@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: decision_sql
+      POSTGRES_USER: decision_admin
+      POSTGRES_PASSWORD: decision_admin_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decision_admin -d decision_sql"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build: .
+    environment:
+      ADMIN_DATABASE_URL: postgresql+psycopg://decision_admin:decision_admin_password@postgres:5432/decision_sql
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["alembic", "upgrade", "head"]
+
+  seed:
+    build: .
+    environment:
+      ADMIN_DATABASE_URL: postgresql+psycopg://decision_admin:decision_admin_password@postgres:5432/decision_sql
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: ["python", "-m", "demo.seed"]
+
+  api:
+    build: .
+    environment:
+      APP_ENV: local
+      DATABASE_URL: postgresql+psycopg://decision_reader:decision_reader_password@postgres:5432/decision_sql
+      OTEL_SERVICE_NAME: decision-sql
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    profiles: ["observability"]
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+
+volumes:
+  postgres_data:

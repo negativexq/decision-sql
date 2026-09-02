@@ -1,0 +1,1 @@
+"""Synthetic commerce demo assets."""

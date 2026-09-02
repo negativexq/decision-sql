@@ -17,3 +17,5 @@ Planned metrics include:
 Every case should retain a typed failure stage such as `SQL_PARSE_ERROR`, `POLICY_REJECTION`, `QUERY_COST_REJECTION`, or `ANSWER_SYNTHESIS_ERROR`. No benchmark or security number is reported until it has actually been measured.
 
 M1 execution outcomes are typed as `ALLOWED`, `SQL_PARSE_ERROR`, `POLICY_REJECTION`, `QUERY_COST_REJECTION`, or `EXECUTION_ERROR`. Adversarial integration tests verify that rejected SQL stops before EXPLAIN, and that accepted SQL reaches execution only after EXPLAIN acceptance.
+
+The trust lifecycle is also tested explicitly: successful planning produces a `QueryPlan`, execution produces a `QueryExecution`, and raw SQL or copied plans cannot bypass `plan()`. Planning is the current M1 dry-plan primitive and does not return database rows.

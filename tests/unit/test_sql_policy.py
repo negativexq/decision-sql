@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 
 from app.catalog.default import build_default_catalog
 from app.db.models import Base
-from app.sql.models import PolicyCode, SqlSafetyStatus
+from app.sql.models import PolicyCode, SqlCandidate, SqlSafetyStatus
 from app.sql.parser import SQLParser
 from app.sql.policy import SQLPolicy
 from app.sql.service import SqlSafetyService
@@ -50,7 +50,7 @@ def test_mutation_and_multiple_statements_are_rejected_before_execution() -> Non
     )
     assert (
         SqlSafetyService(create_engine("sqlite://"))
-        .execute("SELECT * FROM products; DROP TABLE products")
+        .plan(SqlCandidate(sql="SELECT * FROM products; DROP TABLE products"))
         .status
         is SqlSafetyStatus.SQL_PARSE_ERROR
     )
@@ -84,7 +84,7 @@ def test_policy_rejection_does_not_reach_explain() -> None:
         raise AssertionError("EXPLAIN must not run for rejected SQL")
 
     service.cost_gate.explain = fail_if_called
-    result = service.execute("SELECT * FROM pg_roles")
+    result = service.plan(SqlCandidate(sql="SELECT * FROM pg_roles"))
 
     assert result.status is SqlSafetyStatus.POLICY_REJECTION
     assert called is False

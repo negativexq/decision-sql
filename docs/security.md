@@ -8,6 +8,9 @@
 - The migration grants the reader `SELECT` on the demo tables and no write privileges.
 - Schema bootstrap, migrations, and seed use the admin connection and are separate Compose jobs.
 - No LLM is called, no LLM-generated SQL is accepted, and no public query execution endpoint exists.
+- `SqlCandidate` is untrusted input; it contains no authorization state.
+- `QueryPlan` is created only after deterministic policy and EXPLAIN/cost acceptance.
+- `QueryExecution` is the bounded outcome of an accepted plan; proposal, authorization, and execution are never treated as the same state.
 - Health performs `SELECT 1` through the configured reader connection.
 - Candidate SQL is parsed with `sqlglot` using the PostgreSQL dialect and exactly one statement is required.
 - Only `SELECT` ASTs, including SELECT-based CTEs, are accepted.
@@ -15,6 +18,7 @@
 - `customers.external_key` is marked internal and non-queryable; wildcard projections that would expose it are rejected.
 - PostgreSQL functions use an analytical allowlist.
 - EXPLAIN runs only after AST/object policy acceptance and before candidate execution.
+- The supported service API is `plan(SqlCandidate)` followed by `execute(QueryPlan)`. Raw SQL, rejected plans, and copied/foreign plans are rejected at the execution boundary.
 - EXPLAIN and execution use the reader connection in a read-only transaction.
 - Plan rows, plan cost, returned rows, and statement timeout are bounded by settings.
 - Tracing has bounded stage spans and does not record result rows or full candidate SQL.

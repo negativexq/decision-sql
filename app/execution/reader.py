@@ -1,7 +1,6 @@
 from sqlalchemy import Connection, Engine
 
-from app.models.domain import FailureStage
-from app.sql.models import SqlExecutionResult, SqlSafetyStatus
+from app.sql.models import QueryExecution, QueryPlan, SqlExecutionError
 
 
 class ReaderRoleError(RuntimeError):
@@ -17,48 +16,32 @@ class ReadOnlyExecutor:
         self.max_rows = max_rows
         self.reader_role = reader_role
 
-    def execute(self, sql: str) -> SqlExecutionResult:
-        try:
-            with self.engine.connect() as connection:
-                with connection.begin():
-                    self.configure_transaction(connection)
-                    result = connection.exec_driver_sql(sql)
-                    rows = result.fetchmany(self.max_rows + 1)
-                    truncated = len(rows) > self.max_rows
-                    bounded_rows = rows[: self.max_rows]
-                    columns = list(result.keys())
-                    return SqlExecutionResult(
-                        status=SqlSafetyStatus.ALLOWED,
-                        columns=columns,
-                        rows=[dict(row._mapping) for row in bounded_rows],
-                        row_count=len(bounded_rows),
-                        truncated=truncated,
-                    )
-        except Exception:
-            return SqlExecutionResult(
-                status=SqlSafetyStatus.EXECUTION_ERROR,
-                failure_stage=FailureStage.EXECUTION_ERROR,
-                error="Candidate SQL could not be executed by the restricted reader.",
+    def _execute_on_connection(
+        self, connection: Connection, plan: QueryPlan
+    ) -> QueryExecution | SqlExecutionError:
+        """Execute after SqlSafetyService has established plan acceptance and EXPLAIN."""
+        if not isinstance(plan, QueryPlan):
+            return SqlExecutionError(
+                error="Restricted execution requires an accepted QueryPlan."
             )
-
-    def execute_on_connection(self, connection: Connection, sql: str) -> SqlExecutionResult:
-        """Execute inside a caller-owned read-only transaction after EXPLAIN acceptance."""
         try:
-            result = connection.exec_driver_sql(sql)
+            result = connection.exec_driver_sql(plan.normalized_sql)
             rows = result.fetchmany(self.max_rows + 1)
             truncated = len(rows) > self.max_rows
             bounded_rows = rows[: self.max_rows]
-            return SqlExecutionResult(
-                status=SqlSafetyStatus.ALLOWED,
+            return QueryExecution(
+                plan_id=plan.plan_id,
+                correlation_id=plan.correlation_id,
                 columns=list(result.keys()),
                 rows=[dict(row._mapping) for row in bounded_rows],
                 row_count=len(bounded_rows),
                 truncated=truncated,
+                latency_ms=0.0,
             )
         except Exception:
-            return SqlExecutionResult(
-                status=SqlSafetyStatus.EXECUTION_ERROR,
-                failure_stage=FailureStage.EXECUTION_ERROR,
+            return SqlExecutionError(
+                plan_id=plan.plan_id,
+                correlation_id=plan.correlation_id,
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
 

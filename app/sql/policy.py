@@ -114,7 +114,7 @@ class SQLPolicy:
 
     def _validate_functions(self, expression: exp.Expression) -> PolicyRejection | None:
         for function in expression.find_all(exp.Func):
-            function_name = self._function_name(function)
+            function_name = self.function_name(function)
             if function_name not in SAFE_FUNCTIONS:
                 return self._reject(
                     PolicyCode.FORBIDDEN_FUNCTION,
@@ -184,7 +184,7 @@ class SQLPolicy:
         return None
 
     @staticmethod
-    def _function_name(function: exp.Func) -> str:
+    def function_name(function: exp.Func) -> str:
         if isinstance(function, exp.Anonymous):
             return function.name.upper()
         if isinstance(function, exp.TimestampTrunc):

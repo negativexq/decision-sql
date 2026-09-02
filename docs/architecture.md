@@ -19,11 +19,32 @@ question -> server UserContext -> semantic resolution -> schema retrieval
 
 M1 adds a deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code. It performs parsing, AST policy validation, EXPLAIN cost gating, and reader-only execution. There is still deliberately no public Text-to-SQL endpoint.
 
+## Trust lifecycle
+
+The M1 domain model keeps proposal, authorization evidence, and execution outcome distinct:
+
+```text
+SqlCandidate
+    |  untrusted SQL proposal; no authorization state
+    v
+QueryPlan
+    |  issued only after parse, AST/object/function policy, reader validation,
+    |  EXPLAIN, and cost acceptance; contains bounded planning evidence
+    v
+QueryExecution
+       bounded result from the restricted reader connection
+```
+
+The service API is `plan(candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure` and `execute(plan: QueryPlan) -> QueryExecution | SqlExecutionError`. The service retains the accepted plan identity, so a raw string, a rejected plan, or a copied/foreign plan cannot enter execution. Planning is the M1 dry-plan/dry-run primitive: it returns no result rows.
+
 The trust order is fixed in code:
 
 ```text
-parse -> AST/object/function policy -> EXPLAIN -> cost policy -> execute -> bounded result
+parse -> AST validation -> object/function policy -> reader identity validation
+-> EXPLAIN -> cost policy -> QueryPlan -> QueryExecution
 ```
+
+Planning performs parse, validation, authorization, EXPLAIN, and cost evaluation without fetching result rows. Execution requires an accepted `QueryPlan` and only then returns a bounded `QueryExecution`.
 
 The EXPLAIN and execution stages share a transaction configured with `READ ONLY` and the configured statement timeout. Queries without a LIMIT are not rewritten; the executor fetches at most `max_result_rows + 1`, returns at most `max_result_rows`, and marks the result as truncated. The cost gate is the protection against unbounded work, while the row cap bounds returned data.
 

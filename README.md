@@ -20,6 +20,7 @@ The LLM will propose SQL. Deterministic application code will decide what may ex
 - Typed `UserContext`, `QueryRequest`, `QueryStatus`, `QueryResult`, and `FailureStage` models.
 - Provider-neutral LLM interface; it is intentionally unconfigured and does not call a model.
 - Deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code.
+- Explicit trust lifecycle: untrusted `SqlCandidate`, evidence-backed `QueryPlan`, and bounded `QueryExecution`.
 - `sqlglot` PostgreSQL parsing, one-statement enforcement, read-only AST policy, catalog/table/column/function policy.
 - EXPLAIN JSON plan-row/cost gate.
 - Reader-only execution with `transaction_read_only`, timeout enforcement, and bounded result fetching.
@@ -27,6 +28,16 @@ The LLM will propose SQL. Deterministic application code will decide what may ex
 - Architecture, security, and evaluation plans.
 
 M1 accepts candidate SQL only. There is no public Text-to-SQL endpoint, no LLM call, and no LLM-generated SQL execution path.
+
+The M1 internal service boundary is:
+
+```text
+SqlCandidate (untrusted proposal)
+        -> plan() -> QueryPlan (deterministic authorization evidence)
+        -> execute() -> QueryExecution (bounded database outcome)
+```
+
+`execute()` accepts only a `QueryPlan` issued by the same service instance after successful parsing, policy checks, reader validation, EXPLAIN, and cost evaluation. Raw SQL cannot bypass planning.
 
 ## Local startup
 

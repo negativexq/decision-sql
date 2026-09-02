@@ -8,20 +8,25 @@ How do we prove that the query used the correct business data, respected authori
 
 ## Core authority boundary
 
-The LLM will propose SQL. Deterministic application code will decide what may execute. The model will not own identity, tenant scope, authorization, database credentials, or execution authority. The future execution path will add AST validation, policy evaluation, an `EXPLAIN` cost gate, read-only transaction settings, PostgreSQL controls, bounded results, and result validation.
+The LLM will propose SQL. Deterministic application code will decide what may execute. The model will not own identity, tenant scope, authorization, database credentials, or execution authority. M1 implements the AST policy, catalog/function checks, EXPLAIN cost gate, reader-only transaction, timeout, and bounded results. Tenant policy, RLS, result validation, and answer grounding remain deferred.
 
-## Implemented scope: M0
+## Implemented scope: M0 + M1
 
-- Python 3.12 project with FastAPI, Pydantic Settings, SQLAlchemy 2.x, Alembic, `sqlglot`, pytest, Ruff, mypy, and OpenTelemetry API.
+- Python 3.12 project with FastAPI, Pydantic Settings, SQLAlchemy 2.x, Alembic, `sqlglot`, pytest, Ruff, mypy, and OpenTelemetry SDK/OTLP exporter.
 - Docker Compose PostgreSQL 16 environment.
 - Eight-table synthetic commerce schema with deterministic seed data.
 - Separate admin and restricted reader database connections.
 - `GET /health` with a reader-backed `SELECT 1` connectivity check.
 - Typed `UserContext`, `QueryRequest`, `QueryStatus`, `QueryResult`, and `FailureStage` models.
 - Provider-neutral LLM interface; it is intentionally unconfigured and does not call a model.
+- Deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code.
+- `sqlglot` PostgreSQL parsing, one-statement enforcement, read-only AST policy, catalog/table/column/function policy.
+- EXPLAIN JSON plan-row/cost gate.
+- Reader-only execution with `transaction_read_only`, timeout enforcement, and bounded result fetching.
+- Typed SQL execution outcomes and bounded OpenTelemetry stage spans.
 - Architecture, security, and evaluation plans.
 
-There is no Text-to-SQL or query execution endpoint in M0.
+M1 accepts candidate SQL only. There is no public Text-to-SQL endpoint, no LLM call, and no LLM-generated SQL execution path.
 
 ## Local startup
 
@@ -69,4 +74,4 @@ alembic upgrade head
 python -m demo.seed
 ```
 
-See [docs/architecture.md](docs/architecture.md), [docs/security.md](docs/security.md), and [docs/evaluation.md](docs/evaluation.md) for boundaries and intentionally deferred work.
+See [docs/architecture.md](docs/architecture.md), [docs/security.md](docs/security.md), and [docs/evaluation.md](docs/evaluation.md) for boundaries, execution order, tests, and intentionally deferred M2 work.

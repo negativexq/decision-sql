@@ -1,1 +1,1 @@
-"""Schema catalog boundary; retrieval is intentionally deferred."""
+"""Typed application schema catalog."""

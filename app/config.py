@@ -18,8 +18,15 @@ class Settings(BaseSettings):
     otel_exporter_otlp_endpoint: str | None = Field(
         default=None, validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT"
     )
+    max_plan_rows: int = Field(default=100_000, validation_alias="DECISION_SQL_MAX_PLAN_ROWS")
+    max_plan_cost: float = Field(default=100_000.0, validation_alias="DECISION_SQL_MAX_PLAN_COST")
+    max_result_rows: int = Field(default=1000, validation_alias="DECISION_SQL_MAX_RESULT_ROWS")
+    statement_timeout_ms: int = Field(
+        default=5000, validation_alias="DECISION_SQL_STATEMENT_TIMEOUT_MS"
+    )
+    reader_role: str = Field(default="decision_reader", validation_alias="DECISION_SQL_READER_ROLE")
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 
 
 @lru_cache

@@ -1,1 +1,1 @@
-"""Read-only query execution boundary; implementation is deferred."""
+"""Restricted EXPLAIN and read-only execution boundary."""

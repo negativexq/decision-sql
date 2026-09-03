@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Sensitivity(StrEnum):
@@ -64,3 +64,53 @@ class SchemaCatalog(BaseModel):
                 scored.append((score, table.name, table))
         scored.sort(key=lambda item: (-item[0], item[1]))
         return [table for _, _, table in scored[:limit]]
+
+
+class RelevanceScore(BaseModel):
+    table_name: str
+    score: int
+    matched_tokens: tuple[str, ...] = ()
+
+
+class RelevantColumn(BaseModel):
+    table_name: str
+    name: str
+    type: str
+    description: str
+    sensitivity: Sensitivity
+    primary_key: bool = False
+    foreign_key_table: str | None = None
+    foreign_key_column: str | None = None
+
+
+class RelevantTable(BaseModel):
+    name: str
+    description: str
+    columns: tuple[RelevantColumn, ...] = Field(default_factory=tuple)
+
+
+class RelevantRelationship(BaseModel):
+    source_table: str
+    source_column: str
+    target_table: str
+    target_column: str
+
+
+class ContextMetadata(BaseModel):
+    mode: str
+    seed_table_count: int
+    selected_table_count: int
+    selected_column_count: int
+    relationship_count: int
+    relevance_scores: tuple[RelevanceScore, ...] = ()
+
+
+class SchemaContext(BaseModel):
+    """Bounded, server-derived schema context safe to serialize for a provider."""
+
+    model_config = ConfigDict(frozen=True)
+
+    tables: tuple[RelevantTable, ...] = Field(default_factory=tuple)
+    relationships: tuple[RelevantRelationship, ...] = Field(default_factory=tuple)
+    selected_columns: tuple[RelevantColumn, ...] = Field(default_factory=tuple)
+    context_metadata: ContextMetadata

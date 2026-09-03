@@ -1,43 +1,83 @@
 # DecisionSQL
 
-DecisionSQL is a production-oriented foundation for a governed Text-to-SQL / Decision Intelligence service. It will convert natural-language business questions into safe, read-only PostgreSQL queries while preserving authorization, provenance, and measurable failure attribution.
+DecisionSQL is **Governed Text-to-SQL for Enterprise Analytics**.
 
-## North-star question
+> The LLM proposes. Deterministic software decides what may execute.
 
-How do we prove that the query used the correct business data, respected authorization boundaries, could not execute dangerous or expensive SQL, produced an answer supported by its result, and failed at an identifiable pipeline stage when it could not answer?
-
-## Core authority boundary
-
-The LLM will propose SQL. Deterministic application code will decide what may execute. The model will not own identity, tenant scope, authorization, database credentials, or execution authority. M1 implements the AST policy, catalog/function checks, EXPLAIN cost gate, reader-only transaction, timeout, and bounded results. Tenant policy, RLS, result validation, and answer grounding remain deferred.
-
-## Implemented scope: M0 + M1
-
-- Python 3.12 project with FastAPI, Pydantic Settings, SQLAlchemy 2.x, Alembic, `sqlglot`, pytest, Ruff, mypy, and OpenTelemetry SDK/OTLP exporter.
-- Docker Compose PostgreSQL 16 environment.
-- Eight-table synthetic commerce schema with deterministic seed data.
-- Separate admin and restricted reader database connections.
-- `GET /health` with a reader-backed `SELECT 1` connectivity check.
-- Typed `UserContext`, `QueryRequest`, `QueryStatus`, `QueryResult`, and `FailureStage` models.
-- Provider-neutral LLM interface; it is intentionally unconfigured and does not call a model.
-- Deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code.
-- Explicit trust lifecycle: untrusted `SqlCandidate`, evidence-backed `QueryPlan`, and bounded `QueryExecution`.
-- `sqlglot` PostgreSQL parsing, one-statement enforcement, read-only AST policy, catalog/table/column/function policy.
-- EXPLAIN JSON plan-row/cost gate.
-- Reader-only execution with `transaction_read_only`, timeout enforcement, and bounded result fetching.
-- Typed SQL execution outcomes and bounded OpenTelemetry stage spans.
-- Architecture, security, and evaluation plans.
-
-M1 accepts candidate SQL only. There is no public Text-to-SQL endpoint, no LLM call, and no LLM-generated SQL execution path.
-
-The M1 internal service boundary is:
+The system keeps generation separate from authority. A natural-language
+question is combined with server-owned schema and business context, then an
+LLM proposes PostgreSQL. The proposal remains untrusted until deterministic
+SQL policy, catalog checks, PostgreSQL `EXPLAIN` cost gates, and read-only
+execution accept it.
 
 ```text
-SqlCandidate (untrusted proposal)
-        -> plan() -> QueryPlan (deterministic authorization evidence)
-        -> execute() -> QueryExecution (bounded database outcome)
+Question
+  -> server-owned context
+  -> LLM SQL proposal
+  -> deterministic SQL safety and planning
+  -> PostgreSQL EXPLAIN cost gate
+  -> read-only, timed, bounded execution
+  -> result and provenance
 ```
 
-`execute()` accepts only a `QueryPlan` issued by the same service instance after successful parsing, policy checks, reader validation, EXPLAIN, and cost evaluation. Raw SQL cannot bypass planning.
+## What is implemented
+
+- Python 3.12, FastAPI, Pydantic Settings, SQLAlchemy, Alembic, `sqlglot`,
+  pytest, Ruff, mypy, and OpenTelemetry.
+- PostgreSQL-only V1 with separate admin and restricted reader connections.
+- Deterministic M1 SQL safety and planning: one statement, SELECT/SELECT-CTE
+  policy, catalog/object and function policy, EXPLAIN cost gates, read-only
+  transactions, timeouts, and bounded results.
+- An optional one-shot OpenAI-compatible Text-to-SQL generation path. Model
+  output becomes an untrusted `SqlCandidate` and always passes through M1.
+- Reproducible internal generation experiments and a bounded typed Window IR
+  with a deterministic PostgreSQL compiler.
+- Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
+  PostgreSQL. Their benchmark executors are isolated from the product M1 path.
+
+There is no public Text-to-SQL endpoint yet. Tenant policy, RLS, governed
+semantic metrics, answer synthesis, and user-facing product integration remain
+future work.
+
+## External evaluation
+
+These are execution-based results from different datasets and evaluators. They
+must not be averaged into a single accuracy number.
+
+| Benchmark | Metric | Result |
+| --- | --- | ---: |
+| Defog SQL-Eval PostgreSQL — Classic | Exact | **142/210 (67.62%)** |
+| Defog SQL-Eval PostgreSQL — Advanced | Exact | **48/64 (75.00%)** |
+| Defog Advanced — official Window category | Exact | **6/8 (75.00%)** |
+| BIRD Mini-Dev PostgreSQL | EX | **225/500 (45.00%)** |
+| BIRD — Simple | EX | **87/148 (58.78%)** |
+| BIRD — Moderate | EX | **108/250 (43.20%)** |
+| BIRD — Challenging | EX | **30/102 (29.41%)** |
+
+The BIRD run parsed 499/500 generated queries and executed 496/500; the main
+loss was semantic result correctness rather than basic SQL executability.
+Defog and BIRD provenance and run details are retained under
+[`evaluation/external/`](evaluation/external/) and the milestone documents.
+
+## Current limitations
+
+Derived and temporal semantics remain weak across the external evidence:
+
+- Defog ratio: **12/35 (34.29%)** exact.
+- BIRD ratio/division: **17/101 (16.83%)** EX.
+- BIRD temporal: **4/19 (21.05%)** EX.
+
+The current bottleneck is semantic/compositional grounding, especially derived
+business metrics and temporal logic, rather than SQL syntax validity alone.
+
+## Window research
+
+DecisionSQL includes a deterministic compiler for a bounded, typed Window IR.
+Gold IR compiled, passed safety planning, executed, and matched results on
+**80/80** controlled development and holdout cases. LLM-generated Window IR
+did not outperform direct SQL. The original 48-question suite is therefore
+retained as an **Internal Window Compositional Stress Suite**, not as a general
+product-accuracy or general Window benchmark.
 
 ## Local startup
 
@@ -48,7 +88,8 @@ cp .env.example .env
 docker compose up --build
 ```
 
-The database becomes healthy, then the `migrate` and `seed` one-shot services run before the API starts. Check the API:
+The database becomes healthy, then migrations and deterministic seed data run
+before the API starts. Check the API:
 
 ```bash
 curl http://localhost:8000/health
@@ -60,15 +101,13 @@ Expected response:
 {"status":"ok","database":"ok"}
 ```
 
-To include the optional Jaeger-compatible local service:
+To include the optional Jaeger-compatible service:
 
 ```bash
 docker compose --profile observability up --build
 ```
 
-Open Jaeger at `http://localhost:16686` after a future exporter/instrumentation stage is enabled.
-
-## Development commands
+## Development
 
 With Python 3.12 and the development dependencies installed:
 
@@ -78,11 +117,23 @@ ruff check .
 mypy app demo
 ```
 
-For a local database, migrations and seeding can be run explicitly with `ADMIN_DATABASE_URL` set:
+See [`docs/architecture.md`](docs/architecture.md),
+[`docs/security.md`](docs/security.md),
+[`docs/evaluation.md`](docs/evaluation.md), and
+[`docs/evaluation-research-history.md`](docs/evaluation-research-history.md).
 
-```bash
-alembic upgrade head
-python -m demo.seed
-```
+## Roadmap
 
-See [docs/architecture.md](docs/architecture.md), [docs/security.md](docs/security.md), and [docs/evaluation.md](docs/evaluation.md) for boundaries, execution order, tests, and intentionally deferred M2 work.
+Completed: M0 Foundation, M1 Deterministic SQL Safety, M2 generation and
+evaluation research, M2.12 Window compiler research, M2.13 Defog external
+calibration, and M2.14 BIRD external validation.
+
+Broad benchmark acquisition is now frozen. Existing evidence consists of the
+Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
+benchmark, and the internal Window stress suite.
+
+Next product milestone: **M3 — Governed Semantic Metrics**.
+
+Later work may cover temporal/value grounding, verified query memory,
+clarification and controlled repair, answer synthesis/provenance, final
+external evaluation, UserContext/RLS, and product integration.

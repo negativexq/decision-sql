@@ -19,6 +19,13 @@ class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
 
 
+class TextToSqlRequest(QueryRequest):
+    """Minimal natural-language request; identity remains outside this model."""
+
+    correlation_id: str | None = None
+    execute: bool = True
+
+
 class QueryStatus(StrEnum):
     RECEIVED = "received"
     SUCCEEDED = "succeeded"
@@ -29,6 +36,7 @@ class QueryStatus(StrEnum):
 class FailureStage(StrEnum):
     SCHEMA_RETRIEVAL_ERROR = "SCHEMA_RETRIEVAL_ERROR"
     SCHEMA_LINKING_ERROR = "SCHEMA_LINKING_ERROR"
+    QUERY_INTENT_GENERATION_ERROR = "QUERY_INTENT_GENERATION_ERROR"
     SEMANTIC_RESOLUTION_ERROR = "SEMANTIC_RESOLUTION_ERROR"
     SQL_GENERATION_ERROR = "SQL_GENERATION_ERROR"
     SQL_PARSE_ERROR = "SQL_PARSE_ERROR"

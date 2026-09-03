@@ -114,6 +114,10 @@ class SQLPolicy:
 
     def _validate_functions(self, expression: exp.Expression) -> PolicyRejection | None:
         for function in expression.find_all(exp.Func):
+            # SQLGlot models boolean connectors and CASE expressions as Func
+            # subclasses; they are expression syntax, not callable functions.
+            if isinstance(function, (exp.Case, exp.If, exp.Connector)):
+                continue
             function_name = self.function_name(function)
             if function_name not in SAFE_FUNCTIONS:
                 return self._reject(

@@ -1,0 +1,146 @@
+{
+  "milestone": "M2.12R.1",
+  "phase": "A",
+  "source_dataset": "evaluation/datasets/m212_window_dev.json",
+  "source_dataset_sha256": "bfb04992e860d7e10add010db350e94357fcedb20037540eaf9a0dfc17704ac3",
+  "question_count": 20,
+  "target_count": 15,
+  "control_count": 5,
+  "entries": [
+    {
+      "question_id": "m212-dev-laglead-001",
+      "pattern": "LAG",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-laglead-002",
+      "pattern": "LEAD",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-laglead-003",
+      "pattern": "LAG",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-laglead-004",
+      "pattern": "LEAD",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-laglead-005",
+      "pattern": "LAG",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-laglead-006",
+      "pattern": "LEAD",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-moving-001",
+      "pattern": "MOVING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-moving-002",
+      "pattern": "MOVING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-moving-003",
+      "pattern": "MOVING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-moving-006",
+      "pattern": "MOVING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-running-001",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-running-002",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-running-003",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-running-005",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-running-006",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "FAILURE_TARGET",
+      "source_m212r_classification": "COMPUTED_ALIAS_USED_AS_PHYSICAL_COLUMN"
+    },
+    {
+      "question_id": "m212-dev-latest-005",
+      "pattern": "LATEST_PER_GROUP",
+      "role": "CONTROL",
+      "source_m212r_classification": "TRANSPORTED_CONTROL"
+    },
+    {
+      "question_id": "m212-dev-moving-004",
+      "pattern": "MOVING_AGGREGATE",
+      "role": "CONTROL",
+      "source_m212r_classification": "TRANSPORTED_CONTROL"
+    },
+    {
+      "question_id": "m212-dev-ranking-001",
+      "pattern": "RANKING",
+      "role": "CONTROL",
+      "source_m212r_classification": "TRANSPORTED_CONTROL"
+    },
+    {
+      "question_id": "m212-dev-running-004",
+      "pattern": "RUNNING_AGGREGATE",
+      "role": "CONTROL",
+      "source_m212r_classification": "TRANSPORTED_CONTROL"
+    },
+    {
+      "question_id": "m212-dev-topn-002",
+      "pattern": "TOP_N_PER_GROUP",
+      "role": "CONTROL",
+      "source_m212r_classification": "TRANSPORTED_CONTROL"
+    }
+  ],
+  "model": "gpt-5.6-luna",
+  "reasoning_effort": "none",
+  "temperature": null,
+  "schema_mode": "FULL_COMPACT",
+  "transport": "pattern_specific_role_explicit_plain_json",
+  "one_provider_call_per_question": true,
+  "holdout_used": false,
+  "code_sha": null,
+  "frozen_before_provider_calls": true,
+  "precommitted_gate": {
+    "overall_transport_minimum": 0.9,
+    "target_transport_minimum": 13,
+    "control_transport_minimum": 4,
+    "max_target_role_confusion": 2
+  }
+}

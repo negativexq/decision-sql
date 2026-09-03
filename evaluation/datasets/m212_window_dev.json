@@ -1,0 +1,2041 @@
+[
+  {
+    "id": "m212-dev-latest-001",
+    "question": "For each customer, return the most recently placed order with its id, status, and timestamp.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"status\", \"ordered_at\" FROM (SELECT \"customer_id\", \"id\", \"status\", \"ordered_at\", ROW_NUMBER() OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"orders\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.status",
+        "orders.ordered_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "orders.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-latest-002",
+    "question": "Show the newest product record in every category, including the product id, name, and price.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"category\", \"id\", \"name\", \"unit_price\" FROM (SELECT \"category\", \"id\", \"name\", \"unit_price\", ROW_NUMBER() OVER (PARTITION BY \"category\" ORDER BY \"id\" DESC, \"sku\" DESC) AS \"__decision_rank_0\" FROM \"products\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.name",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.id",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "products.sku",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-latest-003",
+    "question": "Find the last payment recorded for each order and show order id, payment id, and paid time.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"paid_at\", \"amount\" FROM (SELECT \"order_id\", \"id\", \"paid_at\", \"amount\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"payments\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.paid_at",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "payments.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-latest-004",
+    "question": "For every order, keep only its latest refund and return the order id, refund id, and reason.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"reason\", \"refunded_at\" FROM (SELECT \"order_id\", \"id\", \"reason\", \"refunded_at\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"refunds\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.reason",
+        "refunds.refunded_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "refunds.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-latest-005",
+    "question": "Return the most recent line item for each order, with the order, item, product, and quantity columns.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"product_id\", \"quantity\" FROM (SELECT \"order_id\", \"id\", \"product_id\", \"quantity\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"id\" DESC) AS \"__decision_rank_0\" FROM \"order_items\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.product_id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": []
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-latest-006",
+    "question": "For each sales region, list the newest customer id, name, and creation time.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"name\", \"created_at\" FROM (SELECT \"region_id\", \"id\", \"name\", \"created_at\", ROW_NUMBER() OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"customers\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.name",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "customers.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-001",
+    "question": "Show the two highest-value orders for each customer.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\" FROM (SELECT \"customer_id\", \"id\", \"total_amount\", ROW_NUMBER() OVER (PARTITION BY \"customer_id\" ORDER BY \"total_amount\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"orders\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 2",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.total_amount",
+              "direction": "DESC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "DESC"
+            }
+          ],
+          "n": 2,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-002",
+    "question": "For every product category, return the three most expensive products by id and price.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\" FROM (SELECT \"category\", \"id\", \"unit_price\", ROW_NUMBER() OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"products\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 3",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "DESC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 3,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-003",
+    "question": "List the top item quantities within each order, keeping at most one line per tied rank.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\" FROM (SELECT \"order_id\", \"id\", \"quantity\", RANK() OVER (PARTITION BY \"order_id\" ORDER BY \"quantity\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"order_items\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 1",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.quantity",
+              "direction": "DESC"
+            },
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 1,
+          "tie_policy": "INCLUDE_TIES"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-004",
+    "question": "Return the four largest payments for each order, showing payment id and amount.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\" FROM (SELECT \"order_id\", \"id\", \"amount\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"amount\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"payments\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 4",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.amount",
+              "direction": "DESC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 4,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-005",
+    "question": "Within each customer, keep the three largest refunds and their dates.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", \"refunded_at\" FROM (SELECT \"order_id\", \"id\", \"amount\", \"refunded_at\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"amount\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"refunds\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 3",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount",
+        "refunds.refunded_at"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.amount",
+              "direction": "DESC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 3,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-topn-006",
+    "question": "For each region, return the two latest-created customers by id and creation date.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\" FROM (SELECT \"region_id\", \"id\", \"created_at\", ROW_NUMBER() OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"customers\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 2",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "DESC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 2,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-001",
+    "question": "For each customer order, show the amount from the preceding order chronologically.",
+    "category": "lag_lead",
+    "pattern": "LAG",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", LAG(\"total_amount\", 1) OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC) AS \"previous_amount\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "LAG",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "previous_amount"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-002",
+    "question": "Within each order, show the next payment amount in payment-time order.",
+    "category": "lag_lead",
+    "pattern": "LEAD",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", LEAD(\"amount\", 1) OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC) AS \"next_amount\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "LEAD",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_amount"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-003",
+    "question": "Return each refund and the amount of the previous refund for its order, two rows back.",
+    "category": "lag_lead",
+    "pattern": "LAG",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", LAG(\"amount\", 2) OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC) AS \"amount_two_back\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "LAG",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 2,
+          "alias": "amount_two_back"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-004",
+    "question": "For each order, show every line and the quantity on the following line.",
+    "category": "lag_lead",
+    "pattern": "LEAD",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", LEAD(\"quantity\", 1) OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC) AS \"next_quantity\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "LEAD",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_quantity"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-005",
+    "question": "Within a category, show each product's price and the prior product price when sorted low to high.",
+    "category": "lag_lead",
+    "pattern": "LAG",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", LAG(\"unit_price\", 1) OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC, \"id\" ASC) AS \"prior_price\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "LAG",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "prior_price"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-laglead-006",
+    "question": "For customers in each region, include the creation date of the next customer.",
+    "category": "lag_lead",
+    "pattern": "LEAD",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\", LEAD(\"created_at\", 1) OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" ASC, \"id\" ASC) AS \"next_created_at\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "LEAD",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "customers.created_at",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_created_at"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-001",
+    "question": "Show each customer's orders with their cumulative total amount over order time.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", SUM(\"total_amount\") OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_amount\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_amount"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-002",
+    "question": "For each order, calculate the cumulative payment amount in payment sequence.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", SUM(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_payment\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_payment"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-003",
+    "question": "Return line items with the running quantity total within each order.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", SUM(\"quantity\") OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_quantity\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_quantity"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-004",
+    "question": "Within every category, show the cumulative product price from cheapest to most expensive.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", SUM(\"unit_price\") OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"cumulative_price\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "cumulative_price"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-005",
+    "question": "For each refund order, show a running sum of refund amounts by refund date.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", SUM(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"cumulative_refund\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "cumulative_refund"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-running-006",
+    "question": "Across each sales region, show the cumulative customer id in creation order.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\", SUM(\"id\") OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_customer_id\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "customers.id",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_customer_id"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-001",
+    "question": "For each customer order, show a three-row moving average of total amount including the current order.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", AVG(\"total_amount\") OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS \"moving_average\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 2
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "moving_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-002",
+    "question": "Within each order, compute the average of the prior two payment amounts, excluding the current payment.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", AVG(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING) AS \"prior_two_average\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 2
+            },
+            "end": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            }
+          },
+          "alias": "prior_two_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-003",
+    "question": "Show a five-row moving sum of quantities for each order's lines, including the current line.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", SUM(\"quantity\") OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS \"moving_quantity\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 4
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "moving_quantity"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-004",
+    "question": "For products in a category, return a two-row moving average of unit price in descending price order.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", AVG(\"unit_price\") OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" DESC, \"id\" DESC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"price_moving_average\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "DESC"
+            },
+            {
+              "column": "products.id",
+              "direction": "DESC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "price_moving_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-005",
+    "question": "For each order, show a three-row moving average of refunds ordered by refund time.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", AVG(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS \"refund_moving_average\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 2
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "refund_moving_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-moving-006",
+    "question": "Within every region, calculate the moving maximum of customer ids over the current and preceding row.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\", MAX(\"id\") OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" ASC, \"id\" ASC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"recent_max_customer\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "MAX",
+          "target": "customers.id",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "recent_max_customer"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-001",
+    "question": "Rank orders from largest to smallest total within each customer.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", RANK() OVER (PARTITION BY \"customer_id\" ORDER BY \"total_amount\" DESC) AS \"amount_rank\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "RANK",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.total_amount",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "amount_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-002",
+    "question": "Assign a dense price rank to products within each category.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", DENSE_RANK() OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" DESC) AS \"price_rank\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "DENSE_RANK",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "price_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-003",
+    "question": "Number payments in ascending amount order separately for every order.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"amount\" ASC, \"id\" ASC) AS \"payment_number\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.amount",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "payment_number"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-004",
+    "question": "Give refunds a dense rank by amount inside their order.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", DENSE_RANK() OVER (PARTITION BY \"order_id\" ORDER BY \"amount\" DESC) AS \"refund_rank\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "DENSE_RANK",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.amount",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "refund_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-005",
+    "question": "Number each order line from the largest quantity to the smallest within its order.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"quantity\" DESC, \"id\" ASC) AS \"quantity_position\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.quantity",
+              "direction": "DESC"
+            },
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "quantity_position"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-ranking-006",
+    "question": "Rank customers by creation time within each region, newest first.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\", RANK() OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" DESC) AS \"customer_rank\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "RANK",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "customer_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-001",
+    "question": "For every order line, show its quantity as a share of that order's total quantity.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", \"quantity\" / SUM(\"quantity\") OVER (PARTITION BY \"order_id\") * 100 AS \"quantity_share_pct\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "scale": 100.0,
+          "alias": "quantity_share_pct"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-002",
+    "question": "Show each payment amount as a percentage of the payments recorded for its order.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", \"amount\" / SUM(\"amount\") OVER (PARTITION BY \"order_id\") * 100 AS \"payment_share_pct\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "scale": 100.0,
+          "alias": "payment_share_pct"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-003",
+    "question": "For products in each category, calculate each unit price's percentage of category price total.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", \"unit_price\" / SUM(\"unit_price\") OVER (PARTITION BY \"category\") * 100 AS \"category_price_share\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "scale": 100.0,
+          "alias": "category_price_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-004",
+    "question": "Return the amount share of each refund within its order's refunds.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", \"amount\" / SUM(\"amount\") OVER (PARTITION BY \"order_id\") * 100 AS \"refund_share_pct\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "scale": 100.0,
+          "alias": "refund_share_pct"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-005",
+    "question": "Within each customer, express every order total as a percentage of that customer's order total.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", \"total_amount\" / SUM(\"total_amount\") OVER (PARTITION BY \"customer_id\") * 100 AS \"customer_order_share\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "scale": 100.0,
+          "alias": "customer_order_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-share-006",
+    "question": "Show each customer's id as its share of the id total for the region.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"id\" / SUM(\"id\") OVER (PARTITION BY \"region_id\") * 100 AS \"regional_id_share\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "customers.id",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "scale": 100.0,
+          "alias": "regional_id_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-001",
+    "question": "For every order, show the prior-order amount and its rank by amount within the customer.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", LAG(\"total_amount\", 1) OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC) AS \"previous_amount\", RANK() OVER (PARTITION BY \"customer_id\" ORDER BY \"total_amount\" DESC) AS \"amount_rank\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "previous_amount"
+        },
+        {
+          "pattern": "RANKING",
+          "function": "RANK",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.total_amount",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "amount_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-002",
+    "question": "For each payment, return its running amount and its row number within the order.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", SUM(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_payment\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC) AS \"payment_number\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_payment"
+        },
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "payment_number"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-003",
+    "question": "For each line item, include the moving quantity average and a dense quantity rank within its order.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", AVG(\"quantity\") OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"moving_quantity\", DENSE_RANK() OVER (PARTITION BY \"order_id\" ORDER BY \"quantity\" DESC) AS \"quantity_rank\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "moving_quantity"
+        },
+        {
+          "pattern": "RANKING",
+          "function": "DENSE_RANK",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.quantity",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "quantity_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-004",
+    "question": "Within each product category, show the previous price and its category price share.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", LAG(\"unit_price\", 1) OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC, \"id\" ASC) AS \"previous_price\", \"unit_price\" / SUM(\"unit_price\") OVER (PARTITION BY \"category\") * 100 AS \"price_share_pct\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "previous_price"
+        },
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "scale": 100.0,
+          "alias": "price_share_pct"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-005",
+    "question": "For each customer, show a moving average of order totals and the latest-order ranking.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", AVG(\"total_amount\") OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS \"moving_order_average\", ROW_NUMBER() OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" DESC, \"id\" DESC) AS \"latest_position\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 2
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "moving_order_average"
+        },
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "DESC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "latest_position"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-dev-mixed-006",
+    "question": "For each refund, show the next refund amount and a running refund total for its order.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", LEAD(\"amount\", 1) OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC) AS \"next_refund\", SUM(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_refund\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_refund"
+        },
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_refund"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  }
+]

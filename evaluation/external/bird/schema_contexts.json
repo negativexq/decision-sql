@@ -1,0 +1,230 @@
+{
+  "california_schools": {
+    "text": "CREATE TABLE public.frpm (\n  cdscode text NULL,\n  \"Academic Year\" text NULL,\n  \"County Code\" text NULL,\n  \"District Code\" bigint NULL,\n  \"School Code\" text NULL,\n  \"County Name\" text NULL,\n  \"District Name\" text NULL,\n  \"School Name\" text NULL,\n  \"District Type\" text NULL,\n  \"School Type\" text NULL,\n  \"Educational Option Type\" text NULL,\n  \"NSLP Provision Status\" text NULL,\n  \"Charter School (Y/N)\" bigint NULL,\n  \"Charter School Number\" text NULL,\n  \"Charter Funding Type\" text NULL,\n  irc bigint NULL,\n  \"Low Grade\" text NULL,\n  \"High Grade\" text NULL,\n  \"Enrollment (K-12)\" real NULL,\n  \"Free Meal Count (K-12)\" real NULL,\n  \"Percent (%) Eligible Free (K-12)\" real NULL,\n  \"FRPM Count (K-12)\" real NULL,\n  \"Percent (%) Eligible FRPM (K-12)\" real NULL,\n  \"Enrollment (Ages 5-17)\" real NULL,\n  \"Free Meal Count (Ages 5-17)\" real NULL,\n  \"Percent (%) Eligible Free (Ages 5-17)\" real NULL,\n  \"FRPM Count (Ages 5-17)\" real NULL,\n  \"Percent (%) Eligible FRPM (Ages 5-17)\" real NULL,\n  \"2013-14 CALPADS Fall 1 Certification Status\" bigint NULL\n);\nCREATE TABLE public.satscores (\n  cds text NOT NULL,\n  rtype text NULL,\n  sname text NULL,\n  dname text NULL,\n  cname text NULL,\n  enroll12 bigint NULL,\n  numtsttakr bigint NULL,\n  avgscrread bigint NULL,\n  avgscrmath bigint NULL,\n  avgscrwrite bigint NULL,\n  numge1500 bigint NULL\n);\nCREATE TABLE public.schools (\n  cdscode text NULL,\n  ncesdist text NULL,\n  ncesschool text NULL,\n  statustype text NULL,\n  county text NULL,\n  district text NULL,\n  school text NULL,\n  street text NULL,\n  streetabr text NULL,\n  city text NULL,\n  zip text NULL,\n  state text NULL,\n  mailstreet text NULL,\n  mailstrabr text NULL,\n  mailcity text NULL,\n  mailzip text NULL,\n  mailstate text NULL,\n  phone text NULL,\n  ext text NULL,\n  website text NULL,\n  opendate date NULL,\n  closeddate date NULL,\n  charter bigint NULL,\n  charternum text NULL,\n  fundingtype text NULL,\n  doc text NULL,\n  doctype text NULL,\n  soc text NULL,\n  soctype text NULL,\n  edopscode text NULL,\n  edopsname text NULL,\n  eilcode text NULL,\n  eilname text NULL,\n  gsoffered text NULL,\n  gsserved text NULL,\n  virtual text NULL,\n  magnet bigint NULL,\n  latitude real NULL,\n  longitude real NULL,\n  admfname1 text NULL,\n  admlname1 text NULL,\n  admemail1 text NULL,\n  admfname2 text NULL,\n  admlname2 text NULL,\n  admemail2 text NULL,\n  admfname3 text NULL,\n  admlname3 text NULL,\n  admemail3 text NULL,\n  lastupdate date NULL\n);",
+    "metadata": {
+      "db_id": "california_schools",
+      "schema_context_sha256": "5cbdc871506ded471eb841f5bfc6c956bdf996cdf88228a2196f282bd7d17285",
+      "schema_context_chars": 2429,
+      "table_count": 3,
+      "column_count": 89,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.frpm",
+        "public.satscores",
+        "public.schools"
+      ]
+    }
+  },
+  "card_games": {
+    "text": "CREATE TABLE public.cards (\n  id bigint NOT NULL,\n  artist text NULL,\n  asciiname text NULL,\n  availability text NULL,\n  bordercolor text NULL,\n  cardkingdomfoilid text NULL,\n  cardkingdomid text NULL,\n  coloridentity text NULL,\n  colorindicator text NULL,\n  colors text NULL,\n  convertedmanacost real NULL,\n  dueldeck text NULL,\n  edhrecrank bigint NULL,\n  faceconvertedmanacost real NULL,\n  facename text NULL,\n  flavorname text NULL,\n  flavortext text NULL,\n  frameeffects text NULL,\n  frameversion text NULL,\n  hand text NULL,\n  hasalternativedecklimit bigint NULL,\n  hascontentwarning bigint NULL,\n  hasfoil bigint NULL,\n  hasnonfoil bigint NULL,\n  isalternative bigint NULL,\n  isfullart bigint NULL,\n  isonlineonly bigint NULL,\n  isoversized bigint NULL,\n  ispromo bigint NULL,\n  isreprint bigint NULL,\n  isreserved bigint NULL,\n  isstarter bigint NULL,\n  isstoryspotlight bigint NULL,\n  istextless bigint NULL,\n  istimeshifted bigint NULL,\n  keywords text NULL,\n  layout text NULL,\n  leadershipskills text NULL,\n  life text NULL,\n  loyalty text NULL,\n  manacost text NULL,\n  mcmid text NULL,\n  mcmmetaid text NULL,\n  mtgarenaid text NULL,\n  mtgjsonv4id text NULL,\n  mtgofoilid text NULL,\n  mtgoid text NULL,\n  multiverseid text NULL,\n  name text NULL,\n  number text NULL,\n  originalreleasedate text NULL,\n  originaltext text NULL,\n  originaltype text NULL,\n  otherfaceids text NULL,\n  power text NULL,\n  printings text NULL,\n  promotypes text NULL,\n  purchaseurls text NULL,\n  rarity text NULL,\n  scryfallid text NULL,\n  scryfallillustrationid text NULL,\n  scryfalloracleid text NULL,\n  setcode text NULL,\n  side text NULL,\n  subtypes text NULL,\n  supertypes text NULL,\n  tcgplayerproductid text NULL,\n  text text NULL,\n  toughness text NULL,\n  type text NULL,\n  types text NULL,\n  uuid text NULL,\n  variations text NULL,\n  watermark text NULL\n);\nCREATE TABLE public.foreign_data (\n  id bigint NOT NULL,\n  flavortext text NULL,\n  language text NULL,\n  multiverseid bigint NULL,\n  name text NULL,\n  text text NULL,\n  type text NULL,\n  uuid text NULL\n);\nCREATE TABLE public.legalities (\n  id bigint NOT NULL,\n  format text NULL,\n  status text NULL,\n  uuid text NULL\n);\nCREATE TABLE public.rulings (\n  id bigint NOT NULL,\n  date date NULL,\n  text text NULL,\n  uuid text NULL\n);\nCREATE TABLE public.set_translations (\n  id bigint NOT NULL,\n  language text NULL,\n  setcode text NULL,\n  translation text NULL\n);\nCREATE TABLE public.sets (\n  id bigint NOT NULL,\n  basesetsize bigint NULL,\n  block text NULL,\n  booster text NULL,\n  code text NULL,\n  isfoilonly bigint NULL,\n  isforeignonly bigint NULL,\n  isnonfoilonly bigint NULL,\n  isonlineonly bigint NULL,\n  ispartialpreview bigint NULL,\n  keyrunecode text NULL,\n  mcmid bigint NULL,\n  mcmidextras bigint NULL,\n  mcmname text NULL,\n  mtgocode text NULL,\n  name text NULL,\n  parentcode text NULL,\n  releasedate date NULL,\n  tcgplayergroupid bigint NULL,\n  totalsetsize bigint NULL,\n  type text NULL\n);",
+    "metadata": {
+      "db_id": "card_games",
+      "schema_context_sha256": "d7effc82f76fe9c289348815026ea2e732d7ed1d5f163b08443500b1bd84a55b",
+      "schema_context_chars": 2953,
+      "table_count": 6,
+      "column_count": 115,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.cards",
+        "public.foreign_data",
+        "public.legalities",
+        "public.rulings",
+        "public.set_translations",
+        "public.sets"
+      ]
+    }
+  },
+  "codebase_community": {
+    "text": "CREATE TABLE public.badges (\n  id bigint NOT NULL,\n  userid bigint NULL,\n  name text NULL,\n  date timestamp with time zone NULL\n);\nCREATE TABLE public.comments (\n  id bigint NOT NULL,\n  postid bigint NULL,\n  score bigint NULL,\n  text text NULL,\n  creationdate timestamp with time zone NULL,\n  userid bigint NULL,\n  userdisplayname text NULL\n);\nCREATE TABLE public.posthistory (\n  id bigint NOT NULL,\n  posthistorytypeid bigint NULL,\n  postid bigint NULL,\n  revisionguid text NULL,\n  creationdate timestamp with time zone NULL,\n  userid bigint NULL,\n  text text NULL,\n  comment text NULL,\n  userdisplayname text NULL\n);\nCREATE TABLE public.postlinks (\n  id bigint NOT NULL,\n  creationdate timestamp with time zone NULL,\n  postid bigint NULL,\n  relatedpostid bigint NULL,\n  linktypeid bigint NULL\n);\nCREATE TABLE public.posts (\n  id bigint NOT NULL,\n  posttypeid bigint NULL,\n  acceptedanswerid bigint NULL,\n  creaiondate timestamp with time zone NULL,\n  score bigint NULL,\n  viewcount bigint NULL,\n  body text NULL,\n  owneruserid bigint NULL,\n  lasactivitydate timestamp with time zone NULL,\n  title text NULL,\n  tags text NULL,\n  answercount bigint NULL,\n  commentcount bigint NULL,\n  favoritecount bigint NULL,\n  lasteditoruserid bigint NULL,\n  lasteditdate timestamp with time zone NULL,\n  communityowneddate timestamp with time zone NULL,\n  parentid bigint NULL,\n  closeddate timestamp with time zone NULL,\n  ownerdisplayname text NULL,\n  lasteditordisplayname text NULL\n);\nCREATE TABLE public.tags (\n  id bigint NOT NULL,\n  tagname text NULL,\n  count bigint NULL,\n  excerptpostid bigint NULL,\n  wikipostid bigint NULL\n);\nCREATE TABLE public.users (\n  id bigint NOT NULL,\n  reputation bigint NULL,\n  creationdate timestamp with time zone NULL,\n  displayname text NULL,\n  lastaccessdate timestamp with time zone NULL,\n  websiteurl text NULL,\n  location text NULL,\n  aboutme text NULL,\n  views bigint NULL,\n  upvotes bigint NULL,\n  downvotes bigint NULL,\n  accountid bigint NULL,\n  age bigint NULL,\n  profileimageurl text NULL\n);\nCREATE TABLE public.votes (\n  id bigint NOT NULL,\n  postid bigint NULL,\n  votetypeid bigint NULL,\n  creationdate date NULL,\n  userid bigint NULL,\n  bountyamount bigint NULL\n);",
+    "metadata": {
+      "db_id": "codebase_community",
+      "schema_context_sha256": "cb01a19ad56e85160e786c32b60f42b557908bf0a25b90999ee52463b145cb44",
+      "schema_context_chars": 2206,
+      "table_count": 8,
+      "column_count": 71,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.badges",
+        "public.comments",
+        "public.posthistory",
+        "public.postlinks",
+        "public.posts",
+        "public.tags",
+        "public.users",
+        "public.votes"
+      ]
+    }
+  },
+  "debit_card_specializing": {
+    "text": "CREATE TABLE public.customers (\n  customerid bigint NOT NULL,\n  segment text NULL,\n  currency text NULL\n);\nCREATE TABLE public.gasstations (\n  gasstationid bigint NOT NULL,\n  chainid bigint NULL,\n  country text NULL,\n  segment text NULL\n);\nCREATE TABLE public.products (\n  productid bigint NOT NULL,\n  description text NULL\n);\nCREATE TABLE public.transactions_1k (\n  transactionid bigint NOT NULL,\n  date date NULL,\n  time text NULL,\n  customerid bigint NULL,\n  cardid bigint NULL,\n  gasstationid bigint NULL,\n  productid bigint NULL,\n  amount bigint NULL,\n  price real NULL\n);\nCREATE TABLE public.yearmonth (\n  customerid bigint NULL,\n  date text NULL,\n  consumption real NULL\n);",
+    "metadata": {
+      "db_id": "debit_card_specializing",
+      "schema_context_sha256": "d8f8713d67f7c999c69f632379bbd1f940befdd75bd70e11676abb046fc43b8f",
+      "schema_context_chars": 680,
+      "table_count": 5,
+      "column_count": 21,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.customers",
+        "public.gasstations",
+        "public.products",
+        "public.transactions_1k",
+        "public.yearmonth"
+      ]
+    }
+  },
+  "european_football_2": {
+    "text": "CREATE TABLE public.league (\n  id bigint NOT NULL,\n  country_id bigint NULL,\n  name text NULL\n);\nCREATE TABLE public.match (\n  id bigint NOT NULL,\n  country_id bigint NULL,\n  league_id bigint NULL,\n  season text NULL,\n  stage bigint NULL,\n  date text NULL,\n  match_api_id bigint NULL,\n  home_team_api_id bigint NULL,\n  away_team_api_id bigint NULL,\n  home_team_goal bigint NULL,\n  away_team_goal bigint NULL,\n  home_player_x1 bigint NULL,\n  home_player_x2 bigint NULL,\n  home_player_x3 bigint NULL,\n  home_player_x4 bigint NULL,\n  home_player_x5 bigint NULL,\n  home_player_x6 bigint NULL,\n  home_player_x7 bigint NULL,\n  home_player_x8 bigint NULL,\n  home_player_x9 bigint NULL,\n  home_player_x10 bigint NULL,\n  home_player_x11 bigint NULL,\n  away_player_x1 bigint NULL,\n  away_player_x2 bigint NULL,\n  away_player_x3 bigint NULL,\n  away_player_x4 bigint NULL,\n  away_player_x5 bigint NULL,\n  away_player_x6 bigint NULL,\n  away_player_x7 bigint NULL,\n  away_player_x8 bigint NULL,\n  away_player_x9 bigint NULL,\n  away_player_x10 bigint NULL,\n  away_player_x11 bigint NULL,\n  home_player_y1 bigint NULL,\n  home_player_y2 bigint NULL,\n  home_player_y3 bigint NULL,\n  home_player_y4 bigint NULL,\n  home_player_y5 bigint NULL,\n  home_player_y6 bigint NULL,\n  home_player_y7 bigint NULL,\n  home_player_y8 bigint NULL,\n  home_player_y9 bigint NULL,\n  home_player_y10 bigint NULL,\n  home_player_y11 bigint NULL,\n  away_player_y1 bigint NULL,\n  away_player_y2 bigint NULL,\n  away_player_y3 bigint NULL,\n  away_player_y4 bigint NULL,\n  away_player_y5 bigint NULL,\n  away_player_y6 bigint NULL,\n  away_player_y7 bigint NULL,\n  away_player_y8 bigint NULL,\n  away_player_y9 bigint NULL,\n  away_player_y10 bigint NULL,\n  away_player_y11 bigint NULL,\n  home_player_1 bigint NULL,\n  home_player_2 bigint NULL,\n  home_player_3 bigint NULL,\n  home_player_4 bigint NULL,\n  home_player_5 bigint NULL,\n  home_player_6 bigint NULL,\n  home_player_7 bigint NULL,\n  home_player_8 bigint NULL,\n  home_player_9 bigint NULL,\n  home_player_10 bigint NULL,\n  home_player_11 bigint NULL,\n  away_player_1 bigint NULL,\n  away_player_2 bigint NULL,\n  away_player_3 bigint NULL,\n  away_player_4 bigint NULL,\n  away_player_5 bigint NULL,\n  away_player_6 bigint NULL,\n  away_player_7 bigint NULL,\n  away_player_8 bigint NULL,\n  away_player_9 bigint NULL,\n  away_player_10 bigint NULL,\n  away_player_11 bigint NULL,\n  goal text NULL,\n  shoton text NULL,\n  shotoff text NULL,\n  foulcommit text NULL,\n  card text NULL,\n  cross text NULL,\n  corner text NULL,\n  possession text NULL,\n  b365h real NULL,\n  b365d real NULL,\n  b365a real NULL,\n  bwh real NULL,\n  bwd real NULL,\n  bwa real NULL,\n  iwh real NULL,\n  iwd real NULL,\n  iwa real NULL,\n  lbh real NULL,\n  lbd real NULL,\n  lba real NULL,\n  psh real NULL,\n  psd real NULL,\n  psa real NULL,\n  whh real NULL,\n  whd real NULL,\n  wha real NULL,\n  sjh real NULL,\n  sjd real NULL,\n  sja real NULL,\n  vch real NULL,\n  vcd real NULL,\n  vca real NULL,\n  gbh real NULL,\n  gbd real NULL,\n  gba real NULL,\n  bsh real NULL,\n  bsd real NULL,\n  bsa real NULL\n);\nCREATE TABLE public.player (\n  id bigint NOT NULL,\n  player_api_id bigint NULL,\n  player_name text NULL,\n  player_fifa_api_id bigint NULL,\n  birthday text NULL,\n  height bigint NULL,\n  weight bigint NULL\n);\nCREATE TABLE public.player_attributes (\n  id bigint NOT NULL,\n  player_fifa_api_id bigint NULL,\n  player_api_id bigint NULL,\n  date text NULL,\n  overall_rating bigint NULL,\n  potential bigint NULL,\n  preferred_foot text NULL,\n  attacking_work_rate text NULL,\n  defensive_work_rate text NULL,\n  crossing bigint NULL,\n  finishing bigint NULL,\n  heading_accuracy bigint NULL,\n  short_passing bigint NULL,\n  volleys bigint NULL,\n  dribbling bigint NULL,\n  curve bigint NULL,\n  free_kick_accuracy bigint NULL,\n  long_passing bigint NULL,\n  ball_control bigint NULL,\n  acceleration bigint NULL,\n  sprint_speed bigint NULL,\n  agility bigint NULL,\n  reactions bigint NULL,\n  balance bigint NULL,\n  shot_power bigint NULL,\n  jumping bigint NULL,\n  stamina bigint NULL,\n  strength bigint NULL,\n  long_shots bigint NULL,\n  aggression bigint NULL,\n  interceptions bigint NULL,\n  positioning bigint NULL,\n  vision bigint NULL,\n  penalties bigint NULL,\n  marking bigint NULL,\n  standing_tackle bigint NULL,\n  sliding_tackle bigint NULL,\n  gk_diving bigint NULL,\n  gk_handling bigint NULL,\n  gk_kicking bigint NULL,\n  gk_positioning bigint NULL,\n  gk_reflexes bigint NULL\n);\nCREATE TABLE public.team (\n  id bigint NOT NULL,\n  team_api_id bigint NULL,\n  team_fifa_api_id bigint NULL,\n  team_long_name text NULL,\n  team_short_name text NULL\n);\nCREATE TABLE public.team_attributes (\n  id bigint NOT NULL,\n  team_fifa_api_id bigint NULL,\n  team_api_id bigint NULL,\n  date text NULL,\n  buildupplayspeed bigint NULL,\n  buildupplayspeedclass text NULL,\n  buildupplaydribbling bigint NULL,\n  buildupplaydribblingclass text NULL,\n  buildupplaypassing bigint NULL,\n  buildupplaypassingclass text NULL,\n  buildupplaypositioningclass text NULL,\n  chancecreationpassing bigint NULL,\n  chancecreationpassingclass text NULL,\n  chancecreationcrossing bigint NULL,\n  chancecreationcrossingclass text NULL,\n  chancecreationshooting bigint NULL,\n  chancecreationshootingclass text NULL,\n  chancecreationpositioningclass text NULL,\n  defencepressure bigint NULL,\n  defencepressureclass text NULL,\n  defenceaggression bigint NULL,\n  defenceaggressionclass text NULL,\n  defenceteamwidth bigint NULL,\n  defenceteamwidthclass text NULL,\n  defencedefenderlineclass text NULL\n);",
+    "metadata": {
+      "db_id": "european_football_2",
+      "schema_context_sha256": "91adcf8a6b015b0055e26532a70fb796bca9b4791e885199e54605f8e5ec9a9a",
+      "schema_context_chars": 5505,
+      "table_count": 6,
+      "column_count": 197,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.league",
+        "public.match",
+        "public.player",
+        "public.player_attributes",
+        "public.team",
+        "public.team_attributes"
+      ]
+    }
+  },
+  "financial": {
+    "text": "CREATE TABLE public.account (\n  account_id bigint NOT NULL,\n  district_id bigint NULL,\n  frequency text NULL,\n  date date NULL\n);\nCREATE TABLE public.card (\n  card_id bigint NOT NULL,\n  disp_id bigint NULL,\n  type text NULL,\n  issued date NULL\n);\nCREATE TABLE public.client (\n  client_id bigint NOT NULL,\n  gender text NULL,\n  birth_date date NULL,\n  district_id bigint NULL\n);\nCREATE TABLE public.disp (\n  disp_id bigint NOT NULL,\n  client_id bigint NULL,\n  account_id bigint NULL,\n  type text NULL\n);\nCREATE TABLE public.district (\n  district_id bigint NOT NULL,\n  a2 text NULL,\n  a3 text NULL,\n  a4 text NULL,\n  a5 text NULL,\n  a6 text NULL,\n  a7 text NULL,\n  a8 bigint NULL,\n  a9 bigint NULL,\n  a10 real NULL,\n  a11 bigint NULL,\n  a12 real NULL,\n  a13 real NULL,\n  a14 bigint NULL,\n  a15 bigint NULL,\n  a16 bigint NULL\n);\nCREATE TABLE public.loan (\n  loan_id bigint NOT NULL,\n  account_id bigint NULL,\n  date date NULL,\n  amount bigint NULL,\n  duration bigint NULL,\n  payments real NULL,\n  status text NULL\n);\nCREATE TABLE public.\"order\" (\n  order_id bigint NOT NULL,\n  account_id bigint NULL,\n  bank_to text NULL,\n  account_to bigint NULL,\n  amount real NULL,\n  k_symbol text NULL\n);\nCREATE TABLE public.trans (\n  trans_id bigint NOT NULL,\n  account_id bigint NULL,\n  date date NULL,\n  type text NULL,\n  operation text NULL,\n  amount bigint NULL,\n  balance bigint NULL,\n  k_symbol text NULL,\n  bank text NULL,\n  account bigint NULL\n);",
+    "metadata": {
+      "db_id": "financial",
+      "schema_context_sha256": "66dc0d0332c711329f7395744be0441d9f8a8afab407f08a83a2d68a03788356",
+      "schema_context_chars": 1439,
+      "table_count": 8,
+      "column_count": 55,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.account",
+        "public.card",
+        "public.client",
+        "public.disp",
+        "public.district",
+        "public.loan",
+        "public.order",
+        "public.trans"
+      ]
+    }
+  },
+  "formula_1": {
+    "text": "CREATE TABLE public.circuits (\n  circuitid bigint NOT NULL,\n  circuitref text NULL,\n  name text NULL,\n  location text NULL,\n  country text NULL,\n  lat real NULL,\n  lng real NULL,\n  alt bigint NULL,\n  url text NULL\n);\nCREATE TABLE public.constructorresults (\n  constructorresultsid bigint NOT NULL,\n  raceid bigint NULL,\n  constructorid bigint NULL,\n  points real NULL,\n  status text NULL\n);\nCREATE TABLE public.constructors (\n  constructorid bigint NOT NULL,\n  constructorref text NULL,\n  name text NULL,\n  nationality text NULL,\n  url text NULL\n);\nCREATE TABLE public.constructorstandings (\n  constructorstandingsid bigint NOT NULL,\n  raceid bigint NULL,\n  constructorid bigint NULL,\n  points real NULL,\n  position bigint NULL,\n  positiontext text NULL,\n  wins bigint NULL\n);\nCREATE TABLE public.drivers (\n  driverid bigint NOT NULL,\n  driverref text NULL,\n  number bigint NULL,\n  code text NULL,\n  forename text NULL,\n  surname text NULL,\n  dob date NULL,\n  nationality text NULL,\n  url text NULL\n);\nCREATE TABLE public.driverstandings (\n  driverstandingsid bigint NOT NULL,\n  raceid bigint NULL,\n  driverid bigint NULL,\n  points real NULL,\n  position bigint NULL,\n  positiontext text NULL,\n  wins bigint NULL\n);\nCREATE TABLE public.laptimes (\n  raceid bigint NOT NULL,\n  driverid bigint NOT NULL,\n  lap bigint NOT NULL,\n  position bigint NULL,\n  time text NULL,\n  milliseconds bigint NULL\n);\nCREATE TABLE public.pitstops (\n  raceid bigint NOT NULL,\n  driverid bigint NOT NULL,\n  stop bigint NOT NULL,\n  lap bigint NULL,\n  time text NULL,\n  duration text NULL,\n  milliseconds bigint NULL\n);\nCREATE TABLE public.qualifying (\n  qualifyid bigint NOT NULL,\n  raceid bigint NULL,\n  driverid bigint NULL,\n  constructorid bigint NULL,\n  number bigint NULL,\n  position bigint NULL,\n  q1 text NULL,\n  q2 text NULL,\n  q3 text NULL\n);\nCREATE TABLE public.races (\n  raceid bigint NOT NULL,\n  year bigint NULL,\n  round bigint NULL,\n  circuitid bigint NULL,\n  name text NULL,\n  date date NULL,\n  time text NULL,\n  url text NULL\n);\nCREATE TABLE public.results (\n  resultid bigint NOT NULL,\n  raceid bigint NULL,\n  driverid bigint NULL,\n  constructorid bigint NULL,\n  number bigint NULL,\n  grid bigint NULL,\n  position bigint NULL,\n  positiontext text NULL,\n  positionorder bigint NULL,\n  points real NULL,\n  laps bigint NULL,\n  time text NULL,\n  milliseconds bigint NULL,\n  fastestlap bigint NULL,\n  rank bigint NULL,\n  fastestlaptime text NULL,\n  fastestlapspeed text NULL,\n  statusid bigint NULL\n);\nCREATE TABLE public.seasons (\n  year bigint NOT NULL,\n  url text NULL\n);\nCREATE TABLE public.status (\n  statusid bigint NOT NULL,\n  status text NULL\n);",
+    "metadata": {
+      "db_id": "formula_1",
+      "schema_context_sha256": "596d0d12be523baa795106922109e9e5b77e64fce53bb6e14301015ff42e5fab",
+      "schema_context_chars": 2639,
+      "table_count": 13,
+      "column_count": 94,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.circuits",
+        "public.constructorresults",
+        "public.constructors",
+        "public.constructorstandings",
+        "public.drivers",
+        "public.driverstandings",
+        "public.laptimes",
+        "public.pitstops",
+        "public.qualifying",
+        "public.races",
+        "public.results",
+        "public.seasons",
+        "public.status"
+      ]
+    }
+  },
+  "student_club": {
+    "text": "CREATE TABLE public.attendance (\n  link_to_event text NOT NULL,\n  link_to_member text NOT NULL\n);\nCREATE TABLE public.budget (\n  budget_id text NOT NULL,\n  category text NULL,\n  spent real NULL,\n  remaining real NULL,\n  amount bigint NULL,\n  event_status text NULL,\n  link_to_event text NULL\n);\nCREATE TABLE public.event (\n  event_id text NOT NULL,\n  event_name text NULL,\n  event_date text NULL,\n  type text NULL,\n  notes text NULL,\n  location text NULL,\n  status text NULL\n);\nCREATE TABLE public.expense (\n  expense_id text NOT NULL,\n  expense_description text NULL,\n  expense_date text NULL,\n  cost real NULL,\n  approved text NULL,\n  link_to_member text NULL,\n  link_to_budget text NULL\n);\nCREATE TABLE public.income (\n  income_id text NOT NULL,\n  date_received text NULL,\n  amount bigint NULL,\n  source text NULL,\n  notes text NULL,\n  link_to_member text NULL\n);\nCREATE TABLE public.major (\n  major_id text NOT NULL,\n  major_name text NULL,\n  department text NULL,\n  college text NULL\n);\nCREATE TABLE public.member (\n  member_id text NOT NULL,\n  first_name text NULL,\n  last_name text NULL,\n  email text NULL,\n  position text NULL,\n  t_shirt_size text NULL,\n  phone text NULL,\n  zip bigint NULL,\n  link_to_major text NULL\n);\nCREATE TABLE public.zip_code (\n  zip_code bigint NOT NULL,\n  type text NULL,\n  city text NULL,\n  county text NULL,\n  state text NULL,\n  short_state text NULL\n);",
+    "metadata": {
+      "db_id": "student_club",
+      "schema_context_sha256": "aa96fd2bafc18b6d6bb563b6f2bc7e834757721f88a905f45fe28c891fa9d325",
+      "schema_context_chars": 1389,
+      "table_count": 8,
+      "column_count": 48,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.attendance",
+        "public.budget",
+        "public.event",
+        "public.expense",
+        "public.income",
+        "public.major",
+        "public.member",
+        "public.zip_code"
+      ]
+    }
+  },
+  "superhero": {
+    "text": "CREATE TABLE public.alignment (\n  id bigint NOT NULL,\n  alignment text NULL\n);\nCREATE TABLE public.attribute (\n  id bigint NOT NULL,\n  attribute_name text NULL\n);\nCREATE TABLE public.colour (\n  id bigint NOT NULL,\n  colour text NULL\n);\nCREATE TABLE public.gender (\n  id bigint NOT NULL,\n  gender text NULL\n);\nCREATE TABLE public.hero_attribute (\n  hero_id bigint NULL,\n  attribute_id bigint NULL,\n  attribute_value bigint NULL\n);\nCREATE TABLE public.hero_power (\n  hero_id bigint NULL,\n  power_id bigint NULL\n);\nCREATE TABLE public.publisher (\n  id bigint NOT NULL,\n  publisher_name text NULL\n);\nCREATE TABLE public.race (\n  id bigint NOT NULL,\n  race text NULL\n);\nCREATE TABLE public.superhero (\n  id bigint NOT NULL,\n  superhero_name text NULL,\n  full_name text NULL,\n  gender_id bigint NULL,\n  eye_colour_id bigint NULL,\n  hair_colour_id bigint NULL,\n  skin_colour_id bigint NULL,\n  race_id bigint NULL,\n  publisher_id bigint NULL,\n  alignment_id bigint NULL,\n  height_cm bigint NULL,\n  weight_kg bigint NULL\n);\nCREATE TABLE public.superpower (\n  id bigint NOT NULL,\n  power_name text NULL\n);",
+    "metadata": {
+      "db_id": "superhero",
+      "schema_context_sha256": "8c4d323dc13e7d88a27118dc91fece35cb96efc9fd50b8328dd0564c2ec7dd64",
+      "schema_context_chars": 1095,
+      "table_count": 10,
+      "column_count": 31,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.alignment",
+        "public.attribute",
+        "public.colour",
+        "public.gender",
+        "public.hero_attribute",
+        "public.hero_power",
+        "public.publisher",
+        "public.race",
+        "public.superhero",
+        "public.superpower"
+      ]
+    }
+  },
+  "thrombosis_prediction": {
+    "text": "CREATE TABLE public.examination (\n  id bigint NULL,\n  \"Examination Date\" date NULL,\n  \"aCL IgG\" real NULL,\n  \"aCL IgM\" real NULL,\n  ana bigint NULL,\n  \"ANA Pattern\" text NULL,\n  \"aCL IgA\" bigint NULL,\n  diagnosis text NULL,\n  kct text NULL,\n  rvvt text NULL,\n  lac text NULL,\n  symptoms text NULL,\n  thrombosis bigint NULL\n);\nCREATE TABLE public.laboratory (\n  id bigint NULL,\n  date date NULL,\n  got bigint NULL,\n  gpt bigint NULL,\n  ldh bigint NULL,\n  alp bigint NULL,\n  tp real NULL,\n  alb real NULL,\n  ua real NULL,\n  un bigint NULL,\n  cre real NULL,\n  \"T-BIL\" real NULL,\n  \"T-CHO\" bigint NULL,\n  tg bigint NULL,\n  cpk bigint NULL,\n  glu bigint NULL,\n  wbc real NULL,\n  rbc real NULL,\n  hgb real NULL,\n  hct real NULL,\n  plt bigint NULL,\n  pt real NULL,\n  aptt bigint NULL,\n  fg real NULL,\n  pic bigint NULL,\n  tat bigint NULL,\n  tat2 bigint NULL,\n  \"U-PRO\" text NULL,\n  igg bigint NULL,\n  iga bigint NULL,\n  igm bigint NULL,\n  crp text NULL,\n  ra text NULL,\n  rf text NULL,\n  c3 bigint NULL,\n  c4 bigint NULL,\n  rnp text NULL,\n  sm text NULL,\n  sc170 text NULL,\n  ssa text NULL,\n  ssb text NULL,\n  centromea text NULL,\n  dna text NULL,\n  \"DNA-II\" bigint NULL\n);\nCREATE TABLE public.patient (\n  id bigint NOT NULL,\n  sex text NULL,\n  birthday date NULL,\n  description date NULL,\n  \"First Date\" date NULL,\n  admission text NULL,\n  diagnosis text NULL\n);",
+    "metadata": {
+      "db_id": "thrombosis_prediction",
+      "schema_context_sha256": "59a754675081560187224ffd45c2e6ecdb6a0bbb3fb8aeaae03cc4deb4e8fc2b",
+      "schema_context_chars": 1356,
+      "table_count": 3,
+      "column_count": 64,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.examination",
+        "public.laboratory",
+        "public.patient"
+      ]
+    }
+  },
+  "toxicology": {
+    "text": "CREATE TABLE public.atom (\n  atom_id text NOT NULL,\n  molecule_id text NULL,\n  element text NULL\n);\nCREATE TABLE public.bond (\n  bond_id text NOT NULL,\n  molecule_id text NULL,\n  bond_type text NULL\n);\nCREATE TABLE public.connected (\n  atom_id text NOT NULL,\n  atom_id2 text NOT NULL,\n  bond_id text NULL\n);\nCREATE TABLE public.molecule (\n  molecule_id text NOT NULL,\n  label text NULL\n);",
+    "metadata": {
+      "db_id": "toxicology",
+      "schema_context_sha256": "43280ad8a4160819543e55d51de1820dddb761c1d5f6271cded4f20176a11de1",
+      "schema_context_chars": 388,
+      "table_count": 4,
+      "column_count": 11,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.atom",
+        "public.bond",
+        "public.connected",
+        "public.molecule"
+      ]
+    }
+  }
+}

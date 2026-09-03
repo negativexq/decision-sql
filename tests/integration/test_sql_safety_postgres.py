@@ -9,6 +9,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.config import get_settings
 from app.db.session import build_admin_engine, build_reader_engine
+from app.generation.provider import StaticLLMProvider
+from app.generation.window_compiler import WindowSqlCompiler
+from app.generation.window_ir import WindowQueryIR
+from app.models.domain import FailureStage, TextToSqlRequest
+from app.retrieval.context import SchemaContextResolver
 from app.sql.models import (
     PolicyCode,
     QueryExecution,
@@ -19,6 +24,10 @@ from app.sql.models import (
     SqlSafetyStatus,
 )
 from app.sql.service import SqlSafetyService
+from app.text_to_sql.models import TextToSqlStatus
+from app.text_to_sql.service import TextToSqlService
+from evaluation.models import BaselineCase
+from evaluation.runner import evaluate_baseline
 
 
 @pytest.fixture(scope="module")
@@ -39,6 +48,20 @@ def run_candidate(
     if isinstance(planned, QueryPlan):
         return service.execute(planned)
     return planned
+
+
+def build_text_to_sql_service(service: SqlSafetyService, sql: str) -> TextToSqlService:
+    return TextToSqlService(
+        SchemaContextResolver(
+            service.catalog,
+            top_k=service.settings.schema_top_k,
+            max_tables=service.settings.max_context_tables,
+            max_columns_per_table=service.settings.max_columns_per_table,
+            relationship_depth=service.settings.relationship_depth,
+        ),
+        StaticLLMProvider(sql),
+        service,
+    )
 
 
 def test_safe_select_join_cte_and_window_queries_execute(service: SqlSafetyService) -> None:
@@ -63,6 +86,36 @@ def test_safe_select_join_cte_and_window_queries_execute(service: SqlSafetyServi
     assert results[0].row_count == 10
     assert results[2].row_count == 10
     assert results[3].row_count == 4
+
+
+def test_m212_compiled_window_ir_remains_behind_m1(service: SqlSafetyService) -> None:
+    ir = WindowQueryIR(
+        source_relation="orders",
+        pattern="MOVING_AGGREGATE",
+        physical_outputs=("orders.customer_id", "orders.id", "orders.total_amount"),
+        computations=(
+            {
+                "pattern": "MOVING_AGGREGATE",
+                "aggregate": "AVG",
+                "target": "orders.total_amount",
+                "partition_by": ("orders.customer_id",),
+                "order_by": ({"column": "orders.ordered_at", "direction": "ASC"},),
+                "frame": {
+                    "mode": "ROWS",
+                    "start": {"kind": "N_PRECEDING", "value": 2},
+                    "end": {"kind": "CURRENT_ROW"},
+                },
+                "alias": "moving_average",
+            },
+        ),
+    )
+    sql = WindowSqlCompiler(service.catalog).compile(ir)
+    planned = service.plan(SqlCandidate(sql=sql, source="window_compiler"))
+    assert isinstance(planned, QueryPlan)
+    result = service.execute(planned)
+    assert isinstance(result, QueryExecution)
+    assert result.row_count > 0
+    assert planned.candidate_source.value == "window_compiler"
 
 
 @pytest.mark.parametrize(
@@ -245,3 +298,61 @@ def test_successful_pipeline_emits_bounded_stage_spans(service: SqlSafetyService
         for span in spans
         for key in span.attributes
     )
+
+
+@pytest.mark.asyncio
+async def test_m2_static_provider_uses_m1_for_safe_sql(service: SqlSafetyService) -> None:
+    coordinator = build_text_to_sql_service(service, "SELECT id, name FROM products LIMIT 2")
+
+    result = await coordinator.run(
+        TextToSqlRequest(question="list products", correlation_id="m2-1")
+    )
+
+    assert result.status is TextToSqlStatus.SUCCEEDED
+    assert result.candidate is not None
+    assert result.candidate.source.value == "llm"
+    assert result.plan is not None
+    assert result.execution is not None
+    assert result.execution.row_count == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "sql",
+    ("DELETE FROM orders", "SELECT * FROM pg_shadow", "SELECT external_key FROM customers"),
+)
+async def test_m2_malicious_provider_output_stops_at_m1(
+    service: SqlSafetyService, sql: str
+) -> None:
+    coordinator = build_text_to_sql_service(service, sql)
+
+    result = await coordinator.run(TextToSqlRequest(question="show sales"))
+
+    assert result.status is TextToSqlStatus.PLAN_REJECTED
+    assert result.failure_stage is FailureStage.POLICY_REJECTION
+    assert result.plan is None
+    assert result.execution is None
+
+
+@pytest.mark.asyncio
+async def test_m2_baseline_compares_execution_results_not_sql_text(
+    service: SqlSafetyService,
+) -> None:
+    sql = "SELECT id, name FROM products LIMIT 2"
+    coordinator = build_text_to_sql_service(service, sql)
+    cases = [
+        BaselineCase(
+            id="m2-eval-1",
+            question="list products",
+            gold_sql=sql,
+            category="simple_filters",
+            expected_tables=("products",),
+        )
+    ]
+
+    report = await evaluate_baseline(cases, coordinator)
+
+    assert report.total_cases == 1
+    assert report.plan_acceptance_rate == 1.0
+    assert report.execution_success_rate == 1.0
+    assert report.result_equivalence_rate == 1.0

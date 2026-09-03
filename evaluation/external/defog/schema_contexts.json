@@ -1,0 +1,255 @@
+{
+  "academic": {
+    "text": "CREATE TABLE public.author (\n  aid bigint,\n  homepage text,\n  name text,\n  oid bigint\n);\nCREATE TABLE public.cite (\n  cited bigint,\n  citing bigint\n);\nCREATE TABLE public.conference (\n  cid bigint,\n  homepage text,\n  name text\n);\nCREATE TABLE public.domain (\n  did bigint,\n  name text\n);\nCREATE TABLE public.domain_author (\n  aid bigint,\n  did bigint\n);\nCREATE TABLE public.domain_conference (\n  cid bigint,\n  did bigint\n);\nCREATE TABLE public.domain_journal (\n  did bigint,\n  jid bigint\n);\nCREATE TABLE public.domain_keyword (\n  did bigint,\n  kid bigint\n);\nCREATE TABLE public.domain_publication (\n  did bigint,\n  pid bigint\n);\nCREATE TABLE public.journal (\n  homepage text,\n  jid bigint,\n  name text\n);\nCREATE TABLE public.keyword (\n  keyword text,\n  kid bigint\n);\nCREATE TABLE public.organization (\n  continent text,\n  homepage text,\n  name text,\n  oid bigint\n);\nCREATE TABLE public.publication (\n  abstract text,\n  cid bigint,\n  citation_num bigint,\n  jid bigint,\n  pid bigint,\n  reference_num bigint,\n  title text,\n  year bigint\n);\nCREATE TABLE public.publication_keyword (\n  pid bigint,\n  kid bigint\n);\nCREATE TABLE public.writes (\n  aid bigint,\n  pid bigint\n);",
+    "metadata": {
+      "db_name": "academic",
+      "schema_context_sha256": "9337468f06defccc455cadf6ac05b0009b1549af5663a54264ada3a4c75457c3",
+      "schema_context_chars": 1167,
+      "table_count": 15,
+      "column_count": 42,
+      "relationship_count": 0,
+      "tables": [
+        "public.author",
+        "public.cite",
+        "public.conference",
+        "public.domain",
+        "public.domain_author",
+        "public.domain_conference",
+        "public.domain_journal",
+        "public.domain_keyword",
+        "public.domain_publication",
+        "public.journal",
+        "public.keyword",
+        "public.organization",
+        "public.publication",
+        "public.publication_keyword",
+        "public.writes"
+      ]
+    }
+  },
+  "advising": {
+    "text": "CREATE TABLE public.area (\n  course_id bigint,\n  area text\n);\nCREATE TABLE public.comment_instructor (\n  instructor_id bigint,\n  student_id bigint,\n  score bigint,\n  comment_text text\n);\nCREATE TABLE public.course (\n  course_id bigint,\n  name text,\n  department text,\n  number text,\n  credits text,\n  advisory_requirement text,\n  enforced_requirement text,\n  description text,\n  num_semesters bigint,\n  num_enrolled bigint,\n  has_discussion boolean,\n  has_lab boolean,\n  has_projects boolean,\n  has_exams boolean,\n  num_reviews bigint,\n  clarity_score bigint,\n  easiness_score bigint,\n  helpfulness_score bigint\n);\nCREATE TABLE public.course_offering (\n  offering_id bigint,\n  course_id bigint,\n  semester bigint,\n  section_number bigint,\n  start_time time without time zone,\n  end_time time without time zone,\n  monday text,\n  tuesday text,\n  wednesday text,\n  thursday text,\n  friday text,\n  saturday text,\n  sunday text,\n  has_final_project boolean,\n  has_final_exam boolean,\n  textbook text,\n  class_address text,\n  allow_audit text\n);\nCREATE TABLE public.course_prerequisite (\n  pre_course_id bigint,\n  course_id bigint\n);\nCREATE TABLE public.course_tags_count (\n  course_id bigint,\n  clear_grading bigint,\n  pop_quiz bigint,\n  group_projects bigint,\n  inspirational bigint,\n  long_lectures bigint,\n  extra_credit bigint,\n  few_tests bigint,\n  good_feedback bigint,\n  tough_tests bigint,\n  heavy_papers bigint,\n  cares_for_students bigint,\n  heavy_assignments bigint,\n  respected bigint,\n  participation bigint,\n  heavy_reading bigint,\n  tough_grader bigint,\n  hilarious bigint,\n  would_take_again bigint,\n  good_lecture bigint,\n  no_skip bigint\n);\nCREATE TABLE public.instructor (\n  instructor_id bigint,\n  name text,\n  uniqname text\n);\nCREATE TABLE public.offering_instructor (\n  offering_instructor_id bigint,\n  offering_id bigint,\n  instructor_id bigint\n);\nCREATE TABLE public.program (\n  program_id bigint,\n  name text,\n  college text,\n  introduction text\n);\nCREATE TABLE public.program_course (\n  program_id bigint,\n  course_id bigint,\n  workload bigint,\n  category text\n);\nCREATE TABLE public.program_requirement (\n  program_id bigint,\n  category text,\n  min_credit bigint,\n  additional_req text\n);\nCREATE TABLE public.semester (\n  semester_id bigint,\n  semester text,\n  year bigint\n);\nCREATE TABLE public.student (\n  student_id bigint,\n  lastname text,\n  firstname text,\n  program_id bigint,\n  declare_major text,\n  total_credit bigint,\n  total_gpa numeric,\n  entered_as text,\n  admit_term date,\n  predicted_graduation_semester date,\n  degree text,\n  minor text,\n  internship text\n);\nCREATE TABLE public.student_record (\n  student_id bigint,\n  course_id bigint,\n  semester bigint,\n  grade text,\n  how text,\n  transfer_source text,\n  earn_credit text,\n  repeat_term text,\n  test_id text,\n  offering_id bigint\n);",
+    "metadata": {
+      "db_name": "advising",
+      "schema_context_sha256": "631af6359e362f7ccdea1f6d2808d3f3bb21cea633a1a140bd00fea3b0820003",
+      "schema_context_chars": 2823,
+      "table_count": 14,
+      "column_count": 109,
+      "relationship_count": 0,
+      "tables": [
+        "public.area",
+        "public.comment_instructor",
+        "public.course",
+        "public.course_offering",
+        "public.course_prerequisite",
+        "public.course_tags_count",
+        "public.instructor",
+        "public.offering_instructor",
+        "public.program",
+        "public.program_course",
+        "public.program_requirement",
+        "public.semester",
+        "public.student",
+        "public.student_record"
+      ]
+    }
+  },
+  "atis": {
+    "text": "CREATE TABLE public.aircraft (\n  aircraft_code text,\n  aircraft_description text,\n  manufacturer text,\n  basic_type text,\n  engines bigint,\n  propulsion text,\n  wide_body text,\n  wing_span bigint,\n  length bigint,\n  weight bigint,\n  capacity bigint,\n  pay_load bigint,\n  cruising_speed bigint,\n  range_miles bigint,\n  pressurized text\n);\nCREATE TABLE public.airline (\n  airline_code text,\n  airline_name text,\n  note text\n);\nCREATE TABLE public.airport (\n  airport_code text,\n  airport_name text,\n  airport_location text,\n  state_code text,\n  country_name text,\n  time_zone_code text,\n  minimum_connect_time bigint\n);\nCREATE TABLE public.airport_service (\n  city_code text,\n  airport_code text,\n  miles_distant bigint,\n  direction text,\n  minutes_distant bigint\n);\nCREATE TABLE public.city (\n  city_code text,\n  city_name text,\n  state_code text,\n  country_name text,\n  time_zone_code text\n);\nCREATE TABLE public.class_of_service (\n  booking_class text,\n  rank bigint,\n  class_description text\n);\nCREATE TABLE public.code_description (\n  code text,\n  description text\n);\nCREATE TABLE public.compartment_class (\n  compartment text,\n  class_type text\n);\nCREATE TABLE public.days (\n  days_code text,\n  day_name text\n);\nCREATE TABLE public.dual_carrier (\n  main_airline text,\n  low_flight_number bigint,\n  high_flight_number bigint,\n  dual_airline text,\n  service_name text\n);\nCREATE TABLE public.equipment_sequence (\n  aircraft_code_sequence text,\n  aircraft_code text\n);\nCREATE TABLE public.fare (\n  fare_id bigint,\n  from_airport text,\n  to_airport text,\n  fare_basis_code text,\n  fare_airline text,\n  restriction_code text,\n  one_direction_cost bigint,\n  round_trip_cost bigint,\n  round_trip_required text\n);\nCREATE TABLE public.fare_basis (\n  fare_basis_code text,\n  booking_class text,\n  class_type text,\n  premium text,\n  economy text,\n  discounted text,\n  night text,\n  season text,\n  basis_days text\n);\nCREATE TABLE public.flight (\n  flight_id bigint,\n  flight_days text,\n  from_airport text,\n  to_airport text,\n  departure_time bigint,\n  arrival_time bigint,\n  airline_flight text,\n  airline_code text,\n  flight_number text,\n  aircraft_code_sequence text,\n  meal_code text,\n  stops bigint,\n  connections bigint,\n  dual_carrier text,\n  time_elapsed bigint\n);\nCREATE TABLE public.flight_fare (\n  flight_id bigint,\n  fare_id bigint\n);\nCREATE TABLE public.flight_leg (\n  flight_id bigint,\n  leg_number bigint,\n  leg_flight bigint\n);\nCREATE TABLE public.flight_stop (\n  flight_id bigint,\n  stop_number bigint,\n  stop_days text,\n  stop_airport text,\n  arrival_time bigint,\n  arrival_airline text,\n  arrival_flight_number text,\n  departure_time bigint,\n  departure_airline text,\n  departure_flight_number text,\n  stop_time bigint\n);\nCREATE TABLE public.food_service (\n  meal_code text,\n  meal_number bigint,\n  compartment text,\n  meal_description text\n);\nCREATE TABLE public.ground_service (\n  city_code text,\n  airport_code text,\n  transport_type text,\n  ground_fare bigint\n);\nCREATE TABLE public.month (\n  month_number bigint,\n  month_name text\n);\nCREATE TABLE public.restriction (\n  restriction_code text,\n  advance_purchase bigint,\n  stopovers text,\n  saturday_stay_required text,\n  minimum_stay bigint,\n  maximum_stay bigint,\n  application text,\n  no_discounts text\n);\nCREATE TABLE public.state (\n  state_code text,\n  state_name text,\n  country_name text\n);\nCREATE TABLE public.time_interval (\n  period text,\n  begin_time bigint,\n  end_time bigint\n);\nCREATE TABLE public.time_zone (\n  time_zone_code text,\n  time_zone_name text,\n  hours_from_gmt bigint\n);",
+    "metadata": {
+      "db_name": "atis",
+      "schema_context_sha256": "0dea231d7f931c98794448754d6c0d87cca4cd33f0cf7f60bbda4c29a0387665",
+      "schema_context_chars": 3559,
+      "table_count": 24,
+      "column_count": 127,
+      "relationship_count": 0,
+      "tables": [
+        "public.aircraft",
+        "public.airline",
+        "public.airport",
+        "public.airport_service",
+        "public.city",
+        "public.class_of_service",
+        "public.code_description",
+        "public.compartment_class",
+        "public.days",
+        "public.dual_carrier",
+        "public.equipment_sequence",
+        "public.fare",
+        "public.fare_basis",
+        "public.flight",
+        "public.flight_fare",
+        "public.flight_leg",
+        "public.flight_stop",
+        "public.food_service",
+        "public.ground_service",
+        "public.month",
+        "public.restriction",
+        "public.state",
+        "public.time_interval",
+        "public.time_zone"
+      ]
+    }
+  },
+  "broker": {
+    "text": "CREATE TABLE public.sbcustomer (\n  sbcustid character varying,\n  sbcustname character varying,\n  sbcustemail character varying,\n  sbcustphone character varying,\n  sbcustaddress1 character varying,\n  sbcustaddress2 character varying,\n  sbcustcity character varying,\n  sbcuststate character varying,\n  sbcustcountry character varying,\n  sbcustpostalcode character varying,\n  sbcustjoindate date,\n  sbcuststatus character varying\n);\nCREATE TABLE public.sbdailyprice (\n  sbdptickerid character varying,\n  sbdpdate date,\n  sbdpopen numeric,\n  sbdphigh numeric,\n  sbdplow numeric,\n  sbdpclose numeric,\n  sbdpvolume bigint,\n  sbdpepochms bigint,\n  sbdpsource character varying\n);\nCREATE TABLE public.sbticker (\n  sbtickerid character varying,\n  sbtickersymbol character varying,\n  sbtickername character varying,\n  sbtickertype character varying,\n  sbtickerexchange character varying,\n  sbtickercurrency character varying,\n  sbtickerdb2x character varying,\n  sbtickerisactive boolean\n);\nCREATE TABLE public.sbtransaction (\n  sbtxid character varying,\n  sbtxcustid character varying,\n  sbtxtickerid character varying,\n  sbtxdatetime timestamp without time zone,\n  sbtxtype character varying,\n  sbtxshares numeric,\n  sbtxprice numeric,\n  sbtxamount numeric,\n  sbtxccy character varying,\n  sbtxtax numeric,\n  sbtxcommission numeric,\n  sbtxkpx character varying,\n  sbtxsettlementdatestr character varying,\n  sbtxstatus character varying\n);",
+    "metadata": {
+      "db_name": "broker",
+      "schema_context_sha256": "67fad518674ac7837a9bbf3f67d14548c5995dc237b49a9c9667b648aeca6236",
+      "schema_context_chars": 1428,
+      "table_count": 4,
+      "column_count": 43,
+      "relationship_count": 0,
+      "tables": [
+        "public.sbcustomer",
+        "public.sbdailyprice",
+        "public.sbticker",
+        "public.sbtransaction"
+      ]
+    }
+  },
+  "car_dealership": {
+    "text": "CREATE TABLE public.cars (\n  id integer,\n  make text,\n  model text,\n  year integer,\n  color text,\n  vin_number character varying,\n  engine_type text,\n  transmission text,\n  cost numeric,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.customers (\n  id integer,\n  first_name text,\n  last_name text,\n  email character varying,\n  phone character varying,\n  address text,\n  city text,\n  state text,\n  zip_code character varying,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.inventory_snapshots (\n  id integer,\n  snapshot_date date,\n  car_id integer,\n  is_in_inventory boolean,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.payments_made (\n  id integer,\n  vendor_name text,\n  payment_date date,\n  payment_amount numeric,\n  payment_method text,\n  invoice_number character varying,\n  invoice_date date,\n  due_date date,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.payments_received (\n  id integer,\n  sale_id integer,\n  payment_date date,\n  payment_amount numeric,\n  payment_method text,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.sales (\n  id integer,\n  car_id integer,\n  salesperson_id integer,\n  customer_id integer,\n  sale_price numeric,\n  sale_date date,\n  crtd_ts timestamp without time zone\n);\nCREATE TABLE public.salespersons (\n  id integer,\n  first_name text,\n  last_name text,\n  email character varying,\n  phone character varying,\n  hire_date date,\n  termination_date date,\n  crtd_ts timestamp without time zone\n);\n-- Foreign-key relationships:\n-- public.inventory_snapshots.car_id references public.cars.id\n-- public.payments_received.sale_id references public.sales.id\n-- public.sales.car_id references public.cars.id\n-- public.sales.customer_id references public.customers.id\n-- public.sales.salesperson_id references public.salespersons.id",
+    "metadata": {
+      "db_name": "car_dealership",
+      "schema_context_sha256": "a63d1c577ede8d85129bcd7550c4287f73130afd7d4c3f00c7e2cfc459d6597d",
+      "schema_context_chars": 1824,
+      "table_count": 7,
+      "column_count": 55,
+      "relationship_count": 5,
+      "tables": [
+        "public.cars",
+        "public.customers",
+        "public.inventory_snapshots",
+        "public.payments_made",
+        "public.payments_received",
+        "public.sales",
+        "public.salespersons"
+      ]
+    }
+  },
+  "derm_treatment": {
+    "text": "CREATE TABLE public.adverse_events (\n  id integer,\n  treatment_id integer,\n  reported_dt date,\n  description text\n);\nCREATE TABLE public.concomitant_meds (\n  id integer,\n  treatment_id integer,\n  med_name character varying,\n  start_dt text,\n  end_dt text,\n  dose_amt numeric,\n  dose_unit text,\n  freq_hrs integer\n);\nCREATE TABLE public.diagnoses (\n  diag_id integer,\n  diag_code character varying,\n  diag_name character varying,\n  diag_desc text\n);\nCREATE TABLE public.doctors (\n  doc_id integer,\n  first_name character varying,\n  last_name character varying,\n  specialty text,\n  year_reg integer,\n  med_school_name character varying,\n  loc_city character varying,\n  loc_state character,\n  loc_zip character varying,\n  bd_cert_num character varying\n);\nCREATE TABLE public.drugs (\n  drug_id integer,\n  drug_name character varying,\n  manufacturer character varying,\n  drug_type text,\n  moa text,\n  fda_appr_dt date,\n  admin_route text,\n  dos_amt numeric,\n  dos_unit character varying,\n  dos_freq_hrs integer,\n  ndc character varying\n);\nCREATE TABLE public.outcomes (\n  outcome_id integer,\n  treatment_id integer,\n  assess_dt date,\n  day7_lesion_cnt integer,\n  day30_lesion_cnt integer,\n  day100_lesion_cnt integer,\n  day7_pasi_score numeric,\n  day30_pasi_score numeric,\n  day100_pasi_score numeric,\n  day7_tewl numeric,\n  day30_tewl numeric,\n  day100_tewl numeric,\n  day7_itch_vas integer,\n  day30_itch_vas integer,\n  day100_itch_vas integer,\n  day7_hfg numeric,\n  day30_hfg numeric,\n  day100_hfg numeric\n);\nCREATE TABLE public.patients (\n  patient_id integer,\n  first_name character varying,\n  last_name character varying,\n  date_of_birth date,\n  date_of_registration date,\n  gender character varying,\n  email character varying,\n  phone character varying,\n  addr_street character varying,\n  addr_city character varying,\n  addr_state character,\n  addr_zip character varying,\n  ins_type text,\n  ins_policy_num character varying,\n  height_cm double precision,\n  weight_kg double precision\n);\nCREATE TABLE public.treatments (\n  treatment_id integer,\n  patient_id integer,\n  doc_id integer,\n  drug_id integer,\n  diag_id integer,\n  start_dt date,\n  end_dt date,\n  is_placebo boolean,\n  tot_drug_amt numeric,\n  drug_unit text\n);\n-- Foreign-key relationships:\n-- public.adverse_events.treatment_id references public.treatments.treatment_id\n-- public.concomitant_meds.treatment_id references public.treatments.treatment_id\n-- public.outcomes.treatment_id references public.treatments.treatment_id\n-- public.treatments.diag_id references public.diagnoses.diag_id\n-- public.treatments.doc_id references public.doctors.doc_id\n-- public.treatments.drug_id references public.drugs.drug_id\n-- public.treatments.patient_id references public.patients.patient_id",
+    "metadata": {
+      "db_name": "derm_treatment",
+      "schema_context_sha256": "f9efff37a6acafb55e7fa54149f35230838d85fa6d5611eb48772f3b6413351a",
+      "schema_context_chars": 2743,
+      "table_count": 8,
+      "column_count": 81,
+      "relationship_count": 7,
+      "tables": [
+        "public.adverse_events",
+        "public.concomitant_meds",
+        "public.diagnoses",
+        "public.doctors",
+        "public.drugs",
+        "public.outcomes",
+        "public.patients",
+        "public.treatments"
+      ]
+    }
+  },
+  "ewallet": {
+    "text": "CREATE TABLE consumer_div.coupons (\n  cid bigint,\n  merchant_id bigint,\n  code character varying,\n  description text,\n  start_date date,\n  end_date date,\n  discount_type character varying,\n  discount_value numeric,\n  min_purchase_amount numeric,\n  max_discount_amount numeric,\n  redemption_limit integer,\n  status character varying,\n  created_at timestamp without time zone,\n  updated_at timestamp without time zone\n);\nCREATE TABLE consumer_div.merchants (\n  mid bigint,\n  name character varying,\n  description text,\n  website_url character varying,\n  logo_url character varying,\n  created_at timestamp without time zone,\n  country character varying,\n  state character varying,\n  city character varying,\n  postal_code character varying,\n  address text,\n  status character varying,\n  category character varying,\n  sub_category character varying,\n  mcc integer,\n  contact_name character varying,\n  contact_email character varying,\n  contact_phone character varying\n);\nCREATE TABLE consumer_div.notifications (\n  id integer,\n  user_id integer,\n  message text,\n  type character varying,\n  status character varying,\n  created_at timestamp without time zone,\n  read_at timestamp without time zone,\n  device_type character varying,\n  device_id character varying,\n  action_url text\n);\nCREATE TABLE consumer_div.user_sessions (\n  user_id bigint,\n  session_start_ts timestamp without time zone,\n  session_end_ts timestamp without time zone,\n  device_type character varying,\n  device_id character varying\n);\nCREATE TABLE consumer_div.user_setting_snapshot (\n  user_id bigint,\n  snapshot_date date,\n  tx_limit_daily numeric,\n  tx_limit_monthly numeric,\n  membership_status integer,\n  password_hash character varying,\n  api_key character varying,\n  verified_devices text,\n  verified_ips text,\n  mfa_enabled boolean,\n  marketing_opt_in boolean,\n  created_at timestamp without time zone\n);\nCREATE TABLE consumer_div.users (\n  uid bigint,\n  username character varying,\n  email character varying,\n  phone_number character varying,\n  created_at timestamp without time zone,\n  last_login_at timestamp without time zone,\n  user_type character varying,\n  status character varying,\n  country character varying,\n  address_billing text,\n  address_delivery text,\n  kyc_status character varying,\n  kyc_verified_at timestamp without time zone\n);\nCREATE TABLE consumer_div.wallet_merchant_balance_daily (\n  merchant_id bigint,\n  balance numeric,\n  updated_at timestamp without time zone\n);\nCREATE TABLE consumer_div.wallet_transactions_daily (\n  txid integer,\n  sender_id bigint,\n  sender_type integer,\n  receiver_id bigint,\n  receiver_type integer,\n  amount numeric,\n  status character varying,\n  type character varying,\n  description text,\n  coupon_id bigint,\n  created_at timestamp without time zone,\n  completed_at timestamp without time zone,\n  transaction_ref character varying,\n  gateway_name character varying,\n  gateway_ref character varying,\n  device_id character varying,\n  ip_address character varying,\n  user_agent text\n);\nCREATE TABLE consumer_div.wallet_user_balance_daily (\n  user_id bigint,\n  balance numeric,\n  updated_at timestamp without time zone\n);\n-- Foreign-key relationships:\n-- consumer_div.coupons.merchant_id references consumer_div.merchants.mid\n-- consumer_div.notifications.user_id references consumer_div.users.uid",
+    "metadata": {
+      "db_name": "ewallet",
+      "schema_context_sha256": "a82d6d7e52d9528b8ebc22bfb624d20b18be2e0166fe852b41a855d73aa163e4",
+      "schema_context_chars": 3318,
+      "table_count": 9,
+      "column_count": 96,
+      "relationship_count": 2,
+      "tables": [
+        "consumer_div.coupons",
+        "consumer_div.merchants",
+        "consumer_div.notifications",
+        "consumer_div.user_sessions",
+        "consumer_div.user_setting_snapshot",
+        "consumer_div.users",
+        "consumer_div.wallet_merchant_balance_daily",
+        "consumer_div.wallet_transactions_daily",
+        "consumer_div.wallet_user_balance_daily"
+      ]
+    }
+  },
+  "geography": {
+    "text": "CREATE TABLE public.border_info (\n  state_name text,\n  border text\n);\nCREATE TABLE public.city (\n  city_name text,\n  population bigint,\n  country_name text,\n  state_name text\n);\nCREATE TABLE public.highlow (\n  state_name text,\n  highest_elevation text,\n  lowest_point text,\n  highest_point text,\n  lowest_elevation text\n);\nCREATE TABLE public.lake (\n  lake_name text,\n  area double precision,\n  country_name text,\n  state_name text\n);\nCREATE TABLE public.mountain (\n  mountain_name text,\n  mountain_altitude bigint,\n  country_name text,\n  state_name text\n);\nCREATE TABLE public.river (\n  river_name text,\n  length bigint,\n  country_name text,\n  traverse text\n);\nCREATE TABLE public.state (\n  state_name text,\n  population bigint,\n  area double precision,\n  country_name text,\n  capital text,\n  density double precision\n);",
+    "metadata": {
+      "db_name": "geography",
+      "schema_context_sha256": "2e62cb770c1cd872d95de6d6f0e0fbc42425684ef9b8e317fded10fb78a98a2d",
+      "schema_context_chars": 821,
+      "table_count": 7,
+      "column_count": 29,
+      "relationship_count": 0,
+      "tables": [
+        "public.border_info",
+        "public.city",
+        "public.highlow",
+        "public.lake",
+        "public.mountain",
+        "public.river",
+        "public.state"
+      ]
+    }
+  },
+  "restaurants": {
+    "text": "CREATE TABLE public.geographic (\n  city_name text,\n  county text,\n  region text\n);\nCREATE TABLE public.location (\n  restaurant_id bigint,\n  house_number bigint,\n  street_name text,\n  city_name text\n);\nCREATE TABLE public.restaurant (\n  id bigint,\n  name text,\n  food_type text,\n  city_name text,\n  rating real\n);",
+    "metadata": {
+      "db_name": "restaurants",
+      "schema_context_sha256": "c99648d0aa014fd7d0e5669069dd6cccbbcbe485bd485fd095e57272a068370a",
+      "schema_context_chars": 312,
+      "table_count": 3,
+      "column_count": 12,
+      "relationship_count": 0,
+      "tables": [
+        "public.geographic",
+        "public.location",
+        "public.restaurant"
+      ]
+    }
+  },
+  "scholar": {
+    "text": "CREATE TABLE public.author (\n  authorid bigint,\n  authorname text\n);\nCREATE TABLE public.cite (\n  citingpaperid bigint,\n  citedpaperid bigint\n);\nCREATE TABLE public.dataset (\n  datasetid bigint,\n  datasetname text\n);\nCREATE TABLE public.field (\n  fieldid bigint\n);\nCREATE TABLE public.journal (\n  journalid bigint,\n  journalname text\n);\nCREATE TABLE public.keyphrase (\n  keyphraseid bigint,\n  keyphrasename text\n);\nCREATE TABLE public.paper (\n  paperid bigint,\n  title text,\n  venueid bigint,\n  year bigint,\n  numciting bigint,\n  numcitedby bigint,\n  journalid bigint\n);\nCREATE TABLE public.paperdataset (\n  paperid bigint,\n  datasetid bigint\n);\nCREATE TABLE public.paperfield (\n  fieldid bigint,\n  paperid bigint\n);\nCREATE TABLE public.paperkeyphrase (\n  paperid bigint,\n  keyphraseid bigint\n);\nCREATE TABLE public.venue (\n  venueid bigint,\n  venuename text\n);\nCREATE TABLE public.writes (\n  paperid bigint,\n  authorid bigint\n);",
+    "metadata": {
+      "db_name": "scholar",
+      "schema_context_sha256": "0f8e52f608dc5a19b07895251a560264363ab1d3fdb6d64d1c4099c953299a15",
+      "schema_context_chars": 929,
+      "table_count": 12,
+      "column_count": 28,
+      "relationship_count": 0,
+      "tables": [
+        "public.author",
+        "public.cite",
+        "public.dataset",
+        "public.field",
+        "public.journal",
+        "public.keyphrase",
+        "public.paper",
+        "public.paperdataset",
+        "public.paperfield",
+        "public.paperkeyphrase",
+        "public.venue",
+        "public.writes"
+      ]
+    }
+  },
+  "yelp": {
+    "text": "CREATE TABLE public.business (\n  bid bigint,\n  business_id text,\n  name text,\n  full_address text,\n  city text,\n  latitude text,\n  longitude text,\n  review_count bigint,\n  is_open bigint,\n  state text\n);\nCREATE TABLE public.category (\n  id bigint,\n  business_id text,\n  category_name text\n);\nCREATE TABLE public.checkin (\n  cid bigint,\n  business_id text,\n  count bigint,\n  day text\n);\nCREATE TABLE public.neighbourhood (\n  id bigint,\n  business_id text,\n  neighbourhood_name text\n);\nCREATE TABLE public.review (\n  rid bigint,\n  business_id text,\n  user_id text,\n  rating real,\n  text text,\n  year bigint,\n  month text\n);\nCREATE TABLE public.tip (\n  tip_id bigint,\n  business_id text,\n  text text,\n  user_id text,\n  likes bigint,\n  year bigint,\n  month text\n);\nCREATE TABLE public.users (\n  uid bigint,\n  user_id text,\n  name text\n);",
+    "metadata": {
+      "db_name": "yelp",
+      "schema_context_sha256": "7467563c44e91e8a43008d6b8b5e4a9218e3bf06dd0af7c2f33c198005ba2b2d",
+      "schema_context_chars": 833,
+      "table_count": 7,
+      "column_count": 37,
+      "relationship_count": 0,
+      "tables": [
+        "public.business",
+        "public.category",
+        "public.checkin",
+        "public.neighbourhood",
+        "public.review",
+        "public.tip",
+        "public.users"
+      ]
+    }
+  }
+}

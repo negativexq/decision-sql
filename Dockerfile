@@ -9,9 +9,10 @@ WORKDIR /app
 
 COPY app ./app
 COPY demo ./demo
+COPY evaluation ./evaluation
 COPY pyproject.toml README.md ./
 
-RUN pip install --upgrade pip && pip install ".[dev]"
+RUN pip install --upgrade pip && pip install ".[dev,evaluation]"
 
 COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini

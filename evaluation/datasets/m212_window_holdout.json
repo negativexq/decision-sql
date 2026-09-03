@@ -1,0 +1,1344 @@
+[
+  {
+    "id": "m212-holdout-latest-001",
+    "question": "Keep the last order row for each sales representative.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"ordered_at\" FROM (SELECT \"sales_rep_id\", \"id\", \"ordered_at\", ROW_NUMBER() OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"ordered_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"orders\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.ordered_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "orders.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-latest-002",
+    "question": "Find the latest catalog item in each category by product id.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"category\", \"id\", \"name\" FROM (SELECT \"category\", \"id\", \"name\", ROW_NUMBER() OVER (PARTITION BY \"category\" ORDER BY \"id\" DESC) AS \"__decision_rank_0\" FROM \"products\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.name"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.id",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": []
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-latest-003",
+    "question": "For each order, retain the most recent payment event.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"paid_at\" FROM (SELECT \"order_id\", \"id\", \"paid_at\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"payments\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.paid_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "payments.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-latest-004",
+    "question": "Select the newest customer created in each region.",
+    "category": "latest_per_group",
+    "pattern": "LATEST_PER_GROUP",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\" FROM (SELECT \"region_id\", \"id\", \"created_at\", ROW_NUMBER() OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" DESC, \"id\" DESC) AS \"__decision_rank_0\" FROM \"customers\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" = 1",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "LATEST_PER_GROUP",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LATEST_PER_GROUP",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "DESC"
+            }
+          ],
+          "tie_breakers": [
+            {
+              "column": "customers.id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-topn-001",
+    "question": "Return the three most costly orders per sales representative.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"total_amount\" FROM (SELECT \"sales_rep_id\", \"id\", \"total_amount\", ROW_NUMBER() OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"total_amount\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"orders\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 3",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.total_amount",
+              "direction": "DESC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 3,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-topn-002",
+    "question": "Within a category, retain the two cheapest products.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\" FROM (SELECT \"category\", \"id\", \"unit_price\", ROW_NUMBER() OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"products\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 2",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 2,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-topn-003",
+    "question": "Show up to two largest line quantities for every product.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"product_id\", \"id\", \"quantity\" FROM (SELECT \"product_id\", \"id\", \"quantity\", RANK() OVER (PARTITION BY \"product_id\" ORDER BY \"quantity\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"order_items\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 2",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "order_items.product_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "order_items.product_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.quantity",
+              "direction": "DESC"
+            },
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 2,
+          "tie_policy": "INCLUDE_TIES"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-topn-004",
+    "question": "Keep the single largest refund for every order, including amount and reason.",
+    "category": "top_n_per_group",
+    "pattern": "TOP_N_PER_GROUP",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", \"reason\" FROM (SELECT \"order_id\", \"id\", \"amount\", \"reason\", ROW_NUMBER() OVER (PARTITION BY \"order_id\" ORDER BY \"amount\" DESC, \"id\" ASC) AS \"__decision_rank_0\" FROM \"refunds\") AS \"__decision_window_0\" WHERE \"__decision_rank_0\" <= 1",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "TOP_N_PER_GROUP",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount",
+        "refunds.reason"
+      ],
+      "computations": [
+        {
+          "pattern": "TOP_N_PER_GROUP",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.amount",
+              "direction": "DESC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "n": 1,
+          "tie_policy": "EXACT_N"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-laglead-001",
+    "question": "Show the next order date for each customer ordered by time.",
+    "category": "lag_lead",
+    "pattern": "LEAD",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"ordered_at\", LEAD(\"ordered_at\", 1) OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC) AS \"next_order_at\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "LEAD",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.ordered_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "orders.ordered_at",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_order_at"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-laglead-002",
+    "question": "Show the amount from two payments earlier within each order.",
+    "category": "lag_lead",
+    "pattern": "LAG",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", LAG(\"amount\", 2) OVER (PARTITION BY \"order_id\" ORDER BY \"paid_at\" ASC, \"id\" ASC) AS \"amount_two_prior\" FROM \"payments\"",
+    "gold_window_ir": {
+      "source_relation": "payments",
+      "pattern": "LAG",
+      "physical_outputs": [
+        "payments.order_id",
+        "payments.id",
+        "payments.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "payments.amount",
+          "partition_by": [
+            "payments.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "payments.paid_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "payments.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 2,
+          "alias": "amount_two_prior"
+        }
+      ]
+    },
+    "expected_tables": [
+      "payments"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-laglead-003",
+    "question": "For each product category, show the following unit price in ascending order.",
+    "category": "lag_lead",
+    "pattern": "LEAD",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", LEAD(\"unit_price\", 1) OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC, \"id\" ASC) AS \"next_price\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "LEAD",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            },
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_price"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-laglead-004",
+    "question": "For every order, show the prior line quantity by line id.",
+    "category": "lag_lead",
+    "pattern": "LAG",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", LAG(\"quantity\", 1) OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC) AS \"prior_quantity\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "LAG",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "prior_quantity"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-running-001",
+    "question": "Calculate cumulative refund amount within each order.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", SUM(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"refund_total_to_date\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "refund_total_to_date"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-running-002",
+    "question": "Show cumulative product price by category from high to low.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", SUM(\"unit_price\") OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" DESC, \"id\" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_category_price\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "DESC"
+            },
+            {
+              "column": "products.id",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "running_category_price"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-running-003",
+    "question": "For each representative, accumulate customer ids by creation time.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"created_at\", SUM(\"id\") OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"created_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"running_customer_id\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "customers.sales_rep_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "customers.id",
+          "partition_by": [
+            "customers.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "running_customer_id"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-running-004",
+    "question": "Within each customer, accumulate order totals in reverse order time.",
+    "category": "running_aggregate",
+    "pattern": "RUNNING_AGGREGATE",
+    "gold_sql": "SELECT \"customer_id\", \"id\", \"total_amount\", SUM(\"total_amount\") OVER (PARTITION BY \"customer_id\" ORDER BY \"ordered_at\" DESC, \"id\" DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"reverse_running_total\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "RUNNING_AGGREGATE",
+      "physical_outputs": [
+        "orders.customer_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.customer_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "DESC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "reverse_running_total"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-moving-001",
+    "question": "Find a four-row moving average of order totals per representative.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"total_amount\", AVG(\"total_amount\") OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC ROWS BETWEEN 3 PRECEDING AND CURRENT ROW) AS \"four_order_average\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 3
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "four_order_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-moving-002",
+    "question": "For each category, compute the average price over the previous three products, excluding this product.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", AVG(\"unit_price\") OVER (PARTITION BY \"category\" ORDER BY \"id\" ASC ROWS BETWEEN 3 PRECEDING AND 1 PRECEDING) AS \"previous_price_average\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 3
+            },
+            "end": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            }
+          },
+          "alias": "previous_price_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-moving-003",
+    "question": "For each order, show a two-row moving sum of line quantities.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", SUM(\"quantity\") OVER (PARTITION BY \"order_id\" ORDER BY \"id\" ASC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"two_row_quantity\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "order_items.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "two_row_quantity"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-moving-004",
+    "question": "Within each order, show a moving maximum refund amount over the current and prior refund.",
+    "category": "moving_window",
+    "pattern": "MOVING_AGGREGATE",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", MAX(\"amount\") OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"recent_refund_max\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "MOVING_AGGREGATE",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "MAX",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "recent_refund_max"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-ranking-001",
+    "question": "Give each order a dense rank by total inside its sales representative.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"total_amount\", DENSE_RANK() OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"total_amount\" DESC) AS \"rep_amount_rank\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "DENSE_RANK",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.total_amount",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "rep_amount_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-ranking-002",
+    "question": "Rank products from cheapest to most expensive within their category.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", RANK() OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" ASC) AS \"cheapness_rank\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "RANK",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "cheapness_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-ranking-003",
+    "question": "Number each customer chronologically within its representative.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"created_at\", ROW_NUMBER() OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"created_at\" ASC, \"id\" ASC) AS \"customer_number\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "customers.sales_rep_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "customers.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "customer_number"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-ranking-004",
+    "question": "Assign a refund rank by newest refund timestamp within each order.",
+    "category": "ranking",
+    "pattern": "RANKING",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"refunded_at\", RANK() OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" DESC) AS \"refund_recency_rank\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "RANKING",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.refunded_at"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "RANK",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "refund_recency_rank"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-share-001",
+    "question": "Express each order total as its percentage of the representative's order total.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"total_amount\", \"total_amount\" / SUM(\"total_amount\") OVER (PARTITION BY \"sales_rep_id\") * 100 AS \"rep_order_share\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "scale": 100.0,
+          "alias": "rep_order_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-share-002",
+    "question": "For each order, show a line quantity's share of all quantities in that order.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"quantity\", \"quantity\" / SUM(\"quantity\") OVER (PARTITION BY \"order_id\") * 100 AS \"line_quantity_share\" FROM \"order_items\"",
+    "gold_window_ir": {
+      "source_relation": "order_items",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "order_items.order_id",
+        "order_items.id",
+        "order_items.quantity"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "order_items.quantity",
+          "partition_by": [
+            "order_items.order_id"
+          ],
+          "scale": 100.0,
+          "alias": "line_quantity_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "order_items"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-share-003",
+    "question": "Calculate each customer's id percentage within the representative's customers.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"id\" / SUM(\"id\") OVER (PARTITION BY \"sales_rep_id\") * 100 AS \"rep_customer_share\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "customers.sales_rep_id",
+        "customers.id"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "customers.id",
+          "partition_by": [
+            "customers.sales_rep_id"
+          ],
+          "scale": 100.0,
+          "alias": "rep_customer_share"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-share-004",
+    "question": "Show each product price as a fraction of its category's total price, scaled to percent.",
+    "category": "share_of_total",
+    "pattern": "SHARE_OF_TOTAL",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", \"unit_price\" / SUM(\"unit_price\") OVER (PARTITION BY \"category\") * 100 AS \"category_share_percent\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "SHARE_OF_TOTAL",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "scale": 100.0,
+          "alias": "category_share_percent"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-mixed-001",
+    "question": "For orders by representative, show both the prior total and a running total.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"sales_rep_id\", \"id\", \"total_amount\", LAG(\"total_amount\", 1) OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC) AS \"prior_rep_order\", SUM(\"total_amount\") OVER (PARTITION BY \"sales_rep_id\" ORDER BY \"ordered_at\" ASC, \"id\" ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS \"rep_running_total\" FROM \"orders\"",
+    "gold_window_ir": {
+      "source_relation": "orders",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "orders.sales_rep_id",
+        "orders.id",
+        "orders.total_amount"
+      ],
+      "computations": [
+        {
+          "pattern": "LAG",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "prior_rep_order"
+        },
+        {
+          "pattern": "RUNNING_AGGREGATE",
+          "aggregate": "SUM",
+          "target": "orders.total_amount",
+          "partition_by": [
+            "orders.sales_rep_id"
+          ],
+          "order_by": [
+            {
+              "column": "orders.ordered_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "orders.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "rep_running_total"
+        }
+      ]
+    },
+    "expected_tables": [
+      "orders"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-mixed-002",
+    "question": "For each product, include its category rank and a one-row moving average of price.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"category\", \"id\", \"unit_price\", DENSE_RANK() OVER (PARTITION BY \"category\" ORDER BY \"unit_price\" DESC) AS \"category_rank\", AVG(\"unit_price\") OVER (PARTITION BY \"category\" ORDER BY \"id\" ASC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS \"price_average\" FROM \"products\"",
+    "gold_window_ir": {
+      "source_relation": "products",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "products.category",
+        "products.id",
+        "products.unit_price"
+      ],
+      "computations": [
+        {
+          "pattern": "RANKING",
+          "function": "DENSE_RANK",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.unit_price",
+              "direction": "DESC"
+            }
+          ],
+          "alias": "category_rank"
+        },
+        {
+          "pattern": "MOVING_AGGREGATE",
+          "aggregate": "AVG",
+          "target": "products.unit_price",
+          "partition_by": [
+            "products.category"
+          ],
+          "order_by": [
+            {
+              "column": "products.id",
+              "direction": "ASC"
+            }
+          ],
+          "frame": {
+            "mode": "ROWS",
+            "start": {
+              "kind": "N_PRECEDING",
+              "value": 1
+            },
+            "end": {
+              "kind": "CURRENT_ROW",
+              "value": null
+            }
+          },
+          "alias": "price_average"
+        }
+      ]
+    },
+    "expected_tables": [
+      "products"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-mixed-003",
+    "question": "For each customer, show the next creation time and its position within the region.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"region_id\", \"id\", \"created_at\", LEAD(\"created_at\", 1) OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" ASC, \"id\" ASC) AS \"next_customer_at\", ROW_NUMBER() OVER (PARTITION BY \"region_id\" ORDER BY \"created_at\" ASC, \"id\" ASC) AS \"region_position\" FROM \"customers\"",
+    "gold_window_ir": {
+      "source_relation": "customers",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "customers.region_id",
+        "customers.id",
+        "customers.created_at"
+      ],
+      "computations": [
+        {
+          "pattern": "LEAD",
+          "target": "customers.created_at",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_customer_at"
+        },
+        {
+          "pattern": "RANKING",
+          "function": "ROW_NUMBER",
+          "partition_by": [
+            "customers.region_id"
+          ],
+          "order_by": [
+            {
+              "column": "customers.created_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "customers.id",
+              "direction": "ASC"
+            }
+          ],
+          "alias": "region_position"
+        }
+      ]
+    },
+    "expected_tables": [
+      "customers"
+    ],
+    "order_sensitive": false
+  },
+  {
+    "id": "m212-holdout-mixed-004",
+    "question": "For each refund, calculate its amount share and the next refund amount in the order.",
+    "category": "mixed_multi_window",
+    "pattern": "MIXED_MULTI_WINDOW",
+    "gold_sql": "SELECT \"order_id\", \"id\", \"amount\", \"amount\" / SUM(\"amount\") OVER (PARTITION BY \"order_id\") * 100 AS \"refund_percent\", LEAD(\"amount\", 1) OVER (PARTITION BY \"order_id\" ORDER BY \"refunded_at\" ASC, \"id\" ASC) AS \"next_amount\" FROM \"refunds\"",
+    "gold_window_ir": {
+      "source_relation": "refunds",
+      "pattern": "MIXED_MULTI_WINDOW",
+      "physical_outputs": [
+        "refunds.order_id",
+        "refunds.id",
+        "refunds.amount"
+      ],
+      "computations": [
+        {
+          "pattern": "SHARE_OF_TOTAL",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "scale": 100.0,
+          "alias": "refund_percent"
+        },
+        {
+          "pattern": "LEAD",
+          "target": "refunds.amount",
+          "partition_by": [
+            "refunds.order_id"
+          ],
+          "order_by": [
+            {
+              "column": "refunds.refunded_at",
+              "direction": "ASC"
+            },
+            {
+              "column": "refunds.id",
+              "direction": "ASC"
+            }
+          ],
+          "offset": 1,
+          "alias": "next_amount"
+        }
+      ]
+    },
+    "expected_tables": [
+      "refunds"
+    ],
+    "order_sensitive": false
+  }
+]

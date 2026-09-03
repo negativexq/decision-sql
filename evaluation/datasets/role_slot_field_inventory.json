@@ -1,0 +1,1534 @@
+{
+  "LATEST_PER_GROUP": {
+    "dto_name": "LatestPerGroupRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 7,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "tie_breaker_column",
+        "semantic_role": "tie_breaker_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "tie_breaker_direction",
+        "semantic_role": "tie_breaker_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "partition_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        },
+        "tie_breaker_column": {
+          "anyOf": [
+            {
+              "maxLength": 63,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tie Breaker Column"
+        },
+        "tie_breaker_direction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RoleDirection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "partition_columns",
+        "order_column",
+        "order_direction"
+      ],
+      "title": "LatestPerGroupRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "75d53834a9173ed1d96434dc02b19ee49cc188be1fc293e6d0ea92ebb49f5848"
+  },
+  "TOP_N_PER_GROUP": {
+    "dto_name": "TopNPerGroupRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 9,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "top_n",
+        "semantic_role": "top_n",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "tie_policy",
+        "semantic_role": "tie_policy",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "tie_breaker_column",
+        "semantic_role": "tie_breaker_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "tie_breaker_direction",
+        "semantic_role": "tie_breaker_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        },
+        "RoleTiePolicy": {
+          "enum": [
+            "EXACT_N",
+            "INCLUDE_TIES"
+          ],
+          "title": "RoleTiePolicy",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "partition_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        },
+        "top_n": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Top N",
+          "type": "integer"
+        },
+        "tie_policy": {
+          "$ref": "#/$defs/RoleTiePolicy"
+        },
+        "tie_breaker_column": {
+          "anyOf": [
+            {
+              "maxLength": 63,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tie Breaker Column"
+        },
+        "tie_breaker_direction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RoleDirection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "partition_columns",
+        "order_column",
+        "order_direction",
+        "top_n",
+        "tie_policy"
+      ],
+      "title": "TopNPerGroupRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "9de5365c08506ad50ffe6273c9921169c07ccd9f2f7b9e57a562cea5a0072f01"
+  },
+  "LAG": {
+    "dto_name": "LagLeadRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 8,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "window_direction",
+        "semantic_role": "window_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "input_value_column",
+        "semantic_role": "input_value_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "offset_rows",
+        "semantic_role": "offset_rows",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "window_direction": {
+          "enum": [
+            "PREVIOUS",
+            "NEXT"
+          ],
+          "title": "Window Direction",
+          "type": "string"
+        },
+        "input_value_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Input Value Column",
+          "type": "string"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        },
+        "offset_rows": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Offset Rows",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "window_direction",
+        "input_value_column",
+        "order_column",
+        "order_direction",
+        "offset_rows"
+      ],
+      "title": "LagLeadRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "3e12709fd7195ced9fe8d2a1dc4cc0c71d5360a13e2b5e38355958bd4fc2ce7e"
+  },
+  "LEAD": {
+    "dto_name": "LagLeadRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 8,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "window_direction",
+        "semantic_role": "window_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "input_value_column",
+        "semantic_role": "input_value_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "offset_rows",
+        "semantic_role": "offset_rows",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "window_direction": {
+          "enum": [
+            "PREVIOUS",
+            "NEXT"
+          ],
+          "title": "Window Direction",
+          "type": "string"
+        },
+        "input_value_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Input Value Column",
+          "type": "string"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        },
+        "offset_rows": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Offset Rows",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "window_direction",
+        "input_value_column",
+        "order_column",
+        "order_direction",
+        "offset_rows"
+      ],
+      "title": "LagLeadRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "3e12709fd7195ced9fe8d2a1dc4cc0c71d5360a13e2b5e38355958bd4fc2ce7e"
+  },
+  "RUNNING_AGGREGATE": {
+    "dto_name": "RunningAggregateRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 7,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "input_value_column",
+        "semantic_role": "input_value_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "aggregate_function",
+        "semantic_role": "aggregate_function",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleAggregate": {
+          "enum": [
+            "SUM",
+            "AVG",
+            "MIN",
+            "MAX"
+          ],
+          "title": "RoleAggregate",
+          "type": "string"
+        },
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "input_value_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Input Value Column",
+          "type": "string"
+        },
+        "aggregate_function": {
+          "$ref": "#/$defs/RoleAggregate"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "input_value_column",
+        "aggregate_function",
+        "order_column",
+        "order_direction"
+      ],
+      "title": "RunningAggregateRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "4a11d61d0ae6a202e541c48fcd379350b7b078cafb7b007ab558cffd092f75f2"
+  },
+  "MOVING_AGGREGATE": {
+    "dto_name": "MovingAggregateRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 9,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "input_value_column",
+        "semantic_role": "input_value_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "aggregate_function",
+        "semantic_role": "aggregate_function",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "preceding_rows",
+        "semantic_role": "preceding_rows",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "include_current_row",
+        "semantic_role": "include_current_row",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleAggregate": {
+          "enum": [
+            "SUM",
+            "AVG",
+            "MIN",
+            "MAX"
+          ],
+          "title": "RoleAggregate",
+          "type": "string"
+        },
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "input_value_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Input Value Column",
+          "type": "string"
+        },
+        "aggregate_function": {
+          "$ref": "#/$defs/RoleAggregate"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        },
+        "preceding_rows": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Preceding Rows",
+          "type": "integer"
+        },
+        "include_current_row": {
+          "title": "Include Current Row",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "input_value_column",
+        "aggregate_function",
+        "order_column",
+        "order_direction",
+        "preceding_rows",
+        "include_current_row"
+      ],
+      "title": "MovingAggregateRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "c4f0953977e57477042d742b32b9b0fd1f8c92338e393afa958ae19a8c0e2e52"
+  },
+  "RANKING": {
+    "dto_name": "RankingRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 6,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "ranking_function",
+        "semantic_role": "ranking_function",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "order_column",
+        "semantic_role": "order_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "order_direction",
+        "semantic_role": "order_direction",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        },
+        "RoleRankingFunction": {
+          "enum": [
+            "ROW_NUMBER",
+            "RANK",
+            "DENSE_RANK"
+          ],
+          "title": "RoleRankingFunction",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "ranking_function": {
+          "$ref": "#/$defs/RoleRankingFunction"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "order_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Order Column",
+          "type": "string"
+        },
+        "order_direction": {
+          "$ref": "#/$defs/RoleDirection"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "ranking_function",
+        "order_column",
+        "order_direction"
+      ],
+      "title": "RankingRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "ab21585e42f0050497ecf9a2b4614e5e08798575345eff1b80ec5f16fc296081"
+  },
+  "SHARE_OF_TOTAL": {
+    "dto_name": "ShareOfTotalRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 5,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "input_value_column",
+        "semantic_role": "input_value_column",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "partition_columns",
+        "semantic_role": "partition_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      },
+      {
+        "field": "scale_factor",
+        "semantic_role": "scale_factor",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": false
+      }
+    ],
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "input_value_column": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Input Value Column",
+          "type": "string"
+        },
+        "partition_columns": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Partition Columns",
+          "type": "array"
+        },
+        "scale_factor": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scale Factor"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "input_value_column"
+      ],
+      "title": "ShareOfTotalRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "d38e1394867ec1eb6613f15893072f9445f15a4e32862dc330649ef9d7295319"
+  },
+  "MIXED_MULTI_WINDOW": {
+    "dto_name": "MixedWindowRoleDTO",
+    "version": "m212r1-role-v1",
+    "field_count": 3,
+    "fields": [
+      {
+        "field": "source_table",
+        "semantic_role": "source_table",
+        "why_model_chooses": false,
+        "compiler_can_own": true,
+        "adapter_can_derive": true,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "passthrough_columns",
+        "semantic_role": "passthrough_columns",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      },
+      {
+        "field": "operations",
+        "semantic_role": "operations",
+        "why_model_chooses": true,
+        "compiler_can_own": false,
+        "adapter_can_derive": false,
+        "ambiguous_m212r_name": false,
+        "renamed_or_new": true,
+        "required": true
+      }
+    ],
+    "schema": {
+      "$defs": {
+        "MixedRoleOperationDTO": {
+          "additionalProperties": false,
+          "description": "Small bounded mixed DTO retained only for the frozen mixed family.",
+          "properties": {
+            "operation": {
+              "enum": [
+                "LAG",
+                "LEAD",
+                "RUNNING_AGGREGATE",
+                "MOVING_AGGREGATE",
+                "RANKING",
+                "SHARE_OF_TOTAL"
+              ],
+              "title": "Operation",
+              "type": "string"
+            },
+            "input_value_column": {
+              "anyOf": [
+                {
+                  "maxLength": 63,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Input Value Column"
+            },
+            "partition_columns": {
+              "default": [],
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 8,
+              "title": "Partition Columns",
+              "type": "array"
+            },
+            "order_column": {
+              "anyOf": [
+                {
+                  "maxLength": 63,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Order Column"
+            },
+            "order_direction": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/RoleDirection"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "offset_rows": {
+              "anyOf": [
+                {
+                  "maximum": 100,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Offset Rows"
+            },
+            "aggregate_function": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/RoleAggregate"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "preceding_rows": {
+              "anyOf": [
+                {
+                  "maximum": 100,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Preceding Rows"
+            },
+            "include_current_row": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Include Current Row"
+            },
+            "ranking_function": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/RoleRankingFunction"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "scale_factor": {
+              "anyOf": [
+                {
+                  "maximum": 1000000,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Scale Factor"
+            }
+          },
+          "required": [
+            "operation"
+          ],
+          "title": "MixedRoleOperationDTO",
+          "type": "object"
+        },
+        "RoleAggregate": {
+          "enum": [
+            "SUM",
+            "AVG",
+            "MIN",
+            "MAX"
+          ],
+          "title": "RoleAggregate",
+          "type": "string"
+        },
+        "RoleDirection": {
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "RoleDirection",
+          "type": "string"
+        },
+        "RoleRankingFunction": {
+          "enum": [
+            "ROW_NUMBER",
+            "RANK",
+            "DENSE_RANK"
+          ],
+          "title": "RoleRankingFunction",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source_table": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Source Table",
+          "type": "string"
+        },
+        "passthrough_columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Passthrough Columns",
+          "type": "array"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/MixedRoleOperationDTO"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_table",
+        "passthrough_columns",
+        "operations"
+      ],
+      "title": "MixedWindowRoleDTO",
+      "type": "object"
+    },
+    "schema_sha256": "4d51c54fddb646e1ee821d8ba27d4adf5b7ff87eb59e1b3858c49332aaa19785"
+  }
+}

@@ -34,6 +34,20 @@ def test_safe_analytical_shapes_are_allowed() -> None:
     assert all(sql_policy.validate(parsed(query)) is None for query in queries)
 
 
+def test_predicates_and_case_expressions_are_not_treated_as_functions() -> None:
+    sql_policy = policy()
+
+    assert (
+        sql_policy.validate(
+            parsed(
+                "SELECT SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) "
+                "FROM orders WHERE status = 'completed' AND ordered_at >= '2025-01-01'"
+            )
+        )
+        is None
+    )
+
+
 def test_mutation_and_multiple_statements_are_rejected_before_execution() -> None:
     sql_policy = policy()
     assert (

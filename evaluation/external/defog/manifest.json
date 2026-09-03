@@ -1,0 +1,293 @@
+{
+  "milestone": "M2.13",
+  "sql_eval_repository": "defog-ai/sql-eval",
+  "sql_eval_root": "/external/sql-eval",
+  "sql_eval_commit": "b83332416ea2d424b0cd12994a0a9ba100f4b4af",
+  "defog_data_repository": "defog-ai/defog-data",
+  "defog_data_root": "/external/defog-data",
+  "defog_data_commit": "856295d8f0aa8a0b0fb71b9623e86f363469797a",
+  "dialect": "postgres",
+  "datasets": {
+    "classic": {
+      "path": "/external/sql-eval/data/questions_gen_postgres.csv",
+      "sha256": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d",
+      "questions": 210,
+      "databases": [
+        "academic",
+        "advising",
+        "atis",
+        "broker",
+        "car_dealership",
+        "derm_treatment",
+        "ewallet",
+        "geography",
+        "restaurants",
+        "scholar",
+        "yelp"
+      ]
+    },
+    "advanced": {
+      "path": "/external/sql-eval/data/instruct_advanced_postgres.csv",
+      "sha256": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "questions": 64,
+      "databases": [
+        "broker",
+        "car_dealership",
+        "derm_treatment",
+        "ewallet"
+      ]
+    }
+  },
+  "database_names": [
+    "academic",
+    "advising",
+    "atis",
+    "broker",
+    "car_dealership",
+    "derm_treatment",
+    "ewallet",
+    "geography",
+    "restaurants",
+    "scholar",
+    "yelp"
+  ],
+  "database_setup": {
+    "container": "decision-sql-defog-postgres",
+    "host": "host.docker.internal",
+    "port": 55432,
+    "user": "defog_reader",
+    "credentials_persisted": false
+  },
+  "schema_contexts": {
+    "academic": {
+      "db_name": "academic",
+      "schema_context_sha256": "9337468f06defccc455cadf6ac05b0009b1549af5663a54264ada3a4c75457c3",
+      "schema_context_chars": 1167,
+      "table_count": 15,
+      "column_count": 42,
+      "relationship_count": 0,
+      "tables": [
+        "public.author",
+        "public.cite",
+        "public.conference",
+        "public.domain",
+        "public.domain_author",
+        "public.domain_conference",
+        "public.domain_journal",
+        "public.domain_keyword",
+        "public.domain_publication",
+        "public.journal",
+        "public.keyword",
+        "public.organization",
+        "public.publication",
+        "public.publication_keyword",
+        "public.writes"
+      ]
+    },
+    "advising": {
+      "db_name": "advising",
+      "schema_context_sha256": "631af6359e362f7ccdea1f6d2808d3f3bb21cea633a1a140bd00fea3b0820003",
+      "schema_context_chars": 2823,
+      "table_count": 14,
+      "column_count": 109,
+      "relationship_count": 0,
+      "tables": [
+        "public.area",
+        "public.comment_instructor",
+        "public.course",
+        "public.course_offering",
+        "public.course_prerequisite",
+        "public.course_tags_count",
+        "public.instructor",
+        "public.offering_instructor",
+        "public.program",
+        "public.program_course",
+        "public.program_requirement",
+        "public.semester",
+        "public.student",
+        "public.student_record"
+      ]
+    },
+    "atis": {
+      "db_name": "atis",
+      "schema_context_sha256": "0dea231d7f931c98794448754d6c0d87cca4cd33f0cf7f60bbda4c29a0387665",
+      "schema_context_chars": 3559,
+      "table_count": 24,
+      "column_count": 127,
+      "relationship_count": 0,
+      "tables": [
+        "public.aircraft",
+        "public.airline",
+        "public.airport",
+        "public.airport_service",
+        "public.city",
+        "public.class_of_service",
+        "public.code_description",
+        "public.compartment_class",
+        "public.days",
+        "public.dual_carrier",
+        "public.equipment_sequence",
+        "public.fare",
+        "public.fare_basis",
+        "public.flight",
+        "public.flight_fare",
+        "public.flight_leg",
+        "public.flight_stop",
+        "public.food_service",
+        "public.ground_service",
+        "public.month",
+        "public.restriction",
+        "public.state",
+        "public.time_interval",
+        "public.time_zone"
+      ]
+    },
+    "broker": {
+      "db_name": "broker",
+      "schema_context_sha256": "67fad518674ac7837a9bbf3f67d14548c5995dc237b49a9c9667b648aeca6236",
+      "schema_context_chars": 1428,
+      "table_count": 4,
+      "column_count": 43,
+      "relationship_count": 0,
+      "tables": [
+        "public.sbcustomer",
+        "public.sbdailyprice",
+        "public.sbticker",
+        "public.sbtransaction"
+      ]
+    },
+    "car_dealership": {
+      "db_name": "car_dealership",
+      "schema_context_sha256": "a63d1c577ede8d85129bcd7550c4287f73130afd7d4c3f00c7e2cfc459d6597d",
+      "schema_context_chars": 1824,
+      "table_count": 7,
+      "column_count": 55,
+      "relationship_count": 5,
+      "tables": [
+        "public.cars",
+        "public.customers",
+        "public.inventory_snapshots",
+        "public.payments_made",
+        "public.payments_received",
+        "public.sales",
+        "public.salespersons"
+      ]
+    },
+    "derm_treatment": {
+      "db_name": "derm_treatment",
+      "schema_context_sha256": "f9efff37a6acafb55e7fa54149f35230838d85fa6d5611eb48772f3b6413351a",
+      "schema_context_chars": 2743,
+      "table_count": 8,
+      "column_count": 81,
+      "relationship_count": 7,
+      "tables": [
+        "public.adverse_events",
+        "public.concomitant_meds",
+        "public.diagnoses",
+        "public.doctors",
+        "public.drugs",
+        "public.outcomes",
+        "public.patients",
+        "public.treatments"
+      ]
+    },
+    "ewallet": {
+      "db_name": "ewallet",
+      "schema_context_sha256": "a82d6d7e52d9528b8ebc22bfb624d20b18be2e0166fe852b41a855d73aa163e4",
+      "schema_context_chars": 3318,
+      "table_count": 9,
+      "column_count": 96,
+      "relationship_count": 2,
+      "tables": [
+        "consumer_div.coupons",
+        "consumer_div.merchants",
+        "consumer_div.notifications",
+        "consumer_div.user_sessions",
+        "consumer_div.user_setting_snapshot",
+        "consumer_div.users",
+        "consumer_div.wallet_merchant_balance_daily",
+        "consumer_div.wallet_transactions_daily",
+        "consumer_div.wallet_user_balance_daily"
+      ]
+    },
+    "geography": {
+      "db_name": "geography",
+      "schema_context_sha256": "2e62cb770c1cd872d95de6d6f0e0fbc42425684ef9b8e317fded10fb78a98a2d",
+      "schema_context_chars": 821,
+      "table_count": 7,
+      "column_count": 29,
+      "relationship_count": 0,
+      "tables": [
+        "public.border_info",
+        "public.city",
+        "public.highlow",
+        "public.lake",
+        "public.mountain",
+        "public.river",
+        "public.state"
+      ]
+    },
+    "restaurants": {
+      "db_name": "restaurants",
+      "schema_context_sha256": "c99648d0aa014fd7d0e5669069dd6cccbbcbe485bd485fd095e57272a068370a",
+      "schema_context_chars": 312,
+      "table_count": 3,
+      "column_count": 12,
+      "relationship_count": 0,
+      "tables": [
+        "public.geographic",
+        "public.location",
+        "public.restaurant"
+      ]
+    },
+    "scholar": {
+      "db_name": "scholar",
+      "schema_context_sha256": "0f8e52f608dc5a19b07895251a560264363ab1d3fdb6d64d1c4099c953299a15",
+      "schema_context_chars": 929,
+      "table_count": 12,
+      "column_count": 28,
+      "relationship_count": 0,
+      "tables": [
+        "public.author",
+        "public.cite",
+        "public.dataset",
+        "public.field",
+        "public.journal",
+        "public.keyphrase",
+        "public.paper",
+        "public.paperdataset",
+        "public.paperfield",
+        "public.paperkeyphrase",
+        "public.venue",
+        "public.writes"
+      ]
+    },
+    "yelp": {
+      "db_name": "yelp",
+      "schema_context_sha256": "7467563c44e91e8a43008d6b8b5e4a9218e3bf06dd0af7c2f33c198005ba2b2d",
+      "schema_context_chars": 833,
+      "table_count": 7,
+      "column_count": 37,
+      "relationship_count": 0,
+      "tables": [
+        "public.business",
+        "public.category",
+        "public.checkin",
+        "public.neighbourhood",
+        "public.review",
+        "public.tip",
+        "public.users"
+      ]
+    }
+  },
+  "prompt_template": "You generate one read-only PostgreSQL analytical query. Use only the supplied benchmark schema. Return exactly one JSON object with a non-empty 'sql' string and no Markdown. The user question is authoritative.",
+  "prompt_template_sha256": "942ef120e620f257a88281190fb075ce4ecc9cac7735d81c10d00c3dfa919b29",
+  "advanced_instruction_field": "instructions",
+  "full_instructions_used": false,
+  "k_shot": 0,
+  "model": "gpt-5.6-luna",
+  "reasoning": "none",
+  "temperature": "provider_default",
+  "gold_leakage": false,
+  "prepared_at": "2026-09-03T11:58:14.795582+00:00"
+}

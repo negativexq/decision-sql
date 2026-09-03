@@ -1,0 +1,237 @@
+{
+  "milestone": "M2.14",
+  "repository": "bird-bench/mini_dev",
+  "commit": "b3d4bcbbae9a96934ad812551eb400c7a3b23c12",
+  "dataset_source": "https://bird-bench.oss-cn-beijing.aliyuncs.com/minidev.zip",
+  "dataset_archive_sha256": "cc48ba16838204e4e214512030cb572eeb5f7bcdd999bae4b9b6ff12ec13b92f",
+  "dataset_file": "/bird/mini_dev_postgresql.json",
+  "dataset_file_sha256": "d2731292f20b8d8569cd956dd747ffe1df13cd625076263e38ae9ebcef50b1ab",
+  "dataset_split": "mini_dev_postgresql.json from MINIDEV package",
+  "selected_subset": "canonical 500 SELECT-only Mini-Dev V1",
+  "dataset_rows": 500,
+  "logical_database_count": 11,
+  "physical_database": "bird",
+  "postgres_dump": "/bird/BIRD_dev.sql",
+  "postgres_dump_sha256": "31b1da211849d24a57c9af7636da46a5b82fc8a3ca1542bb3ebd8775e9a31cec",
+  "dialect": "postgres",
+  "reference_prompt_source": "llm/src/prompt.py in pinned bird-bench/mini_dev",
+  "reference_prompt_notes": {
+    "schema": "catalog-derived CREATE TABLE definitions, no FK metadata in prompt",
+    "evidence": "expert evidence appended to the question prompt",
+    "reasoning": "reference has a CoT phrase; DecisionSQL omits it",
+    "response": "SQL-only response; DecisionSQL allows one surrounding Markdown fence cleanup"
+  },
+  "schema_serialization": {
+    "california_schools": {
+      "db_id": "california_schools",
+      "schema_context_sha256": "5cbdc871506ded471eb841f5bfc6c956bdf996cdf88228a2196f282bd7d17285",
+      "schema_context_chars": 2429,
+      "table_count": 3,
+      "column_count": 89,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.frpm",
+        "public.satscores",
+        "public.schools"
+      ]
+    },
+    "card_games": {
+      "db_id": "card_games",
+      "schema_context_sha256": "d7effc82f76fe9c289348815026ea2e732d7ed1d5f163b08443500b1bd84a55b",
+      "schema_context_chars": 2953,
+      "table_count": 6,
+      "column_count": 115,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.cards",
+        "public.foreign_data",
+        "public.legalities",
+        "public.rulings",
+        "public.set_translations",
+        "public.sets"
+      ]
+    },
+    "codebase_community": {
+      "db_id": "codebase_community",
+      "schema_context_sha256": "cb01a19ad56e85160e786c32b60f42b557908bf0a25b90999ee52463b145cb44",
+      "schema_context_chars": 2206,
+      "table_count": 8,
+      "column_count": 71,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.badges",
+        "public.comments",
+        "public.posthistory",
+        "public.postlinks",
+        "public.posts",
+        "public.tags",
+        "public.users",
+        "public.votes"
+      ]
+    },
+    "debit_card_specializing": {
+      "db_id": "debit_card_specializing",
+      "schema_context_sha256": "d8f8713d67f7c999c69f632379bbd1f940befdd75bd70e11676abb046fc43b8f",
+      "schema_context_chars": 680,
+      "table_count": 5,
+      "column_count": 21,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.customers",
+        "public.gasstations",
+        "public.products",
+        "public.transactions_1k",
+        "public.yearmonth"
+      ]
+    },
+    "european_football_2": {
+      "db_id": "european_football_2",
+      "schema_context_sha256": "91adcf8a6b015b0055e26532a70fb796bca9b4791e885199e54605f8e5ec9a9a",
+      "schema_context_chars": 5505,
+      "table_count": 6,
+      "column_count": 197,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.league",
+        "public.match",
+        "public.player",
+        "public.player_attributes",
+        "public.team",
+        "public.team_attributes"
+      ]
+    },
+    "financial": {
+      "db_id": "financial",
+      "schema_context_sha256": "66dc0d0332c711329f7395744be0441d9f8a8afab407f08a83a2d68a03788356",
+      "schema_context_chars": 1439,
+      "table_count": 8,
+      "column_count": 55,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.account",
+        "public.card",
+        "public.client",
+        "public.disp",
+        "public.district",
+        "public.loan",
+        "public.order",
+        "public.trans"
+      ]
+    },
+    "formula_1": {
+      "db_id": "formula_1",
+      "schema_context_sha256": "596d0d12be523baa795106922109e9e5b77e64fce53bb6e14301015ff42e5fab",
+      "schema_context_chars": 2639,
+      "table_count": 13,
+      "column_count": 94,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.circuits",
+        "public.constructorresults",
+        "public.constructors",
+        "public.constructorstandings",
+        "public.drivers",
+        "public.driverstandings",
+        "public.laptimes",
+        "public.pitstops",
+        "public.qualifying",
+        "public.races",
+        "public.results",
+        "public.seasons",
+        "public.status"
+      ]
+    },
+    "student_club": {
+      "db_id": "student_club",
+      "schema_context_sha256": "aa96fd2bafc18b6d6bb563b6f2bc7e834757721f88a905f45fe28c891fa9d325",
+      "schema_context_chars": 1389,
+      "table_count": 8,
+      "column_count": 48,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.attendance",
+        "public.budget",
+        "public.event",
+        "public.expense",
+        "public.income",
+        "public.major",
+        "public.member",
+        "public.zip_code"
+      ]
+    },
+    "superhero": {
+      "db_id": "superhero",
+      "schema_context_sha256": "8c4d323dc13e7d88a27118dc91fece35cb96efc9fd50b8328dd0564c2ec7dd64",
+      "schema_context_chars": 1095,
+      "table_count": 10,
+      "column_count": 31,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.alignment",
+        "public.attribute",
+        "public.colour",
+        "public.gender",
+        "public.hero_attribute",
+        "public.hero_power",
+        "public.publisher",
+        "public.race",
+        "public.superhero",
+        "public.superpower"
+      ]
+    },
+    "thrombosis_prediction": {
+      "db_id": "thrombosis_prediction",
+      "schema_context_sha256": "59a754675081560187224ffd45c2e6ecdb6a0bbb3fb8aeaae03cc4deb4e8fc2b",
+      "schema_context_chars": 1356,
+      "table_count": 3,
+      "column_count": 64,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.examination",
+        "public.laboratory",
+        "public.patient"
+      ]
+    },
+    "toxicology": {
+      "db_id": "toxicology",
+      "schema_context_sha256": "43280ad8a4160819543e55d51de1820dddb761c1d5f6271cded4f20176a11de1",
+      "schema_context_chars": 388,
+      "table_count": 4,
+      "column_count": 11,
+      "foreign_keys_exposed": false,
+      "sample_rows_exposed": false,
+      "tables": [
+        "public.atom",
+        "public.bond",
+        "public.connected",
+        "public.molecule"
+      ]
+    }
+  },
+  "prompt_version": "m214-bird-standard-evidence-v1",
+  "prompt_template_sha256": "16d0c25cf414766a344a2d2753b6e02e354f997b9a8a3724497432b4846c8165",
+  "model": "gpt-5.6-luna",
+  "reasoning": "none",
+  "temperature": "provider_default",
+  "k_shot": 0,
+  "gold_leakage": false,
+  "foreign_keys_exposed": false,
+  "sample_rows_exposed": false,
+  "benchmark_executor": {
+    "container": "decision-sql-bird-postgres",
+    "port": 55433,
+    "reader_role": "bird_reader",
+    "credentials_persisted": false
+  },
+  "created_at": "2026-09-03T13:33:11.818459+00:00"
+}

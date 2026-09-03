@@ -17,6 +17,8 @@ class SqlSafetyStatus(StrEnum):
 
 class CandidateSource(StrEnum):
     INTERNAL = "internal"
+    LLM = "llm"
+    WINDOW_COMPILER = "window_compiler"
     FUTURE_LLM = "future_llm"
 
 

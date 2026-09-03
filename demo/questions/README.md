@@ -1,3 +1,3 @@
 # Demo questions
 
-Question fixtures are intentionally deferred until the evaluation harness is introduced. M0 only establishes the deterministic database foundation.
+M2 provides the reproducible baseline at `evaluation/datasets/m2_baseline.json` with 48 commerce questions across filters, aggregations, joins, dates, grouping, top-k, ratios, and window functions. The final benchmark remains deferred.

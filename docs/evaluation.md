@@ -29,6 +29,8 @@ The current evaluation roadmap is:
 - M3: Governed Semantic Metrics (accepted for catalog-covered metrics).
 - M3.4: Feature-Flagged Governed Metric Routing & Observability (completed;
   production default remains off).
+- M3.5: Semantic Contract Hardening (completed; stable identity, lifecycle,
+  versioning, and governed execution provenance).
 
 The external benchmark adapters and their isolated executors remain under
 `evaluation/external/`; they do not replace or bypass the production M1 SQL

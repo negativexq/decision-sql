@@ -203,6 +203,12 @@ async def test_on_valid_governed_request_does_not_call_direct_provider() -> None
     assert decision.status is GovernedRouteStatus.SUCCESS
     assert decision.metric_name == "completed_revenue"
     assert decision.dimensions == ("customer",)
+    assert decision.semantic_provenance is not None
+    assert decision.semantic_provenance.catalog_id == "decisionsql-demo-semantic-catalog"
+    assert decision.semantic_provenance.catalog_version == 1
+    assert decision.semantic_provenance.metric_stable_id == "metric:completed_revenue"
+    assert decision.semantic_provenance.requested_dimensions == ("dimension:customer",)
+    assert len(decision.semantic_provenance.semantic_contract_hash) == 64
     assert direct.calls == 0
     assert provider.calls == 1
     assert safety.plan_calls == 1
@@ -379,6 +385,11 @@ def test_route_spans_contain_only_bounded_attributes() -> None:
     attributes = route_span.attributes or {}
     assert attributes["decision_sql.route.path"] == "GOVERNED_METRIC"
     assert attributes["decision_sql.semantic.metric_name"] == "completed_revenue"
+    assert attributes["decision_sql.semantic.catalog_id"] == "decisionsql-demo-semantic-catalog"
+    assert attributes["decision_sql.semantic.catalog_version"] == 1
+    assert len(attributes["decision_sql.semantic.contract_hash_prefix"]) == 16
+    assert attributes["decision_sql.semantic.metric_id"] == "metric:completed_revenue"
+    assert attributes["decision_sql.semantic.metric_version"] == 1
     serialized = str(attributes)
     assert "private question" not in serialized
     assert "SELECT" not in serialized

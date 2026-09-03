@@ -21,6 +21,12 @@ from app.models.domain import TextToSqlRequest
 from app.observability.tracing import get_tracer
 from app.semantics.catalog import build_m3_catalog, public_metric_glossary
 from app.semantics.compiler import MetricCompilationFailure, MetricCompiler
+from app.semantics.contract import (
+    SemanticContractError,
+    SemanticExecutionProvenance,
+    build_semantic_contract,
+    metric_provenance,
+)
 from app.semantics.models import MetricCatalog
 from app.sql.models import (
     QueryExecution,
@@ -98,6 +104,7 @@ class GovernedRouteDecision(BaseModel):
     governed_plan: QueryPlan | None = None
     governed_execution: QueryExecution | None = None
     shadow_comparison: ShadowComparison | None = None
+    semantic_provenance: SemanticExecutionProvenance | None = None
     diagnostics: dict[str, int | float | str | bool] = Field(default_factory=dict)
 
 
@@ -126,8 +133,9 @@ class GovernedMetricRouteService:
         self.provider = provider
         self.safety_service = safety_service
         self.catalog = catalog or build_m3_catalog()
-        self.compiler = MetricCompiler(self.catalog)
-        self.glossary = public_metric_glossary(self.catalog)
+        self.semantic_contract = build_semantic_contract(self.catalog)
+        self.compiler = MetricCompiler(self.catalog, semantic_contract=self.semantic_contract)
+        self.glossary = public_metric_glossary(self.catalog, self.semantic_contract)
         self.mode = mode
         self.shadow_execute = shadow_execute
         self.tracer = tracer or get_tracer()
@@ -248,6 +256,19 @@ class GovernedMetricRouteService:
                 applicable=True,
                 grounding=grounding,
             )
+        try:
+            provenance = metric_provenance(
+                self.semantic_contract, metric_request.metric_name, metric_request.dimensions
+            )
+        except SemanticContractError:
+            return await self._fallback(
+                request,
+                direct,
+                status=GovernedRouteStatus.VALIDATION_FAILURE,
+                reason=GovernedFallbackReason.INVALID_GROUNDING,
+                applicable=True,
+                grounding=grounding,
+            )
 
         with self.tracer.start_as_current_span("decision_sql.semantic.compile") as span:
             compile_started = perf_counter()
@@ -304,6 +325,7 @@ class GovernedMetricRouteService:
                 compiled,
                 planned,
                 status=GovernedRouteStatus.READY,
+                provenance=provenance,
                 diagnostics={"compile_latency_ms": compile_latency, "m1_latency_ms": m1_latency},
             )
 
@@ -315,6 +337,7 @@ class GovernedMetricRouteService:
                 planned,
                 None,
                 status=GovernedRouteStatus.READY,
+                provenance=provenance,
                 diagnostics={"compile_latency_ms": compile_latency, "m1_latency_ms": m1_latency},
             )
 
@@ -341,6 +364,7 @@ class GovernedMetricRouteService:
                 planned,
                 execution=execution,
                 status=GovernedRouteStatus.SUCCESS,
+                provenance=provenance,
                 diagnostics={"m1_latency_ms": m1_latency},
             )
         return self._governed_decision(
@@ -350,6 +374,7 @@ class GovernedMetricRouteService:
             planned,
             execution,
             status=GovernedRouteStatus.SUCCESS,
+            provenance=provenance,
             diagnostics={"compile_latency_ms": compile_latency, "m1_latency_ms": m1_latency},
         )
 
@@ -364,6 +389,7 @@ class GovernedMetricRouteService:
         grounding: GovernedMetricGroundingDTO | None,
         candidate: SqlCandidate | None = None,
         plan: QueryPlan | None = None,
+        provenance: SemanticExecutionProvenance | None = None,
         diagnostics: dict[str, int | float | str | bool] | None = None,
         governed_execution: QueryExecution | SqlExecutionError | None = None,
     ) -> GovernedRouteDecision:
@@ -388,6 +414,7 @@ class GovernedMetricRouteService:
             governed_execution=(
                 governed_execution if isinstance(governed_execution, QueryExecution) else None
             ),
+            semantic_provenance=provenance,
             diagnostics=diagnostics or {},
         )
 
@@ -421,6 +448,7 @@ class GovernedMetricRouteService:
         *,
         execution: QueryExecution | None = None,
         status: GovernedRouteStatus,
+        provenance: SemanticExecutionProvenance,
         diagnostics: dict[str, int | float | str | bool],
     ) -> GovernedRouteDecision:
         assert direct is not None
@@ -450,6 +478,7 @@ class GovernedMetricRouteService:
             governed_candidate=candidate,
             governed_plan=plan,
             governed_execution=execution,
+            semantic_provenance=provenance,
             shadow_comparison=comparison,
             diagnostics=diagnostics,
         )
@@ -463,6 +492,7 @@ class GovernedMetricRouteService:
         execution: QueryExecution | None,
         *,
         status: GovernedRouteStatus,
+        provenance: SemanticExecutionProvenance,
         diagnostics: dict[str, int | float | str | bool],
     ) -> GovernedRouteDecision:
         user_result = TextToSqlResult(
@@ -492,6 +522,7 @@ class GovernedMetricRouteService:
             governed_candidate=candidate,
             governed_plan=plan,
             governed_execution=execution,
+            semantic_provenance=provenance,
             diagnostics=diagnostics,
         )
 
@@ -511,6 +542,24 @@ class GovernedMetricRouteService:
         if decision.fallback_reason:
             span.set_attribute(
                 "decision_sql.semantic.fallback_reason", decision.fallback_reason.value
+            )
+        if decision.semantic_provenance is not None:
+            provenance = decision.semantic_provenance
+            span.set_attribute("decision_sql.semantic.catalog_id", provenance.catalog_id)
+            span.set_attribute(
+                "decision_sql.semantic.catalog_version", provenance.catalog_version
+            )
+            span.set_attribute(
+                "decision_sql.semantic.contract_hash_prefix",
+                provenance.semantic_contract_hash[:16],
+            )
+            span.set_attribute("decision_sql.semantic.metric_id", provenance.metric_stable_id)
+            span.set_attribute(
+                "decision_sql.semantic.metric_version", provenance.metric_semantic_version
+            )
+            span.set_attribute(
+                "decision_sql.semantic.lifecycle_status",
+                provenance.metric_lifecycle_status.value,
             )
         span.set_attribute("decision_sql.route.total_latency_ms", latency_ms)
 

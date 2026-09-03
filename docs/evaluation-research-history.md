@@ -18,6 +18,7 @@ unchanged.
 | M2.14.1 | What semantic mechanisms cause external failures? | BIRD ratio failures were led by wrong aggregation, missing filters, arithmetic structure, join path, and fanout. | Build a narrow governed metric subsystem; do not broaden benchmarking. |
 | M3 | Can server-owned metric semantics outperform direct SQL on catalog-covered metrics? | Governed compiler 48/48 DEV and 32/32 HOLDOUT versus direct SQL 26/48 and 13/32. | Accept governed metric compilation; keep routing feature-gated. |
 | M3.4 | Can the accepted governed path be integrated safely behind explicit modes? | Fixed routing corpus: 40/40 route, metric, and dimension decisions; M1 and bounded telemetry checks passed. | Keep production routing default-off; defer activation to an explicit operational decision. |
+| M3.5 | Can governed semantic meaning remain versioned, lifecycle-aware, and attributable? | Deterministic 48-object contract snapshot, lifecycle/version transition checks, and route provenance integrated without changing M3 semantics. | Keep the catalog immutable at startup; require explicit contract/version review for semantic changes. |
 
 ## Current evidence
 
@@ -43,6 +44,6 @@ Window holdout was not consumed by later reruns.
 ## Benchmarking status
 
 Broad benchmark acquisition is frozen after Defog and BIRD PostgreSQL. M3
-Governed Semantic Metrics and M3.4 feature-flagged routing/observability are
-accepted for catalog-covered internal metric questions. Production activation
-remains a separate operational decision.
+Governed Semantic Metrics, M3.4 feature-flagged routing/observability, and M3.5
+semantic contract hardening are accepted for catalog-covered internal metric
+questions. Production activation remains a separate operational decision.

@@ -5,6 +5,11 @@ from typing import cast
 
 from sqlglot import exp
 
+from app.semantics.contract import (
+    LifecycleStatus,
+    SemanticContractSnapshot,
+    build_semantic_contract,
+)
 from app.semantics.models import (
     Aggregation,
     DimensionDefinition,
@@ -32,15 +37,30 @@ MetricCompilationResult = SqlCandidate | MetricCompilationFailure
 class MetricCompiler:
     """Compile a governed metric request into policy-compatible PostgreSQL SQL."""
 
-    def __init__(self, catalog: MetricCatalog) -> None:
+    def __init__(
+        self, catalog: MetricCatalog, semantic_contract: SemanticContractSnapshot | None = None
+    ) -> None:
         self.catalog = catalog
+        self.semantic_contract = semantic_contract or build_semantic_contract(catalog)
         self.graph = RelationshipGraph(catalog)
 
     def compile_metric(self, request: MetricRequest) -> MetricCompilationResult:
         try:
             normalized = request.normalized()
             metric = self.catalog.metric(normalized.metric_name)
+            metric_identity = self.semantic_contract.object(f"metric:{normalized.metric_name}")
+            if metric_identity.lifecycle_status is LifecycleStatus.RETIRED:
+                return MetricCompilationFailure(
+                    "RETIRED_METRIC", f"Retired metrics cannot be compiled: {metric.name}"
+                )
             dimensions = tuple(self.catalog.dimension(name) for name in normalized.dimensions)
+            for dimension in dimensions:
+                dimension_identity = self.semantic_contract.object(f"dimension:{dimension.name}")
+                if dimension_identity.lifecycle_status is LifecycleStatus.RETIRED:
+                    return MetricCompilationFailure(
+                        "RETIRED_DIMENSION",
+                        f"Retired dimensions cannot be compiled: {dimension.name}",
+                    )
             if len(dimensions) > 2:
                 return MetricCompilationFailure(
                     "INVALID_METRIC_DIMENSION", "M3 V1 supports at most two dimensions."

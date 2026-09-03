@@ -32,7 +32,8 @@ Question
   output becomes an untrusted `SqlCandidate` and always passes through M1.
 - A governed semantic catalog and deterministic metric compiler for
   catalog-covered business metrics. M3 validates this path internally; it is
-  not yet the default production route.
+  not yet the default production route. M3.5 adds stable semantic identity,
+  lifecycle/version metadata, and execution provenance.
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
 - Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
@@ -48,8 +49,8 @@ M1. For catalog-covered business metrics, the validated M3 path selects a
 metric and dimensions, then lets the server-owned semantic catalog and
 deterministic compiler own physical mappings, aggregation, formulas, grain,
 cardinality, eligibility filters, scale, and zero/NULL policy. Both paths
-remain subject to M1; governed routing is feature-flagged/default-off pending
-the next integration milestone.
+remain subject to M1; governed routing is feature-flagged and default-off after
+M3.4 integration validation.
 
 The semantic catalog is organized around entities, relationships, dimensions,
 measures, and metrics. The LLM does not provide physical columns, numerator or
@@ -157,24 +158,28 @@ See [`docs/architecture.md`](docs/architecture.md),
 [`docs/evaluation-research-history.md`](docs/evaluation-research-history.md).
 The M3.4 routing contract and observability validation are documented in
 [`docs/m34-governed-routing-observability.md`](docs/m34-governed-routing-observability.md).
+Semantic contract lifecycle and provenance are documented in
+[`docs/m35-semantic-contract-hardening.md`](docs/m35-semantic-contract-hardening.md).
 
 ## Roadmap
 
 Completed: M0 Foundation, M1 Deterministic SQL Safety, M2 generation and
 evaluation research, M2.12 Window compiler research, M2.13 Defog external
 calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
-and M3 Governed Semantic Metrics.
+M3 Governed Semantic Metrics, M3.4 Governed Routing & Observability, and M3.5
+Semantic Contract Hardening.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
 benchmark, the Internal Window Compositional Stress Suite, and the M3 governed
 metric benchmark.
 
-M3.4 Feature-Flagged Governed Metric Routing & Observability is now validated
-as an explicit, bounded integration path. Its production default remains
-**OFF**; activation is a separate operational decision.
+M3.4 Feature-Flagged Governed Metric Routing & Observability and M3.5 Semantic
+Contract Hardening are now validated as explicit, bounded integration and
+governance layers. The production routing default remains **OFF**; activation
+is a separate operational decision.
 
-Later work may cover semantic contract hardening, temporal/value grounding,
+Later work may cover temporal/value grounding,
 verified query memory, clarification and controlled repair, answer
 synthesis/provenance, final external evaluation, UserContext/RLS, and
 production hardening.

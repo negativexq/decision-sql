@@ -61,3 +61,6 @@ async def test_on_governed_metric_compiles_and_executes_through_m1(
     assert result.user_result.execution.row_count >= 1
     assert result.governed_plan is not None
     assert result.governed_plan.candidate_source.value == "semantic_metric_compiler"
+    assert result.semantic_provenance is not None
+    assert result.semantic_provenance.metric_stable_id == "metric:completed_revenue"
+    assert result.semantic_provenance.catalog_version == 1

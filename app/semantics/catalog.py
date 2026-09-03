@@ -1,6 +1,7 @@
 """The small, server-owned semantic catalog for the M3 demo domain."""
 
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from app.catalog.default import build_default_catalog
 from app.catalog.models import SchemaCatalog
@@ -20,6 +21,9 @@ from app.semantics.models import (
     RelationshipDefinition,
     ZeroDenominatorPolicy,
 )
+
+if TYPE_CHECKING:
+    from app.semantics.contract import SemanticContractSnapshot
 
 
 def build_m3_catalog(schema: SchemaCatalog | None = None) -> MetricCatalog:
@@ -302,13 +306,33 @@ def build_m3_catalog(schema: SchemaCatalog | None = None) -> MetricCatalog:
     return catalog
 
 
-def public_metric_glossary(catalog: MetricCatalog) -> str:
+def public_metric_glossary(
+    catalog: MetricCatalog, semantic_contract: "SemanticContractSnapshot | None" = None
+) -> str:
+    from app.semantics.contract import (
+        SemanticObjectKind,
+        active_metric_names,
+        build_semantic_contract,
+    )
+
+    contract = semantic_contract or build_semantic_contract(catalog)
+    active_metrics = active_metric_names(contract)
+    active_dimensions = {
+        item.display_name
+        for item in contract.objects
+        if item.kind is SemanticObjectKind.DIMENSION
+        and item.lifecycle_status.value == "ACTIVE"
+    }
     lines = ["AVAILABLE GOVERNED METRICS:"]
     for metric in catalog.metrics:
+        if metric.name not in active_metrics:
+            continue
         lines.append(f"- {metric.name}: {metric.description}")
         lines.append(f"  valid dimensions: {', '.join(metric.valid_dimensions) or '(none)'}")
     lines.append("\nAVAILABLE SEMANTIC DIMENSIONS:")
     for dimension in catalog.dimensions:
+        if dimension.name not in active_dimensions:
+            continue
         lines.append(f"- {dimension.name}: {dimension.description}")
     return "\n".join(lines)
 

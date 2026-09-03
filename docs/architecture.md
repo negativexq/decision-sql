@@ -28,8 +28,9 @@ question -> public metric glossary -> metric/dimension grounding
 ```
 
 This governed route is explicit and default-off after M3.4 feature-flagged
-routing and observability validation. Arbitrary analytics continue to use the
-direct SQL proposal path above.
+routing and observability validation. M3.5 adds stable semantic contract
+identity and execution provenance without changing route selection. Arbitrary
+analytics continue to use the direct SQL proposal path above.
 
 ## Trust lifecycle
 

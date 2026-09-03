@@ -27,7 +27,8 @@ The current evaluation roadmap is:
 - M2.14: BIRD Mini-Dev PostgreSQL External Validation (completed).
 - M2.14.1: Cross-Benchmark Semantic Failure Mechanism Audit (completed).
 - M3: Governed Semantic Metrics (accepted for catalog-covered metrics).
-- M3.4: Feature-Flagged Governed Metric Routing & Observability (next).
+- M3.4: Feature-Flagged Governed Metric Routing & Observability (completed;
+  production default remains off).
 
 The external benchmark adapters and their isolated executors remain under
 `evaluation/external/`; they do not replace or bypass the production M1 SQL

@@ -17,6 +17,7 @@ unchanged.
 | M2.14 | Does a second public PostgreSQL benchmark confirm the picture? | BIRD EX 225/500; simple 87/148; challenging 30/102. | Broad calibration is sufficient; focus product work on semantic/compositional failure modes. |
 | M2.14.1 | What semantic mechanisms cause external failures? | BIRD ratio failures were led by wrong aggregation, missing filters, arithmetic structure, join path, and fanout. | Build a narrow governed metric subsystem; do not broaden benchmarking. |
 | M3 | Can server-owned metric semantics outperform direct SQL on catalog-covered metrics? | Governed compiler 48/48 DEV and 32/32 HOLDOUT versus direct SQL 26/48 and 13/32. | Accept governed metric compilation; keep routing feature-gated. |
+| M3.4 | Can the accepted governed path be integrated safely behind explicit modes? | Fixed routing corpus: 40/40 route, metric, and dimension decisions; M1 and bounded telemetry checks passed. | Keep production routing default-off; defer activation to an explicit operational decision. |
 
 ## Current evidence
 
@@ -42,6 +43,6 @@ Window holdout was not consumed by later reruns.
 ## Benchmarking status
 
 Broad benchmark acquisition is frozen after Defog and BIRD PostgreSQL. M3
-Governed Semantic Metrics is accepted for catalog-covered internal metric
-questions. The next product milestone is **M3.4 — Feature-Flagged Governed
-Metric Routing & Observability**; it is not implemented in this consolidation.
+Governed Semantic Metrics and M3.4 feature-flagged routing/observability are
+accepted for catalog-covered internal metric questions. Production activation
+remains a separate operational decision.

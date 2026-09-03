@@ -155,6 +155,8 @@ See [`docs/architecture.md`](docs/architecture.md),
 [`docs/security.md`](docs/security.md),
 [`docs/evaluation.md`](docs/evaluation.md), and
 [`docs/evaluation-research-history.md`](docs/evaluation-research-history.md).
+The M3.4 routing contract and observability validation are documented in
+[`docs/m34-governed-routing-observability.md`](docs/m34-governed-routing-observability.md).
 
 ## Roadmap
 
@@ -168,8 +170,9 @@ Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
 benchmark, the Internal Window Compositional Stress Suite, and the M3 governed
 metric benchmark.
 
-Next product milestone: **M3.4 — Feature-Flagged Governed Metric Routing &
-Observability**.
+M3.4 Feature-Flagged Governed Metric Routing & Observability is now validated
+as an explicit, bounded integration path. Its production default remains
+**OFF**; activation is a separate operational decision.
 
 Later work may cover semantic contract hardening, temporal/value grounding,
 verified query memory, clarification and controlled repair, answer

@@ -1,7 +1,14 @@
+from enum import StrEnum
 from functools import lru_cache
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class GovernedMetricsMode(StrEnum):
+    OFF = "off"
+    SHADOW = "shadow"
+    ON = "on"
 
 
 class Settings(BaseSettings):
@@ -54,6 +61,14 @@ class Settings(BaseSettings):
     )
     relationship_depth: int = Field(
         default=2, validation_alias="DECISION_SQL_RELATIONSHIP_DEPTH"
+    )
+    governed_metrics_mode: GovernedMetricsMode = Field(
+        default=GovernedMetricsMode.OFF,
+        validation_alias="DECISION_SQL_GOVERNED_METRICS_MODE",
+    )
+    governed_metrics_shadow_execute: bool = Field(
+        default=False,
+        validation_alias="DECISION_SQL_GOVERNED_METRICS_SHADOW_EXECUTE",
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

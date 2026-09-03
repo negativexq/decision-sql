@@ -27,9 +27,9 @@ question -> public metric glossary -> metric/dimension grounding
  -> SqlCandidate -> M1 -> EXPLAIN -> read-only execution
 ```
 
-This governed route is explicit and default-off until M3.4 feature-flagged
-routing and observability are implemented. Arbitrary analytics continue to use
-the direct SQL proposal path above.
+This governed route is explicit and default-off after M3.4 feature-flagged
+routing and observability validation. Arbitrary analytics continue to use the
+direct SQL proposal path above.
 
 ## Trust lifecycle
 

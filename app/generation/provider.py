@@ -763,10 +763,12 @@ def _intent_messages(question: str, schema_context: str) -> list[dict[str, str]]
 
 def _metric_grounding_messages(question: str, glossary: str) -> list[dict[str, str]]:
     system = (
-        "Select one governed business metric and zero or more semantic dimensions. "
-        "Return exactly one JSON object with only these keys: metric_name and dimensions. "
-        "Use only names from the supplied glossary. Do not return SQL, physical tables, "
-        "physical columns, formulas, filters, joins, aliases, or reasoning."
+        "Select a governed business metric only when the question directly asks for "
+        "one of the listed metrics. Otherwise return not applicable. Return exactly "
+        "one JSON object with only these keys: applicable, metric_name, and dimensions. "
+        "Use only names from the supplied glossary. For not applicable, use false, "
+        "null, and an empty list. Do not return SQL, physical tables, physical columns, "
+        "formulas, filters, joins, aliases, confidence, or reasoning."
         f"\n\nPUBLIC GOVERNED SEMANTIC GLOSSARY:\n{glossary}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]

@@ -111,6 +111,6 @@ governed path is not enabled by default.
 
 M1, the canonical evaluator, FULL_COMPACT, WindowQueryIR, and the Window
 compiler remain unchanged. Defog, BIRD, and previous internal holdouts were
-not rerun or consumed. Broad benchmark acquisition is frozen. The next
-milestone is **M3.4 — Feature-Flagged Governed Metric Routing & Observability**;
-no M3.4 work is implemented here.
+not rerun or consumed. Broad benchmark acquisition is frozen. M3.4
+subsequently validated feature-flagged routing and observability; its
+production default remains off. No later milestone is implemented here.

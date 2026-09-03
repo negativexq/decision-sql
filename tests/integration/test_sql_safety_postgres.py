@@ -245,7 +245,7 @@ def test_statement_timeout_is_enforced(service: SqlSafetyService) -> None:
         settings=service.settings.model_copy(
             update={
                 "statement_timeout_ms": 25,
-                "max_plan_cost": 1_000_000_000.0,
+                "max_plan_cost": 2_000_000_000.0,
                 "max_plan_rows": 10_000_000_000,
             }
         ),

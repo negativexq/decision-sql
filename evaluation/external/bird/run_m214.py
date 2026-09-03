@@ -502,6 +502,8 @@ def control_questions(questions: list[BirdQuestion], count: int) -> list[BirdQue
     """Select a stable 20–30-row control slice across all logical databases."""
     if count < 20 or count > 30:
         raise ValueError("control count must be between 20 and 30")
+    if count > len(questions):
+        raise ValueError("control count cannot exceed available questions")
     by_db: dict[str, list[BirdQuestion]] = {}
     for question in questions:
         by_db.setdefault(question.db_id, []).append(question)

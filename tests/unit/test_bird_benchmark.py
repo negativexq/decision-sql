@@ -11,6 +11,7 @@ from evaluation.external.bird.benchmark import (
     load_questions,
 )
 from evaluation.external.bird.features import ast_features
+from evaluation.external.bird.run_m214 import control_questions
 
 
 def test_bird_loader_preserves_canonical_fields(tmp_path):
@@ -76,3 +77,8 @@ def test_bird_ex_handles_postgresql_array_values():
     gold = QueryResult(columns=("values",), rows=(([1, 2],),))
     generated = QueryResult(columns=("other_alias",), rows=(([1, 2],),))
     assert bird_execution_match(generated, gold)
+
+
+def test_bird_control_slice_rejects_impossible_count():
+    with pytest.raises(ValueError, match="available questions"):
+        control_questions([], 20)

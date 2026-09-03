@@ -38,6 +38,10 @@ class M3BenchmarkCase(BaseModel):
     dimensions: tuple[str, ...] = ()
 
 
+class BenchmarkConstructionError(ValueError):
+    """Raised when the frozen M3 benchmark constraints cannot be constructed."""
+
+
 @dataclass(frozen=True)
 class _MeasureShape:
     from_sql: str
@@ -104,6 +108,10 @@ def build_benchmark_cases(
     targets: tuple[M3Target, ...] | None = None,
 ) -> tuple[M3BenchmarkCase, ...]:
     targets = targets or build_targets()
+    if not targets:
+        raise BenchmarkConstructionError(
+            "M3 benchmark construction requires at least one semantic target"
+        )
     # Four target compositions are held out from development.  All remaining
     # targets receive deterministic paraphrase coverage in development.
     holdout_only = {"m3-target-27", "m3-target-28", "m3-target-29", "m3-target-30"}
@@ -117,13 +125,25 @@ def build_benchmark_cases(
             dev_index += 1
     # Add a second wording to selected development targets, giving 48 cases
     # without changing the semantic target distribution.
-    extra_index = 0
-    while len(cases) < 48:
-        target = targets[(extra_index * 3) % len(targets)]
-        extra_index += 1
-        if target.target_id in holdout_only:
-            continue
-        cases.append(_case(target, "dev", len(cases), 1))
+    extra_count = 48 - len(cases)
+    if extra_count > 0:
+        # The old rejection loop could make no progress forever when every
+        # target in its cycle was holdout-only.  Preserve its default target
+        # order, but materialize one finite cycle before selecting extras.
+        candidate_cycle = tuple(
+            targets[(index * 3) % len(targets)]
+            for index in range(len(targets))
+            if targets[(index * 3) % len(targets)].target_id not in holdout_only
+        )
+        if not candidate_cycle:
+            raise BenchmarkConstructionError(
+                "M3 development benchmark constraints are impossible: "
+                f"requested=48 constructed={len(cases)} "
+                f"candidate_cycle_size={len(candidate_cycle)}"
+            )
+        for extra_index in range(extra_count):
+            target = candidate_cycle[extra_index % len(candidate_cycle)]
+            cases.append(_case(target, "dev", len(cases), 1))
     for index in range(32):
         target = targets[(index * 5 + 3) % len(targets)]
         cases.append(_case(target, "holdout", index, index % 3))

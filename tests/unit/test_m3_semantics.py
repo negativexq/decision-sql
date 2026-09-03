@@ -11,7 +11,13 @@ from app.semantics.catalog import build_m3_catalog
 from app.semantics.compiler import MetricCompilationFailure, MetricCompiler
 from app.semantics.models import SemanticCatalogError
 from app.semantics.requests import MetricRequest
-from evaluation.m3_benchmark import build_benchmark_cases, build_targets
+from evaluation.m3_benchmark import (
+    BenchmarkConstructionError,
+    M3Target,
+    benchmark_hash,
+    build_benchmark_cases,
+    build_targets,
+)
 
 
 def test_m3_catalog_validates_against_actual_demo_schema() -> None:
@@ -114,3 +120,23 @@ def test_benchmark_is_frozen_shape_without_temporal_or_value_questions() -> None
         )
         >= 1
     )
+
+
+def test_benchmark_is_deterministic_and_preserves_frozen_hash() -> None:
+    targets = build_targets()
+    first = build_benchmark_cases(targets)
+    second = build_benchmark_cases(targets)
+
+    assert first == second
+    assert len({case.case_id for case in first}) == len(first)
+    assert benchmark_hash(targets, first) == (
+        "bae37fa9c4850954dbae1a58b6c26c5b9cb1855b7ab6b6acd562845ee4bbb0b8"
+    )
+
+
+def test_benchmark_fails_fast_when_dev_constraints_have_no_candidates() -> None:
+    target = build_targets()[27]
+    holdout_only_targets = (M3Target.model_validate(target.model_dump()),)
+
+    with pytest.raises(BenchmarkConstructionError, match="candidate_cycle_size=0"):
+        build_benchmark_cases(holdout_only_targets)

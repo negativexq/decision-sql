@@ -7,6 +7,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.config import Settings, get_settings
+from app.generation.governed_metric_grounding import GovernedMetricGroundingDTO
 from app.generation.hard_query_plans import (
     OperationPlan,
     RatioPlan,
@@ -39,6 +40,21 @@ class SqlProposal(BaseModel):
 
 
 SQLProposal = SqlProposal
+
+
+class GovernedMetricGroundingProposal(BaseModel):
+    """One untrusted semantic-name selection for the M3 experiment."""
+
+    model_config = ConfigDict(frozen=True)
+
+    grounding: GovernedMetricGroundingDTO
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
 
 
 class ProviderTransportProposal(BaseModel):
@@ -87,6 +103,7 @@ class ModelIOCapture(BaseModel):
     parsed_result_shape: dict[str, Any] | None = None
     parsed_operation_plan: dict[str, Any] | None = None
     parsed_window_ir: dict[str, Any] | None = None
+    parsed_metric_grounding: dict[str, Any] | None = None
     usage: dict[str, int | None] = Field(default_factory=dict)
     latency_ms: float | None = None
     finish_reason: str | None = None
@@ -109,6 +126,11 @@ class MalformedProviderResponse(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_metric_grounding(
+        self, question: str, glossary: str
+    ) -> GovernedMetricGroundingProposal:
+        """Return one untrusted governed metric/dimension selection."""
+
     async def propose_window_ir(self, question: str, schema_context: str) -> WindowQueryIRProposal:
         """Return one untrusted semantic WindowQueryIR object."""
 
@@ -170,6 +192,45 @@ class OpenAICompatibleProvider:
         self._complete_model_io(
             payload,
             parsed_sql=None,
+            raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_metric_grounding(
+        self, question: str, glossary: str
+    ) -> GovernedMetricGroundingProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _metric_grounding_messages(question, glossary)
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("metric_grounding", question, glossary, messages)
+        started = perf_counter()
+        payload = await self._post(body)
+        grounding = _metric_grounding_from_response(payload)
+        usage = payload.get("usage") or {}
+        completion_details = usage.get("completion_tokens_details") or {}
+        prompt_details = usage.get("prompt_tokens_details") or {}
+        proposal = GovernedMetricGroundingProposal(
+            grounding=grounding,
+            provider="openai-compatible",
+            model=payload.get("model") or self.settings.llm_model,
+            prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+            completion_tokens=_optional_int(usage.get("completion_tokens")),
+            reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+            cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+            latency_ms=(perf_counter() - started) * 1000,
+        )
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_metric_grounding=grounding.model_dump(mode="json"),
             raw_content=_assistant_content(payload),
             latency_ms=proposal.latency_ms,
         )
@@ -455,6 +516,7 @@ class OpenAICompatibleProvider:
         parsed_result_shape: dict[str, Any] | None = None,
         parsed_operation_plan: dict[str, Any] | None = None,
         parsed_window_ir: dict[str, Any] | None = None,
+        parsed_metric_grounding: dict[str, Any] | None = None,
         raw_content: str | None,
         latency_ms: float | None,
     ) -> None:
@@ -476,6 +538,7 @@ class OpenAICompatibleProvider:
                 "parsed_result_shape": parsed_result_shape,
                 "parsed_operation_plan": parsed_operation_plan,
                 "parsed_window_ir": parsed_window_ir,
+                "parsed_metric_grounding": parsed_metric_grounding,
                 "usage": {
                     "prompt_tokens": _optional_int(usage.get("prompt_tokens")),
                     "completion_tokens": _optional_int(usage.get("completion_tokens")),
@@ -548,6 +611,16 @@ class StaticLLMProvider:
 
     def __init__(self, sql: str, model: str = "static-test") -> None:
         self.proposal = SqlProposal(sql=sql, provider="static", model=model)
+
+    async def propose_metric_grounding(
+        self, question: str, glossary: str
+    ) -> GovernedMetricGroundingProposal:
+        del question, glossary
+        return GovernedMetricGroundingProposal(
+            grounding=GovernedMetricGroundingDTO(metric_name="completed_revenue", dimensions=()),
+            provider="static",
+            model=self.proposal.model,
+        )
 
     async def propose_window_ir(self, question: str, schema_context: str) -> WindowQueryIRProposal:
         del question, schema_context
@@ -632,6 +705,12 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_metric_grounding(
+        self, question: str, glossary: str
+    ) -> GovernedMetricGroundingProposal:
+        del question, glossary
+        raise NotImplementedError("M3 governed metric grounding is not configured")
+
     async def propose_window_ir(self, question: str, schema_context: str) -> WindowQueryIRProposal:
         del question, schema_context
         raise NotImplementedError("M2.12 Window IR generation is not enabled")
@@ -678,6 +757,17 @@ def _intent_messages(question: str, schema_context: str) -> list[dict[str, str]]
         "source_column, target_table, target_column), filters, aggregations, group_by, "
         "order_by, limit, and window_operations."
         f"\n\nBOUNDED SCHEMA CONTEXT:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _metric_grounding_messages(question: str, glossary: str) -> list[dict[str, str]]:
+    system = (
+        "Select one governed business metric and zero or more semantic dimensions. "
+        "Return exactly one JSON object with only these keys: metric_name and dimensions. "
+        "Use only names from the supplied glossary. Do not return SQL, physical tables, "
+        "physical columns, formulas, filters, joins, aliases, or reasoning."
+        f"\n\nPUBLIC GOVERNED SEMANTIC GLOSSARY:\n{glossary}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
 
@@ -885,6 +975,21 @@ def _assistant_content(payload: Any) -> str | None:
     except (KeyError, IndexError, TypeError):
         return None
     return content if isinstance(content, str) else None
+
+
+def _metric_grounding_from_response(payload: Any) -> GovernedMetricGroundingDTO:
+    try:
+        content = payload["choices"][0]["message"]["content"]
+        if not isinstance(content, str):
+            raise TypeError("content is not text")
+        data = json.loads(content)
+        if not isinstance(data, dict):
+            raise TypeError("structured output is not an object")
+        return GovernedMetricGroundingDTO.model_validate(data)
+    except (KeyError, IndexError, TypeError, ValueError) as error:
+        raise MalformedProviderResponse(
+            "Provider response did not contain governed metric grounding"
+        ) from error
 
 
 def _intent_from_response(payload: Any, model: str) -> IntentProposal:

@@ -8,7 +8,7 @@ DecisionSQL is designed to answer: how can we prove that a natural-language ques
 
 The model is a proposal generator. It does not receive database credentials, authorization authority, or an execution tool. A future request coordinator will pass a server-owned `UserContext` through deterministic stages. SQL will be parsed with `sqlglot`, validated, policy-checked, cost-gated with `EXPLAIN`, and executed only through a restricted PostgreSQL reader.
 
-## Planned request path
+## Request paths
 
 ```text
 question -> server UserContext -> semantic resolution -> schema retrieval
@@ -18,6 +18,18 @@ question -> server UserContext -> semantic resolution -> schema retrieval
 ```
 
 M1 adds a deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code. It performs parsing, AST policy validation, EXPLAIN cost gating, and reader-only execution. There is still deliberately no public Text-to-SQL endpoint.
+
+For catalog-covered business metrics, the validated M3 path is:
+
+```text
+question -> public metric glossary -> metric/dimension grounding
+ -> server-owned semantic catalog -> deterministic metric compiler
+ -> SqlCandidate -> M1 -> EXPLAIN -> read-only execution
+```
+
+This governed route is explicit and default-off until M3.4 feature-flagged
+routing and observability are implemented. Arbitrary analytics continue to use
+the direct SQL proposal path above.
 
 ## Trust lifecycle
 
@@ -125,7 +137,8 @@ The EXPLAIN and execution stages share a transaction configured with `READ ONLY`
 
 - `app/models`: typed contracts shared between stages.
 - `app/catalog` and `app/retrieval`: server-owned catalog and deterministic relevant-schema retrieval.
-- `app/semantic`: future governed business metrics and terminology.
+- `app/semantics`: governed business metrics, relationship graph, and typed
+  deterministic metric compilation.
 - `app/generation`: provider-neutral proposal interface.
 - `app/sql/parser.py`: PostgreSQL parsing and one-statement enforcement.
 - `app/sql/policy.py`: deterministic statement, object, column, catalog, and function policy.

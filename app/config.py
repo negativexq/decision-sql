@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,7 +29,10 @@ class Settings(BaseSettings):
     llm_base_url: str = Field(
         default="https://api.openai.com/v1", validation_alias="DECISION_SQL_LLM_BASE_URL"
     )
-    llm_api_key: str | None = Field(default=None, validation_alias="DECISION_SQL_LLM_API_KEY")
+    llm_api_key: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("DECISION_SQL_LLM_API_KEY", "OPENAI_API_KEY"),
+    )
     llm_timeout_seconds: float = Field(
         default=30.0, validation_alias="DECISION_SQL_LLM_TIMEOUT_SECONDS"
     )

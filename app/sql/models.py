@@ -19,6 +19,7 @@ class CandidateSource(StrEnum):
     INTERNAL = "internal"
     LLM = "llm"
     WINDOW_COMPILER = "window_compiler"
+    SEMANTIC_METRIC_COMPILER = "semantic_metric_compiler"
     FUTURE_LLM = "future_llm"
 
 

@@ -15,6 +15,8 @@ unchanged.
 | M2.12R series | Can the provider reliably express Window IR semantics? | Transport was eventually reliable, but semantic slot grounding remained weak and did not beat direct SQL. | Close provider-format experiments; retain Window as an internal stress suite. |
 | M2.13 | How does one-shot SQL perform on public Defog PostgreSQL? | Classic exact 142/210; Advanced exact 48/64; Advanced Window 6/8. | External calibration is viable; ratio/date semantics remain weak. |
 | M2.14 | Does a second public PostgreSQL benchmark confirm the picture? | BIRD EX 225/500; simple 87/148; challenging 30/102. | Broad calibration is sufficient; focus product work on semantic/compositional failure modes. |
+| M2.14.1 | What semantic mechanisms cause external failures? | BIRD ratio failures were led by wrong aggregation, missing filters, arithmetic structure, join path, and fanout. | Build a narrow governed metric subsystem; do not broaden benchmarking. |
+| M3 | Can server-owned metric semantics outperform direct SQL on catalog-covered metrics? | Governed compiler 48/48 DEV and 32/32 HOLDOUT versus direct SQL 26/48 and 13/32. | Accept governed metric compilation; keep routing feature-gated. |
 
 ## Current evidence
 
@@ -39,6 +41,7 @@ Window holdout was not consumed by later reruns.
 
 ## Benchmarking status
 
-Broad benchmark acquisition is frozen after Defog and BIRD PostgreSQL. The
-next product milestone is **M3 — Governed Semantic Metrics**. No M3
-implementation is included in this consolidation.
+Broad benchmark acquisition is frozen after Defog and BIRD PostgreSQL. M3
+Governed Semantic Metrics is accepted for catalog-covered internal metric
+questions. The next product milestone is **M3.4 — Feature-Flagged Governed
+Metric Routing & Observability**; it is not implemented in this consolidation.

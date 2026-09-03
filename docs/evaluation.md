@@ -25,7 +25,9 @@ The current evaluation roadmap is:
 - M2.12: Internal Window Compositional Stress Suite (completed).
 - M2.13: Defog PostgreSQL External Calibration (completed).
 - M2.14: BIRD Mini-Dev PostgreSQL External Validation (completed).
-- M3: Governed Semantic Metrics (next product milestone).
+- M2.14.1: Cross-Benchmark Semantic Failure Mechanism Audit (completed).
+- M3: Governed Semantic Metrics (accepted for catalog-covered metrics).
+- M3.4: Feature-Flagged Governed Metric Routing & Observability (next).
 
 The external benchmark adapters and their isolated executors remain under
 `evaluation/external/`; they do not replace or bypass the production M1 SQL

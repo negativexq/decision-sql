@@ -1,0 +1,458 @@
+[
+  {
+    "dimensions": [],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_revenue",
+    "reference_sql": "SELECT SUM(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed'",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-00"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_revenue",
+    "reference_sql": "SELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-01"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_revenue",
+    "reference_sql": "SELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-02"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_revenue",
+    "reference_sql": "SELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-03"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_completed_order_value",
+    "reference_sql": "SELECT AVG(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed'",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-04"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_completed_order_value",
+    "reference_sql": "SELECT customers.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-05"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_completed_order_value",
+    "reference_sql": "SELECT sales_representatives.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-06"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_completed_order_value",
+    "reference_sql": "SELECT orders.currency AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-07"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_payment_amount",
+    "reference_sql": "SELECT AVG(payments.amount) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-08"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_payment_amount",
+    "reference_sql": "SELECT customers.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-09"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_payment_amount",
+    "reference_sql": "SELECT sales_representatives.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-10"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "average_payment_amount",
+    "reference_sql": "SELECT orders.currency AS dimension_0, AVG(payments.amount) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id GROUP BY orders.currency ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-11"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_item_quantity",
+    "reference_sql": "SELECT SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed'",
+    "relationship_distance": 0,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-12"
+  },
+  {
+    "dimensions": [
+      "product_category"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_item_quantity",
+    "reference_sql": "SELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN products ON order_items.product_id = products.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-13"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_item_quantity",
+    "reference_sql": "SELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-14"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "MEASURE",
+    "metric_name": "completed_item_quantity",
+    "reference_sql": "SELECT orders.currency AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "DIRECT_MEASURE",
+      "AGGREGATION_SENSITIVE"
+    ],
+    "target_id": "m3-target-15"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "RATIO",
+    "metric_name": "payment_success_rate",
+    "reference_sql": "WITH n AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id WHERE payments.status = 'settled'), d AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id) SELECT CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n CROSS JOIN d",
+    "relationship_distance": 0,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-16"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "payment_success_rate",
+    "reference_sql": "WITH n AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE payments.status = 'settled' GROUP BY customers.name ORDER BY dimension_0), d AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-17"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "payment_success_rate",
+    "reference_sql": "WITH n AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE payments.status = 'settled' GROUP BY sales_representatives.name ORDER BY dimension_0), d AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-18"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "payment_success_rate",
+    "reference_sql": "WITH n AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id WHERE payments.status = 'settled' GROUP BY orders.currency ORDER BY dimension_0), d AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments JOIN orders ON payments.order_id = orders.id GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-19"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "RATIO",
+    "metric_name": "refunded_order_rate",
+    "reference_sql": "WITH n AS (SELECT COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed'), d AS (SELECT COUNT(DISTINCT orders.id) AS measure_value FROM orders  WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n CROSS JOIN d",
+    "relationship_distance": 0,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-20"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refunded_order_rate",
+    "reference_sql": "WITH n AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), d AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-21"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refunded_order_rate",
+    "reference_sql": "WITH n AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), d AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-22"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refunded_order_rate",
+    "reference_sql": "WITH n AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), d AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders  WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-23"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "RATIO",
+    "metric_name": "refund_to_revenue_rate",
+    "reference_sql": "WITH n AS (SELECT SUM(refunds.amount) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed'), d AS (SELECT SUM(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n CROSS JOIN d",
+    "relationship_distance": 0,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-24"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refund_to_revenue_rate",
+    "reference_sql": "WITH n AS (SELECT customers.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), d AS (SELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-25"
+  },
+  {
+    "dimensions": [
+      "sales_representative"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refund_to_revenue_rate",
+    "reference_sql": "WITH n AS (SELECT sales_representatives.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), d AS (SELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-26"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "refund_to_revenue_rate",
+    "reference_sql": "WITH n AS (SELECT orders.currency AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), d AS (SELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders  WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO",
+      "FILTER_SENSITIVE",
+      "JOIN_PATH_SENSITIVE"
+    ],
+    "target_id": "m3-target-27"
+  },
+  {
+    "dimensions": [],
+    "metric_kind": "RATIO",
+    "metric_name": "average_items_per_completed_order",
+    "reference_sql": "WITH n AS (SELECT SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed'), d AS (SELECT COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM n CROSS JOIN d",
+    "relationship_distance": 0,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO"
+    ],
+    "target_id": "m3-target-28"
+  },
+  {
+    "dimensions": [
+      "product_category"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "average_items_per_completed_order",
+    "reference_sql": "WITH n AS (SELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN products ON order_items.product_id = products.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0), d AS (SELECT products.category AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN products ON order_items.product_id = products.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO"
+    ],
+    "target_id": "m3-target-29"
+  },
+  {
+    "dimensions": [
+      "customer"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "average_items_per_completed_order",
+    "reference_sql": "WITH n AS (SELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), d AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 2,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO"
+    ],
+    "target_id": "m3-target-30"
+  },
+  {
+    "dimensions": [
+      "order_currency"
+    ],
+    "metric_kind": "RATIO",
+    "metric_name": "average_items_per_completed_order",
+    "reference_sql": "WITH n AS (SELECT orders.currency AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), d AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(n.dimension_0, d.dimension_0) AS dimension_0, CASE WHEN COALESCE(d.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(n.measure_value, 0) AS DECIMAL) / CAST(COALESCE(d.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM n FULL OUTER JOIN d ON n.dimension_0 = d.dimension_0 ORDER BY dimension_0",
+    "relationship_distance": 1,
+    "slices": [
+      "RATIO",
+      "ARITHMETIC_RATIO"
+    ],
+    "target_id": "m3-target-31"
+  }
+]

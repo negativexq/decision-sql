@@ -30,14 +30,30 @@ Question
   transactions, timeouts, and bounded results.
 - An optional one-shot OpenAI-compatible Text-to-SQL generation path. Model
   output becomes an untrusted `SqlCandidate` and always passes through M1.
+- A governed semantic catalog and deterministic metric compiler for
+  catalog-covered business metrics. M3 validates this path internally; it is
+  not yet the default production route.
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
 - Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
   PostgreSQL. Their benchmark executors are isolated from the product M1 path.
 
-There is no public Text-to-SQL endpoint yet. Tenant policy, RLS, governed
-semantic metrics, answer synthesis, and user-facing product integration remain
-future work.
+There is no public Text-to-SQL endpoint yet. Tenant policy, RLS, answer
+synthesis, and user-facing product integration remain future work.
+
+## Two generation paths
+
+For arbitrary analytics, the current path is direct Text-to-SQL followed by
+M1. For catalog-covered business metrics, the validated M3 path selects a
+metric and dimensions, then lets the server-owned semantic catalog and
+deterministic compiler own physical mappings, aggregation, formulas, grain,
+cardinality, eligibility filters, scale, and zero/NULL policy. Both paths
+remain subject to M1; governed routing is feature-flagged/default-off pending
+the next integration milestone.
+
+The semantic catalog is organized around entities, relationships, dimensions,
+measures, and metrics. The LLM does not provide physical columns, numerator or
+denominator definitions, join paths, or formulas.
 
 ## External evaluation
 
@@ -69,6 +85,24 @@ Derived and temporal semantics remain weak across the external evidence:
 
 The current bottleneck is semantic/compositional grounding, especially derived
 business metrics and temporal logic, rather than SQL syntax validity alone.
+
+M2.14.1 found the largest BIRD ratio failure classes were wrong aggregation
+(30), missing filters (13), arithmetic structure (13), join path (11), and
+join fanout (6). This evidence motivated the governed metric compiler; it does
+not imply that M3 solves arbitrary Text-to-SQL.
+
+## Governed metric evidence
+
+These results apply only to frozen internal questions whose requested business
+metric is covered by the governed semantic catalog.
+
+| Evaluation | Direct SQL | Governed compiler | Delta |
+| --- | ---: | ---: | ---: |
+| M3 DEV | 26/48 (54.17%) | 48/48 (100.00%) | +45.83 pp |
+| M3 HOLDOUT | 13/32 (40.63%) | 32/32 (100.00%) | +59.38 pp |
+
+The compiler itself reached 32/32 independent reference targets, with 80/80
+correctly grounded DEV/HOLDOUT requests compiling to equivalent results.
 
 ## Window research
 
@@ -126,14 +160,18 @@ See [`docs/architecture.md`](docs/architecture.md),
 
 Completed: M0 Foundation, M1 Deterministic SQL Safety, M2 generation and
 evaluation research, M2.12 Window compiler research, M2.13 Defog external
-calibration, and M2.14 BIRD external validation.
+calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
+and M3 Governed Semantic Metrics.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
-benchmark, and the internal Window stress suite.
+benchmark, the Internal Window Compositional Stress Suite, and the M3 governed
+metric benchmark.
 
-Next product milestone: **M3 — Governed Semantic Metrics**.
+Next product milestone: **M3.4 — Feature-Flagged Governed Metric Routing &
+Observability**.
 
-Later work may cover temporal/value grounding, verified query memory,
-clarification and controlled repair, answer synthesis/provenance, final
-external evaluation, UserContext/RLS, and product integration.
+Later work may cover semantic contract hardening, temporal/value grounding,
+verified query memory, clarification and controlled repair, answer
+synthesis/provenance, final external evaluation, UserContext/RLS, and
+production hardening.

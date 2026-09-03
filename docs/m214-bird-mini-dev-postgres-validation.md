@@ -51,5 +51,6 @@ wrong-schema and interrupted runs are excluded from the score.
 
 M2.14 closes broad benchmark acquisition for this project. M2.12 remains the
 **Internal Window Compositional Stress Suite**; its results are not averaged
-with BIRD or Defog. The next product milestone is M3 — Governed Semantic
-Metrics.
+with BIRD or Defog. M3 Governed Semantic Metrics was subsequently validated on
+its own frozen internal benchmark; the next product milestone is M3.4 —
+Feature-Flagged Governed Metric Routing & Observability.

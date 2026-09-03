@@ -77,6 +77,16 @@ class TextToSqlService:
         """Run the unchanged M2 question-to-SQL path."""
         return await self._run(request, result_shape_contract=False)
 
+    async def run_with_context_addition(
+        self, request: TextToSqlRequest, context_addition: str
+    ) -> TextToSqlResult:
+        """Run direct SQL generation with bounded server-owned prompt context."""
+        return await self._run(
+            request,
+            result_shape_contract=False,
+            context_addition=context_addition,
+        )
+
     async def run_result_shape_contract(self, request: TextToSqlRequest) -> TextToSqlResult:
         """Run M2.8 with a narrow, untrusted result-shape proposal."""
         return await self._run(request, result_shape_contract=True)
@@ -93,6 +103,7 @@ class TextToSqlService:
         *,
         result_shape_contract: bool,
         operation_plan: OperationPlan | None = None,
+        context_addition: str | None = None,
     ) -> TextToSqlResult:
         started = perf_counter()
         provider_calls_attempted = 0
@@ -130,6 +141,8 @@ class TextToSqlService:
             )
 
             schema_text = self.schema_serializer(context)
+            if context_addition:
+                schema_text = f"{schema_text}\n\n{context_addition}"
             result_shape_proposal: ResultShapeProposal | None = None
             if result_shape_contract:
                 with self.tracer.start_as_current_span(

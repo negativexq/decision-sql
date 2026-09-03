@@ -6,6 +6,7 @@ from app.catalog.models import SchemaContext
 from app.generation.intent import IntentProposal, QueryIntent
 from app.generation.provider import ProviderErrorDetail, SqlProposal
 from app.generation.result_shape import ResultShapeProposal, ResultShapeValidation
+from app.memory.provenance import VerifiedMemoryProvenance
 from app.models.domain import FailureStage
 from app.sql.models import (
     QueryExecution,
@@ -48,6 +49,12 @@ class GenerationMode(StrEnum):
     GROUNDED = "GROUNDED"
 
 
+class GenerationPath(StrEnum):
+    DIRECT_SQL = "DIRECT_SQL"
+    DIRECT_SQL_WITH_VERIFIED_MEMORY = "DIRECT_SQL_WITH_VERIFIED_MEMORY"
+    GOVERNED_METRIC = "GOVERNED_METRIC"
+
+
 class TextToSqlResult(BaseModel):
     status: TextToSqlStatus
     correlation_id: str | None = None
@@ -78,3 +85,6 @@ class TextToSqlResult(BaseModel):
     provider_calls_attempted: int = 0
     provider_calls_succeeded: int = 0
     provider_calls_failed: int = 0
+    generation_path: GenerationPath = GenerationPath.DIRECT_SQL
+    verified_memory_used: bool = False
+    verified_memory_provenance: VerifiedMemoryProvenance | None = None

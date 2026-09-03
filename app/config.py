@@ -11,6 +11,12 @@ class GovernedMetricsMode(StrEnum):
     ON = "on"
 
 
+class VerifiedMemoryMode(StrEnum):
+    OFF = "off"
+    SHADOW = "shadow"
+    ON = "on"
+
+
 class Settings(BaseSettings):
     app_env: str = Field(default="local", validation_alias="APP_ENV")
     database_url: str = Field(
@@ -69,6 +75,20 @@ class Settings(BaseSettings):
     governed_metrics_shadow_execute: bool = Field(
         default=False,
         validation_alias="DECISION_SQL_GOVERNED_METRICS_SHADOW_EXECUTE",
+    )
+    verified_query_memory_mode: VerifiedMemoryMode = Field(
+        default=VerifiedMemoryMode.OFF,
+        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_MODE",
+    )
+    verified_query_memory_shadow_sample_rate: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_SHADOW_SAMPLE_RATE",
+    )
+    verified_query_memory_shadow_execute: bool = Field(
+        default=False,
+        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_SHADOW_EXECUTE",
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

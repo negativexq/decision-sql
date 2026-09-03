@@ -35,8 +35,9 @@ Question
   not yet the default production route. M3.5 adds stable semantic identity,
   lifecycle/version metadata, and execution provenance.
 - A provider-evaluated, verified-query-memory path for residual direct SQL
-  composition. M4 uses deterministic local retrieval and remains disabled by
-  default; retrieved SQL is context only and generated SQL still passes M1.
+  composition. M4 uses deterministic local retrieval and M4.1 integrates it
+  behind explicit OFF/SHADOW/ON controls; it remains disabled by default.
+  Retrieved SQL is context only and generated SQL still passes M1.
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
 - Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
@@ -179,7 +180,9 @@ The M3.4 routing contract and observability validation are documented in
 Semantic contract lifecycle and provenance are documented in
 [`docs/m35-semantic-contract-hardening.md`](docs/m35-semantic-contract-hardening.md).
 Verified Query Memory evaluation and its frozen corpus are documented in
-[`docs/m4-verified-query-memory.md`](docs/m4-verified-query-memory.md).
+[`docs/m4-verified-query-memory.md`](docs/m4-verified-query-memory.md); its
+default-off runtime integration is documented in
+[`docs/m41-verified-memory-integration-observability.md`](docs/m41-verified-memory-integration-observability.md).
 
 ## Roadmap
 
@@ -187,7 +190,8 @@ Completed: M0 Foundation, M1 Deterministic SQL Safety, M2 generation and
 evaluation research, M2.12 Window compiler research, M2.13 Defog external
 calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
 M3 Governed Semantic Metrics, M3.4 Governed Routing & Observability, M3.5
-Semantic Contract Hardening, and M4 Verified Query Memory.
+Semantic Contract Hardening, M4 Verified Query Memory, and M4.1 Verified Query
+Memory Integration & Observability.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
@@ -197,8 +201,10 @@ metric benchmark.
 M3.4 Feature-Flagged Governed Metric Routing & Observability and M3.5 Semantic
 Contract Hardening are now validated as explicit, bounded integration and
 governance layers. M4 Verified Query Memory is accepted for the frozen internal
-direct-path evaluation, but remains disabled by default. The production routing
-default remains **OFF**; activation is a separate operational decision.
+direct-path evaluation, and M4.1 integrates it behind a default-off runtime
+feature mode. The production routing default remains **OFF**; activation is a
+separate operational decision. M4.1 does not change the frozen retriever or
+corpus.
 
 Later work may cover temporal/value grounding, clarification and controlled repair, answer
 synthesis/provenance, final external evaluation, UserContext/RLS, and

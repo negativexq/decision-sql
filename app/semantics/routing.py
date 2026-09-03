@@ -8,7 +8,7 @@ from typing import Protocol
 from opentelemetry import trace
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.config import GovernedMetricsMode, Settings
+from app.config import GovernedMetricsMode, Settings, VerifiedMemoryMode
 from app.generation.governed_metric_grounding import (
     GovernedMetricGroundingDTO,
     grounding_to_request,
@@ -17,6 +17,7 @@ from app.generation.provider import (
     GovernedMetricGroundingProposal,
     LLMProviderError,
 )
+from app.memory.provenance import VerifiedMemoryProvenance
 from app.models.domain import TextToSqlRequest
 from app.observability.tracing import get_tracer
 from app.semantics.catalog import build_m3_catalog, public_metric_glossary
@@ -35,7 +36,7 @@ from app.sql.models import (
     SqlExecutionError,
     SqlPlanFailure,
 )
-from app.text_to_sql.models import TextToSqlResult, TextToSqlStatus
+from app.text_to_sql.models import GenerationPath, TextToSqlResult, TextToSqlStatus
 
 
 class MetricGroundingProvider(Protocol):
@@ -105,6 +106,7 @@ class GovernedRouteDecision(BaseModel):
     governed_execution: QueryExecution | None = None
     shadow_comparison: ShadowComparison | None = None
     semantic_provenance: SemanticExecutionProvenance | None = None
+    verified_memory_provenance: VerifiedMemoryProvenance | None = None
     diagnostics: dict[str, int | float | str | bool] = Field(default_factory=dict)
 
 
@@ -112,6 +114,14 @@ class _SafetyService(Protocol):
     def plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure: ...
 
     def execute(self, plan: QueryPlan) -> QueryExecution | SqlExecutionError: ...
+
+
+class _VerifiedMemoryResidualRunner(Protocol):
+    async def run(self, request: TextToSqlRequest) -> TextToSqlResult: ...
+
+    async def run_shadow(
+        self, request: TextToSqlRequest, baseline: TextToSqlResult
+    ) -> tuple[TextToSqlResult, VerifiedMemoryProvenance]: ...
 
 
 class GovernedMetricRouteService:
@@ -128,6 +138,7 @@ class GovernedMetricRouteService:
         shadow_execute: bool = False,
         tracer: trace.Tracer | None = None,
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
+        verified_memory: _VerifiedMemoryResidualRunner | None = None,
     ) -> None:
         self.direct_service = direct_service
         self.provider = provider
@@ -140,6 +151,7 @@ class GovernedMetricRouteService:
         self.shadow_execute = shadow_execute
         self.tracer = tracer or get_tracer()
         self.result_comparator = result_comparator
+        self.verified_memory = verified_memory
         self._metric_names = frozenset(metric.name for metric in self.catalog.metrics)
 
     @classmethod
@@ -153,6 +165,7 @@ class GovernedMetricRouteService:
         catalog: MetricCatalog | None = None,
         tracer: trace.Tracer | None = None,
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
+        verified_memory: _VerifiedMemoryResidualRunner | None = None,
     ) -> "GovernedMetricRouteService":
         """Build a route from settings without changing the direct service defaults."""
         return cls(
@@ -164,6 +177,7 @@ class GovernedMetricRouteService:
             shadow_execute=settings.governed_metrics_shadow_execute,
             tracer=tracer,
             result_comparator=result_comparator,
+            verified_memory=verified_memory,
         )
 
     async def run(self, request: TextToSqlRequest) -> GovernedRouteDecision:
@@ -242,6 +256,7 @@ class GovernedMetricRouteService:
                 reason=GovernedFallbackReason.NOT_APPLICABLE,
                 applicable=False,
                 grounding=grounding,
+                use_verified_memory=True,
             )
 
         try:
@@ -392,7 +407,17 @@ class GovernedMetricRouteService:
         provenance: SemanticExecutionProvenance | None = None,
         diagnostics: dict[str, int | float | str | bool] | None = None,
         governed_execution: QueryExecution | SqlExecutionError | None = None,
+        use_verified_memory: bool = False,
     ) -> GovernedRouteDecision:
+        memory_provenance = None
+        if use_verified_memory and self.verified_memory is not None:
+            if self.mode is GovernedMetricsMode.SHADOW and direct is not None:
+                direct, memory_provenance = await self.verified_memory.run_shadow(
+                    request, direct
+                )
+            elif self.mode is GovernedMetricsMode.ON and direct is None:
+                direct = await self.verified_memory.run(request)
+                memory_provenance = direct.verified_memory_provenance
         if direct is None:
             direct = await self.direct_service.run(request)
         return GovernedRouteDecision(
@@ -415,6 +440,7 @@ class GovernedMetricRouteService:
                 governed_execution if isinstance(governed_execution, QueryExecution) else None
             ),
             semantic_provenance=provenance,
+            verified_memory_provenance=memory_provenance,
             diagnostics=diagnostics or {},
         )
 
@@ -509,6 +535,7 @@ class GovernedMetricRouteService:
             model=None,
             provider_calls_attempted=1,
             provider_calls_succeeded=1,
+            generation_path=GenerationPath.GOVERNED_METRIC,
         )
         return GovernedRouteDecision(
             mode=self.mode,
@@ -561,6 +588,40 @@ class GovernedMetricRouteService:
                 "decision_sql.semantic.lifecycle_status",
                 provenance.metric_lifecycle_status.value,
             )
+        if decision.verified_memory_provenance is not None:
+            memory = decision.verified_memory_provenance
+            span.set_attribute(
+                "decision_sql.verified_memory.enabled",
+                memory.mode is not VerifiedMemoryMode.OFF,
+            )
+            span.set_attribute("decision_sql.verified_memory.mode", memory.mode.value)
+            span.set_attribute(
+                "decision_sql.verified_memory.corpus_version", memory.corpus_version
+            )
+            span.set_attribute(
+                "decision_sql.verified_memory.corpus_hash_prefix", memory.corpus_hash[:16]
+            )
+            span.set_attribute(
+                "decision_sql.verified_memory.retriever_version", memory.retriever_version
+            )
+            span.set_attribute("decision_sql.verified_memory.k", memory.k)
+            span.set_attribute(
+                "decision_sql.verified_memory.hit_count", len(memory.retrieved_example_ids)
+            )
+            span.set_attribute(
+                "decision_sql.verified_memory.outcome", memory.outcome.value
+            )
+            span.set_attribute("decision_sql.verified_memory.sampled", memory.sampled)
+            if memory.fallback_reason is not None:
+                span.set_attribute(
+                    "decision_sql.verified_memory.fallback_reason",
+                    memory.fallback_reason.value,
+                )
+            if memory.shadow_result_comparison is not None:
+                span.set_attribute(
+                    "decision_sql.verified_memory.shadow_result_comparison",
+                    memory.shadow_result_comparison.value,
+                )
         span.set_attribute("decision_sql.route.total_latency_ms", latency_ms)
 
 

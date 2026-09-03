@@ -65,6 +65,10 @@ class VerifiedQueryExample(BaseModel):
     content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
+class MemoryCorpusError(ValueError):
+    """The server-owned verified corpus does not satisfy its contract."""
+
+
 def build_verified_query_example(
     *,
     example_id: str,
@@ -147,6 +151,35 @@ def canonical_example_payload(example: VerifiedQueryExample) -> dict[str, Any]:
     data = example.model_dump(mode="json")
     data.pop("content_hash")
     return data
+
+
+def memory_corpus_hash(examples: tuple[VerifiedQueryExample, ...]) -> str:
+    """Hash the corpus in its server-owned, deterministic order."""
+    return sha256(
+        _canonical_json([canonical_example_payload(example) for example in examples]).encode()
+    ).hexdigest()
+
+
+def validate_memory_corpus(
+    examples: tuple[VerifiedQueryExample, ...], expected_hash: str | None = None
+) -> str:
+    """Validate IDs, content hashes, and optional frozen corpus identity."""
+    if len({example.example_id for example in examples}) != len(examples):
+        raise MemoryCorpusError("verified memory corpus contains duplicate example IDs")
+    for example in examples:
+        actual = sha256(_canonical_json(canonical_example_payload(example)).encode()).hexdigest()
+        if actual != example.content_hash:
+            raise MemoryCorpusError(f"content hash mismatch for {example.example_id}")
+        try:
+            parse_one(example.sql, read="postgres")
+        except Exception as error:
+            raise MemoryCorpusError(
+                f"verified memory SQL does not parse for {example.example_id}"
+            ) from error
+    actual_hash = memory_corpus_hash(examples)
+    if expected_hash is not None and actual_hash != expected_hash:
+        raise MemoryCorpusError("verified memory corpus hash does not match the frozen contract")
+    return actual_hash
 
 
 def _canonical_json(value: object) -> str:

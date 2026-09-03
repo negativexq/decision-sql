@@ -20,7 +20,7 @@ from app.memory.models import (
     VerificationType,
     VerifiedQueryExample,
     build_verified_query_example,
-    canonical_example_payload,
+    memory_corpus_hash,
 )
 from app.semantics.catalog import build_m3_catalog
 
@@ -274,7 +274,7 @@ def build_benchmark() -> tuple[M4BenchmarkQuestion, ...]:
 
 def corpus_hash(examples: tuple[VerifiedQueryExample, ...] | None = None) -> str:
     examples = examples or build_memory_corpus()
-    return _hash_payload([canonical_example_payload(example) for example in examples])
+    return memory_corpus_hash(examples)
 
 
 def benchmark_hash(questions: tuple[M4BenchmarkQuestion, ...] | None = None) -> str:

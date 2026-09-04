@@ -1,0 +1,17 @@
+{
+  "contract_id": "decision-sql-residual-provenance-v1",
+  "schema_version": "1",
+  "mode": "append_only_behavior_neutral_runtime_events",
+  "event_envelope": ["run_id", "case_id", "stage", "event_type", "sequence", "schema_version", "payload", "payload_hash"],
+  "profiles": {
+    "MEMORY_DIAGNOSTIC": ["retrieval_attempted", "retriever_version", "retriever_config_hash", "memory_corpus_hash", "query_input_hash", "top_k_requested", "ranked_results", "selected_memory_ids", "memory_use_mode", "rendered_memory_context_hash"],
+    "GOVERNED_DIAGNOSTIC": ["grounding_request_hash", "grounding_output", "selected_metric_id", "selected_dimension_ids", "compiler_input_hash", "compiler_version_hash", "compiled_sql_hash", "provider_request_hash", "provider_response_id", "raw_provider_output", "candidate_extraction_status", "candidate_sql_hash"],
+    "DIRECT_DIAGNOSTIC": ["schema_context_hash", "generation_context_manifest_hash", "rendered_memory_context_hash", "provider_request_hash", "provider_response_id", "raw_provider_output", "candidate_extraction_status", "candidate_sql_hash"],
+    "FULL_DIAGNOSTIC": ["run_id", "case_id", "stage", "event_type", "sequence", "schema_version", "payload_hash", "router_version_hash", "route_input_hash", "route_output", "retrieval_attempted", "retriever_version", "retriever_config_hash", "memory_corpus_hash", "query_input_hash", "top_k_requested", "ranked_results", "selected_memory_ids", "memory_use_mode", "rendered_memory_context_hash", "grounding_request_hash", "grounding_output", "selected_metric_id", "selected_dimension_ids", "compiler_input_hash", "compiler_version_hash", "compiled_sql_hash", "schema_context_hash", "generation_context_manifest_hash", "provider_request_hash", "provider_response_id", "raw_provider_output", "candidate_extraction_status", "candidate_sql_hash", "m1_outcome", "m1_rejection_code", "execution_outcome", "evaluator_v1_outcome", "binder_v2_status"]
+  },
+  "runtime_boundary": {"collector_receives": "only values already present at the named runtime seam", "collector_never_receives": ["reference SQL", "reference result", "result contract", "expected route", "V1/V2 correctness", "residual label"], "product_failure_policy": "fail open; decision result and provider/M1 behavior remain unchanged", "diagnostic_failure_policy": "mandatory provenance loss invalidates causal diagnosis for the affected case/run under a precommitted completeness gate"},
+  "retention": {"canonical": "append-only JSONL per diagnostic run", "raw_sql": "do not duplicate immutable memory/reference SQL; retain hashes and stable IDs", "raw_provider_output": "bounded assistant content in diagnostic ledger only", "results": "bounded result metadata and existing evaluator hashes; no unrestricted rows"},
+  "hash_policy": "canonical UTF-8 JSON with sorted object keys, preserved meaningful list order, explicit nulls, no timestamps in semantic hashes",
+  "offline_diagnostics": ["AST motifs for memory/candidate/reference SQL", "semantic comparison against benchmark truth after runtime capture", "result mismatch classification", "V1/V2 outcomes"],
+  "readiness_gate": "all mandatory fields present for 100% of cases in a future fresh diagnostic run before causal mechanism conclusions are accepted"
+}

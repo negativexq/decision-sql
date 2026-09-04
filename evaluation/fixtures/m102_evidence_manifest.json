@@ -1,0 +1,28 @@
+{
+  "protocol_id": "decision-sql-residual-provenance-v1",
+  "historical_inputs": [
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/final_summary.json", "hash": "3ba4d1c4ab9ee1859576c3672338ddd653b40dd034d8fd4db95d868ea27513a1", "use": "M10R score and completion status"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/reference_results.json", "hash": "8730aacf8d80d719d492f1fa7d66a34915cc1795721ad0b4e9697514bfc122f9", "use": "frozen reference execution identity only"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/provider_protocol.json", "hash": "443d3ab59635bc8c3823bfced6c13a6963df60638e9f24586675604349f3c2e2", "use": "frozen provider protocol identity"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/master_protocol.json", "hash": "1212542536762b0688e465dac3700d07e82e26e252064818996449f5ecb89b18", "use": "frozen protocol identity"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/case_ledger.jsonl", "hash": "0eb4d4d640f3759f24da40ad0e242950eedc1a39fb6e039968e9e9c94e346f49", "use": "route, candidate, stage and existing provider capture boundary"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/primary_results.json", "hash": "e327a6bd3b9272549d5e5cea7fa4edcc836a6841f7627c87b27d96a78c67640d", "use": "authoritative V1 outcome"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/v2_shadow_results.json", "hash": "536a1d77883d754e4161d4a0a0bb648013333b7f4f37a85d33f6eafb1dfb9497", "use": "V2 shadow status only"},
+    {"path": "evaluation/results/m10r/clean-rebaseline-20260904/residual_results.json", "hash": "38d914526c0debf68da291c9a1a7070c5b4ad3d906ea8bf16f25831b30900e04", "use": "historical residual stage counts only"},
+    {"path": "evaluation/fixtures/m101_residual_taxonomy.json", "hash": "e6e47e41d94638c90b77f10216d7450a43db440bb2fa0bb91f91430cd8ca19d0", "use": "immutable M10.1 taxonomy"},
+    {"path": "evaluation/fixtures/m101_evidence_manifest.json", "hash": "7c25341a3cc878989b1ee66d4d4dbf3d5589cfd8ac08584289fbdea83da227b5", "use": "immutable M10.1 evidence boundary"},
+    {"path": "evaluation/fixtures/m101_audit_protocol.json", "hash": "b833439f0c0c515aa77797fa93e6a402740d8d7f85e5f069414f22f09d459c18", "use": "immutable M10.1 audit rules"},
+    {"path": "evaluation/results/m101/residual-audit-20260904/automated_failure_ledger.json", "hash": "548a543d3a1f66e19f5403074634736b87dafa4e639fca979cd1b074bb718789", "use": "immutable M10.1 automated audit identity"},
+    {"path": "evaluation/results/m101/residual-audit-20260904/final_decision.json", "hash": "007d1c0442330694fd393cb24f61fa7ca94ed41bf0275652ce3180e537505632", "use": "immutable M10.1 decision identity"}
+  ],
+  "source_boundaries": {
+    "memory_runtime": "app/memory/runtime.py:VerifiedMemoryRuntime._run_memory",
+    "memory_retriever": "app/memory/retrieval.py:VerifiedQueryRetriever.retrieve",
+    "memory_renderer": "app/memory/prompt.py:render_verified_examples",
+    "governed_route": "app/semantics/routing.py:GovernedMetricRouteService._governed_attempt",
+    "direct_context": "app/text_to_sql/service.py:TextToSqlService._run",
+    "provider": "app/generation/provider.py:OpenAICompatibleProvider.propose_sql",
+    "m1": "app/sql/service.py:SqlSafetyService.plan/execute"
+  },
+  "forbidden": ["rerun retrieval", "rerun grounding", "rerun generation", "reference-aware runtime capture", "score change"]
+}

@@ -1,0 +1,14 @@
+{
+  "protocol_id": "decision-sql-residual-provenance-v1",
+  "mode": "future_instrumentation_only",
+  "tests": [
+    {"id": "NOOP_REQUEST_IDENTITY", "fixture": "deterministic non-provider request", "sink_off_vs_on": ["router output", "retriever result order/IDs/scores", "grounding DTO", "compiler input", "compiled SQL", "rendered provider payload", "candidate extraction", "M1 plan input"], "provider_assertion": "compare request payload identity; do not compare nondeterministic answer"},
+    {"id": "RETRIEVER_SINGLE_MATERIALIZATION", "fixture": "retriever returns a tuple of immutable results", "assert": ["same selected IDs", "same order including ties", "same float scores", "one retrieval call", "no iterator consumption by sink"]},
+    {"id": "CONTEXT_BYTE_IDENTITY", "fixture": "memory and schema additions", "assert": ["same final context bytes", "same context hash", "same provider messages"]},
+    {"id": "FAIL_OPEN_PRODUCT", "fixture": "sink raises on write", "assert": ["decision result unchanged", "provider call unchanged", "M1 input unchanged", "failure reported out of band when available"]},
+    {"id": "DIAGNOSTIC_COMPLETENESS", "fixture": "missing mandatory event", "assert": ["case marked provenance-incomplete", "no causal conclusion accepted", "no score substitution"]},
+    {"id": "SECRET_REJECTION", "fixture": "payload containing authorization/database credentials", "assert": ["sink rejects prohibited fields", "no secret persisted"]},
+    {"id": "ASYNC_ORDER", "fixture": "async orchestration with buffered sink", "assert": ["event sequence preserves retrieval before context before provider response", "sink cannot block or reorder decisions"]}
+  ],
+  "implementation_constraints": ["snapshot immutable DTOs", "never serialize generators twice", "do not pass reference/gold fields to sink", "do not log raw result rows", "capture actual final context after any future truncation"]
+}

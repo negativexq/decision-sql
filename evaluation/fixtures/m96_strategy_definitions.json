@@ -1,0 +1,122 @@
+{
+  "audit_id": "decisionsql-m96-evaluator-applicability-strategy-audit",
+  "audit_version": "m96-evaluator-applicability-v1",
+  "dimensions": [
+    "D1_FULL_DENOMINATOR_COVERAGE",
+    "D2_NO_REFERENCE_LEAKAGE",
+    "D3_NO_BEST_OF",
+    "D4_CROSS_MODEL_COMPARABILITY",
+    "D5_ROUTE_INDEPENDENCE",
+    "D6_M1_CHANGE_REQUIRED",
+    "D7_BINDER_UNIVERSALITY_REQUIRED",
+    "D8_EVALUATOR_FALSE_NEGATIVE_RISK",
+    "D9_PROTOCOL_COMPLEXITY",
+    "D10_RESIDUAL_DIAGNOSIS_CLARITY",
+    "D11_HISTORICAL_COMPARABILITY",
+    "D12_M10_READINESS"
+  ],
+  "strategies": {
+    "S1_V2_UNIVERSAL": {
+      "definition": "Every M10 candidate must become a valid BoundResult and V2 is authoritative.",
+      "diagnostic_eligible": false,
+      "invalidation": "Current M1 rejects required CTE/derived output scopes and universal V2 binding is unproven.",
+      "primary_eligible": false,
+      "ratings": {
+        "D10_RESIDUAL_DIAGNOSIS_CLARITY": "WEAK",
+        "D11_HISTORICAL_COMPARABILITY": "WEAK",
+        "D12_M10_READINESS": "UNACCEPTABLE",
+        "D1_FULL_DENOMINATOR_COVERAGE": "WEAK",
+        "D2_NO_REFERENCE_LEAKAGE": "STRONG",
+        "D3_NO_BEST_OF": "STRONG",
+        "D4_CROSS_MODEL_COMPARABILITY": "STRONG",
+        "D5_ROUTE_INDEPENDENCE": "STRONG",
+        "D6_M1_CHANGE_REQUIRED": "UNACCEPTABLE",
+        "D7_BINDER_UNIVERSALITY_REQUIRED": "UNACCEPTABLE",
+        "D8_EVALUATOR_FALSE_NEGATIVE_RISK": "STRONG",
+        "D9_PROTOCOL_COMPLEXITY": "WEAK"
+      }
+    },
+    "S2_V1_AUTHORITATIVE_V2_SHADOW": {
+      "definition": "Frozen V1 is authoritative for every executable M10 case; V2 runs only as a reference-blind shadow when binding is valid.",
+      "diagnostic_eligible": true,
+      "invalidation": null,
+      "primary_eligible": true,
+      "ratings": {
+        "D10_RESIDUAL_DIAGNOSIS_CLARITY": "STRONG",
+        "D11_HISTORICAL_COMPARABILITY": "STRONG",
+        "D12_M10_READINESS": "STRONG",
+        "D1_FULL_DENOMINATOR_COVERAGE": "STRONG",
+        "D2_NO_REFERENCE_LEAKAGE": "STRONG",
+        "D3_NO_BEST_OF": "STRONG",
+        "D4_CROSS_MODEL_COMPARABILITY": "STRONG",
+        "D5_ROUTE_INDEPENDENCE": "STRONG",
+        "D6_M1_CHANGE_REQUIRED": "STRONG",
+        "D7_BINDER_UNIVERSALITY_REQUIRED": "STRONG",
+        "D8_EVALUATOR_FALSE_NEGATIVE_RISK": "ACCEPTABLE",
+        "D9_PROTOCOL_COMPLEXITY": "STRONG"
+      }
+    },
+    "S3_PREDECLARED_CASE_LEVEL_EVALUATOR": {
+      "definition": "Each benchmark case receives a frozen V1 or V2 evaluator designation before provider execution.",
+      "diagnostic_eligible": false,
+      "invalidation": "A fixed mixed evaluator assignment is harder to interpret and can couple route metadata to evaluator semantics.",
+      "primary_eligible": false,
+      "ratings": {
+        "D10_RESIDUAL_DIAGNOSIS_CLARITY": "WEAK",
+        "D11_HISTORICAL_COMPARABILITY": "WEAK",
+        "D12_M10_READINESS": "ACCEPTABLE",
+        "D1_FULL_DENOMINATOR_COVERAGE": "ACCEPTABLE",
+        "D2_NO_REFERENCE_LEAKAGE": "STRONG",
+        "D3_NO_BEST_OF": "STRONG",
+        "D4_CROSS_MODEL_COMPARABILITY": "ACCEPTABLE",
+        "D5_ROUTE_INDEPENDENCE": "WEAK",
+        "D6_M1_CHANGE_REQUIRED": "STRONG",
+        "D7_BINDER_UNIVERSALITY_REQUIRED": "WEAK",
+        "D8_EVALUATOR_FALSE_NEGATIVE_RISK": "ACCEPTABLE",
+        "D9_PROTOCOL_COMPLEXITY": "WEAK"
+      }
+    },
+    "S4_DETERMINISTIC_GENERATED_SIDE_APPLICABILITY": {
+      "definition": "A frozen generated-side function selects V2 or V1 before comparison using only candidate-side applicability evidence.",
+      "diagnostic_eligible": true,
+      "invalidation": "Two models can receive different authoritative evaluators for the same case because their SQL shapes differ.",
+      "primary_eligible": false,
+      "ratings": {
+        "D10_RESIDUAL_DIAGNOSIS_CLARITY": "ACCEPTABLE",
+        "D11_HISTORICAL_COMPARABILITY": "WEAK",
+        "D12_M10_READINESS": "WEAK",
+        "D1_FULL_DENOMINATOR_COVERAGE": "STRONG",
+        "D2_NO_REFERENCE_LEAKAGE": "STRONG",
+        "D3_NO_BEST_OF": "STRONG",
+        "D4_CROSS_MODEL_COMPARABILITY": "WEAK",
+        "D5_ROUTE_INDEPENDENCE": "WEAK",
+        "D6_M1_CHANGE_REQUIRED": "STRONG",
+        "D7_BINDER_UNIVERSALITY_REQUIRED": "ACCEPTABLE",
+        "D8_EVALUATOR_FALSE_NEGATIVE_RISK": "ACCEPTABLE",
+        "D9_PROTOCOL_COMPLEXITY": "WEAK"
+      }
+    },
+    "S5_STRICT_CORE_PLUS_CONTRACT_DIAGNOSTIC": {
+      "definition": "A universally applicable strict core is authoritative while contract-aware V2 is diagnostic; the existing accepted instance is V1 authoritative plus V2 shadow.",
+      "diagnostic_eligible": true,
+      "invalidation": null,
+      "primary_eligible": true,
+      "ratings": {
+        "D10_RESIDUAL_DIAGNOSIS_CLARITY": "STRONG",
+        "D11_HISTORICAL_COMPARABILITY": "STRONG",
+        "D12_M10_READINESS": "STRONG",
+        "D1_FULL_DENOMINATOR_COVERAGE": "STRONG",
+        "D2_NO_REFERENCE_LEAKAGE": "STRONG",
+        "D3_NO_BEST_OF": "STRONG",
+        "D4_CROSS_MODEL_COMPARABILITY": "STRONG",
+        "D5_ROUTE_INDEPENDENCE": "STRONG",
+        "D6_M1_CHANGE_REQUIRED": "STRONG",
+        "D7_BINDER_UNIVERSALITY_REQUIRED": "STRONG",
+        "D8_EVALUATOR_FALSE_NEGATIVE_RISK": "ACCEPTABLE",
+        "D9_PROTOCOL_COMPLEXITY": "STRONG"
+      }
+    }
+  },
+  "strategy_definition_hash": "d09f85b4ef2dd28ed47422e7bd6d5d8a06fd9f29e092e15da938266a6fc92257",
+  "strategy_matrix_hash": "b5e6149de311b46ce0ea61d612220aef3ef7e5aa56e54c0fb81e2b59bb23caa3"
+}

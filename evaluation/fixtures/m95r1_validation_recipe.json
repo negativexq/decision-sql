@@ -1,0 +1,44 @@
+{
+  "corpus_id": "decisionsql-m95r1-binding-v2-independent",
+  "version": "m95r1-binding-v2-independent-v1",
+  "seed": "m95r1-independent-v1",
+  "case_id_prefix": "M95R1",
+  "counts": {
+    "SEMANTICALLY_CORRECT_POSITIVE": 60,
+    "GOVERNED_PROVENANCE": 20,
+    "DIRECT": 40,
+    "SEMANTICALLY_WRONG_EXECUTABLE": 40,
+    "FAIL_CLOSED_AMBIGUOUS_OR_UNSUPPORTED": 20,
+    "TOTAL": 120
+  },
+  "direct_positive_groups": {
+    "UNIQUE_DIRECT_COLUMN_QUALIFIED_MULTI_TABLE": 8,
+    "CTE_OR_DERIVED_PASSTHROUGH": 8,
+    "AGGREGATE_OR_DISTINCT": 8,
+    "ARITHMETIC_OR_RATIO": 6,
+    "CASE_OR_SAFE_CAST": 4,
+    "WINDOW": 4,
+    "SCALAR_OR_BOUNDED_NESTED_EXPRESSION": 2
+  },
+  "wrong_negative_groups": {
+    "WRONG_SOURCE_OR_LEAF": 8,
+    "WRONG_AGGREGATE_OR_DISTINCT": 6,
+    "WRONG_ARITHMETIC_OR_RATIO": 6,
+    "WRONG_WINDOW_SEMANTICS": 6,
+    "WRONG_CTE_DERIVED_LINEAGE": 4,
+    "WRONG_RELATION_SOURCE_ROLE": 4,
+    "WRONG_OUTPUT_SEMANTIC_IDENTITY": 6
+  },
+  "fail_closed_groups": {
+    "SELF_JOIN_OR_SCOPE_AMBIGUITY": 6,
+    "MULTI_SOURCE_SAME_COLUMN_AMBIGUITY": 4,
+    "MULTIPLE_SLOT_CANDIDATES": 4,
+    "UNSUPPORTED_EXPRESSION": 3,
+    "COMPETING_PROJECTIONS_OR_DUPLICATE_SLOT": 3
+  },
+  "oracle": {
+    "authored_before_binder_execution": true,
+    "binder_inputs": ["generated_sql", "query_execution", "binding_spec", "schema_map", "governed_provenance"],
+    "forbidden_binder_inputs": ["reference_sql", "reference_rows", "reference_values", "oracle", "evaluator"]
+  }
+}

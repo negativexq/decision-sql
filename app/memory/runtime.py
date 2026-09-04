@@ -28,6 +28,14 @@ from app.memory.retrieval import (
 )
 from app.models.domain import TextToSqlRequest
 from app.observability.tracing import get_tracer
+from app.provenance.canonical import semantic_hash, text_hash
+from app.provenance.models import (
+    ProvenanceEventType,
+    ProvenanceSink,
+    ProvenanceStage,
+    recorder_for,
+)
+from app.provenance.sink import NoOpProvenanceSink
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
 from app.text_to_sql.models import GenerationPath, TextToSqlResult, TextToSqlStatus
 
@@ -67,6 +75,7 @@ class VerifiedMemoryRuntime:
         settings: Settings | None = None,
         tracer: trace.Tracer | None = None,
         expected_corpus_hash: str = FROZEN_MEMORY_CORPUS_HASH,
+        provenance_sink: ProvenanceSink | None = None,
     ) -> None:
         self.direct_service = direct_service
         config = settings or get_settings()
@@ -74,6 +83,7 @@ class VerifiedMemoryRuntime:
         self.shadow_sample_rate = config.verified_query_memory_shadow_sample_rate
         self.shadow_execute = config.verified_query_memory_shadow_execute
         self.tracer = tracer or get_tracer()
+        self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self.retriever_config = FROZEN_RETRIEVER_CONFIG
         self.corpus_hash = expected_corpus_hash
         self.retriever: VerifiedQueryRetriever | None = None
@@ -135,14 +145,15 @@ class VerifiedMemoryRuntime:
         execute: bool,
         fallback_result: TextToSqlResult | None = None,
     ) -> TextToSqlResult:
+        event_recorder = recorder_for(self.provenance_sink, request)
         if self.retriever is None:
-            provenance = self._provenance(
+            memory_provenance = self._provenance(
                 outcome=VerifiedMemoryOutcome.DISABLED,
                 reason=VerifiedMemoryFallbackReason.FEATURE_OFF,
                 sampled=False,
             )
             return self._annotate(
-                await self._fallback_direct(request, fallback_result), provenance, used=False
+                await self._fallback_direct(request, fallback_result), memory_provenance, used=False
             )
         started = perf_counter()
         try:
@@ -161,33 +172,63 @@ class VerifiedMemoryRuntime:
                         "decision_sql.verified_memory.top1_score", retrieved[0].final_score
                     )
         except Exception:
-            provenance = self._provenance(
+            event_recorder.emit(
+                ProvenanceStage.MEMORY_RETRIEVAL_RESULT,
+                ProvenanceEventType.MEMORY_RETRIEVAL_COMPLETED,
+                self._retrieval_payload(request, ()),
+            )
+            event_recorder.emit(
+                ProvenanceStage.MEMORY_SELECTION,
+                ProvenanceEventType.MEMORY_SELECTION_COMPLETED,
+                self._selection_payload((), "FALLBACK_DIRECT", None),
+            )
+            memory_provenance = self._provenance(
                 outcome=VerifiedMemoryOutcome.RETRIEVAL_FAILURE,
                 reason=VerifiedMemoryFallbackReason.RETRIEVAL_ERROR,
                 sampled=True,
                 latency_ms=(perf_counter() - started) * 1000,
             )
             return self._annotate(
-                await self._fallback_direct(request, fallback_result), provenance, used=False
+                await self._fallback_direct(request, fallback_result), memory_provenance, used=False
             )
 
+        event_recorder.emit(
+            ProvenanceStage.MEMORY_RETRIEVAL_RESULT,
+            ProvenanceEventType.MEMORY_RETRIEVAL_COMPLETED,
+            self._retrieval_payload(request, retrieved),
+        )
+
         if not retrieved:
-            provenance = self._provenance(
+            event_recorder.emit(
+                ProvenanceStage.MEMORY_SELECTION,
+                ProvenanceEventType.MEMORY_SELECTION_COMPLETED,
+                self._selection_payload((), "NO_MEMORY", None),
+            )
+            memory_provenance = self._provenance(
                 outcome=VerifiedMemoryOutcome.NO_HIT,
                 reason=VerifiedMemoryFallbackReason.NO_RETRIEVAL_HIT,
                 sampled=True,
                 latency_ms=(perf_counter() - started) * 1000,
             )
             return self._annotate(
-                await self._fallback_direct(request, fallback_result), provenance, used=False
+                await self._fallback_direct(request, fallback_result), memory_provenance, used=False
             )
 
         try:
             with self.tracer.start_as_current_span("decision_sql.memory.prompt") as span:
                 span.set_attribute("decision_sql.verified_memory.example_count", len(retrieved))
                 addition = render_verified_examples(tuple(item.example for item in retrieved))
+            event_recorder.emit(
+                ProvenanceStage.MEMORY_SELECTION,
+                ProvenanceEventType.MEMORY_SELECTION_COMPLETED,
+                self._selection_payload(
+                    tuple(item.example.example_id for item in retrieved),
+                    "CONTEXTUAL_EXAMPLE_INJECTION",
+                    text_hash(addition),
+                ),
+            )
         except Exception:
-            provenance = self._provenance(
+            memory_provenance = self._provenance(
                 retrieved=retrieved,
                 outcome=VerifiedMemoryOutcome.MEMORY_GENERATION_FAILURE,
                 reason=VerifiedMemoryFallbackReason.PROVIDER_ERROR,
@@ -195,29 +236,64 @@ class VerifiedMemoryRuntime:
                 latency_ms=(perf_counter() - started) * 1000,
             )
             return self._annotate(
-                await self._fallback_direct(request, fallback_result), provenance, used=False
+                await self._fallback_direct(request, fallback_result), memory_provenance, used=False
             )
         memory_request = request.model_copy(update={"execute": execute})
         try:
             result = await self.direct_service.run_with_context_addition(memory_request, addition)
         except Exception:
-            provenance = self._provenance(
+            memory_provenance = self._provenance(
                 retrieved=retrieved,
                 outcome=VerifiedMemoryOutcome.MEMORY_GENERATION_FAILURE,
                 reason=VerifiedMemoryFallbackReason.PROVIDER_ERROR,
                 sampled=True,
                 latency_ms=(perf_counter() - started) * 1000,
             )
-            return self._failed_result(memory_request, provenance)
+            return self._failed_result(memory_request, memory_provenance)
         outcome, reason = _result_outcome(result)
-        provenance = self._provenance(
+        memory_provenance = self._provenance(
             retrieved=retrieved,
             outcome=outcome,
             reason=reason,
             sampled=True,
             latency_ms=(perf_counter() - started) * 1000,
         )
-        return self._annotate(result, provenance, used=outcome is VerifiedMemoryOutcome.SUCCESS)
+        return self._annotate(
+            result, memory_provenance, used=outcome is VerifiedMemoryOutcome.SUCCESS
+        )
+
+    def _retrieval_payload(
+        self, request: TextToSqlRequest, retrieved: tuple[RetrievedExample, ...]
+    ) -> dict[str, object]:
+        return {
+            "retrieval_attempted": True,
+            "retriever_version": self.retriever_config.version,
+            "retriever_config_hash": semantic_hash(
+                self.retriever_config.model_dump(mode="json")
+            ),
+            "memory_corpus_hash": self.corpus_hash,
+            "query_input_hash": text_hash(request.question),
+            "top_k_requested": self.retriever_config.k,
+            "ranked_results": [
+                {
+                    "memory_entry_id": item.example.example_id,
+                    "rank": rank,
+                    "score": item.final_score,
+                    "score_type": "weighted_lexical_schema",
+                }
+                for rank, item in enumerate(retrieved, start=1)
+            ],
+        }
+
+    @staticmethod
+    def _selection_payload(
+        selected_ids: tuple[str, ...], mode: str, rendered_hash: str | None
+    ) -> dict[str, object]:
+        return {
+            "selected_memory_ids": list(selected_ids),
+            "memory_use_mode": mode,
+            "rendered_memory_context_hash": rendered_hash,
+        }
 
     async def _fallback_direct(
         self, request: TextToSqlRequest, fallback_result: TextToSqlResult | None

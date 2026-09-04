@@ -20,6 +20,14 @@ from app.generation.provider import (
 from app.memory.provenance import VerifiedMemoryProvenance
 from app.models.domain import TextToSqlRequest
 from app.observability.tracing import get_tracer
+from app.provenance.canonical import semantic_hash, text_hash
+from app.provenance.models import (
+    ProvenanceEventType,
+    ProvenanceSink,
+    ProvenanceStage,
+    recorder_for,
+)
+from app.provenance.sink import NoOpProvenanceSink
 from app.semantics.catalog import build_m3_catalog, public_metric_glossary
 from app.semantics.compiler import MetricCompilationFailure, MetricCompiler
 from app.semantics.contract import (
@@ -127,6 +135,8 @@ class _VerifiedMemoryResidualRunner(Protocol):
 class GovernedMetricRouteService:
     """Select direct or governed execution without duplicating semantic rules."""
 
+    _ROUTER_VERSION_HASH = semantic_hash("decision-sql-governed-route-v1")
+
     def __init__(
         self,
         direct_service: DirectQueryRunner,
@@ -139,6 +149,7 @@ class GovernedMetricRouteService:
         tracer: trace.Tracer | None = None,
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
         verified_memory: _VerifiedMemoryResidualRunner | None = None,
+        provenance_sink: ProvenanceSink | None = None,
     ) -> None:
         self.direct_service = direct_service
         self.provider = provider
@@ -152,6 +163,7 @@ class GovernedMetricRouteService:
         self.tracer = tracer or get_tracer()
         self.result_comparator = result_comparator
         self.verified_memory = verified_memory
+        self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self._metric_names = frozenset(metric.name for metric in self.catalog.metrics)
 
     @classmethod
@@ -166,6 +178,7 @@ class GovernedMetricRouteService:
         tracer: trace.Tracer | None = None,
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
         verified_memory: _VerifiedMemoryResidualRunner | None = None,
+        provenance_sink: ProvenanceSink | None = None,
     ) -> "GovernedMetricRouteService":
         """Build a route from settings without changing the direct service defaults."""
         return cls(
@@ -178,10 +191,12 @@ class GovernedMetricRouteService:
             tracer=tracer,
             result_comparator=result_comparator,
             verified_memory=verified_memory,
+            provenance_sink=provenance_sink,
         )
 
     async def run(self, request: TextToSqlRequest) -> GovernedRouteDecision:
         started = perf_counter()
+        event_recorder = recorder_for(self.provenance_sink, request)
         with self.tracer.start_as_current_span("decision_sql.route") as span:
             if self.mode is GovernedMetricsMode.OFF:
                 direct = await self.direct_service.run(request)
@@ -197,6 +212,15 @@ class GovernedMetricRouteService:
                 )
                 decision = await self._governed_attempt(request, shadow_direct)
             self._record_route(span, decision, (perf_counter() - started) * 1000)
+            event_recorder.emit(
+                ProvenanceStage.ROUTER,
+                ProvenanceEventType.ROUTE_DECIDED,
+                {
+                    "router_version_hash": self._ROUTER_VERSION_HASH,
+                    "route_input_hash": semantic_hash(request.model_dump(mode="json")),
+                    "route_output": decision.path.value,
+                },
+            )
             return decision
 
     async def _governed_attempt(
@@ -204,7 +228,25 @@ class GovernedMetricRouteService:
     ) -> GovernedRouteDecision:
         proposal: GovernedMetricGroundingProposal | None = None
         grounding: GovernedMetricGroundingDTO | None = None
+        event_recorder = recorder_for(self.provenance_sink, request)
         started = perf_counter()
+        grounding_request_hash = semantic_hash(
+            {
+                "operation": "metric_grounding",
+                "question": request.question,
+                "glossary": self.glossary,
+            }
+        )
+        event_recorder.emit(
+            ProvenanceStage.GOVERNED_GROUNDING_REQUEST,
+            ProvenanceEventType.GOVERNED_GROUNDING_REQUESTED,
+            {"grounding_request_hash": grounding_request_hash},
+        )
+        event_recorder.emit(
+            ProvenanceStage.PROVIDER_REQUEST,
+            ProvenanceEventType.PROVIDER_REQUEST_READY,
+            {"provider_request_hash": grounding_request_hash},
+        )
         with self.tracer.start_as_current_span("decision_sql.semantic.grounding") as span:
             try:
                 proposal = await self.provider.propose_metric_grounding(
@@ -213,6 +255,14 @@ class GovernedMetricRouteService:
                 if not isinstance(proposal, GovernedMetricGroundingProposal):
                     raise TypeError("provider returned invalid governed grounding")
                 grounding = proposal.grounding
+                event_recorder.emit(
+                    ProvenanceStage.PROVIDER_RESPONSE,
+                    ProvenanceEventType.PROVIDER_RESPONSE_RECEIVED,
+                    {
+                        "provider_response_id": None,
+                        "raw_provider_output": grounding.model_dump_json(),
+                    },
+                )
                 span.set_attribute("decision_sql.semantic.grounding_status", "success")
                 span.set_attribute(
                     "decision_sql.semantic.grounding_latency_ms",
@@ -224,8 +274,45 @@ class GovernedMetricRouteService:
                     span.set_attribute(
                         "decision_sql.semantic.output_tokens", proposal.completion_tokens
                     )
+                event_recorder.emit(
+                    ProvenanceStage.GOVERNED_GROUNDING_RESULT,
+                    ProvenanceEventType.GOVERNED_GROUNDING_COMPLETED,
+                    {
+                        "grounding_output": grounding.model_dump(mode="json"),
+                        "selected_metric_id": (
+                            f"metric:{grounding.metric_name}"
+                            if grounding.metric_name is not None
+                            else None
+                        ),
+                        "selected_dimension_ids": list(grounding.dimensions),
+                        "provider_request_hash": grounding_request_hash,
+                        "provider_response_id": None,
+                        "raw_provider_output": grounding.model_dump_json(),
+                        "candidate_extraction_status": "NOT_APPLICABLE",
+                        "candidate_sql_hash": None,
+                    },
+                )
             except Exception as error:
                 span.set_attribute("decision_sql.semantic.grounding_status", "failure")
+                event_recorder.emit(
+                    ProvenanceStage.PROVIDER_RESPONSE,
+                    ProvenanceEventType.PROVIDER_RESPONSE_RECEIVED,
+                    {"provider_response_id": None, "raw_provider_output": None},
+                )
+                event_recorder.emit(
+                    ProvenanceStage.GOVERNED_GROUNDING_RESULT,
+                    ProvenanceEventType.GOVERNED_GROUNDING_COMPLETED,
+                    {
+                        "grounding_output": None,
+                        "selected_metric_id": None,
+                        "selected_dimension_ids": [],
+                        "provider_request_hash": grounding_request_hash,
+                        "provider_response_id": None,
+                        "raw_provider_output": None,
+                        "candidate_extraction_status": "NOT_APPLICABLE",
+                        "candidate_sql_hash": None,
+                    },
+                )
                 return await self._fallback(
                     request,
                     direct,
@@ -271,6 +358,12 @@ class GovernedMetricRouteService:
                 applicable=True,
                 grounding=grounding,
             )
+        compiler_input_hash = semantic_hash(metric_request.model_dump(mode="json"))
+        event_recorder.emit(
+            ProvenanceStage.GOVERNED_COMPILER_INPUT,
+            ProvenanceEventType.GOVERNED_COMPILER_INPUT_READY,
+            {"compiler_input_hash": compiler_input_hash},
+        )
         try:
             provenance = metric_provenance(
                 self.semantic_contract, metric_request.metric_name, metric_request.dimensions
@@ -295,6 +388,14 @@ class GovernedMetricRouteService:
                 )
             except Exception:
                 span.set_attribute("decision_sql.semantic.compiler_status", "failure")
+                event_recorder.emit(
+                    ProvenanceStage.GOVERNED_COMPILER_OUTPUT,
+                    ProvenanceEventType.GOVERNED_COMPILER_COMPLETED,
+                    {
+                        "compiler_version_hash": self.semantic_contract.semantic_contract_hash,
+                        "compiled_sql_hash": None,
+                    },
+                )
                 return await self._fallback(
                     request,
                     direct,
@@ -305,6 +406,14 @@ class GovernedMetricRouteService:
                 )
             if isinstance(compiled, MetricCompilationFailure):
                 span.set_attribute("decision_sql.semantic.compiler_status", "failure")
+                event_recorder.emit(
+                    ProvenanceStage.GOVERNED_COMPILER_OUTPUT,
+                    ProvenanceEventType.GOVERNED_COMPILER_COMPLETED,
+                    {
+                        "compiler_version_hash": self.semantic_contract.semantic_contract_hash,
+                        "compiled_sql_hash": None,
+                    },
+                )
                 reason = _compilation_reason(compiled.code)
                 return await self._fallback(
                     request,
@@ -315,6 +424,14 @@ class GovernedMetricRouteService:
                     grounding=grounding,
                 )
             span.set_attribute("decision_sql.semantic.compiler_status", "success")
+            event_recorder.emit(
+                ProvenanceStage.GOVERNED_COMPILER_OUTPUT,
+                ProvenanceEventType.GOVERNED_COMPILER_COMPLETED,
+                {
+                    "compiler_version_hash": self.semantic_contract.semantic_contract_hash,
+                    "compiled_sql_hash": text_hash(compiled.sql),
+                },
+            )
 
         compiled = compiled.model_copy(update={"correlation_id": request.correlation_id})
 

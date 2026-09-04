@@ -20,6 +20,14 @@ from app.generation.result_shape import (
 )
 from app.models.domain import FailureStage, TextToSqlRequest
 from app.observability.tracing import get_tracer
+from app.provenance.canonical import semantic_hash, text_hash
+from app.provenance.models import (
+    ProvenanceEventType,
+    ProvenanceSink,
+    ProvenanceStage,
+    recorder_for,
+)
+from app.provenance.sink import NoOpProvenanceSink
 from app.retrieval.context import (
     SchemaContextMode,
     SchemaContextResolver,
@@ -55,6 +63,7 @@ class TextToSqlService:
         tracer: trace.Tracer | None = None,
         generation_mode: GenerationMode | None = None,
         schema_serializer: Callable[[SchemaContext], str] = serialize_schema_context,
+        provenance_sink: ProvenanceSink | None = None,
     ) -> None:
         self.context_resolver = context_resolver
         self.provider = provider
@@ -72,6 +81,7 @@ class TextToSqlService:
         )
         self.tracer = tracer or get_tracer()
         self.schema_serializer = schema_serializer
+        self.provenance_sink = provenance_sink or NoOpProvenanceSink()
 
     async def run(self, request: TextToSqlRequest) -> TextToSqlResult:
         """Run the unchanged M2 question-to-SQL path."""
@@ -106,6 +116,7 @@ class TextToSqlService:
         context_addition: str | None = None,
     ) -> TextToSqlResult:
         started = perf_counter()
+        provenance = recorder_for(self.provenance_sink, request)
         provider_calls_attempted = 0
         provider_calls_succeeded = 0
         provider_calls_failed = 0
@@ -141,8 +152,27 @@ class TextToSqlService:
             )
 
             schema_text = self.schema_serializer(context)
+            schema_context_hash = text_hash(schema_text)
             if context_addition:
                 schema_text = f"{schema_text}\n\n{context_addition}"
+            memory_context_hash = text_hash(context_addition) if context_addition else None
+            provenance.emit(
+                ProvenanceStage.GENERATION_CONTEXT,
+                ProvenanceEventType.MEMORY_CONTEXT_RENDERED,
+                {
+                    "schema_context_hash": schema_context_hash,
+                    "generation_context_manifest_hash": semantic_hash(
+                        {
+                            "schema_context_hash": schema_context_hash,
+                            "memory_context_hash": memory_context_hash,
+                            "final_context_hash": text_hash(schema_text),
+                            "context_mode": self.context_mode.name,
+                            "generation_mode": self.generation_mode.value,
+                        }
+                    ),
+                    "rendered_memory_context_hash": memory_context_hash,
+                },
+            )
             result_shape_proposal: ResultShapeProposal | None = None
             if result_shape_contract:
                 with self.tracer.start_as_current_span(

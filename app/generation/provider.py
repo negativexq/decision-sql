@@ -21,6 +21,14 @@ from app.generation.intent import IntentProposal, QueryIntent
 from app.generation.result_shape import ResultShapeProposal
 from app.generation.window_ir import WindowQueryIR, WindowQueryIRProposal
 from app.models.domain import QueryRequest, UserContext
+from app.provenance.canonical import bounded_text, semantic_hash, text_hash
+from app.provenance.models import (
+    ProvenanceEventType,
+    ProvenanceSink,
+    ProvenanceStage,
+    recorder_for_identity,
+)
+from app.provenance.sink import NoOpProvenanceSink
 
 
 class SqlProposal(BaseModel):
@@ -166,8 +174,11 @@ class OpenAICompatibleProvider:
 
     provider_name = "openai-compatible"
 
-    def __init__(self, settings: Settings | None = None) -> None:
+    def __init__(
+        self, settings: Settings | None = None, provenance_sink: ProvenanceSink | None = None
+    ) -> None:
         self.settings = settings or get_settings()
+        self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self._last_model_io: ModelIOCapture | None = None
         self._model_io_history: list[ModelIOCapture] = []
         self._response_metadata: dict[str, str | None] = {}
@@ -440,11 +451,62 @@ class OpenAICompatibleProvider:
         }
         _add_temperature(body, self.settings.llm_temperature)
         _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        provenance = recorder_for_identity(
+            self.provenance_sink,
+            getattr(request, "correlation_id", None)
+            or f"question:{semantic_hash(request.question)}",
+        )
+        provenance.emit(
+            ProvenanceStage.PROVIDER_REQUEST,
+            ProvenanceEventType.PROVIDER_REQUEST_READY,
+            {"provider_request_hash": semantic_hash(body)},
+        )
         self._begin_model_io("sql", request.question, schema_context, messages)
         started = perf_counter()
-        payload = await self._post(body)
-        proposal = _proposal_from_response(payload, self.settings.llm_model)
+        try:
+            payload = await self._post(body)
+        except Exception:
+            provenance.emit(
+                ProvenanceStage.PROVIDER_RESPONSE,
+                ProvenanceEventType.PROVIDER_RESPONSE_RECEIVED,
+                {
+                    "provider_response_id": self._response_metadata.get("request_id"),
+                    "raw_provider_output": None,
+                },
+            )
+            provenance.emit(
+                ProvenanceStage.CANDIDATE_EXTRACTION,
+                ProvenanceEventType.CANDIDATE_EXTRACTION_COMPLETED,
+                {"candidate_extraction_status": "FAILURE", "candidate_sql_hash": None},
+            )
+            raise
+        raw_content = _assistant_content(payload)
+        provenance.emit(
+            ProvenanceStage.PROVIDER_RESPONSE,
+            ProvenanceEventType.PROVIDER_RESPONSE_RECEIVED,
+            {
+                "provider_response_id": self._response_metadata.get("request_id"),
+                "raw_provider_output": bounded_text(raw_content),
+            },
+        )
+        try:
+            proposal = _proposal_from_response(payload, self.settings.llm_model)
+        except Exception:
+            provenance.emit(
+                ProvenanceStage.CANDIDATE_EXTRACTION,
+                ProvenanceEventType.CANDIDATE_EXTRACTION_COMPLETED,
+                {"candidate_extraction_status": "FAILURE", "candidate_sql_hash": None},
+            )
+            raise
         proposal = proposal.model_copy(update={"latency_ms": (perf_counter() - started) * 1000})
+        provenance.emit(
+            ProvenanceStage.CANDIDATE_EXTRACTION,
+            ProvenanceEventType.CANDIDATE_EXTRACTION_COMPLETED,
+            {
+                "candidate_extraction_status": "SUCCESS",
+                "candidate_sql_hash": text_hash(proposal.sql),
+            },
+        )
         self._complete_model_io(
             payload,
             parsed_sql=proposal.sql,

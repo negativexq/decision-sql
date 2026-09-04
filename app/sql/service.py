@@ -13,6 +13,14 @@ from app.execution.cost import QueryCostGate
 from app.execution.reader import ReaderRoleError, ReadOnlyExecutor
 from app.models.domain import FailureStage
 from app.observability.tracing import get_tracer
+from app.provenance.canonical import text_hash
+from app.provenance.models import (
+    ProvenanceEventType,
+    ProvenanceSink,
+    ProvenanceStage,
+    recorder_for_identity,
+)
+from app.provenance.sink import NoOpProvenanceSink
 from app.sql.models import (
     ExplainEstimate,
     PolicyCode,
@@ -47,6 +55,7 @@ class SqlSafetyService:
         settings: Settings | None = None,
         catalog: SchemaCatalog | None = None,
         tracer: trace.Tracer | None = None,
+        provenance_sink: ProvenanceSink | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         self.reader_engine = reader_engine
@@ -61,9 +70,15 @@ class SqlSafetyService:
             reader_role=self.settings.reader_role,
         )
         self.tracer = tracer or get_tracer()
+        self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self._accepted_plans: dict[UUID, QueryPlan] = {}
 
     def plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure:
+        result = self._plan(candidate)
+        self._record_plan(candidate, result)
+        return result
+
+    def _plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure:
         """Parse, authorize, cost-check, and return an executable QueryPlan."""
         with self.tracer.start_as_current_span("decision_sql.validate") as span:
             span.set_attribute("decision_sql.statement_length", len(candidate.sql))
@@ -156,6 +171,11 @@ class SqlSafetyService:
             )
 
     def execute(self, plan: QueryPlan) -> QueryExecution | SqlExecutionError:
+        result = self._execute(plan)
+        self._record_execution(plan, result)
+        return result
+
+    def _execute(self, plan: QueryPlan) -> QueryExecution | SqlExecutionError:
         """Execute only a QueryPlan issued by this service's successful plan call."""
         if not isinstance(plan, QueryPlan):
             return SqlExecutionError(error="Execution requires an accepted QueryPlan.")
@@ -196,6 +216,42 @@ class SqlSafetyService:
                 correlation_id=plan.correlation_id,
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
+
+    def _record_plan(
+        self, candidate: SqlCandidate, result: QueryPlan | SqlPlanFailure
+    ) -> None:
+        rejection = (
+            result.rejection.code.value
+            if isinstance(result, SqlPlanFailure) and result.rejection
+            else result.status.value if isinstance(result, SqlPlanFailure) else None
+        )
+        outcome = "ALLOWED" if isinstance(result, QueryPlan) else result.status.value
+        recorder = recorder_for_identity(
+            self.provenance_sink,
+            candidate.correlation_id or f"candidate:{text_hash(candidate.sql)}",
+        )
+        recorder.emit(
+            ProvenanceStage.M1_PLAN,
+            ProvenanceEventType.M1_PLAN_COMPLETED,
+            {
+                "candidate_sql_hash": text_hash(candidate.sql),
+                "m1_outcome": outcome,
+                "m1_rejection_code": rejection,
+            },
+        )
+
+    def _record_execution(
+        self, plan: QueryPlan, result: QueryExecution | SqlExecutionError
+    ) -> None:
+        recorder = recorder_for_identity(
+            self.provenance_sink,
+            plan.correlation_id or f"plan:{plan.plan_id}",
+        )
+        recorder.emit(
+            ProvenanceStage.EXECUTION,
+            ProvenanceEventType.EXECUTION_COMPLETED,
+            {"execution_outcome": "SUCCEEDED" if isinstance(result, QueryExecution) else "FAILED"},
+        )
 
     @staticmethod
     def _policy_failure(rejection: PolicyRejection) -> SqlPlanFailure:

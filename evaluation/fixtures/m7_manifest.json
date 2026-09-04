@@ -1,0 +1,3721 @@
+{
+  "cases": [
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-000",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report the governed revenue from completed orders for the entire business.",
+      "reference_sql_variants": [
+        "SELECT SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed'"
+      ],
+      "relevant_schema_objects": [
+        "orders",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_revenue"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-001",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed revenue from completed orders.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "orders",
+        "orders.customer_id",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_revenue"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-002",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed revenue from completed orders.",
+      "reference_sql_variants": [
+        "SELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "orders",
+        "orders.sales_rep_id",
+        "orders.status",
+        "orders.total_amount",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_revenue"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-003",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report the governed average completed order value for the entire business.",
+      "reference_sql_variants": [
+        "SELECT AVG(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed'"
+      ],
+      "relevant_schema_objects": [
+        "orders",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_completed_order_value"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-004",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed average completed order value.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "orders",
+        "orders.customer_id",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_completed_order_value"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-005",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For order_currency, report the governed average payment amount.",
+      "reference_sql_variants": [
+        "SELECT orders.currency AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id GROUP BY orders.currency ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "orders",
+        "orders.currency",
+        "orders.id",
+        "payments",
+        "payments.amount",
+        "payments.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_payment_amount"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-006",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For product_category, report the governed quantity on completed orders.",
+      "reference_sql_variants": [
+        "SELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "order_items",
+        "order_items.order_id",
+        "order_items.product_id",
+        "order_items.quantity",
+        "orders",
+        "orders.id",
+        "orders.status",
+        "products",
+        "products.category",
+        "products.id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_item_quantity"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-007",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report the governed payment success rate for the entire business.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments WHERE payments.status = 'settled'), denominator AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.measure_value",
+        "numerator",
+        "numerator.measure_value",
+        "payments",
+        "payments.id",
+        "payments.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:payment_success_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-008",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed refunded order rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.id",
+        "orders.sales_rep_id",
+        "orders.status",
+        "refunds",
+        "refunds.order_id",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refunded_order_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-009",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For order_currency, report the governed refund amount as a share of completed revenue.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT orders.currency AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.currency",
+        "orders.id",
+        "orders.status",
+        "orders.total_amount",
+        "refunds",
+        "refunds.amount",
+        "refunds.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refund_to_revenue_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-010",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed average items per completed order.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "order_items",
+        "order_items.order_id",
+        "order_items.quantity",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "orders.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_items_per_completed_order"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-011",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For order_currency, report the governed completed order rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.currency",
+        "orders.id",
+        "orders.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_order_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-012",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed customer order coverage rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT customers.id) AS measure_value FROM customers INNER JOIN sales_representatives ON customers.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.sales_rep_id",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id",
+        "orders.sales_rep_id",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:customer_order_coverage_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-013",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For order_currency, report the governed revenue from completed orders.",
+      "reference_sql_variants": [
+        "SELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "orders",
+        "orders.currency",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_revenue"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-014",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed average completed order value.",
+      "reference_sql_variants": [
+        "SELECT sales_representatives.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "orders",
+        "orders.sales_rep_id",
+        "orders.status",
+        "orders.total_amount",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_completed_order_value"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-015",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed average payment amount.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "payments",
+        "payments.amount",
+        "payments.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_payment_amount"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-016",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed quantity on completed orders.",
+      "reference_sql_variants": [
+        "SELECT sales_representatives.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "order_items",
+        "order_items.order_id",
+        "order_items.quantity",
+        "orders",
+        "orders.id",
+        "orders.sales_rep_id",
+        "orders.status",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_item_quantity"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-017",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed payment success rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE payments.status = 'settled' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "payments",
+        "payments.id",
+        "payments.order_id",
+        "payments.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:payment_success_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-018",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed refunded order rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "orders.status",
+        "refunds",
+        "refunds.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refunded_order_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-019",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed refund amount as a share of completed revenue.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT customers.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "orders.status",
+        "orders.total_amount",
+        "refunds",
+        "refunds.amount",
+        "refunds.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refund_to_revenue_rate"
+      ],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-020",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For product_category, report the governed average items per completed order.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0), denominator AS (SELECT products.category AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "order_items",
+        "order_items.order_id",
+        "order_items.product_id",
+        "order_items.quantity",
+        "orders",
+        "orders.id",
+        "orders.status",
+        "products",
+        "products.category",
+        "products.id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_items_per_completed_order"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-021",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed completed order rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "orders.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_order_rate"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-022",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report the governed customer order coverage rate for the entire business.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders), denominator AS (SELECT COUNT(DISTINCT customers.id) AS measure_value FROM customers) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "denominator",
+        "denominator.measure_value",
+        "numerator",
+        "numerator.measure_value",
+        "orders",
+        "orders.customer_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:customer_order_coverage_rate"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-023",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer and order_currency, report the governed revenue from completed orders.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, orders.currency AS dimension_1, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "orders",
+        "orders.currency",
+        "orders.customer_id",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_revenue"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-024",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer and order_currency, report the governed average completed order value.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, orders.currency AS dimension_1, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "orders",
+        "orders.currency",
+        "orders.customer_id",
+        "orders.status",
+        "orders.total_amount"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_completed_order_value"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-025",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed average payment amount.",
+      "reference_sql_variants": [
+        "SELECT sales_representatives.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "dimension_0",
+        "orders",
+        "orders.id",
+        "orders.sales_rep_id",
+        "payments",
+        "payments.amount",
+        "payments.order_id",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:average_payment_amount"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-026",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For customer, report the governed quantity on completed orders.",
+      "reference_sql_variants": [
+        "SELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "customers",
+        "customers.id",
+        "customers.name",
+        "dimension_0",
+        "order_items",
+        "order_items.order_id",
+        "order_items.quantity",
+        "orders",
+        "orders.customer_id",
+        "orders.id",
+        "orders.status"
+      ],
+      "relevant_semantic_ids": [
+        "metric:completed_item_quantity"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-027",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed payment success rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE payments.status = 'settled' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.id",
+        "orders.sales_rep_id",
+        "payments",
+        "payments.id",
+        "payments.order_id",
+        "payments.status",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:payment_success_rate"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-028",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For order_currency, report the governed refunded order rate.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.currency",
+        "orders.id",
+        "orders.status",
+        "refunds",
+        "refunds.order_id"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refunded_order_rate"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored governed_metric reference for an answerable analytics request.",
+      "case_id": "m7-governed_metric-029",
+      "expected_route": "GOVERNED",
+      "family": "GOVERNED_METRIC",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For sales_representative, report the governed refund amount as a share of completed revenue.",
+      "reference_sql_variants": [
+        "WITH numerator AS (SELECT sales_representatives.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ],
+      "relevant_schema_objects": [
+        "denominator",
+        "denominator.dimension_0",
+        "denominator.measure_value",
+        "dimension_0",
+        "numerator",
+        "numerator.dimension_0",
+        "numerator.measure_value",
+        "orders",
+        "orders.id",
+        "orders.sales_rep_id",
+        "orders.status",
+        "orders.total_amount",
+        "refunds",
+        "refunds.amount",
+        "refunds.order_id",
+        "sales_representatives",
+        "sales_representatives.id",
+        "sales_representatives.name"
+      ],
+      "relevant_semantic_ids": [
+        "metric:refund_to_revenue_rate"
+      ],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-000",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List every customer together with the name of their region.",
+      "reference_sql_variants": [
+        "SELECT c.name, r.name AS region FROM customers c JOIN regions r ON r.id = c.region_id ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.name",
+        "c.region_id",
+        "customers",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-001",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show product names, categories, and prices from the catalog.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.category, p.unit_price FROM products p ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-002",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count orders by their lifecycle status.",
+      "reference_sql_variants": [
+        "SELECT o.status, COUNT(*) AS order_count FROM orders o GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-003",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List all payment records with their amount and status.",
+      "reference_sql_variants": [
+        "SELECT p.id, p.amount, p.status FROM payments p ORDER BY p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "p.status",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-004",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each refund record and its stated reason.",
+      "reference_sql_variants": [
+        "SELECT r.id, r.amount, r.reason FROM refunds r ORDER BY r.id"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "r.id",
+        "r.reason",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-005",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List sales representatives alphabetically with their region identifiers.",
+      "reference_sql_variants": [
+        "SELECT sr.name, sr.region_id FROM sales_representatives sr ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "sales_representatives",
+        "sr.name",
+        "sr.region_id"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-006",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show order numbers and totals for orders placed in 2025.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount FROM orders o WHERE o.ordered_at >= DATE '2025-01-01' AND o.ordered_at < DATE '2026-01-01' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.ordered_at",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-007",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count the products in each catalog category.",
+      "reference_sql_variants": [
+        "SELECT p.category, COUNT(*) AS product_count FROM products p GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-008",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List completed order numbers in order-number order.",
+      "reference_sql_variants": [
+        "SELECT o.order_number FROM orders o WHERE o.status = 'completed' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-009",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show settled payment IDs and amounts.",
+      "reference_sql_variants": [
+        "SELECT p.id, p.amount FROM payments p WHERE p.status = 'settled' ORDER BY p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "p.status",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-010",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List customers assigned to each sales representative.",
+      "reference_sql_variants": [
+        "SELECT sr.name, c.name AS customer FROM sales_representatives sr JOIN customers c ON c.sales_rep_id = sr.id ORDER BY sr.name, c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.name",
+        "c.sales_rep_id",
+        "customers",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-011",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show products priced above 200.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price FROM products p WHERE p.unit_price > 200 ORDER BY p.unit_price DESC, p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-012",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List orders whose currency is USD.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount FROM orders o WHERE o.currency = 'USD' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.order_number",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-013",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count customers assigned to each region.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(c.id) AS customer_count FROM regions r LEFT JOIN customers c ON c.region_id = r.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-014",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show item identifiers, quantities, and unit prices.",
+      "reference_sql_variants": [
+        "SELECT oi.id, oi.quantity, oi.unit_price FROM order_items oi ORDER BY oi.id"
+      ],
+      "relevant_schema_objects": [
+        "oi.id",
+        "oi.quantity",
+        "oi.unit_price",
+        "order_items"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-015",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List orders with a nonzero discount.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.discount_amount FROM orders o WHERE o.discount_amount > 0 ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.discount_amount",
+        "o.order_number",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-016",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show customer identifiers and names.",
+      "reference_sql_variants": [
+        "SELECT c.id, c.name FROM customers c ORDER BY c.id"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-017",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List all regions by name.",
+      "reference_sql_variants": [
+        "SELECT r.name FROM regions r ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-018",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show payment dates and amounts for settled payments.",
+      "reference_sql_variants": [
+        "SELECT p.paid_at, p.amount FROM payments p WHERE p.status = 'settled' ORDER BY p.paid_at, p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "p.paid_at",
+        "p.status",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_simple reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_simple-019",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_SIMPLE",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List refund amounts in descending order.",
+      "reference_sql_variants": [
+        "SELECT r.id, r.amount FROM refunds r ORDER BY r.amount DESC, r.id"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "r.id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-000",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For every customer, show the count of orders and keep customers with at least four.",
+      "reference_sql_variants": [
+        "SELECT c.name, COUNT(o.id) AS order_count FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id, c.name HAVING COUNT(o.id) >= 4 ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-001",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Return products whose price is higher than the catalog average.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price FROM products p WHERE p.unit_price > (SELECT AVG(i.unit_price) FROM products i) ORDER BY p.unit_price DESC, p.name"
+      ],
+      "relevant_schema_objects": [
+        "i.unit_price",
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-002",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each category, show average price and retain categories above 200.",
+      "reference_sql_variants": [
+        "SELECT p.category, AVG(p.unit_price) AS average_price FROM products p GROUP BY p.category HAVING AVG(p.unit_price) > 200 ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-003",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Rank each representative by total order value within the full representative list.",
+      "reference_sql_variants": [
+        "SELECT sr.name, SUM(o.total_amount) AS order_value, RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS value_rank FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY value_rank, sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.sales_rep_id",
+        "o.total_amount",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name",
+        "value_rank"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-004",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the latest order number for every customer that has an order.",
+      "reference_sql_variants": [
+        "SELECT c.name, MAX(o.order_number) AS latest_order FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.order_number",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-005",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each order, show its item count beside the order total.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount, COUNT(oi.id) AS item_count FROM orders o JOIN order_items oi ON oi.order_id = o.id GROUP BY o.id, o.order_number, o.total_amount ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.order_number",
+        "o.total_amount",
+        "oi.id",
+        "oi.order_id",
+        "order_items",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-006",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Find representatives whose average completed-order total exceeds 250.",
+      "reference_sql_variants": [
+        "SELECT sr.name, AVG(o.total_amount) AS average_total FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id WHERE o.status = 'completed' GROUP BY sr.id, sr.name HAVING AVG(o.total_amount) > 250 ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.sales_rep_id",
+        "o.status",
+        "o.total_amount",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-007",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each region's completed revenue using the customer relationship.",
+      "reference_sql_variants": [
+        "SELECT r.name, SUM(o.total_amount) AS revenue FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.status",
+        "o.total_amount",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-008",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each product, calculate the total extended line value.",
+      "reference_sql_variants": [
+        "SELECT p.name, SUM(oi.quantity * oi.unit_price - oi.discount_amount) AS extended_value FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id, p.name ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "oi.discount_amount",
+        "oi.product_id",
+        "oi.quantity",
+        "oi.unit_price",
+        "order_items",
+        "p.id",
+        "p.name",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-009",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List orders whose total is above their own customer's average order total.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount FROM orders o WHERE o.total_amount > (SELECT AVG(i.total_amount) FROM orders i WHERE i.customer_id = o.customer_id) ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "i.customer_id",
+        "i.total_amount",
+        "o.customer_id",
+        "o.order_number",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-010",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each product category's share of all item quantity.",
+      "reference_sql_variants": [
+        "SELECT p.category, CAST(SUM(oi.quantity) AS numeric) / (SELECT SUM(quantity) FROM order_items) AS quantity_share FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "p.category",
+        "p.id",
+        "products",
+        "quantity"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-011",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each payment, show the order number and the customer's name.",
+      "reference_sql_variants": [
+        "SELECT pay.id, o.order_number, c.name FROM payments pay JOIN orders o ON o.id = pay.order_id JOIN customers c ON c.id = o.customer_id ORDER BY pay.id"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "o.order_number",
+        "orders",
+        "pay.id",
+        "pay.order_id",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-012",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate running completed revenue by order date.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.ordered_at, SUM(o.total_amount) OVER (ORDER BY o.ordered_at, o.id) AS running_revenue FROM orders o WHERE o.status = 'completed' ORDER BY o.ordered_at, o.id"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.order_number",
+        "o.ordered_at",
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-013",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show categories with a product count above the average category count.",
+      "reference_sql_variants": [
+        "SELECT p.category, COUNT(*) AS product_count FROM products p GROUP BY p.category HAVING COUNT(*) > (SELECT AVG(category_count) FROM (SELECT COUNT(*) AS category_count FROM products GROUP BY category) x) ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "category",
+        "category_count",
+        "p.category",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-014",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each sales representative, return their smallest and largest order totals.",
+      "reference_sql_variants": [
+        "SELECT sr.name, MIN(o.total_amount) AS smallest_order, MAX(o.total_amount) AS largest_order FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.sales_rep_id",
+        "o.total_amount",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-015",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show customers with at least one refund-bearing order and their refund total.",
+      "reference_sql_variants": [
+        "SELECT c.name, SUM(r.amount) AS refund_total FROM customers c JOIN orders o ON o.customer_id = c.id JOIN refunds r ON r.order_id = o.id GROUP BY c.id, c.name HAVING COUNT(DISTINCT r.order_id) >= 1 ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "orders",
+        "r.amount",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-016",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Compare each order total with the overall average using a derived column.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount, o.total_amount - (SELECT AVG(total_amount) FROM orders) AS difference_from_average FROM orders o ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.total_amount",
+        "orders",
+        "total_amount"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-017",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each region and the date of its earliest order.",
+      "reference_sql_variants": [
+        "SELECT r.name, MIN(o.ordered_at) AS first_order_date FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.ordered_at",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-018",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For every customer, show total quantity purchased across their orders.",
+      "reference_sql_variants": [
+        "SELECT c.name, SUM(oi.quantity) AS quantity_purchased FROM customers c JOIN orders o ON o.customer_id = c.id JOIN order_items oi ON oi.order_id = o.id GROUP BY c.id, c.name ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "oi.order_id",
+        "oi.quantity",
+        "order_items",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-019",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Find products that appear in more than ten order lines.",
+      "reference_sql_variants": [
+        "SELECT p.name, COUNT(oi.id) AS line_count FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id, p.name HAVING COUNT(oi.id) > 10 ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "oi.id",
+        "oi.product_id",
+        "order_items",
+        "p.id",
+        "p.name",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-020",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each status with its percentage of all orders.",
+      "reference_sql_variants": [
+        "SELECT o.status, CAST(COUNT(*) AS numeric) / (SELECT COUNT(*) FROM orders) * 100 AS percentage_of_orders FROM orders o GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-021",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Return the second-highest order total for each customer when it exists.",
+      "reference_sql_variants": [
+        "SELECT name, order_number, total_amount FROM (SELECT c.name, o.order_number, o.total_amount, DENSE_RANK() OVER (PARTITION BY c.id ORDER BY o.total_amount DESC) AS position FROM customers c JOIN orders o ON o.customer_id = c.id) ranked WHERE position = 2 ORDER BY name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "name",
+        "o.customer_id",
+        "o.order_number",
+        "o.total_amount",
+        "order_number",
+        "orders",
+        "position",
+        "total_amount"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-022",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show refund amounts alongside the related order subtotal and refund ratio.",
+      "reference_sql_variants": [
+        "SELECT r.id, o.subtotal, r.amount, CAST(r.amount AS numeric) / o.subtotal AS refund_ratio FROM refunds r JOIN orders o ON o.id = r.order_id ORDER BY r.id"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.subtotal",
+        "orders",
+        "r.amount",
+        "r.id",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-023",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For every category, report minimum, average, and maximum product price.",
+      "reference_sql_variants": [
+        "SELECT p.category, MIN(p.unit_price) AS minimum_price, AVG(p.unit_price) AS average_price, MAX(p.unit_price) AS maximum_price FROM products p GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored clear_direct_complex reference for an answerable analytics request.",
+      "case_id": "m7-clear_direct_complex-024",
+      "expected_route": "DIRECT",
+      "family": "CLEAR_DIRECT_COMPLEX",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the total and average completed order value for each currency.",
+      "reference_sql_variants": [
+        "SELECT o.currency, SUM(o.total_amount) AS total_value, AVG(o.total_amount) AS average_value FROM orders o WHERE o.status = 'completed' GROUP BY o.currency ORDER BY o.currency"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-000",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count completed orders for each sales representative region.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(o.id) AS completed_orders FROM regions r JOIN sales_representatives sr ON sr.region_id = r.id JOIN orders o ON o.sales_rep_id = sr.id WHERE o.status = 'completed' GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "o.status",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions",
+        "sales_representatives",
+        "sr.id",
+        "sr.region_id"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-001",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show total payment amount by customer region.",
+      "reference_sql_variants": [
+        "SELECT r.name, SUM(pay.amount) AS payment_total FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id JOIN payments pay ON pay.order_id = o.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "orders",
+        "pay.amount",
+        "pay.order_id",
+        "payments",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-002",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List every product category with its sold unit count.",
+      "reference_sql_variants": [
+        "SELECT p.category, SUM(oi.quantity) AS units_sold FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-003",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each product category, count the different customers represented in its sales.",
+      "reference_sql_variants": [
+        "SELECT p.category, COUNT(DISTINCT o.customer_id) AS customers FROM products p JOIN order_items oi ON oi.product_id = p.id JOIN orders o ON o.id = oi.order_id GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "o.customer_id",
+        "o.id",
+        "oi.order_id",
+        "oi.product_id",
+        "order_items",
+        "orders",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-004",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the summed refund amount associated with each sales representative.",
+      "reference_sql_variants": [
+        "SELECT sr.name, SUM(r.amount) AS refund_total FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id JOIN refunds r ON r.order_id = o.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "orders",
+        "r.amount",
+        "r.order_id",
+        "refunds",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-005",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each customer and the number of products they have purchased.",
+      "reference_sql_variants": [
+        "SELECT c.name, COUNT(DISTINCT oi.product_id) AS product_count FROM customers c LEFT JOIN orders o ON o.customer_id = c.id LEFT JOIN order_items oi ON oi.order_id = o.id GROUP BY c.id, c.name ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "oi.order_id",
+        "oi.product_id",
+        "order_items",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-006",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count payments by region through the representative assigned to the order.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(pay.id) AS payment_count FROM regions r JOIN sales_representatives sr ON sr.region_id = r.id JOIN orders o ON o.sales_rep_id = sr.id JOIN payments pay ON pay.order_id = o.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "orders",
+        "pay.id",
+        "pay.order_id",
+        "payments",
+        "r.id",
+        "r.name",
+        "regions",
+        "sales_representatives",
+        "sr.id",
+        "sr.region_id"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-007",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List order numbers with their representative and customer.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, sr.name AS representative, c.name AS customer FROM orders o JOIN sales_representatives sr ON sr.id = o.sales_rep_id JOIN customers c ON c.id = o.customer_id ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.order_number",
+        "o.sales_rep_id",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-008",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show average order total for each region using customer ownership.",
+      "reference_sql_variants": [
+        "SELECT r.name, AVG(o.total_amount) AS average_total FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.total_amount",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-009",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count refund records by customer region.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(ref.id) AS refund_count FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id JOIN refunds ref ON ref.order_id = o.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "orders",
+        "r.id",
+        "r.name",
+        "ref.id",
+        "ref.order_id",
+        "refunds",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-010",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show product names with the count of distinct orders containing them.",
+      "reference_sql_variants": [
+        "SELECT p.name, COUNT(DISTINCT oi.order_id) AS order_count FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id, p.name ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "oi.order_id",
+        "oi.product_id",
+        "order_items",
+        "p.id",
+        "p.name",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-011",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each representative, show the number of distinct customers served.",
+      "reference_sql_variants": [
+        "SELECT sr.name, COUNT(DISTINCT c.id) AS customer_count FROM sales_representatives sr LEFT JOIN customers c ON c.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.sales_rep_id",
+        "customers",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-012",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show completed item quantity by order currency.",
+      "reference_sql_variants": [
+        "SELECT o.currency, SUM(oi.quantity) AS item_quantity FROM orders o JOIN order_items oi ON oi.order_id = o.id WHERE o.status = 'completed' GROUP BY o.currency ORDER BY o.currency"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.id",
+        "o.status",
+        "oi.order_id",
+        "oi.quantity",
+        "order_items",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-013",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show total order discount by region through customers.",
+      "reference_sql_variants": [
+        "SELECT r.name, SUM(o.discount_amount) AS discount_total FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.discount_amount",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-014",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count orders containing each product category.",
+      "reference_sql_variants": [
+        "SELECT p.category, COUNT(DISTINCT o.id) AS order_count FROM products p JOIN order_items oi ON oi.product_id = p.id JOIN orders o ON o.id = oi.order_id GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "oi.order_id",
+        "oi.product_id",
+        "order_items",
+        "orders",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-015",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show average payment amount by sales representative.",
+      "reference_sql_variants": [
+        "SELECT sr.name, AVG(pay.amount) AS average_payment FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id JOIN payments pay ON pay.order_id = o.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "orders",
+        "pay.amount",
+        "pay.order_id",
+        "payments",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-016",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List customers with their region and total completed revenue.",
+      "reference_sql_variants": [
+        "SELECT c.name, r.name AS region, SUM(o.total_amount) AS revenue FROM customers c JOIN regions r ON r.id = c.region_id JOIN orders o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY c.id, c.name, r.id, r.name ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.status",
+        "o.total_amount",
+        "orders",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-017",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Break down refund amount by the lifecycle status of its order.",
+      "reference_sql_variants": [
+        "SELECT o.status, SUM(r.amount) AS refund_total FROM orders o JOIN refunds r ON r.order_id = o.id GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.status",
+        "orders",
+        "r.amount",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-018",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For every sales representative, count their distinct orders.",
+      "reference_sql_variants": [
+        "SELECT sr.name, COUNT(DISTINCT o.id) AS order_count FROM sales_representatives sr LEFT JOIN orders o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored relational_composition reference for an answerable analytics request.",
+      "case_id": "m7-relational_composition-019",
+      "expected_route": "DIRECT",
+      "family": "RELATIONAL_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show item quantity sold by product category for completed orders only.",
+      "reference_sql_variants": [
+        "SELECT p.category, SUM(oi.quantity) AS quantity_sold FROM products p JOIN order_items oi ON oi.product_id = p.id JOIN orders o ON o.id = oi.order_id WHERE o.status = 'completed' GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.status",
+        "oi.order_id",
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "orders",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-000",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "What is the total value of completed orders?",
+      "reference_sql_variants": [
+        "SELECT SUM(o.total_amount) AS total_value FROM orders o WHERE o.status = 'completed'"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-001",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "How many orders are pending?",
+      "reference_sql_variants": [
+        "SELECT COUNT(*) AS order_count FROM orders o WHERE o.status = 'pending'"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-002",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Give the average payment amount for settled payments.",
+      "reference_sql_variants": [
+        "SELECT AVG(p.amount) AS average_amount FROM payments p WHERE p.status = 'settled'"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.status",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-003",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Sum refunds attached to completed orders.",
+      "reference_sql_variants": [
+        "SELECT SUM(r.amount) AS refund_total FROM refunds r JOIN orders o ON o.id = r.order_id WHERE o.status = 'completed'"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.status",
+        "orders",
+        "r.amount",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-004",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count products priced above 150 in each category.",
+      "reference_sql_variants": [
+        "SELECT p.category, COUNT(*) AS product_count FROM products p WHERE p.unit_price > 150 GROUP BY p.category ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-005",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show average completed order total by status.",
+      "reference_sql_variants": [
+        "SELECT o.status, AVG(o.total_amount) AS average_total FROM orders o WHERE o.status = 'completed' GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-006",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "How much subtotal belongs to USD orders by status?",
+      "reference_sql_variants": [
+        "SELECT o.status, SUM(o.subtotal) AS subtotal_total FROM orders o WHERE o.currency = 'USD' GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.status",
+        "o.subtotal",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-007",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count settled payments for each customer region.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(p.id) AS settled_payments FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id JOIN payments p ON p.order_id = o.id WHERE p.status = 'settled' GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "orders",
+        "p.id",
+        "p.order_id",
+        "p.status",
+        "payments",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-008",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show categories whose completed item quantity exceeds 20.",
+      "reference_sql_variants": [
+        "SELECT p.category, SUM(oi.quantity) AS quantity FROM products p JOIN order_items oi ON oi.product_id = p.id JOIN orders o ON o.id = oi.order_id WHERE o.status = 'completed' GROUP BY p.category HAVING SUM(oi.quantity) > 20 ORDER BY p.category"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.status",
+        "oi.order_id",
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "orders",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-009",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Find customers with more than two completed orders.",
+      "reference_sql_variants": [
+        "SELECT c.name, COUNT(o.id) AS completed_orders FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY c.id, c.name HAVING COUNT(o.id) > 2 ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-010",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the total paid amount for orders with a discount.",
+      "reference_sql_variants": [
+        "SELECT SUM(p.amount) AS paid_total FROM payments p JOIN orders o ON o.id = p.order_id WHERE o.discount_amount > 0"
+      ],
+      "relevant_schema_objects": [
+        "o.discount_amount",
+        "o.id",
+        "orders",
+        "p.amount",
+        "p.order_id",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-011",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Count refund records with amounts above 100.",
+      "reference_sql_variants": [
+        "SELECT COUNT(*) AS refund_count FROM refunds r WHERE r.amount > 100"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-012",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show average item quantity for Electronics products.",
+      "reference_sql_variants": [
+        "SELECT AVG(oi.quantity) AS average_quantity FROM products p JOIN order_items oi ON oi.product_id = p.id WHERE p.category = 'Electronics'"
+      ],
+      "relevant_schema_objects": [
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "p.category",
+        "p.id",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-013",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Find regions with at least ten customers.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(c.id) AS customer_count FROM regions r JOIN customers c ON c.region_id = r.id GROUP BY r.id, r.name HAVING COUNT(c.id) >= 10 ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored filter_aggregation reference for an answerable analytics request.",
+      "case_id": "m7-filter_aggregation-014",
+      "expected_route": "DIRECT",
+      "family": "FILTER_AGGREGATION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show total completed revenue for orders placed before July 2025.",
+      "reference_sql_variants": [
+        "SELECT SUM(o.total_amount) AS revenue FROM orders o WHERE o.status = 'completed' AND o.ordered_at < DATE '2025-07-01'"
+      ],
+      "relevant_schema_objects": [
+        "o.ordered_at",
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-000",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate each order's discount as a percentage of subtotal.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, CASE WHEN o.subtotal = 0 THEN 0 ELSE CAST(o.discount_amount AS numeric) / o.subtotal * 100 END AS discount_percent FROM orders o ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.discount_amount",
+        "o.order_number",
+        "o.subtotal",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-001",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the fraction of each order total represented by its refund.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, CASE WHEN o.total_amount = 0 THEN 0 ELSE CAST(r.amount AS numeric) / o.total_amount END AS refund_fraction FROM orders o JOIN refunds r ON r.order_id = o.id ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.order_number",
+        "o.total_amount",
+        "orders",
+        "r.amount",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-002",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report payment amount as a percentage of the related order total.",
+      "reference_sql_variants": [
+        "SELECT p.id, CASE WHEN o.total_amount = 0 THEN 0 ELSE CAST(p.amount AS numeric) / o.total_amount * 100 END AS payment_percent FROM payments p JOIN orders o ON o.id = p.order_id ORDER BY p.id"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.total_amount",
+        "orders",
+        "p.amount",
+        "p.id",
+        "p.order_id",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-003",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each product's price relative to the maximum catalog price.",
+      "reference_sql_variants": [
+        "SELECT p.name, CAST(p.unit_price AS numeric) / (SELECT MAX(unit_price) FROM products) AS price_ratio FROM products p ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.name",
+        "p.unit_price",
+        "products",
+        "unit_price"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-004",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate the share of total order value for each customer.",
+      "reference_sql_variants": [
+        "SELECT c.name, CAST(SUM(o.total_amount) AS numeric) / (SELECT SUM(total_amount) FROM orders) AS order_share FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.total_amount",
+        "orders",
+        "total_amount"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-005",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the percentage of orders represented by each status.",
+      "reference_sql_variants": [
+        "SELECT o.status, CAST(COUNT(*) AS numeric) / (SELECT COUNT(*) FROM orders) * 100 AS status_percent FROM orders o GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-006",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Report refunded amount divided by completed revenue for each region.",
+      "reference_sql_variants": [
+        "SELECT r.name, CAST(COALESCE(SUM(ref.amount), 0) AS numeric) / SUM(CASE WHEN o.status = 'completed' THEN o.total_amount ELSE 0 END) AS refund_ratio FROM regions r JOIN customers c ON c.region_id = r.id JOIN orders o ON o.customer_id = c.id LEFT JOIN refunds ref ON ref.order_id = o.id GROUP BY r.id, r.name ORDER BY r.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "o.status",
+        "o.total_amount",
+        "orders",
+        "r.id",
+        "r.name",
+        "ref.amount",
+        "ref.order_id",
+        "refunds",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-007",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate average order total per item line for every currency.",
+      "reference_sql_variants": [
+        "SELECT o.currency, CAST(SUM(o.total_amount) AS numeric) / COUNT(oi.id) AS value_per_line FROM orders o JOIN order_items oi ON oi.order_id = o.id GROUP BY o.currency ORDER BY o.currency"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.id",
+        "o.total_amount",
+        "oi.id",
+        "oi.order_id",
+        "order_items",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-008",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each refund as a percentage of its order subtotal.",
+      "reference_sql_variants": [
+        "SELECT r.id, CAST(r.amount AS numeric) / o.subtotal * 100 AS subtotal_percent FROM refunds r JOIN orders o ON o.id = r.order_id ORDER BY r.id"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.subtotal",
+        "orders",
+        "r.amount",
+        "r.id",
+        "r.order_id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored ratio_derived reference for an answerable analytics request.",
+      "case_id": "m7-ratio_derived-009",
+      "expected_route": "DIRECT",
+      "family": "RATIO_DERIVED",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate the percentage discount by order status.",
+      "reference_sql_variants": [
+        "SELECT o.status, CASE WHEN SUM(o.subtotal) = 0 THEN 0 ELSE CAST(SUM(o.discount_amount) AS numeric) / SUM(o.subtotal) * 100 END AS discount_percent FROM orders o GROUP BY o.status ORDER BY o.status"
+      ],
+      "relevant_schema_objects": [
+        "o.discount_amount",
+        "o.status",
+        "o.subtotal",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-000",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Return the five orders with the highest total amounts.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount FROM orders o ORDER BY o.total_amount DESC, o.order_number LIMIT 5"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-001",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List the three least expensive products.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price FROM products p ORDER BY p.unit_price, p.name LIMIT 3"
+      ],
+      "relevant_schema_objects": [
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-002",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the top four customers by number of orders.",
+      "reference_sql_variants": [
+        "SELECT c.name, COUNT(o.id) AS order_count FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY order_count DESC, c.name LIMIT 4"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.id",
+        "order_count",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-003",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Which two categories have the greatest total item quantity?",
+      "reference_sql_variants": [
+        "SELECT p.category, SUM(oi.quantity) AS quantity FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.category ORDER BY quantity DESC, p.category LIMIT 2"
+      ],
+      "relevant_schema_objects": [
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "p.category",
+        "p.id",
+        "products",
+        "quantity"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-004",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the four largest refunds.",
+      "reference_sql_variants": [
+        "SELECT r.id, r.amount FROM refunds r ORDER BY r.amount DESC, r.id LIMIT 4"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "r.id",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-005",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Return the first six customers alphabetically.",
+      "reference_sql_variants": [
+        "SELECT c.name FROM customers c ORDER BY c.name LIMIT 6"
+      ],
+      "relevant_schema_objects": [
+        "c.name",
+        "customers"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-006",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Find the three representatives with the smallest average order total.",
+      "reference_sql_variants": [
+        "SELECT sr.name, AVG(o.total_amount) AS average_total FROM sales_representatives sr JOIN orders o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY average_total, sr.name LIMIT 3"
+      ],
+      "relevant_schema_objects": [
+        "average_total",
+        "o.sales_rep_id",
+        "o.total_amount",
+        "orders",
+        "sales_representatives",
+        "sr.id",
+        "sr.name"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-007",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "List the five products with the most units sold.",
+      "reference_sql_variants": [
+        "SELECT p.name, SUM(oi.quantity) AS units FROM products p JOIN order_items oi ON oi.product_id = p.id GROUP BY p.id, p.name ORDER BY units DESC, p.name LIMIT 5"
+      ],
+      "relevant_schema_objects": [
+        "oi.product_id",
+        "oi.quantity",
+        "order_items",
+        "p.id",
+        "p.name",
+        "products",
+        "units"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-008",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show the two highest payment amounts.",
+      "reference_sql_variants": [
+        "SELECT p.id, p.amount FROM payments p ORDER BY p.amount DESC, p.id LIMIT 2"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored order_top_n reference for an answerable analytics request.",
+      "case_id": "m7-order_top_n-009",
+      "expected_route": "DIRECT",
+      "family": "ORDER_TOP_N",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Return the three regions with the largest customer populations.",
+      "reference_sql_variants": [
+        "SELECT r.name, COUNT(c.id) AS customer_count FROM regions r JOIN customers c ON c.region_id = r.id GROUP BY r.id, r.name ORDER BY customer_count DESC, r.name LIMIT 3"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.region_id",
+        "customer_count",
+        "customers",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-000",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each order with its sequence number within its customer history.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.customer_id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.ordered_at, o.id) AS customer_sequence FROM orders o ORDER BY o.customer_id, customer_sequence"
+      ],
+      "relevant_schema_objects": [
+        "customer_sequence",
+        "o.customer_id",
+        "o.id",
+        "o.order_number",
+        "o.ordered_at",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-001",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Rank products from most expensive to least expensive.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price, RANK() OVER (ORDER BY p.unit_price DESC) AS price_rank FROM products p ORDER BY price_rank, p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.name",
+        "p.unit_price",
+        "price_rank",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-002",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show a running total of payments in payment-date order.",
+      "reference_sql_variants": [
+        "SELECT p.id, p.paid_at, SUM(p.amount) OVER (ORDER BY p.paid_at, p.id) AS running_paid FROM payments p ORDER BY p.paid_at, p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "p.paid_at",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-003",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each representative, number their orders from newest to oldest.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.sales_rep_id, ROW_NUMBER() OVER (PARTITION BY o.sales_rep_id ORDER BY o.ordered_at DESC, o.id DESC) AS recent_position FROM orders o ORDER BY o.sales_rep_id, recent_position"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.order_number",
+        "o.ordered_at",
+        "o.sales_rep_id",
+        "orders",
+        "recent_position"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-004",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each customer's order total and the previous order total.",
+      "reference_sql_variants": [
+        "SELECT o.customer_id, o.order_number, o.total_amount, LAG(o.total_amount) OVER (PARTITION BY o.customer_id ORDER BY o.ordered_at, o.id) AS previous_total FROM orders o ORDER BY o.customer_id, o.ordered_at, o.id"
+      ],
+      "relevant_schema_objects": [
+        "o.customer_id",
+        "o.id",
+        "o.order_number",
+        "o.ordered_at",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-005",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Calculate cumulative completed revenue ordered by order date.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, SUM(o.total_amount) OVER (ORDER BY o.ordered_at, o.id) AS cumulative_revenue FROM orders o WHERE o.status = 'completed' ORDER BY o.ordered_at, o.id"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.order_number",
+        "o.ordered_at",
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-006",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Rank customers by their completed revenue.",
+      "reference_sql_variants": [
+        "SELECT c.name, SUM(o.total_amount) AS revenue, RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS revenue_rank FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY c.id, c.name ORDER BY revenue_rank, c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.id",
+        "c.name",
+        "customers",
+        "o.customer_id",
+        "o.status",
+        "o.total_amount",
+        "orders",
+        "revenue_rank"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-007",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show every product and its price difference from the prior product by price.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price, p.unit_price - LAG(p.unit_price) OVER (ORDER BY p.unit_price, p.id) AS price_difference FROM products p ORDER BY p.unit_price, p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.id",
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-008",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "For each region, rank representatives by their order count.",
+      "reference_sql_variants": [
+        "SELECT r.name AS region, sr.name AS representative, COUNT(o.id) AS order_count, RANK() OVER (PARTITION BY r.id ORDER BY COUNT(o.id) DESC) AS region_rank FROM regions r JOIN sales_representatives sr ON sr.region_id = r.id LEFT JOIN orders o ON o.sales_rep_id = sr.id GROUP BY r.id, r.name, sr.id, sr.name ORDER BY r.name, region_rank, sr.name"
+      ],
+      "relevant_schema_objects": [
+        "o.id",
+        "o.sales_rep_id",
+        "orders",
+        "r.id",
+        "r.name",
+        "region_rank",
+        "regions",
+        "sales_representatives",
+        "sr.id",
+        "sr.name",
+        "sr.region_id"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored window_composition reference for an answerable analytics request.",
+      "case_id": "m7-window_composition-009",
+      "expected_route": "DIRECT",
+      "family": "WINDOW_COMPOSITION",
+      "literal_values": [],
+      "naturalness": "NATURAL",
+      "question": "Show each refund and the next refund amount by refund date.",
+      "reference_sql_variants": [
+        "SELECT r.id, r.refunded_at, r.amount, LEAD(r.amount) OVER (ORDER BY r.refunded_at, r.id) AS next_amount FROM refunds r ORDER BY r.refunded_at, r.id"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "r.id",
+        "r.refunded_at",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-000",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "completed"
+      ],
+      "naturalness": "NATURAL",
+      "question": "List orders whose status is exactly completed.",
+      "reference_sql_variants": [
+        "SELECT o.order_number, o.total_amount FROM orders o WHERE o.status = 'completed' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.status",
+        "o.total_amount",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-001",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "settled"
+      ],
+      "naturalness": "NATURAL",
+      "question": "Show payments whose status is exactly settled.",
+      "reference_sql_variants": [
+        "SELECT p.id, p.amount FROM payments p WHERE p.status = 'settled' ORDER BY p.id"
+      ],
+      "relevant_schema_objects": [
+        "p.amount",
+        "p.id",
+        "p.status",
+        "payments"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-002",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "Electronics"
+      ],
+      "naturalness": "NATURAL",
+      "question": "List products in the Electronics category.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.sku FROM products p WHERE p.category = 'Electronics' ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.name",
+        "p.sku",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-003",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "North"
+      ],
+      "naturalness": "NATURAL",
+      "question": "Show customers assigned to the North region.",
+      "reference_sql_variants": [
+        "SELECT c.name FROM customers c JOIN regions r ON r.id = c.region_id WHERE r.name = 'North' ORDER BY c.name"
+      ],
+      "relevant_schema_objects": [
+        "c.name",
+        "c.region_id",
+        "customers",
+        "r.id",
+        "r.name",
+        "regions"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-004",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "USD"
+      ],
+      "naturalness": "NATURAL",
+      "question": "List orders using the USD currency.",
+      "reference_sql_variants": [
+        "SELECT o.order_number FROM orders o WHERE o.currency = 'USD' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.currency",
+        "o.order_number",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-005",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "Customer return"
+      ],
+      "naturalness": "NATURAL",
+      "question": "Show refunds whose reason is Customer return.",
+      "reference_sql_variants": [
+        "SELECT r.id, r.amount FROM refunds r WHERE r.reason = 'Customer return' ORDER BY r.id"
+      ],
+      "relevant_schema_objects": [
+        "r.amount",
+        "r.id",
+        "r.reason",
+        "refunds"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "dev",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-006",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "Office"
+      ],
+      "naturalness": "NATURAL",
+      "question": "List products in the Office category.",
+      "reference_sql_variants": [
+        "SELECT p.name FROM products p WHERE p.category = 'Office' ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.name",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-007",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "cancelled"
+      ],
+      "naturalness": "NATURAL",
+      "question": "Show cancelled order numbers.",
+      "reference_sql_variants": [
+        "SELECT o.order_number FROM orders o WHERE o.status = 'cancelled' ORDER BY o.order_number"
+      ],
+      "relevant_schema_objects": [
+        "o.order_number",
+        "o.status",
+        "orders"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-008",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "West"
+      ],
+      "naturalness": "NATURAL",
+      "question": "List representatives assigned to the West region.",
+      "reference_sql_variants": [
+        "SELECT sr.name FROM sales_representatives sr JOIN regions r ON r.id = sr.region_id WHERE r.name = 'West' ORDER BY sr.name"
+      ],
+      "relevant_schema_objects": [
+        "r.id",
+        "r.name",
+        "regions",
+        "sales_representatives",
+        "sr.name",
+        "sr.region_id"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    },
+    {
+      "adjudication_note": "Manually authored exact_literal_value_filter reference for an answerable analytics request.",
+      "case_id": "m7-exact_literal_value_filter-009",
+      "expected_route": "DIRECT",
+      "family": "EXACT_LITERAL_VALUE_FILTER",
+      "literal_values": [
+        "Outdoor"
+      ],
+      "naturalness": "NATURAL",
+      "question": "Show products in the Outdoor category with their prices.",
+      "reference_sql_variants": [
+        "SELECT p.name, p.unit_price FROM products p WHERE p.category = 'Outdoor' ORDER BY p.name"
+      ],
+      "relevant_schema_objects": [
+        "p.category",
+        "p.name",
+        "p.unit_price",
+        "products"
+      ],
+      "relevant_semantic_ids": [],
+      "split": "holdout",
+      "temporal_tag": null
+    }
+  ],
+  "corpus_id": "decisionsql-combined-mixed-workload",
+  "corpus_version": "m7-combined-v1",
+  "dev": 100,
+  "dev_hash": "59bd32b94939b4f1c2d77ab79cc9feaf4622358009073f9c16f7108eee3a014f",
+  "family_counts": {
+    "CLEAR_DIRECT_COMPLEX": 25,
+    "CLEAR_DIRECT_SIMPLE": 20,
+    "EXACT_LITERAL_VALUE_FILTER": 10,
+    "FILTER_AGGREGATION": 15,
+    "GOVERNED_METRIC": 30,
+    "ORDER_TOP_N": 10,
+    "RATIO_DERIVED": 10,
+    "RELATIONAL_COMPOSITION": 20,
+    "WINDOW_COMPOSITION": 10
+  },
+  "full_hash": "f169e3641d64bdb9f009bb97ee6f82e6589608579817ed948f2109ddf8921043",
+  "holdout": 50,
+  "holdout_hash": "740ab83e8700877e3bbe7bee6bcd61611a03d92755231dafebb7270d762be0e5",
+  "leakage": {
+    "exact_question_reuse": 0,
+    "m3_exact_question_reuse": 0,
+    "m4_exact_question_reuse": 0,
+    "m4_exact_sql_reuse": 0,
+    "m4_memory_exact_question_reuse": 0,
+    "memory_corpus_hash": "f871bd31649af8284bde0264aa6e8032b8ed2a2163f930d28df97d8e764087ae",
+    "normalized_sql_overlap": 4,
+    "passed": true
+  },
+  "naturalness": {
+    "BORDERLINE": 0,
+    "NATURAL": 150
+  },
+  "reference_validation": {
+    "failures": [],
+    "passed": true,
+    "reference_execution": "150/150",
+    "reference_m1_acceptance": "150/150",
+    "reference_parse": "150/150"
+  },
+  "route_counts": {
+    "DIRECT": 120,
+    "GOVERNED": 30
+  },
+  "total": 150
+}

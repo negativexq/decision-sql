@@ -12,12 +12,38 @@ execution accept it.
 
 ```text
 Question
-  -> server-owned context
-  -> LLM SQL proposal
-  -> deterministic SQL safety and planning
-  -> PostgreSQL EXPLAIN cost gate
-  -> read-only, timed, bounded execution
-  -> result and provenance
+  |
+  v
+Governed applicability
+  |
+  +-- catalog-covered metric
+  |      |
+  |      v
+  |   Governed semantic grounding
+  |      |
+  |      v
+  |   Deterministic metric compiler
+  |
+  +-- residual direct
+         |
+         v
+     Verified Query Memory
+         |
+         v
+     LLM SQL proposal
+         |
+         +-------------------+
+                             |
+                             v
+               Deterministic M1 trust boundary
+                             |
+                   sqlglot AST / policy
+                             |
+                   PostgreSQL EXPLAIN
+                             |
+                   read-only execution
+                             |
+                        bounded result
 ```
 
 ## What is implemented
@@ -60,6 +86,35 @@ The semantic catalog is organized around entities, relationships, dimensions,
 measures, and metrics. The LLM does not provide physical columns, numerator or
 denominator definitions, join paths, or formulas.
 
+## Current combined-system evidence
+
+M7 evaluated the current accepted architecture as one system on a new frozen
+internal mixed-workload benchmark: `decisionsql-combined-mixed-workload`,
+version `m7-combined-v1`, with 150 answerable cases (100 DEV, 50 HOLDOUT).
+This is execution-equivalence evidence for a frozen internal workload, not
+production accuracy or general Text-to-SQL accuracy.
+
+| Arm | DEV | HOLDOUT | Combined |
+| --- | ---: | ---: | ---: |
+| P0 direct one-shot | 35/100 (35%) | 16/50 (32%) | 51/150 (34%) |
+| P1 current combined architecture | 63/100 (63%) | 36/50 (72%) | 99/150 (66%) |
+
+The combined gain was **+32 percentage points**. The governed path resolved all
+30 catalog-covered governed-metric cases (30/30); the residual direct path
+resolved 69/120 (57.5%). Routing accuracy was 130/150 (86.67%), with 100%
+governed recall, 60% governed precision, 20 false-governed routes, and no
+false-direct routes. P1 averaged 3,186 ms versus 2,757 ms for P0 in this
+evaluation, roughly 429 ms slower; these are evaluation measurements, not an
+SLA.
+
+The 51 incorrect P1 cases were manually and deterministically attributed. The
+largest residuals were `ROUTING_ERROR` (13, 25.5%),
+`QUERY_STRUCTURE_ERROR` (12, 23.5%), and `FILTER_ERROR` (9, 17.6%), together
+66.7% of residual failures. The resulting classification is
+**COMBINED_ARCHITECTURE_PARTIALLY_VALIDATED** with
+**RESIDUAL_FAILURES_CONCENTRATED**. Full methodology, provenance, and hashes
+are in [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md).
+
 ## External evaluation
 
 These are execution-based results from different datasets and evaluators. They
@@ -88,8 +143,9 @@ Derived and temporal semantics remain weak across the external evidence:
 - BIRD ratio/division: **17/101 (16.83%)** EX.
 - BIRD temporal: **4/19 (21.05%)** EX.
 
-The current bottleneck is semantic/compositional grounding, especially derived
-business metrics and temporal logic, rather than SQL syntax validity alone.
+The external evidence still shows weak derived and temporal semantics. In the
+new combined internal evaluation, however, the largest measured residual was
+false-governed routing followed by direct query-structure and filter errors.
 
 M2.14.1 found the largest BIRD ratio failure classes were wrong aggregation
 (30), missing filters (13), arithmetic structure (13), join path (11), and
@@ -123,6 +179,29 @@ path as the baseline, with only the retrieved examples added to the prompt.
 These results apply only to the frozen internal residual direct-path questions;
 they are not general Text-to-SQL accuracy. Verified Query Memory is not
 production-default and has no automatic repair or learning-from-traffic path.
+
+## M5–M7 research status
+
+M5 post-SQL semantic verification was too noisy for a broad production
+correctness gate. Its pre-SQL selective-answering follow-up also did not
+justify a production subsystem: R0 and R2 were rejected, while R1 remained
+unresolved because of intermittent provider structured-output reliability.
+Selective answering is parked and is not part of the current runtime.
+
+M6 value-grounding research concluded **VALUE_GROUNDING_WEAK_EVIDENCE**: no
+confirmed or plausible historical value-grounding failures were found. A
+no-guessing resolution contract remains useful future design guidance, but a
+resolver, fuzzy matching, embeddings, and M6.1 are parked.
+
+M7 is the current combined-system checkpoint. Its strongest measured residual
+is routing, so the next research recommendation is **M8 — Routing Error
+Audit**. M8 is not implemented, and the current production defaults remain
+unchanged. See the complete M5–M7 records in
+[`docs/m50-semantic-verification-signal-audit.md`](docs/m50-semantic-verification-signal-audit.md),
+[`docs/m501-adjudicated-semantic-verification-corpus.md`](docs/m501-adjudicated-semantic-verification-corpus.md),
+[`docs/m5r-selective-answering-research.md`](docs/m5r-selective-answering-research.md),
+[`docs/m6-value-grounding-evidence-contract.md`](docs/m6-value-grounding-evidence-contract.md),
+and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md).
 
 ## Window research
 
@@ -191,7 +270,8 @@ evaluation research, M2.12 Window compiler research, M2.13 Defog external
 calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
 M3 Governed Semantic Metrics, M3.4 Governed Routing & Observability, M3.5
 Semantic Contract Hardening, M4 Verified Query Memory, and M4.1 Verified Query
-Memory Integration & Observability.
+Memory Integration & Observability, M5–M6 research, and M7 Combined Product
+Evaluation.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
@@ -204,8 +284,11 @@ governance layers. M4 Verified Query Memory is accepted for the frozen internal
 direct-path evaluation, and M4.1 integrates it behind a default-off runtime
 feature mode. The production routing default remains **OFF**; activation is a
 separate operational decision. M4.1 does not change the frozen retriever or
-corpus.
+corpus. M7 shows a substantial gain from the combined architecture on its new
+internal workload, but its 66% execution-equivalence result is not a broad
+production claim. M5 selective answering and M6 value grounding remain parked;
+no related runtime subsystem has been added.
 
-Later work may cover temporal/value grounding, clarification and controlled repair, answer
-synthesis/provenance, final external evaluation, UserContext/RLS, and
-production hardening.
+The next evidence milestone is **M8 — Routing Error Audit**. It must remain a
+frozen diagnostic study before any routing change. Later work may cover answer
+synthesis/provenance, UserContext/RLS, and production hardening.

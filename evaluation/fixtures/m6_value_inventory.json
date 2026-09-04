@@ -1,0 +1,152 @@
+{
+  "inventory_id": "decisionsql-demo-value-inventory",
+  "inventory_version": 1,
+  "source": "read-only inspection of the seeded commerce-v1 PostgreSQL fixture",
+  "scope": "bounded textual/value-bearing columns; no row dump",
+  "fields": [
+    {
+      "field_id": "dimension:region",
+      "table": "regions",
+      "column": "name",
+      "category": "ENTITY_NAME",
+      "cardinality_class": "LOW",
+      "distinct_count": 4,
+      "null_count": 0,
+      "safe_example_values": ["East", "North", "South", "West"],
+      "provider_exposable": true,
+      "notes": "Unique region names; no value alias registry."
+    },
+    {
+      "field_id": "dimension:sales_representative",
+      "table": "sales_representatives",
+      "column": "name",
+      "category": "ENTITY_NAME",
+      "cardinality_class": "MEDIUM",
+      "distinct_count": 8,
+      "null_count": 0,
+      "safe_example_values": ["Representative 01", "Representative 02"],
+      "provider_exposable": false,
+      "notes": "Synthetic names; candidate retrieval should remain bounded."
+    },
+    {
+      "field_id": "dimension:customer",
+      "table": "customers",
+      "column": "name",
+      "category": "ENTITY_NAME",
+      "cardinality_class": "HIGH",
+      "distinct_count": 40,
+      "null_count": 0,
+      "safe_example_values": ["Customer 0001", "Customer 0002"],
+      "provider_exposable": false,
+      "notes": "Entity names; do not dump the inventory into prompts or telemetry."
+    },
+    {
+      "field_id": "dimension:product",
+      "table": "products",
+      "column": "name",
+      "category": "ENTITY_NAME",
+      "cardinality_class": "MEDIUM",
+      "distinct_count": 24,
+      "null_count": 0,
+      "safe_example_values": ["Electronics Item 01", "Electronics Item 05"],
+      "provider_exposable": false,
+      "notes": "Synthetic product names; exact lookup is more defensible than semantic similarity."
+    },
+    {
+      "field_id": "dimension:product_category",
+      "table": "products",
+      "column": "category",
+      "category": "ENUM_LIKE",
+      "cardinality_class": "LOW",
+      "distinct_count": 4,
+      "null_count": 0,
+      "safe_example_values": ["Electronics", "Home", "Office", "Outdoor"],
+      "provider_exposable": true,
+      "notes": "Complete-looking fixture vocabulary, but completeness is not a general runtime assumption."
+    },
+    {
+      "field_id": "dimension:order_status",
+      "table": "orders",
+      "column": "status",
+      "category": "ENUM_LIKE",
+      "cardinality_class": "LOW",
+      "distinct_count": 3,
+      "null_count": 0,
+      "safe_example_values": ["cancelled", "completed", "pending"],
+      "provider_exposable": true,
+      "notes": "Low-cardinality lifecycle vocabulary."
+    },
+    {
+      "field_id": "dimension:order_currency",
+      "table": "orders",
+      "column": "currency",
+      "category": "ENUM_LIKE",
+      "cardinality_class": "LOW",
+      "distinct_count": 1,
+      "null_count": 0,
+      "safe_example_values": ["USD"],
+      "provider_exposable": true,
+      "notes": "Only USD is present in commerce-v1; not evidence for global currency aliases."
+    },
+    {
+      "field_id": "dimension:payment_status",
+      "table": "payments",
+      "column": "status",
+      "category": "ENUM_LIKE",
+      "cardinality_class": "LOW",
+      "distinct_count": 1,
+      "null_count": 0,
+      "safe_example_values": ["settled"],
+      "provider_exposable": true,
+      "notes": "One observed value; successful/success is not a governed alias."
+    },
+    {
+      "field_id": "dimension:refund_reason",
+      "table": "refunds",
+      "column": "reason",
+      "category": "FREE_TEXT",
+      "cardinality_class": "LOW_CURRENT_FIXTURE",
+      "distinct_count": 1,
+      "null_count": 0,
+      "safe_example_values": ["Customer return"],
+      "provider_exposable": false,
+      "notes": "Treat as free text despite current low cardinality; do not build a full enum inventory."
+    },
+    {
+      "field_id": "identifier:product_sku",
+      "table": "products",
+      "column": "sku",
+      "category": "IDENTIFIER",
+      "cardinality_class": "HIGH",
+      "distinct_count": 24,
+      "null_count": 0,
+      "safe_example_values": ["SKU-0001", "SKU-0002"],
+      "provider_exposable": false,
+      "notes": "Business-facing only if the product explicitly exposes SKU lookup."
+    },
+    {
+      "field_id": "identifier:order_number",
+      "table": "orders",
+      "column": "order_number",
+      "category": "IDENTIFIER",
+      "cardinality_class": "HIGH",
+      "distinct_count": 120,
+      "null_count": 0,
+      "safe_example_values": ["ORD-000001", "ORD-000002"],
+      "provider_exposable": false,
+      "notes": "Internal/bounded lookup candidate, not a general value synonym field."
+    },
+    {
+      "field_id": "identifier:customer_external_key",
+      "table": "customers",
+      "column": "external_key",
+      "category": "IDENTIFIER_INTERNAL",
+      "cardinality_class": "HIGH",
+      "distinct_count": 40,
+      "null_count": 0,
+      "safe_example_values": [],
+      "provider_exposable": false,
+      "notes": "Non-queryable internal identifier; excluded from value grounding."
+    }
+  ]
+}

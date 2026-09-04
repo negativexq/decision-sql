@@ -165,6 +165,20 @@ LLM-generated contract inference. See the detailed
 [M9.3 independent validation](docs/m93-result-equivalence-v2-independent-validation.md),
 and [M9.4 versioned evaluator integration](docs/m94-versioned-evaluator-v2-integration-provenance.md).
 
+Before the M10 clean rebaseline could begin, the V2 path exposed a missing
+generated-result binding protocol: the execution path provides `QueryExecution`,
+while V2 requires a `BoundResult` with semantic bindings. The offline
+`benchmark-result-binding-v1` study was rejected as unsafe after 8 incorrect
+semantic bindings across 117 independent projections and the
+`A17_SELF_JOIN_AMBIGUITY` false binding. A follow-up safety-boundary audit
+identified a narrower fail-closed Boundary B that retained 109/109 known-correct
+projection bindings and 49/52 correct-case evaluability opportunities in
+counterfactual analysis. This does not validate binder-v2: the M9.5 validation
+set is consumed, no M10 cases were constructed or run, and a new binder version
+requires a new independent validation corpus.
+Detailed records are in the [M9.5 protocol report](docs/m95-benchmark-result-contract-binding-protocol.md)
+and [M9.5R safety-boundary audit](docs/m95r-result-binding-safety-boundary-audit.md).
+
 ## External evaluation
 
 These are execution-based results from different datasets and evaluators. They
@@ -261,6 +275,10 @@ without changing the default V1 semantics. See the complete research records in
 and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md),
 plus the M8–M9.4 documents linked above.
 
+The M2.8 provider-generated ResultShape proposal remains rejected; the later
+M9 evaluator work is offline contract/evaluation infrastructure, not a revival
+of that provider stage.
+
 ## Window research
 
 DecisionSQL includes a deterministic compiler for a bounded, typed Window IR.
@@ -332,7 +350,9 @@ Memory Integration & Observability, M5–M6 research, and M7 Combined Product
 Evaluation, M8 Routing Error Audit, M9 Direct-Path Query Structure Audit,
 M9.1 Result-Shape / Projection Contract Audit, M9.2 Result Equivalence Contract
 Regression, M9.3 Result Equivalence V2 Independent Validation, and M9.4
-Versioned Evaluator V2 Integration & Provenance.
+Versioned Evaluator V2 Integration & Provenance. M9.5 Benchmark Result-Contract
+Binding Protocol was rejected as unsafe, and M9.5R identified a bounded
+fail-closed safety boundary for a new experiment.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
@@ -353,11 +373,12 @@ result-equivalence V2 candidate, and M9.4 integrated it as an explicit,
 versioned evaluation path. Evaluator V1 remains historical and default;
 DUAL_SHADOW remains V1-authoritative.
 
-The next milestone is **M10 — Clean Residual Rebaseline**. It will be a new
-frozen internal evaluation identity using explicit V2 provenance and
-benchmark-owned result contracts while keeping the current generation
-architecture unchanged. It is not a rescore of M7. The sequence remains:
-clean rebaseline → measured bottleneck → bounded generation/architecture
-intervention → independent internal validation → Defog/BIRD revalidation.
-Public revalidation remains deferred until a validated general-path change
-exists.
+M10 is blocked before corpus construction because no independently validated
+generated-result binding protocol was available. The next milestone is
+**M9.5R.1 — Fail-Closed Result Binder V2 & New Independent Validation**. It must
+preserve binder-v1, implement only the audited fail-closed boundary, and use
+new independent cases. Only if that succeeds should **M10 — Clean Residual
+Rebaseline** run as a new frozen internal evaluation identity using explicit V2
+provenance and benchmark-owned contracts; it will not rescore M7. Public
+revalidation remains deferred until after M10, a measured generation or
+architecture intervention, and new independent internal validation.

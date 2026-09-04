@@ -1,0 +1,55 @@
+{
+  "artifact": "M110_POLICY_FAMILY_MANIFEST",
+  "version": "decision-sql-m110-policy-families-v1",
+  "status": "FROZEN_BEFORE_LABEL_LEVEL_OPTIMIZATION",
+  "scope": "global memory admission; no family/route/partition thresholds",
+  "missing_score_behavior": "BLOCK_MEMORY_ADMISSION",
+  "tie_behavior": "preserve frozen ranked order and stable-ID tie break; do not rerank",
+  "families": [
+    {
+      "policy_id": "P0_CURRENT",
+      "parameters": [],
+      "decision": "admit iff current retrieval supplied selected examples",
+      "inputs": ["selected_count"]
+    },
+    {
+      "policy_id": "P1_TOP1_MIN_SCORE",
+      "parameters": ["tau"],
+      "decision": "admit iff s1 >= tau",
+      "inputs": ["s1"]
+    },
+    {
+      "policy_id": "P2_MIN_SELECTED_SCORE",
+      "parameters": ["tau"],
+      "decision": "admit iff min(s1, ..., sK) >= tau",
+      "inputs": ["min_selected_score"]
+    },
+    {
+      "policy_id": "P3_TOP1_PLUS_MARGIN",
+      "parameters": ["tau", "delta"],
+      "decision": "admit iff s1 >= tau and (s1 - s2) >= delta",
+      "inputs": ["s1", "top1_top2_gap"]
+    }
+  ],
+  "parameter_limit": 2,
+  "threshold_candidates": "unique training-fold observed values and deterministic adjacent midpoints only",
+  "selection_objective": [
+    "compatible_context_retention >= 85% on training fold",
+    "maximize primary selectivity block recall",
+    "higher compatible retention",
+    "higher blocked-set precision",
+    "simpler family",
+    "less restrictive admission"
+  ],
+  "held_fold_gates": {
+    "primary_selectivity_block_recall_min": 0.5,
+    "compatible_context_retention_min": 0.8,
+    "blocked_set_precision_min": 0.7,
+    "correct_compatible_retention_min_if_n_ge_5": 0.8,
+    "combined_primary_blocks_min": 12
+  },
+  "parameter_instability": "flag when selected scalar threshold positions differ by more than 20 percentile points",
+  "downstream_accuracy": "not evaluated; no counterfactual provider execution",
+  "learned_classifier": false,
+  "gold_or_reference_features": false
+}

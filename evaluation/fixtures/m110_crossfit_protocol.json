@@ -1,0 +1,35 @@
+{
+  "artifact": "M110_CROSSFIT_PROTOCOL",
+  "version": "decision-sql-m110-crossfit-v1",
+  "folds": ["DIAG_A", "DIAG_B"],
+  "directions": [
+    {"train": "DIAG_A", "test": "DIAG_B"},
+    {"train": "DIAG_B", "test": "DIAG_A"}
+  ],
+  "threshold_source": "training-fold feature values and deterministic midpoints only",
+  "labels_forbidden_as_features": true,
+  "partition_forbidden_as_feature": true,
+  "train_objective": {
+    "compatible_retention_min": 0.85,
+    "maximize": "primary_selectivity_block_recall",
+    "tie_break": [
+      "higher compatible retention",
+      "higher blocked-set precision",
+      "simpler policy family",
+      "less restrictive admission"
+    ]
+  },
+  "test_gates": {
+    "primary_selectivity_block_recall_min": 0.5,
+    "compatible_context_retention_min": 0.8,
+    "blocked_set_precision_min": 0.7,
+    "correct_compatible_memory_retention_min_if_n_ge_5": 0.8,
+    "combined_primary_blocks_min": 12
+  },
+  "stability_flag": {
+    "name": "PARAMETER_UNSTABLE",
+    "percentile_difference_gt": 20
+  },
+  "selection_boundary": "policy family only; numeric threshold is not frozen for M11",
+  "counterfactual": "not run"
+}

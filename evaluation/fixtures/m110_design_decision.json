@@ -1,0 +1,24 @@
+{
+  "artifact": "M110_DESIGN_DECISION",
+  "version": "decision-sql-m110-design-decision-v1",
+  "classification": "M110_DESIGN_AUDIT_BLOCKED",
+  "decision": "NO_POLICY_FAMILY_SELECTED",
+  "primary_evidence": {
+    "source": "frozen M10.4S automated causal attribution",
+    "primary_selectivity_positive": 61,
+    "diag_a_primary_positive": 31,
+    "diag_b_primary_positive": 30,
+    "secondary_overtransfer": 21,
+    "memory_use_cases": 105,
+    "compatible_controls": 0,
+    "compatibility_unknown": 23
+  },
+  "interpretation": "The M10.4S evidence identifies the selectivity failure, but it does not provide the deterministic compatible-memory control class required to evaluate retention and blocked-set precision. Existing score sufficiency is therefore unresolved by this audit.",
+  "score_policy_sufficiency": "NOT_DETERMINED",
+  "new_server_owned_compatibility_signal": "NOT_DESIGNED",
+  "numeric_threshold_frozen": false,
+  "downstream_recovery_claim": false,
+  "counterfactual": "not_run",
+  "m11_implementation": "not_started",
+  "next_step": "Obtain a valid deterministic compatible-control evidence basis before selecting or implementing a score policy; no M11.1 policy experiment is authorized by this blocked audit."
+}

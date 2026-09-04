@@ -1,0 +1,80 @@
+{
+  "artifact": "M110_FEATURE_MANIFEST",
+  "version": "decision-sql-m110-feature-manifest-v1",
+  "status": "FROZEN_BEFORE_LABEL_LEVEL_OPTIMIZATION",
+  "source": "M10.4S runtime provenance MEMORY_RETRIEVAL_RESULT payload",
+  "policy_feature_columns": [
+    "selected_count",
+    "s1",
+    "s2",
+    "s3",
+    "min_selected_score",
+    "top1_top2_gap"
+  ],
+  "features": [
+    {
+      "name": "selected_count",
+      "category": "EXISTING_RUNTIME_VALUE",
+      "source_field": "selected_ids",
+      "reference_blind": true,
+      "availability": "105/105 memory-use cases with preserved selection"
+    },
+    {
+      "name": "s1",
+      "category": "EXISTING_RUNTIME_VALUE",
+      "source_field": "ranked_results[0].score",
+      "reference_blind": true,
+      "availability": "113/113 retrieval events; 105/105 memory-use rows"
+    },
+    {
+      "name": "s2",
+      "category": "EXISTING_RUNTIME_VALUE",
+      "source_field": "ranked_results[1].score",
+      "reference_blind": true,
+      "availability": "113/113 retrieval events; 105/105 memory-use rows"
+    },
+    {
+      "name": "s3",
+      "category": "EXISTING_RUNTIME_VALUE",
+      "source_field": "ranked_results[2].score",
+      "reference_blind": true,
+      "availability": "113/113 retrieval events; 105/105 memory-use rows"
+    },
+    {
+      "name": "min_selected_score",
+      "category": "OFFLINE_DERIVABLE_FROM_EXISTING_RUNTIME_VALUES",
+      "source_field": "ranked_results[*].score",
+      "formula": "min(s1, s2, ..., sK)",
+      "reference_blind": true,
+      "availability": "113/113 retrieval events; 105/105 memory-use rows"
+    },
+    {
+      "name": "top1_top2_gap",
+      "category": "OFFLINE_DERIVABLE_FROM_EXISTING_RUNTIME_VALUES",
+      "source_field": "ranked_results[0:2].score",
+      "formula": "s1 - s2",
+      "reference_blind": true,
+      "availability": "113/113 retrieval events; 105/105 memory-use rows"
+    }
+  ],
+  "unavailable_assumed_signals": [
+    "lexical_score",
+    "schema_score",
+    "structural_score",
+    "semantic_score",
+    "calibrated_probability",
+    "compatibility_score"
+  ],
+  "forbidden_policy_inputs": [
+    "correct",
+    "primary_mechanism",
+    "reference_sql",
+    "compatibility_label",
+    "expected_route",
+    "diagnostic_family",
+    "partition",
+    "gold_semantics",
+    "failure_outcome"
+  ],
+  "score_precision": "preserve runtime precision; round only for presentation"
+}

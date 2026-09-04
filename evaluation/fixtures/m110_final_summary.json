@@ -1,0 +1,93 @@
+{
+  "artifact": "M110_FINAL_SUMMARY",
+  "version": "decision-sql-m110-final-summary-v1",
+  "classification": "M110_DESIGN_AUDIT_BLOCKED",
+  "starting_head": "2ae4e6a2e022dec3a28f6829059238b110098f6d",
+  "starting_origin_main": "2ae4e6a2e022dec3a28f6829059238b110098f6d",
+  "branch": "main",
+  "runtime_changes": 0,
+  "provider_calls": 0,
+  "database_calls": 0,
+  "retrieval_reruns": 0,
+  "new_corpus_cases": 0,
+  "m11_implementation": false,
+  "frozen_m104s": {
+    "classification": "M104S_HIGH_LEVERAGE_MECHANISM_IDENTIFIED",
+    "v1": "27/160",
+    "failures": 133,
+    "primary_selectivity_failures": 61,
+    "primary_selectivity_e2": 61,
+    "diag_a": 31,
+    "diag_b": 30,
+    "overtransfer_secondary": 21
+  },
+  "signal_audit": {
+    "score_formula": "0.75 * lexical_score + 0.25 * schema_score + 0.0 * structural_bonus",
+    "score_orientation": "higher_is_better",
+    "score_calibrated_probability": false,
+    "top_k": 3,
+    "preserved_runtime_scalar": "final_score",
+    "derived_signals": ["min_selected_score", "top1_top2_gap"],
+    "unavailable_assumed_signals": ["lexical_score", "schema_score", "structural_score", "compatibility_score"],
+    "policy_families": ["P0_CURRENT", "P1_TOP1_MIN_SCORE", "P2_MIN_SELECTED_SCORE", "P3_TOP1_PLUS_MARGIN"]
+  },
+  "label_counts": {
+    "memory_use_cases": 105,
+    "no_memory_cases": 55,
+    "primary_selectivity_positive": 61,
+    "diag_a_primary_positive": 31,
+    "diag_b_primary_positive": 30,
+    "overtransfer_secondary": 21,
+    "compatible_controls": 0,
+    "correct_compatible_controls": 0,
+    "compatible_but_wrong_controls": 0,
+    "compatibility_unknown": 23
+  },
+  "policy_result": {
+    "p0": "REFERENCE_ONLY",
+    "p1": "NOT_EVALUABLE",
+    "p2": "NOT_EVALUABLE",
+    "p3": "NOT_EVALUABLE",
+    "thresholds_selected": false,
+    "numeric_threshold_frozen": false,
+    "score_policy_sufficiency": "NOT_DETERMINED"
+  },
+  "scientific_boundary": {
+    "development_evidence_only": true,
+    "independent_validation": false,
+    "memory_off_counterfactual": false,
+    "provider_counterfactual": false,
+    "blocked_cases_claimed_recovered": false,
+    "new_server_owned_compatibility_signal_implemented": false,
+    "public_benchmark_rerun": false,
+    "m104s_corpus_reusable": false
+  },
+  "hashes": {
+    "feature_manifest": "6b8d642068cf6d2a611e9064e933b4da7314eaccf1e36a2d4efe20f50df3d933",
+    "policy_family_manifest": "233955c32b7e15bea3180b8210d72af96996dda0ead8fb6adfafa9760eed9417",
+    "compatibility_labels": "4d652d45abce5c2df779c0505c85fd7670dac2d291a6f391fab637c32ffd588f",
+    "crossfit_protocol": "82cc46ad93c88788c1e3fd243c881961a990f8076463c7ddfc9501cc772e5bdd",
+    "feature_rows": "3dde379055cfcf7f5645dff64b61430583f6b813c9f153bca7b811f390f6f426",
+    "score_diagnostics": "7eac9bf0257b7fff323631b80607f0ca750c40262897957de2fc6d51857bd423",
+    "policy_results": "ae3509420e80b3694ec068c915fc6979b4dacb3e8647b89d53f0d73b31667650",
+    "design_decision": "f7dd9fbea0fb710cdd48f99b9149d7bc315101a1ed6a916883fd6cca5f8a9c8b",
+    "evidence_manifest": "92608a3b49d7283cede018c4c9663fe65cffa05898b0e359cfaeedbffabd1584",
+    "source": "411e64e48fdc41e80f3927f00963b3c641a4a26d015320bbc987f341bdcfd585",
+    "tests": "4c811930fd56a8a0d6675598e70e8f97d1e458aef4806d308df86695d4fda548",
+    "final_summary": "computed externally as file-byte SHA-256; not self-embedded"
+  },
+  "quality": {
+    "focused_m110_tests": "6/6",
+    "cross_milestone_regressions": "45/45",
+    "db_free_unit_suite": "370/370",
+    "targeted_ruff": "pass",
+    "targeted_mypy": "pass",
+    "project_ruff": "1 frozen binder-v1 diagnostic; 0 new",
+    "project_mypy": "7 pre-existing diagnostics (4 binder-v1 and 3 m104s audit); 0 new",
+    "git_diff_check": "pass",
+    "secret_scan": "pass on intended artifact paths",
+    "full_pytest": "not run because it may invoke DB/provider/benchmark workflows",
+    "stale_one_off_containers": ["decision-sql-bird-postgres", "decision-sql-defog-postgres"]
+  },
+  "next_step": "No policy-family or M11.1 counterfactual recommendation is authorized while deterministic compatible controls are unavailable."
+}

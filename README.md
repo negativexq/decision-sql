@@ -44,6 +44,14 @@ Governed applicability
                    read-only execution
                              |
                         bounded result
+                             |
+                    versioned evaluation
+                    /         |          \
+                  V1       V2 explicit   DUAL_SHADOW
+             historical/      explicit    V1 authoritative;
+              default        contract     V2 diagnostic
+                             |
+                         provenance
 ```
 
 ## Current system
@@ -66,6 +74,10 @@ Governed applicability
   Retrieved SQL is context only and generated SQL still passes M1.
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
+- Evaluation-only versioned result evaluation: V1 preserves historical and
+  default semantics, V2 is an explicit contract-aware path, and DUAL_SHADOW
+  keeps V1 authoritative while recording V2 diagnostics. This does not change
+  M1's SQL execution authority or infer result contracts automatically.
 - Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
   PostgreSQL. Their benchmark executors are isolated from the product M1 path.
 
@@ -130,23 +142,28 @@ known genuine errors. M9.3 independently validated the unchanged candidate:
 
 | Validation | Legitimate positives/controls | False accepts |
 | --- | ---: | ---: |
-| M9.2 frozen regression | 85/85 retained or recovered | 0 across 26 known negatives |
-| M9.3 independent corpus | 70/70 accepted | 0 across 80 genuine negatives |
+| M9.2 frozen regression | 85/85 retained or recovered; 30/30 synthetic | 0 across 28 historical negatives |
+| M9.3 independent corpus | 70/70 accepted | 0 across 90 negative/invalid cases |
 
 The M9.3 corpus contained 160 cases: 40 contract-equivalent positives, 30
 strict controls, and 90 projection, grain, value, ordering/duplicate, or
 invalid-contract negatives. It had no M9.1/M9.2 case overlap or fixture reuse;
 the candidate also passed 12/12 metamorphic and 12/12 mutation-safety checks.
 This validates evaluation semantics on a frozen internal corpus, not universal
-evaluator correctness, a benchmark score increase, or a deployed evaluator V2.
+evaluator correctness or a benchmark score increase.
 
 Evaluator V1 is the historical frozen behavior. The result-equivalence V2
-candidate is independently validated research. Versioned side-by-side
-integration and provenance are deferred to **M9.4**. See the detailed
+candidate is independently validated and is now available through an explicit
+versioned evaluation path. V1 remains the default; DUAL_SHADOW keeps V1
+authoritative and preserves any V1/V2 disagreement. New V2 results carry
+bounded evaluator, contract, comparator, and matched-reference provenance.
+V2 requires an explicit valid contract; M9.4 did not add automatic or
+LLM-generated contract inference. See the detailed
 [M9 direct-path audit](docs/m9-direct-path-query-structure-audit.md),
 [M9.1 result-shape audit](docs/m91-direct-result-shape-projection-contract-audit.md),
 [M9.2 contract regression](docs/m92-result-equivalence-contract-regression-suite.md),
-and [M9.3 independent validation](docs/m93-result-equivalence-v2-independent-validation.md).
+[M9.3 independent validation](docs/m93-result-equivalence-v2-independent-validation.md),
+and [M9.4 versioned evaluator integration](docs/m94-versioned-evaluator-v2-integration-provenance.md).
 
 ## External evaluation
 
@@ -235,14 +252,14 @@ equivalence on its frozen internal workload, not production or general
 Text-to-SQL accuracy. M8 found routing was not the primary recoverable
 bottleneck. M9 found structural failures were real but fragmented, with
 result-shape/projection dominating its structural labels. M9.1–M9.3 validated
-the evaluation-contract direction only; evaluator V2 is not integrated or
-default. See the complete research records in
+the evaluation-contract direction, and M9.4 integrated that path explicitly
+without changing the default V1 semantics. See the complete research records in
 [`docs/m50-semantic-verification-signal-audit.md`](docs/m50-semantic-verification-signal-audit.md),
 [`docs/m501-adjudicated-semantic-verification-corpus.md`](docs/m501-adjudicated-semantic-verification-corpus.md),
 [`docs/m5r-selective-answering-research.md`](docs/m5r-selective-answering-research.md),
 [`docs/m6-value-grounding-evidence-contract.md`](docs/m6-value-grounding-evidence-contract.md),
 and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md),
-plus the M8–M9.3 documents linked above.
+plus the M8–M9.4 documents linked above.
 
 ## Window research
 
@@ -314,7 +331,8 @@ Semantic Contract Hardening, M4 Verified Query Memory, and M4.1 Verified Query
 Memory Integration & Observability, M5–M6 research, and M7 Combined Product
 Evaluation, M8 Routing Error Audit, M9 Direct-Path Query Structure Audit,
 M9.1 Result-Shape / Projection Contract Audit, M9.2 Result Equivalence Contract
-Regression, and M9.3 Result Equivalence V2 Independent Validation.
+Regression, M9.3 Result Equivalence V2 Independent Validation, and M9.4
+Versioned Evaluator V2 Integration & Provenance.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
@@ -330,13 +348,16 @@ separate operational decision. M4.1 does not change the frozen retriever or
 corpus. M7 shows a substantial gain from the combined architecture on its new
 internal workload, but its 66% execution-equivalence result is not a broad
 production claim. M5 selective answering and M6 value grounding remain parked;
-no related runtime subsystem has been added. M9.3 independently validated a
-result-equivalence V2 candidate, but evaluator V1 remains historical and V2 is
-not integrated or the default.
+no related runtime subsystem has been added. M9.3 independently validated the
+result-equivalence V2 candidate, and M9.4 integrated it as an explicit,
+versioned evaluation path. Evaluator V1 remains historical and default;
+DUAL_SHADOW remains V1-authoritative.
 
-The next milestone is **M9.4 — Versioned Evaluator V2 Integration &
-Provenance**. It must preserve V1 and add explicit side-by-side provenance;
-M9.4 has not started. After that, a clean residual rebaseline should determine
-whether evidence supports general-path generation improvements. Public Defog and
-BIRD revalidation remains deferred until a validated general-path change
+The next milestone is **M10 — Clean Residual Rebaseline**. It will be a new
+frozen internal evaluation identity using explicit V2 provenance and
+benchmark-owned result contracts while keeping the current generation
+architecture unchanged. It is not a rescore of M7. The sequence remains:
+clean rebaseline → measured bottleneck → bounded generation/architecture
+intervention → independent internal validation → Defog/BIRD revalidation.
+Public revalidation remains deferred until a validated general-path change
 exists.

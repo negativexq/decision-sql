@@ -1,0 +1,30 @@
+{
+  "corpus_id": "decisionsql-m93-equivalence-independent",
+  "version": "m93-equivalence-independent-v2",
+  "source": "new deterministic result-contract fixtures; no M9.2 row reuse",
+  "categories": {
+    "CONTRACT_EQUIVALENT_POSITIVES": {"count": 40, "expected": "SHOULD_ACCEPT_CONTRACT"},
+    "STRICT_EQUIVALENT_CONTROLS": {"count": 30, "expected": "SHOULD_ACCEPT_STRICT"},
+    "PROJECTION_NEGATIVES": {"count": 30, "expected": "SHOULD_REJECT"},
+    "GRAIN_CARDINALITY_NEGATIVES": {"count": 20, "expected": "SHOULD_REJECT"},
+    "VALUE_SEMANTIC_NEGATIVES": {"count": 20, "expected": "SHOULD_REJECT"},
+    "ORDER_DUPLICATE_SHAPE_NEGATIVES": {"count": 10, "expected": "SHOULD_REJECT"},
+    "INVALID_OR_AMBIGUOUS": {"count": 10, "expected": "SHOULD_BE_CONTRACT_INVALID"}
+  },
+  "split": {
+    "method": "alternating index within each frozen category",
+    "VALIDATION_A": 80,
+    "VALIDATION_B": 80
+  },
+  "fresh_value_namespace": {
+    "regions": ["East", "West", "Central", "Coastal"],
+    "products": ["Atlas", "Beacon", "Cedar", "Delta"],
+    "categories": ["Hardware", "Services", "Software"],
+    "representatives": ["Ayla", "Bora", "Cem", "Deniz"]
+  },
+  "prohibited_overlap": {
+    "m91_s11_case_ids": 0,
+    "m92_case_ids": 0,
+    "m92_exact_result_fixture_reuse": 0
+  }
+}

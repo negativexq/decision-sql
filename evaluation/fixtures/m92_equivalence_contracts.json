@@ -1,0 +1,63 @@
+{
+  "corpus_id": "decisionsql-m92-result-equivalence-regression",
+  "version": "m92-equivalence-contract-v1",
+  "contract_version": "result-equivalence-contract-v1",
+  "candidate_version": "m92-result-equivalence-candidate-v1",
+  "contract_policy": {
+    "slot_kinds": ["DIMENSION", "MEASURE", "ENTITY_ID", "DISPLAY_LABEL", "AUXILIARY"],
+    "required_fields": ["required_output_slots", "row_identity_slots", "required_measure_slots", "scalar_or_tabular", "row_order_policy", "duplicate_policy", "extra_output_policy"],
+    "duplicate_policy": "PRESERVE",
+    "extra_output_policy": "ALLOW_DECLARED_OPTIONAL_ONLY",
+    "optional_field_rule": "ignore only explicitly declared, non-grain-changing extras",
+    "forbidden_operations": ["subset_search", "deduplication", "reaggregation", "value_rewriting"]
+  },
+  "historical_groups": {
+    "POSITIVE_EQUIVALENT_ARTIFACTS": [
+      "m7-clear_direct_simple-003", "m7-clear_direct_simple-004", "m7-exact_literal_value_filter-000", "m7-exact_literal_value_filter-001", "m7-exact_literal_value_filter-002", "m7-exact_literal_value_filter-003", "m7-exact_literal_value_filter-004", "m7-exact_literal_value_filter-005", "m7-clear_direct_simple-019", "m7-order_top_n-008"
+    ],
+    "NEGATIVE_PROJECTION_VIOLATIONS": [
+      "m7-clear_direct_complex-000", "m7-clear_direct_complex-001", "m7-clear_direct_complex-004", "m7-clear_direct_complex-009", "m7-clear_direct_complex-015", "m7-filter_aggregation-009", "m7-order_top_n-006", "m7-ratio_derived-001", "m7-ratio_derived-002", "m7-relational_composition-005", "m7-window_composition-001", "m7-window_composition-002", "m7-window_composition-003", "m7-window_composition-004", "m7-window_composition-005", "m7-clear_direct_complex-019", "m7-clear_direct_complex-021", "m7-filter_aggregation-013", "m7-ratio_derived-008"
+    ],
+    "NEGATIVE_SEMANTIC_ERRORS": [
+      "m7-ratio_derived-004", "m7-clear_direct_complex-018"
+    ],
+    "CORRECT_CONTROLS": [
+      "m7-clear_direct_complex-002", "m7-clear_direct_complex-003", "m7-clear_direct_complex-005", "m7-clear_direct_complex-006", "m7-clear_direct_complex-007", "m7-clear_direct_complex-011", "m7-clear_direct_complex-013", "m7-clear_direct_complex-014", "m7-clear_direct_simple-000", "m7-clear_direct_simple-001", "m7-clear_direct_simple-002", "m7-clear_direct_simple-005", "m7-clear_direct_simple-006", "m7-clear_direct_simple-007", "m7-clear_direct_simple-009", "m7-clear_direct_simple-010", "m7-clear_direct_simple-011", "m7-clear_direct_simple-012", "m7-filter_aggregation-000", "m7-filter_aggregation-001", "m7-filter_aggregation-002", "m7-filter_aggregation-003", "m7-filter_aggregation-004", "m7-filter_aggregation-005", "m7-filter_aggregation-006", "m7-filter_aggregation-007", "m7-filter_aggregation-008", "m7-order_top_n-000", "m7-order_top_n-001", "m7-order_top_n-002", "m7-order_top_n-003", "m7-order_top_n-004", "m7-order_top_n-005", "m7-ratio_derived-000", "m7-relational_composition-000", "m7-relational_composition-001", "m7-relational_composition-002", "m7-relational_composition-003", "m7-relational_composition-004", "m7-relational_composition-006", "m7-relational_composition-007", "m7-relational_composition-008", "m7-relational_composition-009", "m7-relational_composition-010", "m7-relational_composition-011", "m7-relational_composition-012", "m7-window_composition-000", "m7-window_composition-006", "m7-clear_direct_complex-017", "m7-clear_direct_complex-023", "m7-clear_direct_complex-024", "m7-clear_direct_simple-013", "m7-clear_direct_simple-014", "m7-clear_direct_simple-015", "m7-clear_direct_simple-016", "m7-clear_direct_simple-017", "m7-clear_direct_simple-018", "m7-exact_literal_value_filter-006", "m7-exact_literal_value_filter-007", "m7-exact_literal_value_filter-008", "m7-exact_literal_value_filter-009", "m7-filter_aggregation-011", "m7-filter_aggregation-012", "m7-filter_aggregation-014", "m7-order_top_n-009", "m7-ratio_derived-009", "m7-relational_composition-013", "m7-relational_composition-014", "m7-relational_composition-015", "m7-relational_composition-017", "m7-relational_composition-018", "m7-relational_composition-019", "m7-window_composition-007", "m7-window_composition-008", "m7-window_composition-009"
+    ],
+    "NON_S11_NEGATIVE_CONTROLS": [
+      "m7-clear_direct_complex-008", "m7-clear_direct_complex-012", "m7-clear_direct_simple-008", "m7-clear_direct_complex-022", "m7-filter_aggregation-010", "m7-order_top_n-007", "m7-relational_composition-016"
+    ]
+  },
+  "synthetic_cases": [
+    {"case_id": "A01_DECLARED_OPTIONAL_ID", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A02_UNDECLARED_BUSINESS", "expected": "SHOULD_REJECT"},
+    {"case_id": "A03_MISSING_DIMENSION", "expected": "SHOULD_REJECT"},
+    {"case_id": "A04_MISSING_MEASURE", "expected": "SHOULD_REJECT"},
+    {"case_id": "A05_WRONG_MEASURE_VALUE", "expected": "SHOULD_REJECT"},
+    {"case_id": "A06_WRONG_DIMENSION_VALUE", "expected": "SHOULD_REJECT"},
+    {"case_id": "A07_EXTRA_GROUPING_KEY", "expected": "SHOULD_REJECT"},
+    {"case_id": "A08_EXTRA_KEY_DUPLICATES", "expected": "SHOULD_REJECT"},
+    {"case_id": "A09_DUPLICATE_ROW", "expected": "SHOULD_REJECT"},
+    {"case_id": "A10_MISSING_DUPLICATE", "expected": "SHOULD_REJECT"},
+    {"case_id": "A11_SCALAR_GROUPED", "expected": "SHOULD_REJECT"},
+    {"case_id": "A12_GROUPED_SCALAR", "expected": "SHOULD_REJECT"},
+    {"case_id": "A13_REQUIRED_ORDER_WRONG", "expected": "SHOULD_REJECT"},
+    {"case_id": "A14_INSENSITIVE_ROW_ORDER", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A15_ALIAS_ONLY", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A16_COLUMN_ORDER_ONLY", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A17_NULL_EQUIVALENCE", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A18_NUMERIC_TOLERANCE", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A19_NUMERIC_OUTSIDE_TOLERANCE", "expected": "SHOULD_REJECT"},
+    {"case_id": "A20_OPTIONAL_APPENDED", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A21_OPTIONAL_INSERTED", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A22_ONE_OF_TWO_EXTRAS", "expected": "SHOULD_REJECT"},
+    {"case_id": "A23_OPTIONAL_VALUE_DIFFERS", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A24_OPTIONAL_REQUIRES_DEDUP", "expected": "SHOULD_REJECT"},
+    {"case_id": "A25_OPTIONAL_REQUIRES_REAGGREGATION", "expected": "SHOULD_REJECT"},
+    {"case_id": "A26_WRONG_SEMANTIC_SLOT", "expected": "SHOULD_REJECT"},
+    {"case_id": "A27_WRONG_LITERAL_SLOT", "expected": "SHOULD_REJECT"},
+    {"case_id": "A28_REFERENCE_VARIANTS", "expected": "SHOULD_ACCEPT"},
+    {"case_id": "A29_NO_REFERENCE_MATCH", "expected": "SHOULD_REJECT"},
+    {"case_id": "A30_AMBIGUOUS_BINDING", "expected": "SHOULD_REJECT"}
+  ]
+}

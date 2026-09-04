@@ -46,7 +46,7 @@ Governed applicability
                         bounded result
 ```
 
-## What is implemented
+## Current system
 
 - Python 3.12, FastAPI, Pydantic Settings, SQLAlchemy, Alembic, `sqlglot`,
   pytest, Ruff, mypy, and OpenTelemetry.
@@ -115,6 +115,39 @@ largest residuals were `ROUTING_ERROR` (13, 25.5%),
 **RESIDUAL_FAILURES_CONCENTRATED**. Full methodology, provenance, and hashes
 are in [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md).
 
+## Result equivalence and evaluation provenance
+
+SQL-string equality is not the correctness criterion. Historical evaluator V1
+remains frozen so M7, M8, and M9 results stay reproducible. M9–M9.3 were
+evaluation-only research; they did not change SQL generation or runtime
+behavior.
+
+M9.1 separated the 31 historical result-shape/projection failures into 10
+evaluator artifacts, 19 genuine projection-contract violations, and 2 deeper
+semantic/computation errors. M9.2 then validated a deterministic contract
+candidate that recovered the known harmless result supersets without accepting
+known genuine errors. M9.3 independently validated the unchanged candidate:
+
+| Validation | Legitimate positives/controls | False accepts |
+| --- | ---: | ---: |
+| M9.2 frozen regression | 85/85 retained or recovered | 0 across 26 known negatives |
+| M9.3 independent corpus | 70/70 accepted | 0 across 80 genuine negatives |
+
+The M9.3 corpus contained 160 cases: 40 contract-equivalent positives, 30
+strict controls, and 90 projection, grain, value, ordering/duplicate, or
+invalid-contract negatives. It had no M9.1/M9.2 case overlap or fixture reuse;
+the candidate also passed 12/12 metamorphic and 12/12 mutation-safety checks.
+This validates evaluation semantics on a frozen internal corpus, not universal
+evaluator correctness, a benchmark score increase, or a deployed evaluator V2.
+
+Evaluator V1 is the historical frozen behavior. The result-equivalence V2
+candidate is independently validated research. Versioned side-by-side
+integration and provenance are deferred to **M9.4**. See the detailed
+[M9 direct-path audit](docs/m9-direct-path-query-structure-audit.md),
+[M9.1 result-shape audit](docs/m91-direct-result-shape-projection-contract-audit.md),
+[M9.2 contract regression](docs/m92-result-equivalence-contract-regression-suite.md),
+and [M9.3 independent validation](docs/m93-result-equivalence-v2-independent-validation.md).
+
 ## External evaluation
 
 These are execution-based results from different datasets and evaluators. They
@@ -144,8 +177,12 @@ Derived and temporal semantics remain weak across the external evidence:
 - BIRD temporal: **4/19 (21.05%)** EX.
 
 The external evidence still shows weak derived and temporal semantics. In the
-new combined internal evaluation, however, the largest measured residual was
-false-governed routing followed by direct query-structure and filter errors.
+combined internal evaluation, M8 showed that routing errors were not the main
+recoverable bottleneck. M9 showed that broad structure failures were real but
+mostly concentrated in result-shape/projection mismatches rather than a
+generic SQL-planning deficit. M9.1–M9.3 then separated evaluator artifacts
+from genuine projection violations and validated a narrow contract-aware
+candidate without changing historical scores.
 
 M2.14.1 found the largest BIRD ratio failure classes were wrong aggregation
 (30), missing filters (13), arithmetic structure (13), join path (11), and
@@ -180,7 +217,7 @@ These results apply only to the frozen internal residual direct-path questions;
 they are not general Text-to-SQL accuracy. Verified Query Memory is not
 production-default and has no automatic repair or learning-from-traffic path.
 
-## M5–M7 research status
+## M5–M9 research status
 
 M5 post-SQL semantic verification was too noisy for a broad production
 correctness gate. Its pre-SQL selective-answering follow-up also did not
@@ -193,15 +230,19 @@ confirmed or plausible historical value-grounding failures were found. A
 no-guessing resolution contract remains useful future design guidance, but a
 resolver, fuzzy matching, embeddings, and M6.1 are parked.
 
-M7 is the current combined-system checkpoint. Its strongest measured residual
-is routing, so the next research recommendation is **M8 — Routing Error
-Audit**. M8 is not implemented, and the current production defaults remain
-unchanged. See the complete M5–M7 records in
+M7 remains the current combined-system product evaluation: 66% execution
+equivalence on its frozen internal workload, not production or general
+Text-to-SQL accuracy. M8 found routing was not the primary recoverable
+bottleneck. M9 found structural failures were real but fragmented, with
+result-shape/projection dominating its structural labels. M9.1–M9.3 validated
+the evaluation-contract direction only; evaluator V2 is not integrated or
+default. See the complete research records in
 [`docs/m50-semantic-verification-signal-audit.md`](docs/m50-semantic-verification-signal-audit.md),
 [`docs/m501-adjudicated-semantic-verification-corpus.md`](docs/m501-adjudicated-semantic-verification-corpus.md),
 [`docs/m5r-selective-answering-research.md`](docs/m5r-selective-answering-research.md),
 [`docs/m6-value-grounding-evidence-contract.md`](docs/m6-value-grounding-evidence-contract.md),
-and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md).
+and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md),
+plus the M8–M9.3 documents linked above.
 
 ## Window research
 
@@ -271,7 +312,9 @@ calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
 M3 Governed Semantic Metrics, M3.4 Governed Routing & Observability, M3.5
 Semantic Contract Hardening, M4 Verified Query Memory, and M4.1 Verified Query
 Memory Integration & Observability, M5–M6 research, and M7 Combined Product
-Evaluation.
+Evaluation, M8 Routing Error Audit, M9 Direct-Path Query Structure Audit,
+M9.1 Result-Shape / Projection Contract Audit, M9.2 Result Equivalence Contract
+Regression, and M9.3 Result Equivalence V2 Independent Validation.
 
 Broad benchmark acquisition is now frozen. Existing evidence consists of the
 Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
@@ -287,8 +330,13 @@ separate operational decision. M4.1 does not change the frozen retriever or
 corpus. M7 shows a substantial gain from the combined architecture on its new
 internal workload, but its 66% execution-equivalence result is not a broad
 production claim. M5 selective answering and M6 value grounding remain parked;
-no related runtime subsystem has been added.
+no related runtime subsystem has been added. M9.3 independently validated a
+result-equivalence V2 candidate, but evaluator V1 remains historical and V2 is
+not integrated or the default.
 
-The next evidence milestone is **M8 — Routing Error Audit**. It must remain a
-frozen diagnostic study before any routing change. Later work may cover answer
-synthesis/provenance, UserContext/RLS, and production hardening.
+The next milestone is **M9.4 — Versioned Evaluator V2 Integration &
+Provenance**. It must preserve V1 and add explicit side-by-side provenance;
+M9.4 has not started. After that, a clean residual rebaseline should determine
+whether evidence supports general-path generation improvements. Public Defog and
+BIRD revalidation remains deferred until a validated general-path change
+exists.

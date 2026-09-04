@@ -1,0 +1,34 @@
+{
+  "canonical_index_hash": "eba19f6064d85eb51c6dbfa1870b349085c04840004c79547df704ab35b45020",
+  "canonical_overlap_policy": "any prior canonical fingerprint match is a hard pre-exposure freshness failure",
+  "canonicalizer_source_hash": "3917b5f4a4a55ec897e8e799d1228ca4223ceae57aa836e54de3e17c22118e62",
+  "canonicalizer_version": "decision-sql-reference-freshness-v1",
+  "contract_id": "decision-sql-reference-freshness-v1",
+  "contract_version": "1",
+  "explicitly_unsupported_equivalences": [
+    "same-result",
+    "join algebra",
+    "predicate implication",
+    "aggregate equivalence",
+    "CTE/subquery equivalence",
+    "LLM or embedding similarity"
+  ],
+  "future_master_lock_integration": "include canonical freshness manifest hash before provider exposure",
+  "historical_manifest_hash": "17b5fc23ffdbcf1c2e45191c708032fae9b7690632197f4c0aa8b9d9d5de7ebc",
+  "historical_source_manifest_hash": "17b5fc23ffdbcf1c2e45191c708032fae9b7690632197f4c0aa8b9d9d5de7ebc",
+  "negative_control_hash": "276fa7f9a9886b87c946869b7c3a6ff7a3a8344cc556f259ce8e972ed2bbad20",
+  "parse_failure_policy": "canonical fingerprint unavailable; freshness validation fails; no raw-text fallback",
+  "parser_library": "sqlglot",
+  "parser_version": "29.0.1",
+  "positive_control_hash": "d1d82b70fae3a21a55744a39c95d2a1f470951e9b73b2d97230d88a39fb8bbf9",
+  "positive_regression_hash": "315d7d9a0a5a2719a33e08f4a216541b97e7c9346c042ccaf70aa31c6398b038",
+  "postgres_dialect": "postgres",
+  "pre_run_post_run_shared_function": "evaluation.reference_freshness.canonical_reference_fingerprint",
+  "safe_transformations": [
+    "PostgreSQL parsing",
+    "comments",
+    "whitespace",
+    "parser formatting",
+    "keyword case"
+  ]
+}

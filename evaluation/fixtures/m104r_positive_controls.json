@@ -1,0 +1,31 @@
+{
+  "controls": [
+    {
+      "base_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'completed' ORDER BY o.id",
+      "id": "whitespace",
+      "variant_sql": "  SELECT  o.id, o.status\nFROM orders AS o\nWHERE o.status = 'completed'\nORDER BY o.id  "
+    },
+    {
+      "base_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'completed' ORDER BY o.id",
+      "id": "keyword_case",
+      "variant_sql": "select o.id, o.status from orders as o where o.status = 'completed' order by o.id"
+    },
+    {
+      "base_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'completed' ORDER BY o.id",
+      "id": "comments",
+      "variant_sql": "SELECT /* harmless comment */ o.id, o.status FROM orders AS o -- line comment\nWHERE o.status = 'completed' ORDER BY o.id"
+    },
+    {
+      "base_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'completed' ORDER BY o.id",
+      "id": "parser_reformat",
+      "variant_sql": "SELECT\n    o.id,\n    o.status\nFROM orders AS o\nWHERE o.status = 'completed'\nORDER BY o.id"
+    }
+  ],
+  "supported_transformations": [
+    "whitespace",
+    "comments",
+    "keyword_case",
+    "parser_reformat"
+  ],
+  "version": "m104r-positive-controls-v1"
+}

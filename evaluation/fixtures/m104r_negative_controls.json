@@ -1,0 +1,82 @@
+{
+  "base_sql": "SELECT p.category, COUNT(DISTINCT p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category",
+  "controls": [
+    {
+      "id": "filter_literal",
+      "variant_sql": "SELECT p.category FROM products AS p WHERE p.category = 'hardware'"
+    },
+    {
+      "id": "filter_operator",
+      "variant_sql": "SELECT p.category FROM products AS p WHERE p.category <> 'hardware'"
+    },
+    {
+      "id": "table_source",
+      "variant_sql": "SELECT c.category FROM customers AS c GROUP BY c.category ORDER BY c.category"
+    },
+    {
+      "id": "join_key",
+      "variant_sql": "SELECT p.category, COUNT(oi.id) FROM products AS p JOIN order_items AS oi ON oi.product_id <> p.id GROUP BY p.category"
+    },
+    {
+      "id": "aggregation_function",
+      "variant_sql": "SELECT p.category, SUM(p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category"
+    },
+    {
+      "id": "grouping_column",
+      "variant_sql": "SELECT p.name, COUNT(DISTINCT p.id) AS product_count FROM products AS p GROUP BY p.name ORDER BY p.name"
+    },
+    {
+      "id": "formula",
+      "variant_sql": "SELECT p.id, p.unit_price * 2 AS value FROM products AS p"
+    },
+    {
+      "id": "temporal_boundary",
+      "variant_sql": "SELECT o.id FROM orders AS o WHERE o.ordered_at >= DATE '2025-01-01'"
+    },
+    {
+      "id": "window_specification",
+      "variant_sql": "SELECT o.id, ROW_NUMBER() OVER (ORDER BY o.id DESC) AS position FROM orders AS o"
+    },
+    {
+      "id": "order_direction",
+      "variant_sql": "SELECT p.category, COUNT(DISTINCT p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category DESC"
+    },
+    {
+      "id": "limit",
+      "variant_sql": "SELECT p.category, COUNT(DISTINCT p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category LIMIT 10"
+    },
+    {
+      "id": "distinct_semantics",
+      "variant_sql": "SELECT p.category, COUNT(p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category"
+    },
+    {
+      "id": "set_operator",
+      "variant_sql": "SELECT p.id FROM products AS p UNION ALL SELECT o.id FROM orders AS o"
+    },
+    {
+      "id": "self_join_relation_instance",
+      "variant_sql": "SELECT e.id, manager.id FROM employees AS e JOIN employees AS manager ON manager.id = e.manager_id"
+    },
+    {
+      "id": "self_join_different_path",
+      "variant_sql": "SELECT e.id, peer.id FROM employees AS e JOIN employees AS peer ON peer.id = e.id"
+    },
+    {
+      "id": "nested_scope_correlation",
+      "variant_sql": "SELECT o.id FROM orders AS o WHERE EXISTS (SELECT 1 FROM payments AS p WHERE p.order_id = o.id)"
+    },
+    {
+      "id": "nested_scope_uncorrelated",
+      "variant_sql": "SELECT o.id FROM orders AS o WHERE EXISTS (SELECT 1 FROM payments AS p WHERE p.order_id = p.order_id)"
+    },
+    {
+      "id": "cte_scope",
+      "variant_sql": "WITH recent AS (SELECT o.id FROM orders AS o) SELECT recent.id FROM recent"
+    },
+    {
+      "id": "cte_different_semantics",
+      "variant_sql": "WITH recent AS (SELECT o.id FROM orders AS o WHERE o.status = 'completed') SELECT recent.id FROM recent"
+    }
+  ],
+  "version": "m104r-negative-controls-v1"
+}

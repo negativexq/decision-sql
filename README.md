@@ -171,13 +171,37 @@ while V2 requires a `BoundResult` with semantic bindings. The offline
 `benchmark-result-binding-v1` study was rejected as unsafe after 8 incorrect
 semantic bindings across 117 independent projections and the
 `A17_SELF_JOIN_AMBIGUITY` false binding. A follow-up safety-boundary audit
-identified a narrower fail-closed Boundary B that retained 109/109 known-correct
-projection bindings and 49/52 correct-case evaluability opportunities in
-counterfactual analysis. This does not validate binder-v2: the M9.5 validation
-set is consumed, no M10 cases were constructed or run, and a new binder version
-requires a new independent validation corpus.
-Detailed records are in the [M9.5 protocol report](docs/m95-benchmark-result-contract-binding-protocol.md)
-and [M9.5R safety-boundary audit](docs/m95r-result-binding-safety-boundary-audit.md).
+identified a narrower fail-closed Boundary B. The new
+`benchmark-result-binding-v2` then independently passed its provider-free
+semantic binding protocol: 120 cases, 0 incorrect semantic bindings, 60/60
+positive cases accepted, 20/20 governed positives, 40/40 direct positives,
+0/40 wrong-case false accepts, 20/20 fail-closed cases, and 60/60 fresh
+adversarial cases. This is fixture-based semantic validation, not universal
+real M1/PostgreSQL integration validation.
+
+The subsequent real-execution attempts remain explicit evidence boundaries:
+M9.5R.2 was invalid because reconnaissance preceded manifest freeze; M9.5R.2R
+was blocked by contaminated case selection; and M9.5R.2S was blocked when the
+frozen M1 policy rejected required CTE/derived output-scope columns. M1 was not
+weakened for evaluator convenience. These outcomes do not show that binder-v2,
+V2, or PostgreSQL is unsafe; they show that universal V2 real-execution
+applicability is not established and is not required for M10.
+
+M9.6 therefore froze the M10 evaluator strategy as
+**V1 authoritative + V2 shadow**. V1 remains the sole primary evaluator over
+the full denominator. V2 runs only as a deterministic, reference-blind shadow
+when binding is available; V2 unavailability and V1/V2 disagreement are
+diagnostics only. There is no best-of behavior, evaluator shopping, manual
+binding, post-hoc case removal, or score rewriting. M10 has not started and has
+consumed zero cases. The primary evaluation protocol and V2 shadow protocol are
+ready; universal V2 binding is not a prerequisite.
+
+Detailed records are in the [M9.5 protocol report](docs/m95-benchmark-result-contract-binding-protocol.md),
+the [M9.5R safety-boundary audit](docs/m95r-result-binding-safety-boundary-audit.md),
+the [M9.5R.1 binder-v2 validation](docs/m95r1-fail-closed-result-binder-v2-independent-validation.md),
+the [M9.5R.2R integration block](docs/m95r2r-frozen-first-real-execution-binding-validation.md),
+the [M9.5R.2S fixture-construction block](docs/m95r2s-fresh-real-execution-integration-fixture-construction.md),
+and the [M9.6 evaluator strategy audit](docs/m96-evaluator-v2-applicability-strategy-audit.md).
 
 ## External evaluation
 
@@ -265,15 +289,16 @@ M7 remains the current combined-system product evaluation: 66% execution
 equivalence on its frozen internal workload, not production or general
 Text-to-SQL accuracy. M8 found routing was not the primary recoverable
 bottleneck. M9 found structural failures were real but fragmented, with
-result-shape/projection dominating its structural labels. M9.1–M9.3 validated
-the evaluation-contract direction, and M9.4 integrated that path explicitly
-without changing the default V1 semantics. See the complete research records in
+result-shape/projection dominating its structural labels. M9.1–M9.6 separated
+evaluator semantics, result binding safety, real-execution applicability, and
+future evaluator strategy without changing the product trust boundary. See the
+complete research records in
 [`docs/m50-semantic-verification-signal-audit.md`](docs/m50-semantic-verification-signal-audit.md),
 [`docs/m501-adjudicated-semantic-verification-corpus.md`](docs/m501-adjudicated-semantic-verification-corpus.md),
 [`docs/m5r-selective-answering-research.md`](docs/m5r-selective-answering-research.md),
 [`docs/m6-value-grounding-evidence-contract.md`](docs/m6-value-grounding-evidence-contract.md),
 and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md),
-plus the M8–M9.4 documents linked above.
+plus the M8–M9.6 documents linked above.
 
 The M2.8 provider-generated ResultShape proposal remains rejected; the later
 M9 evaluator work is offline contract/evaluation infrastructure, not a revival
@@ -370,15 +395,16 @@ internal workload, but its 66% execution-equivalence result is not a broad
 production claim. M5 selective answering and M6 value grounding remain parked;
 no related runtime subsystem has been added. M9.3 independently validated the
 result-equivalence V2 candidate, and M9.4 integrated it as an explicit,
-versioned evaluation path. Evaluator V1 remains historical and default;
-DUAL_SHADOW remains V1-authoritative.
+versioned evaluation path. M9.5R.1 independently validated the fail-closed
+binder-v2 semantics on deterministic fixtures. M9.5R.2/R/S did not establish
+universal real-execution binding and exposed protocol and current-M1
+applicability boundaries. M9.6 froze V1 as the authoritative evaluator for
+M10, with V2 as a shadow diagnostic. Evaluator V1 remains historical and
+default; DUAL_SHADOW remains V1-authoritative.
 
-M10 is blocked before corpus construction because no independently validated
-generated-result binding protocol was available. The next milestone is
-**M9.5R.1 — Fail-Closed Result Binder V2 & New Independent Validation**. It must
-preserve binder-v1, implement only the audited fail-closed boundary, and use
-new independent cases. Only if that succeeds should **M10 — Clean Residual
-Rebaseline** run as a new frozen internal evaluation identity using explicit V2
-provenance and benchmark-owned contracts; it will not rescore M7. Public
-revalidation remains deferred until after M10, a measured generation or
-architecture intervention, and new independent internal validation.
+The next milestone is **M10 — Clean Residual Rebaseline**. It will use the
+frozen V1-authoritative/V2-shadow protocol, preserve every case in the
+denominator, and will not rescore M7. M10 has not started and has consumed zero
+cases. Public revalidation remains deferred until after M10, a measured
+generation or architecture intervention, and new independent internal
+validation.

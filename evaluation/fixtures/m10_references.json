@@ -1,0 +1,1205 @@
+{
+  "cases": [
+    {
+      "case_id": "m10-gov-00-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 00-00 */\nSELECT SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed'"
+      ]
+    },
+    {
+      "case_id": "m10-gov-00-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 00-01 */\nSELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-00-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 00-02 */\nSELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-00-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 00-03 */\nSELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-00-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 00-04 */\nSELECT customers.name AS dimension_0, orders.currency AS dimension_1, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-01-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 01-00 */\nSELECT AVG(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed'"
+      ]
+    },
+    {
+      "case_id": "m10-gov-01-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 01-01 */\nSELECT customers.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-01-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 01-02 */\nSELECT sales_representatives.name AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-01-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 01-03 */\nSELECT orders.currency AS dimension_0, AVG(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-01-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 01-04 */\nSELECT customers.name AS dimension_0, orders.currency AS dimension_1, AVG(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-02-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 02-00 */\nSELECT AVG(payments.amount) AS measure_value FROM payments"
+      ]
+    },
+    {
+      "case_id": "m10-gov-02-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 02-01 */\nSELECT customers.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-02-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 02-02 */\nSELECT sales_representatives.name AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-02-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 02-03 */\nSELECT orders.currency AS dimension_0, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id GROUP BY orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-02-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 02-04 */\nSELECT customers.name AS dimension_0, orders.currency AS dimension_1, AVG(payments.amount) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name, orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-03-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 03-00 */\nSELECT SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed'"
+      ]
+    },
+    {
+      "case_id": "m10-gov-03-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 03-01 */\nSELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-03-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 03-02 */\nSELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-03-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 03-03 */\nSELECT sales_representatives.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-03-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 03-04 */\nSELECT products.category AS dimension_0, orders.currency AS dimension_1, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category, orders.currency ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-04-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 04-00 */\nWITH numerator AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments WHERE payments.status = 'settled'), denominator AS (SELECT COUNT(DISTINCT payments.id) AS measure_value FROM payments) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-04-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 04-01 */\nWITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE payments.status = 'settled' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-04-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 04-02 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE payments.status = 'settled' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-04-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 04-03 */\nWITH numerator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id WHERE payments.status = 'settled' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-04-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 04-04 */\nWITH numerator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE payments.status = 'settled' GROUP BY customers.name, orders.currency ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT payments.id) AS measure_value FROM payments INNER JOIN orders ON payments.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name, orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-05-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 05-00 */\nWITH numerator AS (SELECT COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed'), denominator AS (SELECT COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-05-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 05-01 */\nWITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-05-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 05-02 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-05-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 05-03 */\nWITH numerator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-05-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 05-04 */\nWITH numerator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT refunds.order_id) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-06-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 06-00 */\nWITH numerator AS (SELECT SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed'), denominator AS (SELECT SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-06-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 06-01 */\nWITH numerator AS (SELECT customers.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-06-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 06-02 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-06-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 06-03 */\nWITH numerator AS (SELECT orders.currency AS dimension_0, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, SUM(orders.total_amount) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-06-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 06-04 */\nWITH numerator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, SUM(refunds.amount) AS measure_value FROM refunds INNER JOIN orders ON refunds.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, SUM(orders.total_amount) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-07-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 07-00 */\nWITH numerator AS (SELECT SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed'), denominator AS (SELECT COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed') SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-07-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 07-01 */\nWITH numerator AS (SELECT products.category AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0), denominator AS (SELECT products.category AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-07-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 07-02 */\nWITH numerator AS (SELECT customers.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-07-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 07-03 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN orders ON order_items.order_id = orders.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-07-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 07-04 */\nWITH numerator AS (SELECT products.category AS dimension_0, orders.currency AS dimension_1, SUM(order_items.quantity) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category, orders.currency ORDER BY dimension_0), denominator AS (SELECT products.category AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT order_items.order_id) AS measure_value FROM order_items INNER JOIN products ON order_items.product_id = products.id INNER JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'completed' GROUP BY products.category, orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN 0 ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 1 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-08-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 08-00 */\nWITH numerator AS (SELECT COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed'), denominator AS (SELECT COUNT(DISTINCT orders.id) AS measure_value FROM orders) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-08-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 08-01 */\nWITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-08-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 08-02 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id WHERE orders.status = 'completed' GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-08-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 08-03 */\nWITH numerator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders WHERE orders.status = 'completed' GROUP BY orders.currency ORDER BY dimension_0), denominator AS (SELECT orders.currency AS dimension_0, COUNT(DISTINCT orders.id) AS measure_value FROM orders GROUP BY orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-08-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 08-04 */\nWITH numerator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id WHERE orders.status = 'completed' GROUP BY customers.name, orders.currency ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, orders.currency AS dimension_1, COUNT(DISTINCT orders.id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name, orders.currency ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-09-00",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 09-00 */\nWITH numerator AS (SELECT COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders), denominator AS (SELECT COUNT(DISTINCT customers.id) AS measure_value FROM customers) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-gov-09-01",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 09-01 */\nWITH numerator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id GROUP BY customers.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, COUNT(DISTINCT customers.id) AS measure_value FROM customers GROUP BY customers.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-09-02",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 09-02 */\nWITH numerator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT sales_representatives.name AS dimension_0, COUNT(DISTINCT customers.id) AS measure_value FROM customers INNER JOIN sales_representatives ON customers.sales_rep_id = sales_representatives.id GROUP BY sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-09-03",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 09-03 */\nWITH numerator AS (SELECT customers.name AS dimension_0, sales_representatives.name AS dimension_1, COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders INNER JOIN customers ON orders.customer_id = customers.id INNER JOIN sales_representatives ON orders.sales_rep_id = sales_representatives.id GROUP BY customers.name, sales_representatives.name ORDER BY dimension_0), denominator AS (SELECT customers.name AS dimension_0, sales_representatives.name AS dimension_1, COUNT(DISTINCT customers.id) AS measure_value FROM customers INNER JOIN sales_representatives ON customers.sales_rep_id = sales_representatives.id GROUP BY customers.name, sales_representatives.name ORDER BY dimension_0) SELECT COALESCE(numerator.dimension_0, denominator.dimension_0) AS dimension_0, COALESCE(numerator.dimension_1, denominator.dimension_1) AS dimension_1, CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator FULL OUTER JOIN denominator ON numerator.dimension_0 = denominator.dimension_0 AND numerator.dimension_1 = denominator.dimension_1 ORDER BY dimension_0"
+      ]
+    },
+    {
+      "case_id": "m10-gov-09-04",
+      "reference_sql_variants": [
+        "/* m10 governed fixture 09-04 */\nWITH numerator AS (SELECT COUNT(DISTINCT orders.customer_id) AS measure_value FROM orders), denominator AS (SELECT COUNT(DISTINCT customers.id) AS measure_value FROM customers) SELECT CASE WHEN COALESCE(denominator.measure_value, 0) = 0 THEN NULL ELSE CAST(COALESCE(numerator.measure_value, 0) AS DECIMAL) / CAST(COALESCE(denominator.measure_value, 0) AS DECIMAL) * 100 END AS metric_value FROM numerator CROSS JOIN denominator"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-000",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 1 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-001",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 2 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-002",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 3 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-003",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 4 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-004",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 1 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-005",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 2 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-006",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 3 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-007",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key FROM customers AS c WHERE c.region_id = 4 ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-008",
+      "reference_sql_variants": [
+        "SELECT p.sku AS product_sku, p.name AS product_name FROM products AS p WHERE p.category = 'Electronics' ORDER BY p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-009",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.unit_price AS listed_price FROM products AS p WHERE p.unit_price > 250 ORDER BY p.unit_price DESC, p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-010",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total FROM orders AS o WHERE o.status = 'completed' AND o.currency = 'USD' ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-011",
+      "reference_sql_variants": [
+        "SELECT p.id AS payment_key, p.amount AS payment_amount FROM payments AS p WHERE p.status = 'settled' AND p.amount > 100 ORDER BY p.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-012",
+      "reference_sql_variants": [
+        "SELECT r.id AS refund_key, r.amount AS refund_amount FROM refunds AS r WHERE r.reason = 'damaged' ORDER BY r.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-013",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.discount_amount AS discount_value FROM orders AS o WHERE o.discount_amount > 20 ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-014",
+      "reference_sql_variants": [
+        "SELECT c.id AS customer_key, c.name AS customer_name FROM customers AS c WHERE c.sales_rep_id = 3 ORDER BY c.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-015",
+      "reference_sql_variants": [
+        "SELECT oi.id AS line_key, oi.quantity AS units FROM order_items AS oi WHERE oi.quantity >= 4 ORDER BY oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-016",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.ordered_at AS order_time FROM orders AS o WHERE o.status = 'pending' ORDER BY o.ordered_at, o.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-017",
+      "reference_sql_variants": [
+        "SELECT p.sku AS product_sku, p.unit_price AS listed_price FROM products AS p WHERE p.category = 'Office' AND p.unit_price < 180 ORDER BY p.sku"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-018",
+      "reference_sql_variants": [
+        "SELECT p.id AS payment_key, p.paid_at AS payment_time FROM payments AS p WHERE p.paid_at >= TIMESTAMP '2025-06-01' ORDER BY p.paid_at, p.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-019",
+      "reference_sql_variants": [
+        "SELECT c.id AS customer_key, c.name AS customer_name FROM customers AS c WHERE c.sales_rep_id IS NOT NULL ORDER BY c.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-020",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.subtotal AS order_subtotal FROM orders AS o WHERE o.discount_amount = 0 ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-021",
+      "reference_sql_variants": [
+        "SELECT r.id AS refund_key, r.amount AS refund_amount FROM refunds AS r WHERE r.amount >= 50 ORDER BY r.amount DESC, r.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-022",
+      "reference_sql_variants": [
+        "SELECT p.sku AS product_sku, p.name AS product_name FROM products AS p WHERE p.name LIKE 'A%' ORDER BY p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-filter_projection-023",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total FROM orders AS o WHERE o.total_amount >= 100 AND o.total_amount <= 400 ORDER BY o.total_amount, o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-000",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, r.name AS region_name FROM customers AS c INNER JOIN regions AS r ON r.id = c.region_id ORDER BY r.name, c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-001",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, c.name AS customer_name FROM orders AS o INNER JOIN customers AS c ON c.id = o.customer_id ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-002",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, sr.name AS representative_name FROM orders AS o INNER JOIN sales_representatives AS sr ON sr.id = o.sales_rep_id ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-003",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, oi.quantity AS line_units FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id ORDER BY p.name, oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-004",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, o.order_number AS order_ref, pay.amount AS paid_amount FROM payments AS pay INNER JOIN orders AS o ON o.id = pay.order_id ORDER BY pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-005",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, o.order_number AS order_ref, ref.amount AS refund_amount FROM refunds AS ref INNER JOIN orders AS o ON o.id = ref.order_id ORDER BY ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-006",
+      "reference_sql_variants": [
+        "SELECT sr.name AS representative_name, r.name AS region_name FROM sales_representatives AS sr INNER JOIN regions AS r ON r.id = sr.region_id ORDER BY sr.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-007",
+      "reference_sql_variants": [
+        "SELECT oi.id AS line_key, p.name AS product_name, o.order_number AS order_ref FROM order_items AS oi INNER JOIN products AS p ON p.id = oi.product_id INNER JOIN orders AS o ON o.id = oi.order_id ORDER BY oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-008",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, o.order_number AS order_ref, o.total_amount AS order_total FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id ORDER BY c.name, o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-009",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, c.name AS customer_name FROM payments AS pay INNER JOIN orders AS o ON o.id = pay.order_id INNER JOIN customers AS c ON c.id = o.customer_id ORDER BY pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-010",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, oi.id AS line_key FROM refunds AS ref INNER JOIN order_items AS oi ON oi.order_id = ref.order_id ORDER BY ref.id, oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-011",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, oi.quantity AS line_units FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id ORDER BY p.category, oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-012",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, sr.name AS representative_name FROM customers AS c INNER JOIN sales_representatives AS sr ON sr.id = c.sales_rep_id ORDER BY c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-013",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, pay.amount AS paid_amount FROM orders AS o INNER JOIN payments AS pay ON pay.order_id = o.id ORDER BY o.id, pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-014",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, ref.amount AS refund_amount FROM orders AS o INNER JOIN refunds AS ref ON ref.order_id = o.id ORDER BY o.id, ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-015",
+      "reference_sql_variants": [
+        "SELECT r.name AS region_name, c.name AS customer_name, o.order_number AS order_ref FROM regions AS r INNER JOIN customers AS c ON c.region_id = r.id INNER JOIN orders AS o ON o.customer_id = c.id ORDER BY r.name, c.name, o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-016",
+      "reference_sql_variants": [
+        "SELECT r.name AS region_name, o.total_amount AS order_total FROM regions AS r INNER JOIN sales_representatives AS sr ON sr.region_id = r.id INNER JOIN orders AS o ON o.sales_rep_id = sr.id ORDER BY r.name, o.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-017",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, pay.status AS payment_status FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id INNER JOIN payments AS pay ON pay.order_id = oi.order_id ORDER BY p.name, pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-018",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, ref.reason AS refund_reason FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id INNER JOIN refunds AS ref ON ref.order_id = o.id ORDER BY c.name, ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-019",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, COUNT(oi.id) AS line_count FROM orders AS o INNER JOIN order_items AS oi ON oi.order_id = o.id GROUP BY o.id, o.order_number ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-020",
+      "reference_sql_variants": [
+        "SELECT sr.name AS representative_name, COUNT(c.id) AS customer_count FROM sales_representatives AS sr LEFT JOIN customers AS c ON c.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY sr.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-021",
+      "reference_sql_variants": [
+        "SELECT r.name AS region_name, COUNT(c.id) AS customer_count FROM regions AS r LEFT JOIN customers AS c ON c.region_id = r.id GROUP BY r.id, r.name ORDER BY r.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-022",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, AVG(oi.unit_price) AS average_line_price FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.id, p.name ORDER BY p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-multi_table_join-023",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, SUM(pay.amount) AS paid_total FROM orders AS o INNER JOIN payments AS pay ON pay.order_id = o.id GROUP BY o.id, o.order_number ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-000",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, COUNT(o.id) AS order_count FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-001",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, SUM(o.total_amount) AS order_value FROM orders AS o GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-002",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, AVG(p.unit_price) AS average_price FROM products AS p GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-003",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, COUNT(p.id) AS product_count FROM products AS p GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-004",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, MAX(o.total_amount) AS largest_total FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-005",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, MIN(pay.amount) AS smallest_payment FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-006",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, SUM(ref.amount) AS refund_total FROM refunds AS ref GROUP BY ref.reason ORDER BY ref.reason"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-007",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, AVG(o.discount_amount) AS average_discount FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-008",
+      "reference_sql_variants": [
+        "SELECT oi.product_id AS product_key, COUNT(oi.id) AS line_count FROM order_items AS oi GROUP BY oi.product_id ORDER BY oi.product_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-009",
+      "reference_sql_variants": [
+        "SELECT oi.product_id AS product_key, SUM(oi.quantity) AS units_ordered FROM order_items AS oi GROUP BY oi.product_id ORDER BY oi.product_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-010",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, AVG(o.subtotal) AS average_subtotal FROM orders AS o GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-011",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, MAX(ref.amount) AS largest_refund FROM refunds AS ref GROUP BY ref.reason ORDER BY ref.reason"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-012",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, COUNT(pay.id) AS payment_count FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-013",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, MIN(p.unit_price) AS minimum_price FROM products AS p GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-014",
+      "reference_sql_variants": [
+        "SELECT o.sales_rep_id AS representative_key, SUM(o.total_amount) AS completed_revenue FROM orders AS o WHERE o.status = 'completed' GROUP BY o.sales_rep_id ORDER BY o.sales_rep_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-015",
+      "reference_sql_variants": [
+        "SELECT c.region_id AS region_key, COUNT(o.id) AS order_count FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region_id ORDER BY c.region_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-016",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, AVG(oi.quantity) AS average_units FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-017",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, SUM(pay.amount) AS payment_total FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-018",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, SUM(o.discount_amount) AS discount_total FROM orders AS o GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-019",
+      "reference_sql_variants": [
+        "SELECT ref.order_id AS order_key, COUNT(ref.id) AS refund_count FROM refunds AS ref GROUP BY ref.order_id ORDER BY ref.order_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-020",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, AVG(pay.amount) AS average_payment FROM orders AS o INNER JOIN payments AS pay ON pay.order_id = o.id GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-021",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, SUM(oi.quantity) AS units_ordered FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-022",
+      "reference_sql_variants": [
+        "SELECT o.sales_rep_id AS representative_key, MAX(o.total_amount) AS largest_order FROM orders AS o GROUP BY o.sales_rep_id ORDER BY o.sales_rep_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-aggregate_group-023",
+      "reference_sql_variants": [
+        "SELECT c.region_id AS region_key, COUNT(DISTINCT c.id) AS customer_count FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region_id ORDER BY c.region_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-000",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total FROM orders AS o ORDER BY o.total_amount DESC, o.id LIMIT 3"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-001",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.unit_price AS listed_price FROM products AS p ORDER BY p.unit_price DESC, p.id LIMIT 5"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-002",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, pay.amount AS payment_amount FROM payments AS pay ORDER BY pay.amount DESC, pay.id LIMIT 4"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-003",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, ref.amount AS refund_amount FROM refunds AS ref ORDER BY ref.amount DESC, ref.id LIMIT 4"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-004",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.id AS customer_key FROM customers AS c ORDER BY c.id DESC LIMIT 6"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-005",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.discount_amount AS discount_value FROM orders AS o ORDER BY o.discount_amount DESC, o.id LIMIT 5"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-006",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.sku AS product_sku FROM products AS p ORDER BY p.name ASC, p.id LIMIT 7"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-007",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.subtotal AS order_subtotal FROM orders AS o ORDER BY o.subtotal ASC, o.id LIMIT 4"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-008",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, SUM(o.total_amount) AS customer_value FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY customer_value DESC, c.id LIMIT 5"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-009",
+      "reference_sql_variants": [
+        "SELECT sr.name AS representative_name, SUM(o.total_amount) AS representative_value FROM sales_representatives AS sr INNER JOIN orders AS o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY representative_value DESC, sr.id LIMIT 3"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-010",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, SUM(oi.quantity) AS units_ordered FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category ORDER BY units_ordered DESC, p.category LIMIT 3"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-011",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, SUM(pay.amount) AS payment_total FROM payments AS pay GROUP BY pay.status ORDER BY payment_total DESC, pay.status LIMIT 2"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-012",
+      "reference_sql_variants": [
+        "SELECT r.name AS region_name, COUNT(c.id) AS customer_count FROM regions AS r INNER JOIN customers AS c ON c.region_id = r.id GROUP BY r.id, r.name ORDER BY customer_count DESC, r.id LIMIT 3"
+      ]
+    },
+    {
+      "case_id": "m10-direct-order_topn-013",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, AVG(p.unit_price) AS average_price FROM products AS p GROUP BY p.category ORDER BY average_price DESC, p.category LIMIT 2"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-000",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.subtotal - o.discount_amount AS net_subtotal FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-001",
+      "reference_sql_variants": [
+        "SELECT oi.id AS line_key, oi.quantity * oi.unit_price AS extended_amount FROM order_items AS oi ORDER BY oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-002",
+      "reference_sql_variants": [
+        "SELECT oi.id AS line_key, oi.quantity * oi.unit_price - oi.discount_amount AS net_line_amount FROM order_items AS oi ORDER BY oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-003",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, CASE WHEN o.subtotal = 0 THEN 0 ELSE CAST(o.discount_amount AS numeric) / o.subtotal * 100 END AS discount_percent FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-004",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, CAST(o.total_amount AS numeric) / (SELECT SUM(i.total_amount) FROM orders AS i) * 100 AS value_percent FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-005",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, CAST(ref.amount AS numeric) / o.total_amount * 100 AS refund_percent FROM refunds AS ref INNER JOIN orders AS o ON o.id = ref.order_id ORDER BY ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-006",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, pay.amount - pay.amount * 0.02 AS net_payment FROM payments AS pay ORDER BY pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-007",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.unit_price - oi.unit_price AS price_gap FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id ORDER BY p.name, oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-008",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, CAST(SUM(o.total_amount) AS numeric) / COUNT(oi.id) AS amount_per_line FROM orders AS o INNER JOIN order_items AS oi ON oi.order_id = o.id GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-009",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, CAST(SUM(o.discount_amount) AS numeric) / COUNT(o.id) AS discount_per_order FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-010",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, o.subtotal - ref.amount AS remaining_subtotal FROM refunds AS ref INNER JOIN orders AS o ON o.id = ref.order_id ORDER BY ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-011",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount * 1.03 AS charged_total FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-012",
+      "reference_sql_variants": [
+        "SELECT oi.id AS line_key, CAST(oi.discount_amount AS numeric) / oi.quantity AS discount_per_unit FROM order_items AS oi ORDER BY oi.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-013",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount - o.subtotal AS total_gap FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-014",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, CAST(pay.amount AS numeric) / o.total_amount AS payment_ratio FROM payments AS pay INNER JOIN orders AS o ON o.id = pay.order_id ORDER BY pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-015",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, AVG(oi.quantity * oi.unit_price) AS average_line_value FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-016",
+      "reference_sql_variants": [
+        "SELECT o.currency AS order_currency, CAST(SUM(o.total_amount) AS numeric) / (SELECT SUM(i.total_amount) FROM orders AS i WHERE i.status = 'completed') AS revenue_share FROM orders AS o WHERE o.status = 'completed' GROUP BY o.currency ORDER BY o.currency"
+      ]
+    },
+    {
+      "case_id": "m10-direct-formula_ratio-017",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, SUM(oi.quantity * oi.unit_price) AS product_value FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.id, p.name ORDER BY p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-000",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', o.ordered_at) AS order_month, COUNT(o.id) AS order_count FROM orders AS o WHERE o.ordered_at >= TIMESTAMP '2025-01-01' AND o.ordered_at < TIMESTAMP '2026-01-01' GROUP BY DATE_TRUNC('month', o.ordered_at) ORDER BY order_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-001",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', o.ordered_at) AS order_month, SUM(o.total_amount) AS completed_revenue FROM orders AS o WHERE o.status = 'completed' GROUP BY DATE_TRUNC('month', o.ordered_at) ORDER BY order_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-002",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', pay.paid_at) AS payment_month, COUNT(pay.id) AS payment_count FROM payments AS pay GROUP BY DATE_TRUNC('month', pay.paid_at) ORDER BY payment_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-003",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', pay.paid_at) AS payment_month, SUM(pay.amount) AS payment_total FROM payments AS pay GROUP BY DATE_TRUNC('month', pay.paid_at) ORDER BY payment_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-004",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', ref.refunded_at) AS refund_month, COUNT(ref.id) AS refund_count FROM refunds AS ref GROUP BY DATE_TRUNC('month', ref.refunded_at) ORDER BY refund_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-005",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', ref.refunded_at) AS refund_month, SUM(ref.amount) AS refund_total FROM refunds AS ref GROUP BY DATE_TRUNC('month', ref.refunded_at) ORDER BY refund_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-006",
+      "reference_sql_variants": [
+        "SELECT EXTRACT(QUARTER FROM o.ordered_at) AS order_quarter, COUNT(o.id) AS order_count FROM orders AS o GROUP BY EXTRACT(QUARTER FROM o.ordered_at) ORDER BY order_quarter"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-007",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', o.ordered_at) AS order_month, AVG(o.total_amount) AS average_order_value FROM orders AS o GROUP BY DATE_TRUNC('month', o.ordered_at) ORDER BY order_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-008",
+      "reference_sql_variants": [
+        "SELECT COUNT(o.id) AS order_count FROM orders AS o WHERE o.status = 'completed' AND o.ordered_at >= TIMESTAMP '2025-04-01'"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-009",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', o.ordered_at) AS order_month, SUM(o.discount_amount) AS discount_total FROM orders AS o GROUP BY DATE_TRUNC('month', o.ordered_at) ORDER BY order_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-010",
+      "reference_sql_variants": [
+        "SELECT EXTRACT(DOW FROM o.ordered_at) AS weekday_number, COUNT(o.id) AS order_count FROM orders AS o GROUP BY EXTRACT(DOW FROM o.ordered_at) ORDER BY weekday_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-011",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, MIN(o.ordered_at) AS first_order_time FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-012",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, MAX(pay.paid_at) AS last_payment_time FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-temporal-013",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, MIN(ref.refunded_at) AS first_refund_time FROM refunds AS ref GROUP BY ref.reason ORDER BY ref.reason"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-000",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.ordered_at AS order_time, SUM(o.total_amount) OVER (ORDER BY o.ordered_at, o.id) AS running_total FROM orders AS o ORDER BY o.ordered_at, o.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-001",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total, RANK() OVER (ORDER BY o.total_amount DESC) AS value_rank FROM orders AS o ORDER BY value_rank, o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-002",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.category AS product_category, RANK() OVER (PARTITION BY p.category ORDER BY p.unit_price DESC) AS category_rank FROM products AS p ORDER BY p.category, category_rank, p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-003",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total, LAG(o.total_amount) OVER (ORDER BY o.ordered_at, o.id) AS prior_total FROM orders AS o ORDER BY o.ordered_at, o.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-004",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, pay.paid_at AS payment_time, SUM(pay.amount) OVER (ORDER BY pay.paid_at, pay.id) AS running_payment_total FROM payments AS pay ORDER BY pay.paid_at, pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-005",
+      "reference_sql_variants": [
+        "SELECT sr.name AS representative_name, SUM(o.total_amount) AS order_value, DENSE_RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS value_rank FROM sales_representatives AS sr INNER JOIN orders AS o ON o.sales_rep_id = sr.id GROUP BY sr.id, sr.name ORDER BY value_rank, sr.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-006",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, ref.amount AS refund_amount, LEAD(ref.amount) OVER (ORDER BY ref.refunded_at, ref.id) AS next_amount FROM refunds AS ref ORDER BY ref.refunded_at, ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-007",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, c.region_id AS region_key, ROW_NUMBER() OVER (PARTITION BY c.region_id ORDER BY c.name, c.id) AS region_position FROM customers AS c ORDER BY c.region_id, region_position"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-008",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, SUM(o.total_amount) OVER (ORDER BY o.ordered_at, o.id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS moving_total FROM orders AS o ORDER BY o.ordered_at, o.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-009",
+      "reference_sql_variants": [
+        "SELECT pay.id AS payment_key, pay.status AS payment_status, RANK() OVER (PARTITION BY pay.status ORDER BY pay.amount DESC) AS status_rank FROM payments AS pay ORDER BY pay.status, status_rank, pay.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-010",
+      "reference_sql_variants": [
+        "SELECT p.name AS product_name, p.category AS product_category, MAX(p.unit_price) OVER (PARTITION BY p.category) AS category_max_price FROM products AS p ORDER BY p.category, p.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-011",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.customer_id AS customer_key, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.ordered_at, o.id) AS customer_order_number FROM orders AS o ORDER BY o.customer_id, customer_order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-012",
+      "reference_sql_variants": [
+        "SELECT o.order_number AS order_ref, o.total_amount AS order_total, AVG(o.total_amount) OVER () AS overall_average FROM orders AS o ORDER BY o.order_number"
+      ]
+    },
+    {
+      "case_id": "m10-direct-window-013",
+      "reference_sql_variants": [
+        "SELECT ref.id AS refund_key, ref.reason AS refund_reason, RANK() OVER (PARTITION BY ref.reason ORDER BY ref.amount DESC) AS reason_rank FROM refunds AS ref ORDER BY ref.reason, reason_rank, ref.id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-000",
+      "reference_sql_variants": [
+        "SELECT COUNT(DISTINCT o.customer_id) AS distinct_customer_count FROM orders AS o"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-001",
+      "reference_sql_variants": [
+        "SELECT COUNT(DISTINCT oi.product_id) AS distinct_product_count FROM order_items AS oi"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-002",
+      "reference_sql_variants": [
+        "SELECT COUNT(DISTINCT pay.order_id) AS distinct_paid_orders FROM payments AS pay"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-003",
+      "reference_sql_variants": [
+        "SELECT COUNT(DISTINCT ref.order_id) AS distinct_refund_orders FROM refunds AS ref"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-004",
+      "reference_sql_variants": [
+        "SELECT c.region_id AS region_key, COUNT(DISTINCT c.id) AS distinct_customer_count FROM customers AS c GROUP BY c.region_id ORDER BY c.region_id"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-005",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, COUNT(DISTINCT oi.product_id) AS distinct_product_count FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-006",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, COUNT(DISTINCT pay.order_id) AS distinct_order_count FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-distinct_or_set-007",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, COUNT(DISTINCT ref.order_id) AS distinct_order_count FROM refunds AS ref GROUP BY ref.reason ORDER BY ref.reason"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-000",
+      "reference_sql_variants": [
+        "SELECT r.name AS region_name, SUM(o.total_amount) AS completed_revenue FROM regions AS r INNER JOIN customers AS c ON c.region_id = r.id INNER JOIN orders AS o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY r.id, r.name HAVING COUNT(o.id) >= 5 ORDER BY completed_revenue DESC, r.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-001",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, SUM(o.total_amount) AS completed_value FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id WHERE o.status = 'completed' GROUP BY c.id, c.name ORDER BY completed_value DESC, c.name LIMIT 5"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-002",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, SUM(oi.quantity) AS completed_units, AVG(oi.unit_price) AS average_line_price FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id INNER JOIN orders AS o ON o.id = oi.order_id WHERE o.status = 'completed' GROUP BY p.category ORDER BY p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-003",
+      "reference_sql_variants": [
+        "SELECT DATE_TRUNC('month', o.ordered_at) AS order_month, COUNT(o.id) AS completed_orders, RANK() OVER (ORDER BY COUNT(o.id) DESC) AS volume_rank FROM orders AS o WHERE o.status = 'completed' GROUP BY DATE_TRUNC('month', o.ordered_at) ORDER BY volume_rank, order_month"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-004",
+      "reference_sql_variants": [
+        "SELECT sr.name AS representative_name, SUM(o.total_amount) AS completed_revenue, RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS revenue_rank FROM sales_representatives AS sr INNER JOIN orders AS o ON o.sales_rep_id = sr.id WHERE o.status = 'completed' GROUP BY sr.id, sr.name ORDER BY revenue_rank, sr.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-005",
+      "reference_sql_variants": [
+        "SELECT pay.status AS payment_status, SUM(pay.amount) AS payment_total, CAST(SUM(pay.amount) AS numeric) / (SELECT SUM(i.amount) FROM payments AS i) AS payment_share FROM payments AS pay GROUP BY pay.status ORDER BY pay.status"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-006",
+      "reference_sql_variants": [
+        "SELECT p.category AS product_category, SUM(oi.quantity) AS units_ordered, AVG(p.unit_price) AS average_price FROM products AS p INNER JOIN order_items AS oi ON oi.product_id = p.id GROUP BY p.category HAVING SUM(oi.quantity) > 30 ORDER BY units_ordered DESC, p.category"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-007",
+      "reference_sql_variants": [
+        "SELECT c.name AS customer_name, COUNT(o.id) AS order_count, MAX(o.ordered_at) AS last_order_time FROM customers AS c INNER JOIN orders AS o ON o.customer_id = c.id GROUP BY c.id, c.name ORDER BY order_count DESC, c.name"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-008",
+      "reference_sql_variants": [
+        "SELECT ref.reason AS refund_reason, SUM(ref.amount) AS refund_total, RANK() OVER (ORDER BY SUM(ref.amount) DESC) AS refund_rank FROM refunds AS ref GROUP BY ref.reason ORDER BY refund_rank, ref.reason"
+      ]
+    },
+    {
+      "case_id": "m10-direct-mixed_composition-009",
+      "reference_sql_variants": [
+        "SELECT o.status AS order_status, COUNT(o.id) AS order_count, AVG(o.total_amount) AS average_total FROM orders AS o GROUP BY o.status ORDER BY o.status"
+      ]
+    }
+  ],
+  "corpus_id": "decisionsql-m10-clean-rebaseline"
+}

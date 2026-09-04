@@ -1,0 +1,18 @@
+{
+  "case_id_mapping_policy": "m10v2-governed-{metric}-{ordinal:03d} or m10v2-direct-{family-lower}-{ordinal:03d}",
+  "construction_seed": "24c7e3592100920004aa057e1971cb0b91bd3cf0c802b8bc25671f6f579e99c0",
+  "corpus_id": "decisionsql-m10-clean-rebaseline",
+  "corpus_version": "m10-clean-rebaseline-v2",
+  "freshness_policy": "new case IDs; zero overlap with consumed prior benchmark questions and M4 exact memory entries; v1 overlap explicitly tracked because v1 was unconsumed",
+  "protocol_id": "m10r-clean-rebaseline-v2",
+  "question_reconstruction_policy": "none required for this version",
+  "reconstruction_algorithm": "deterministic v1 semantic carry-forward with new IDs; only raw-percent reference rewritten as doubled LIKE wildcard",
+  "reference_reconstruction_policy": "static sqlglot PostgreSQL normalization plus narrow observed percent transport preflight",
+  "semantic_carry_forward_policy": "preserve question, split, route, family, semantic metadata and contract semantics unless transport compatibility requires exact reference-only reconstruction",
+  "source_v1_case_id_hash": "1e984a7ff942f2103d81e55210326439178f8cb38a3ec844ef28a1b8695dd1ea",
+  "source_v1_corpus_hash": "bd5a9b5904240f1a0647dfe0a547f4f482cb8cf62129fda222cb063106d75fd2",
+  "source_v1_recipe_hash": "82b389deb10dd0563b38b6b8ea26655b65a6f32d4a184ddf2e911af661c2bcb2",
+  "split_category_preservation": true,
+  "transport_audit_hash": "36fc93b52beebe9f88e47407818c93d065a21c99b23f137d316534c3bdbd1c8c",
+  "transport_contract_hash": "d6c0e19761e14c70c26802e32bb5d75a7ad9f36c58f103dc6ddaef8eeec7f11a"
+}

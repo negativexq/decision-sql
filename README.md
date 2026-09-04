@@ -192,9 +192,9 @@ M9.6 therefore froze the M10 evaluator strategy as
 the full denominator. V2 runs only as a deterministic, reference-blind shadow
 when binding is available; V2 unavailability and V1/V2 disagreement are
 diagnostics only. There is no best-of behavior, evaluator shopping, manual
-binding, post-hoc case removal, or score rewriting. M10 has not started and has
-consumed zero cases. The primary evaluation protocol and V2 shadow protocol are
-ready; universal V2 binding is not a prerequisite.
+binding, post-hoc case removal, or score rewriting. The primary evaluation
+protocol and V2 shadow protocol are ready; universal V2 binding is not a
+prerequisite.
 
 Detailed records are in the [M9.5 protocol report](docs/m95-benchmark-result-contract-binding-protocol.md),
 the [M9.5R safety-boundary audit](docs/m95r-result-binding-safety-boundary-audit.md),
@@ -202,6 +202,29 @@ the [M9.5R.1 binder-v2 validation](docs/m95r1-fail-closed-result-binder-v2-indep
 the [M9.5R.2R integration block](docs/m95r2r-frozen-first-real-execution-binding-validation.md),
 the [M9.5R.2S fixture-construction block](docs/m95r2s-fresh-real-execution-integration-fixture-construction.md),
 and the [M9.6 evaluator strategy audit](docs/m96-evaluator-v2-applicability-strategy-audit.md).
+
+The first valid clean residual rebaseline was subsequently completed as M10R
+on the fresh internal `m10-clean-rebaseline-v2` workload: **28/200 (14%)**
+under Evaluator V1 authoritative, with DEV **17/120** and HOLDOUT **11/80**.
+This is a frozen internal rebaseline, not production accuracy or general
+Text-to-SQL accuracy. The 200-case corpus, including its 80-case HOLDOUT, is
+now consumed historical evidence and cannot be reused as independent
+validation after future tuning. M10R retained V2 as shadow-only: 110 cases
+were evaluated and there was one V1/V2 recovery disagreement; no best-of or
+adjusted score was created.
+
+M10.1 audited the 172 primary failures using frozen artifacts. It classified
+125/172 with E1/E2 evidence, but selected no dominant intervention mechanism.
+The audit is `M101_AUDIT_BLOCKED` because the M10R run recorded memory use but
+not retrieved memory IDs, scores, or verified example SQL; therefore memory
+selectivity and overtransfer cannot be distinguished from downstream
+generation errors. This does not establish that memory caused the failures.
+The next milestone is **M10.2 — Residual Provenance Capture Audit**.
+
+M7 remains **99/150 (66%)** on its separate historical workload; it must not
+be compared directly to M10R as a regression delta. Public Defog/BIRD reruns
+remain deferred until a measured mechanism is addressed and validated on new
+independent internal data.
 
 ## External evaluation
 
@@ -402,9 +425,10 @@ applicability boundaries. M9.6 froze V1 as the authoritative evaluator for
 M10, with V2 as a shadow diagnostic. Evaluator V1 remains historical and
 default; DUAL_SHADOW remains V1-authoritative.
 
-The next milestone is **M10 — Clean Residual Rebaseline**. It will use the
-frozen V1-authoritative/V2-shadow protocol, preserve every case in the
-denominator, and will not rescore M7. M10 has not started and has consumed zero
-cases. Public revalidation remains deferred until after M10, a measured
-generation or architecture intervention, and new independent internal
-validation.
+M10R completed the first valid clean residual rebaseline under the frozen
+V1-authoritative/V2-shadow protocol and consumed its 200-case v2 corpus. M10.1
+did not identify a dominant mechanism and is blocked from causal memory
+analysis because the run omitted retriever provenance. The next milestone is
+**M10.2 — Residual Provenance Capture Audit**. Public revalidation remains
+deferred until after a measured generation or architecture intervention and
+new independent internal validation.

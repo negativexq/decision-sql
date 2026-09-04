@@ -1,0 +1,65 @@
+{
+  "case_count": 200,
+  "case_id_scheme": "m10-gov-{metric}-{ordinal} / m10-direct-{family}-{ordinal}",
+  "construction_seed_source": [
+    "m10-clean-rebaseline-v1",
+    "46e4e059eac8d7051e1ee7e23821ad4858b96ea9",
+    "0463a10ecd3dbb414d11559f8559c604748f2b131a078d66ec79c4993d70eb3c",
+    "f871bd31649af8284bde0264aa6e8032b8ed2a2163f930d28df97d8e764087ae"
+  ],
+  "contract_policy": "result-equivalence-contract-v1; reference-blind candidate binding",
+  "corpus_id": "decisionsql-m10-clean-rebaseline",
+  "corpus_version": "m10-clean-rebaseline-v1",
+  "direct_category_counts": {
+    "AGGREGATE_GROUP": 24,
+    "DISTINCT_OR_SET": 8,
+    "FILTER_PROJECTION": 24,
+    "FORMULA_RATIO": 18,
+    "MIXED_COMPOSITION": 10,
+    "MULTI_TABLE_JOIN": 24,
+    "ORDER_TOPN": 14,
+    "TEMPORAL": 14,
+    "WINDOW": 14
+  },
+  "direct_dev_category_counts": {
+    "AGGREGATE_GROUP": 14,
+    "DISTINCT_OR_SET": 5,
+    "FILTER_PROJECTION": 14,
+    "FORMULA_RATIO": 11,
+    "MIXED_COMPOSITION": 8,
+    "MULTI_TABLE_JOIN": 14,
+    "ORDER_TOPN": 8,
+    "TEMPORAL": 8,
+    "WINDOW": 8
+  },
+  "direct_holdout_category_counts": {
+    "AGGREGATE_GROUP": 10,
+    "DISTINCT_OR_SET": 3,
+    "FILTER_PROJECTION": 10,
+    "FORMULA_RATIO": 7,
+    "MIXED_COMPOSITION": 2,
+    "MULTI_TABLE_JOIN": 10,
+    "ORDER_TOPN": 6,
+    "TEMPORAL": 6,
+    "WINDOW": 6
+  },
+  "evaluation_protocol_id": "m10-v1-v1-authoritative-v2-shadow",
+  "execution_order_policy": "SHA256(m10-execution-order-v1|case_id|corpus_content_hash)",
+  "freshness_policy": "zero case/question/candidate SQL exact overlap with prior corpora",
+  "governed_per_metric": 5,
+  "governed_split_per_metric": {
+    "dev": 3,
+    "holdout": 2
+  },
+  "provider_protocol_id": "decisionsql-m10-current-combined-pass1-v1",
+  "question_policy": "static benchmark-owned templates with deterministic variation",
+  "reference_policy": "one frozen benchmark-owned M1-valid reference per case",
+  "route_counts": {
+    "DIRECT": 150,
+    "GOVERNED": 50
+  },
+  "split_counts": {
+    "dev": 120,
+    "holdout": 80
+  }
+}

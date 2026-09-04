@@ -1,0 +1,69 @@
+{
+  "protocol_id": "m101-residual-mechanism-audit-v1",
+  "purpose": "Offline, provider-free, DB-free diagnostic classification of the frozen M10R primary failures.",
+  "evidence_grades": {
+    "E1_DIRECT_PROVENANCE": "Frozen runtime provenance directly identifies the wrong semantic decision or execution boundary.",
+    "E2_STRUCTURAL_CORROBORATION": "Frozen provenance plus deterministic candidate/reference structure supports a semantically relevant mechanism.",
+    "E3_STRONG_ASSOCIATION": "Strong categorical or statistical association without case-level causal or transfer proof.",
+    "E4_MANUAL_DIAGNOSTIC_ONLY": "Human/static interpretation after automated classification; never eligible for dominance.",
+    "E5_UNCLASSIFIED": "Required evidence is absent or insufficient."
+  },
+  "primary_mechanisms": [
+    {"id": "M1_FORBIDDEN_FUNCTION", "definition": "Frozen M1 rejected a forbidden function.", "dominance_eligible": false},
+    {"id": "M1_UNKNOWN_COLUMN", "definition": "Frozen M1 rejected an unknown column.", "dominance_eligible": false},
+    {"id": "M1_UNKNOWN_TABLE", "definition": "Frozen M1 rejected an unknown table.", "dominance_eligible": false},
+    {"id": "M1_TRANSPORT_PLACEHOLDER_COLLISION", "definition": "Frozen M1/EXPLAIN transport rejected candidate placeholder-like syntax.", "dominance_eligible": false},
+    {"id": "GOVERNED_METRIC_GROUNDING_FAILURE", "definition": "Expected governed metric is known and frozen grounding selected a semantically different metric.", "required_evidence": ["expected metric", "selected metric"], "exclusions": ["slot-only mismatch", "compiler-only mismatch"], "dominance_eligible": true},
+    {"id": "GOVERNED_SLOT_GROUNDING_FAILURE", "definition": "Metric identity is correct but frozen governed semantic slots differ from the benchmark-owned slots.", "required_evidence": ["expected slots", "selected slots"], "exclusions": ["metric identity mismatch", "compiler-only mismatch"], "dominance_eligible": true},
+    {"id": "GOVERNED_CATALOG_OR_COMPILER_SEMANTIC_FAILURE", "definition": "Frozen grounding matches expected semantics but deterministic compiled SQL represents different semantics.", "required_evidence": ["grounding payload", "compiled SQL", "reference contract"], "exclusions": ["result mismatch alone"], "dominance_eligible": true},
+    {"id": "GOVERNED_UNCLASSIFIED", "definition": "Expected governed semantic failure without enough frozen grounding/compiler evidence for a stronger cause.", "dominance_eligible": false},
+    {"id": "ROUTING_OVERREACH", "definition": "A frozen expected-direct case was sent to the governed semantic path without a benchmark-supported governed contract.", "required_evidence": ["expected route", "actual route", "governed applicability provenance"], "exclusions": ["route mismatch alone without scope evidence"], "dominance_eligible": true},
+    {"id": "VERIFIED_MEMORY_RETRIEVAL_SELECTIVITY_FAILURE", "definition": "A semantically incompatible retrieved example crossed the frozen memory-use threshold.", "required_evidence": ["retrieved example identity", "retrieval decision", "target semantics"], "exclusions": ["memory_used plus incorrect result"], "dominance_eligible": true},
+    {"id": "VERIFIED_MEMORY_OVERTRANSFER", "definition": "Candidate contains a semantically wrong motif present in the retrieved verified example and absent from the reference.", "required_evidence": ["retrieved SQL", "candidate SQL", "reference SQL", "same wrong motif"], "exclusions": ["lexical similarity", "memory_used plus incorrect result"], "dominance_eligible": true},
+    {"id": "DIRECT_SCHEMA_OR_COLUMN_GROUNDING", "definition": "Executed direct candidate uses a wrong table, semantic source column, required relation, or projected/filter leaf.", "dominance_eligible": true},
+    {"id": "DIRECT_FILTER_OR_VALUE_CONDITION", "definition": "Executed direct candidate has a semantically relevant predicate or value-condition difference.", "dominance_eligible": true},
+    {"id": "DIRECT_JOIN_OR_RELATIONAL_COMPOSITION", "definition": "Executed direct candidate has a semantically relevant join or relational-composition difference.", "dominance_eligible": true},
+    {"id": "DIRECT_AGGREGATION_OR_GROUPING", "definition": "Executed direct candidate has a semantically relevant aggregate or grouping difference.", "dominance_eligible": true},
+    {"id": "DIRECT_FORMULA_OR_METRIC_SEMANTICS", "definition": "Executed direct candidate has a semantically relevant formula, operand, scale, or metric-expression difference.", "dominance_eligible": true},
+    {"id": "DIRECT_TEMPORAL_LOGIC", "definition": "Executed direct candidate has a semantically relevant temporal column, boundary, period, function, or granularity difference.", "dominance_eligible": true},
+    {"id": "DIRECT_WINDOW_LOGIC", "definition": "Executed direct candidate has a semantically relevant window function, partition, order, frame, rank, or offset difference.", "dominance_eligible": true},
+    {"id": "DIRECT_ORDER_OR_LIMIT", "definition": "Executed direct candidate has a semantically relevant ordering, direction, limit, offset, or top-N difference.", "dominance_eligible": true},
+    {"id": "DIRECT_PROJECTION_OR_RESULT_SHAPE", "definition": "Executed direct candidate has a semantically relevant projection or result-shape mismatch not recovered by the shadow contract evaluator.", "dominance_eligible": true},
+    {"id": "DIRECT_DISTINCT_OR_SET_SEMANTICS", "definition": "Executed direct candidate has a semantically relevant DISTINCT or set-operation difference.", "dominance_eligible": true},
+    {"id": "COMPOUND_SEMANTIC_FAILURE", "definition": "Multiple independent semantic axes differ and no single mechanism clearly dominates.", "dominance_eligible": false},
+    {"id": "UNCLASSIFIED", "definition": "Frozen evidence does not support a trustworthy mechanism assignment.", "dominance_eligible": false}
+  ],
+  "priority_order": [
+    "EVALUATOR_PROTOCOL_FAILURE",
+    "PROVIDER_OR_GENERATION_FAILURE",
+    "M1_REJECTION",
+    "GOVERNED_SEMANTIC_PATH_FAILURE",
+    "ROUTING_OVERREACH",
+    "VERIFIED_MEMORY_TRANSFER",
+    "DIRECT_AST_SEMANTIC_MECHANISM",
+    "COMPOUND_SEMANTIC_FAILURE",
+    "UNCLASSIFIED"
+  ],
+  "memory_transfer_levels": {
+    "M0_NO_TRANSFER_EVIDENCE": "No frozen retrieved-example identity or SQL evidence is available.",
+    "M1_LEXICAL_ONLY": "Only lexical similarity is present.",
+    "M2_STRUCTURAL_SIMILARITY": "Deterministic structure is similar but no wrong motif transfer is shown.",
+    "M3_WRONG_MOTIF_CARRYOVER": "Candidate and memory share a semantically wrong motif absent from reference.",
+    "M4_NEAR_EXACT_WRONG_SQL_CARRYOVER": "Candidate near-exactly carries a semantically wrong memory SQL."
+  },
+  "dominance": {
+    "failure_denominator": 172,
+    "minimum_count": 43,
+    "minimum_share": 0.25,
+    "eligible_grades": ["E1_DIRECT_PROVENANCE", "E2_STRUCTURAL_CORROBORATION"],
+    "family_membership_alone_eligible": false,
+    "manual_evidence_eligible": false
+  },
+  "manual_review": {
+    "runs_after": "automated_outputs_are_frozen",
+    "allowed_for": ["UNCLASSIFIED", "COMPOUND_SEMANTIC_FAILURE"],
+    "grade": "E4_MANUAL_DIAGNOSTIC_ONLY",
+    "may_change_score": false,
+    "may_change_primary_mechanism": false
+  }
+}

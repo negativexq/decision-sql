@@ -1,0 +1,617 @@
+{
+  "columns": [
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "products",
+      "type": "INTEGER"
+    },
+    {
+      "column": "sku",
+      "queryable": true,
+      "table": "products",
+      "type": "VARCHAR(50)"
+    },
+    {
+      "column": "name",
+      "queryable": true,
+      "table": "products",
+      "type": "VARCHAR(150)"
+    },
+    {
+      "column": "category",
+      "queryable": true,
+      "table": "products",
+      "type": "VARCHAR(100)"
+    },
+    {
+      "column": "unit_price",
+      "queryable": true,
+      "table": "products",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "regions",
+      "type": "INTEGER"
+    },
+    {
+      "column": "name",
+      "queryable": true,
+      "table": "regions",
+      "type": "VARCHAR(100)"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "sales_representatives",
+      "type": "INTEGER"
+    },
+    {
+      "column": "name",
+      "queryable": true,
+      "table": "sales_representatives",
+      "type": "VARCHAR(150)"
+    },
+    {
+      "column": "region_id",
+      "queryable": true,
+      "table": "sales_representatives",
+      "type": "INTEGER"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "customers",
+      "type": "INTEGER"
+    },
+    {
+      "column": "external_key",
+      "queryable": false,
+      "table": "customers",
+      "type": "VARCHAR(50)"
+    },
+    {
+      "column": "name",
+      "queryable": true,
+      "table": "customers",
+      "type": "VARCHAR(150)"
+    },
+    {
+      "column": "region_id",
+      "queryable": true,
+      "table": "customers",
+      "type": "INTEGER"
+    },
+    {
+      "column": "sales_rep_id",
+      "queryable": true,
+      "table": "customers",
+      "type": "INTEGER"
+    },
+    {
+      "column": "created_at",
+      "queryable": true,
+      "table": "customers",
+      "type": "DATETIME"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "orders",
+      "type": "INTEGER"
+    },
+    {
+      "column": "order_number",
+      "queryable": true,
+      "table": "orders",
+      "type": "VARCHAR(50)"
+    },
+    {
+      "column": "customer_id",
+      "queryable": true,
+      "table": "orders",
+      "type": "INTEGER"
+    },
+    {
+      "column": "sales_rep_id",
+      "queryable": true,
+      "table": "orders",
+      "type": "INTEGER"
+    },
+    {
+      "column": "ordered_at",
+      "queryable": true,
+      "table": "orders",
+      "type": "DATETIME"
+    },
+    {
+      "column": "status",
+      "queryable": true,
+      "table": "orders",
+      "type": "VARCHAR(30)"
+    },
+    {
+      "column": "currency",
+      "queryable": true,
+      "table": "orders",
+      "type": "VARCHAR(3)"
+    },
+    {
+      "column": "subtotal",
+      "queryable": true,
+      "table": "orders",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "discount_amount",
+      "queryable": true,
+      "table": "orders",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "total_amount",
+      "queryable": true,
+      "table": "orders",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "order_items",
+      "type": "INTEGER"
+    },
+    {
+      "column": "order_id",
+      "queryable": true,
+      "table": "order_items",
+      "type": "INTEGER"
+    },
+    {
+      "column": "product_id",
+      "queryable": true,
+      "table": "order_items",
+      "type": "INTEGER"
+    },
+    {
+      "column": "quantity",
+      "queryable": true,
+      "table": "order_items",
+      "type": "INTEGER"
+    },
+    {
+      "column": "unit_price",
+      "queryable": true,
+      "table": "order_items",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "discount_amount",
+      "queryable": true,
+      "table": "order_items",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "payments",
+      "type": "INTEGER"
+    },
+    {
+      "column": "order_id",
+      "queryable": true,
+      "table": "payments",
+      "type": "INTEGER"
+    },
+    {
+      "column": "paid_at",
+      "queryable": true,
+      "table": "payments",
+      "type": "DATETIME"
+    },
+    {
+      "column": "amount",
+      "queryable": true,
+      "table": "payments",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "status",
+      "queryable": true,
+      "table": "payments",
+      "type": "VARCHAR(30)"
+    },
+    {
+      "column": "id",
+      "queryable": true,
+      "table": "refunds",
+      "type": "INTEGER"
+    },
+    {
+      "column": "order_id",
+      "queryable": true,
+      "table": "refunds",
+      "type": "INTEGER"
+    },
+    {
+      "column": "refunded_at",
+      "queryable": true,
+      "table": "refunds",
+      "type": "DATETIME"
+    },
+    {
+      "column": "amount",
+      "queryable": true,
+      "table": "refunds",
+      "type": "NUMERIC(12, 2)"
+    },
+    {
+      "column": "reason",
+      "queryable": true,
+      "table": "refunds",
+      "type": "VARCHAR(200)"
+    }
+  ],
+  "relationships": [
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "customers"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "product_id",
+      "referenced_column": "id",
+      "referenced_table": "products",
+      "table": "order_items"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "customer_id",
+      "referenced_column": "id",
+      "referenced_table": "customers",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "sales_rep_id",
+      "referenced_column": "id",
+      "referenced_table": "sales_representatives",
+      "table": "orders"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "payments"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "payments"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "payments"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "payments"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "payments"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "refunds"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "refunds"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "refunds"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "refunds"
+    },
+    {
+      "column": "order_id",
+      "referenced_column": "id",
+      "referenced_table": "orders",
+      "table": "refunds"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "sales_representatives"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "sales_representatives"
+    },
+    {
+      "column": "region_id",
+      "referenced_column": "id",
+      "referenced_table": "regions",
+      "table": "sales_representatives"
+    }
+  ],
+  "sources": [
+    "app/db/models.py",
+    "alembic/versions/0001_commerce_schema.py",
+    "app/catalog/default.py",
+    "app/semantics/catalog.py",
+    "demo/seed/generate.py"
+  ],
+  "tables": [
+    "products",
+    "regions",
+    "sales_representatives",
+    "customers",
+    "orders",
+    "order_items",
+    "payments",
+    "refunds"
+  ]
+}

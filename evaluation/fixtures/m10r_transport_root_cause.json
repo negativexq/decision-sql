@@ -1,0 +1,13 @@
+{
+  "call": "Connection.exec_driver_sql(f\"EXPLAIN (FORMAT JSON) {sql}\")",
+  "observed_behavior": "A raw single percent is interpreted by psycopg's pyformat transport before PostgreSQL parses EXPLAIN.",
+  "primary_class": "TRANSPORT_PLACEHOLDER_COLLISION",
+  "production_code_changed": false,
+  "secondary_observations": [
+    "underscore LIKE wildcard passes",
+    "doubled percent passes",
+    "named pyformat-shaped literal fails",
+    "M1 AST/object/function policy is not the rejecting boundary for the demonstrated percent forms"
+  ],
+  "source_boundary": "app/execution/cost.py:11"
+}

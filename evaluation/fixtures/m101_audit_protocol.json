@@ -1,0 +1,28 @@
+{
+  "protocol_id": "m101-residual-mechanism-audit-v1",
+  "mode": "offline-provider-free-db-free-no-generation",
+  "starting_checkpoint": "46e4e059eac8d7051e1ee7e23821ad4858b96ea9",
+  "frozen_input": "M10R m10-clean-rebaseline-v2 consumed artifacts only",
+  "primary_failure_denominator": 172,
+  "primary_reference_rule": "Use the benchmark-designated primary reference; otherwise stable sorted reference ID.",
+  "classification_order": ["stage", "governed", "routing", "memory", "direct_ast", "compound", "unclassified"],
+  "evidence_grades": ["E1_DIRECT_PROVENANCE", "E2_STRUCTURAL_CORROBORATION", "E3_STRONG_ASSOCIATION", "E4_MANUAL_DIAGNOSTIC_ONLY", "E5_UNCLASSIFIED"],
+  "governed_rules": {
+    "metric": "E1 only when expected and selected metric IDs are both present and semantically differ.",
+    "slot": "E1 only when metric matches and frozen slot payload directly differs.",
+    "compiler": "E2 only when grounding matches and compiled candidate semantics deterministically differ from the canonical reference; result mismatch alone is insufficient.",
+    "false_governed": "E1/E2 only when expected-direct and actual-governed provenance establishes governed scope overreach; never claim the direct counterfactual would be correct."
+  },
+  "memory_rules": {
+    "required_for_selectivity": ["retrieved example IDs", "ranking/scores or frozen retrieval decision", "target and retrieved semantic signatures"],
+    "required_for_overtransfer": ["memory SQL", "candidate SQL", "reference SQL", "same wrong semantic motif"],
+    "current_artifact_gap": "M10R ledger and provider captures do not retain retrieved memory IDs, scores, or SQL; memory transfer and selectivity are therefore unclassifiable, not disproven.",
+    "memory_used_is": "E3 association at most"
+  },
+  "ast_signature_fields": ["tables", "join_graph", "projections", "projection_count", "where", "where_columns_operators", "group_by", "aggregates", "distinct", "arithmetic", "temporal", "windows", "order_by", "limit", "offset", "set_operations"],
+  "direct_rule": "AST structure is explanatory only. Assign E2 only where a semantically relevant, intervention-specific difference is deterministic and no higher-priority cause applies.",
+  "controls": "Analyze all 28 V1-correct cases alongside the 172 failures; report feature prevalence without causal claims.",
+  "manual_review": "Only after automated outputs are hashed; manual annotations are E4 and cannot change primary mechanism, correctness, score, route or denominator.",
+  "dominance": {"minimum_count": 43, "minimum_share": 0.25, "eligible_grades": ["E1_DIRECT_PROVENANCE", "E2_STRUCTURAL_CORROBORATION"], "family_membership_alone": false},
+  "forbidden": ["provider calls", "DB calls", "SQL generation", "embedding/reranker calls", "LLM judge", "counterfactual score", "score rewrite", "V2 authority", "benchmark artifact mutation"]
+}

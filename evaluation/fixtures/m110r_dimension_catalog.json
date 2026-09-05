@@ -1,0 +1,20 @@
+{
+  "artifact": "M110R_DIMENSION_CATALOG",
+  "version": "decision-sql-memory-compatibility-dimensions-v1",
+  "dimensions": [
+    {"name": "SOURCE_RELATION", "evidence": "parsed source relation set", "positive": "exact relation-set MATCH", "conflict": "different relation set"},
+    {"name": "JOIN_RELATIONSHIP", "evidence": "bounded parsed join relation strings", "positive": "exact normalized join MATCH", "conflict": "different join structure or relation"},
+    {"name": "RESULT_GRAIN", "evidence": "bounded group-by shape", "positive": "exact grouping-shape MATCH", "conflict": "grouped versus ungrouped or different grouping"},
+    {"name": "AGGREGATION", "evidence": "aggregate function identity tuple", "positive": "exact aggregate tuple MATCH", "conflict": "aggregate identity differs"},
+    {"name": "FORMULA", "evidence": "bounded arithmetic expression tuple", "positive": "exact normalized formula MATCH", "conflict": "formula present/different"},
+    {"name": "FILTER", "evidence": "bounded normalized WHERE expression", "positive": "exact filter structure MATCH", "conflict": "filter presence/operator/operand structure differs"},
+    {"name": "TEMPORAL", "evidence": "bounded temporal function/expression tuple", "positive": "exact temporal tuple MATCH", "conflict": "temporal structure differs"},
+    {"name": "WINDOW_SEMANTICS", "evidence": "bounded window expression tuple", "positive": "exact window tuple MATCH", "conflict": "window presence/definition differs"},
+    {"name": "PROJECTION_ROLE", "evidence": "normalized projection expression tuple", "positive": "exact projection tuple MATCH", "conflict": "projection expression or result shape differs"},
+    {"name": "ORDERING", "evidence": "normalized order expression/direction tuple", "positive": "exact ordering tuple MATCH", "conflict": "ordering differs"},
+    {"name": "TOP_N", "evidence": "bounded LIMIT expression", "positive": "exact limit-role MATCH", "conflict": "limit differs"},
+    {"name": "DISTINCT_SET", "evidence": "distinct flag and set-operation tuple", "positive": "exact tuple MATCH", "conflict": "distinct/set operation differs"}
+  ],
+  "unsupported_scope": ["nested subquery", "CTE", "ambiguous self-join alias", "unparseable SQL"],
+  "not_applicable": "a dimension with no decision-bearing structure on either side is NOT_APPLICABLE and does not count as positive evidence"
+}

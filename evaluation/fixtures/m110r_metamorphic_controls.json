@@ -1,0 +1,43 @@
+{
+  "artifact": "M110R_METAMORPHIC_CONTROLS",
+  "version": "decision-sql-memory-compatibility-metamorphic-v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_RESULT_INSPECTION",
+  "controls": [
+    {
+      "control_id": "meta-whitespace",
+      "base_shape": "aggregate_group",
+      "transformation": "whitespace and line breaks",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    },
+    {
+      "control_id": "meta-comments",
+      "base_shape": "aggregate_group",
+      "transformation": "SQL comments",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    },
+    {
+      "control_id": "meta-safe-quoting",
+      "base_shape": "filter",
+      "transformation": "safe identifier quoting",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    },
+    {
+      "control_id": "meta-aliases",
+      "base_shape": "join_group",
+      "transformation": "local alias renaming",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    },
+    {
+      "control_id": "meta-case",
+      "base_shape": "temporal",
+      "transformation": "keyword case",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    },
+    {
+      "control_id": "meta-format-window",
+      "base_shape": "window",
+      "transformation": "formatting only",
+      "expected_invariant": "PROVEN_COMPATIBLE"
+    }
+  ]
+}

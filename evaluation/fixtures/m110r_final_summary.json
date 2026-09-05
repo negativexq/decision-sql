@@ -1,0 +1,166 @@
+{
+  "artifact": "M110R_FINAL_SUMMARY",
+  "version": "decision-sql-m110r-final-summary-v1",
+  "classification": "M110R_COMPATIBILITY_CONTRACT_VALID_CONTROLS_INSUFFICIENT",
+  "starting_provenance": {
+    "head": "0cbfd7b6cfedfd4f1741779f43a0a174ef656fe7",
+    "origin_main": "0cbfd7b6cfedfd4f1741779f43a0a174ef656fe7",
+    "branch": "main",
+    "tree_clean": true,
+    "untracked_count": 0
+  },
+  "frozen_m104s": {
+    "classification": "M104S_HIGH_LEVERAGE_MECHANISM_IDENTIFIED",
+    "v1": "27/160",
+    "failures": 133,
+    "selectivity_e2": 61,
+    "diag_a": 31,
+    "diag_b": 30,
+    "overtransfer_secondary": 21
+  },
+  "contract": {
+    "id": "decision-sql-memory-compatibility-evidence-v1",
+    "version": 1,
+    "scope": "offline evaluation/control labeling only",
+    "runtime_feature": false,
+    "states": [
+      "PROVEN_COMPATIBLE",
+      "PROVEN_INCOMPATIBLE",
+      "UNKNOWN"
+    ],
+    "positive_requires": [
+      "zero material conflicts",
+      "zero unresolved supported applicable dimensions",
+      "at least one decision-bearing positive alignment"
+    ],
+    "score_used": false,
+    "correctness_used": false,
+    "causal_labels_used": false
+  },
+  "independent_validation": {
+    "total": 120,
+    "expected_compatible": 40,
+    "expected_incompatible": 40,
+    "expected_unknown": 40,
+    "predicted_compatible": 40,
+    "predicted_incompatible": 40,
+    "predicted_unknown": 40,
+    "false_compatible": 0,
+    "expected_compatible_false_incompatible": 0,
+    "unknown_promoted_compatible": 0,
+    "adversarial": "PASS",
+    "mutations": "PASS",
+    "metamorphic": "PASS",
+    "evidence_removal": "PASS",
+    "determinism": "PASS"
+  },
+  "application": {
+    "memory_use_contexts": 105,
+    "entry_evaluations": 315,
+    "context_proven_compatible": 0,
+    "context_proven_incompatible": 105,
+    "context_unknown": 0,
+    "diag_a_compatible": 0,
+    "diag_b_compatible": 0,
+    "known_selectivity_to_compatible": 0,
+    "known_overtransfer_to_compatible": 0,
+    "old_unknown_transitions": {
+      "to_proven_compatible": 0,
+      "to_proven_incompatible": 23,
+      "to_unknown": 0
+    },
+    "v1_correct_proven_compatible": 0,
+    "v1_incorrect_proven_compatible": 0
+  },
+  "control_gate": {
+    "required_total": 12,
+    "required_each_partition": 5,
+    "observed_total": 0,
+    "observed_diag_a": 0,
+    "observed_diag_b": 0,
+    "contract_safety": "PASS",
+    "control_sufficiency": "FAIL"
+  },
+  "policy_boundary": {
+    "p1": "NOT_EVALUATED",
+    "p2": "NOT_EVALUATED",
+    "p3": "NOT_EVALUATED",
+    "threshold_selected": false,
+    "policy_family_selected": null,
+    "auroc": null,
+    "auprc": null,
+    "score_analysis": "not performed"
+  },
+  "activity": {
+    "provider_calls": 0,
+    "database_calls": 0,
+    "retrieval_reruns": 0,
+    "generation_calls": 0,
+    "embedding_calls": 0,
+    "llm_judge_calls": 0,
+    "memory_off": false,
+    "provider_counterfactual": false,
+    "new_benchmark_cases": 0,
+    "m11_runtime_implementation": false
+  },
+  "quality": {
+    "focused_m110r": "9/9",
+    "independent_validation": "9/9",
+    "cross_milestone": "53/53",
+    "db_free_unit": "379/379",
+    "full_pytest": "not run: may invoke provider/DB/benchmark workflows",
+    "targeted_ruff": "pass",
+    "project_ruff": "1 pre-existing binder-v1; 0 new",
+    "targeted_mypy": "pass",
+    "project_mypy": "7 current pre-existing baseline; 0 new",
+    "git_diff_check": "pass",
+    "secret_scan": "pass on intended artifact paths",
+    "containers": [
+      "decision-sql-bird-postgres: exited, pre-existing",
+      "decision-sql-defog-postgres: exited, pre-existing"
+    ]
+  },
+  "scientific_boundary": {
+    "m110_target_selected": "Verified Query Memory Selectivity Intervention",
+    "m110_policy_selected": false,
+    "unknown_not_promoted": true,
+    "v1_correctness_not_compatibility_proof": true,
+    "contract_offline_only": true,
+    "m104s_corpus_consumed_development_evidence": true,
+    "no_new_validation_corpus": true,
+    "public_benchmarks_deferred": true,
+    "next_milestone": "CHECKPOINT — Freeze M11.0R Compatible-Memory Contract with Insufficient Control Coverage",
+    "after_checkpoint": "M11.0T — Compatible-Memory Control Evidence Expansion Audit"
+  },
+  "hashes": {
+    "source": "1d34b4bd90f7cb8edc163a88173b330faf5058378ff1053771d273823d42f776",
+    "contract": "0876ea1196163de30abd79c6aec671f3399701ae49a89a625f5a9365dd43b4f7",
+    "dimension_catalog": "bec9d5cfc35ac00886f98c0dcfc9cb7efc2e63d0ebb8371136cdb7aaf0043e06",
+    "unknown_reason_catalog": "0a59bfc8d22507e204e54cddae88bb18817a26886498cd246f5c6af60d905ccd",
+    "design_fixtures": "485b1f57d47fb42618c490a8f8f2d61e7a0b374425c567bffbf8e26af5f6afc4",
+    "validation_fixtures": "1a8e306fbe57d4b927f7972900b77d0d95262b05d4088552feecbeb866ebf1f1",
+    "validation_expected": "0ccf4547882d6c0a349841a496dc87963c614a8677134eef1256e49dc58e595f",
+    "mutation_controls": "43dc35774782a56567ad85e5b9cfb9ff965218420ac3e944b068d4a85149ed38",
+    "metamorphic_controls": "67f139ed9a9d0266baa2966098483813aa1b2187ee81bfa6b3a59369998eb097",
+    "validation_results": "30378003be0f030d131a9ce238907ae0ae85dd0ea571eb0d20008c353acb4b1f",
+    "entry_labels": "9b239b43d244319c2f54873f5c046fa83737027c38e4cb71cd2815cd3ae1c0e4",
+    "context_labels": "2212a87b968a7f7618acfe8931bbb037b27d34fed66620358b9980c11228825c",
+    "unknown_transition": "45bd639fcd4f0068f09042f1e7b3592c4b51d0ca223a6996ed3d4ffd1e8774cf",
+    "application": "8b20ba6a86dae9c31907fa7b399db9f0525c07bba2bd9124f6eba1170d5c33b8",
+    "control_decision": "3335232c81715ab49b564495352204618f2623cf8614866581ebe7ab17ce0ed5",
+    "test_summary": "f4911fc874dcb65f7bc1eb25e255e69f7cb30510655192a45f77483cf048edf1",
+    "final_summary": "computed_externally_file_byte_sha256"
+  },
+  "m104s_hashes": {
+    "corpus": "10e5d8956ac7c5fa30f317bb725cd23a814e81ebdfd0b225c9dda181c2d52c17",
+    "final_freshness": "c127c029ce00119359101343faa69e72efd5e16f8c005aed2dce4f21bb43f718",
+    "master_lock": "5faeb2f32176b0e3502ceabb12afb0dc00481b0eaf3e14bf54330d626008dffd",
+    "ledger": "a60362c1b85815ab6684e42962c9f5def0f138188b9f543466437af41fe6ae10",
+    "completeness": "84905a4feeef629fbeec259f3ebde89d5f1423ab33ed9f5e9e4b72f3ec0348e8",
+    "attribution": "6061b13f3601430339caece4ed28eb6e2af274da7a2cedf603410443fd0e49de",
+    "m4_corpus": "f871bd31649af8284bde0264aa6e8032b8ed2a2163f930d28df97d8e764087ae"
+  },
+  "commit": "none",
+  "push": "none",
+  "hash_method": "New artifact hashes are file-byte SHA-256; final summary and evidence-manifest hashes are computed externally after file creation."
+}

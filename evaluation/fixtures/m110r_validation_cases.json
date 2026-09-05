@@ -1,0 +1,813 @@
+{
+  "artifact": "M110R_INDEPENDENT_VALIDATION_FIXTURES",
+  "version": "decision-sql-memory-compatibility-validation-v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_RESULT_INSPECTION",
+  "total_cases": 120,
+  "category_counts": {
+    "EXPECTED_COMPATIBLE": 40,
+    "EXPECTED_INCOMPATIBLE": 40,
+    "EXPECTED_UNKNOWN": 40
+  },
+  "cases": [
+    {
+      "fixture_id": "m110r-validation-compatible-00",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-01",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT customer.region, SUM(order_row.total_amount) AS total FROM customers AS customer JOIN orders AS order_row ON order_row.customer_id = customer.id GROUP BY customer.region /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-02",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "-- harmless comment\nSELECT row.id, row.subtotal - row.discount AS net_total\nFROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-03",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('month', x.created_at) AS month, SUM(x.total_amount) FROM orders AS x GROUP BY DATE_TRUNC('month', x.created_at) /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-04",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT row.id, ROW_NUMBER() OVER (PARTITION BY row.customer_id ORDER BY row.created_at DESC) AS rn FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-05",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT item.id, item.total_amount FROM orders AS item ORDER BY item.total_amount DESC LIMIT 3 /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-06",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(DISTINCT row.customer_id) AS customers FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-07",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT row.id, row.status FROM orders AS row WHERE row.status = 'paid' /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-08",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-09",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT customer.region, SUM(order_row.total_amount) AS total FROM customers AS customer JOIN orders AS order_row ON order_row.customer_id = customer.id GROUP BY customer.region /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-10",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "-- harmless comment\nSELECT row.id, row.subtotal - row.discount AS net_total\nFROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-11",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('month', x.created_at) AS month, SUM(x.total_amount) FROM orders AS x GROUP BY DATE_TRUNC('month', x.created_at) /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-12",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT row.id, ROW_NUMBER() OVER (PARTITION BY row.customer_id ORDER BY row.created_at DESC) AS rn FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-13",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT item.id, item.total_amount FROM orders AS item ORDER BY item.total_amount DESC LIMIT 3 /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-14",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(DISTINCT row.customer_id) AS customers FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-15",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT row.id, row.status FROM orders AS row WHERE row.status = 'paid' /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-16",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-17",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT customer.region, SUM(order_row.total_amount) AS total FROM customers AS customer JOIN orders AS order_row ON order_row.customer_id = customer.id GROUP BY customer.region /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-18",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "-- harmless comment\nSELECT row.id, row.subtotal - row.discount AS net_total\nFROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-19",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('month', x.created_at) AS month, SUM(x.total_amount) FROM orders AS x GROUP BY DATE_TRUNC('month', x.created_at) /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-20",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT row.id, ROW_NUMBER() OVER (PARTITION BY row.customer_id ORDER BY row.created_at DESC) AS rn FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-21",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT item.id, item.total_amount FROM orders AS item ORDER BY item.total_amount DESC LIMIT 3 /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-22",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(DISTINCT row.customer_id) AS customers FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-23",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT row.id, row.status FROM orders AS row WHERE row.status = 'paid' /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-24",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-25",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT customer.region, SUM(order_row.total_amount) AS total FROM customers AS customer JOIN orders AS order_row ON order_row.customer_id = customer.id GROUP BY customer.region /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-26",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "-- harmless comment\nSELECT row.id, row.subtotal - row.discount AS net_total\nFROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-27",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('month', x.created_at) AS month, SUM(x.total_amount) FROM orders AS x GROUP BY DATE_TRUNC('month', x.created_at) /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-28",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT row.id, ROW_NUMBER() OVER (PARTITION BY row.customer_id ORDER BY row.created_at DESC) AS rn FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-29",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT item.id, item.total_amount FROM orders AS item ORDER BY item.total_amount DESC LIMIT 3 /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-30",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(DISTINCT row.customer_id) AS customers FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-31",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT row.id, row.status FROM orders AS row WHERE row.status = 'paid' /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-32",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-33",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT customer.region, SUM(order_row.total_amount) AS total FROM customers AS customer JOIN orders AS order_row ON order_row.customer_id = customer.id GROUP BY customer.region /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-34",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "-- harmless comment\nSELECT row.id, row.subtotal - row.discount AS net_total\nFROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-35",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('month', x.created_at) AS month, SUM(x.total_amount) FROM orders AS x GROUP BY DATE_TRUNC('month', x.created_at) /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-36",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT row.id, ROW_NUMBER() OVER (PARTITION BY row.customer_id ORDER BY row.created_at DESC) AS rn FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-37",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT item.id, item.total_amount FROM orders AS item ORDER BY item.total_amount DESC LIMIT 3 /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-38",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(DISTINCT row.customer_id) AS customers FROM orders AS row"
+    },
+    {
+      "fixture_id": "m110r-validation-compatible-39",
+      "category": "EXPECTED_COMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT row.id, row.status FROM orders AS row WHERE row.status = 'paid' /* harmless representation variant */"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-00",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "mutation_dimension": "AGGREGATION"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-01",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN payments AS p ON p.customer_id = c.id GROUP BY c.region",
+      "mutation_dimension": "JOIN_RELATIONSHIP"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-02",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.subtotal + o.discount AS net_total FROM orders AS o",
+      "mutation_dimension": "FORMULA"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-03",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('year', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('year', o.created_at)",
+      "mutation_dimension": "TEMPORAL"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-04",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.customer_id FROM orders AS o",
+      "mutation_dimension": "WINDOW_SEMANTICS"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-05",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount ASC LIMIT 3",
+      "mutation_dimension": "ORDERING"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-06",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(o.customer_id) AS customers FROM orders AS o",
+      "mutation_dimension": "DISTINCT_SET"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-07",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status <> 'paid'",
+      "mutation_dimension": "FILTER"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-08",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "mutation_dimension": "AGGREGATION"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-09",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN payments AS p ON p.customer_id = c.id GROUP BY c.region",
+      "mutation_dimension": "JOIN_RELATIONSHIP"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-10",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.subtotal + o.discount AS net_total FROM orders AS o",
+      "mutation_dimension": "FORMULA"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-11",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('year', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('year', o.created_at)",
+      "mutation_dimension": "TEMPORAL"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-12",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.customer_id FROM orders AS o",
+      "mutation_dimension": "WINDOW_SEMANTICS"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-13",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount ASC LIMIT 3",
+      "mutation_dimension": "ORDERING"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-14",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(o.customer_id) AS customers FROM orders AS o",
+      "mutation_dimension": "DISTINCT_SET"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-15",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status <> 'paid'",
+      "mutation_dimension": "FILTER"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-16",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "mutation_dimension": "AGGREGATION"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-17",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN payments AS p ON p.customer_id = c.id GROUP BY c.region",
+      "mutation_dimension": "JOIN_RELATIONSHIP"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-18",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.subtotal + o.discount AS net_total FROM orders AS o",
+      "mutation_dimension": "FORMULA"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-19",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('year', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('year', o.created_at)",
+      "mutation_dimension": "TEMPORAL"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-20",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.customer_id FROM orders AS o",
+      "mutation_dimension": "WINDOW_SEMANTICS"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-21",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount ASC LIMIT 3",
+      "mutation_dimension": "ORDERING"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-22",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(o.customer_id) AS customers FROM orders AS o",
+      "mutation_dimension": "DISTINCT_SET"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-23",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status <> 'paid'",
+      "mutation_dimension": "FILTER"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-24",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "mutation_dimension": "AGGREGATION"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-25",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN payments AS p ON p.customer_id = c.id GROUP BY c.region",
+      "mutation_dimension": "JOIN_RELATIONSHIP"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-26",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.subtotal + o.discount AS net_total FROM orders AS o",
+      "mutation_dimension": "FORMULA"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-27",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('year', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('year', o.created_at)",
+      "mutation_dimension": "TEMPORAL"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-28",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.customer_id FROM orders AS o",
+      "mutation_dimension": "WINDOW_SEMANTICS"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-29",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount ASC LIMIT 3",
+      "mutation_dimension": "ORDERING"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-30",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(o.customer_id) AS customers FROM orders AS o",
+      "mutation_dimension": "DISTINCT_SET"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-31",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status <> 'paid'",
+      "mutation_dimension": "FILTER"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-32",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status",
+      "mutation_dimension": "AGGREGATION"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-33",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN orders AS o ON o.customer_id = c.id GROUP BY c.region",
+      "memory_sql": "SELECT c.region, SUM(o.total_amount) AS total FROM customers AS c JOIN payments AS p ON p.customer_id = c.id GROUP BY c.region",
+      "mutation_dimension": "JOIN_RELATIONSHIP"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-34",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.subtotal - o.discount AS net_total FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.subtotal + o.discount AS net_total FROM orders AS o",
+      "mutation_dimension": "FORMULA"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-35",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT DATE_TRUNC('month', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('month', o.created_at)",
+      "memory_sql": "SELECT DATE_TRUNC('year', o.created_at) AS month, SUM(o.total_amount) FROM orders AS o GROUP BY DATE_TRUNC('year', o.created_at)",
+      "mutation_dimension": "TEMPORAL"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-36",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.created_at DESC) AS rn FROM orders AS o",
+      "memory_sql": "SELECT o.id, o.customer_id FROM orders AS o",
+      "mutation_dimension": "WINDOW_SEMANTICS"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-37",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount DESC LIMIT 3",
+      "memory_sql": "SELECT o.id, o.total_amount FROM orders AS o ORDER BY o.total_amount ASC LIMIT 3",
+      "mutation_dimension": "ORDERING"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-38",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT COUNT(DISTINCT o.customer_id) AS customers FROM orders AS o",
+      "memory_sql": "SELECT COUNT(o.customer_id) AS customers FROM orders AS o",
+      "mutation_dimension": "DISTINCT_SET"
+    },
+    {
+      "fixture_id": "m110r-validation-incompatible-39",
+      "category": "EXPECTED_INCOMPATIBLE",
+      "target_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status = 'paid'",
+      "memory_sql": "SELECT o.id, o.status FROM orders AS o WHERE o.status <> 'paid'",
+      "mutation_dimension": "FILTER"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-00",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT FROM",
+      "unknown_reason": "parse_failure"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-01",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": null,
+      "unknown_reason": "missing_memory_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-02",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": null,
+      "memory_sql": "SELECT id FROM accounts",
+      "unknown_reason": "missing_target_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-03",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM (SELECT id FROM accounts) AS nested",
+      "unknown_reason": "unsupported_subquery"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-04",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "memory_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "unknown_reason": "unsupported_cte"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-05",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT a.id FROM accounts AS a JOIN accounts AS b ON a.id = b.id",
+      "memory_sql": "SELECT x.id FROM accounts AS x JOIN accounts AS y ON x.id = y.id",
+      "unknown_reason": "ambiguous_self_join"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-06",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id, CUSTOM_SEMANTIC(profile) FROM accounts",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-07",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM accounts WHERE id IN (SELECT id FROM blocked)",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-08",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT FROM",
+      "unknown_reason": "parse_failure"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-09",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": null,
+      "unknown_reason": "missing_memory_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-10",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": null,
+      "memory_sql": "SELECT id FROM accounts",
+      "unknown_reason": "missing_target_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-11",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM (SELECT id FROM accounts) AS nested",
+      "unknown_reason": "unsupported_subquery"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-12",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "memory_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "unknown_reason": "unsupported_cte"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-13",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT a.id FROM accounts AS a JOIN accounts AS b ON a.id = b.id",
+      "memory_sql": "SELECT x.id FROM accounts AS x JOIN accounts AS y ON x.id = y.id",
+      "unknown_reason": "ambiguous_self_join"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-14",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id, CUSTOM_SEMANTIC(profile) FROM accounts",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-15",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM accounts WHERE id IN (SELECT id FROM blocked)",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-16",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT FROM",
+      "unknown_reason": "parse_failure"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-17",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": null,
+      "unknown_reason": "missing_memory_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-18",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": null,
+      "memory_sql": "SELECT id FROM accounts",
+      "unknown_reason": "missing_target_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-19",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM (SELECT id FROM accounts) AS nested",
+      "unknown_reason": "unsupported_subquery"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-20",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "memory_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "unknown_reason": "unsupported_cte"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-21",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT a.id FROM accounts AS a JOIN accounts AS b ON a.id = b.id",
+      "memory_sql": "SELECT x.id FROM accounts AS x JOIN accounts AS y ON x.id = y.id",
+      "unknown_reason": "ambiguous_self_join"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-22",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id, CUSTOM_SEMANTIC(profile) FROM accounts",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-23",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM accounts WHERE id IN (SELECT id FROM blocked)",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-24",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT FROM",
+      "unknown_reason": "parse_failure"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-25",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": null,
+      "unknown_reason": "missing_memory_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-26",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": null,
+      "memory_sql": "SELECT id FROM accounts",
+      "unknown_reason": "missing_target_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-27",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM (SELECT id FROM accounts) AS nested",
+      "unknown_reason": "unsupported_subquery"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-28",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "memory_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "unknown_reason": "unsupported_cte"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-29",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT a.id FROM accounts AS a JOIN accounts AS b ON a.id = b.id",
+      "memory_sql": "SELECT x.id FROM accounts AS x JOIN accounts AS y ON x.id = y.id",
+      "unknown_reason": "ambiguous_self_join"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-30",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id, CUSTOM_SEMANTIC(profile) FROM accounts",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-31",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM accounts WHERE id IN (SELECT id FROM blocked)",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-32",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT FROM",
+      "unknown_reason": "parse_failure"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-33",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": null,
+      "unknown_reason": "missing_memory_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-34",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": null,
+      "memory_sql": "SELECT id FROM accounts",
+      "unknown_reason": "missing_target_evidence"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-35",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM (SELECT id FROM accounts) AS nested",
+      "unknown_reason": "unsupported_subquery"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-36",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "memory_sql": "WITH recent AS (SELECT id FROM accounts) SELECT id FROM recent",
+      "unknown_reason": "unsupported_cte"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-37",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT a.id FROM accounts AS a JOIN accounts AS b ON a.id = b.id",
+      "memory_sql": "SELECT x.id FROM accounts AS x JOIN accounts AS y ON x.id = y.id",
+      "unknown_reason": "ambiguous_self_join"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-38",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id, CUSTOM_SEMANTIC(profile) FROM accounts",
+      "unknown_reason": "unsupported_expression"
+    },
+    {
+      "fixture_id": "m110r-validation-unknown-39",
+      "category": "EXPECTED_UNKNOWN",
+      "target_sql": "SELECT id FROM accounts",
+      "memory_sql": "SELECT id FROM accounts WHERE id IN (SELECT id FROM blocked)",
+      "unknown_reason": "unsupported_expression"
+    }
+  ]
+}

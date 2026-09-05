@@ -1,0 +1,55 @@
+{
+  "artifact": "M110R_MUTATION_CONTROLS",
+  "version": "decision-sql-memory-compatibility-mutations-v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_RESULT_INSPECTION",
+  "controls": [
+    {
+      "control_id": "mutation-aggregate-sum-to-avg",
+      "base_shape": "aggregate_group",
+      "mutation": "SUM -> AVG",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-join-target",
+      "base_shape": "join_group",
+      "mutation": "orders join source -> payments",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-formula-sign",
+      "base_shape": "formula",
+      "mutation": "subtraction -> addition",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-temporal-grain",
+      "base_shape": "temporal",
+      "mutation": "month -> year",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-window-removal",
+      "base_shape": "window",
+      "mutation": "window -> ordinary projection",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-order-direction",
+      "base_shape": "topn",
+      "mutation": "DESC -> ASC",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-distinct-removal",
+      "base_shape": "distinct",
+      "mutation": "COUNT DISTINCT -> COUNT",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    },
+    {
+      "control_id": "mutation-filter-operator",
+      "base_shape": "filter",
+      "mutation": "= -> <>",
+      "expected_transition": "PROVEN_COMPATIBLE_TO_PROVEN_INCOMPATIBLE"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "artifact": "M110R_CONTRACT",
+  "contract_id": "decision-sql-memory-compatibility-evidence-v1",
+  "version": 1,
+  "scope": "offline evaluation/control labeling only",
+  "allowed_inputs": [
+    "target reference SQL or frozen semantic target",
+    "immutable selected M4 question and verified SQL",
+    "immutable M4 schema metadata"
+  ],
+  "forbidden_inputs": [
+    "retrieval score",
+    "rank",
+    "score gap",
+    "V1 correctness",
+    "candidate SQL correctness",
+    "primary causal mechanism",
+    "diagnostic family",
+    "partition",
+    "provider output",
+    "database result",
+    "LLM or embedding judgment"
+  ],
+  "states": ["PROVEN_COMPATIBLE", "PROVEN_INCOMPATIBLE", "UNKNOWN"],
+  "relation_states": ["MATCH", "NON_CONFLICTING", "CONFLICT", "UNKNOWN", "NOT_APPLICABLE"],
+  "positive_proof": {
+    "requires": [
+      "zero CONFLICT relations",
+      "zero UNKNOWN relations on supported applicable dimensions",
+      "at least one decision-bearing MATCH relation",
+      "positive evidence dimensions recorded"
+    ],
+    "absence_of_conflict_is_insufficient": true,
+    "v1_correctness_is_insufficient": true
+  },
+  "incompatibility_proof": "any supported decision-bearing dimension with CONFLICT yields PROVEN_INCOMPATIBLE",
+  "unknown_rule": "parse failure, unsupported expression, missing required evidence, ambiguity, or partial alignment yields UNKNOWN unless a material CONFLICT is already proven",
+  "entry_aggregation": "evaluate each selected M4 entry independently",
+  "context_aggregation": {
+    "any_entry_incompatible": "PROVEN_INCOMPATIBLE",
+    "all_entries_compatible": "PROVEN_COMPATIBLE",
+    "otherwise": "UNKNOWN"
+  },
+  "parse_failure": "UNKNOWN with typed PARSE_FAILURE reason",
+  "missing_evidence": "UNKNOWN with typed reason; no optimistic fallback",
+  "alias_policy": "normalize local aliases only for comparison; preserve self-join relation instances; ambiguous scopes become UNKNOWN",
+  "semantic_equivalence_claim": "bounded compatibility evidence, not general SQL semantic equivalence",
+  "runtime_feature": false,
+  "score_policy": false
+}

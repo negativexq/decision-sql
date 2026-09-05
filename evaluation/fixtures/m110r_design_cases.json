@@ -1,0 +1,10 @@
+{
+  "artifact": "M110R_DESIGN_FIXTURES",
+  "version": "decision-sql-memory-compatibility-design-v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_RESULT_INSPECTION",
+  "cases": [
+    {"fixture_id": "m110r-design-compatible-aggregate", "expected": "PROVEN_COMPATIBLE", "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status", "memory_sql": "-- harmless comment\nSELECT x.status, SUM(x.total_amount) AS total FROM orders AS x GROUP BY x.status"},
+    {"fixture_id": "m110r-design-incompatible-aggregate", "expected": "PROVEN_INCOMPATIBLE", "target_sql": "SELECT o.status, SUM(o.total_amount) AS total FROM orders AS o GROUP BY o.status", "memory_sql": "SELECT o.status, AVG(o.total_amount) AS total FROM orders AS o GROUP BY o.status"},
+    {"fixture_id": "m110r-design-unknown-parse", "expected": "UNKNOWN", "target_sql": "SELECT o.status FROM orders AS o", "memory_sql": "SELECT FROM"}
+  ]
+}

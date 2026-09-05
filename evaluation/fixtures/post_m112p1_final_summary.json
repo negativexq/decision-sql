@@ -1,0 +1,313 @@
+{
+  "blocker_counts": {
+    "ATTRIBUTION_IMPLEMENTATION_COVERAGE_GAP": 0,
+    "COMPOUND_DIVERGENCE_NO_ISOLATABLE_BOUNDARY": 15,
+    "DATA_DEPENDENT_SEMANTICS_REQUIRED": 0,
+    "INSUFFICIENT_FROZEN_PROVENANCE": 0,
+    "OBSERVED_HETEROGENEOUS_DIVERGENCE": 0,
+    "OTHER_BOUNDED_DIAGNOSTIC_LIMIT": 0,
+    "P0_TIER_OR_OUTPUT_MASK_BOUNDARY": 1,
+    "RESOLUTION_BLOCKER_UNRESOLVED": 0,
+    "SCHEMA_RELATIONSHIP_SEMANTICS_LIMIT": 2,
+    "STATIC_SEMANTIC_PROOF_LIMIT": 24,
+    "UNSUPPORTED_SQL_CONSTRUCT_OR_PROFILE": 0,
+    "VALUE_DOMAIN_SEMANTICS_LIMIT": 4
+  },
+  "capability_limit_total": 31,
+  "classification": "POSTM112P1_ATTRIBUTION_CAPABILITY_BOUNDARY_DOMINANT",
+  "compound_summary": {
+    "case_count_with_two_or_more_dimensions": 44,
+    "changed_dimension_distribution": {
+      "1": 2,
+      "2": 21,
+      "3": 8,
+      "4": 11,
+      "5": 4
+    },
+    "median_changed_dimension_count": 2.5,
+    "no_semantic_failure_inference": true,
+    "top_dimension_combinations": [
+      {
+        "combination": "ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 21
+      },
+      {
+        "combination": "GROUP_BY_CHANGE+JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 6
+      },
+      {
+        "combination": "JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+SOURCE_SET_CHANGE",
+        "support": 5
+      },
+      {
+        "combination": "ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+WHERE_SIGNATURE_CHANGE",
+        "support": 4
+      },
+      {
+        "combination": "GROUP_BY_CHANGE+JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+SOURCE_SET_CHANGE",
+        "support": 3
+      },
+      {
+        "combination": "FORMULA_EXPRESSION_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 2
+      },
+      {
+        "combination": "GROUP_BY_CHANGE+JOIN_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 2
+      },
+      {
+        "combination": "JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+SOURCE_SET_CHANGE+WHERE_SIGNATURE_CHANGE",
+        "support": 1
+      }
+    ]
+  },
+  "conditions": {
+    "dominant": true,
+    "fragmented": false,
+    "mixed": false
+  },
+  "family_reachability": {
+    "AGGREGATION_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "DISTINCT_SET_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "FORMULA_BUSINESS_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 2,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 2,
+      "unresolved_despite_available_rule": 2
+    },
+    "GROUPING_GRAIN_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 11,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 11,
+      "unresolved_despite_available_rule": 11
+    },
+    "GROUP_FILTER_HAVING_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "M1_REJECTION": {
+      "control_case_ids_are_descriptive_only": [
+        "m104s-direct-filter_column-04",
+        "m104s-direct-filter_column-09",
+        "m104s-direct-filter_literal-03",
+        "m104s-direct-filter_operator_boolean-05"
+      ],
+      "implementation_reachability": "M1_METADATA_ONLY",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 4,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "NULL_ZERO_INCLUSION_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "NO_POSITIVE_ATTRIBUTION_PATH",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "ORDER_RANK_LIMIT_OFFSET_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 42,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 42,
+      "unresolved_despite_available_rule": 42
+    },
+    "OTHER_BOUNDED_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "NO_POSITIVE_ATTRIBUTION_PATH",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "PROJECTION_OUTPUT_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 46,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 46,
+      "unresolved_despite_available_rule": 46
+    },
+    "RELATIONAL_COMPOSITION_JOIN": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 17,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 17,
+      "unresolved_despite_available_rule": 17
+    },
+    "ROW_FILTER_VALUE_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 5,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 5,
+      "unresolved_despite_available_rule": 5
+    },
+    "SOURCE_ENTITY_SELECTION": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 9,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 9,
+      "unresolved_despite_available_rule": 9
+    },
+    "UNRESOLVED": {
+      "control_case_ids_are_descriptive_only": [],
+      "implementation_reachability": "STRUCTURAL_EVIDENCE_ONLY_NO_FAILURE_RULE",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 0,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    },
+    "WINDOW_SEMANTICS": {
+      "control_case_ids_are_descriptive_only": [
+        "m104s-direct-window-01",
+        "m104s-direct-window-05",
+        "m104s-direct-window-07"
+      ],
+      "implementation_reachability": "PARTIAL_DETERMINISTIC_POSITIVE_RULE",
+      "positive_rule_available_in_unresolved_cases": 0,
+      "resolved_control_cases": 3,
+      "structurally_applicable_unresolved_cases": 0,
+      "unresolved_despite_available_rule": 0
+    }
+  },
+  "hashes": {
+    "docs/post-m112p1-fragmentation-review.md": "454374992ec44c2c51f0a3ad33ad6c669582b2391560f301c3360d1ca38d0218",
+    "evaluation/post_m112p1_fragmentation_review.py": "085d6e92827e2c3c5365f65a5c4a4a84c9ba838a6eec3eaa4c996b6ee1fab070",
+    "post_m112p1_blocker_ledger.jsonl": "f8bd77d331b34ea1e1d8e296d5f8ec777e58c06998f4c33389ad2bc70037e9fb",
+    "post_m112p1_blocker_summary.json": "d00284213155108c10dc5eace52359d6488b04d29fe07099fa2598d40045ac13",
+    "post_m112p1_blocker_taxonomy.json": "bceb75473e3629fe9cff0f89fb4e69f93c9cce2eeaaeae1e08d1c42fa1e2c689",
+    "post_m112p1_compound_divergence_summary.json": "889e9f6356541ea2bc51a2ee300ad8b6fcffe159243bc3bf58b41810255518e9",
+    "post_m112p1_control_comparison.json": "b928c89fedc2bf655f68e87b0122f5449ae1bee433187f918850d2c0af662bbf",
+    "post_m112p1_control_population.json": "67643409a418a4d469f259071c786f958382519d9999a9ff4a7a85c9e6b85273",
+    "post_m112p1_decision_rule.json": "6bce0978f36d60fbcd6a1fcca97da101b98b06ea56e34cd3a636c1edc0e11b01",
+    "post_m112p1_design_controls.json": "6b62398e78aa4b0dd5a1f12de1caf3d35f5caa0abbe8d20eeaa8f585b2299718",
+    "post_m112p1_evidence_manifest.json": "0f40461cd4af0d62dff8e37f7be526b0c82c7933a56b117b24c3cc9ac70da86e",
+    "post_m112p1_family_reachability.json": "a9ee716391445d47c6b8167e347b467ed76646f60a853aecb0f14d6e09d52ae8",
+    "post_m112p1_family_reachability_matrix.json": "e48f6538d0835f07b5fc95502dc200e9ce07ef3f9e31a66c0ba78f1641cdf745",
+    "post_m112p1_final_decision.json": "2b6c78f1c727327b4699bdf9c85a1c3307921f8ba40bfbb5f766fa2547c94440",
+    "post_m112p1_fragmentation_decision.json": "5a5f7633dbd25caa0139cb5382bc5fd43fc5e15d1168021b327d9f1a47ef3855",
+    "post_m112p1_future_contract.json": "7f8f941a5bc4c570a8a6421c834e299926529a1966eb5daf8e8df6bca2c77c1d",
+    "post_m112p1_implementation_conclusion.json": "47c05cdee0256e1d268b23da94f8c90b61ddcffccfb40e895f7e37bfcd7787ac",
+    "post_m112p1_implementation_coverage.json": "bcdf12bfea31ad232086a2cd530099bcfcf6c6defc90a474863448e3f0fa9816",
+    "post_m112p1_predecessor_integrity.json": "68c84c30ebbcfebfcd00b71b0167a85ce8746a90211c25be80cb4b3c9bd2459a",
+    "post_m112p1_preexposure_manifest.json": "b8ec862d48e62e6f14fb34222a6dd8342419caacb49cb2dd8d3ca3869fccd18a",
+    "post_m112p1_protocol.json": "f81e59d407c4e6f2b9feb5975fe5548a5ceaead5965edb56172cc58c2210eccb",
+    "post_m112p1_starting_checkpoint.json": "e4aac536ef1973edb8f57609148cf36826b8352d976a3d38c3a12a33765f0733",
+    "post_m112p1_structural_profile_contract.json": "eb2575aa455cbad2244fbcd8d7dd415f0d47793140958fd3ca306c9914bbb2f9",
+    "post_m112p1_structural_profile_summary.json": "1f1966580fb26b5973366d4c82e60b4f1e67abab181e781d32f8d7a2d3f10a86",
+    "post_m112p1_test_summary.json": "59698ca6d7378119f913db481fd4f88276f3ad9553443b8cb77e40e0da799cce",
+    "post_m112p1_tier_blocker_summary.json": "74465e1788c5f77da9434dc407af4719f2cbe82bd8f553d80f647aef3f2fe725",
+    "post_m112p1_unresolved_population.json": "e59fdff93ea2984905152b1e0ff2b49a4c0415a7f8d3d22415ec17b5a7c7378a",
+    "post_m112p1_zero_support_authority.json": "1c3d268669ddd52324d4721e7546edd12c3a4b4f20471a5cd34a2d4c6d4ee41d",
+    "tests/unit/test_post_m112p1_fragmentation_review.py": "10070b3d161e8e0f006126fbe6b320c030e1745ca35a1f2e7c01d2a4f58848e1"
+  },
+  "heterogeneity_or_compound_total": 15,
+  "intervention_selected": false,
+  "largest_capability_blocker": {
+    "name": "STATIC_SEMANTIC_PROOF_LIMIT",
+    "support": 24
+  },
+  "new_failure_family_attribution": false,
+  "no_repeated_boundary_is_not_fragmentation_proof": true,
+  "p1_history_rewritten": false,
+  "p1_repeated_boundary": "NO_REPEATED_BOUNDED_BOUNDARY_CANDIDATE",
+  "population": {
+    "controls": 7,
+    "eligible": 53,
+    "primary_unresolved": 46
+  },
+  "predecessor": "M112P1_RESIDUAL_ATTRIBUTION_COMPLETED",
+  "primary_blocker_counts": {
+    "ATTRIBUTION_IMPLEMENTATION_COVERAGE_GAP": 0,
+    "COMPOUND_DIVERGENCE_NO_ISOLATABLE_BOUNDARY": 15,
+    "DATA_DEPENDENT_SEMANTICS_REQUIRED": 0,
+    "INSUFFICIENT_FROZEN_PROVENANCE": 0,
+    "OBSERVED_HETEROGENEOUS_DIVERGENCE": 0,
+    "OTHER_BOUNDED_DIAGNOSTIC_LIMIT": 0,
+    "P0_TIER_OR_OUTPUT_MASK_BOUNDARY": 1,
+    "RESOLUTION_BLOCKER_UNRESOLVED": 0,
+    "SCHEMA_RELATIONSHIP_SEMANTICS_LIMIT": 2,
+    "STATIC_SEMANTIC_PROOF_LIMIT": 24,
+    "UNSUPPORTED_SQL_CONSTRUCT_OR_PROFILE": 0,
+    "VALUE_DOMAIN_SEMANTICS_LIMIT": 4
+  },
+  "profile_summary": {
+    "characterized_profiles": 46,
+    "distinct_profile_count": 9,
+    "largest_profile_support": 21,
+    "profile_is_not_failure_family": true,
+    "singleton_profile_count": 1,
+    "top3_profile_coverage": 32,
+    "top5_profile_coverage": 39,
+    "top_profiles": [
+      {
+        "profile": "ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 21
+      },
+      {
+        "profile": "GROUP_BY_CHANGE+JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE",
+        "support": 6
+      },
+      {
+        "profile": "JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+SOURCE_SET_CHANGE",
+        "support": 5
+      },
+      {
+        "profile": "ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+WHERE_SIGNATURE_CHANGE",
+        "support": 4
+      },
+      {
+        "profile": "GROUP_BY_CHANGE+JOIN_SIGNATURE_CHANGE+ORDER_SIGNATURE_CHANGE+PROJECTION_CHANGE+SOURCE_SET_CHANGE",
+        "support": 3
+      }
+    ]
+  },
+  "review_classification": "POSTM112P1_ATTRIBUTION_CAPABILITY_BOUNDARY_DOMINANT",
+  "systematic_evidence_for_largest_capability_blocker": "the frozen source exposes only bounded feature detectors and no general semantic equivalence proof path",
+  "tier_summary": {
+    "CORE": 27,
+    "FULL": 19,
+    "p0_mask_primary_count": 1,
+    "primary_blockers": {
+      "CORE": {
+        "COMPOUND_DIVERGENCE_NO_ISOLATABLE_BOUNDARY": 7,
+        "P0_TIER_OR_OUTPUT_MASK_BOUNDARY": 1,
+        "STATIC_SEMANTIC_PROOF_LIMIT": 15,
+        "VALUE_DOMAIN_SEMANTICS_LIMIT": 4
+      },
+      "FULL": {
+        "COMPOUND_DIVERGENCE_NO_ISOLATABLE_BOUNDARY": 8,
+        "SCHEMA_RELATIONSHIP_SEMANTICS_LIMIT": 2,
+        "STATIC_SEMANTIC_PROOF_LIMIT": 9
+      }
+    }
+  },
+  "unresolved_blocker_count": 0
+}

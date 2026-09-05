@@ -43,6 +43,7 @@ from evaluation.result_binding_protocol_v2 import (
     bind_generated_result_v2,
 )
 from evaluation.result_equivalence_contract import ResultEquivalenceContract
+from evaluation.result_snapshot import restore_query_execution, snapshot_query_execution
 from evaluation.versioned_result_evaluator import (
     EvaluationComparisonRequest,
     EvaluatorMode,
@@ -143,7 +144,7 @@ def validate_references() -> dict[str, Any]:
         _write("reference_validation.json", {"parse": f"{parse_count}/200", "m1_acceptance": f"{accepted_count}/200", "execution": f"{execution_count}/200", "failed_case": case["case_id"], "records": records})
         raise RuntimeError(f"M10R frozen reference failed M1/execution: {case['case_id']} {detail}")
     protocol = _observe_db_protocol(engine, settings)
-    reference_results = {key: value.model_dump(mode="json") for key, value in results.items()}
+    reference_results = {key: snapshot_query_execution(value) for key, value in results.items()}
     reference_results_hash = stable_hash(records)
     _write("reference_results.json", {"records": records, "results": reference_results})
     summary = {"parse": f"{parse_count}/200", "m1_acceptance": f"{accepted_count}/200", "execution": f"{execution_count}/200", "reference_result_count": len(results), "reference_results_hash": reference_results_hash, "db_protocol": protocol, "v1_hash": V1_HASH, "v2_hash": V2_HASH, "comparator_hash": COMPARATOR_HASH, "provider_calls_before_reference_gate": 0, "architecture_cases_consumed_before_reference_gate": 0}
@@ -210,7 +211,7 @@ async def run_benchmark() -> dict[str, Any]:
     cases = _load("m10r_cases_v2.json")["cases"]
     manifest = _load("m10r_execution_manifest_v2.json")
     references = json.loads((RESULT_ROOT / "reference_results.json").read_text())["results"]
-    reference_by_id = {key: QueryExecution.model_validate(value) for key, value in references.items()}
+    reference_by_id = {key: restore_query_execution(value) for key, value in references.items()}
     settings = _settings_for_m10r()
     route, provider = _build_runtime(settings)
     provider_calls = 0

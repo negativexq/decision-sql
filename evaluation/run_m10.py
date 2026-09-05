@@ -45,6 +45,7 @@ from evaluation.result_binding_protocol_v2 import (
     bind_generated_result_v2,
 )
 from evaluation.result_equivalence_contract import ResultEquivalenceContract
+from evaluation.result_snapshot import restore_query_execution, snapshot_query_execution
 from evaluation.versioned_result_evaluator import (
     EvaluationComparisonRequest,
     EvaluatorMode,
@@ -159,7 +160,7 @@ def validate_references() -> dict[str, Any]:
         records.append({"case_id": case["case_id"], "sql_hash": sha256(sql.encode()).hexdigest(), "failure": str(detail)})
         raise RuntimeError(f"M10 frozen reference failed M1/execution: {case['case_id']} {detail}")
     protocol = _observe_db_protocol(engine, settings)
-    _write(RUN_DIR / "reference_results.json", {"records": records, "results": {key: value.model_dump(mode="json") for key, value in results.items()}})
+    _write(RUN_DIR / "reference_results.json", {"records": records, "results": {key: snapshot_query_execution(value) for key, value in results.items()}})
     _write(RUN_DIR / "reference_validation.json", {"parse": f"{parse_count}/200", "m1_acceptance": f"{accepted_count}/200", "execution": f"{execution_count}/200", "reference_result_count": len(results), "reference_results_hash": stable_hash(records), "db_protocol": protocol})
     return {"parse": parse_count, "m1_acceptance": accepted_count, "execution": execution_count, "reference_result_count": len(results), "protocol": protocol, "reference_results_hash": stable_hash(records)}
 
@@ -219,7 +220,7 @@ async def run_benchmark(reference_payload: dict[str, Any]) -> dict[str, Any]:
     cases = _load("m10_cases.json")["cases"]
     order = _load("m10_execution_manifest.json")["ordered_case_ids"]
     by_id = {case["case_id"]: case for case in cases}
-    references = {item["case_id"]: QueryExecution.model_validate(item) for item in reference_payload["results"].values()}
+    references = {key: restore_query_execution(item) for key, item in reference_payload["results"].items()}
     settings = _settings_for_m10()
     route, _safety, provider = _build_runtime(settings)
     rows: list[dict[str, Any]] = []

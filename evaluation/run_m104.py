@@ -44,6 +44,7 @@ from evaluation.result_binding_protocol_v2 import (
     bind_generated_result_v2,
 )
 from evaluation.result_equivalence_contract import ResultEquivalenceContract
+from evaluation.result_snapshot import restore_query_execution, snapshot_query_execution
 from evaluation.versioned_result_evaluator import (
     EvaluationComparisonRequest,
     EvaluatorMode,
@@ -190,7 +191,7 @@ def validate_references() -> dict[str, Any]:
         if not isinstance(execution, QueryExecution):
             raise RuntimeError(f"reference execution failed: {case['case_id']}: {execution}")
         execution_count += 1
-        results[case["case_id"]] = execution.model_dump(mode="json")
+        results[case["case_id"]] = snapshot_query_execution(execution)
         records.append({"case_id": case["case_id"], "sql_hash": sha256(sql.encode()).hexdigest(), "columns": execution.columns, "row_count": execution.row_count, "result_hash": _execution_hash(execution)})
     payload = {"records": records, "results": results, "reference_protocol": _reference_protocol(engine, settings)}
     reference_hash = _write("reference_results.json", payload)
@@ -265,7 +266,7 @@ async def run_benchmark() -> dict[str, Any]:
     settings = _settings_for_m104()
     sink = DiagnosticJsonlProvenanceSink(LEDGER_PATH)
     route, provider = _build_runtime(settings, sink)
-    reference_by_id = {key: QueryExecution.model_validate(value) for key, value in reference_payload["results"].items()}
+    reference_by_id = {key: restore_query_execution(value) for key, value in reference_payload["results"].items()}
     rows: list[dict[str, Any]] = []
     logical_calls = 0
     try:

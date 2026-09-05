@@ -24,6 +24,7 @@ from evaluation.m104s_corpus import (
     freshness_report,
     stable_hash,
 )
+from evaluation.result_snapshot import snapshot_query_execution
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULT_ROOT = ROOT / "evaluation" / "results" / "m104s" / "fresh-provenance-20260905"
@@ -197,7 +198,7 @@ def validate_references() -> dict[str, Any]:
         if not isinstance(execution, QueryExecution):
             raise RuntimeError(f"M10.4S reference execution failed: {case['case_id']}")
         executions += 1
-        results[case["case_id"]] = execution.model_dump(mode="json")
+        results[case["case_id"]] = snapshot_query_execution(execution)
         records.append({
             "case_id": case["case_id"],
             "reference_sql_hash": case["reference_sql_hash"],

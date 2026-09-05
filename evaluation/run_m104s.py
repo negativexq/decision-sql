@@ -32,6 +32,7 @@ from evaluation.m104s_protocol import (
     validate_manifest,
 )
 from evaluation.result_binding_protocol_v2 import BindingStatus, bind_generated_result_v2
+from evaluation.result_snapshot import restore_query_execution
 from evaluation.run_m104 import (
     _build_runtime,
     _contract_and_spec,
@@ -101,7 +102,7 @@ async def run_once() -> dict[str, Any]:
     references = json.loads(REFERENCE_PATH.read_text())["results"]
     if len(references) != 160:
         raise RuntimeError("M10.4S reference results are incomplete")
-    reference_by_id = {key: QueryExecution.model_validate(value) for key, value in references.items()}
+    reference_by_id = {key: restore_query_execution(value) for key, value in references.items()}
     settings = _settings_for_m104()
     sink = DiagnosticJsonlProvenanceSink(LEDGER_PATH)
     route, provider = _build_runtime(settings, sink)

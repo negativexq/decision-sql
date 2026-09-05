@@ -1,0 +1,20 @@
+{
+  "artifact": "M11.1P0_TYPED_ROUNDTRIP_VALIDATION",
+  "contract_id": "decision-sql-query-result-snapshot-v1",
+  "json_encode_decode_included": true,
+  "supported_types_tested": 8,
+  "parameterized_supported_cell_cases": 11,
+  "decimal_cases": ["123.45", "0", "0.00", "-1.2500", "12345678901234567890.12345678901234567890"],
+  "string_anti_coercion_cases": ["123.45", "00123", "0", "-1.2500", "true", "2026-09-05", "null"],
+  "mixed_row_cases": 3,
+  "duplicate_rows_preserved": true,
+  "row_order_preserved": true,
+  "column_order_preserved": true,
+  "row_count_preserved": true,
+  "truncated_preserved": true,
+  "compare_original_to_restored": true,
+  "restored_decimal_type": "Decimal",
+  "restored_numeric_looking_string_type": "str",
+  "NEW_PATH_DECIMAL_SELF_COMPARISON": "PASS",
+  "all_supported_typed_roundtrips": "PASS"
+}

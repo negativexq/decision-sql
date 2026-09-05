@@ -1,0 +1,25 @@
+{
+  "artifact": "M11.1P0_TYPED_RESULT_PERSISTENCE_CONTRACT",
+  "contract_id": "decision-sql-query-result-snapshot-v1",
+  "version": 1,
+  "scope": "evaluation persistence only",
+  "encoding": "explicit type-tagged JSON cells",
+  "supported_cell_types": [
+    "NULL",
+    "BOOLEAN",
+    "INTEGER",
+    "FLOAT",
+    "DECIMAL",
+    "STRING",
+    "DATE",
+    "DATETIME"
+  ],
+  "decimal_encoding": "exact decimal text; no float conversion",
+  "string_encoding": "literal string value; no content-based coercion",
+  "bool_integer_boundary": "BOOLEAN is encoded before INTEGER and restored distinctly",
+  "date_datetime_boundary": "DATE and DATETIME use explicit separate tags",
+  "unsupported_values": "rejected; no arbitrary object reconstruction",
+  "legacy_behavior": "payloads without the exact contract marker are classified as LEGACY_UNTYPED_RESULT_SNAPSHOT and are not restored by this contract",
+  "runtime_dependency": false,
+  "source_module": "evaluation/result_snapshot.py"
+}

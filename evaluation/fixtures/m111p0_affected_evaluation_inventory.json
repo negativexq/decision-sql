@@ -1,0 +1,51 @@
+{
+  "artifact": "M11.1P0_AFFECTED_EVALUATION_INVENTORY",
+  "inventory_scope": "evaluation persistence seams and downstream evidence families",
+  "historical_artifacts_rewritten": false,
+  "historical_scores_recomputed": false,
+  "entries": [
+    {
+      "family": "M10R",
+      "write_seam": "evaluation/run_m10r.py::validate_references",
+      "restore_seam": "evaluation/run_m10r.py::run_benchmark",
+      "legacy_pattern_confirmed": true,
+      "status": "UNCHANGED_HISTORICAL_ARTIFACT; PENDING_REVALIDATION_IF_AFFECTED"
+    },
+    {
+      "family": "M10",
+      "write_seam": "evaluation/run_m10.py::validate_references",
+      "restore_seam": "evaluation/run_m10.py::run_benchmark",
+      "legacy_pattern_confirmed": true,
+      "status": "UNCHANGED_HISTORICAL_ARTIFACT; PENDING_REVALIDATION_IF_AFFECTED"
+    },
+    {
+      "family": "M10.4",
+      "write_seam": "evaluation/run_m104.py::validate_references",
+      "restore_seam": "evaluation/run_m104.py::run_benchmark",
+      "legacy_pattern_confirmed": true,
+      "status": "UNCHANGED_HISTORICAL_ARTIFACT; PENDING_REVALIDATION_IF_AFFECTED"
+    },
+    {
+      "family": "M10.4S",
+      "write_seam": "evaluation/m104s_protocol.py::validate_references",
+      "restore_seam": "evaluation/run_m104s.py::run_once",
+      "legacy_pattern_confirmed": true,
+      "status": "UNCHANGED_HISTORICAL_ARTIFACT; PENDING_REVALIDATION_IF_AFFECTED"
+    },
+    {
+      "family": "M10.4S causal attribution",
+      "write_seam": "consumes M10.4S evaluation evidence",
+      "restore_seam": "downstream analysis",
+      "legacy_pattern_confirmed": "inherited dependency; no new persistence seam asserted",
+      "status": "UNCHANGED_HISTORICAL_ARTIFACT; PENDING_EVALUATOR_INTEGRITY_REVALIDATION"
+    },
+    {
+      "family": "M11.0R / M11.0T / M11.1 intervention reasoning",
+      "write_seam": "downstream research artifacts",
+      "restore_seam": "downstream analysis",
+      "legacy_pattern_confirmed": "depends on historical evaluation authority; no direct result persistence seam asserted",
+      "status": "PENDING_EVALUATOR_INTEGRITY_REVALIDATION"
+    }
+  ],
+  "scope_boundary": "Potential impact is an integrity-revalidation question, not a claim that every historical result or score is wrong."
+}

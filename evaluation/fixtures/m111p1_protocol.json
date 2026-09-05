@@ -1,0 +1,17 @@
+{
+  "artifact": "M11.1P1_PROTOCOL",
+  "version": "decision-sql-m111p1-dual-contract-v1",
+  "starting_checkpoint": "c189f324edce0a00f1258444d252e0bf49daf250",
+  "contracts": {
+    "semantic_relation": "decision-sql-query-semantic-relation-v1",
+    "demonstration_adaptability": "decision-sql-demonstration-adaptability-v1",
+    "version": 1
+  },
+  "scope": "offline evaluator-side contract validation only",
+  "historical_application": false,
+  "allowed_inputs": ["target SQL artifact", "verified memory SQL artifact"],
+  "forbidden_inputs": ["correctness", "retrieval score", "rank", "partition", "causal label", "provider output", "database result", "embedding", "reranker"],
+  "required_mandatory_cases": ["threshold", "and_reorder", "join_kind", "having_threshold", "order_priority"],
+  "validation_rule": "required supported cases have zero false labels and zero UNKNOWN",
+  "no_runtime_integration": true
+}

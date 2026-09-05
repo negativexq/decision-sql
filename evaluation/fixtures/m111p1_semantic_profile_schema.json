@@ -1,0 +1,22 @@
+{
+  "artifact": "M11.1P1_SEMANTIC_PROFILE_SCHEMA",
+  "version": 1,
+  "dimensions": ["sources", "joins", "projection", "aggregation", "formula", "where", "having", "grouping", "ordering", "limit", "distinct_set", "windows", "temporal"],
+  "supported": {
+    "sources": "relation identity",
+    "joins": "ordered join edge with side/kind/target/ON relation",
+    "projection": "ordered result expressions with aliases removed",
+    "aggregation": "normalized aggregate expressions",
+    "formula": "bounded arithmetic expression identities",
+    "where": "AND-normalized predicate terms",
+    "having": "separate AND-normalized predicate terms",
+    "grouping": "unordered GROUP BY expression set",
+    "ordering": "ordered ORDER BY expressions including direction",
+    "limit": "LIMIT expression",
+    "distinct_set": "DISTINCT and bounded set-operation identity",
+    "windows": "bounded window expression identity",
+    "temporal": "bounded timestamp/extract expression identity"
+  },
+  "normalizations": ["alias removal", "relation-alias resolution", "keyword/case rendering", "safe AND term ordering", "safe GROUP BY term ordering", "non-material parentheses"],
+  "not_implemented": ["De Morgan", "distribution", "predicate implication", "range reasoning", "query containment", "theorem proving"]
+}

@@ -1,0 +1,11 @@
+{
+  "artifact": "M11.1P1_SEMANTIC_RELATION_CONTRACT",
+  "contract_id": "decision-sql-query-semantic-relation-v1",
+  "version": 1,
+  "scope": "offline evaluator-side design evidence only",
+  "states": ["PROVEN_EQUIVALENT", "PROVEN_MATERIAL_CONFLICT", "UNKNOWN"],
+  "positive_rule": "PROVEN_EQUIVALENT only when all supported material profile dimensions match",
+  "conflict_rule": "PROVEN_MATERIAL_CONFLICT when supported profiles differ",
+  "unknown_rule": "unsupported, ambiguous, or unparsable structures fail closed to UNKNOWN",
+  "forbidden_inputs": ["correctness", "retrieval", "rank", "partition", "causal labels", "provider", "database results", "embeddings"]
+}

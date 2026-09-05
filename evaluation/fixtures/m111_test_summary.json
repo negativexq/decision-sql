@@ -1,0 +1,51 @@
+{
+  "artifact": "M111_TEST_SUMMARY",
+  "version": "decision-sql-m111-test-summary-v1",
+  "status": "PASS",
+  "focused_m111_tests": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cross_milestone_regressions": {
+    "passed": 72,
+    "failed": 0,
+    "skipped": 0,
+    "scope": ["M11.1", "M11.0T", "M11.0R", "M11.0", "M10.4S", "M10.4R", "M10.3", "M10.2", "M10.1", "M10R"]
+  },
+  "db_free_unit_suite": {
+    "passed": 398,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "tests/unit"
+  },
+  "static_checks": {
+    "targeted_ruff": "PASS",
+    "targeted_mypy": "PASS",
+    "project_ruff_diagnostics": 1,
+    "project_ruff_new_m111_diagnostics": 0,
+    "project_mypy_diagnostics": 7,
+    "project_mypy_new_m111_diagnostics": 0,
+    "git_diff_check": "PASS",
+    "scoped_secret_scan": "PASS"
+  },
+  "offline_design_oracle": {
+    "self_pairs": 105,
+    "self_compatible": 105,
+    "target_pairs": 11025,
+    "off_diagonal_pairs": 10920,
+    "deterministic": true
+  },
+  "prohibited_activity": {
+    "provider_calls": 0,
+    "db_calls": 0,
+    "retrieval_reruns": 0,
+    "runtime_changes": 0,
+    "m4_changes": 0,
+    "new_validation_cases": 0
+  },
+  "full_pytest": {
+    "run": false,
+    "reason": "Skipped because the repository-wide suite may invoke provider, database, benchmark, Defog, BIRD, or live M10/M11 workflows."
+  }
+}

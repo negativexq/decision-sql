@@ -1,0 +1,60 @@
+{
+  "artifact": "M111_INTERVENTION_MATRIX",
+  "version": "decision-sql-m111-intervention-matrix-v1",
+  "reference_architecture": "CURRENT_FULL_QUERY_M4",
+  "candidates": [
+    {
+      "id": "CURRENT_FULL_QUERY_M4",
+      "representation_unit": "server-owned full verified question-to-SQL example",
+      "evidence_for": "Historical M4 benefit exists on an older corpus.",
+      "evidence_against": "Current frozen M4 covers 3/105 primary targets under the frozen contract.",
+      "reference_blind_runtime_feasible": true,
+      "server_owned": true,
+      "deterministic": true,
+      "expected_scaling_pressure": "Observed low coverage; reuse audit is required.",
+      "new_semantic_ownership": "none",
+      "independent_measurability": "yes",
+      "status": "reference_not_winner"
+    },
+    {
+      "id": "COVERAGE_BALANCED_EXACT_VERIFIED_EXAMPLES",
+      "representation_unit": "same full verified question-to-SQL unit with coverage-balanced corpus construction",
+      "evidence_for": "Could address sampling if exact-query reuse and greedy scaling were strong.",
+      "evidence_against": "Measured exact-query reuse is weak and greedy 80% coverage requires 83 representatives.",
+      "reference_blind_runtime_feasible": true,
+      "server_owned": true,
+      "deterministic": true,
+      "expected_scaling_pressure": "High within this target population.",
+      "new_semantic_ownership": "none",
+      "independent_measurability": "yes",
+      "status": "not_justified_by_current_evidence"
+    },
+    {
+      "id": "REUSABLE_VERIFIED_SEMANTIC_MEMORY",
+      "representation_unit": "bounded reusable verified semantic decision components",
+      "evidence_for": "Could address compositional pressure if reusable-atom evidence were strong.",
+      "evidence_against": "Only 10/105 targets have all atoms reused; novel-atom pressure is strong.",
+      "reference_blind_runtime_feasible": "conceptually_possible",
+      "server_owned": true,
+      "deterministic": true,
+      "expected_scaling_pressure": "Requires bounded component maintenance and governance.",
+      "new_semantic_ownership": "potentially bounded semantic decision ownership",
+      "independent_measurability": "requires fresh validation",
+      "status": "not_justified_as_primary_family"
+    },
+    {
+      "id": "HYBRID_VERIFIED_MEMORY",
+      "representation_unit": "full verified examples plus bounded reusable verified metadata",
+      "evidence_for": "Could serve materially distinct exact-reuse and compositional regions if a precommitted split existed.",
+      "evidence_against": "No strong compositional pressure or materially sized split was detected.",
+      "reference_blind_runtime_feasible": "conceptually_possible",
+      "server_owned": true,
+      "deterministic": true,
+      "expected_scaling_pressure": "Two governed representation units.",
+      "new_semantic_ownership": "potentially bounded metadata ownership",
+      "independent_measurability": "requires fresh validation",
+      "status": "not_justified_as_primary_family"
+    }
+  ],
+  "decision_boundary": "M11.1 is design evidence only; no implementation is authorized."
+}

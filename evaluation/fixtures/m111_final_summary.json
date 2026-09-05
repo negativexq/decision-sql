@@ -1,0 +1,69 @@
+{
+  "artifact": "M111_FINAL_SUMMARY",
+  "version": "decision-sql-m111-final-summary-v1",
+  "classification": "M111_NEW_SEMANTIC_COVERAGE_REQUIRED_REPRESENTATION_UNRESOLVED",
+  "design_scope": "offline architecture/design evidence only",
+  "frozen_predecessor": {
+    "m110t_classification": "M110T_CORPUS_COVERAGE_DOMINANT",
+    "m110t_checkpoint": "4c5b48982f3c4fb8ed7d034a9560ed6496f3c774",
+    "m110r_contract": "decision-sql-memory-compatibility-evidence-v1",
+    "m110r_contract_version": 1,
+    "m110r_contract_hash": "0876ea1196163de30abd79c6aec671f3399701ae49a89a625f5a9365dd43b4f7"
+  },
+  "primary_population": {
+    "targets": 105,
+    "hypothetical_candidates": 105,
+    "self_compatible": 105,
+    "self_incompatible": 0,
+    "self_unknown": 0,
+    "target_pairs": 11025,
+    "off_diagonal_pairs": 10920
+  },
+  "exact_query_reuse": {
+    "cross_target_reusable_targets": 2,
+    "self_only_targets": 103,
+    "cross_target_reuse_rate": 0.01904761904761905,
+    "classification": "EXACT_QUERY_REPRESENTATION_REUSE_WEAK",
+    "greedy_representatives_for_80_percent": 83,
+    "greedy_representatives_for_100_percent": 104,
+    "greedy_is_not_minimum_proof": true
+  },
+  "semantic_factorization": {
+    "complete_signature_targets": 105,
+    "distinct_full_signatures": 104,
+    "unique_full_signature_target_rate": 0.9809523809523809,
+    "all_atoms_reused_target_rate": 0.09523809523809523,
+    "novel_atom_target_rate": 0.9047619047619048,
+    "compositionally_novel_target_rate": 0.0761904761904762,
+    "semantic_pressure": "REUSABLE_SEMANTIC_REPRESENTATION_PRESSURE_WEAK",
+    "new_semantic_content_pressure": "NEW_SEMANTIC_CONTENT_PRESSURE_STRONG"
+  },
+  "current_m4_signature_description": {
+    "entries": 50,
+    "complete_signatures": 45,
+    "distinct_full_signatures": 45,
+    "target_signatures_represented": 3,
+    "target_signatures_absent": 101
+  },
+  "secondary_no_memory_population": {
+    "status": "NOT_RUN",
+    "reason": "The frozen M11.0T 55-case coverage result was preserved; M11.1 primary representation-pressure metrics were intentionally limited to the 105 memory-used targets."
+  },
+  "decision": {
+    "selected_intervention_family": null,
+    "implementation_authorized": false,
+    "reason": "Weak full-query reuse combined with strong novel-semantic-content pressure does not satisfy a precommitted single-family selection rule."
+  },
+  "boundaries": {
+    "v1_correctness_used": false,
+    "retrieval_score_used": false,
+    "provider_counterfactual": false,
+    "memory_off": false,
+    "retrieval_rerun": false,
+    "m4_modified": false,
+    "runtime_implementation": false,
+    "new_validation_data": false,
+    "public_benchmark_rerun": false
+  },
+  "interpretation": "The evidence shows representation pressure and substantial novel semantic content in this frozen target population; it does not prove that a semantic-memory runtime intervention will improve SQL accuracy."
+}

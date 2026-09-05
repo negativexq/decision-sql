@@ -1,0 +1,29 @@
+{
+  "artifact": "M111_SEMANTIC_SIGNATURE_SCHEMA",
+  "version": "decision-sql-m111-semantic-signature-v1",
+  "scope": "offline factorization diagnostics only",
+  "source": "frozen M11.0R SemanticSignature and DIMENSIONS",
+  "dimensions": [
+    "SOURCE_RELATION",
+    "JOIN_RELATIONSHIP",
+    "RESULT_GRAIN",
+    "AGGREGATION",
+    "FORMULA",
+    "FILTER",
+    "TEMPORAL",
+    "WINDOW_SEMANTICS",
+    "PROJECTION_ROLE",
+    "ORDERING",
+    "TOP_N",
+    "DISTINCT_SET"
+  ],
+  "atom_definition": "dimension plus canonical material value from frozen SemanticSignature; NOT_APPLICABLE dimensions emit no atom",
+  "full_signature": "ordered applicable atoms hashed with SHA-256",
+  "complete_signature": "frozen SQL parses under the M11.0R bounded parser and yields all supported fields",
+  "incomplete_signature": "parse failure or unsupported/ambiguous bounded shape",
+  "forbidden": ["new dimensions", "V1 correctness", "retrieval score", "partition", "causal mechanism", "runtime use"],
+  "unique_full_signature": "no other target has the same full signature hash",
+  "all_atoms_reused": "every atom appears in at least one other target",
+  "novel_atom_target": "at least one atom has frequency one",
+  "compositionally_novel_target": "unique full signature and every atom is reused elsewhere"
+}

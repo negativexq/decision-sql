@@ -1,0 +1,72 @@
+{
+  "artifact": "M111_PROTOCOL",
+  "version": "decision-sql-m111-corpus-coverage-design-v1",
+  "classification": "OFFLINE_CORPUS_COVERAGE_REPRESENTATION_SCALING_AUDIT",
+  "starting_checkpoint": "4c5b48982f3c4fb8ed7d034a9560ed6496f3c774",
+  "compatibility_contract": {
+    "id": "decision-sql-memory-compatibility-evidence-v1",
+    "version": 1,
+    "scope": "offline evaluation/control labeling only",
+    "hash": "0876ea1196163de30abd79c6aec671f3399701ae49a89a625f5a9365dd43b4f7"
+  },
+  "populations": {
+    "primary_targets": 105,
+    "m4_entries": 50,
+    "target_by_target_pairs": 11025,
+    "off_diagonal_pairs": 10920,
+    "secondary_all_m104s_targets": 160
+  },
+  "oracle": {
+    "candidate_definition": "one evaluator-only hypothetical exact verified-query candidate per frozen primary target, using its frozen reference SQL",
+    "self_gate": "105/105 PROVEN_COMPATIBLE; 0 PROVEN_INCOMPATIBLE; 0 UNKNOWN",
+    "self_pairs_excluded_from_cross_target_metrics": true,
+    "runtime_or_m4_mutation": false
+  },
+  "greedy_set_cover": {
+    "candidate_pool": "105 hypothetical candidates",
+    "universe": "105 primary targets",
+    "selection": "largest uncovered-target coverage first",
+    "tie_break": "candidate target ID ascending",
+    "interpretation": "deterministic design heuristic, not a globally minimal corpus proof",
+    "report_targets": [0.5, 0.8, 0.9, 0.95, 1.0],
+    "report_representatives": [5, 10, 20, 30, 50]
+  },
+  "reuse_bands": {
+    "strong_min": 0.8,
+    "partial_min": 0.4,
+    "weak_below": 0.4
+  },
+  "exact_representation_bands": {
+    "strong_requires_reuse_at_least": 0.8,
+    "strong_requires_greedy_80_at_most": 20,
+    "strong_requires_self_only_at_most": 0.1,
+    "weak_if_reuse_below": 0.4,
+    "weak_if_greedy_80_above": 50,
+    "weak_if_self_only_at_least": 0.4
+  },
+  "semantic_pressure": {
+    "strong_unique_full_signature_min": 0.7,
+    "strong_all_atoms_reused_min": 0.7,
+    "strong_compositionally_novel_min": 0.5,
+    "strong_novel_atom_below": 0.3,
+    "weak_compositionally_novel_below": 0.2,
+    "weak_novel_atom_at_least": 0.6,
+    "new_semantic_content_strong_novel_atom_at_least": 0.6
+  },
+  "hybrid_split": {
+    "minimum_targets": 20,
+    "minimum_share": 0.15
+  },
+  "prohibited": [
+    "provider or database execution",
+    "historical retrieval replay",
+    "M4 modification or new verified-query entry",
+    "runtime semantic feature",
+    "retrieval scoring or ranking simulation",
+    "P1/P2/P3 or threshold analysis",
+    "accuracy or recovery estimate",
+    "learned classifier",
+    "new semantic dimension",
+    "new validation corpus"
+  ]
+}

@@ -1,0 +1,1961 @@
+{
+  "all_atoms_reused_target_count": 10,
+  "artifact": "M111_ATOM_REUSE",
+  "atom_count": 230,
+  "atom_frequencies": [
+    {
+      "atom": "AGGREGATION=[\"avg(r0.discount_amount)\",\"avg(r0.subtotal)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-06"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"avg(r0.total_amount)\",\"max(r0.total_amount)\",\"min(r0.total_amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"avg(r0.unit_price)\",\"max(r0.unit_price)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-02"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"avg(r0.unit_price)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-05"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(*)\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-distinct_set-04",
+        "m104s-direct-temporal-00"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(distinct r0.id)\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-distinct_set-02",
+        "m104s-direct-distinct_set-05",
+        "m104s-direct-distinct_set-06",
+        "m104s-direct-distinct_set-09"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(distinct r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-07"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(distinct r0.product_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-03"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(distinct r2.product_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-08"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r0.id)\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-03"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r0.id)\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-07",
+        "m104s-direct-projection_result_shape-08",
+        "m104s-direct-temporal-05",
+        "m104s-direct-temporal-08"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r1.id)\",\"count(r1.id)\",\"dense_rank()\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r1.id)\",\"sum(r1.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r1.id)\",\"sum(r1.subtotal)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"count(r1.id)\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-join_grain-02",
+        "m104s-direct-join_grain-04",
+        "m104s-direct-order_topn-06"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"lag(r0.total_amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-03"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"lead(r0.paid_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-08"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"max(r0.amount)\",\"min(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-08"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"max(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-04"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"rank()\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-window-00",
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r0.amount)\"]",
+      "target_count": 5,
+      "target_ids": [
+        "m104s-direct-order_topn-09",
+        "m104s-direct-temporal-01",
+        "m104s-direct-temporal-07",
+        "m104s-direct-temporal-09",
+        "m104s-direct-window-01"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r0.discount_amount)\",\"sum(r0.subtotal)\",\"sum(r0.subtotal)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-08"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r0.quantity * r0.unit_price)\",\"sum(r0.quantity)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r0.quantity)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-06"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r1.amount)\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-05"
+      ]
+    },
+    {
+      "atom": "AGGREGATION=[\"sum(r3.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-09"
+      ]
+    },
+    {
+      "atom": "DISTINCT_SET=[\"False\"]",
+      "target_count": 95,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00",
+        "m104s-direct-aggregation_grouping-01",
+        "m104s-direct-aggregation_grouping-02",
+        "m104s-direct-aggregation_grouping-03",
+        "m104s-direct-aggregation_grouping-04",
+        "m104s-direct-aggregation_grouping-05",
+        "m104s-direct-aggregation_grouping-06",
+        "m104s-direct-aggregation_grouping-07",
+        "m104s-direct-aggregation_grouping-08",
+        "m104s-direct-distinct_set-04",
+        "m104s-direct-filter_column-00",
+        "m104s-direct-filter_column-02",
+        "m104s-direct-filter_column-03",
+        "m104s-direct-filter_column-04",
+        "m104s-direct-filter_column-05",
+        "m104s-direct-filter_column-06",
+        "m104s-direct-filter_column-07",
+        "m104s-direct-filter_column-08",
+        "m104s-direct-filter_column-09",
+        "m104s-direct-filter_literal-01",
+        "m104s-direct-filter_literal-02",
+        "m104s-direct-filter_literal-03",
+        "m104s-direct-filter_literal-04",
+        "m104s-direct-filter_literal-05",
+        "m104s-direct-filter_literal-06",
+        "m104s-direct-filter_literal-09",
+        "m104s-direct-filter_operator_boolean-00",
+        "m104s-direct-filter_operator_boolean-02",
+        "m104s-direct-filter_operator_boolean-03",
+        "m104s-direct-filter_operator_boolean-04",
+        "m104s-direct-filter_operator_boolean-05",
+        "m104s-direct-filter_operator_boolean-06",
+        "m104s-direct-filter_operator_boolean-07",
+        "m104s-direct-filter_operator_boolean-09",
+        "m104s-direct-formula_ratio-00",
+        "m104s-direct-formula_ratio-01",
+        "m104s-direct-formula_ratio-02",
+        "m104s-direct-formula_ratio-03",
+        "m104s-direct-formula_ratio-05",
+        "m104s-direct-formula_ratio-08",
+        "m104s-direct-join_grain-02",
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-04",
+        "m104s-direct-join_grain-05",
+        "m104s-direct-join_grain-07",
+        "m104s-direct-join_grain-09",
+        "m104s-direct-order_topn-00",
+        "m104s-direct-order_topn-01",
+        "m104s-direct-order_topn-02",
+        "m104s-direct-order_topn-03",
+        "m104s-direct-order_topn-04",
+        "m104s-direct-order_topn-05",
+        "m104s-direct-order_topn-06",
+        "m104s-direct-order_topn-07",
+        "m104s-direct-order_topn-08",
+        "m104s-direct-order_topn-09",
+        "m104s-direct-projection_result_shape-00",
+        "m104s-direct-projection_result_shape-01",
+        "m104s-direct-projection_result_shape-02",
+        "m104s-direct-projection_result_shape-03",
+        "m104s-direct-projection_result_shape-04",
+        "m104s-direct-projection_result_shape-05",
+        "m104s-direct-projection_result_shape-06",
+        "m104s-direct-projection_result_shape-07",
+        "m104s-direct-projection_result_shape-08",
+        "m104s-direct-projection_result_shape-09",
+        "m104s-direct-schema_source_grounding-00",
+        "m104s-direct-schema_source_grounding-01",
+        "m104s-direct-schema_source_grounding-02",
+        "m104s-direct-schema_source_grounding-03",
+        "m104s-direct-schema_source_grounding-04",
+        "m104s-direct-schema_source_grounding-05",
+        "m104s-direct-schema_source_grounding-06",
+        "m104s-direct-schema_source_grounding-07",
+        "m104s-direct-schema_source_grounding-08",
+        "m104s-direct-schema_source_grounding-09",
+        "m104s-direct-temporal-00",
+        "m104s-direct-temporal-01",
+        "m104s-direct-temporal-02",
+        "m104s-direct-temporal-03",
+        "m104s-direct-temporal-05",
+        "m104s-direct-temporal-06",
+        "m104s-direct-temporal-07",
+        "m104s-direct-temporal-08",
+        "m104s-direct-temporal-09",
+        "m104s-direct-window-00",
+        "m104s-direct-window-01",
+        "m104s-direct-window-02",
+        "m104s-direct-window-03",
+        "m104s-direct-window-04",
+        "m104s-direct-window-05",
+        "m104s-direct-window-06",
+        "m104s-direct-window-07",
+        "m104s-direct-window-08",
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "DISTINCT_SET=[\"True\"]",
+      "target_count": 10,
+      "target_ids": [
+        "m104s-direct-distinct_set-00",
+        "m104s-direct-distinct_set-01",
+        "m104s-direct-distinct_set-02",
+        "m104s-direct-distinct_set-03",
+        "m104s-direct-distinct_set-05",
+        "m104s-direct-distinct_set-06",
+        "m104s-direct-distinct_set-07",
+        "m104s-direct-distinct_set-08",
+        "m104s-direct-distinct_set-09",
+        "m104s-direct-join_grain-08"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"not r0.category = 'books'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-07"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"not r0.status in ('failed', 'pending')\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-03"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.amount > 0 and r0.status <> 'settled'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-06"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.amount > 300\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-03"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.category = 'books'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-02"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.category = 'garden'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-02"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.currency = 'cad' and r0.total_amount > 125\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-00"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.currency = 'gbp'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-00"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.currency = 'jpy'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-01"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.discount_amount <> 0 and r0.currency = 'gbp'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-09"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.discount_amount > 0 and r0.total_amount > 150\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-04"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.id = 3\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-07"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.order_id = 4\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-04"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.ordered_at >= cast('2024-04-01 00:00:00+00:00' as timestamptz) and r0.ordered_at < cast('2024-07-01 00:00:00+00:00' as timestamptz)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-02"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.ordered_at >= cast('2024-06-01 00:00:00+00:00' as timestamptz)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-05"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.ordered_at >= cast('2024-12-01 00:00:00+00:00' as timestamptz) and r0.ordered_at < cast('2025-01-01 00:00:00+00:00' as timestamptz)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-06"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.quantity >= 6\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-06"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.reason = 'duplicate_charge'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-09"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.reason = 'late_delivery'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-04"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.refunded_at >= cast('2023-01-01 00:00:00+00:00' as timestamptz) and r0.refunded_at < cast('2024-01-01 00:00:00+00:00' as timestamptz)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-03"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.region_id = 4\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_literal-06"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.sales_rep_id = 1\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-05"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.status <> 'failed'\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-09"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.status = 'cancelled' or r0.total_amount < 40\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-05"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.status = 'pending'\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-filter_column-08",
+        "m104s-direct-filter_literal-03"
+      ]
+    },
+    {
+      "atom": "FILTER=[\"r0.status in ('pending', 'cancelled')\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-02"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.amount * 0.97\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-02"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.discount_amount / r0.total_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-03"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.quantity * r0.unit_price\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05",
+        "m104s-direct-formula_ratio-01"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.subtotal - r0.total_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-05"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.total_amount - r0.discount_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-00"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"r0.unit_price + 7\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-01"
+      ]
+    },
+    {
+      "atom": "FORMULA=[\"sum(r0.discount_amount) / sum(r0.subtotal)\",\"sum(r0.discount_amount) / sum(r0.subtotal) * 100\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-08"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.customer_id = r0.id\",\"r2.order_id = r1.id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-08"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.id = r0.region_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-07"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.order_id = r0.id\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01",
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-05"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.region_id = r0.id\",\"r2.customer_id = r1.id\",\"r3.order_id = r2.id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-09"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.region_id = r0.id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-04"
+      ]
+    },
+    {
+      "atom": "JOIN_RELATIONSHIP=[\"r1.sales_rep_id = r0.id\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04",
+        "m104s-direct-join_grain-02",
+        "m104s-direct-order_topn-06",
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"count(r1.id) desc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"mean_price desc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"month_start\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-temporal-00",
+        "m104s-direct-temporal-01"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"order_day\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"order_rows desc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-06"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"payment_day\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-09"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"payment_value desc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-09"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"quarter_start\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.amount desc\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-02",
+        "m104s-direct-order_topn-03"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.category\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-02",
+        "m104s-direct-distinct_set-06",
+        "m104s-direct-projection_result_shape-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.currency\"]",
+      "target_count": 5,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01",
+        "m104s-direct-aggregation_grouping-06",
+        "m104s-direct-distinct_set-00",
+        "m104s-direct-distinct_set-09",
+        "m104s-direct-formula_ratio-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.customer_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id asc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-04"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\",\"r0.order_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-04"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\",\"r0.ordered_at\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-03"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\",\"r0.paid_at\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-03",
+        "m104s-direct-window-01",
+        "m104s-direct-window-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\",\"r0.product_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-06"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\",\"r0.unit_price\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-02"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.id\"]",
+      "target_count": 47,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04",
+        "m104s-direct-filter_column-00",
+        "m104s-direct-filter_column-02",
+        "m104s-direct-filter_column-03",
+        "m104s-direct-filter_column-04",
+        "m104s-direct-filter_column-05",
+        "m104s-direct-filter_column-06",
+        "m104s-direct-filter_column-07",
+        "m104s-direct-filter_column-08",
+        "m104s-direct-filter_column-09",
+        "m104s-direct-filter_literal-01",
+        "m104s-direct-filter_literal-02",
+        "m104s-direct-filter_literal-03",
+        "m104s-direct-filter_literal-04",
+        "m104s-direct-filter_literal-05",
+        "m104s-direct-filter_literal-06",
+        "m104s-direct-filter_literal-09",
+        "m104s-direct-filter_operator_boolean-00",
+        "m104s-direct-filter_operator_boolean-02",
+        "m104s-direct-filter_operator_boolean-03",
+        "m104s-direct-filter_operator_boolean-04",
+        "m104s-direct-filter_operator_boolean-05",
+        "m104s-direct-filter_operator_boolean-06",
+        "m104s-direct-filter_operator_boolean-07",
+        "m104s-direct-filter_operator_boolean-09",
+        "m104s-direct-formula_ratio-00",
+        "m104s-direct-formula_ratio-01",
+        "m104s-direct-formula_ratio-02",
+        "m104s-direct-formula_ratio-03",
+        "m104s-direct-formula_ratio-05",
+        "m104s-direct-join_grain-02",
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-04",
+        "m104s-direct-join_grain-05",
+        "m104s-direct-join_grain-08",
+        "m104s-direct-join_grain-09",
+        "m104s-direct-projection_result_shape-02",
+        "m104s-direct-projection_result_shape-04",
+        "m104s-direct-projection_result_shape-05",
+        "m104s-direct-projection_result_shape-06",
+        "m104s-direct-schema_source_grounding-00",
+        "m104s-direct-schema_source_grounding-02",
+        "m104s-direct-schema_source_grounding-07",
+        "m104s-direct-schema_source_grounding-08",
+        "m104s-direct-schema_source_grounding-09",
+        "m104s-direct-temporal-06",
+        "m104s-direct-window-07"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.name asc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-01"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.name\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-join_grain-07",
+        "m104s-direct-projection_result_shape-01",
+        "m104s-direct-projection_result_shape-03",
+        "m104s-direct-schema_source_grounding-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.order_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-03"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.order_number\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-00",
+        "m104s-direct-projection_result_shape-07",
+        "m104s-direct-projection_result_shape-09"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.ordered_at asc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-07"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.ordered_at\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-02"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.product_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.reason\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-03",
+        "m104s-direct-distinct_set-04"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.refunded_at\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-03"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.region_id\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-07",
+        "m104s-direct-distinct_set-02"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.sales_rep_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-05"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.sku\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-01"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.status\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00",
+        "m104s-direct-aggregation_grouping-08",
+        "m104s-direct-distinct_set-01",
+        "m104s-direct-distinct_set-07"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.total_amount desc\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-00",
+        "m104s-direct-window-00"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.unit_price asc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-08"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"r0.unit_price desc\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "ORDERING=[\"refund_year\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"cast(r0.ordered_at as date)\",\"count(r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"cast(r0.paid_at as date)\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"date_trunc('month', r0.ordered_at)\",\"count(*)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"date_trunc('month', r0.paid_at)\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"date_trunc('quarter', r0.paid_at)\",\"count(r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"extract(year from r0.refunded_at)\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.category\",\"avg(r0.unit_price)\",\"max(r0.unit_price)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-02"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.category\",\"avg(r0.unit_price)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.category\",\"count(distinct r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.category\",\"count(r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.currency\",\"avg(r0.discount_amount)\",\"avg(r0.subtotal)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.currency\",\"case when sum(r0.subtotal) = 0 then 0 else sum(r0.discount_amount) / sum(r0.subtotal) * 100 end\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.currency\",\"count(distinct r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.currency\",\"count(r1.id)\",\"sum(r1.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.currency\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.customer_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"case when r0.total_amount = 0 then 0 else r0.discount_amount / r0.total_amount end\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"count(distinct r2.product_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"count(r1.id)\",\"dense_rank() over (order by count(r1.id) desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"count(r1.id)\",\"sum(r1.subtotal)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"count(r1.id)\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-join_grain-02",
+        "m104s-direct-join_grain-04",
+        "m104s-direct-order_topn-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.amount * 0.97\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-02"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.amount\"]",
+      "target_count": 6,
+      "target_ids": [
+        "m104s-direct-filter_column-03",
+        "m104s-direct-filter_column-04",
+        "m104s-direct-filter_literal-09",
+        "m104s-direct-filter_operator_boolean-06",
+        "m104s-direct-order_topn-02",
+        "m104s-direct-order_topn-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.category\",\"r0.unit_price\",\"rank() over (partition by r0.category order by r0.unit_price desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.category\",\"row_number() over (partition by r0.category order by r0.unit_price, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-02"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.category\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.currency\",\"r0.total_amount\",\"rank() over (partition by r0.currency order by r0.total_amount desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.currency\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-02"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.discount_amount\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-04",
+        "m104s-direct-filter_operator_boolean-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.name\"]",
+      "target_count": 7,
+      "target_ids": [
+        "m104s-direct-filter_column-02",
+        "m104s-direct-filter_column-07",
+        "m104s-direct-order_topn-01",
+        "m104s-direct-order_topn-04",
+        "m104s-direct-projection_result_shape-02",
+        "m104s-direct-schema_source_grounding-00",
+        "m104s-direct-schema_source_grounding-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.order_id\",\"r0.amount\",\"max(r0.amount) over (partition by r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-04"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.order_id\",\"r0.amount\",\"sum(r0.amount) over (partition by r0.order_id order by r0.paid_at, r0.id rows between unbounded preceding and current row)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.order_id\",\"r0.paid_at\",\"lead(r0.paid_at) over (partition by r0.order_id order by r0.paid_at, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.order_id\",\"r0.quantity\",\"sum(r0.quantity) over (partition by r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.ordered_at\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-order_topn-07",
+        "m104s-direct-temporal-02",
+        "m104s-direct-temporal-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.quantity * r0.unit_price\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.quantity\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_column-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.refunded_at\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.region_id\",\"row_number() over (partition by r0.region_id order by r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.sales_rep_id\",\"r0.total_amount\",\"lag(r0.total_amount) over (partition by r0.sales_rep_id order by r0.ordered_at, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.sales_rep_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.status\",\"r0.total_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-filter_operator_boolean-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.status\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-filter_column-09",
+        "m104s-direct-filter_operator_boolean-02",
+        "m104s-direct-filter_operator_boolean-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.subtotal - r0.total_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.total_amount - r0.discount_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-formula_ratio-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.total_amount\"]",
+      "target_count": 5,
+      "target_ids": [
+        "m104s-direct-filter_column-00",
+        "m104s-direct-filter_column-05",
+        "m104s-direct-filter_column-08",
+        "m104s-direct-filter_operator_boolean-00",
+        "m104s-direct-order_topn-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"r0.unit_price\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"sum(r1.amount)\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\",\"sum(r3.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.id\"]",
+      "target_count": 6,
+      "target_ids": [
+        "m104s-direct-filter_literal-01",
+        "m104s-direct-filter_literal-02",
+        "m104s-direct-filter_literal-03",
+        "m104s-direct-filter_literal-04",
+        "m104s-direct-filter_literal-05",
+        "m104s-direct-filter_literal-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.name\",\"r0.region_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.name\",\"r0.sales_rep_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.name\",\"r0.unit_price + 7\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.name\",\"r1.name\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.order_id\",\"count(distinct r0.product_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.order_id\",\"r0.reason\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-04"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.order_number\",\"(r0.discount_amount > 0)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.order_number\",\"r0.ordered_at\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.order_number\",\"r0.status\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.paid_at\",\"r0.amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.product_id\",\"r0.quantity\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.product_id\",\"sum(r0.quantity)\",\"sum(r0.quantity * r0.unit_price)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.quantity\",\"r0.unit_price\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-06"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.reason\",\"count(*)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-04"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.reason\",\"count(r0.id)\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-03"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.reason\",\"r0.amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.region_id\",\"count(distinct r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-02"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.region_id\",\"count(r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.sales_rep_id\",\"count(distinct r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-05"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.sku\",\"r0.name\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\",\"count(distinct r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-07"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\",\"min(r0.amount)\",\"max(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-08"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\",\"min(r0.total_amount)\",\"max(r0.total_amount)\",\"avg(r0.total_amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\",\"r0.amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-projection_result_shape-04"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\",\"sum(r0.amount)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-09"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.status\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-01"
+      ]
+    },
+    {
+      "atom": "PROJECTION_ROLE=[\"r0.subtotal\",\"r0.discount_amount\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-schema_source_grounding-08"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"cast(r0.ordered_at as date)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-08"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"cast(r0.paid_at as date)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-09"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"date_trunc('month', r0.ordered_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-00"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"date_trunc('month', r0.paid_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-01"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"date_trunc('quarter', r0.paid_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-05"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"extract(year from r0.refunded_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-07"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.category\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-02",
+        "m104s-direct-distinct_set-06",
+        "m104s-direct-order_topn-05",
+        "m104s-direct-projection_result_shape-08"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.currency\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01",
+        "m104s-direct-aggregation_grouping-06",
+        "m104s-direct-distinct_set-09",
+        "m104s-direct-formula_ratio-08"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.id\"]",
+      "target_count": 9,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04",
+        "m104s-direct-join_grain-02",
+        "m104s-direct-join_grain-03",
+        "m104s-direct-join_grain-04",
+        "m104s-direct-join_grain-05",
+        "m104s-direct-join_grain-08",
+        "m104s-direct-join_grain-09",
+        "m104s-direct-order_topn-06",
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.order_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-03"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.product_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.reason\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-03",
+        "m104s-direct-distinct_set-04"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.region_id\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-07",
+        "m104s-direct-distinct_set-02"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.sales_rep_id\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-distinct_set-05"
+      ]
+    },
+    {
+      "atom": "RESULT_GRAIN=[\"r0.status\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00",
+        "m104s-direct-aggregation_grouping-08",
+        "m104s-direct-distinct_set-07",
+        "m104s-direct-order_topn-09"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"customers\",\"order_items\",\"orders\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-08"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"customers\",\"orders\",\"payments\",\"regions\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-09"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"customers\",\"regions\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-04"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"customers\"]",
+      "target_count": 7,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-07",
+        "m104s-direct-distinct_set-02",
+        "m104s-direct-order_topn-04",
+        "m104s-direct-projection_result_shape-03",
+        "m104s-direct-schema_source_grounding-00",
+        "m104s-direct-schema_source_grounding-09",
+        "m104s-direct-window-07"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"order_items\"]",
+      "target_count": 7,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-05",
+        "m104s-direct-distinct_set-03",
+        "m104s-direct-filter_column-06",
+        "m104s-direct-formula_ratio-01",
+        "m104s-direct-projection_result_shape-06",
+        "m104s-direct-schema_source_grounding-06",
+        "m104s-direct-window-06"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"orders\",\"payments\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-01",
+        "m104s-direct-join_grain-03"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"orders\",\"refunds\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-05"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"orders\",\"sales_representatives\"]",
+      "target_count": 4,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-04",
+        "m104s-direct-join_grain-02",
+        "m104s-direct-order_topn-06",
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"orders\"]",
+      "target_count": 34,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-00",
+        "m104s-direct-aggregation_grouping-06",
+        "m104s-direct-distinct_set-00",
+        "m104s-direct-distinct_set-01",
+        "m104s-direct-distinct_set-05",
+        "m104s-direct-distinct_set-08",
+        "m104s-direct-distinct_set-09",
+        "m104s-direct-filter_column-00",
+        "m104s-direct-filter_column-05",
+        "m104s-direct-filter_column-08",
+        "m104s-direct-filter_literal-01",
+        "m104s-direct-filter_literal-05",
+        "m104s-direct-filter_operator_boolean-00",
+        "m104s-direct-filter_operator_boolean-02",
+        "m104s-direct-filter_operator_boolean-04",
+        "m104s-direct-filter_operator_boolean-05",
+        "m104s-direct-filter_operator_boolean-09",
+        "m104s-direct-formula_ratio-00",
+        "m104s-direct-formula_ratio-03",
+        "m104s-direct-formula_ratio-05",
+        "m104s-direct-formula_ratio-08",
+        "m104s-direct-order_topn-00",
+        "m104s-direct-order_topn-07",
+        "m104s-direct-projection_result_shape-00",
+        "m104s-direct-projection_result_shape-07",
+        "m104s-direct-projection_result_shape-09",
+        "m104s-direct-schema_source_grounding-02",
+        "m104s-direct-schema_source_grounding-08",
+        "m104s-direct-temporal-00",
+        "m104s-direct-temporal-02",
+        "m104s-direct-temporal-06",
+        "m104s-direct-temporal-08",
+        "m104s-direct-window-00",
+        "m104s-direct-window-03"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"payments\"]",
+      "target_count": 17,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-08",
+        "m104s-direct-distinct_set-07",
+        "m104s-direct-filter_column-03",
+        "m104s-direct-filter_column-09",
+        "m104s-direct-filter_literal-03",
+        "m104s-direct-filter_operator_boolean-03",
+        "m104s-direct-filter_operator_boolean-06",
+        "m104s-direct-formula_ratio-02",
+        "m104s-direct-order_topn-02",
+        "m104s-direct-order_topn-09",
+        "m104s-direct-projection_result_shape-04",
+        "m104s-direct-schema_source_grounding-03",
+        "m104s-direct-temporal-01",
+        "m104s-direct-temporal-05",
+        "m104s-direct-temporal-09",
+        "m104s-direct-window-01",
+        "m104s-direct-window-08"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"products\"]",
+      "target_count": 13,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-02",
+        "m104s-direct-distinct_set-06",
+        "m104s-direct-filter_column-02",
+        "m104s-direct-filter_literal-02",
+        "m104s-direct-filter_operator_boolean-07",
+        "m104s-direct-order_topn-01",
+        "m104s-direct-order_topn-05",
+        "m104s-direct-order_topn-08",
+        "m104s-direct-projection_result_shape-01",
+        "m104s-direct-projection_result_shape-08",
+        "m104s-direct-schema_source_grounding-01",
+        "m104s-direct-window-02",
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"refunds\"]",
+      "target_count": 11,
+      "target_ids": [
+        "m104s-direct-aggregation_grouping-03",
+        "m104s-direct-distinct_set-04",
+        "m104s-direct-filter_column-04",
+        "m104s-direct-filter_literal-04",
+        "m104s-direct-filter_literal-09",
+        "m104s-direct-order_topn-03",
+        "m104s-direct-projection_result_shape-05",
+        "m104s-direct-schema_source_grounding-04",
+        "m104s-direct-temporal-03",
+        "m104s-direct-temporal-07",
+        "m104s-direct-window-04"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"regions\",\"sales_representatives\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-join_grain-07"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"regions\"]",
+      "target_count": 3,
+      "target_ids": [
+        "m104s-direct-filter_column-07",
+        "m104s-direct-projection_result_shape-02",
+        "m104s-direct-schema_source_grounding-07"
+      ]
+    },
+    {
+      "atom": "SOURCE_RELATION=[\"sales_representatives\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-filter_literal-06",
+        "m104s-direct-schema_source_grounding-05"
+      ]
+    },
+    {
+      "atom": "TEMPORAL=[\"date_trunc('month', r0.ordered_at)\",\"date_trunc('month', r0.ordered_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-00"
+      ]
+    },
+    {
+      "atom": "TEMPORAL=[\"date_trunc('month', r0.paid_at)\",\"date_trunc('month', r0.paid_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-01"
+      ]
+    },
+    {
+      "atom": "TEMPORAL=[\"date_trunc('quarter', r0.paid_at)\",\"date_trunc('quarter', r0.paid_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-05"
+      ]
+    },
+    {
+      "atom": "TEMPORAL=[\"extract(year from r0.refunded_at)\",\"extract(year from r0.refunded_at)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-temporal-07"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 3\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-03",
+        "m104s-direct-order_topn-09"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 4\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-00",
+        "m104s-direct-order_topn-05"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 5\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-07",
+        "m104s-direct-order_topn-08"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 6\"]",
+      "target_count": 2,
+      "target_ids": [
+        "m104s-direct-order_topn-02",
+        "m104s-direct-order_topn-06"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 7\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-01"
+      ]
+    },
+    {
+      "atom": "TOP_N=[\"limit 8\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-order_topn-04"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"dense_rank() over (order by count(r1.id) desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-05"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"lag(r0.total_amount) over (partition by r0.sales_rep_id order by r0.ordered_at, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-03"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"lead(r0.paid_at) over (partition by r0.order_id order by r0.paid_at, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-08"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"max(r0.amount) over (partition by r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-04"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"rank() over (partition by r0.category order by r0.unit_price desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-09"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"rank() over (partition by r0.currency order by r0.total_amount desc)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-00"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"row_number() over (partition by r0.category order by r0.unit_price, r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-02"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"row_number() over (partition by r0.region_id order by r0.id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-07"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"sum(r0.amount) over (partition by r0.order_id order by r0.paid_at, r0.id rows between unbounded preceding and current row)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-01"
+      ]
+    },
+    {
+      "atom": "WINDOW_SEMANTICS=[\"sum(r0.quantity) over (partition by r0.order_id)\"]",
+      "target_count": 1,
+      "target_ids": [
+        "m104s-direct-window-06"
+      ]
+    }
+  ],
+  "compositionally_novel_target_count": 8,
+  "novel_atom_target_count": 95,
+  "rates": {
+    "all_atoms_reused_target_rate": 0.09523809523809523,
+    "compositionally_novel_target_rate": 0.0761904761904762,
+    "novel_atom_target_rate": 0.9047619047619048,
+    "unique_full_signature_target_rate": 0.9809523809523809
+  },
+  "reused_atom_count": 54,
+  "singleton_atom_count": 176,
+  "version": "decision-sql-m111-atom-reuse-v1"
+}

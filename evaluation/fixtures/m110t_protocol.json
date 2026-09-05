@@ -1,0 +1,63 @@
+{
+  "artifact": "M110T_PROTOCOL",
+  "version": "decision-sql-m110t-coverage-recall-v1",
+  "classification": "OFFLINE_DIAGNOSTIC_MECHANISM_DISAMBIGUATION",
+  "starting_checkpoint": "1869c43b0a0821e85135faee54ef8d4c30402741",
+  "compatibility_contract": {
+    "id": "decision-sql-memory-compatibility-evidence-v1",
+    "version": 1,
+    "scope": "offline evaluation/control labeling only",
+    "hash": "0876ea1196163de30abd79c6aec671f3399701ae49a89a625f5a9365dd43b4f7"
+  },
+  "activity": {
+    "provider_calls": 0,
+    "database_calls": 0,
+    "retrieval_reruns": 0,
+    "runtime_changes": 0,
+    "new_corpus_cases": 0,
+    "new_m4_entries": 0,
+    "policy_analysis": false
+  },
+  "populations": {
+    "primary": "105 frozen M10.4S memory-use targets",
+    "secondary": "55 frozen M10.4S no-memory targets; coverage existence only",
+    "m4_entries": 50
+  },
+  "pair_evaluation": {
+    "primary_pairs": 5250,
+    "secondary_pairs": 2750,
+    "score_blind": true,
+    "retrieval_replay": false,
+    "all_frozen_m4_entries": true
+  },
+  "target_state_enum": [
+    "CORPUS_COVERAGE_FAILURE",
+    "RETRIEVAL_RECALL_FAILURE",
+    "SELECTIVITY_ADMISSION_FAILURE",
+    "COMPATIBLE_CONTEXT_RETRIEVED",
+    "UNRESOLVED"
+  ],
+  "decision_priority": [
+    "compatible_entry_count == 0 -> CORPUS_COVERAGE_FAILURE",
+    "compatible entries exist and selected compatible count == 0 -> RETRIEVAL_RECALL_FAILURE",
+    "selected compatible exists and context is not pure compatible -> SELECTIVITY_ADMISSION_FAILURE",
+    "selected context is pure compatible -> COMPATIBLE_CONTEXT_RETRIEVED",
+    "otherwise -> UNRESOLVED"
+  ],
+  "dominance_gate": {
+    "minimum_count": 20,
+    "minimum_share": 0.25,
+    "both_partitions": true,
+    "minimum_each_partition": 5,
+    "applies_to": ["CORPUS_COVERAGE_FAILURE", "RETRIEVAL_RECALL_FAILURE", "SELECTIVITY_ADMISSION_FAILURE"]
+  },
+  "prohibited": [
+    "threshold selection",
+    "P1/P2/P3 analysis",
+    "AUROC/AUPRC",
+    "retriever replay",
+    "M4 modification",
+    "provider or database execution",
+    "runtime compatibility feature"
+  ]
+}

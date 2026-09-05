@@ -1,0 +1,105 @@
+{
+  "artifact": "M110T_FINAL_SUMMARY",
+  "classification": "M110T_CORPUS_COVERAGE_DOMINANT",
+  "contract": "decision-sql-memory-compatibility-evidence-v1",
+  "contract_scope": "offline evaluation/control labeling only",
+  "coverage": {
+    "capability_band": "M4_CORPUS_COVERAGE_WEAK",
+    "coverage_rate": 0.02857142857142857,
+    "covered_distribution": {
+      "max": 1,
+      "mean": 1.0,
+      "median": 1.0,
+      "min": 1,
+      "p25": 1.0,
+      "p75": 1.0
+    },
+    "target_count": 105,
+    "targets_with_compatible": 3,
+    "targets_without_compatible": 102
+  },
+  "dominance": {
+    "CORPUS_COVERAGE_FAILURE": {
+      "DIAG_A": 52,
+      "DIAG_B": 50,
+      "both_partitions_gate": true,
+      "count_gate": true,
+      "dominant": true,
+      "minimum_each_partition_gate": true,
+      "share": 0.9714285714285714,
+      "share_gate": true,
+      "total": 102
+    },
+    "RETRIEVAL_RECALL_FAILURE": {
+      "DIAG_A": 0,
+      "DIAG_B": 0,
+      "both_partitions_gate": false,
+      "count_gate": false,
+      "dominant": false,
+      "minimum_each_partition_gate": false,
+      "share": 0.0,
+      "share_gate": false,
+      "total": 0
+    },
+    "SELECTIVITY_ADMISSION_FAILURE": {
+      "DIAG_A": 1,
+      "DIAG_B": 2,
+      "both_partitions_gate": true,
+      "count_gate": false,
+      "dominant": false,
+      "minimum_each_partition_gate": false,
+      "share": 0.02857142857142857,
+      "share_gate": false,
+      "total": 3
+    }
+  },
+  "negative_boundaries": [
+    "historical retrieval was not rerun",
+    "no provider or DB execution",
+    "no corpus or M4 modification",
+    "0 compatible selected contexts does not imply 0 compatible entries in the entire M4 corpus"
+  ],
+  "policy_boundary": {
+    "AUPRC": "not computed",
+    "AUROC": "not computed",
+    "P1": "not evaluated",
+    "P2": "not evaluated",
+    "P3": "not evaluated",
+    "threshold": "none"
+  },
+  "primary_state_counts": {
+    "COMPATIBLE_CONTEXT_RETRIEVED": 0,
+    "CORPUS_COVERAGE_FAILURE": 102,
+    "RETRIEVAL_RECALL_FAILURE": 0,
+    "SELECTIVITY_ADMISSION_FAILURE": 3,
+    "UNRESOLVED": 0
+  },
+  "purity": {
+    "all_compatible_contexts": 0,
+    "compatible_hit_targets": 3,
+    "compatible_plus_incompatible_contexts": 3,
+    "compatible_plus_incompatible_plus_unknown_contexts": 0,
+    "compatible_plus_unknown_contexts": 0,
+    "context_purity_rate": 0.0,
+    "purity_band": "PURE_CONTEXT_WEAK",
+    "purity_denominator": 3
+  },
+  "recall": {
+    "compatible_corpus_entries_across_covered_targets": 3,
+    "compatible_selected_entries": 3,
+    "compatible_top_k_hit_targets": 3,
+    "compatible_top_k_miss_targets": 0,
+    "covered_targets": 3,
+    "entry_level_compatible_selection_rate": 1.0,
+    "recall_band": "RETRIEVAL_COMPATIBLE_RECALL_STRONG",
+    "target_level_compatible_recall": 1.0
+  },
+  "scientific_state": {
+    "m104s": "valid high-leverage diagnostic",
+    "m110": "M110_DESIGN_AUDIT_BLOCKED",
+    "m110r": "M110R_COMPATIBILITY_CONTRACT_VALID_CONTROLS_INSUFFICIENT",
+    "m11_runtime": "not started",
+    "m11_target": "Verified Query Memory Selectivity Intervention"
+  },
+  "version": "decision-sql-m110t-final-summary-v1"
+}

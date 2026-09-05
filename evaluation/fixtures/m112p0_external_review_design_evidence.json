@@ -1,0 +1,34 @@
+{
+  "ambiguity_inputs": [
+    "difference direction",
+    "share ratio versus percentage scale",
+    "zero-member representative inclusion"
+  ],
+  "garden_example": {
+    "boundary": "reference projection alone does not prove exact two-column entitlement",
+    "candidate_projection": [
+      "id",
+      "name",
+      "sku",
+      "unit_price"
+    ],
+    "design_question_text": "Which catalog items belong to the Garden category?",
+    "reference_projection": [
+      "id",
+      "name"
+    ]
+  },
+  "projection_observations": {
+    "OFF": "49/56",
+    "ON": "31/56",
+    "both": "28/56",
+    "either": "52/56"
+  },
+  "share_quantity_example": {
+    "case_id": "m104s-direct-window-06",
+    "design_question_text": "Show each line and its share of quantity within its order.",
+    "reference_formula": "SUM(quantity) OVER (PARTITION BY order_id)",
+    "review_input": "must adjudicate question/reference formula alignment"
+  },
+  "status": "PRE_EXPOSED_DESIGN_EVIDENCE_NOT_FINAL_RESULT"
+}

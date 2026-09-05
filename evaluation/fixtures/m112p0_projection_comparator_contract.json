@@ -1,0 +1,29 @@
+{
+  "literal_policy": "preserve string case and numeric value",
+  "normalization": "SQLGlot AST only; no whole-text lowercasing",
+  "preserved_outside_projection": [
+    "FROM",
+    "JOIN kind",
+    "JOIN ON",
+    "JOIN USING columns",
+    "WHERE",
+    "GROUP BY",
+    "HAVING",
+    "WINDOW/PARTITION/ORDER",
+    "ORDER BY",
+    "DISTINCT",
+    "LIMIT",
+    "OFFSET",
+    "set operations",
+    "CTEs/subqueries as represented"
+  ],
+  "proof_states": [
+    "EXACT_REFERENCE_PROJECTION",
+    "PROJECTION_ONLY_REFERENCE_DIFFERENCE_PROVEN",
+    "NON_PROJECTION_DIFFERENCE_PRESENT",
+    "PROJECTION_COMPARISON_UNRESOLVED"
+  ],
+  "purpose": "prove only top-level projection difference, not general SQL equivalence",
+  "star_policy": "keep SELECT * as one explicit AST projection; do not expand",
+  "version": "m112p0-projection-comparator-v1"
+}

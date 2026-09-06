@@ -1,0 +1,1074 @@
+{
+  "active_supported_components": [
+    "TOP_LEVEL_PROJECTION",
+    "TOP_LEVEL_ORDER_BY",
+    "TOP_LEVEL_WHERE",
+    "TOP_LEVEL_GROUP_BY",
+    "TOP_LEVEL_HAVING",
+    "TOP_LEVEL_LIMIT",
+    "TOP_LEVEL_OFFSET",
+    "TOP_LEVEL_DISTINCT",
+    "RELATIONAL_FROM_JOIN_BLOCK",
+    "WINDOW_EXPRESSION_SLOT"
+  ],
+  "candidate_regeneration": 0,
+  "classification": "M112P3_COMPONENT_ISOLATION_VALIDATION_PASSED",
+  "component_catalog": [
+    "TOP_LEVEL_PROJECTION",
+    "TOP_LEVEL_ORDER_BY",
+    "TOP_LEVEL_WHERE",
+    "TOP_LEVEL_GROUP_BY",
+    "TOP_LEVEL_HAVING",
+    "TOP_LEVEL_LIMIT",
+    "TOP_LEVEL_OFFSET",
+    "TOP_LEVEL_DISTINCT",
+    "RELATIONAL_FROM_JOIN_BLOCK",
+    "WINDOW_EXPRESSION_SLOT",
+    "PROJECTION_EXPRESSION_SLOT",
+    "SET_OPERATION"
+  ],
+  "controls": 10,
+  "d2_fixture_bank_hash": "ea85428896cc7c611e14d84843b582ef491c6874846e2eb59c59344b96fe4cb7",
+  "d2_regression": true,
+  "d2_source_hash": "6cc7a54363c0c85627a4aac003901539978ca347f8603757254c33ebd8b04ccb",
+  "d2_validation_contract_hash": "b11d15f0e0ec28751f2cdb6bfe9791f0dfc288abce30a0c0ffbdac68d3b85728",
+  "d3_source_hash": "be65200e865a74e0134a0aaffcdfa0d0f2aafbeea4740218ad553273831d11ff",
+  "false_unique_isolation": 0,
+  "gates": {
+    "D3-V1_false_unique_isolation": true,
+    "D3-V2_required_isolation": true,
+    "D3-V3_non_target_invariance": true,
+    "D3-V4_reproducibility": true,
+    "D3-V5_abstention": true,
+    "D3-V6_d2_regression": true,
+    "D3-V7_safety": true
+  },
+  "interaction_or_non_unique_controls": 3,
+  "known_single_component_isolatable": 4,
+  "non_target_invariance": "11/11",
+  "p0_controls": 1,
+  "provider_calls": 0,
+  "reference_regeneration": 0,
+  "reproducibility_rate": "100%",
+  "required_isolation": 4,
+  "retrieval_calls": 0,
+  "runs": [
+    [
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "fadf3b50b01c8a7477805c05ffe0c13568d18e15bd9cf59294048069c74eb24d",
+        "baseline_reference_hash": "db1a004705a5e0c9f8d2070c4a2dd8532d1a4048ff50c61adf7dfbec7f6468d4",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO01_ORDER",
+        "changed_components": [
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "isolated_component": "TOP_LEVEL_ORDER_BY",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "db1a004705a5e0c9f8d2070c4a2dd8532d1a4048ff50c61adf7dfbec7f6468d4",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "fadf3b50b01c8a7477805c05ffe0c13568d18e15bd9cf59294048069c74eb24d",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+        "baseline_reference_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO02_WHERE",
+        "changed_components": [
+          "TOP_LEVEL_WHERE"
+        ],
+        "isolated_component": "TOP_LEVEL_WHERE",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_WHERE"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "03bfde002fd99a30500cf92b4da4e0b87362a000f6e6d95e3e0d16542b73afa6",
+        "baseline_reference_hash": "693f48d538eb8245bc0036f1b6d78293f6f35872aa6ba36a4f702a5d5391eebb",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO03_LIMIT",
+        "changed_components": [
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": "TOP_LEVEL_LIMIT",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "693f48d538eb8245bc0036f1b6d78293f6f35872aa6ba36a4f702a5d5391eebb",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "03bfde002fd99a30500cf92b4da4e0b87362a000f6e6d95e3e0d16542b73afa6",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "81504be1d745d8c614fee1fd793bb25505b9184b77160751bd1aa6e5338113c0",
+        "baseline_reference_hash": "541bf9220e132ca2143acf4ca0dd375eb2e8b272e788616be099a87b4d7a593d",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO04_DISTINCT",
+        "changed_components": [
+          "TOP_LEVEL_DISTINCT"
+        ],
+        "isolated_component": "TOP_LEVEL_DISTINCT",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_DISTINCT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_DISTINCT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "541bf9220e132ca2143acf4ca0dd375eb2e8b272e788616be099a87b4d7a593d",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "81504be1d745d8c614fee1fd793bb25505b9184b77160751bd1aa6e5338113c0",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "accc6ce21a2cc3385738a8b92217aba3704f7782801bedcf44081eb8ca69de53",
+        "baseline_reference_hash": "3607373d9bc2b448ed63df5f04c11c22bdff98780e3420814f84b2035bbcfd77",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NEG05_WHERE_LIMIT_INTERACTION",
+        "changed_components": [
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "74bdaed6ed09f1d9f2a3f976beb3f06e6dc7b9aa48e2d266e4c1f34418cbade9",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "7c92540bfed08577f99a676666c462d1de5b3692e23238de18e54ad165ac87b7",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "7c92540bfed08577f99a676666c462d1de5b3692e23238de18e54ad165ac87b7",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "74bdaed6ed09f1d9f2a3f976beb3f06e6dc7b9aa48e2d266e4c1f34418cbade9",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+        "baseline_reference_hash": "b0aa57e090e1df3f0360bb52b1f1ff08d51cd9631f324ab121632b34779d63ea",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NEG06_PROJECTION_WHERE_INTERACTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_WHERE"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_WHERE"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "8904077a98fc82fd489b0b02b9b2bfbfa115899952a55dc5adad328061371ce6",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "8904077a98fc82fd489b0b02b9b2bfbfa115899952a55dc5adad328061371ce6",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "7a320b506fa51277c02c58aef4365747c8468fc5d0302f58c6b8405bfcc16944",
+        "baseline_reference_hash": "b0a1d74fafebec00700f91327058c7faea02ddc3d9b1a3cd06aeb6f9e9144c10",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "UNSAFE07_PROJECTION_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "SUBSTITUTION_NOT_SAFE",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection replacement leaves a dependent clause using a removed alias",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          },
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "hybrid failed the frozen diagnostic SQL admission boundary",
+            "repair_equal_reference": null,
+            "repair_sql_hash": "3a0365d8674d132d2950452df16851720a33ded6f2d23b01568f8fb27118e46a",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": "50cb928a559ba5ae001f2f5fb0b21b2f5e1e8bedfab3f83a44d8de12bffc4447",
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "4c0f9bb6a5e34f98d881f021ebe0350bb49b779799275e4f2eb3f52f93eb8771",
+        "baseline_reference_hash": "e6ba08f6fee6e2e177ee32af7a01806925d1e331628dc44cccd44e025181e1ab",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "UNSAFE08_GROUP_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_GROUP_BY"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "SUBSTITUTION_NOT_SAFE",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection replacement leaves a dependent clause using a removed alias",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          },
+          {
+            "component": "TOP_LEVEL_GROUP_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "hybrid failed the frozen diagnostic SQL admission boundary",
+            "repair_equal_reference": null,
+            "repair_sql_hash": "2d310ed646d9b38e94ddfeedc867ab14df37c8ad65cb1ee0a9ff4f61be440c8e",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": "1463ba43b871b0496352bb71023e8a2eb7d240bde4450c4260bab050b47ecd5f",
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "867d04e4de35f6c69d6a16116898c81fadae295fcf22eeaedf6a4fe0ecd2969e",
+        "baseline_reference_hash": "150f0c6ef4bd30f1bab1aab77435d2101f1ea8133b7773eba7a284bb26f1864d",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "P0_09_PROJECTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION"
+        ],
+        "isolated_component": null,
+        "p0_tier": "CORE",
+        "reason": null,
+        "state": "P0_ENTITLEMENT_BLOCKED",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection is not entitled by the governing P0 contract",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "P0_ENTITLEMENT_BLOCKED"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "e08c8375ca47b1889adbdf6317246ae3afb8c919d5d6f7fab62d787cac4fbb48",
+        "baseline_reference_hash": "25b7521203e081ec757d2b102d67cebe4c6d73166daa8e998754fb32b707cee0",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NO10_MULTI_COMPONENT",
+        "changed_components": [
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "4ef939b91688864579f6fc1c316a4b75a884c4fd618e1906e2f0c83d9f8ade8b",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "1e39a722d6ce7fc84e43a4a4912f6cf42ad48b04ef02701ab47d2f327e321424",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "a5d641f01a9da52cd67637ddd7f5bc3cacb7f6937d85500dd87cd8923f8962df",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "474f07122b8ffd0a45638fabf092e2e07bb5f5fbfef15ea639752546a2f89af7",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "bd4f0e85ebbafb956ee502ffcb9a47d2c41f484f280d763ac56775e16b960804",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "de5454a3cfdbef64196f0f880798ac6f4b51daa1874707a8f4010079a45a5c9e",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "fadf3b50b01c8a7477805c05ffe0c13568d18e15bd9cf59294048069c74eb24d",
+        "baseline_reference_hash": "db1a004705a5e0c9f8d2070c4a2dd8532d1a4048ff50c61adf7dfbec7f6468d4",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO01_ORDER",
+        "changed_components": [
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "isolated_component": "TOP_LEVEL_ORDER_BY",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "db1a004705a5e0c9f8d2070c4a2dd8532d1a4048ff50c61adf7dfbec7f6468d4",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "fadf3b50b01c8a7477805c05ffe0c13568d18e15bd9cf59294048069c74eb24d",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+        "baseline_reference_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO02_WHERE",
+        "changed_components": [
+          "TOP_LEVEL_WHERE"
+        ],
+        "isolated_component": "TOP_LEVEL_WHERE",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_WHERE"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "03bfde002fd99a30500cf92b4da4e0b87362a000f6e6d95e3e0d16542b73afa6",
+        "baseline_reference_hash": "693f48d538eb8245bc0036f1b6d78293f6f35872aa6ba36a4f702a5d5391eebb",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO03_LIMIT",
+        "changed_components": [
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": "TOP_LEVEL_LIMIT",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "693f48d538eb8245bc0036f1b6d78293f6f35872aa6ba36a4f702a5d5391eebb",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "03bfde002fd99a30500cf92b4da4e0b87362a000f6e6d95e3e0d16542b73afa6",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "81504be1d745d8c614fee1fd793bb25505b9184b77160751bd1aa6e5338113c0",
+        "baseline_reference_hash": "541bf9220e132ca2143acf4ca0dd375eb2e8b272e788616be099a87b4d7a593d",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "ISO04_DISTINCT",
+        "changed_components": [
+          "TOP_LEVEL_DISTINCT"
+        ],
+        "isolated_component": "TOP_LEVEL_DISTINCT",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_COMPONENT_WITNESS_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_DISTINCT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_DISTINCT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "541bf9220e132ca2143acf4ca0dd375eb2e8b272e788616be099a87b4d7a593d",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "81504be1d745d8c614fee1fd793bb25505b9184b77160751bd1aa6e5338113c0",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "accc6ce21a2cc3385738a8b92217aba3704f7782801bedcf44081eb8ca69de53",
+        "baseline_reference_hash": "3607373d9bc2b448ed63df5f04c11c22bdff98780e3420814f84b2035bbcfd77",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NEG05_WHERE_LIMIT_INTERACTION",
+        "changed_components": [
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "74bdaed6ed09f1d9f2a3f976beb3f06e6dc7b9aa48e2d266e4c1f34418cbade9",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "7c92540bfed08577f99a676666c462d1de5b3692e23238de18e54ad165ac87b7",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "7c92540bfed08577f99a676666c462d1de5b3692e23238de18e54ad165ac87b7",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "74bdaed6ed09f1d9f2a3f976beb3f06e6dc7b9aa48e2d266e4c1f34418cbade9",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "9d0019ed6dd7a0340cddba4bae969d702e84b4bfd53da5e7a3d83e51bc57fe91",
+        "baseline_reference_hash": "b0aa57e090e1df3f0360bb52b1f1ff08d51cd9631f324ab121632b34779d63ea",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NEG06_PROJECTION_WHERE_INTERACTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_WHERE"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_WHERE"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "8904077a98fc82fd489b0b02b9b2bfbfa115899952a55dc5adad328061371ce6",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "e9a3f115de1299bb740dd05f4d946684e48b0e2f5d717b60785a7e2583bc5280",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "8904077a98fc82fd489b0b02b9b2bfbfa115899952a55dc5adad328061371ce6",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "7a320b506fa51277c02c58aef4365747c8468fc5d0302f58c6b8405bfcc16944",
+        "baseline_reference_hash": "b0a1d74fafebec00700f91327058c7faea02ddc3d9b1a3cd06aeb6f9e9144c10",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "UNSAFE07_PROJECTION_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "SUBSTITUTION_NOT_SAFE",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection replacement leaves a dependent clause using a removed alias",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          },
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "hybrid failed the frozen diagnostic SQL admission boundary",
+            "repair_equal_reference": null,
+            "repair_sql_hash": "3a0365d8674d132d2950452df16851720a33ded6f2d23b01568f8fb27118e46a",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": "50cb928a559ba5ae001f2f5fb0b21b2f5e1e8bedfab3f83a44d8de12bffc4447",
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "4c0f9bb6a5e34f98d881f021ebe0350bb49b779799275e4f2eb3f52f93eb8771",
+        "baseline_reference_hash": "e6ba08f6fee6e2e177ee32af7a01806925d1e331628dc44cccd44e025181e1ab",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "UNSAFE08_GROUP_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_GROUP_BY"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "SUBSTITUTION_NOT_SAFE",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection replacement leaves a dependent clause using a removed alias",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          },
+          {
+            "component": "TOP_LEVEL_GROUP_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "hybrid failed the frozen diagnostic SQL admission boundary",
+            "repair_equal_reference": null,
+            "repair_sql_hash": "2d310ed646d9b38e94ddfeedc867ab14df37c8ad65cb1ee0a9ff4f61be440c8e",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": "1463ba43b871b0496352bb71023e8a2eb7d240bde4450c4260bab050b47ecd5f",
+            "transfer_witness_reproduced": false,
+            "validation": "SUBSTITUTION_NOT_SAFE"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "867d04e4de35f6c69d6a16116898c81fadae295fcf22eeaedf6a4fe0ecd2969e",
+        "baseline_reference_hash": "150f0c6ef4bd30f1bab1aab77435d2101f1ea8133b7773eba7a284bb26f1864d",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "P0_09_PROJECTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION"
+        ],
+        "isolated_component": null,
+        "p0_tier": "CORE",
+        "reason": null,
+        "state": "P0_ENTITLEMENT_BLOCKED",
+        "supported_components": [],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_PROJECTION",
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection is not entitled by the governing P0 contract",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "P0_ENTITLEMENT_BLOCKED"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "e08c8375ca47b1889adbdf6317246ae3afb8c919d5d6f7fab62d787cac4fbb48",
+        "baseline_reference_hash": "25b7521203e081ec757d2b102d67cebe4c6d73166daa8e998754fb32b707cee0",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "NO10_MULTI_COMPONENT",
+        "changed_components": [
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "isolated_component": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_SUPPORTED_COMPONENT_ISOLATED",
+        "supported_components": [
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_WHERE",
+          "TOP_LEVEL_LIMIT"
+        ],
+        "trials": [
+          {
+            "component": "TOP_LEVEL_ORDER_BY",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "4ef939b91688864579f6fc1c316a4b75a884c4fd618e1906e2f0c83d9f8ade8b",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "1e39a722d6ce7fc84e43a4a4912f6cf42ad48b04ef02701ab47d2f327e321424",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_WHERE",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "a5d641f01a9da52cd67637ddd7f5bc3cacb7f6937d85500dd87cd8923f8962df",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "474f07122b8ffd0a45638fabf092e2e07bb5f5fbfef15ea639752546a2f89af7",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          },
+          {
+            "component": "TOP_LEVEL_LIMIT",
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": false,
+            "repair_sql_hash": "bd4f0e85ebbafb956ee502ffcb9a47d2c41f484f280d763ac56775e16b960804",
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": false,
+            "transfer_sql_hash": "de5454a3cfdbef64196f0f880798ac6f4b51daa1874707a8f4010079a45a5c9e",
+            "transfer_witness_reproduced": false,
+            "validation": "VALID"
+          }
+        ]
+      }
+    ]
+  ],
+  "substitution_contract": {
+    "finite_fixture_causality_not_universal": true,
+    "non_target_invariance_required": true,
+    "parse_round_trip_required": true,
+    "repair_and_transfer_required": true,
+    "single_component_only": true
+  },
+  "unsafe_controls": 2,
+  "validation_attempt": 1
+}

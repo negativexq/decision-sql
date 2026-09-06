@@ -1,0 +1,81 @@
+{
+  "version": "m112p3-validation-controls-v1",
+  "controls": [
+    {
+      "control_id": "ISO01_ORDER",
+      "candidate_sql": "SELECT id FROM orders ORDER BY id ASC LIMIT 1",
+      "reference_sql": "SELECT id FROM orders ORDER BY id DESC LIMIT 1",
+      "expected_class": "KNOWN_SINGLE_COMPONENT_ISOLATABLE",
+      "expected_component": "TOP_LEVEL_ORDER_BY",
+      "scenario_tags": ["order", "limit"]
+    },
+    {
+      "control_id": "ISO02_WHERE",
+      "candidate_sql": "SELECT id FROM orders WHERE status = 'completed'",
+      "reference_sql": "SELECT id FROM orders WHERE status = 'cancelled'",
+      "expected_class": "KNOWN_SINGLE_COMPONENT_ISOLATABLE",
+      "expected_component": "TOP_LEVEL_WHERE",
+      "scenario_tags": ["where", "status"]
+    },
+    {
+      "control_id": "ISO03_LIMIT",
+      "candidate_sql": "SELECT id FROM orders ORDER BY id LIMIT 1",
+      "reference_sql": "SELECT id FROM orders ORDER BY id LIMIT 5",
+      "expected_class": "KNOWN_SINGLE_COMPONENT_ISOLATABLE",
+      "expected_component": "TOP_LEVEL_LIMIT",
+      "scenario_tags": ["limit", "order"]
+    },
+    {
+      "control_id": "ISO04_DISTINCT",
+      "candidate_sql": "SELECT status FROM orders",
+      "reference_sql": "SELECT DISTINCT status FROM orders",
+      "expected_class": "KNOWN_SINGLE_COMPONENT_ISOLATABLE",
+      "expected_component": "TOP_LEVEL_DISTINCT",
+      "scenario_tags": ["distinct", "duplicates"]
+    },
+    {
+      "control_id": "NEG05_WHERE_LIMIT_INTERACTION",
+      "candidate_sql": "SELECT id FROM orders WHERE status = 'completed' LIMIT 1",
+      "reference_sql": "SELECT id FROM orders WHERE status = 'cancelled' LIMIT 5",
+      "expected_class": "KNOWN_INTERACTION",
+      "scenario_tags": ["interaction", "where", "limit"]
+    },
+    {
+      "control_id": "NEG06_PROJECTION_WHERE_INTERACTION",
+      "candidate_sql": "SELECT id FROM orders WHERE status = 'completed'",
+      "reference_sql": "SELECT order_number FROM orders WHERE status = 'cancelled'",
+      "expected_class": "KNOWN_INTERACTION",
+      "scenario_tags": ["interaction", "projection", "where"]
+    },
+    {
+      "control_id": "UNSAFE07_PROJECTION_ALIAS",
+      "candidate_sql": "SELECT id + 1 AS order_id FROM orders ORDER BY order_id LIMIT 1",
+      "reference_sql": "SELECT id AS id FROM orders ORDER BY id LIMIT 1",
+      "expected_class": "KNOWN_UNSAFE",
+      "scenario_tags": ["unsafe", "alias-dependency"]
+    },
+    {
+      "control_id": "UNSAFE08_GROUP_ALIAS",
+      "candidate_sql": "SELECT status AS s, COUNT(*) + 1 AS n FROM orders GROUP BY s",
+      "reference_sql": "SELECT status AS t, COUNT(*) AS n FROM orders GROUP BY t",
+      "expected_class": "KNOWN_UNSAFE",
+      "scenario_tags": ["unsafe", "group-alias"]
+    },
+    {
+      "control_id": "P0_09_PROJECTION",
+      "candidate_sql": "SELECT id FROM products",
+      "reference_sql": "SELECT name FROM products",
+      "expected_class": "P0_ENTITLEMENT_BLOCKED",
+      "p0_projection_entitled": false,
+      "p0_tier": "CORE",
+      "scenario_tags": ["p0", "projection"]
+    },
+    {
+      "control_id": "NO10_MULTI_COMPONENT",
+      "candidate_sql": "SELECT id FROM orders WHERE status = 'completed' ORDER BY id ASC LIMIT 1",
+      "reference_sql": "SELECT id FROM orders WHERE status = 'cancelled' ORDER BY id DESC LIMIT 5",
+      "expected_class": "KNOWN_NO_ISOLATION",
+      "scenario_tags": ["no-isolation", "compound"]
+    }
+  ]
+}

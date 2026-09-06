@@ -29,6 +29,7 @@ from app.provenance.models import (
     recorder_for_identity,
 )
 from app.provenance.sink import NoOpProvenanceSink
+from app.semantics.query_plan_v1 import QueryPlanV1
 
 
 class SqlProposal(BaseModel):
@@ -56,6 +57,21 @@ class GovernedMetricGroundingProposal(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     grounding: GovernedMetricGroundingDTO
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class QueryPlanV1Proposal(BaseModel):
+    """One untrusted, strictly bounded relational plan proposal."""
+
+    model_config = ConfigDict(frozen=True)
+
+    plan: QueryPlanV1
     provider: str
     model: str
     prompt_tokens: int | None = None
@@ -134,6 +150,11 @@ class MalformedProviderResponse(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_query_plan_v1(
+        self, question: str, schema_context: str
+    ) -> QueryPlanV1Proposal:
+        """Return one untrusted bounded QueryPlan V1 proposal."""
+
     async def propose_metric_grounding(
         self, question: str, glossary: str
     ) -> GovernedMetricGroundingProposal:
@@ -204,6 +225,54 @@ class OpenAICompatibleProvider:
             payload,
             parsed_sql=None,
             raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_query_plan_v1(
+        self, question: str, schema_context: str
+    ) -> QueryPlanV1Proposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _query_plan_v1_messages(question, schema_context)
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("query_plan_v1", question, schema_context, messages)
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            if not isinstance(data, dict):
+                raise TypeError("structured output is not an object")
+            plan = QueryPlanV1.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = QueryPlanV1Proposal(
+                plan=plan,
+                provider="openai-compatible",
+                model=self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError) as error:
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid QueryPlan V1"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=plan.model_dump(mode="json"),
+            raw_content=content,
             latency_ms=proposal.latency_ms,
         )
         return proposal
@@ -671,8 +740,21 @@ class OpenAICompatibleProvider:
 class StaticLLMProvider:
     """Deterministic provider useful for tests and explicit local evaluation fixtures."""
 
-    def __init__(self, sql: str, model: str = "static-test") -> None:
+    def __init__(
+        self, sql: str, model: str = "static-test", query_plan: QueryPlanV1 | None = None
+    ) -> None:
         self.proposal = SqlProposal(sql=sql, provider="static", model=model)
+        self.query_plan = query_plan
+
+    async def propose_query_plan_v1(
+        self, question: str, schema_context: str
+    ) -> QueryPlanV1Proposal:
+        del question, schema_context
+        if self.query_plan is None:
+            raise NotImplementedError("static QueryPlan V1 proposal is not configured")
+        return QueryPlanV1Proposal(
+            plan=self.query_plan, provider="static", model=self.proposal.model
+        )
 
     async def propose_metric_grounding(
         self, question: str, glossary: str
@@ -767,6 +849,12 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_query_plan_v1(
+        self, question: str, schema_context: str
+    ) -> QueryPlanV1Proposal:
+        del question, schema_context
+        raise NotImplementedError("QueryPlan V1 generation is not configured")
+
     async def propose_metric_grounding(
         self, question: str, glossary: str
     ) -> GovernedMetricGroundingProposal:
@@ -819,6 +907,25 @@ def _intent_messages(question: str, schema_context: str) -> list[dict[str, str]]
         "source_column, target_table, target_column), filters, aggregations, group_by, "
         "order_by, limit, and window_operations."
         f"\n\nBOUNDED SCHEMA CONTEXT:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _query_plan_v1_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    system = (
+        "Propose only one bounded QueryPlan V1 JSON object for the user's request. "
+        "Return no markdown, explanation, SQL, raw identifiers outside the supplied "
+        "context, or extra fields. The only fields are applicable, source, joins, "
+        "projection, and filters. Use exactly the server-owned table and column IDs. "
+        "Use at most two connected joins, one to three projection column IDs, and at "
+        "most two AND predicates. Each join contains only relationship_id and join_type "
+        "(INNER or LEFT). Each predicate contains only column_id, operator, and an "
+        "optional typed value with kind/value. Supported operators are EQ, NE, LT, LTE, "
+        "GT, GTE, IS_NULL, and IS_NOT_NULL. Never emit sql, raw_sql, expression, "
+        "on_clause, where_sql, order_by, group_by, having, window, function, or any "
+        "other field. All evaluation requests are pre-scoped as applicable; do not "
+        "use applicability to select a runtime route."
+        f"\n\n{schema_context}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
 

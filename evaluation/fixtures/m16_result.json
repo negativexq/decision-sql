@@ -1,0 +1,2682 @@
+{
+  "A": 20,
+  "B": 45,
+  "C": 5,
+  "C_minus_B": -40,
+  "D": 20,
+  "classification": "M16_GENERAL_QUERYPLAN_V1_CAPABILITY_NOT_PROVEN",
+  "authoritative_calls_attempted": 180,
+  "confirmation": "NOT_RUN_PRIMARY_FAILED",
+  "judge_calls": 0,
+  "repair_calls": 0,
+  "retrieval_calls": 0,
+  "gold_integrity": {
+    "plans": "120/120",
+    "compile": "120/120",
+    "m1": "120/120",
+    "execution": "120/120",
+    "reproducibility": "120/120"
+  },
+  "failure_counts": {
+    "control": {
+      "provider": 0,
+      "sql_extraction": 0,
+      "m1_rejection": 10,
+      "execution": 0,
+      "result_mismatch": 15
+    },
+    "intervention": {
+      "provider": 63,
+      "json_parse_or_plan_response": 0,
+      "plan_validation_or_compiler": 0,
+      "m1_invariant": 0,
+      "execution": 0,
+      "result_mismatch": 2
+    }
+  },
+  "control_correct": 65,
+  "delta_pp": -44.44444444444444,
+  "exact_p_value": 4.209852022540872e-09,
+  "intervention_correct": 25,
+  "ledger": [
+    {
+      "case_id": "m16-queryplan-000",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 2825.990458019078,
+        "failure": "M1_REJECTION",
+        "latency_ms": 2782.6197498943657,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "fe400304f46b5b2c0bbe974b709852537c58f5481718be8402346ee593d48353",
+        "sql_hash": "b69b2322f5c98e246f5672b0816f15c3ea8c7c00445585fdc8879a4df3de1080"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1391.8586249928921,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-001",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1410.0769581273198,
+        "failure": null,
+        "latency_ms": 1397.8042921517044,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "200b31bb7d65fd0e7f2dc0a57bbeee18cc03f0cec82f1825a635a5424b96e592",
+        "result_hash": "0857e945a0e616414bb3ba702977c2cbe330782e4b615b8f6a8a531c78c3cd1c",
+        "sql_hash": "1a4c668280dc6819db4961d029f6c7a06c35b541d9a67fc6dc27401f3f571847"
+      },
+      "intervention": {
+        "compiled_sql_hash": "454b0d02b48d2aaac2db97b69d59bba05e5d45db04de606424476e2670099daa",
+        "correct": true,
+        "elapsed_ms": 1649.289040826261,
+        "failure": null,
+        "latency_ms": 1637.5701248180121,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "014068ce8f5cd6bdaff7766ac5c691d8be86a11e9fd754b12cee9881d7b9b7db",
+        "provider": "openai-compatible",
+        "response_hash": "f76648ec7e0928230e3336e7d2ea40a1b8b18b53f6e74d5735b54cf495437fea",
+        "result_hash": "0857e945a0e616414bb3ba702977c2cbe330782e4b615b8f6a8a531c78c3cd1c"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-002",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1185.2551251649857,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1157.9900418873876,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "338fe5cba003142cc7ea9a34f52f5ec386d72c45c24d3a7be6051334928ce045",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "81eed6196f7da084f874ad4223d1358702fa41b36cb2244cdcc38d16412e6e9d"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1388.067458057776,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-004",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1284.8807498812675,
+        "failure": null,
+        "latency_ms": 1268.628332996741,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "78cddc9e889e1826525dc5ced974b5609ea37cbd132be08187e4c01a61c84971",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "715c99f0193f7c62458b0e14a5ad542b85fa8621e490f1ed0d41ec309b9804ff"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1436.949917115271,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-005",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1176.2362918816507,
+        "failure": null,
+        "latency_ms": 1164.7167501505464,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "822593ffcac493bd14c88073f084019a366650f944f8e8a0f242e04f4b6a8d9b",
+        "result_hash": "3263028bd51eecd6648a07eff57d18f77eca9cda60d2e749ae512ebcacdce87b",
+        "sql_hash": "d79342740ddfc0c06495cb65fc1adae677e842bbe4ce39d2d49928b82db02b31"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1286.881583975628,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-006",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1536.8413331452757,
+        "failure": null,
+        "latency_ms": 1517.9572911001742,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9383d70e1095931eb653995fd4ca2d524c889fcb75c03063727c9f4a8d3e878e",
+        "result_hash": "60fc11c2dc304334010876993f939ac681f905ebd412c28b9e4c2410bb815f6a",
+        "sql_hash": "2a3fb50a4e7954a5456235dd9a31d72a2e4ffa16f3f41c7c5e2c79596ddbade3"
+      },
+      "intervention": {
+        "compiled_sql_hash": "95788d68c73ecbd05c999ea8a38624b77f4088eebb87088a10a48f0cccfbfb53",
+        "correct": true,
+        "elapsed_ms": 1361.3526250701398,
+        "failure": null,
+        "latency_ms": 1336.45175001584,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "0bb01111ce64c633f467c24ac1ac59873bee468fa4e133780b80f99113495da1",
+        "provider": "openai-compatible",
+        "response_hash": "09bd5bcc0f0fbf0926926e4654d199fc4afa1eb65b9b47df78e033d4f34c6d47",
+        "result_hash": "60fc11c2dc304334010876993f939ac681f905ebd412c28b9e4c2410bb815f6a"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-007",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1421.0715000517666,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1404.5355000998825,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "99d22bb58b44793174419d67aff8680eb26a8e659b814bc28f61107acb883c4f",
+        "result_hash": "098c69cc8848836c3ac0f1b18eaccd1ff187589ca1d2cc6b8eabea83a7b2a8a7",
+        "sql_hash": "c6a45de19287ef1dc4e3ca59a134f14c12fc9bc8c643c397186ee3c6fe842c3b"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1252.9826669488102,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-009",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1183.1533340737224,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1173.924915958196,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "1d5680066ca93f8ac91b46e26486f5eb6cf939438e9c5092aac7fe081d0cb4a2",
+        "sql_hash": "d9ee0731500645de6fdb0d777a715bbf15fd90bfd667eecf0feaaac4a60b2f6f"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1448.465625056997,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-010",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1452.0644589792937,
+        "failure": null,
+        "latency_ms": 1426.2926247902215,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "a7d8b9d3259260e8443199809fbf483b0262708b40f716e4bf2ec813b5876a74",
+        "result_hash": "028704c21f23a8390a7f40588df340f53cd02632c6528f23eb55d14c21c7a804",
+        "sql_hash": "aeacc1228105ca90acc008f43bca6deb5df6ed99845b96b63e49b1b35e3aec0a"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1141.4840840734541,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-011",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1198.108916170895,
+        "failure": null,
+        "latency_ms": 1183.1872921902686,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "b2bdac70cff5ecaa1d109381f4f12aba8520def5270cc3a78799690dd3556db5",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "0e3703c33e84476c7e89fac316dd9588eb292ce9382e3f8ba29ec21dc001c1c3"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1383.621749933809,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-013",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1192.920041969046,
+        "failure": null,
+        "latency_ms": 1174.862541956827,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "5fca631eca305b88a2980d82fca7ea3db63d1e5afe60544f83b3265e8e251776",
+        "result_hash": "eded16e2705d6ecfdb0f5bba4e480b3134c1c1d3a59c50f2cdef00429edf0229",
+        "sql_hash": "80446b05045673b9f10c566389b45f932dbda9570276ab3382dd37e6672b6fc4"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1295.4409171361476,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-015",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1301.279375096783,
+        "failure": null,
+        "latency_ms": 1282.409624895081,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "649a79335271220bca03f087dabbfb82b8a862334a81ada65260dd2dbfca8b42",
+        "result_hash": "4edc096eed411d7280125974a1ea9a4349c089daea7b75e4d409bd01ef1208ad",
+        "sql_hash": "6aa847b660dbe1ec43f1253066bdc9073d85532830241a6f81433610f6af03c7"
+      },
+      "intervention": {
+        "compiled_sql_hash": "00ebf835fbf78a5e7ea2d7d99689d741523cc021bdba8f81b045b832fec4b9b4",
+        "correct": true,
+        "elapsed_ms": 1380.4290420375764,
+        "failure": null,
+        "latency_ms": 1352.5864169932902,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "214b37de9de3b01579c07c6c47453e91cd5cfd49ef5f91d22d7a28904b5ec279",
+        "provider": "openai-compatible",
+        "response_hash": "e0ac6de2bae42d2b1fbe1e6b73b8f2a3814a7a3ebea9d7e3c027836e812e014b",
+        "result_hash": "4edc096eed411d7280125974a1ea9a4349c089daea7b75e4d409bd01ef1208ad"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-016",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1622.779707890004,
+        "failure": null,
+        "latency_ms": 1607.1380418725312,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "3723fed6f27f1245bc9e77737f678a235eb223beff1ac3090cc802421a1af2d3",
+        "result_hash": "a265048882b8e6a254b62b6e4bef4894daefa2a9aaab1c419103e9149857a800",
+        "sql_hash": "cbae409eb12d5f42dc961fe32ac87e796c4de643817a20bc69949a97283ec3bf"
+      },
+      "intervention": {
+        "compiled_sql_hash": "f5235502e2cc82bb2b28af0cf52b0f96dec80fa24b5ef6f1cd765596ef0eaff7",
+        "correct": true,
+        "elapsed_ms": 1463.2339999079704,
+        "failure": null,
+        "latency_ms": 1445.9585829172283,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "231d78dddb4c1530e69732c93a944432ffb04936df8442a913a96c9b2acd2b03",
+        "provider": "openai-compatible",
+        "response_hash": "b213615634780af89b0b7d9f8dc9e5919b0ffcba726e2bf251ae61aea73800f6",
+        "result_hash": "a265048882b8e6a254b62b6e4bef4894daefa2a9aaab1c419103e9149857a800"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-017",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1065.6199168879539,
+        "failure": null,
+        "latency_ms": 1053.5970830824226,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "528f676686a6c5da6935e993f702fa0d573649e02d07e93d58d57e46f19ca406",
+        "result_hash": "70db6342a1369093d71ce97e7330b70e5e6f12fce602d865d537c8d10bb49436",
+        "sql_hash": "e4af7c4e601bc7ae0bbe7eb24b4ffb1882e944725c8fe894d659ddbeb021af25"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1243.482582969591,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-018",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1229.9170419573784,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1217.7148750051856,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "1a3fc94b93976f8ddc4b77582ced1f5ae3ada1e5fae555f218ee05c00e18f542",
+        "result_hash": "f7408717cd5d1c9af46870ed698df18aa82df555629da5096e9ae193ed54cebf",
+        "sql_hash": "3183f8c0763c608496e480a78e14179682a4d0941fd245dbea5d5abbe2cf0f8b"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1359.6514998935163,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-019",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1431.6326670814306,
+        "failure": null,
+        "latency_ms": 1414.352708030492,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "6d82bd4fad5506ce18e9bf494de10f85c96ca5f459928288ed1508140464e527",
+        "result_hash": "e754bf5d15003bff424bb66ba3077057037e0e17281ced11343769ba8a07ef1e",
+        "sql_hash": "c530e12da6eca4c4db4cb96f643c070a76eef6efae2d5a77be502f5874a32ba3"
+      },
+      "intervention": {
+        "compiled_sql_hash": "dcd302fd110b408cdb173e13e4332779b4b0746ba86ec5bb3999b792d3c9ea8a",
+        "correct": true,
+        "elapsed_ms": 1351.5619582030922,
+        "failure": null,
+        "latency_ms": 1332.3209160007536,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "271ae4ec3062368dff813bf5e0e7efaeab170d57196aa97f1b2e0ee028dabeba",
+        "provider": "openai-compatible",
+        "response_hash": "0cc6d78c69c53257a4d097214a5756dd8b12c07aa48a6442b694f0b92ca97c9b",
+        "result_hash": "e754bf5d15003bff424bb66ba3077057037e0e17281ced11343769ba8a07ef1e"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-020",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1322.7846252266318,
+        "failure": null,
+        "latency_ms": 1310.131291858852,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e70542aed0f483b4054a0bdeabfd52de6e665ba82be9bee25d76d967f10b632d",
+        "result_hash": "572c372bdf06ddb2486fedf7363df26107dc53ba600d85aa2f440f6b16120000",
+        "sql_hash": "44ffbc1c374915abb5833bbee9c1f9d13c6896fe61a88474504f1dade9a04d0f"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1363.1396668497473,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-022",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1387.9819998983294,
+        "failure": null,
+        "latency_ms": 1372.0922919455916,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "80b392ac7e372927631895eeb1d90742817576603538c20b82845c015b827e5f",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "c504520437376369b5e4fce62ba7bd48537516ca6f0ed92f054e2287c8e14816"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1757.3288748972118,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-023",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1235.7725000474602,
+        "failure": null,
+        "latency_ms": 1216.656249947846,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "a49423c48b62085a35affad26c4627a6e7729d521f6de0eabd57d1f301c565dd",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "aed4196cfe7897e1b568bc55e19e8b51128166cf2d13069055a4f8acdafa021d"
+      },
+      "intervention": {
+        "compiled_sql_hash": "140072ef4609349f9a8395962377d00cdc8bbb2ab210768ca4a5be40e1e668e0",
+        "correct": true,
+        "elapsed_ms": 1309.326458023861,
+        "failure": null,
+        "latency_ms": 1285.2008331101388,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "2caa3f3680e40c99aa18b0357f4662683cca99d60fe9356d6c111448e3495fce",
+        "provider": "openai-compatible",
+        "response_hash": "6fe7879c25b2bf791352a75ab3ecff1fd94b5e138f0ab5b13645262c6eb536b2",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-024",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1578.8050841074437,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1560.3570418898016,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "7b3bacf3c1d2a02258601547a21ec8527170ad124e262b3aaeb33cb27166e4aa",
+        "result_hash": "ad16a4bb03cc371b954b5a26d3711050e6c729a157c87e98aaa0a9a63dd3f55e",
+        "sql_hash": "ac3cdbd250d99dc2d9fdb840afe002b53f27caa0709208e2ab31dbb087a9d301"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1411.1355419736356,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-025",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1194.8219160549343,
+        "failure": null,
+        "latency_ms": 1180.703500052914,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e87c793d1d88841ce87229bbe93882bdf64e7c985f02d8a07e889a3620c84079",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "c86143abcff9a3f7d6b1c579e407932380517abb94eeceaca401e76fb229827b"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1243.363499874249,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-026",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1139.0089590568095,
+        "failure": null,
+        "latency_ms": 1125.8422920946032,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9123d820c06172563668066f57aebe2748edbd4a3892335764f45fa47bfedad3",
+        "result_hash": "033c3150f51777247b3edb5b3e0aeaac197c79ca76727b9d5768ea89c968e30c",
+        "sql_hash": "3feb106ccd3570881c24a01366d156400a551f8feff905ef944bf4c0734f891e"
+      },
+      "intervention": {
+        "compiled_sql_hash": "12f79212e0fb8cdb7e54b5c10c712e4b1adccebdb47203d27c61f9f52ce3e294",
+        "correct": true,
+        "elapsed_ms": 1044.762082863599,
+        "failure": null,
+        "latency_ms": 1031.2685421667993,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "30ebe9567306978c93fbc6ce353ebebabf78c027c269e1e58ec2b60dcd1b8cb2",
+        "provider": "openai-compatible",
+        "response_hash": "a720836425f60449a5028c0976291b405c6ba6cdefc2ea3aaa8a4f58f9106dff",
+        "result_hash": "033c3150f51777247b3edb5b3e0aeaac197c79ca76727b9d5768ea89c968e30c"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-027",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1153.6792910192162,
+        "failure": null,
+        "latency_ms": 1125.7029578555375,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "ae81cb3f32a53961ee40f2624e12b288266b6dfea2af476cc6507b41b2406729",
+        "result_hash": "9f52806e8813effa50305c5c0369c95f7f681af4ddd2a137bf44d68bebae2e8c",
+        "sql_hash": "eb2b8e99f22cd17fdbf8aeea47504f7cff4f7e2470693ef44deda0fe1aaa912c"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1275.205499958247,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-028",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1345.8847079891711,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1325.935207773,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "23db802d507735d6edcf53e8a60af6b8eb2f7beecd3bdf4d1ab93413bcfa6634",
+        "result_hash": "28ed01303baaed3335d780d91ada34746487d191a983f61e295360599dbb5a05",
+        "sql_hash": "7ac464ad99414cdb7be3ce53fe155beb4fe263f157f1f7e568e6efa146c71c03"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1321.1094997823238,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-029",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1431.3503340817988,
+        "failure": null,
+        "latency_ms": 1416.6982499882579,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "55044aefda7a2e56d4739babe19c46f7a7fadb9511689294cdbf76cb6e802970",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "8f8f468f7878aa08c40b04f0e95c40284550ee3ba1db7de34c6f68c8c445528a"
+      },
+      "intervention": {
+        "compiled_sql_hash": "13ff1cee2ec06d175d4799370e8b57ddfc918a8102b0657cfb4ab4dfe38793ca",
+        "correct": true,
+        "elapsed_ms": 1340.2087499853224,
+        "failure": null,
+        "latency_ms": 1327.060499927029,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": false,
+          "join_type": false,
+          "predicate_columns": false,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": false,
+          "source": true
+        },
+        "plan_hash": "269ac51ddb01f1cea37131616a950d83ea8238951e6184c69ca7034930c5f04f",
+        "provider": "openai-compatible",
+        "response_hash": "7f09694972a50fdbc93f2d96e4d8fb8e80bfcc43fdad4e79daf6cd740ce16b09",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-030",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1124.4118339382112,
+        "failure": null,
+        "latency_ms": 1110.939250094816,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "8b33a67ed3b7bdccd782083e045b7058fc6f894d1c0ed1253b96251b39440455",
+        "result_hash": "6da93f9490928d5d3cbbf82a8aa9a0bd4820c84bcdaf8435383837f46f928617",
+        "sql_hash": "8617e14362ab06cbaa201e9eb80c19d1ccbdb9f3fae10eab462e6691cc13581c"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1216.0892500542104,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-033",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1328.1315420754254,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1316.3928331341594,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "eecf01957824126dff2132b480aeb8b809c6adc79f70da7b2a2183c766b114e8",
+        "sql_hash": "c5c7d0d5d8d107b13555b787266c68ea475f1c6fad97fded1f8844b5c245fa67"
+      },
+      "intervention": {
+        "compiled_sql_hash": "6a5c5e24fc0d15aeb8fda473434b338446266b520ee5d1af40bdc973706dd7b8",
+        "correct": true,
+        "elapsed_ms": 1347.2648749593645,
+        "failure": null,
+        "latency_ms": 1330.6099579203874,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": false,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": false,
+          "relationships": true,
+          "source": false
+        },
+        "plan_hash": "ecea237825cba5f3948e89cbb5bfaeff9dcccf213d367093cd59ead676b0a594",
+        "provider": "openai-compatible",
+        "response_hash": "5ba416950930ba75d85e610e90ead496a34a649e80da668ad577448af05ff129",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-034",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1106.1347499489784,
+        "failure": null,
+        "latency_ms": 1094.728667056188,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "4509ce11dd216fcd93dd2d007fe23c90b58a258149a1d8cb72a8895f336c1dfa",
+        "result_hash": "b70ab5a23cadbe237a536bb857e1538d7cbab383410e0ea395c9b344b1761670",
+        "sql_hash": "09e1ca7a01e851f27f80724478ab583a628f2bf1505f656c945687171733b156"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1234.8461251240224,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-035",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1245.3070830088109,
+        "failure": null,
+        "latency_ms": 1230.6729999836534,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "f514f7c778accbcd1e2a64f183f6f0cd57f7cfa074ab6565de5ac850106e9210",
+        "result_hash": "fc80a7e1b335f6dd209051e7ad7d046f277c22ec14b8b1de079f31d6276f98d1",
+        "sql_hash": "9eaffe308600adc06104f14e6cd9c5526067cc16ee8283a1c316f0525064200f"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1431.1992079019547,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-036",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1290.7334160991013,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1281.3543330412358,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "47e78df6a5f362a44a4550cb47ccd787704d35e4b4b747e37cbd63f3006f0254",
+        "sql_hash": "e38d427594b5bf528ff7da95d725d8580cd62d23a3c6919993e52f0879992a6a"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1492.2930421307683,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-038",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1325.753791956231,
+        "failure": null,
+        "latency_ms": 1303.8959170226008,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "eb4d9ddcb76e0ccc3e7ba2dcf5abc2bac820219cd3b378eab62d5c28f9ddaabd",
+        "result_hash": "71d44f2beb08468e908a54956ce523decdda0905034c28a96ea5ea9d4588ecda",
+        "sql_hash": "b432ed0cdcc6eca310b6d58464add8d9b970d534f25239cdacc6727d80a290ef"
+      },
+      "intervention": {
+        "compiled_sql_hash": "65b221253e95e089928a7a2969f35beb7dc969cc8ab48bfc11c9ba55363ae62e",
+        "correct": true,
+        "elapsed_ms": 1325.9517499245703,
+        "failure": null,
+        "latency_ms": 1298.8087921403348,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "467812dbae007fedb8e7b0616e6a9974df19d832732cb77f80f7acd71d83a9c6",
+        "provider": "openai-compatible",
+        "response_hash": "ba6f7e765e2d9c5a7b075729ef11be2dc833e3aaa0846b6c3a58091e5b16276a",
+        "result_hash": "71d44f2beb08468e908a54956ce523decdda0905034c28a96ea5ea9d4588ecda"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-039",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1114.2770419828594,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1104.1520410217345,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "1107425da294982b8a6759366e96661622d29172ced103886ba88d09df5e23b8",
+        "sql_hash": "c67d968dc4701069611342ff00a14de3d95cf2d25271df242c6bf58fe6937bdb"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1525.9347499813884,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-040",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1344.4699998944998,
+        "failure": null,
+        "latency_ms": 1332.29308295995,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "c830c4a3e3f763a48ea53751f6880b33f05026a180ea22eb477804da11ca1411",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "08018d0918a473d452428207b8448dfd4f02b90a7a97aecb7085f79b48238402"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1329.955292167142,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-043",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1191.0633340012282,
+        "failure": null,
+        "latency_ms": 1173.7520839087665,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "767628560fced50df906a5f5317bdbff53f136a49c76852a0f90a19a6d9fdefb",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "55f997611b1a3949a1347d2e849df5c77b2273605acbdb828e5977a0c95a5fad"
+      },
+      "intervention": {
+        "compiled_sql_hash": "c843faf4c3d552bb89b310bf1214189ca82e8bc2294049d7f595e6f7bcd2965b",
+        "correct": true,
+        "elapsed_ms": 1475.9763749316335,
+        "failure": null,
+        "latency_ms": 1462.446042103693,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": false,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": false,
+          "relationships": true,
+          "source": false
+        },
+        "plan_hash": "b251b917757dce1b3eac29c34f474c5d4b68ad6f7727c7f38ed29cc78f578a51",
+        "provider": "openai-compatible",
+        "response_hash": "61837f27c9eadf03aa4990de5920ebf6c490396c18410bf3b4704605b1ad6939",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-045",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1341.9846249744296,
+        "failure": null,
+        "latency_ms": 1326.913082972169,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "50a5375df1b6d18cb74862fbf449cfde97f3b003973732d851dbd10d4763717f",
+        "result_hash": "42ad84fc99a9b3bc384435fa3e3a12b638e5399aa688a0194b94334976e462b3",
+        "sql_hash": "bd80fda85fd3b00eff8a84c0cdbd5f13bab23b4a5bb1d567af441e109cf78cd3"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1569.3392909597605,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-046",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1243.0061660706997,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1233.8141249492764,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "480a41892ca668e21994b744c70875d01a8f9fe43d03434fb29e44b8999ac087",
+        "sql_hash": "128005b096304c569c8f05ff260b1b2c4cc36429ef0c8f1bc3ed95672d2e87bf"
+      },
+      "intervention": {
+        "compiled_sql_hash": "22eae67336d8964871f745d1717f546f73408610fb9d85572d809dd73cbdf56b",
+        "correct": true,
+        "elapsed_ms": 1163.3023750036955,
+        "failure": null,
+        "latency_ms": 1141.440125182271,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "5bd9dad205d32628ffe723ade0b1a40d8649f78cef2aa755d835bc772cd59e7f",
+        "provider": "openai-compatible",
+        "response_hash": "e18d5a719b54e0f35e426a1c15de9bdc5931b3e8d7ce02cb8d03388fa6e1af18",
+        "result_hash": "76155c69145565c29b940f95b53f9cae313dd9f57d702be4e67191ff64a33e52"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-047",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1133.260624948889,
+        "failure": null,
+        "latency_ms": 1117.0581250917166,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "cd6ae5408a6159bcf9c3854ed3c85d7127e54ff4114a259a1c8120de5eb364c7",
+        "result_hash": "9c2afbe2a8d03484366fdf65647eea781fd9ed49f670c34e85d22c0663f6f601",
+        "sql_hash": "3004489e92a3a128511e0acf7d1e89b4ed6d7b6fd4007b0285bb6b5c751985a0"
+      },
+      "intervention": {
+        "compiled_sql_hash": "94644a65ffd5f9bfbf3cc021ed4f966ee7b9e7ca33a3cedfc95bd98dba35c999",
+        "correct": true,
+        "elapsed_ms": 1944.9924582149833,
+        "failure": null,
+        "latency_ms": 1935.1667079608887,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "5f710ecaadb78029e54b45476e6c3a44473eeac63dfb76573733329c868621b6",
+        "provider": "openai-compatible",
+        "response_hash": "acf0b2d1c6c7c9399ebc77a8b863d5ae165df48cfa879b63b430b99cd70db9b3",
+        "result_hash": "9c2afbe2a8d03484366fdf65647eea781fd9ed49f670c34e85d22c0663f6f601"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-049",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1228.9251249749213,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1211.4793749060482,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "eede7630a941325e7b78d55c0602c6a015482a15c47fb5fbad7a44cd2b8901c3",
+        "result_hash": "dafea59bd20bdf6b18a14328400b1c752b493c200441d30664f3e87b4b6d8ded",
+        "sql_hash": "0d42f5d784e891ff8811f59ebe1b2b3b8fd8e3906b370e571486156bd50e1d24"
+      },
+      "intervention": {
+        "compiled_sql_hash": "2f40dde56ce992c350f6299cacfadaa4c14aed02f1e65aa85cd1bae91e6c5e0c",
+        "correct": false,
+        "elapsed_ms": 1339.9915001355112,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1316.9174171052873,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": false,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": false,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "c139f240754b82b1ddbb226d2cc868e39eab4eaaee73e28172dc5e1961ccc870",
+        "provider": "openai-compatible",
+        "response_hash": "0ce1a4a3222c31f5db0ca5bfb44b03c5555f05409f703c4880fd6ea2db9c1054",
+        "result_hash": "a1220223aa3578ebf982a4890b84cbd1a1ff68fdae07e7933ecf4f4c2f549b72"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-050",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1278.160542016849,
+        "failure": null,
+        "latency_ms": 1252.1425830200315,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9b29ab4342addcb3bd9dc598c75cc389106a9584ca67d0fcabc7f62944648eed",
+        "result_hash": "9f52806e8813effa50305c5c0369c95f7f681af4ddd2a137bf44d68bebae2e8c",
+        "sql_hash": "06f5781d2ab329e9745a282843479999ce362d58834b31ac345869ef151602f5"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1305.233916034922,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-051",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1323.8062909804285,
+        "failure": null,
+        "latency_ms": 1309.8171669989824,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bd5690a73eb8cc42549976cd30e34aac8e850712ffd2e0ac229dce194f8a839d",
+        "result_hash": "1ddbc890e366611dce608e4fbd576f0b739d41bbcae2954883e30458e02c2a0c",
+        "sql_hash": "6afc3776247b331bc6dfa4cf7c1538d800c654be06953387a5c214cff978df43"
+      },
+      "intervention": {
+        "compiled_sql_hash": "23afc9ecb09f60b179d4fc768540a2be9999f87984f3dc10c1494b6e3efe5195",
+        "correct": true,
+        "elapsed_ms": 1599.6756250970066,
+        "failure": null,
+        "latency_ms": 1590.6041669659317,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "61f87a690fd71471a0e3665c3d4b673f53d71c84b4a69bdc67a54a4902e32c3f",
+        "provider": "openai-compatible",
+        "response_hash": "e41124eed2e2dbff9daa72d487bed4bbb2bbc2d4d01e47a05742798736709449",
+        "result_hash": "1ddbc890e366611dce608e4fbd576f0b739d41bbcae2954883e30458e02c2a0c"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-052",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1172.8178330231458,
+        "failure": null,
+        "latency_ms": 1155.9312499593943,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9fa989645db464301668895c4d6476b6373da86f411e178dde6d3debbe7eacc2",
+        "result_hash": "2ce8deecdeea09946443eedc0c85c9f65b786648d110ecdc342e71b37dd32305",
+        "sql_hash": "058734c520581de1841b20fcfc35305939f137fd6ef60848424735b5de0133e4"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1328.1118341255933,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-054",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1400.570415891707,
+        "failure": null,
+        "latency_ms": 1388.6869160924107,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "140e35dfc95071ce6bcd11842ed6494382796550c8806103e94ead8c6bb241da",
+        "result_hash": "6975b68a9ad2673a70844539a6c8792d8da62f0c033ab89f774672ab2fe624f6",
+        "sql_hash": "ec81b22e9065822e158c359290d40636aba8bee8290844fe065c4e9e441f4274"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1061.1324170604348,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-055",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1090.6948330812156,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1076.8346248660237,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "0bc01c381c64de7a7bca93b77ccbdf500c949e3cc375d54069dec05754e80f8f",
+        "result_hash": "02f0507f01173e25e631cd91981b86bf288faa4d5ad79c6253b0582545555478",
+        "sql_hash": "81548d3287785230ab6a7099148952ea5453724f969a8d61bec9c8e17e0f3068"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1523.1350841931999,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-056",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1227.4703332222998,
+        "failure": null,
+        "latency_ms": 1211.0092919319868,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "17c19c2a134157f882516af9cc3c89e31e8c13b1652e2e1a75bbe51fbaf972aa",
+        "result_hash": "a265048882b8e6a254b62b6e4bef4894daefa2a9aaab1c419103e9149857a800",
+        "sql_hash": "e98c552aa06e9f20d93f93d60230af76bcbf7fdfe1391ef4fcf2cf543da9e473"
+      },
+      "intervention": {
+        "compiled_sql_hash": "971be43e524d1fb346c8ef3847854736eac1830a23a225200d521ac74c4f4d8d",
+        "correct": true,
+        "elapsed_ms": 1553.453000029549,
+        "failure": null,
+        "latency_ms": 1536.2384589388967,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "6e222e54c7c64a4f7a8d8fb8120789993eded93a2ce443888e122cfa830bba27",
+        "provider": "openai-compatible",
+        "response_hash": "bbd2f0c25ce45562ce1bbe10463dcdcf42e4961a730ab5af9a15c9bb8e8f8da7",
+        "result_hash": "a265048882b8e6a254b62b6e4bef4894daefa2a9aaab1c419103e9149857a800"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-058",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1345.1494998298585,
+        "failure": null,
+        "latency_ms": 1329.130790894851,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "ad90c2b85382e69c06e8d9128ff0fae5247c98b2c188ab6f4968e106119c7116",
+        "result_hash": "2761f964f6e745cc93db89b3b2bbc045de64a4ff3bc842fd40f09a0b454cd253",
+        "sql_hash": "74b3f13d225333d1adad8e576d16662d38eba974936b69691e67fc8ad00a3b52"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1418.7159999273717,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-061",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1324.2335829418153,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1315.1919587980956,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "ba528556a3fca3fbc609757d10a8a5e6d540c236f0aa264b6204dbd838f7c9ea",
+        "sql_hash": "08708b7be325f192d538d27d523f45f7eff71acd7892d52f4362c96bd73927c9"
+      },
+      "intervention": {
+        "compiled_sql_hash": "40260e453d85946a11aba3e6bbcfc1c55abc23b3b81e065277cd95f97f2d7db3",
+        "correct": true,
+        "elapsed_ms": 1346.3140409439802,
+        "failure": null,
+        "latency_ms": 1322.4754170514643,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "75dfc5930018346b478b33938a5aa50475ca6aa905521fda0c8bc67f397d79d2",
+        "provider": "openai-compatible",
+        "response_hash": "4e74c5a79f60bd1c979bc7d99f3401726ce7c990b94007d301a61fa34ac205b1",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-062",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1290.2606669813395,
+        "failure": null,
+        "latency_ms": 1271.6432090383023,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "93ef82d5f44515fe53b0066277e80789a6bda0f54b3d141a2639d87cda996d24",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "fd5ca0a7cb01a4685e0e3043f96f94ef41e34946bec6473ba609c7b3a07e3f5b"
+      },
+      "intervention": {
+        "compiled_sql_hash": "d1b0596c302c9d62f0561156ed428214ccfccf28b237855e2f743a89156cf73a",
+        "correct": true,
+        "elapsed_ms": 1318.9588331151754,
+        "failure": null,
+        "latency_ms": 1303.0287080910057,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "75e94379b790ea5e2cc9f28d29860989cbcf7ce2c6302ede036ba1f1ab2180cd",
+        "provider": "openai-compatible",
+        "response_hash": "352dfa8aaf00446e7749021f151e21cdc4803788f5ffdcb7cb0c7f8eb15f65af",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-064",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1031.02954197675,
+        "failure": null,
+        "latency_ms": 1023.2739590574056,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e5a8fd408c10704cd418a3ec8a2c1bc81ce307da793d1ae3ae3adf34d6eaba9d",
+        "result_hash": "93f318fb8a7e54ba0e4882f4e3133dd875e5215e167c4733900733f376c4ad7c",
+        "sql_hash": "b447ee3dfb6c913b099068f6d18451d0b30647815e38e56b173c483103640108"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1259.7964168526232,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-065",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1237.2629579622298,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1220.196999842301,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "8319a28b4ce541dd6a0d2bf535e47391630077a94221bc1cabc040f257c09771",
+        "result_hash": "b451655c52d2d8354c17cbcbc0bbabf71de5110edf08f19467c1f9efddfcb03b",
+        "sql_hash": "0ba667abf33d775d7ddabd2abf43c4aa0348af64794d799c0dc1e8b96502cfc8"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1315.0352919474244,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-067",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1141.2652919534594,
+        "failure": null,
+        "latency_ms": 1125.9789580944926,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "29972cb4d57405c2dc60c3b912b79ab1b21cbe979b1c83a5befaddc74b42b4b2",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "e3356eae5d42d0a6452cb789d9d1b54082243d0ca7a5d81dc8969c86b55a9711"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1316.0201669670641,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-068",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1253.1322920694947,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1228.842084063217,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e72d69422498cefa6f4493bb19a0571bf017514204aca1df178f4524207c5bc5",
+        "result_hash": "ad16a4bb03cc371b954b5a26d3711050e6c729a157c87e98aaa0a9a63dd3f55e",
+        "sql_hash": "4b0fab380e1378036605a68018d62dc5b4b53bb00cb752dade98c3411bf49232"
+      },
+      "intervention": {
+        "compiled_sql_hash": "156a3bee29109e7b0e7040bbf613ac97785c860aaa05775173a08568eb6622b1",
+        "correct": true,
+        "elapsed_ms": 1323.3959169592708,
+        "failure": null,
+        "latency_ms": 1302.8908749110997,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "825abc9de48d0c7649e88a71e5eb221f19edd01145e2db3ab038e87b8e5eebac",
+        "provider": "openai-compatible",
+        "response_hash": "3c96f00009321c96e2b9a5230580c9a6a96148cc8cea589269fa6db33858b5cf",
+        "result_hash": "14a755efc7e2b721e7e96b401f20d500e9ec43e1629044fac835622d2e1be17b"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-069",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1562.36383295618,
+        "failure": null,
+        "latency_ms": 1536.7208330426365,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "741a624510a8713eaaa0637cbe84b2558067dabc006262b633ee89156e5ea484",
+        "result_hash": "9780e020277ecf68fd05f897aa76b08028946e2ffbda09032ecad063a40ed8fa",
+        "sql_hash": "1e08157dcab2e80443f39d12e53f33182781585756f6aa43f3b1dc203e872f25"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1621.3619580958039,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-070",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1354.040625039488,
+        "failure": null,
+        "latency_ms": 1340.0987079367042,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "fb1231e11e8ea8d48f65b6a6780f0fcf601fc527aff254c02e3d3e79cbc63750",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "bb2ec882842f32ea3a9b9565953b77e92d7eece8ada95efddcd1ce36b9f6fc27"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1485.1434999145567,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-071",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1246.8836249317974,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1231.113167013973,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e460283b8669210dea2ced66a6f8b2820d5898df2107e945f3a2836fa7a343c9",
+        "result_hash": "19addd43a8128dbb8a73eee4efbf6faea01de7dd0ca3bd6ee990726ccec4c843",
+        "sql_hash": "ca2598ca4268da50612696c39f4ec369621a8384af809f0537419d0e1a8fd19b"
+      },
+      "intervention": {
+        "compiled_sql_hash": "f33dcc082f7b2fc7059eaf3f3e07ee7b3d8db4ac06184eb8e5bfb851489717f3",
+        "correct": false,
+        "elapsed_ms": 1549.5084170252085,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1536.542917136103,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": false,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": false,
+          "relationships": true,
+          "source": false
+        },
+        "plan_hash": "d9e08088cfb7185ab8d66312500b685af026d030aa3de70ec4ddee4fe6b1d376",
+        "provider": "openai-compatible",
+        "response_hash": "a77f562194d01fe9a220df351f5554bdc6fc7606682e97d99c3b738aa43eae3e",
+        "result_hash": "19addd43a8128dbb8a73eee4efbf6faea01de7dd0ca3bd6ee990726ccec4c843"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-072",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1216.0025420598686,
+        "failure": null,
+        "latency_ms": 1200.6377920042723,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "868414edc18457235c42931aaf8763c0cdbeab3e0a6039fb8faf311ac75b615e",
+        "result_hash": "5a6abb788f3aa80323474283540ab7766b29f5aec17e85dac54e07b91ecf0d94",
+        "sql_hash": "34283c9a8506ddd160d12a1d6d6688692c9412c431278450aceda76c9cdc7a78"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1150.8116670884192,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-074",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1718.1819579564035,
+        "failure": null,
+        "latency_ms": 1699.7657499741763,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "8849e790beb530fb29c23591b9c3f4b182548ee4ee6e95b285b05a414fd61232",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "de1c30de292b5b4b3b0a71bc3133986cc684e70252dcc51681104f377a50843e"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1426.2183329556137,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-076",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1070.9571251645684,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1055.4678330663592,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "c2650f20967a47998ab38c144f6c2d7ec51898601e0d0d2803cbcf1680f42456",
+        "result_hash": "8a264b2b42ab76c711b46bc02995f32d636d0c46ef51ad7078cb09724cb90dc5",
+        "sql_hash": "6eef8756828775e2f0f7c427652c00bc881105f484bf72ee27e6a603bc14b5b7"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1067.197458120063,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-077",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1247.033790918067,
+        "failure": null,
+        "latency_ms": 1227.8477908112109,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "7e6c3de7f88b36b070e3e3ec279b709390329d64a4ef3ecb936118ef1026ef87",
+        "result_hash": "ad16a4bb03cc371b954b5a26d3711050e6c729a157c87e98aaa0a9a63dd3f55e",
+        "sql_hash": "873d1576078df999d195ee94e7890db9af4e401ca36ff43898dad9b504214863"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1415.3382079675794,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-078",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1243.3199579827487,
+        "failure": null,
+        "latency_ms": 1228.4684169571847,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9e5601effb0d98204746fc5425c5be2ee401f708a219776435174aab865fe47e",
+        "result_hash": "24a96cd1857b044dbb0960f55b38b99824930204424a0463ab00b9ae14c59e49",
+        "sql_hash": "687710f3325ddb6e47d2fc1ec7918b998b53b4f82e01a13c42d4c838b4c7fcb8"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1318.0962498299778,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-079",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1139.5869590342045,
+        "failure": null,
+        "latency_ms": 1125.6246250122786,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "49bcceb86cd097dcf79d83a0625c5b56dcf62d730fad767141f97a3df2dde132",
+        "result_hash": "97fe559a43cf445085374633eaf83c3f0f416f8107b4c9546e7256c0f7579c53",
+        "sql_hash": "75ccbc5b597ea6687afa3cc7d28b96b2e59c5bfef5114c10b198232773d3f40e"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1330.2286250982434,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-080",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1248.2327909674495,
+        "failure": null,
+        "latency_ms": 1229.2917501181364,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bac565d437d6fc08a7b53970e80a91b4b61cef08745b2d259b228322f55ba8ae",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "4e80fc32c12d47bb406c4af1c7c1c961860664d7841b164fb84de17dd8430855"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1420.4014998394996,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-081",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1126.3214158825576,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1102.4357499554753,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "5b8c0ee05a7329551f56e1634adbeeaa7cdfc4f3e930ec22adbc0d1beec000c0",
+        "result_hash": "90b46059997aa86a945adf5f17a48875c410a33779501e3b400c2ca70b402688",
+        "sql_hash": "effb103446ac1fbdba401b82e74fb9a616d103270a4721134bdf5a3999617101"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1415.0093330536038,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-082",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1263.4043749421835,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1244.8160001076758,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "905d58c95836bdd9c6030a690498efb8ee34196faf764094c1bae299032aab24",
+        "result_hash": "5b66dbe1f5a3b77d0c6c072bf9a473253958df01dead2f2a2a37bb407bdf63c8",
+        "sql_hash": "14b155d1e8533de9a1aad3d7b78a227c3884440a5c2300bfe24fa2ae5f0b0b29"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1211.7703747935593,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-083",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1242.4564161337912,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1231.8474580533803,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "b681060c9260959fb71a44ad3cbebd797f2ef062e197e6f9e08153dbb7b66eec",
+        "sql_hash": "20565ff6041b559a4fb294a4f425667e119009f0e1451082f1ba950018637598"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1209.118832834065,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-084",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1067.1373328659683,
+        "failure": null,
+        "latency_ms": 1045.3746658749878,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "4f645357494b5fe3471a7b681cd65f9abc41714ff86e8b0bc2dd05fad580c71a",
+        "result_hash": "e6f0eb9ba0f05f48495c75969e74fb3dd22351d21d24fd30b70f5354d37fc835",
+        "sql_hash": "6f29da053c37eadf80a3a928a06f3bc18c6cbf7eba439dffb12879f6674832c7"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1304.2922499589622,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-086",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 2108.1260829232633,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 2090.102249989286,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "a89160f17f20d3d8f4ef082dc54b6be9a24e30473a1838bf706f69b1956989d2",
+        "result_hash": "a265048882b8e6a254b62b6e4bef4894daefa2a9aaab1c419103e9149857a800",
+        "sql_hash": "e20537bfc84d6046785cd71c9908daaa3891b2c79efdbcf95bbcc636d47d5a7a"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1816.572166979313,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-087",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1073.4867500141263,
+        "failure": null,
+        "latency_ms": 1055.3675831761211,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "74329e699670e8f51073b37225f1a20b0c3b218b2ec0cf456b5c2b03c2f7cef9",
+        "result_hash": "d367817dacf7d89a6b0fb030a2d2d1a55bdf729a654e2add705a18693dd95d80",
+        "sql_hash": "130b4a95675ef2b84c75f2209fd00bcc1929a09b97f30d567ef08d566b7df6fc"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1267.9829997941852,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-088",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1638.3295829873532,
+        "failure": null,
+        "latency_ms": 1619.8270409367979,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "08228baf0f9b216c7e59c34a0f9fec4c8ae36ab55af3ca7baff60bb0d61a5ae3",
+        "result_hash": "7ad11ad4b7707eb3bc043065f87240005f02b6836fe5b7a850c2b82776016c42",
+        "sql_hash": "1ab0ab861805f260fdb3b8faa70445e6369569a4df44a06f077964bade1945f9"
+      },
+      "intervention": {
+        "compiled_sql_hash": "cb4c773e3e2bde6c6fbf278c97194583fa7dd27ad0756ba37c20b9943a682feb",
+        "correct": true,
+        "elapsed_ms": 1608.411124907434,
+        "failure": null,
+        "latency_ms": 1590.4560410417616,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "b210c6d4eff06fde8c95ed178e6ae8e58577cc3d93145c20831974c67ece92c2",
+        "provider": "openai-compatible",
+        "response_hash": "88dcd0e44af80fab7c348adc0a72273d82e2b1f6a6c55509109ef00c3a33295b",
+        "result_hash": "7ad11ad4b7707eb3bc043065f87240005f02b6836fe5b7a850c2b82776016c42"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-089",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1325.785333989188,
+        "failure": null,
+        "latency_ms": 1312.7067920286208,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "6ffc6938655316a0b93c7b940da4b6d003d7bff1e4bdba89e619db047d44e9f9",
+        "result_hash": "8296c28f065b29aa9a9f5f76bf9185f382f07bfa0a2d3e383a8c424555071c9b",
+        "sql_hash": "e31aab466b67877ee6d10f22c6d90f79e05c7f6fc72ee873ab2cbe5fef45fd4b"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1438.2807919755578,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-091",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1258.741124998778,
+        "failure": null,
+        "latency_ms": 1237.0801661163568,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "e2f378934c88749de9c4457d05d01a5f5aeb3a13839cdfd8ac78917e2a0e301b",
+        "result_hash": "17d353caaca7461c8c9f5bff3b9a2b1dac247905244389f7f741ed594eab7de0",
+        "sql_hash": "b50180f2207016cdf2f1fed61c1dd627ec433abc42585e549f6f3020ef928458"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1488.2811249699444,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-093",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1230.6355421897024,
+        "failure": null,
+        "latency_ms": 1207.3398330248892,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "b09a61f35d0f9938d80072463f1436d3aeef7c660ef4c3013a482ea3a7cd946b",
+        "result_hash": "9780e020277ecf68fd05f897aa76b08028946e2ffbda09032ecad063a40ed8fa",
+        "sql_hash": "ac56968d7e9bbe2b0e8a03bb2a5f151530d36c1ffa1714b2f54cbe15cadb0f28"
+      },
+      "intervention": {
+        "compiled_sql_hash": "1a723f96974f112a7f3def4ea731ec6a0cd35ae2edb81e977dcf8044f21c5999",
+        "correct": true,
+        "elapsed_ms": 1556.3543329481035,
+        "failure": null,
+        "latency_ms": 1534.9862091243267,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "b6980e03b02d953eb60cb43d7b63cc47d80bdbd117e927eb7f3053aa829c2852",
+        "provider": "openai-compatible",
+        "response_hash": "b3ace8bd7b3703b91950025d87797033b72abf8a76602a0c900d86b92617c68a",
+        "result_hash": "9780e020277ecf68fd05f897aa76b08028946e2ffbda09032ecad063a40ed8fa"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-094",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1386.1778329592198,
+        "failure": null,
+        "latency_ms": 1362.2954580932856,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bf61a191e75eb3631ba1e9a21b0bba1171adf34e7a8e21d58d6abdbeac282ca5",
+        "result_hash": "bb7582180000738284fb9d7287d3bbf0a20de3cfef6ce76b4d2a6391baf35ee0",
+        "sql_hash": "ffa8174fd6d8da402b45a2439867129395dec9f83107e39cb34dc9e73ff263a3"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1560.5038329958916,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-097",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1166.5671251248568,
+        "failure": null,
+        "latency_ms": 1153.9765419438481,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "16c4e22b46ea7d66ea3826cc1e52330a1b096317a052ce9375204c9533bfbe15",
+        "result_hash": "55a8dd376b4aa3f519c717e9e1938fe0ba9c01b8e753d223a6d2f42924372181",
+        "sql_hash": "63b31e004e88067751cc3ff9e9ef1908935b3429565807ab7e357ed8f049547e"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1537.3071250505745,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-098",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1270.1409170404077,
+        "failure": null,
+        "latency_ms": 1254.2245001532137,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "ad090de69b4529f5b77de3d2473436958a704dcfd902de1e04ef7bc705c0f4b0",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "68ac4ee50bbbf00a1a680829ca0b7323c2fbe309b091b8ade2d21edb0d66668d"
+      },
+      "intervention": {
+        "compiled_sql_hash": "b0dd81cbc2dc8fe02a8845a71d657a000f8a1da0fb0e641860380460badbadd4",
+        "correct": true,
+        "elapsed_ms": 1417.8730838466436,
+        "failure": null,
+        "latency_ms": 1393.9448329620063,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "c46bc84a21062745c250022f40329cb24f436464bec5eb347740f06136401db2",
+        "provider": "openai-compatible",
+        "response_hash": "2d00b6c2b5e42b1d927071ecd32d9ca349157bca30fb90edfdc2316a33157e8a",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-099",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1022.7881669998169,
+        "failure": null,
+        "latency_ms": 1013.1365419365466,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "6a360a85b0de6049bdd1106d3846a28accf4f574bf8221e0c7949cb41a755029",
+        "result_hash": "1cd4ceddf47ea5a9e0b6785680669bcaef16cdef8a2c2f3b34e9b81673dc6ec5",
+        "sql_hash": "5693f917acc75b6053be263ed6a4c459962e4fff161a5e7bf248c889a73f6383"
+      },
+      "intervention": {
+        "compiled_sql_hash": "d51e5724992c548a43e21769e70c17567ba435b39047fa8487fa8a5677071bba",
+        "correct": true,
+        "elapsed_ms": 1358.3407499827445,
+        "failure": null,
+        "latency_ms": 1344.3828749004751,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "c552bdce3366b51c5634878f49920d66e33a4a2d2017f8bfb84ebf2d5b603993",
+        "provider": "openai-compatible",
+        "response_hash": "e6683371f6d1dfe03eb7c33ec0d3261f668ffffa3ce103ccc3d551f2403d7ed7",
+        "result_hash": "1cd4ceddf47ea5a9e0b6785680669bcaef16cdef8a2c2f3b34e9b81673dc6ec5"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-100",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1230.651041958481,
+        "failure": null,
+        "latency_ms": 1217.7898329682648,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "5309d4ad2633f7fe398ee60a9e6244b6c9cebedc46152ae9d8853e02520fec7c",
+        "result_hash": "dbce94b8f371d4890718393e2978ce9eb11a9e34b53ad0f8ff88bfe9eff147e0",
+        "sql_hash": "66bd6c5a8faa080ae87168cdbf33ac58521db3a48685a8c60500cdb41d8ca203"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1557.8777908813208,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-101",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1223.3147090300918,
+        "failure": null,
+        "latency_ms": 1213.0992917809635,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "02ee1be92a6db545ac16ea089d7149f6c1f4daa945d59254eb1c47f8d5c55b94",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "404bf4e7ccddf150d8aada11a9f48f37aed14e4b0329ba075c6e59adf7896a8f"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1551.8807088956237,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-102",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1115.9352080430835,
+        "failure": null,
+        "latency_ms": 1102.4870828259736,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bfab792d22c1c2b1a73c408730af19f132d507cea5b7083428a4f7066246b322",
+        "result_hash": "b8c9d05c1102f66fc13ba4d2600eaf55091960fe70975cf3893ed37f3e54d625",
+        "sql_hash": "e5f859d8ab1ad49b337ac6837b3315728931fc4a09fd71be217a31151b133bb7"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1523.3503750059754,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-103",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1624.6975830290467,
+        "failure": null,
+        "latency_ms": 1607.9613340552896,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "4246a7d0d87e036ef7b97460f230cb23b678058536f0eef884e782a4363cbea0",
+        "result_hash": "04840e6d21cc337cffeb88ea01db829cf8ed1de39413d76bea17201e80c2fdbf",
+        "sql_hash": "9ab03ec87a56bbc1e26fd726e9efb544254e4ae4e0ef7d1c3a89b6d3b87dd39c"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1771.9477501232177,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-104",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1338.9479590114206,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1328.2869160175323,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bbd41e93ee97234688719e2d20985697e23c7dc0d25f0e0d44287b090c3bd053",
+        "sql_hash": "f5ee1f5747be62dbcfe2a47691f00ad420b3f05d31a9d75d9e78cbdf450dc4e1"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1519.6339590474963,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-105",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1326.555874897167,
+        "failure": null,
+        "latency_ms": 1306.5868748817593,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "29e8ed79f068969503734f8d9915cc2e6292330da1ec3c9c3e8f263c038bee9e",
+        "result_hash": "72b24f69e866cc0222aee1be3b0e8869898c0aa1e03caa3d7b2b8042f198d9b2",
+        "sql_hash": "100e5cf89ead8c283c4a169136b6d4cbf21ef3e03539f02daa4a00884a5b6d0b"
+      },
+      "intervention": {
+        "compiled_sql_hash": "4fd76cb1017f4920c672166c400cff5dcbc275c65fd293a7fd0d46ca85a90a3e",
+        "correct": true,
+        "elapsed_ms": 1653.1457919627428,
+        "failure": null,
+        "latency_ms": 1628.0078329145908,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "d61448563a6049e53e352b5f6c36510aea780744957182879a809ca4dd778546",
+        "provider": "openai-compatible",
+        "response_hash": "db519e4ce4684df4b52af26f2431eeed7e5117d304f69c9198cb5d768a280c29",
+        "result_hash": "72b24f69e866cc0222aee1be3b0e8869898c0aa1e03caa3d7b2b8042f198d9b2"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-106",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1091.6746251750737,
+        "failure": "RESULT_MISMATCH",
+        "latency_ms": 1077.1457080263644,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "4bb3388a01d4a52dd093582d071937df489523a32eb5387593110c8c026095f4",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "ec40db5faf1ca3d0177911a821c35efc7e27477dae75991faae2befd8b976cc7"
+      },
+      "intervention": {
+        "compiled_sql_hash": "6dfc20bca5eb56c171509baeaa6551e38bfe7d8a780154bb86ade6c5c060de10",
+        "correct": true,
+        "elapsed_ms": 1462.7140411175787,
+        "failure": null,
+        "latency_ms": 1438.8976250775158,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "d7decd62837379060c9766fb2e9cbdf2235f28893e51e785b09f017352d7ae9d",
+        "provider": "openai-compatible",
+        "response_hash": "1eb59a6341a15887aa365d8bcef39ace2e81e9c6e606288474311cf1a1682c09",
+        "result_hash": "a4a40a13e33a7f14ffd0c4a0c65a1d67e70669331440cd6a568e2c5bddab5dff"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "TWO_JOINS_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-107",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1126.9425828941166,
+        "failure": null,
+        "latency_ms": 1112.353292061016,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9e0af5aefc53ee451856a47128e0218efbc06d95e39621c31921110fb9c4db2c",
+        "result_hash": "d0d458b95438c6c6b2a6bf4b83c324014429928b84d9112c07b39a19de9d428c",
+        "sql_hash": "80cf045b94beb5ca706f0188258d94c96b9c21120284e4ce2f03571c1a444c8e"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1408.6282919161022,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-110",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1156.8249999545515,
+        "failure": null,
+        "latency_ms": 1147.9505419265479,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "cbdedf311244351911092d4853479cbb2f4efcf47e6beffbee58765f528a6358",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "657fadfe9a9a807cbb6a6d0f63d647f2ccce3176530ac9cb51df249d91923214"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1241.4197090547532,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "SOURCE_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-111",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1145.3910418786108,
+        "failure": null,
+        "latency_ms": 1130.9856248553842,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "1eec0d30ed3db319f33022fbae6839426846fdcfe12fdcf2c8bd89ad6c8387b7",
+        "result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+        "sql_hash": "99bf5d3203738e2f96858708bef7d911f893f60a50cdecc9301c5567c5ffe385"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1603.806666098535,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "INTERVENTION_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-112",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1163.0862499587238,
+        "failure": null,
+        "latency_ms": 1142.2377908602357,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "a20df480e6575d5eaa0cf011d1aed1c77caf8b991aa8b114cac838dddf0fc044",
+        "result_hash": "ad16a4bb03cc371b954b5a26d3711050e6c729a157c87e98aaa0a9a63dd3f55e",
+        "sql_hash": "c3ac1a86d1875b29b94d888186f82862ba7fedd89db51079501b2d9ed5db9ef7"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1031.4799998886883,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "SOURCE_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-114",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1393.9002910628915,
+        "failure": null,
+        "latency_ms": 1371.7963751405478,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "9993bbb968dbaad09de5784e0f552ae997123cd42c1d6fbd234e0563ca50522b",
+        "result_hash": "51de5180952e03266624704b0c4b6338d7846d29e0c8f514bcb6c6823bfd1cce",
+        "sql_hash": "7a49a709f62ef5abc1a01b5ec5c52baabae13e3ef0b7ca26b76ca46ef1fa6ff0"
+      },
+      "intervention": {
+        "compiled_sql_hash": "738498f42cc5bdfcab53538a8967295a31036aca6401b7ac3850b406092ff5d1",
+        "correct": true,
+        "elapsed_ms": 1487.4479579739273,
+        "failure": null,
+        "latency_ms": 1469.9998751748353,
+        "model": "gpt-5.6-luna",
+        "operation": "intervention",
+        "plan_exactness": {
+          "applicable": true,
+          "full": true,
+          "join_type": true,
+          "predicate_columns": true,
+          "predicate_operators": true,
+          "predicate_values": true,
+          "projection": true,
+          "relationships": true,
+          "source": true
+        },
+        "plan_hash": "f2c93bfe1996a7cfccad6c4acaf03998a77773dcaaeff3b2e0c1aa87dcaf1056",
+        "provider": "openai-compatible",
+        "response_hash": "cec77d7da8e5d484796121ae7090123900ceaf70aad2a42c603940301b3c771f",
+        "result_hash": "51de5180952e03266624704b0c4b6338d7846d29e0c8f514bcb6c6823bfd1cce"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "TWO_JOINS_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-115",
+      "control": {
+        "correct": false,
+        "elapsed_ms": 1364.5481658168137,
+        "failure": "M1_REJECTION",
+        "latency_ms": 1358.0172080546618,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "bb7bb28e20cdf2132bc77df05987b496740173c9c38304a40ebd3d17590744e5",
+        "sql_hash": "4431dc102b4ab98932144901fdce04ed64ddde6832b781410934ac7cbd61baac"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1427.1712920162827,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-116",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1247.9546249378473,
+        "failure": null,
+        "latency_ms": 1230.3374998737127,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "aee907f8703216a2c1cef98b9e53151e7ae5b4719394b054bf59fe18df3adce5",
+        "result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+        "sql_hash": "dd72e07a88c4e75f3dd39ca786b360b2a5eabf51cb815ea75a78dd39a72803e3"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1310.3362498804927,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_PROJECTION",
+      "split": "PRIMARY"
+    },
+    {
+      "case_id": "m16-queryplan-117",
+      "control": {
+        "correct": true,
+        "elapsed_ms": 1219.3731248844415,
+        "failure": null,
+        "latency_ms": 1202.3344999179244,
+        "model": "gpt-5.6-luna",
+        "operation": "control",
+        "provider": "openai-compatible",
+        "response_hash": "b2486e57d23444f34fc03f6a9577841eb69b91b27543200d7998dcaede992187",
+        "result_hash": "72b24f69e866cc0222aee1be3b0e8869898c0aa1e03caa3d7b2b8042f198d9b2",
+        "sql_hash": "06b528ced390aa5d3e64add1399b2f1291600c4a83045f24b73e37b14bb8eda6"
+      },
+      "intervention": {
+        "correct": false,
+        "elapsed_ms": 1619.7217910084873,
+        "failure": "PROVIDER_FAILURE",
+        "operation": "intervention"
+      },
+      "order": "CONTROL_FIRST",
+      "shape": "ONE_JOIN_FILTER",
+      "split": "PRIMARY"
+    }
+  ],
+  "n": 90,
+  "split": "PRIMARY",
+  "version": "m16-queryplan-v1-result-1"
+}

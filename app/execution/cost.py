@@ -8,7 +8,14 @@ from app.sql.models import ExplainEstimate
 class QueryCostGate:
     def explain(self, connection: Connection, sql: str) -> ExplainEstimate:
         """Run EXPLAIN only for SQL already accepted by the AST policy."""
-        result = connection.exec_driver_sql(f"EXPLAIN (FORMAT JSON) {sql}")
+        # psycopg's DB-API paramstyle treats percent signs as placeholder
+        # syntax even when SQLAlchemy receives no bind parameters.  The
+        # doubled form is the driver's documented literal-percent spelling;
+        # it is applied only to the EXPLAIN transport copy.  PostgreSQL still
+        # receives the original candidate SQL semantics, after the unchanged
+        # parser/policy boundary above this cost gate.
+        explain_sql = sql.replace("%", "%%")
+        result = connection.exec_driver_sql(f"EXPLAIN (FORMAT JSON) {explain_sql}")
         document: Any = result.scalar_one()
         plan = document[0]["Plan"]
         return ExplainEstimate(

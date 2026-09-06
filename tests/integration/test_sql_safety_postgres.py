@@ -239,6 +239,34 @@ def test_cost_gate_rejects_before_execution(service: SqlSafetyService) -> None:
     assert result.estimate is not None
 
 
+def test_cost_gate_explains_multiple_percent_literals(service: SqlSafetyService) -> None:
+    planned = service.plan(
+        SqlCandidate(
+            sql="""SELECT name
+           FROM products
+           WHERE name LIKE '%abc%'
+              OR name LIKE 'foo%'
+              OR name LIKE '%bar'"""
+        )
+    )
+
+    assert isinstance(planned, QueryPlan)
+    assert planned.statement_type == "Select"
+
+
+def test_cost_gate_without_percent_and_policy_rejection_remain_unchanged(
+    service: SqlSafetyService,
+) -> None:
+    ordinary = service.plan(SqlCandidate(sql="SELECT id FROM products LIMIT 1"))
+    assert isinstance(ordinary, QueryPlan)
+
+    rejected = service.plan(SqlCandidate(sql="SELECT pg_read_file('/etc/passwd')"))
+    assert isinstance(rejected, SqlPlanFailure)
+    assert rejected.status is SqlSafetyStatus.POLICY_REJECTION
+    assert rejected.rejection is not None
+    assert rejected.rejection.code is PolicyCode.FORBIDDEN_FUNCTION
+
+
 def test_statement_timeout_is_enforced(service: SqlSafetyService) -> None:
     timed = SqlSafetyService(
         service.reader_engine,
@@ -257,7 +285,7 @@ def test_statement_timeout_is_enforced(service: SqlSafetyService) -> None:
            FROM orders a
            CROSS JOIN order_items b
            CROSS JOIN orders c
-           CROSS JOIN order_items d"""
+           CROSS JOIN order_items d""",
     )
 
     assert result.status is SqlSafetyStatus.EXECUTION_ERROR

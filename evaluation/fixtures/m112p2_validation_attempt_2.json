@@ -1,0 +1,1989 @@
+{
+  "classification": "M112P2_D2_INDEPENDENT_VALIDATION_PASSED",
+  "contract_hash": "49249b38e15b9557debaa19e2fc0ffb49c8aea58dec26ff9f1c30bc8051da347",
+  "corpus_version": "m112p2-validation-pairs-v2",
+  "db_calls": "diagnostic PostgreSQL only",
+  "fixture_generation": "fixed seed recreation only",
+  "gates": {
+    "V1_false_witness_precision": true,
+    "V2_required_witness_detection": true,
+    "V3_p1_defect_regressions": true,
+    "V4_reproducibility": true,
+    "V5_abstention": true,
+    "V6_safety": true,
+    "V7_resource_bounds": true
+  },
+  "metadata": {
+    "database": "decision_sql_m112p2",
+    "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "reader_role": "decision_reader",
+    "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a",
+    "transaction_read_only": "on"
+  },
+  "metrics": {
+    "NO_COUNTEREXAMPLE_FOUND": 13,
+    "equivalent_controls": 12,
+    "false_witnessed_non_equivalence": 0,
+    "fixture_invalid": 0,
+    "inconclusive": 2,
+    "known_non_equivalent": 18,
+    "query_not_executable": 0,
+    "reproducibility_rate": "100%",
+    "witness_detection_rate": "18/18",
+    "witnessed": 18
+  },
+  "p1_defect_states": {
+    "NE01_LITERAL_CASE": "NON_EQUIVALENCE_WITNESSED",
+    "NE02_OFFSET": "NON_EQUIVALENCE_WITNESSED",
+    "NE03_JOIN_USING_KEY": "NON_EQUIVALENCE_WITNESSED"
+  },
+  "provider_calls": 0,
+  "runs": [
+    [
+      {
+        "candidate_sql_hash": "4cd5977e2ce38b294be6b1b2d978d244d728ff930fcf20652e9e9e6e7f46eb12",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ01_ALIAS",
+        "reason": null,
+        "reference_sql_hash": "f5d18a187538b9ca3ba45bdbf9803cc486368d4d2ab05f525070e199129301b6",
+        "result_hash": "c9480755769b3c8e5736d9e7d35c3b44c7d7d4ba4533cf9adb8a0a1c58e1e8dc",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "904556af2a7f92ff333ef42d9fab9f62a928c632e70f2bab12cb5fad8b992b3a",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ02_CONJUNCTION",
+        "reason": null,
+        "reference_sql_hash": "8d0932222c7c7360710433199d9d914ccde00d5e05dabe3addd3d097475fa2d6",
+        "result_hash": "e44961d48eb7840b896050153df5321bafebf9baa7c60d3ca3c9ddc38aae6e23",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "33fd89ca9f4cd2054ecc76c7b49d0a33f64f91110c5df3f2d37cbbbedbde2ca4",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ03_PREDICATE",
+        "reason": null,
+        "reference_sql_hash": "e51abd373509d5c6d3bcc828174a94d66aa56479faa1676555bd0481e0691681",
+        "result_hash": "5446f6fe5585b70e60cb9a04eb8233d0a267e08a64d8c4e24994d98df5a01708",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "2792c147097f54ba3e34d3e97ca0ceb1cadcb946f22103113a04e25f76a2a578",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ04_COUNT_NONNULL",
+        "reason": null,
+        "reference_sql_hash": "33a9d8afbedc041c4567deb66740ce48849985fc1625ea93c5d070abc21700df",
+        "result_hash": "f38bff947e66e35a64e8c83828c80bc407f20b425d2057b174c7358c52d8d7b3",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ05_TOTAL_FORMULA",
+        "reason": null,
+        "reference_sql_hash": "fddf8fb02ea36a4935b5a933a3414318250772ff7e29041e91429c51152b2ecd",
+        "result_hash": "eff9604cfc2a107e52be3fd49006a4a80f88e0e7143caa8ab519c1d00d806c86",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "419cc9976286725d8a90694719f50584ad2c5ab5deaeba7b12210e835570a54d",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ06_GROUP_ORDER",
+        "reason": null,
+        "reference_sql_hash": "347e5e054ad5c7434fceef1e1728342a5f535b8ff4fc5dc409ab97d611d75b4f",
+        "result_hash": "5f7cec89f57a4a7972decabcef3105b0ffb2fc684dfe9d9fa65f94460e998cba",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "777d3723f62ffb4b669cf268c1c1bb778b229101c3b80b41a40f5bf517b0be87",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ07_ORDER_EXPLICIT_ASC",
+        "reason": null,
+        "reference_sql_hash": "e26912ef0737994d2cc744a966930a7a3e5710047d4ef722cd7a2599ca466938",
+        "result_hash": "911906423c13323ec0662d9a22e32d951ce318d441d28f3b8d2a0e2683507899",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9f399fa7bb1d5ad814e5a3cf52c5cacd7622328ffde5c33335eb6a577337b0a4",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ08_ALIAS_ORDER",
+        "reason": null,
+        "reference_sql_hash": "511acdf2a5425174fe84c99673fc7ddbd7070856e21ea2a6bdc6ef041ee6a52d",
+        "result_hash": "e7a968281ec57f54daa7e337fb6883f7573f638aefca324aad43dcaba473d6e5",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "dc4f96daaae152825d953801e2628386d89620fc6b9b44871414d4ce310cdcfc",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ09_CTE",
+        "reason": null,
+        "reference_sql_hash": "cbf255eb9e9f860b487f79b9dc0a21029dfae8e1badfad0cd7bce4fd5c1a1103",
+        "result_hash": "e5f443e719ecf7db1fe61e2e12f3a7ddc121107b54b9e43ee96ece7a8ab4f8ec",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9ae7b400feb949d41ee60c7222a1107f16211255b23828e59ceff07f8048cf9f",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ10_IN_LIST",
+        "reason": null,
+        "reference_sql_hash": "2dfc02ad37f6412fe3a9c964caaebee8227cd0dae8b263c3f34f5e42cf7eed84",
+        "result_hash": "ff97721bc8bd484fb3102df3cd12482a751b9cee5ed013baba7315a6be1e9dd4",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "44c373c6659ecb805a8dfb873fd97d0ab13715cec040b42c0a9113ef832cc9ff",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ11_CAST",
+        "reason": null,
+        "reference_sql_hash": "7c9e20581cb144a0496389770ea73dd04d539212e5844f7beb5aa1a084b3597d",
+        "result_hash": "77858bc4c767f058206e574a7ebb532f9777aa903de4a5abde3e80a1034a53bc",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "3da67cf1fca57536dea770377da0e0b3c10aa624343bd7da42e1a65a214a5d1d",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ12_DISTINCT_KEY",
+        "reason": null,
+        "reference_sql_hash": "4f7c356c8d8f51c717a245e05c5f300694a0a1a0d6fa3c8da5d97e4771433be4",
+        "result_hash": "ab1c002c7cd73f1e7beafea562677e43fe554aedb90a8f765333be9dd1e5ed46",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "84958cd3584fb87ee59bbd02ac44fd214f2dd7aaba59e3310ddba01f89453151",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE01_LITERAL_CASE",
+        "reason": null,
+        "reference_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+        "result_hash": "856ba5df2cecba66ec987173f3fcf978a7d3d670e0e0c671d8608e83c37cbc57",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "6b36d824f879deeb235d3cc4caaba02dfc8570beb75885c860c9c167416b2708",
+          "candidate_sql_hash": "84958cd3584fb87ee59bbd02ac44fd214f2dd7aaba59e3310ddba01f89453151",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b4075b4db051972cd980dd56d63a9e3fea91f09753b9b0c6484735219562f5d7",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE02_OFFSET",
+        "reason": null,
+        "reference_sql_hash": "ac560e9115cc423671232527c81cd13e776b38c3c2b73b439483ea4f2a956309",
+        "result_hash": "869a7d7508cdc5fa9e0c0534e932f76c54fbbe235a33f2d44f62cdf45b2a96ed",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 5,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 0
+          },
+          "candidate_result_hash": "0a2cf0f6d6f8f1db1bada2d90df9db3c6425f6ba7c0ac72dfaaae00e92186bb5",
+          "candidate_sql_hash": "b4075b4db051972cd980dd56d63a9e3fea91f09753b9b0c6484735219562f5d7",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+          "reference_sql_hash": "ac560e9115cc423671232527c81cd13e776b38c3c2b73b439483ea4f2a956309",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "4708fc2ede5d38e2e63c33d8ff2606d64ff41e0c16c4eb83660b92bab612af88",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE03_JOIN_USING_KEY",
+        "reason": null,
+        "reference_sql_hash": "e57c79ba11574c355e5e181e62ad96a886c7c514c356017dbf9362b22ecc5467",
+        "result_hash": "ce093461d6551af3cbeab01915d83f47e36d9c718e4b6f9a926366cd5e7df910",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "candidate_sql_hash": "4708fc2ede5d38e2e63c33d8ff2606d64ff41e0c16c4eb83660b92bab612af88",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "b778c06cca2c1e83e94f4a16f2c80016045f8c0fd53651de1e35aa3168f8342f",
+          "reference_sql_hash": "e57c79ba11574c355e5e181e62ad96a886c7c514c356017dbf9362b22ecc5467",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE04_LEFT_INNER",
+        "reason": null,
+        "reference_sql_hash": "227decbab9375a407dc86117c79ae7bde745443b1b5cae35086c1b8c3b212c7e",
+        "result_hash": "d68d7a8816bc45e325b792247838c6dd3bfc11d1f45335b4b3821717bd8344d2",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "227decbab9375a407dc86117c79ae7bde745443b1b5cae35086c1b8c3b212c7e",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8c7cee6829820feb88fff15059abd461dd331d2ac4aca2fc5374656abbb2c4af",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE05_BAG_MULTIPLICITY",
+        "reason": null,
+        "reference_sql_hash": "9cee837de275ed5656719158c773e99e4837bd7c3e532a09029233eb6975b171",
+        "result_hash": "53de9b4d0a378b6c316f81ecb6edc5378f28740079a65430755efe0e1f323c3c",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "a9753b63782d2ad5fa90fc446229805bccfe108f94a13968f788f43207dab075",
+          "candidate_sql_hash": "8c7cee6829820feb88fff15059abd461dd331d2ac4aca2fc5374656abbb2c4af",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "reference_sql_hash": "9cee837de275ed5656719158c773e99e4837bd7c3e532a09029233eb6975b171",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "85cfacbb6bbb174cf9e5e2722bdd35bafa969e29c48f167634e65a73945b3175",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE06_NULL_THREE_VALUED",
+        "reason": null,
+        "reference_sql_hash": "74cd81553893dcbfd4e2beb3fe5d6ea454c5814681daf2ddb644054eb7aac5d6",
+        "result_hash": "3b984a6f989967f9ce13e66a7a5ec373caa95e7cc9bbd37584531ea09996c3f8",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "6e933e30831fb52a19862a0dd9dc8983bf6da63761d143367ed66d0a59830a3e",
+          "candidate_sql_hash": "85cfacbb6bbb174cf9e5e2722bdd35bafa969e29c48f167634e65a73945b3175",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "6b36d824f879deeb235d3cc4caaba02dfc8570beb75885c860c9c167416b2708",
+          "reference_sql_hash": "74cd81553893dcbfd4e2beb3fe5d6ea454c5814681daf2ddb644054eb7aac5d6",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE07_COUNT_STAR_NULL",
+        "reason": null,
+        "reference_sql_hash": "6c437f267a40acaf6bcaf12f2439ad47ec92e2d1e2f4ded8e0aee722cc379382",
+        "result_hash": "ad5b48b0b45be8383915b82808d765996412e419d19ecc4d44a0604cfa886fc7",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "6c437f267a40acaf6bcaf12f2439ad47ec92e2d1e2f4ded8e0aee722cc379382",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "f29b4affea5f5744c11811270de563d1ebb16d5b2d1f563074b5e52bf56ff6b6",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE08_COUNT_DISTINCT",
+        "reason": null,
+        "reference_sql_hash": "a1b05b1ece6bd46a383931dd02eb979c2a997bff1f474aa22e5674d3eb8e3533",
+        "result_hash": "e756812c07d0bf02aeddea6ada77bf21bd9cb39611eca29b2a42d6a30421b388",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "candidate_sql_hash": "f29b4affea5f5744c11811270de563d1ebb16d5b2d1f563074b5e52bf56ff6b6",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "reference_sql_hash": "a1b05b1ece6bd46a383931dd02eb979c2a997bff1f474aa22e5674d3eb8e3533",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE09_SUM_AVG",
+        "reason": null,
+        "reference_sql_hash": "448b638ba7411eb1661372a1ffa407c528f8a6da927c66c1420542b43f8d5d6b",
+        "result_hash": "77a9a9082c04511814b2441cc913689934740911f9583d4e9278c152ad0c1675",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "sum"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "avg"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "340b1f120cbd983a0392c6cdb95ab5fb906ac0e8fc143f380d6092f6de48001a",
+          "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "278f63672e1400478a2f35a99b5496db82fba2a80f7b5243f428d44384187da0",
+          "reference_sql_hash": "448b638ba7411eb1661372a1ffa407c528f8a6da927c66c1420542b43f8d5d6b",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "fd7fa16aaf8de8d4182cd98ddc3a53192e0861403c069b3480180f647e6e537e",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE10_GROUP_GRAIN",
+        "reason": null,
+        "reference_sql_hash": "a4be105549e50b48dc36d23f7af7d9edfe30de593e9ceea14ba362149029d8b5",
+        "result_hash": "a8f2eeb42ab0b74dde134a776f46fa4c6e1f0a109a11b8132cc45e60633d46f3",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "candidate_sql_hash": "fd7fa16aaf8de8d4182cd98ddc3a53192e0861403c069b3480180f647e6e537e",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "reference_sql_hash": "a4be105549e50b48dc36d23f7af7d9edfe30de593e9ceea14ba362149029d8b5",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE11_FILTER_BOUNDARY",
+        "reason": null,
+        "reference_sql_hash": "b3b4e973d922eaeee730f8352649ed7f968c3f968b6736d98baace7da00eedba",
+        "result_hash": "5e426dcaaaa43afa21708ceb2c9038ad12367d01d219a339d9ec93f55a47c119",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "candidate_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "reference_sql_hash": "b3b4e973d922eaeee730f8352649ed7f968c3f968b6736d98baace7da00eedba",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8373cc3701fc45b72edcadbeac4111598114d883e7228df92aa4af507f1dea05",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE12_WINDOW_PARTITION",
+        "reason": null,
+        "reference_sql_hash": "99a4a08b1b52455e5c8d5c80dc7002631b7e5848d0599f3dd6a7a8133b8b29ed",
+        "result_hash": "d72753c55ed410a20d75612f30547ebacc1bd568bd99281ac718fb154dee9fe1",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "candidate_sql_hash": "8373cc3701fc45b72edcadbeac4111598114d883e7228df92aa4af507f1dea05",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "6e933e30831fb52a19862a0dd9dc8983bf6da63761d143367ed66d0a59830a3e",
+          "reference_sql_hash": "99a4a08b1b52455e5c8d5c80dc7002631b7e5848d0599f3dd6a7a8133b8b29ed",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "0dbc04ef50ee3d076ed60f158741fa6099a12884e34679cab272be2aafc889b0",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE13_WINDOW_ORDER",
+        "reason": null,
+        "reference_sql_hash": "abff5a6b08e6ed246c339678a03c2b78da305937a43fe6c6f56348806660a6a8",
+        "result_hash": "ca54c4398dedffa7bbd7c8ec5a197db6fd70702881a475b6353106a47ae6cf3c",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id",
+              "row_number"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "id",
+              "row_number"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "51bd9c9a38db2988e39c980d3dd8f11fee10d34bf39aa8df518813b9caf8b5e1",
+          "candidate_sql_hash": "0dbc04ef50ee3d076ed60f158741fa6099a12884e34679cab272be2aafc889b0",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "4952321f055d68ee2486104368486052d7d5cd7d6c6fcaaba1ba567e991e064e",
+          "reference_sql_hash": "abff5a6b08e6ed246c339678a03c2b78da305937a43fe6c6f56348806660a6a8",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "556da25c4a49f68a48fe76240df96f190176aafaeeafbd8d642f788acfe9c140",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE14_WINDOW_FRAME",
+        "reason": null,
+        "reference_sql_hash": "36ea0cb5e6247acdc6f7a377a9bd30312779fc5ceb9c2dc1b3d7f7e0846d687b",
+        "result_hash": "df0f51a8a0eb3168d35cdb0869135628fb8dce00b84f0352e87f20fc02f2c877",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id",
+              "running_price"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "id",
+              "running_price"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "3847283a89d81d9fdf849cc4b95c33d2b39a8c747653dfa98ae40643bbdcc20a",
+          "candidate_sql_hash": "556da25c4a49f68a48fe76240df96f190176aafaeeafbd8d642f788acfe9c140",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ac1705f389adb61b04f195d20dd4b68e9c6561080a8acc8a0c566dceafdfac3f",
+          "reference_sql_hash": "36ea0cb5e6247acdc6f7a377a9bd30312779fc5ceb9c2dc1b3d7f7e0846d687b",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "2ac0721a312471cf08140d454566c723280e791e0b24775374e7b7d6021d82a8",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE15_ORDER_PRIORITY",
+        "reason": null,
+        "reference_sql_hash": "1b65d330bed0d369bb41f35010ceb415b345d748bd9984e93e5992865e0b1fc2",
+        "result_hash": "580cd34420736ce411496a8cc9ece0210d0806d5fb7a71b6e861e7ae0aaddd20",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 3,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 3
+          },
+          "candidate_result_hash": "0eaa75d33ed00dd427c855bd4b83bd33516b4400e2e1b7af1babf0c5516c695b",
+          "candidate_sql_hash": "2ac0721a312471cf08140d454566c723280e791e0b24775374e7b7d6021d82a8",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ad80f409e92c6a772751cca1d818bfdeea4ec87f292b7c504f34b57db33c17e8",
+          "reference_sql_hash": "1b65d330bed0d369bb41f35010ceb415b345d748bd9984e93e5992865e0b1fc2",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "1ebb2065bd66812add95c188557c7a74eb97149eb220993c73b524cacdb21499",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE16_LIMIT",
+        "reason": null,
+        "reference_sql_hash": "68f2c43c9e45639514789c5a9640e1d84b290ab0ecd9b0d0be9271a2c7a1b0b6",
+        "result_hash": "1b08f4436738c7d294b3a027411edadf453af5a0eade549e20972e32c4ae6486",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 3,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 4
+          },
+          "candidate_result_hash": "ad80f409e92c6a772751cca1d818bfdeea4ec87f292b7c504f34b57db33c17e8",
+          "candidate_sql_hash": "1ebb2065bd66812add95c188557c7a74eb97149eb220993c73b524cacdb21499",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "93f318fb8a7e54ba0e4882f4e3133dd875e5215e167c4733900733f376c4ad7c",
+          "reference_sql_hash": "68f2c43c9e45639514789c5a9640e1d84b290ab0ecd9b0d0be9271a2c7a1b0b6",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE17_FORMULA",
+        "reason": null,
+        "reference_sql_hash": "190072617e91fc45ea3899a5fb1677a052ec53dcfe6e994fa80eeb8a2a2dfa5d",
+        "result_hash": "3745f26e16eaba29ddf41f389e1f5de1c9ca227a2006acf1c7f7e8ecd6d8a865",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "sum"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "sum"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "340b1f120cbd983a0392c6cdb95ab5fb906ac0e8fc143f380d6092f6de48001a",
+          "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "7a7b6d5aa69d008be1256ac9e9bdf227a56664ec2b10886eb74b65a7234dc350",
+          "reference_sql_hash": "190072617e91fc45ea3899a5fb1677a052ec53dcfe6e994fa80eeb8a2a2dfa5d",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE18_PROJECTION_VALUE",
+        "reason": null,
+        "reference_sql_hash": "c5df6ddc8fc1335e6f048f5f5df7285aabb8b02db4baba13db23a3c46f3ec61e",
+        "result_hash": "ef6e8d10bad334d2573bf92ded4b0c60deb15e6740edb947992748bf7bdd9c96",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "name"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "d84d9791549b4d3d44ecd774c3512c1211fbc15422cfb663b4bd9dd38693dc50",
+          "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+          "comparison_mode": "VALUE_BAG",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "b45768812c32d89f8e80a9392c7b996384d3a4541f282a68eba3b5c99db7d650",
+          "reference_sql_hash": "c5df6ddc8fc1335e6f048f5f5df7285aabb8b02db4baba13db23a3c46f3ec61e",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "c17a265f8d62b5c6440f7d016c0122b672404614cb4741fd458027fb5d88f57a",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB01_UNSAFE_WRITE",
+        "reason": "one or both read-only diagnostic executions failed",
+        "reference_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "result_hash": "442c9339007539a6e4ec75ad6919e67b7cf9e96bb12da0f73d2c643b928c979d",
+        "state": "EXECUTION_INCONCLUSIVE",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9dbe49d079d815452248ceb9a2416620999c5e6344ac0828727b18ca3e9e16c1",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB02_INVALID_SQL",
+        "reason": "one or both read-only diagnostic executions failed",
+        "reference_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "result_hash": "bcf78582102d22fa54eb424186ec51468e4db49e10600919a2d3bbd222414cf7",
+        "state": "EXECUTION_INCONCLUSIVE",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB03_UNORDERED_ORDER_ONLY",
+        "reason": null,
+        "reference_sql_hash": "81ad94855650c3e37406d2d8adce368c2890b7286cdcd25b4017816ca3a65b37",
+        "result_hash": "dbc2197962abeb0df296d4f272e787c22b182110498f410e6e1de795d95c30a6",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      }
+    ],
+    [
+      {
+        "candidate_sql_hash": "4cd5977e2ce38b294be6b1b2d978d244d728ff930fcf20652e9e9e6e7f46eb12",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ01_ALIAS",
+        "reason": null,
+        "reference_sql_hash": "f5d18a187538b9ca3ba45bdbf9803cc486368d4d2ab05f525070e199129301b6",
+        "result_hash": "c9480755769b3c8e5736d9e7d35c3b44c7d7d4ba4533cf9adb8a0a1c58e1e8dc",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "904556af2a7f92ff333ef42d9fab9f62a928c632e70f2bab12cb5fad8b992b3a",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ02_CONJUNCTION",
+        "reason": null,
+        "reference_sql_hash": "8d0932222c7c7360710433199d9d914ccde00d5e05dabe3addd3d097475fa2d6",
+        "result_hash": "e44961d48eb7840b896050153df5321bafebf9baa7c60d3ca3c9ddc38aae6e23",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "33fd89ca9f4cd2054ecc76c7b49d0a33f64f91110c5df3f2d37cbbbedbde2ca4",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ03_PREDICATE",
+        "reason": null,
+        "reference_sql_hash": "e51abd373509d5c6d3bcc828174a94d66aa56479faa1676555bd0481e0691681",
+        "result_hash": "5446f6fe5585b70e60cb9a04eb8233d0a267e08a64d8c4e24994d98df5a01708",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "2792c147097f54ba3e34d3e97ca0ceb1cadcb946f22103113a04e25f76a2a578",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ04_COUNT_NONNULL",
+        "reason": null,
+        "reference_sql_hash": "33a9d8afbedc041c4567deb66740ce48849985fc1625ea93c5d070abc21700df",
+        "result_hash": "f38bff947e66e35a64e8c83828c80bc407f20b425d2057b174c7358c52d8d7b3",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ05_TOTAL_FORMULA",
+        "reason": null,
+        "reference_sql_hash": "fddf8fb02ea36a4935b5a933a3414318250772ff7e29041e91429c51152b2ecd",
+        "result_hash": "eff9604cfc2a107e52be3fd49006a4a80f88e0e7143caa8ab519c1d00d806c86",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "419cc9976286725d8a90694719f50584ad2c5ab5deaeba7b12210e835570a54d",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ06_GROUP_ORDER",
+        "reason": null,
+        "reference_sql_hash": "347e5e054ad5c7434fceef1e1728342a5f535b8ff4fc5dc409ab97d611d75b4f",
+        "result_hash": "5f7cec89f57a4a7972decabcef3105b0ffb2fc684dfe9d9fa65f94460e998cba",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "777d3723f62ffb4b669cf268c1c1bb778b229101c3b80b41a40f5bf517b0be87",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ07_ORDER_EXPLICIT_ASC",
+        "reason": null,
+        "reference_sql_hash": "e26912ef0737994d2cc744a966930a7a3e5710047d4ef722cd7a2599ca466938",
+        "result_hash": "911906423c13323ec0662d9a22e32d951ce318d441d28f3b8d2a0e2683507899",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9f399fa7bb1d5ad814e5a3cf52c5cacd7622328ffde5c33335eb6a577337b0a4",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ08_ALIAS_ORDER",
+        "reason": null,
+        "reference_sql_hash": "511acdf2a5425174fe84c99673fc7ddbd7070856e21ea2a6bdc6ef041ee6a52d",
+        "result_hash": "e7a968281ec57f54daa7e337fb6883f7573f638aefca324aad43dcaba473d6e5",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "dc4f96daaae152825d953801e2628386d89620fc6b9b44871414d4ce310cdcfc",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ09_CTE",
+        "reason": null,
+        "reference_sql_hash": "cbf255eb9e9f860b487f79b9dc0a21029dfae8e1badfad0cd7bce4fd5c1a1103",
+        "result_hash": "e5f443e719ecf7db1fe61e2e12f3a7ddc121107b54b9e43ee96ece7a8ab4f8ec",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9ae7b400feb949d41ee60c7222a1107f16211255b23828e59ceff07f8048cf9f",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ10_IN_LIST",
+        "reason": null,
+        "reference_sql_hash": "2dfc02ad37f6412fe3a9c964caaebee8227cd0dae8b263c3f34f5e42cf7eed84",
+        "result_hash": "ff97721bc8bd484fb3102df3cd12482a751b9cee5ed013baba7315a6be1e9dd4",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "44c373c6659ecb805a8dfb873fd97d0ab13715cec040b42c0a9113ef832cc9ff",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ11_CAST",
+        "reason": null,
+        "reference_sql_hash": "7c9e20581cb144a0496389770ea73dd04d539212e5844f7beb5aa1a084b3597d",
+        "result_hash": "77858bc4c767f058206e574a7ebb532f9777aa903de4a5abde3e80a1034a53bc",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "3da67cf1fca57536dea770377da0e0b3c10aa624343bd7da42e1a65a214a5d1d",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "EQ12_DISTINCT_KEY",
+        "reason": null,
+        "reference_sql_hash": "4f7c356c8d8f51c717a245e05c5f300694a0a1a0d6fa3c8da5d97e4771433be4",
+        "result_hash": "ab1c002c7cd73f1e7beafea562677e43fe554aedb90a8f765333be9dd1e5ed46",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "84958cd3584fb87ee59bbd02ac44fd214f2dd7aaba59e3310ddba01f89453151",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE01_LITERAL_CASE",
+        "reason": null,
+        "reference_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+        "result_hash": "856ba5df2cecba66ec987173f3fcf978a7d3d670e0e0c671d8608e83c37cbc57",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "6b36d824f879deeb235d3cc4caaba02dfc8570beb75885c860c9c167416b2708",
+          "candidate_sql_hash": "84958cd3584fb87ee59bbd02ac44fd214f2dd7aaba59e3310ddba01f89453151",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b4075b4db051972cd980dd56d63a9e3fea91f09753b9b0c6484735219562f5d7",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE02_OFFSET",
+        "reason": null,
+        "reference_sql_hash": "ac560e9115cc423671232527c81cd13e776b38c3c2b73b439483ea4f2a956309",
+        "result_hash": "869a7d7508cdc5fa9e0c0534e932f76c54fbbe235a33f2d44f62cdf45b2a96ed",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 5,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 0
+          },
+          "candidate_result_hash": "0a2cf0f6d6f8f1db1bada2d90df9db3c6425f6ba7c0ac72dfaaae00e92186bb5",
+          "candidate_sql_hash": "b4075b4db051972cd980dd56d63a9e3fea91f09753b9b0c6484735219562f5d7",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "283e33fc3cb40a68241d6fca0e3d75c3eb6b2989e349b2a054304877c5f3d9fd",
+          "reference_sql_hash": "ac560e9115cc423671232527c81cd13e776b38c3c2b73b439483ea4f2a956309",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "4708fc2ede5d38e2e63c33d8ff2606d64ff41e0c16c4eb83660b92bab612af88",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE03_JOIN_USING_KEY",
+        "reason": null,
+        "reference_sql_hash": "e57c79ba11574c355e5e181e62ad96a886c7c514c356017dbf9362b22ecc5467",
+        "result_hash": "ce093461d6551af3cbeab01915d83f47e36d9c718e4b6f9a926366cd5e7df910",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "candidate_sql_hash": "4708fc2ede5d38e2e63c33d8ff2606d64ff41e0c16c4eb83660b92bab612af88",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "b778c06cca2c1e83e94f4a16f2c80016045f8c0fd53651de1e35aa3168f8342f",
+          "reference_sql_hash": "e57c79ba11574c355e5e181e62ad96a886c7c514c356017dbf9362b22ecc5467",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE04_LEFT_INNER",
+        "reason": null,
+        "reference_sql_hash": "227decbab9375a407dc86117c79ae7bde745443b1b5cae35086c1b8c3b212c7e",
+        "result_hash": "d68d7a8816bc45e325b792247838c6dd3bfc11d1f45335b4b3821717bd8344d2",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "227decbab9375a407dc86117c79ae7bde745443b1b5cae35086c1b8c3b212c7e",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8c7cee6829820feb88fff15059abd461dd331d2ac4aca2fc5374656abbb2c4af",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE05_BAG_MULTIPLICITY",
+        "reason": null,
+        "reference_sql_hash": "9cee837de275ed5656719158c773e99e4837bd7c3e532a09029233eb6975b171",
+        "result_hash": "53de9b4d0a378b6c316f81ecb6edc5378f28740079a65430755efe0e1f323c3c",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "a9753b63782d2ad5fa90fc446229805bccfe108f94a13968f788f43207dab075",
+          "candidate_sql_hash": "8c7cee6829820feb88fff15059abd461dd331d2ac4aca2fc5374656abbb2c4af",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "reference_sql_hash": "9cee837de275ed5656719158c773e99e4837bd7c3e532a09029233eb6975b171",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "85cfacbb6bbb174cf9e5e2722bdd35bafa969e29c48f167634e65a73945b3175",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE06_NULL_THREE_VALUED",
+        "reason": null,
+        "reference_sql_hash": "74cd81553893dcbfd4e2beb3fe5d6ea454c5814681daf2ddb644054eb7aac5d6",
+        "result_hash": "3b984a6f989967f9ce13e66a7a5ec373caa95e7cc9bbd37584531ea09996c3f8",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "6e933e30831fb52a19862a0dd9dc8983bf6da63761d143367ed66d0a59830a3e",
+          "candidate_sql_hash": "85cfacbb6bbb174cf9e5e2722bdd35bafa969e29c48f167634e65a73945b3175",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "6b36d824f879deeb235d3cc4caaba02dfc8570beb75885c860c9c167416b2708",
+          "reference_sql_hash": "74cd81553893dcbfd4e2beb3fe5d6ea454c5814681daf2ddb644054eb7aac5d6",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE07_COUNT_STAR_NULL",
+        "reason": null,
+        "reference_sql_hash": "6c437f267a40acaf6bcaf12f2439ad47ec92e2d1e2f4ded8e0aee722cc379382",
+        "result_hash": "ad5b48b0b45be8383915b82808d765996412e419d19ecc4d44a0604cfa886fc7",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "56c56c962276218e76a05733989ec24139e602b338a1da76e4f42207b2dd44e1",
+          "candidate_sql_hash": "b2f267af6d911f43e072fa3972095fe8a296677930ca39724ce88e3e3d758810",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "reference_sql_hash": "6c437f267a40acaf6bcaf12f2439ad47ec92e2d1e2f4ded8e0aee722cc379382",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "f29b4affea5f5744c11811270de563d1ebb16d5b2d1f563074b5e52bf56ff6b6",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE08_COUNT_DISTINCT",
+        "reason": null,
+        "reference_sql_hash": "a1b05b1ece6bd46a383931dd02eb979c2a997bff1f474aa22e5674d3eb8e3533",
+        "result_hash": "e756812c07d0bf02aeddea6ada77bf21bd9cb39611eca29b2a42d6a30421b388",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "candidate_sql_hash": "f29b4affea5f5744c11811270de563d1ebb16d5b2d1f563074b5e52bf56ff6b6",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "reference_sql_hash": "a1b05b1ece6bd46a383931dd02eb979c2a997bff1f474aa22e5674d3eb8e3533",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE09_SUM_AVG",
+        "reason": null,
+        "reference_sql_hash": "448b638ba7411eb1661372a1ffa407c528f8a6da927c66c1420542b43f8d5d6b",
+        "result_hash": "77a9a9082c04511814b2441cc913689934740911f9583d4e9278c152ad0c1675",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "sum"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "avg"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "340b1f120cbd983a0392c6cdb95ab5fb906ac0e8fc143f380d6092f6de48001a",
+          "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "278f63672e1400478a2f35a99b5496db82fba2a80f7b5243f428d44384187da0",
+          "reference_sql_hash": "448b638ba7411eb1661372a1ffa407c528f8a6da927c66c1420542b43f8d5d6b",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "fd7fa16aaf8de8d4182cd98ddc3a53192e0861403c069b3480180f647e6e537e",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE10_GROUP_GRAIN",
+        "reason": null,
+        "reference_sql_hash": "a4be105549e50b48dc36d23f7af7d9edfe30de593e9ceea14ba362149029d8b5",
+        "result_hash": "a8f2eeb42ab0b74dde134a776f46fa4c6e1f0a109a11b8132cc45e60633d46f3",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "candidate_sql_hash": "fd7fa16aaf8de8d4182cd98ddc3a53192e0861403c069b3480180f647e6e537e",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "reference_sql_hash": "a4be105549e50b48dc36d23f7af7d9edfe30de593e9ceea14ba362149029d8b5",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE11_FILTER_BOUNDARY",
+        "reason": null,
+        "reference_sql_hash": "b3b4e973d922eaeee730f8352649ed7f968c3f968b6736d98baace7da00eedba",
+        "result_hash": "5e426dcaaaa43afa21708ceb2c9038ad12367d01d219a339d9ec93f55a47c119",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "08ce1fa143a9053a3fa41124418222a80aeb6da3d750dc9136e7a035a51e6c52",
+          "candidate_sql_hash": "fa312675fe784dc187bec347ea440783f4b8aac43632e7ade83e7defe7a7342d",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "44e4c495de46e1522080265e5c1eea85c627372e67b7087673fbe34ab4d662a5",
+          "reference_sql_hash": "b3b4e973d922eaeee730f8352649ed7f968c3f968b6736d98baace7da00eedba",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8373cc3701fc45b72edcadbeac4111598114d883e7228df92aa4af507f1dea05",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE12_WINDOW_PARTITION",
+        "reason": null,
+        "reference_sql_hash": "99a4a08b1b52455e5c8d5c80dc7002631b7e5848d0599f3dd6a7a8133b8b29ed",
+        "result_hash": "d72753c55ed410a20d75612f30547ebacc1bd568bd99281ac718fb154dee9fe1",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "count"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "count"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "ea98e1b3357726d4e1d300dae2e1cff1c56c1a3eb02f95c65416613bc16f7ff5",
+          "candidate_sql_hash": "8373cc3701fc45b72edcadbeac4111598114d883e7228df92aa4af507f1dea05",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "6e933e30831fb52a19862a0dd9dc8983bf6da63761d143367ed66d0a59830a3e",
+          "reference_sql_hash": "99a4a08b1b52455e5c8d5c80dc7002631b7e5848d0599f3dd6a7a8133b8b29ed",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "0dbc04ef50ee3d076ed60f158741fa6099a12884e34679cab272be2aafc889b0",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE13_WINDOW_ORDER",
+        "reason": null,
+        "reference_sql_hash": "abff5a6b08e6ed246c339678a03c2b78da305937a43fe6c6f56348806660a6a8",
+        "result_hash": "ca54c4398dedffa7bbd7c8ec5a197db6fd70702881a475b6353106a47ae6cf3c",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id",
+              "row_number"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "id",
+              "row_number"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "51bd9c9a38db2988e39c980d3dd8f11fee10d34bf39aa8df518813b9caf8b5e1",
+          "candidate_sql_hash": "0dbc04ef50ee3d076ed60f158741fa6099a12884e34679cab272be2aafc889b0",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "4952321f055d68ee2486104368486052d7d5cd7d6c6fcaaba1ba567e991e064e",
+          "reference_sql_hash": "abff5a6b08e6ed246c339678a03c2b78da305937a43fe6c6f56348806660a6a8",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "556da25c4a49f68a48fe76240df96f190176aafaeeafbd8d642f788acfe9c140",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE14_WINDOW_FRAME",
+        "reason": null,
+        "reference_sql_hash": "36ea0cb5e6247acdc6f7a377a9bd30312779fc5ceb9c2dc1b3d7f7e0846d687b",
+        "result_hash": "df0f51a8a0eb3168d35cdb0869135628fb8dce00b84f0352e87f20fc02f2c877",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id",
+              "running_price"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "id",
+              "running_price"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "3847283a89d81d9fdf849cc4b95c33d2b39a8c747653dfa98ae40643bbdcc20a",
+          "candidate_sql_hash": "556da25c4a49f68a48fe76240df96f190176aafaeeafbd8d642f788acfe9c140",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ac1705f389adb61b04f195d20dd4b68e9c6561080a8acc8a0c566dceafdfac3f",
+          "reference_sql_hash": "36ea0cb5e6247acdc6f7a377a9bd30312779fc5ceb9c2dc1b3d7f7e0846d687b",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "2ac0721a312471cf08140d454566c723280e791e0b24775374e7b7d6021d82a8",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE15_ORDER_PRIORITY",
+        "reason": null,
+        "reference_sql_hash": "1b65d330bed0d369bb41f35010ceb415b345d748bd9984e93e5992865e0b1fc2",
+        "result_hash": "580cd34420736ce411496a8cc9ece0210d0806d5fb7a71b6e861e7ae0aaddd20",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 3,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 3
+          },
+          "candidate_result_hash": "0eaa75d33ed00dd427c855bd4b83bd33516b4400e2e1b7af1babf0c5516c695b",
+          "candidate_sql_hash": "2ac0721a312471cf08140d454566c723280e791e0b24775374e7b7d6021d82a8",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "ad80f409e92c6a772751cca1d818bfdeea4ec87f292b7c504f34b57db33c17e8",
+          "reference_sql_hash": "1b65d330bed0d369bb41f35010ceb415b345d748bd9984e93e5992865e0b1fc2",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "1ebb2065bd66812add95c188557c7a74eb97149eb220993c73b524cacdb21499",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE16_LIMIT",
+        "reason": null,
+        "reference_sql_hash": "68f2c43c9e45639514789c5a9640e1d84b290ab0ecd9b0d0be9271a2c7a1b0b6",
+        "result_hash": "1b08f4436738c7d294b3a027411edadf453af5a0eade549e20972e32c4ae6486",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 3,
+            "reference_columns": [
+              "id"
+            ],
+            "reference_rows": 4
+          },
+          "candidate_result_hash": "ad80f409e92c6a772751cca1d818bfdeea4ec87f292b7c504f34b57db33c17e8",
+          "candidate_sql_hash": "1ebb2065bd66812add95c188557c7a74eb97149eb220993c73b524cacdb21499",
+          "comparison_mode": "VALUE_ORDERED",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "93f318fb8a7e54ba0e4882f4e3133dd875e5215e167c4733900733f376c4ad7c",
+          "reference_sql_hash": "68f2c43c9e45639514789c5a9640e1d84b290ab0ecd9b0d0be9271a2c7a1b0b6",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE17_FORMULA",
+        "reason": null,
+        "reference_sql_hash": "190072617e91fc45ea3899a5fb1677a052ec53dcfe6e994fa80eeb8a2a2dfa5d",
+        "result_hash": "3745f26e16eaba29ddf41f389e1f5de1c9ca227a2006acf1c7f7e8ecd6d8a865",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "sum"
+            ],
+            "candidate_rows": 1,
+            "reference_columns": [
+              "sum"
+            ],
+            "reference_rows": 1
+          },
+          "candidate_result_hash": "340b1f120cbd983a0392c6cdb95ab5fb906ac0e8fc143f380d6092f6de48001a",
+          "candidate_sql_hash": "8f908d2db00387f54038dbf76fccd6951773e7a310dfc94632a9ff79f89c7a00",
+          "comparison_mode": "SCALAR",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "7a7b6d5aa69d008be1256ac9e9bdf227a56664ec2b10886eb74b65a7234dc350",
+          "reference_sql_hash": "190072617e91fc45ea3899a5fb1677a052ec53dcfe6e994fa80eeb8a2a2dfa5d",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "fixture_attempts": [
+          "BASELINE_DENSE"
+        ],
+        "pair_id": "NE18_PROJECTION_VALUE",
+        "reason": null,
+        "reference_sql_hash": "c5df6ddc8fc1335e6f048f5f5df7285aabb8b02db4baba13db23a3c46f3ec61e",
+        "result_hash": "ef6e8d10bad334d2573bf92ded4b0c60deb15e6740edb947992748bf7bdd9c96",
+        "state": "NON_EQUIVALENCE_WITNESSED",
+        "witness": {
+          "bounded_summary": {
+            "candidate_columns": [
+              "id"
+            ],
+            "candidate_rows": 24,
+            "reference_columns": [
+              "name"
+            ],
+            "reference_rows": 24
+          },
+          "candidate_result_hash": "d84d9791549b4d3d44ecd774c3512c1211fbc15422cfb663b4bd9dd38693dc50",
+          "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+          "comparison_mode": "VALUE_BAG",
+          "diagnostic_state": "NON_EQUIVALENCE_WITNESSED",
+          "engine_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+          "fixture_hash": "2c1956a66442994c77c5e03d5bcbe41ade1fd8c73a1909fcafd8a4045fd0ab8d",
+          "fixture_id": "BASELINE_DENSE",
+          "reference_result_hash": "b45768812c32d89f8e80a9392c7b996384d3a4541f282a68eba3b5c99db7d650",
+          "reference_sql_hash": "c5df6ddc8fc1335e6f048f5f5df7285aabb8b02db4baba13db23a3c46f3ec61e",
+          "scenario_tags": [
+            "baseline",
+            "dense"
+          ],
+          "schema_hash": "a4ba8671d4a43c8fe3a9f21b676935ea25868b9cf37bcf20d8ea421f677d448a"
+        }
+      },
+      {
+        "candidate_sql_hash": "c17a265f8d62b5c6440f7d016c0122b672404614cb4741fd458027fb5d88f57a",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB01_UNSAFE_WRITE",
+        "reason": "one or both read-only diagnostic executions failed",
+        "reference_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "result_hash": "442c9339007539a6e4ec75ad6919e67b7cf9e96bb12da0f73d2c643b928c979d",
+        "state": "EXECUTION_INCONCLUSIVE",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "9dbe49d079d815452248ceb9a2416620999c5e6344ac0828727b18ca3e9e16c1",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB02_INVALID_SQL",
+        "reason": "one or both read-only diagnostic executions failed",
+        "reference_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "result_hash": "bcf78582102d22fa54eb424186ec51468e4db49e10600919a2d3bbd222414cf7",
+        "state": "EXECUTION_INCONCLUSIVE",
+        "witness": null
+      },
+      {
+        "candidate_sql_hash": "3cc55a08b750fde225751260c2fe14e8d96e6c111487423ca13a5cb5e76846eb",
+        "fixture_attempts": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "pair_id": "AB03_UNORDERED_ORDER_ONLY",
+        "reason": null,
+        "reference_sql_hash": "81ad94855650c3e37406d2d8adce368c2890b7286cdcd25b4017816ca3a65b37",
+        "result_hash": "dbc2197962abeb0df296d4f272e787c22b182110498f410e6e1de795d95c30a6",
+        "state": "NO_COUNTEREXAMPLE_FOUND",
+        "witness": null
+      }
+    ]
+  ],
+  "sql_execution": "diagnostic PostgreSQL only",
+  "validation_attempt": 2
+}

@@ -1,0 +1,284 @@
+{
+  "correction_delta": {
+    "CONTROL_1": "SELECT FROM products -> SELECT * FRM products",
+    "CONTROL_2": "window frame pair now projects stable id and uses top-level ORDER BY id"
+  },
+  "pairs": [
+    {
+      "candidate_sql": "SELECT id, name FROM products",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ01_ALIAS",
+      "reference_sql": "SELECT p.id, p.name FROM products AS p"
+    },
+    {
+      "candidate_sql": "SELECT id FROM customers WHERE id <= 5 AND region_id = 1",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ02_CONJUNCTION",
+      "reference_sql": "SELECT id FROM customers WHERE region_id = 1 AND id <= 5"
+    },
+    {
+      "candidate_sql": "SELECT id FROM products WHERE id = 1",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ03_PREDICATE",
+      "reference_sql": "SELECT id FROM products WHERE 1 = id"
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM products",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ04_COUNT_NONNULL",
+      "reference_sql": "SELECT COUNT(id) FROM products"
+    },
+    {
+      "candidate_sql": "SELECT SUM(total_amount) FROM orders",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ05_TOTAL_FORMULA",
+      "reference_sql": "SELECT SUM(subtotal - discount_amount) FROM orders"
+    },
+    {
+      "candidate_sql": "SELECT category, COUNT(*) FROM products GROUP BY category",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ06_GROUP_ORDER",
+      "reference_sql": "SELECT p.category, COUNT(*) AS item_count FROM products p GROUP BY p.category"
+    },
+    {
+      "candidate_sql": "SELECT id FROM products ORDER BY id LIMIT 5",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "EQ07_ORDER_EXPLICIT_ASC",
+      "reference_sql": "SELECT id FROM products ORDER BY id ASC LIMIT 5"
+    },
+    {
+      "candidate_sql": "SELECT id, name FROM products ORDER BY id",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "EQ08_ALIAS_ORDER",
+      "reference_sql": "SELECT p.id AS product_id, p.name AS label FROM products p ORDER BY p.id"
+    },
+    {
+      "candidate_sql": "SELECT id FROM products WHERE category = 'Office'",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ09_CTE",
+      "reference_sql": "WITH selected AS (SELECT id, category FROM products) SELECT id FROM selected WHERE category = 'Office'"
+    },
+    {
+      "candidate_sql": "SELECT id FROM orders WHERE status = 'completed'",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ10_IN_LIST",
+      "reference_sql": "SELECT id FROM orders WHERE status IN ('completed')"
+    },
+    {
+      "candidate_sql": "SELECT CAST(1 AS NUMERIC)",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ11_CAST",
+      "reference_sql": "SELECT 1::NUMERIC"
+    },
+    {
+      "candidate_sql": "SELECT DISTINCT category FROM products",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_EQUIVALENT",
+      "pair_id": "EQ12_DISTINCT_KEY",
+      "reference_sql": "SELECT category FROM products GROUP BY category"
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM orders WHERE status = 'COMPLETED'",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE01_LITERAL_CASE",
+      "reference_sql": "SELECT COUNT(*) FROM orders WHERE status = 'completed'",
+      "scenario_tags": [
+        "P1_LITERAL_CASE"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id FROM products ORDER BY id OFFSET 0 LIMIT 5",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "NE02_OFFSET",
+      "reference_sql": "SELECT id FROM products ORDER BY id OFFSET 100 LIMIT 5",
+      "scenario_tags": [
+        "P1_OFFSET"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM products p JOIN products q USING (id)",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE03_JOIN_USING_KEY",
+      "reference_sql": "SELECT COUNT(*) FROM products p JOIN products q USING (name)",
+      "scenario_tags": [
+        "P1_JOIN_USING"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM orders o LEFT JOIN payments p ON p.order_id = o.id",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE04_LEFT_INNER",
+      "reference_sql": "SELECT COUNT(*) FROM orders o INNER JOIN payments p ON p.order_id = o.id",
+      "scenario_tags": [
+        "SPARSE_RELATIONSHIPS"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM orders o JOIN order_items i ON i.order_id = o.id",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE05_BAG_MULTIPLICITY",
+      "reference_sql": "SELECT COUNT(DISTINCT o.id) FROM orders o JOIN order_items i ON i.order_id = o.id",
+      "scenario_tags": [
+        "DUPLICATE_CHILD_MULTIPLICITY"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM (SELECT NULL::TEXT AS value) s WHERE value IS NULL",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE06_NULL_THREE_VALUED",
+      "reference_sql": "SELECT COUNT(*) FROM (SELECT NULL::TEXT AS value) s WHERE value = 'x'",
+      "scenario_tags": [
+        "NULL_BOUNDARIES"
+      ],
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM orders o LEFT JOIN payments p ON p.order_id = o.id",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE07_COUNT_STAR_NULL",
+      "reference_sql": "SELECT COUNT(p.paid_at) FROM orders o LEFT JOIN payments p ON p.order_id = o.id",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(category) FROM products",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE08_COUNT_DISTINCT",
+      "reference_sql": "SELECT COUNT(DISTINCT category) FROM products",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT SUM(total_amount) FROM orders",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE09_SUM_AVG",
+      "reference_sql": "SELECT AVG(total_amount) FROM orders",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM (SELECT category FROM products GROUP BY category) s",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE10_GROUP_GRAIN",
+      "reference_sql": "SELECT COUNT(*) FROM (SELECT category, id FROM products GROUP BY category, id) s",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM orders WHERE status = 'completed'",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE11_FILTER_BOUNDARY",
+      "reference_sql": "SELECT COUNT(*) FROM orders WHERE status = 'cancelled'",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT COUNT(*) FROM (SELECT ROW_NUMBER() OVER (PARTITION BY category ORDER BY id) AS rn FROM products) s WHERE rn = 1",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE12_WINDOW_PARTITION",
+      "reference_sql": "SELECT COUNT(*) FROM (SELECT ROW_NUMBER() OVER (ORDER BY id) AS rn FROM products) s WHERE rn = 1",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id, ROW_NUMBER() OVER (ORDER BY id ASC) FROM products ORDER BY id",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "NE13_WINDOW_ORDER",
+      "reference_sql": "SELECT id, ROW_NUMBER() OVER (ORDER BY id DESC) FROM products ORDER BY id",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id, SUM(unit_price) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_price FROM products ORDER BY id",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "NE14_WINDOW_FRAME",
+      "reference_sql": "SELECT id, SUM(unit_price) OVER (ORDER BY id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS running_price FROM products ORDER BY id",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id FROM products ORDER BY category, id LIMIT 3",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "NE15_ORDER_PRIORITY",
+      "reference_sql": "SELECT id FROM products ORDER BY id, category LIMIT 3",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id FROM products ORDER BY id LIMIT 3",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "order_entitled": true,
+      "pair_id": "NE16_LIMIT",
+      "reference_sql": "SELECT id FROM products ORDER BY id LIMIT 4",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT SUM(total_amount) FROM orders",
+      "comparison_mode": "SCALAR",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE17_FORMULA",
+      "reference_sql": "SELECT SUM(total_amount + discount_amount) FROM orders",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "SELECT id FROM products",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "KNOWN_NON_EQUIVALENT",
+      "pair_id": "NE18_PROJECTION_VALUE",
+      "reference_sql": "SELECT name FROM products",
+      "witness_required": true
+    },
+    {
+      "candidate_sql": "DELETE FROM products",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "ABSTENTION_INVALID",
+      "pair_id": "AB01_UNSAFE_WRITE",
+      "reference_sql": "SELECT id FROM products"
+    },
+    {
+      "candidate_sql": "SELECT * FRM products",
+      "comparison_mode": "VALUE_BAG",
+      "corpus_class": "ABSTENTION_INVALID",
+      "pair_id": "AB02_INVALID_SQL",
+      "reference_sql": "SELECT id FROM products"
+    },
+    {
+      "candidate_sql": "SELECT id FROM products",
+      "comparison_mode": "VALUE_ORDERED",
+      "corpus_class": "ABSTENTION_INCONCLUSIVE",
+      "order_entitled": false,
+      "pair_id": "AB03_UNORDERED_ORDER_ONLY",
+      "reference_sql": "SELECT id FROM products ORDER BY id DESC"
+    }
+  ],
+  "version": "m112p2-validation-pairs-v2"
+}

@@ -1,4 +1,4 @@
-# M20 — Full Benchmark Rebaseline
+# M20 — Full Benchmark Rebaseline (Incomplete)
 
 ## Objective
 
@@ -32,12 +32,12 @@ and result evaluation. Governed execution failures now use the distinct
 
 ## Manifest
 
-The authoritative run uses the clean commit recorded in the manifest, GPT-5.6
-Luna (`gpt-5.6-luna`) through the OpenAI-compatible provider, provider-default
+The implementation is ready for a clean full run with GPT-5.6 Luna
+(`gpt-5.6-luna`) through the OpenAI-compatible provider, provider-default
 temperature, reasoning effort `none`, and a 30-second timeout. Memory,
 retrieval, governed semantics, QueryPlan, Window IR, repair, judge, and
-best-of-N were disabled. The pre-provider manifest hash is
-`919313973ecbb72b3b27a7674ee5f882d74259694f25439c60d0d2c68cb57bd8`.
+best-of-N are disabled. No authoritative M20 manifest/result is currently
+retained because the provider run was stopped before a complete final attempt.
 
 ## Historical evidence
 
@@ -48,18 +48,16 @@ rewritten by M20.
 
 ## Fresh M20 results
 
-The authoritative run submitted all 500 BIRD, 210 Classic, and 64 Advanced
-cases and made 774 provider calls. The exact measured scores and stage counts
-are recorded in `evaluation/fixtures/m20_full_benchmark_result.json`; the
-per-case provenance is in `evaluation/fixtures/m20_full_benchmark_cases.jsonl`.
+No authoritative full-rebaseline result. Two earlier full attempts were
+invalidated by manifest/accounting defects, and a third attempt was stopped
+after partial provider exposure to avoid further cost.
 
 ## Failure-stage distribution
 
-The aggregate and per-case artifacts report M1 rejection, M1 planning errors,
-result evaluation mismatches, provider/protocol failures, and execution
-failures separately. Per-case records contain the generated SQL, stage, M1
-status, execution status, latency, token usage, prompt/schema hashes, and
-commit SHA.
+The implementation records M1 rejection, M1 planning errors, result
+evaluation mismatches, provider/protocol failures, and execution failures
+separately. A future complete run must retain the aggregate and per-case
+artifacts before any cleanup.
 
 ## Limitations
 
@@ -71,6 +69,5 @@ generalization measurements.
 
 ## Next milestone
 
-`M20.1 — Full Failure Forensics` can use the frozen per-case artifact to ask
-which causal mechanisms produced M1 rejections, execution outcomes, and result
-mismatches, without changing this baseline.
+`M20.1 — Full Failure Forensics` must wait until M20 has a complete authoritative
+per-case artifact.

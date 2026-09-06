@@ -406,6 +406,8 @@ def _manifest(
     sql_eval: Path,
     bird_root: Path,
 ) -> dict[str, Any]:
+    old_metadata_json = {f"{key[0]}:{key[1]}": value for key, value in sorted(old_metadata.items())}
+    v2_metadata_json = {f"{key[0]}:{key[1]}": value for key, value in sorted(v2_metadata.items())}
     return {
         "classification": "M21_PREPROVIDER_MANIFEST",
         "source_checkpoint": STARTING_COMMIT,
@@ -460,8 +462,8 @@ def _manifest(
         },
         "call_budget": len(dev) + len(holdout) + len(control),
         "planned_provider_calls": len(dev) + len(holdout) + len(control),
-        "old_context_metadata": old_metadata,
-        "new_context_metadata": v2_metadata,
+        "old_context_metadata": old_metadata_json,
+        "new_context_metadata": v2_metadata_json,
     }
 
 

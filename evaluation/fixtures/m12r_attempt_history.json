@@ -1,0 +1,37 @@
+{
+  "attempts": [
+    {
+      "attempt_id": 1,
+      "classification": "M12R_EXPERIMENT_INVALID",
+      "raw_result_artifact": "m12r_attempt_1_invalid_raw.json",
+      "primary": {
+        "n": 81,
+        "control_correct": 37,
+        "intervention_correct": 81,
+        "A": 37,
+        "B": 0,
+        "C": 44,
+        "D": 0,
+        "delta_pp": 54.3209876543,
+        "exact_two_sided_p": 1.1368683772161603e-13,
+        "control_m1_rejections": 42,
+        "technical_retries": 1
+      },
+      "provider_calls": {
+        "smoke": 4,
+        "primary": 163,
+        "confirmation": 0,
+        "total": 167
+      },
+      "invalid_reason": "The evaluator incorrectly treated ordinary CONTROL M1 rejections as an M1 safety regression. M1 rejections are valid observable arm failures; only an M1 bypass or policy weakening is a safety regression. No confirmation was run."
+    },
+    {
+      "attempt_id": 2,
+      "classification": "AUTHORITATIVE_RESTART_PENDING",
+      "dataset_hash": "ff04022e0c4419fd38d2781ffe1289197305c7327d158dd63a755176bbac0e86",
+      "same_frozen_dataset": true,
+      "same_provider_protocol": true,
+      "restart_reason": "Corrected evaluator safety gate; restart complete primary from scratch before any confirmation calls."
+    }
+  ]
+}

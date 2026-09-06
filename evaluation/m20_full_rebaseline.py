@@ -724,6 +724,7 @@ def _summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         if r["latency_ms"]["total"] is not None
     ]
     ordered = sorted(float(value) for value in latency)
+
     def percentile(fraction: float) -> float | None:
         if not ordered:
             return None
@@ -845,6 +846,59 @@ async def _run_all(
     return aggregate
 
 
+async def _run_smoke(
+    datasets: dict[str, list[Any]],
+    contexts: dict[tuple[str, str], str],
+    safety_cache: dict[tuple[str, str], tuple[Engine, SqlSafetyService]],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    """Run ten fresh cases per benchmark without creating authoritative output."""
+    settings = _settings()
+    provider = OpenAICompatibleProvider(settings)
+    defog_executor = DefogBenchmarkExecutor()
+    bird_executor = BirdBenchmarkExecutor()
+    gold: dict[str, Any] = {}
+    gold["defog_classic"], _ = _defog_gold_preflight(
+        datasets["defog_classic"][:10], defog_executor
+    )
+    gold["defog_advanced"], _ = _defog_gold_preflight(
+        datasets["defog_advanced"][:10], defog_executor
+    )
+    gold["bird"], _ = _bird_gold_preflight(datasets["bird"][:10], bird_executor)
+    records: list[dict[str, Any]] = []
+    for label in ("bird", "defog_classic", "defog_advanced"):
+        kind = "bird" if label == "bird" else "defog"
+        for question in datasets[label][:10]:
+            name = question.db_id if kind == "bird" else question.db_name
+            context = contexts[(kind, name)]
+            key = str(question.index)
+            if kind != "bird":
+                key = f"{question.dataset}:{question.index}"
+            records.append(
+                await _run_case(
+                    provider,
+                    safety_cache[(kind, name)][1],
+                    question,
+                    label,
+                    kind,
+                    context,
+                    gold[label][key],
+                    manifest,
+                )
+            )
+    return {
+        "classification": "M20_SMOKE_NON_AUTHORITATIVE",
+        "cases_per_benchmark": 10,
+        "provider_calls": sum(record["provider_calls"] for record in records),
+        "benchmarks": {
+            label: _summary(
+                [record for record in records if record["benchmark"] == label]
+            )
+            for label in ("bird", "defog_classic", "defog_advanced")
+        },
+    }
+
+
 def run_command() -> dict[str, Any]:
     """Run only after the global fail-closed preflight has fully passed."""
     datasets, validations, contexts, _, safety_cache, manifest = _global_preflight()
@@ -853,14 +907,20 @@ def run_command() -> dict[str, Any]:
     )
 
 
+def smoke_command() -> dict[str, Any]:
+    datasets, _, contexts, _, safety_cache, manifest = _global_preflight()
+    return asyncio.run(_run_smoke(datasets, contexts, safety_cache, manifest))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", action="store_true")
+    parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
-    if not args.run:
-        parser.error("M20 requires --run")
+    if args.run == args.smoke:
+        parser.error("M20 requires exactly one of --smoke or --run")
     try:
-        result = run_command()
+        result = smoke_command() if args.smoke else run_command()
     except M20PreflightFailure as error:
         failure = {
             "classification": "M20_VALIDATION_INVALID",

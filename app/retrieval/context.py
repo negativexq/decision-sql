@@ -149,10 +149,7 @@ class SchemaContextResolver:
                         score=score,
                         matched_tokens=tuple(
                             sorted(
-                                name_matches
-                                | alias_matches
-                                | description_matches
-                                | column_matches
+                                name_matches | alias_matches | description_matches | column_matches
                             )
                         ),
                     )
@@ -170,9 +167,7 @@ class SchemaContextResolver:
             for target_name in sorted(seed_names):
                 if start_name >= target_name:
                     continue
-                path = _shortest_path(
-                    adjacency, start_name, target_name, self.relationship_depth
-                )
+                path = _shortest_path(adjacency, start_name, target_name, self.relationship_depth)
                 for table_name in path:
                     table = self.catalog.get_table(table_name)
                     if table is not None and table.queryable:
@@ -233,9 +228,7 @@ class SchemaContextResolver:
         question_tokens = _tokenize(question)
 
         def rank(column: ColumnMetadata) -> tuple[int, str]:
-            matches = question_tokens & _tokenize(
-                f"{column.name} {column.description}"
-            )
+            matches = question_tokens & _tokenize(f"{column.name} {column.description}")
             return (-len(matches), column.name)
 
         additional = sorted(
@@ -285,17 +278,13 @@ def serialize_schema_context(context: SchemaContext) -> str:
     """
     lines: list[str] = []
     for table in sorted(context.tables, key=lambda item: item.name):
-        lines.extend(
-            (f"[Table] {table.name}", f"Description: {table.description}", "[Columns]")
-        )
+        lines.extend((f"[Table] {table.name}", f"Description: {table.description}", "[Columns]"))
         for column in sorted(table.columns, key=lambda item: item.name):
             annotations: list[str] = []
             if column.primary_key:
                 annotations.append("PK")
             if column.foreign_key_table and column.foreign_key_column:
-                annotations.append(
-                    f"FK -> {column.foreign_key_table}.{column.foreign_key_column}"
-                )
+                annotations.append(f"FK -> {column.foreign_key_table}.{column.foreign_key_column}")
             annotation_text = f" [{', '.join(annotations)}]" if annotations else ""
             lines.append(
                 f"- {table.name}.{column.name} {column.type}{annotation_text} — "
@@ -312,6 +301,54 @@ def serialize_schema_context(context: SchemaContext) -> str:
             f"{relationship.target_table}.{relationship.target_column}"
         )
     return "\n".join(lines).strip()
+
+
+def serialize_schema_context_v2(context: SchemaContext) -> str:
+    """Serialize schema facts with explicit ownership and relationship endpoints.
+
+    This renderer is opt-in.  The existing ``serialize_schema_context`` remains
+    the production default while M21 evaluates this representation explicitly.
+    """
+    lines = ["SCHEMA_CONTEXT_VERSION: 2", "TABLES:"]
+    for table in sorted(context.tables, key=lambda item: item.name):
+        lines.extend((f"TABLE_ID: {table.name}", f"DESCRIPTION: {table.description}", "COLUMNS:"))
+        for column in sorted(table.columns, key=lambda item: item.name):
+            lines.extend(
+                (
+                    f"- COLUMN_ID: {table.name}.{column.name}",
+                    f"  TYPE: {column.type}",
+                    f"  PRIMARY_KEY: {'true' if column.primary_key else 'false'}",
+                    "  FOREIGN_KEY: "
+                    + (
+                        f"{column.foreign_key_table}.{column.foreign_key_column}"
+                        if column.foreign_key_table and column.foreign_key_column
+                        else "null"
+                    ),
+                    f"  DESCRIPTION: {column.description}",
+                )
+            )
+        lines.append("END_TABLE")
+    lines.append("RELATIONSHIPS:")
+    for relationship in sorted(
+        context.relationships,
+        key=lambda item: (
+            item.source_table,
+            item.source_column,
+            item.target_table,
+            item.target_column,
+        ),
+    ):
+        lines.extend(
+            (
+                "- RELATIONSHIP:",
+                f"  FROM_TABLE: {relationship.source_table}",
+                f"  FROM_COLUMN: {relationship.source_column}",
+                f"  TO_TABLE: {relationship.target_table}",
+                f"  TO_COLUMN: {relationship.target_column}",
+            )
+        )
+    lines.append("END_RELATIONSHIPS")
+    return "\n".join(lines)
 
 
 def _tokenize(value: str) -> set[str]:

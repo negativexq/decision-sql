@@ -1,0 +1,1391 @@
+{
+  "alias_and_order": {
+    "alias": {
+      "sql": "SELECT c.name AS display_name FROM customers AS c",
+      "validation": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      }
+    },
+    "derived_aggregate_distinct": {
+      "count_vs_count_distinct": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 0,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "count_vs_sum": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 0,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "sum_vs_avg": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 0,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      }
+    },
+    "interpretation": {
+      "alias_output_name": "ignored; source_hint and physical source are used",
+      "derived_expression_semantics": "not inspected; arity-only for DERIVED_VALUE",
+      "physical_output_order": "position-sensitive for physical outputs"
+    },
+    "output_order": {
+      "sql": "SELECT b, a FROM items",
+      "validation": {
+        "accepted": false,
+        "actual_arity": 2,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_WRONG",
+        "unexpected_projection_count": 0
+      }
+    }
+  },
+  "capability_matrix": [
+    {
+      "capability": "expected output arity",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "reject extra field",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "reject missing field",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "physical column identity",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "entity-qualified source",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "alias tolerance",
+      "existing_result_shape": "SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": true
+    },
+    {
+      "capability": "output order",
+      "existing_result_shape": "PARTIALLY_SUPPORTED",
+      "expansion_needed": false,
+      "required_by_8": false
+    },
+    {
+      "capability": "aggregate semantics",
+      "existing_result_shape": "NOT_SUPPORTED",
+      "expansion_needed": true,
+      "required_by_8": false
+    },
+    {
+      "capability": "derived-expression semantics",
+      "existing_result_shape": "NOT_SUPPORTED",
+      "expansion_needed": true,
+      "required_by_8": false
+    },
+    {
+      "capability": "DISTINCT semantics",
+      "existing_result_shape": "NOT_SUPPORTED",
+      "expansion_needed": true,
+      "required_by_8": false
+    }
+  ],
+  "case_coverage": [
+    {
+      "actual_generated_output_count": 3,
+      "benchmark": "bird",
+      "case_id": "187",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "6e9f8c5b4a18e6088d720e8401cfb6db1620fe83a0fd906db34565faa9d83a9e",
+      "corrected_projection_sql_preview": "SELECT d.forename, d.surname FROM results AS r JOIN drivers AS d ON d.driverid = r.driverid WHERE r.raceid = 592 AND NOT r.time IS NULL ORDER BY d.dob ASC LIMIT 1",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 2,
+        "expected_arity": 2,
+        "limit_matches": true,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": true,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 2,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "formula_1",
+      "detection_correct": true,
+      "expected_output_count": 2,
+      "frozen_generated_sql_hash": "9320a15a4c97a0cc8e210194c15eb5bd178fb50e97bf1597febb452f732f48c3",
+      "frozen_generated_sql_preview": "SELECT d.forename, d.surname, d.dob\nFROM results r\nJOIN drivers d ON d.driverid = r.driverid\nWHERE r.raceid = 592\n  AND r.time IS NOT NULL\nORDER BY d.dob ASC\nLIMIT 1;",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "For all the drivers who finished the game in race No. 592, who is the oldest?",
+      "reference_sql_hash": "bf6500b5a165f397d1ebc2875f988bb737c04877090fa8f693ba273e163673f3",
+      "reference_sql_preview": "SELECT T1.forename, T1.surname FROM drivers AS T1 INNER JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.raceId = 592 AND NOT T2.time IS NULL AND NOT T1.dob IS NULL ORDER BY T1.dob ASC NULLS FIRST LIMIT 1",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": 1,
+        "explicit_order_direction": "ASC",
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "drivers.forename"
+          },
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_2",
+            "source_hint": "drivers.surname"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 3,
+        "expected_arity": 2,
+        "limit_matches": true,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": true,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 2,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 1
+      }
+    },
+    {
+      "actual_generated_output_count": 2,
+      "benchmark": "bird",
+      "case_id": "288",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "81ff4b317c5ac8bf6670b0f7b051805e65600ec48a95e1ab97b9794386b03a4e",
+      "corrected_projection_sql_preview": "SELECT publisher.publisher_name FROM public.superhero LEFT JOIN public.publisher ON publisher.id = superhero.publisher_id WHERE superhero_name IN ('Hawkman', 'Karate Kid', 'Speedy')",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "superhero",
+      "detection_correct": true,
+      "expected_output_count": 1,
+      "frozen_generated_sql_hash": "fecadb34d6fddda68b782f1619a47710771f4c62cf0f2687c76bae50559c931d",
+      "frozen_generated_sql_preview": "SELECT superhero_name, publisher_name\nFROM public.superhero\nLEFT JOIN public.publisher ON publisher.id = superhero.publisher_id\nWHERE superhero_name IN ('Hawkman', 'Karate Kid', 'Speedy');",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "What is the publisher for Hawkman, Karate Kid and Speedy?",
+      "reference_sql_hash": "ff5428f394b161a2f45afd7f466697e265e9e6a029cb8a543e1f2752f60b39b7",
+      "reference_sql_preview": "SELECT T2.publisher_name FROM superhero AS T1 INNER JOIN publisher AS T2 ON T1.publisher_id = T2.id WHERE T1.superhero_name IN ('Hawkman', 'Karate Kid', 'Speedy')",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "publisher.publisher_name"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 2,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 1
+      }
+    },
+    {
+      "actual_generated_output_count": 3,
+      "benchmark": "bird",
+      "case_id": "356",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "657ddb9b4ecad1d23b22b3dcf62f5cb972c15d19fe38ef945719095a5d5b2359",
+      "corrected_projection_sql_preview": "SELECT l.format FROM public.cards AS c JOIN public.legalities AS l ON l.uuid = c.uuid WHERE c.name = 'Benalish Knight'",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "card_games",
+      "detection_correct": true,
+      "expected_output_count": 1,
+      "frozen_generated_sql_hash": "0204effeea7abeae41a04aaa3b4502653bcd1a772e91a353a4b0ad2b60f008cf",
+      "frozen_generated_sql_preview": "SELECT c.name, l.format, l.status\nFROM public.cards AS c\nJOIN public.legalities AS l ON l.uuid = c.uuid\nWHERE c.name = 'Benalish Knight';",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "What is the rule of playing card \"Benalish Knight\"?",
+      "reference_sql_hash": "a2530c4394a88b2efaf2ead51d3b328a7d3f451919bfc5f44548995f00dfb22f",
+      "reference_sql_preview": "SELECT T2.format FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.name = 'Benalish Knight'",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "legalities.format"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 3,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 2
+      }
+    },
+    {
+      "actual_generated_output_count": 1,
+      "benchmark": "bird",
+      "case_id": "427",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "92f61c6cdcc3a15159fab0370f43e7d7fbd69f83df0ff9bd04a99cb2d4251cdb",
+      "corrected_projection_sql_preview": "SELECT c.atom_id, c.atom_id2 FROM public.connected AS c JOIN public.bond AS b ON b.bond_id = c.bond_id JOIN public.atom AS a ON a.atom_id = c.atom_id WHERE b.molecule_id = 'TR041' AND b.bond_type = '#'",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 2,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 2,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "toxicology",
+      "detection_correct": true,
+      "expected_output_count": 2,
+      "frozen_generated_sql_hash": "2e8a53e005bece895a9a341465d2c1959e832732078764b6b4997754d0b77783",
+      "frozen_generated_sql_preview": "SELECT a.atom_id\nFROM public.connected AS c\nJOIN public.bond AS b\n  ON b.bond_id = c.bond_id\nJOIN public.atom AS a\n  ON a.atom_id = c.atom_id\nWHERE b.molecule_id = 'TR041'\n  AND b.bond_type = '#';",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "MISSING_PROJECTED_COLUMN",
+      "question": "What are the atoms of the triple bond with the molecule \"TR041\"?",
+      "reference_sql_hash": "6b467e1420d7aed49f42b85b3a9d6fe0aa4c82c93d582826c67f63a8aa77cff1",
+      "reference_sql_preview": "SELECT T2.atom_id, T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id INNER JOIN bond AS T3 ON T2.bond_id = T3.bond_id WHERE T3.bond_type = '#' AND T3.molecule_id = 'TR041'",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "connected.atom_id"
+          },
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_2",
+            "source_hint": "connected.atom_id2"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 1,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 1,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_MISSING",
+        "unexpected_projection_count": 0
+      }
+    },
+    {
+      "actual_generated_output_count": 1,
+      "benchmark": "bird",
+      "case_id": "72",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "3bf2c094720f0ce300055a9bd62de9a9c694a770e6753eba1fb98d7a6b2450ce",
+      "corrected_projection_sql_preview": "SELECT DISTINCT b.category, e.type FROM public.event AS e JOIN public.budget AS b ON b.link_to_event = e.event_id WHERE e.location = 'MU 215' AND e.type = 'Guest Speaker' AND b.spent = 0",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 2,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 2,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "student_club",
+      "detection_correct": true,
+      "expected_output_count": 2,
+      "frozen_generated_sql_hash": "8c0a3705738257a4b1c54d39e0dce4fd1e4f373ee4ded0225612d966c9cb9266",
+      "frozen_generated_sql_preview": "SELECT DISTINCT b.category\nFROM public.event AS e\nJOIN public.budget AS b\n  ON b.link_to_event = e.event_id\nWHERE e.location = 'MU 215'\n  AND e.type = 'Guest Speaker'\n  AND b.spent = 0;",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "MISSING_PROJECTED_COLUMN",
+      "question": "What are the budget category of the events located at MU 215 and a guest speaker type with a 0 budget spent?",
+      "reference_sql_hash": "69b2e815cda173f51b635108de9f65647ed604d6ce64dcf8910b306790333d2f",
+      "reference_sql_preview": "SELECT DISTINCT T2.category, T1.type FROM event AS T1 INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event WHERE T1.location = 'MU 215' AND T2.spent = 0 AND T1.type = 'Guest Speaker'",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "budget.category"
+          },
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_2",
+            "source_hint": "event.type"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 1,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 1,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 2,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_MISSING",
+        "unexpected_projection_count": 0
+      }
+    },
+    {
+      "actual_generated_output_count": 2,
+      "benchmark": "defog_classic",
+      "case_id": "classic:105",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "618e352786f0cc06c8dd4dfa0b4d51b5e8ebaea44b105c1e9fe8ba7cbe4d5c87",
+      "corrected_projection_sql_preview": "SELECT state_name FROM public.state WHERE population < 100000",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "geography",
+      "detection_correct": true,
+      "expected_output_count": 1,
+      "frozen_generated_sql_hash": "c7da588834d41d62f9a2c92ed06591def81ad44396b6eb0ae30e284c2a736db1",
+      "frozen_generated_sql_preview": "SELECT state_name, population FROM public.state WHERE population < 100000;",
+      "m22_2_source_population": [
+        "SOURCE_M20_2_PROJECTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "Which states have fewer than a hundred thousand people?",
+      "reference_sql_hash": "c385a916b59d7eb9b9698e07fea86bcdf536a886656fcc2161ac36b242737f99",
+      "reference_sql_preview": "SELECT state_name FROM state WHERE population < 100000",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "state_name"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 2,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 1
+      }
+    },
+    {
+      "actual_generated_output_count": 4,
+      "benchmark": "defog_classic",
+      "case_id": "classic:20",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "d808768f5218a23a2c7a3733001dc7caa7ab3ee32a13b2df0aac49e5bf0fb37b",
+      "corrected_projection_sql_preview": "SELECT DISTINCT o.name FROM public.organization AS o JOIN public.author AS a ON a.oid = o.oid JOIN public.writes AS w ON w.aid = a.aid JOIN public.domain_publication AS dp ON dp.pid = w.pid JOIN public.domain AS d ON d.did = dp.did WHERE d.name = 'Machine Learning'",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 1,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "academic",
+      "detection_correct": true,
+      "expected_output_count": 1,
+      "frozen_generated_sql_hash": "7081b1c0a5f5136b7c84c46d20cef89d6742d608aa4d0dfb49613645c3255d1c",
+      "frozen_generated_sql_preview": "SELECT DISTINCT o.oid, o.name, o.homepage, o.continent\nFROM public.organization AS o\nJOIN public.author AS a ON a.oid = o.oid\nJOIN public.writes AS w ON w.aid = a.aid\nJOIN public.domain_publication AS dp ON dp.pid = w.pid\nJOIN public.domain AS d ON d.did = dp.did\nWHERE d.name = 'Machine Learning';",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "Which organizations have authors who have written publications in the domain \"Machine Learning\"?",
+      "reference_sql_hash": "5cd94249f0af6316110df8cd990068fd9e5973a5a12f77dda6be1d610fc59b0f",
+      "reference_sql_preview": "SELECT DISTINCT organization.name FROM organization JOIN author ON organization.oid = author.oid JOIN writes ON author.aid = writes.aid JOIN domain_publication ON writes.pid = domain_publication.pid JOIN domain ON domain_publication.did = domain.did WHERE domain.name = 'Machine Learning'",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "organization.name"
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "ROW_FILTER"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 4,
+        "expected_arity": 1,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 3
+      }
+    },
+    {
+      "actual_generated_output_count": 4,
+      "benchmark": "defog_classic",
+      "case_id": "classic:31",
+      "corrected_control_accepted": true,
+      "corrected_projection_sql_hash": "fee7681868e12e3e5e56d68f47d1a4c23b63ebac9845420a3be25a16564a25e9",
+      "corrected_projection_sql_preview": "SELECT i.name, AVG(c.clarity_score) FROM public.instructor AS i JOIN public.offering_instructor AS oi ON oi.instructor_id = i.instructor_id JOIN public.course_offering AS co ON co.offering_id = oi.offering_id JOIN public.course AS c ON c.course_id = co.course_id WHERE NOT c.clarity_score IS NULL GROUP BY i.instructor_id, i.name, i.uniqname ORDER BY i.name, i.instructor_id",
+      "corrected_sql_validator": {
+        "accepted": true,
+        "actual_arity": 2,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated projection and explicit shape constraints match.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 1,
+        "projection_status": "PROJECTION_EXACT",
+        "unexpected_projection_count": 0
+      },
+      "database": "advising",
+      "detection_correct": true,
+      "expected_output_count": 2,
+      "frozen_generated_sql_hash": "cb89accf2b0564a1c49c7f68342d52bb6d490ed174573feb902fc9a932a37cad",
+      "frozen_generated_sql_preview": "SELECT i.instructor_id, i.name, i.uniqname, AVG(c.clarity_score) AS average_clarity_score\nFROM public.instructor AS i\nJOIN public.offering_instructor AS oi ON oi.instructor_id = i.instructor_id\nJOIN public.course_offering AS co ON co.offering_id = oi.offering_id\nJOIN public.course AS c ON c.course_id = co.course_id\nWHERE c.clarity_score IS NOT NULL\nGROUP BY i.instructor_id, i.name, i.uniqname\nORDER BY i.name, i.instructor_id;",
+      "m22_2_source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "m22_2_subtype": "EXTRA_PROJECTED_COLUMN",
+      "question": "What is the average clarity score for each instructor who taught a course?",
+      "reference_sql_hash": "9afb23b78d22340e8cdd861a69488583e3a8d3649ef10d28defc614ed556bd87",
+      "reference_sql_preview": "SELECT i.name, AVG(c.clarity_score) FROM course c JOIN course_offering co ON c.course_id = co.course_id JOIN offering_instructor oi ON co.offering_id = oi.offering_id JOIN instructor i ON oi.instructor_id = i.instructor_id GROUP BY i.name",
+      "representability": "REPRESENTABLE_AS_IS",
+      "representability_reason": "The frozen contract permits 1-32 PHYSICAL_COLUMN or DERIVED_VALUE outputs.",
+      "required_result_shape_proposal": {
+        "cached_prompt_tokens": null,
+        "completion_tokens": null,
+        "explicit_limit": null,
+        "explicit_order_direction": null,
+        "latency_ms": null,
+        "model": null,
+        "outputs": [
+          {
+            "kind": "PHYSICAL_COLUMN",
+            "semantic_label": "output_1",
+            "source_hint": "instructor.name"
+          },
+          {
+            "kind": "DERIVED_VALUE",
+            "semantic_label": "output_2",
+            "source_hint": null
+          }
+        ],
+        "prompt_tokens": null,
+        "provider": null,
+        "reasoning_tokens": null,
+        "shape": "AGGREGATE"
+      },
+      "wrong_sql_validator": {
+        "accepted": false,
+        "actual_arity": 4,
+        "expected_arity": 2,
+        "limit_matches": null,
+        "message": "Generated SQL is inconsistent with the proposed result shape.",
+        "missing_projection_count": 0,
+        "order_direction_matches": null,
+        "physical_outputs_expected": 1,
+        "physical_outputs_matched": 0,
+        "projection_status": "PROJECTION_EXTRA",
+        "unexpected_projection_count": 2
+      }
+    }
+  ],
+  "classification": "EXISTING_RESULTSHAPE_SUFFICIENT_FOR_M23",
+  "corrected_sql_control": {
+    "all_corrected_exact": true,
+    "state_counts": {
+      "corrected_projection_sql": {
+        "accepted": 8,
+        "rejected": 0
+      },
+      "frozen_wrong_sql": {
+        "accepted": 0,
+        "rejected": 8
+      }
+    }
+  },
+  "decision": {
+    "classification": "EXISTING_RESULTSHAPE_SUFFICIENT_FOR_M23",
+    "reason": "All 8 selected missing/extra-output cases are representable, unchanged validation detects all 8, corrected projection controls accept all 8, and bounded correct controls show no false reject.",
+    "scope_boundary": "Sufficient for a bounded M23 output-presence experiment only; not production promotion and not aggregate/derived/distinct semantic coverage."
+  },
+  "derived_semantic_boundary": {
+    "aggregate_semantics": "NOT_SUPPORTED",
+    "classification": "PHYSICAL_COLUMN_AWARE; not derived/aggregate/distinct semantic aware",
+    "derived_expression_semantics": "NOT_SUPPORTED",
+    "distinct_semantics": "NOT_SUPPORTED",
+    "synthetic_tests": "see alias_and_order.derived_aggregate_distinct"
+  },
+  "existing_contract": {
+    "proposal": {
+      "explicit_limit": "optional integer 1..1000",
+      "explicit_order_direction": [
+        "ASC",
+        "DESC",
+        null
+      ],
+      "metadata": [
+        "provider",
+        "model",
+        "prompt_tokens",
+        "completion_tokens",
+        "reasoning_tokens",
+        "cached_prompt_tokens",
+        "latency_ms"
+      ],
+      "output_fields": [
+        "semantic_label",
+        "kind: PHYSICAL_COLUMN|DERIVED_VALUE",
+        "source_hint optional"
+      ],
+      "outputs": "1..32 ResultShapeOutput values",
+      "shape": [
+        "ROW_FILTER",
+        "AGGREGATE",
+        "GROUPED_AGGREGATE",
+        "GROUPED_TOP_K",
+        "RATIO",
+        "WINDOW",
+        "OTHER"
+      ]
+    },
+    "source": "app/generation/result_shape.py",
+    "validator": {
+      "aggregate_semantics": "NOT_SUPPORTED",
+      "aliases": "SUPPORTED for table aliases; output aliases ignored",
+      "authority": "untrusted consistency diagnostic, not authorization",
+      "derived_expression_semantics": "NOT_SUPPORTED; DERIVED_VALUE bypasses expression comparison",
+      "distinct_semantics": "NOT_SUPPORTED",
+      "limit": "SUPPORTED when explicit",
+      "order_direction": "SUPPORTED when explicit",
+      "output_arity": "SUPPORTED",
+      "physical_source_identity": "SUPPORTED; position-sensitive and table-alias resolving"
+    }
+  },
+  "false_positive_control": {
+    "accepted": 12,
+    "cases_tested": 12,
+    "false_rejects": 0,
+    "rows": [
+      {
+        "benchmark": "bird",
+        "case_id": "129",
+        "generated_sql_hash": "df0d8600a6c3e1e19f5e883657274060ab3af898cafc910d1393ffa821909efd",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": 1,
+          "explicit_order_direction": "DESC",
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "team.team_long_name"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "MULTI_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": true,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": true,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "bird",
+        "case_id": "183",
+        "generated_sql_hash": "346090a4bd838cd31ef8dacce1373af3d6aaaf1b9bdabceae66bad8dd40e3cd5",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "circuits.lat"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "circuits.lng"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "ONE_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 2,
+          "expected_arity": 2,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 2,
+          "physical_outputs_matched": 2,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "bird",
+        "case_id": "231",
+        "generated_sql_hash": "9b33ea5275b9d28b341ba82566b2c24eea8aaa43909c16d78a4a2a026367bed9",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "driverref"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "NO_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "bird",
+        "case_id": "238",
+        "generated_sql_hash": "0a783fa21fc63457d7e10fcc9afe336756a4a5fdf371832db9507d223fc45c95",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": 1,
+          "explicit_order_direction": "ASC",
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "constructors.constructorref"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "constructors.url"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "MULTI_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 2,
+          "expected_arity": 2,
+          "limit_matches": true,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": true,
+          "physical_outputs_expected": 2,
+          "physical_outputs_matched": 2,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "bird",
+        "case_id": "341",
+        "generated_sql_hash": "e734aa842d16ec042a909f31ae27b96e1582487b8f2ed1b4de0e5b7787bbf2c9",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "excerptpostid"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "wikipostid"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "NO_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 2,
+          "expected_arity": 2,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 2,
+          "physical_outputs_matched": 2,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "bird",
+        "case_id": "403",
+        "generated_sql_hash": "934fa23083dec3bd309fe32e4f07155d9609874899a133846e827a2ad1239b76",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "atom.element"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "ONE_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_advanced",
+        "case_id": "advanced:9",
+        "generated_sql_hash": "133e1723012bfea07945a58f765a215cd4d693f2d4eebfe3e5a60db1f222ad00",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": 1,
+          "explicit_order_direction": "DESC",
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "customer_id"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "customer_name"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_3",
+              "source_hint": "transaction_count"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "ONE_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 3,
+          "expected_arity": 3,
+          "limit_matches": true,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": true,
+          "physical_outputs_expected": 3,
+          "physical_outputs_matched": 3,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_classic",
+        "case_id": "classic:0",
+        "generated_sql_hash": "692d11ba10a65651520c6a4dc90db9750c5199060f6a6439be2f5576f33a7ea6",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "author.aid"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "author.name"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "MULTI_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 2,
+          "expected_arity": 2,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 2,
+          "physical_outputs_matched": 2,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_classic",
+        "case_id": "classic:100",
+        "generated_sql_hash": "524b93dc177804fb8a59e13eb457ec215d0dcc7c5218894f967f1c769930a303",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": "ASC",
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "lake.country_name"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "ONE_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": true,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_classic",
+        "case_id": "classic:156",
+        "generated_sql_hash": "989aaa69568e242b45112e86c727102442f74e4007e631cda5e27045e35ab336",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "author.authorname"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "MULTI_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_classic",
+        "case_id": "classic:67",
+        "generated_sql_hash": "a172b411fb52e6765b477d2144f532f799a756b222852951248c25dd97e0eeec",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": null,
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "aircraft_code"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "NO_JOIN_SINGLE_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 1,
+          "expected_arity": 1,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": null,
+          "physical_outputs_expected": 1,
+          "physical_outputs_matched": 1,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      },
+      {
+        "benchmark": "defog_classic",
+        "case_id": "classic:90",
+        "generated_sql_hash": "dfc7418b043e41a3458a78a20da7e0c0516de08d4639fb4641dc96027d138438",
+        "proposal": {
+          "cached_prompt_tokens": null,
+          "completion_tokens": null,
+          "explicit_limit": null,
+          "explicit_order_direction": "DESC",
+          "latency_ms": null,
+          "model": null,
+          "outputs": [
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_1",
+              "source_hint": "state_name"
+            },
+            {
+              "kind": "PHYSICAL_COLUMN",
+              "semantic_label": "output_2",
+              "source_hint": "density"
+            }
+          ],
+          "prompt_tokens": null,
+          "provider": null,
+          "reasoning_tokens": null,
+          "shape": "ROW_FILTER"
+        },
+        "shape_bucket": "NO_JOIN_MULTI_PHYSICAL",
+        "validation": {
+          "accepted": true,
+          "actual_arity": 2,
+          "expected_arity": 2,
+          "limit_matches": null,
+          "message": "Generated projection and explicit shape constraints match.",
+          "missing_projection_count": 0,
+          "order_direction_matches": true,
+          "physical_outputs_expected": 2,
+          "physical_outputs_matched": 2,
+          "projection_status": "PROJECTION_EXACT",
+          "unexpected_projection_count": 0
+        }
+      }
+    ],
+    "selection": "old M20 ALLOWED and correct rows; one BIRD and one Defog row per available physical projection bucket",
+    "uncertain": 0
+  },
+  "fresh_generation": 0,
+  "historical_m2_8_evidence": {
+    "artifact_found": true,
+    "average_end_to_end_latency_ms": "1316 -> 2618",
+    "baseline_provider_calls": 48,
+    "baseline_result_equivalence": "16/48",
+    "classification": "not a positive M2.8 result; no holdout consumed",
+    "documentation": "docs/m28-result-shape-ablation.md",
+    "extra_projection_rate": "37.50% -> 0.00%",
+    "holdout": "none",
+    "implementation": "evaluation/run_m28.py",
+    "model": "gpt-5.6-luna",
+    "population": 48,
+    "provider": "openai-compatible",
+    "required_output_recall": "27.08%",
+    "result_shape_provider_calls": 95,
+    "result_shape_result_equivalence": "16/48"
+  },
+  "m20_2_artifact_hash": "fe03e7084215cff720028aefc12d6fd649597937461f3c157ef6b4aa763773b8",
+  "m20_manifest": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a",
+  "m22_2_artifact_hash": "99d9c1bf9fce30275e3de86af767427ba64dd2bc096ac4229e9b568354ecac74",
+  "method": {
+    "fresh_generation": 0,
+    "production_runtime": "unchanged",
+    "provider_calls": 0,
+    "reference_usage": "offline only to construct evaluator-only proposals and projection counterfactuals"
+  },
+  "production_changes": 0,
+  "production_wiring": {
+    "direct_constructs_proposal": false,
+    "historical_experiment": "evaluation/run_m28.py",
+    "normal_direct_run": "PRODUCTION_ACTIVE: TextToSqlService.run -> _run(result_shape_contract=False)",
+    "result_shape_generation": "EXPERIMENT_ONLY: explicit run_result_shape_contract -> provider.propose_result_shape",
+    "result_shape_guidance": "EXPERIMENT_ONLY: propose_sql(..., result_shape=proposal)",
+    "status": "AVAILABLE_BUT_UNWIRED for current DIRECT path",
+    "validator": "EXPERIMENT_ONLY: _run validates after M1 plan and before execution"
+  },
+  "provider_calls": 0,
+  "provider_topology": {
+    "additional_calls_per_query": 1,
+    "call_1": "provider.propose_result_shape(question, schema_context)",
+    "call_2": "provider.propose_sql(request, schema_context, result_shape=proposal)",
+    "naive_total_calls": 2,
+    "result_shape_deterministic": false,
+    "result_shape_trusted": false,
+    "same_model_provider": true,
+    "schema_context_sent": "same bounded schema context to both prompts",
+    "telemetry": "ResultShapeProposal records optional token/latency metadata; SQL proposal has its own capture"
+  },
+  "query_intent_overlap": {
+    "QUERYINTENT_HAS_EQUIVALENT_INFORMATION": 7,
+    "QUERYINTENT_PARTIAL": 1,
+    "RESULTSHAPE_ADDS_DISTINCT_INFORMATION": 0,
+    "method": "M22.2 offline QueryIntent relevance plus selected output facts; no QueryIntent mutation"
+  },
+  "recommended_next_step": {
+    "control": "current DIRECT generation",
+    "forbidden": [
+      "new contract",
+      "router",
+      "repair",
+      "judge",
+      "best-of-N",
+      "full 774 rerun"
+    ],
+    "intervention": "existing propose_result_shape -> existing result-shape guidance -> SQL -> unchanged M1 -> execution/evaluator",
+    "milestone": "M23 \u2014 Bounded Existing ResultShape A/B Experiment",
+    "must_measure": [
+      "semantic correctness",
+      "missing/extra rate",
+      "M1 acceptance",
+      "execution",
+      "regression controls",
+      "calls",
+      "latency",
+      "tokens",
+      "ResultShape validity"
+    ],
+    "population": "fresh internal/holdout cases plus small targeted public missing/extra projection slice",
+    "status": "RECOMMENDED_NOT_IMPLEMENTED"
+  },
+  "starting_commit": "98a7473660b7087b86abe0ceeaf5792a8b19b920",
+  "target_population": {
+    "case_ids": [
+      "bird:187",
+      "bird:288",
+      "bird:356",
+      "bird:427",
+      "bird:72",
+      "defog_classic:classic:105",
+      "defog_classic:classic:20",
+      "defog_classic:classic:31"
+    ],
+    "m20_2_native_projection": 3,
+    "m22_1_projection_causal": 15,
+    "overlap": 0,
+    "selected_count": 8,
+    "selected_subtypes": {
+      "EXTRA_PROJECTED_COLUMN": 6,
+      "MISSING_PROJECTED_COLUMN": 2
+    },
+    "unique_m22_2_candidates": 18
+  },
+  "validator_detection": {
+    "contract_unrepresentable": 0,
+    "corrected_status_counts": {
+      "PROJECTION_EXACT": 8
+    },
+    "correctly_detected": 8,
+    "not_detected": 0,
+    "total": 8,
+    "uncertain": 0,
+    "wrong_status_counts": {
+      "PROJECTION_EXTRA": 6,
+      "PROJECTION_MISSING": 2
+    }
+  }
+}

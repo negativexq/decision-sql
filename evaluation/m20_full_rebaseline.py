@@ -649,9 +649,15 @@ async def _run_case(
         return record
     record["latency_ms"]["m1"] = (time.perf_counter() - m1_started) * 1000
     if isinstance(planned, SqlPlanFailure):
+        m1_status = (
+            "REJECTED"
+            if planned.status.value
+            in {"SQL_PARSE_ERROR", "POLICY_REJECTION", "QUERY_COST_REJECTION"}
+            else "ERROR"
+        )
         record.update(
             {
-                "m1_status": "REJECTED",
+                "m1_status": m1_status,
                 "failure_stage": M20FailureStage.M1.value,
                 "failure_code": planned.status.value,
             }
@@ -730,10 +736,7 @@ def _summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         "provider_calls": sum(int(r["provider_calls"]) for r in records),
         "m1_accepted": sum(r["m1_status"] == "ALLOWED" for r in records),
         "m1_rejected": sum(r["m1_status"] == "REJECTED" for r in records),
-        "m1_errors": sum(
-            r["failure_stage"] == M20FailureStage.M1.value and r["m1_status"] is None
-            for r in records
-        ),
+        "m1_errors": sum(r["m1_status"] == "ERROR" for r in records),
         "execution_succeeded": sum(r["execution_status"] == "SUCCESS" for r in records),
         "execution_failed": sum(r["execution_status"] == "FAILURE" for r in records),
         "failure_stages": dict(stage_counts),

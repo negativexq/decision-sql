@@ -172,7 +172,8 @@ def _database_relationships(kind: str, name: str) -> list[tuple[str, str, str, s
                 """
             )
             rows = cursor.fetchall()
-    return [
+    allowed = {table.lower() for table in BIRD_TABLES.get(name, ())} if kind == "bird" else None
+    relationships = [
         (
             f"{source_schema}.{source_table}",
             str(source_column),
@@ -187,7 +188,10 @@ def _database_relationships(kind: str, name: str) -> list[tuple[str, str, str, s
             target_table,
             target_column,
         ) in rows
+        if allowed is None
+        or (str(source_table).lower() in allowed and str(target_table).lower() in allowed)
     ]
+    return relationships
 
 
 def _bird_declared_relationships(

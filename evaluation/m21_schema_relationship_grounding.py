@@ -416,6 +416,7 @@ def _manifest(
         "classification": "M21_PREPROVIDER_MANIFEST",
         "source_checkpoint": STARTING_COMMIT,
         "starting_commit": _git_head(),
+        "commit_sha": _git_head(),
         "m20_manifest_hash": json.loads(M20_MANIFEST.read_text())["manifest_hash"],
         "m20_forensics_hash": _sha_file(M20_FORENSICS),
         "dataset_hashes": {

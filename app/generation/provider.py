@@ -1,10 +1,11 @@
 import json
 import re
+from enum import StrEnum
 from time import perf_counter
 from typing import Any, Protocol, cast
 
 import httpx
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.config import Settings, get_settings
 from app.generation.governed_metric_grounding import GovernedMetricGroundingDTO
@@ -30,6 +31,11 @@ from app.provenance.models import (
 )
 from app.provenance.sink import NoOpProvenanceSink
 from app.semantics.query_plan_v1 import QueryPlanV1
+from app.semantics.query_plan_wire_v2 import (
+    QueryPlanWireV2,
+    query_plan_wire_v2_prompt,
+    wire_to_query_plan_v1,
+)
 
 
 class SqlProposal(BaseModel):
@@ -81,6 +87,25 @@ class QueryPlanV1Proposal(BaseModel):
     latency_ms: float | None = None
 
 
+class QueryPlanWireV2Proposal(BaseModel):
+    """Untrusted versioned wire proposal before canonical QueryPlan V1 conversion."""
+
+    model_config = ConfigDict(frozen=True)
+
+    wire: QueryPlanWireV2
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+    @property
+    def plan(self) -> QueryPlanV1:
+        return wire_to_query_plan_v1(self.wire)
+
+
 class ProviderTransportProposal(BaseModel):
     """Raw, bounded assistant content for transport-format diagnostics."""
 
@@ -123,6 +148,8 @@ class ModelIOCapture(BaseModel):
     messages: list[dict[str, str]]
     response_model: str | None = None
     raw_assistant_content: str | None = None
+    raw_assistant_content_sha256: str | None = None
+    raw_assistant_content_truncated: bool = False
     parsed_sql: str | None = None
     parsed_result_shape: dict[str, Any] | None = None
     parsed_operation_plan: dict[str, Any] | None = None
@@ -133,6 +160,11 @@ class ModelIOCapture(BaseModel):
     finish_reason: str | None = None
     system_fingerprint: str | None = None
     request_id: str | None = None
+    provider_response_id: str | None = None
+    failure_stage: str | None = None
+    failure_metadata: dict[str, Any] = Field(default_factory=dict)
+    attempt_count: int = 1
+    technical_retry_count: int = 0
 
 
 class LLMProviderError(RuntimeError):
@@ -149,11 +181,55 @@ class MalformedProviderResponse(LLMProviderError):
     pass
 
 
+class QueryPlanProviderFailureStage(StrEnum):
+    TRANSPORT_FAILURE = "TRANSPORT_FAILURE"
+    HTTP_PROVIDER_FAILURE = "HTTP_PROVIDER_FAILURE"
+    EMPTY_RESPONSE = "EMPTY_RESPONSE"
+    RESPONSE_EXTRACTION_FAILURE = "RESPONSE_EXTRACTION_FAILURE"
+    JSON_PARSE_FAILURE = "JSON_PARSE_FAILURE"
+    WIRE_SCHEMA_VALIDATION_FAILURE = "WIRE_SCHEMA_VALIDATION_FAILURE"
+    CANONICALIZATION_FAILURE = "CANONICALIZATION_FAILURE"
+
+
+class QueryPlanProviderDiagnostic(BaseModel):
+    """Bounded failure metadata safe for experiment evidence."""
+
+    model_config = ConfigDict(frozen=True)
+
+    stage: QueryPlanProviderFailureStage
+    response_preview: str | None = None
+    response_sha256: str | None = None
+    response_truncated: bool = False
+    response_id: str | None = None
+    http_status: int | None = None
+    finish_reason: str | None = None
+    resolved_model: str | None = None
+    attempt_count: int = 1
+    technical_retry_count: int = 0
+    validation_errors: tuple[dict[str, str], ...] = ()
+
+
+class QueryPlanProviderBoundaryError(LLMProviderError):
+    def __init__(
+        self,
+        message: str,
+        diagnostic: QueryPlanProviderDiagnostic,
+        detail: ProviderErrorDetail | None = None,
+    ) -> None:
+        super().__init__(message, detail)
+        self.diagnostic = diagnostic
+
+
 class LLMProvider(Protocol):
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
     ) -> QueryPlanV1Proposal:
         """Return one untrusted bounded QueryPlan V1 proposal."""
+
+    async def propose_query_plan_wire_v2(
+        self, question: str, schema_context: str
+    ) -> QueryPlanWireV2Proposal:
+        """Return one untrusted versioned wire proposal for canonical QueryPlan V1."""
 
     async def propose_metric_grounding(
         self, question: str, glossary: str
@@ -268,6 +344,182 @@ class OpenAICompatibleProvider:
             raise MalformedProviderResponse(
                 "Provider response did not contain a valid QueryPlan V1"
             ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=plan.model_dump(mode="json"),
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_query_plan_wire_v2(
+        self, question: str, schema_context: str
+    ) -> QueryPlanWireV2Proposal:
+        """Request the explicit V2 wire contract and canonically parse it."""
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _query_plan_wire_v2_messages(question, schema_context)
+        response_format = {"type": "json_object"}
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            # The configured OpenAI-compatible endpoint is only verified for JSON mode.
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "query_plan_wire_v2",
+            question,
+            schema_context,
+            messages,
+            response_format,
+        )
+        started = perf_counter()
+        try:
+            payload = await self._post(body)
+        except LLMProviderError as error:
+            if isinstance(error, MalformedProviderResponse):
+                stage = QueryPlanProviderFailureStage.RESPONSE_EXTRACTION_FAILURE
+            else:
+                stage = (
+                    QueryPlanProviderFailureStage.HTTP_PROVIDER_FAILURE
+                    if error.detail is not None and error.detail.status_code is not None
+                    else QueryPlanProviderFailureStage.TRANSPORT_FAILURE
+                )
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=stage,
+                response_id=error.detail.request_id if error.detail else None,
+                http_status=error.detail.status_code if error.detail else None,
+                resolved_model=self.settings.llm_model,
+                attempt_count=1,
+            )
+            self._complete_model_io(
+                None,
+                parsed_sql=None,
+                raw_content=None,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(str(error), diagnostic, error.detail) from error
+        content = _assistant_content(payload)
+        base_metadata = _query_plan_response_metadata(
+            payload, self._response_metadata, self.settings.llm_model
+        )
+        if content is None:
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=QueryPlanProviderFailureStage.EMPTY_RESPONSE, **base_metadata
+            )
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=None,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=diagnostic.stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(
+                "Provider returned an empty plan response", diagnostic
+            )
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError as error:
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=QueryPlanProviderFailureStage.JSON_PARSE_FAILURE,
+                **base_metadata,
+                **_response_diagnostic_fields(content),
+            )
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=diagnostic.stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(
+                "Provider plan response was not valid JSON", diagnostic
+            ) from error
+        if not isinstance(data, dict):
+            errors = (
+                {
+                    "loc": "__root__",
+                    "type": "object_type",
+                    "msg": "JSON value must be an object",
+                },
+            )
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=QueryPlanProviderFailureStage.WIRE_SCHEMA_VALIDATION_FAILURE,
+                **base_metadata,
+                **_response_diagnostic_fields(content),
+                validation_errors=errors,
+            )
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=diagnostic.stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(
+                "Provider plan response was not an object", diagnostic
+            )
+        try:
+            wire = QueryPlanWireV2.model_validate(data)
+        except ValidationError as error:
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=QueryPlanProviderFailureStage.WIRE_SCHEMA_VALIDATION_FAILURE,
+                **base_metadata,
+                **_response_diagnostic_fields(content),
+                validation_errors=_safe_validation_errors(error),
+            )
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=diagnostic.stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(
+                "Provider plan failed the QueryPlanWireV2 schema", diagnostic
+            ) from error
+        try:
+            plan = wire_to_query_plan_v1(wire)
+        except (TypeError, ValueError, ValidationError) as error:
+            diagnostic = QueryPlanProviderDiagnostic(
+                stage=QueryPlanProviderFailureStage.CANONICALIZATION_FAILURE,
+                **base_metadata,
+                **_response_diagnostic_fields(content),
+                validation_errors=_safe_validation_errors(error),
+            )
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage=diagnostic.stage.value,
+                failure_metadata=diagnostic.model_dump(mode="json"),
+            )
+            raise QueryPlanProviderBoundaryError(
+                "Provider plan could not be canonicalized", diagnostic
+            ) from error
+        usage = payload.get("usage") or {}
+        completion_details = usage.get("completion_tokens_details") or {}
+        prompt_details = usage.get("prompt_tokens_details") or {}
+        proposal = QueryPlanWireV2Proposal(
+            wire=wire,
+            provider="openai-compatible",
+            model=payload.get("model") or self.settings.llm_model,
+            prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+            completion_tokens=_optional_int(usage.get("completion_tokens")),
+            reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+            cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+            latency_ms=(perf_counter() - started) * 1000,
+        )
         self._complete_model_io(
             payload,
             parsed_sql=None,
@@ -650,6 +902,10 @@ class OpenAICompatibleProvider:
         parsed_metric_grounding: dict[str, Any] | None = None,
         raw_content: str | None,
         latency_ms: float | None,
+        failure_stage: str | None = None,
+        failure_metadata: dict[str, Any] | None = None,
+        attempt_count: int = 1,
+        technical_retry_count: int = 0,
     ) -> None:
         if not self.settings.eval_capture_model_io or self._last_model_io is None:
             return
@@ -661,10 +917,15 @@ class OpenAICompatibleProvider:
         prompt_details = prompt_details if isinstance(prompt_details, dict) else {}
         choice = payload.get("choices", [{}])[0] if isinstance(payload, dict) else {}
         choice = choice if isinstance(choice, dict) else {}
+        bounded_content, content_truncated = _bounded_response_content(raw_content)
         self._last_model_io = self._last_model_io.model_copy(
             update={
                 "response_model": payload.get("model") if isinstance(payload, dict) else None,
-                "raw_assistant_content": raw_content,
+                "raw_assistant_content": bounded_content,
+                "raw_assistant_content_sha256": (
+                    text_hash(raw_content) if raw_content is not None else None
+                ),
+                "raw_assistant_content_truncated": content_truncated,
                 "parsed_sql": parsed_sql,
                 "parsed_result_shape": parsed_result_shape,
                 "parsed_operation_plan": parsed_operation_plan,
@@ -682,6 +943,13 @@ class OpenAICompatibleProvider:
                     payload.get("system_fingerprint") if isinstance(payload, dict) else None
                 ),
                 "request_id": self._response_metadata.get("request_id"),
+                "provider_response_id": _bounded_request_id(
+                    payload.get("id") if isinstance(payload, dict) else None
+                ),
+                "failure_stage": failure_stage,
+                "failure_metadata": failure_metadata or {},
+                "attempt_count": attempt_count,
+                "technical_retry_count": technical_retry_count,
             }
         )
 
@@ -737,6 +1005,58 @@ class OpenAICompatibleProvider:
             raise MalformedProviderResponse("Provider returned invalid JSON") from error
 
 
+def _query_plan_wire_v2_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    return [
+        {"role": "system", "content": query_plan_wire_v2_prompt(schema_context)},
+        {"role": "user", "content": question},
+    ]
+
+
+def _bounded_response_content(content: str | None, limit: int = 4096) -> tuple[str | None, bool]:
+    if content is None:
+        return None, False
+    return content[:limit], len(content) > limit
+
+
+def _response_diagnostic_fields(content: str) -> dict[str, Any]:
+    preview, truncated = _bounded_response_content(content)
+    return {
+        "response_preview": preview,
+        "response_sha256": text_hash(content),
+        "response_truncated": truncated,
+    }
+
+
+def _query_plan_response_metadata(
+    payload: Any, response_metadata: dict[str, str | None], model: str
+) -> dict[str, Any]:
+    choice = payload.get("choices", [{}])[0] if isinstance(payload, dict) else {}
+    choice = choice if isinstance(choice, dict) else {}
+    return {
+        "response_id": response_metadata.get("request_id")
+        or _bounded_request_id(payload.get("id") if isinstance(payload, dict) else None),
+        "resolved_model": payload.get("model") or model if isinstance(payload, dict) else model,
+        "finish_reason": _bounded_string(choice.get("finish_reason")),
+        "attempt_count": 1,
+    }
+
+
+def _safe_validation_errors(error: Exception) -> tuple[dict[str, str], ...]:
+    if not isinstance(error, ValidationError):
+        return ({"loc": "__root__", "type": type(error).__name__, "msg": str(error)[:240]},)
+    safe: list[dict[str, str]] = []
+    for item in error.errors():
+        location = ".".join(str(part) for part in item.get("loc", ())) or "__root__"
+        safe.append(
+            {
+                "loc": location,
+                "type": str(item.get("type", "validation_error")),
+                "msg": str(item.get("msg", "validation failed"))[:240],
+            }
+        )
+    return tuple(safe[:20])
+
+
 class StaticLLMProvider:
     """Deterministic provider useful for tests and explicit local evaluation fixtures."""
 
@@ -755,6 +1075,15 @@ class StaticLLMProvider:
         return QueryPlanV1Proposal(
             plan=self.query_plan, provider="static", model=self.proposal.model
         )
+
+    async def propose_query_plan_wire_v2(
+        self, question: str, schema_context: str
+    ) -> QueryPlanWireV2Proposal:
+        del question, schema_context
+        if self.query_plan is None:
+            raise NotImplementedError("static QueryPlan wire proposal is not configured")
+        wire = QueryPlanWireV2.model_validate(self.query_plan.model_dump(mode="json"))
+        return QueryPlanWireV2Proposal(wire=wire, provider="static", model=self.proposal.model)
 
     async def propose_metric_grounding(
         self, question: str, glossary: str
@@ -854,6 +1183,12 @@ class UnconfiguredLLMProvider:
     ) -> QueryPlanV1Proposal:
         del question, schema_context
         raise NotImplementedError("QueryPlan V1 generation is not configured")
+
+    async def propose_query_plan_wire_v2(
+        self, question: str, schema_context: str
+    ) -> QueryPlanWireV2Proposal:
+        del question, schema_context
+        raise NotImplementedError("QueryPlan Wire V2 generation is not configured")
 
     async def propose_metric_grounding(
         self, question: str, glossary: str

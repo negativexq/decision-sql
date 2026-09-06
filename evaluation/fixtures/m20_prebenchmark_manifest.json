@@ -1,0 +1,75 @@
+{
+  "milestone": "M20",
+  "commit_sha": "8439b1e10bb53dbf58b7d78a81418da33f18ca58",
+  "repository": {
+    "clean": false,
+    "status_sha256": "593bb7d78213de7b3523e7e9a46d86f530e73eafd4214ce5df71aabd560929e3",
+    "code_state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked_files": [
+      "evaluation/fixtures/m20_prebenchmark_manifest.json"
+    ]
+  },
+  "benchmark": {
+    "bird_dataset_sha256": "d2731292f20b8d8569cd956dd747ffe1df13cd625076263e38ae9ebcef50b1ab",
+    "defog_classic_sha256": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d",
+    "defog_advanced_sha256": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+    "counts": {
+      "defog_classic": 210,
+      "defog_advanced": 64,
+      "bird": 500
+    }
+  },
+  "provider": {
+    "provider": "openai-compatible",
+    "model": "gpt-5.6-luna",
+    "base_url": "https://api.openai.com/v1",
+    "temperature": "provider_default",
+    "reasoning_effort": "none",
+    "timeout_seconds": 30.0
+  },
+  "generation_mode": "DIRECT",
+  "memory_enabled": false,
+  "retrieval_enabled": false,
+  "governed_semantics_enabled": false,
+  "queryplan_enabled": false,
+  "window_ir_enabled": false,
+  "repair_calls": 0,
+  "judge_calls": 0,
+  "best_of_n": false,
+  "retry_policy": "no semantic retry; existing provider adapter only",
+  "m1": {
+    "max_plan_rows": 100000,
+    "max_plan_cost": 100000.0,
+    "max_result_rows": 1000,
+    "statement_timeout_ms": 5000
+  },
+  "schema_context_hashes": {
+    "bird:california_schools": "5cbdc871506ded471eb841f5bfc6c956bdf996cdf88228a2196f282bd7d17285",
+    "bird:card_games": "d7effc82f76fe9c289348815026ea2e732d7ed1d5f163b08443500b1bd84a55b",
+    "bird:codebase_community": "cb01a19ad56e85160e786c32b60f42b557908bf0a25b90999ee52463b145cb44",
+    "bird:debit_card_specializing": "d8f8713d67f7c999c69f632379bbd1f940befdd75bd70e11676abb046fc43b8f",
+    "bird:european_football_2": "91adcf8a6b015b0055e26532a70fb796bca9b4791e885199e54605f8e5ec9a9a",
+    "bird:financial": "66dc0d0332c711329f7395744be0441d9f8a8afab407f08a83a2d68a03788356",
+    "bird:formula_1": "596d0d12be523baa795106922109e9e5b77e64fce53bb6e14301015ff42e5fab",
+    "bird:student_club": "aa96fd2bafc18b6d6bb563b6f2bc7e834757721f88a905f45fe28c891fa9d325",
+    "bird:superhero": "8c4d323dc13e7d88a27118dc91fece35cb96efc9fd50b8328dd0564c2ec7dd64",
+    "bird:thrombosis_prediction": "59a754675081560187224ffd45c2e6ecdb6a0bbb3fb8aeaae03cc4deb4e8fc2b",
+    "bird:toxicology": "43280ad8a4160819543e55d51de1820dddb761c1d5f6271cded4f20176a11de1",
+    "defog:academic": "9337468f06defccc455cadf6ac05b0009b1549af5663a54264ada3a4c75457c3",
+    "defog:advising": "631af6359e362f7ccdea1f6d2808d3f3bb21cea633a1a140bd00fea3b0820003",
+    "defog:atis": "0dea231d7f931c98794448754d6c0d87cca4cd33f0cf7f60bbda4c29a0387665",
+    "defog:broker": "67fad518674ac7837a9bbf3f67d14548c5995dc237b49a9c9667b648aeca6236",
+    "defog:car_dealership": "a63d1c577ede8d85129bcd7550c4287f73130afd7d4c3f00c7e2cfc459d6597d",
+    "defog:derm_treatment": "f9efff37a6acafb55e7fa54149f35230838d85fa6d5611eb48772f3b6413351a",
+    "defog:ewallet": "a82d6d7e52d9528b8ebc22bfb624d20b18be2e0166fe852b41a855d73aa163e4",
+    "defog:geography": "2e62cb770c1cd872d95de6d6f0e0fbc42425684ef9b8e317fded10fb78a98a2d",
+    "defog:restaurants": "c99648d0aa014fd7d0e5669069dd6cccbbcbe485bd485fd095e57272a068370a",
+    "defog:scholar": "0f8e52f608dc5a19b07895251a560264363ab1d3fdb6d64d1c4099c953299a15",
+    "defog:yelp": "7467563c44e91e8a43008d6b8b5e4a9218e3bf06dd0af7c2f33c198005ba2b2d"
+  },
+  "evaluator": {
+    "defog": "pinned sql-eval compare_df/subset_df",
+    "bird": "existing bird_execution_match"
+  },
+  "manifest_hash": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a"
+}

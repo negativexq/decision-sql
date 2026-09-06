@@ -1,4 +1,4 @@
-# M20 — Full Benchmark Rebaseline (Incomplete)
+# M20 — Full Benchmark Rebaseline
 
 ## Objective
 
@@ -32,12 +32,16 @@ and result evaluation. Governed execution failures now use the distinct
 
 ## Manifest
 
-The implementation is ready for a clean full run with GPT-5.6 Luna
+The authoritative run used commit
+`8439b1e10bb53dbf58b7d78a81418da33f18ca58` with GPT-5.6 Luna
 (`gpt-5.6-luna`) through the OpenAI-compatible provider, provider-default
 temperature, reasoning effort `none`, and a 30-second timeout. Memory,
 retrieval, governed semantics, QueryPlan, Window IR, repair, judge, and
-best-of-N are disabled. No authoritative M20 manifest/result is currently
-retained because the provider run was stopped before a complete final attempt.
+best-of-N were disabled. The pre-provider manifest hash is
+`36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a`.
+The raw git cleanliness field is `false` because the non-source smoke
+manifest was still present when the full manifest was written; the recorded
+code-state hash is empty, so no source diff was present.
 
 ## Historical evidence
 
@@ -48,16 +52,27 @@ rewritten by M20.
 
 ## Fresh M20 results
 
-No authoritative full-rebaseline result. Two earlier full attempts were
-invalidated by manifest/accounting defects, and a third attempt was stopped
-after partial provider exposure to avoid further cost.
+The authoritative run submitted all 500 BIRD, 210 Classic, and 64 Advanced
+cases and made 774 provider calls:
+
+| Benchmark | Correct | Total | Accuracy |
+| --- | ---: | ---: | ---: |
+| BIRD Mini-Dev | 193 | 500 | 38.60% |
+| Defog Classic | 90 | 210 | 42.86% |
+| Defog Advanced | 13 | 64 | 20.31% |
+
+The earlier invalid attempts and the stopped partial attempt are preserved as
+separate invalid-run records and are not included in these scores.
 
 ## Failure-stage distribution
 
-The implementation records M1 rejection, M1 planning errors, result
+The aggregate artifact records M1 rejection, M1 planning errors, result
 evaluation mismatches, provider/protocol failures, and execution failures
-separately. A future complete run must retain the aggregate and per-case
-artifacts before any cleanup.
+separately. In the authoritative run, M1 accepted 475 candidates, rejected
+264, and returned 35 planning errors; all 475 accepted candidates executed
+successfully. Result mismatches were 179. Provider/protocol and execution
+failures were zero. Per-case provenance is retained in
+`evaluation/fixtures/m20_full_benchmark_cases.jsonl`.
 
 ## Limitations
 
@@ -69,5 +84,6 @@ generalization measurements.
 
 ## Next milestone
 
-`M20.1 — Full Failure Forensics` must wait until M20 has a complete authoritative
-per-case artifact.
+`M20.1 — Full Failure Forensics` can use the frozen per-case artifact to ask
+which causal mechanisms produced M1 rejections, M1 planning errors, and result
+mismatches, without changing this baseline.

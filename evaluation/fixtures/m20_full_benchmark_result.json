@@ -1,0 +1,128 @@
+{
+  "classification": "M20_FULL_REBASELINE_COMPLETED",
+  "commit_sha": "8439b1e10bb53dbf58b7d78a81418da33f18ca58",
+  "manifest_hash": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a",
+  "model": {
+    "provider": "openai-compatible",
+    "model": "gpt-5.6-luna",
+    "base_url": "https://api.openai.com/v1",
+    "temperature": "provider_default",
+    "reasoning_effort": "none",
+    "timeout_seconds": 30.0
+  },
+  "benchmarks": {
+    "bird": {
+      "correct": 193,
+      "total": 500,
+      "provider_calls": 500,
+      "m1_accepted": 338,
+      "m1_rejected": 147,
+      "m1_errors": 15,
+      "execution_succeeded": 338,
+      "execution_failed": 0,
+      "failure_stages": {
+        "M1": 162,
+        "RESULT_EVALUATION": 145
+      },
+      "latency_ms": {
+        "p50": 1444.4767078384757,
+        "p95": 2035.741499857977
+      },
+      "stage_latency_ms": {
+        "generation": {
+          "p50": 1424.2683749180287,
+          "p95": 2013.3059590589255
+        },
+        "m1": {
+          "p50": 10.708916932344437,
+          "p95": 18.90124985948205
+        },
+        "execution": {
+          "p50": 8.656499907374382,
+          "p95": 60.58458308689296
+        }
+      },
+      "input_tokens": 312212,
+      "output_tokens": 36135
+    },
+    "defog_classic": {
+      "correct": 90,
+      "total": 210,
+      "provider_calls": 210,
+      "m1_accepted": 123,
+      "m1_rejected": 72,
+      "m1_errors": 15,
+      "execution_succeeded": 123,
+      "execution_failed": 0,
+      "failure_stages": {
+        "RESULT_EVALUATION": 33,
+        "M1": 87
+      },
+      "latency_ms": {
+        "p50": 1423.0289170518517,
+        "p95": 1967.2067910432816
+      },
+      "stage_latency_ms": {
+        "generation": {
+          "p50": 1399.5933751575649,
+          "p95": 1964.3269169609994
+        },
+        "m1": {
+          "p50": 9.368167025968432,
+          "p95": 18.494958989322186
+        },
+        "execution": {
+          "p50": 4.668750101700425,
+          "p95": 6.842874921858311
+        }
+      },
+      "input_tokens": 97740,
+      "output_tokens": 13315
+    },
+    "defog_advanced": {
+      "correct": 13,
+      "total": 64,
+      "provider_calls": 64,
+      "m1_accepted": 14,
+      "m1_rejected": 45,
+      "m1_errors": 5,
+      "execution_succeeded": 14,
+      "execution_failed": 0,
+      "failure_stages": {
+        "M1": 50,
+        "RESULT_EVALUATION": 1
+      },
+      "latency_ms": {
+        "p50": 1726.3177919667214,
+        "p95": 2622.078875079751
+      },
+      "stage_latency_ms": {
+        "generation": {
+          "p50": 1723.0551671236753,
+          "p95": 2611.5990420803428
+        },
+        "m1": {
+          "p50": 5.200000014156103,
+          "p95": 16.630042111501098
+        },
+        "execution": {
+          "p50": 4.679124802350998,
+          "p95": 5.77745889313519
+        }
+      },
+      "input_tokens": 41299,
+      "output_tokens": 7495
+    }
+  },
+  "provider_calls": 774,
+  "provider_failures": 0,
+  "failure_stages": {
+    "M1": 299,
+    "RESULT_EVALUATION": 179
+  },
+  "repair_calls": 0,
+  "judge_calls": 0,
+  "retrieval_calls": 0,
+  "memory_calls": 0,
+  "created_at": "2026-09-06T20:24:03.869650+00:00"
+}

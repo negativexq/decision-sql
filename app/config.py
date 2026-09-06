@@ -76,6 +76,10 @@ class Settings(BaseSettings):
         default=False,
         validation_alias="DECISION_SQL_GOVERNED_METRICS_SHADOW_EXECUTE",
     )
+    governed_metric_runtime_enabled: bool = Field(
+        default=False,
+        validation_alias="DECISION_SQL_GOVERNED_METRIC_RUNTIME_ENABLED",
+    )
     verified_query_memory_mode: VerifiedMemoryMode = Field(
         default=VerifiedMemoryMode.OFF,
         validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_MODE",

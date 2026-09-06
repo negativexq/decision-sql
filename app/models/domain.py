@@ -15,6 +15,13 @@ class UserContext(BaseModel):
     roles: tuple[str, ...] = ()
 
 
+class ExecutionMode(StrEnum):
+    """Server-owned execution scope for a text-to-SQL request."""
+
+    DIRECT = "DIRECT"
+    GOVERNED_METRIC = "GOVERNED_METRIC"
+
+
 class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
 
@@ -24,6 +31,7 @@ class TextToSqlRequest(QueryRequest):
 
     correlation_id: str | None = None
     execute: bool = True
+    execution_mode: ExecutionMode = ExecutionMode.DIRECT
 
 
 class QueryStatus(StrEnum):

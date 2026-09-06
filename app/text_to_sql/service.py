@@ -5,6 +5,7 @@ from typing import Any
 from opentelemetry import trace
 
 from app.catalog.models import SchemaContext
+from app.config import GovernedMetricsMode, Settings, get_settings
 from app.generation.hard_query_plans import OperationPlan
 from app.generation.intent import IntentProposal, QueryIntent
 from app.generation.provider import (
@@ -18,7 +19,7 @@ from app.generation.result_shape import (
     ResultShapeValidation,
     validate_result_shape,
 )
-from app.models.domain import FailureStage, TextToSqlRequest
+from app.models.domain import ExecutionMode, FailureStage, TextToSqlRequest
 from app.observability.tracing import get_tracer
 from app.provenance.canonical import semantic_hash, text_hash
 from app.provenance.models import (
@@ -33,6 +34,14 @@ from app.retrieval.context import (
     SchemaContextResolver,
     SchemaResolutionError,
     serialize_schema_context,
+)
+from app.semantics.catalog import build_m3_catalog
+from app.semantics.routing import (
+    GovernedFallbackReason,
+    GovernedMetricRouteService,
+    GovernedRouteDecision,
+    GovernedRouteStatus,
+    GovernedRuntimeRouteState,
 )
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError, SqlPlanFailure
 from app.sql.service import SqlSafetyService
@@ -50,6 +59,16 @@ from app.text_to_sql.models import (
 )
 
 
+class _DirectOnlyRunner:
+    """Adapter preventing a governed fallback from re-entering the router."""
+
+    def __init__(self, service: "TextToSqlService") -> None:
+        self.service = service
+
+    async def run(self, request: TextToSqlRequest) -> TextToSqlResult:
+        return await self.service._run(request, result_shape_contract=False)
+
+
 class TextToSqlService:
     """M2 coordinator; M1 remains the sole SQL authorization and execution authority."""
 
@@ -64,6 +83,7 @@ class TextToSqlService:
         generation_mode: GenerationMode | None = None,
         schema_serializer: Callable[[SchemaContext], str] = serialize_schema_context,
         provenance_sink: ProvenanceSink | None = None,
+        settings: Settings | None = None,
     ) -> None:
         self.context_resolver = context_resolver
         self.provider = provider
@@ -82,10 +102,40 @@ class TextToSqlService:
         self.tracer = tracer or get_tracer()
         self.schema_serializer = schema_serializer
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
+        self.settings = settings or getattr(safety_service, "settings", None) or get_settings()
+        schema_catalog = getattr(safety_service, "catalog", None)
+        self.governed_metric_route = GovernedMetricRouteService(
+            _DirectOnlyRunner(self),
+            provider,
+            safety_service,
+            catalog=build_m3_catalog(schema_catalog),
+            mode=(
+                GovernedMetricsMode.ON
+                if self.settings.governed_metric_runtime_enabled
+                else GovernedMetricsMode.OFF
+            ),
+            tracer=self.tracer,
+            provenance_sink=self.provenance_sink,
+            allow_post_m1_fallback=False,
+            metric_context_provider=self._governed_metric_context,
+        )
 
     async def run(self, request: TextToSqlRequest) -> TextToSqlResult:
-        """Run the unchanged M2 question-to-SQL path."""
-        return await self._run(request, result_shape_contract=False)
+        """Run direct SQL by default or the explicit bounded M13 route."""
+        if request.execution_mode is ExecutionMode.GOVERNED_METRIC:
+            decision = await self.governed_metric_route.run(request)
+            return self._decorate_route_result(request, decision)
+        result = await self._run(request, result_shape_contract=False)
+        return result.model_copy(
+            update={
+                "diagnostics": {
+                    **result.diagnostics,
+                    "requested_execution_mode": ExecutionMode.DIRECT.value,
+                    "actual_execution_path": "DIRECT_SQL",
+                    "route_state": GovernedRuntimeRouteState.DIRECT_REQUESTED.value,
+                }
+            }
+        )
 
     async def run_with_context_addition(
         self, request: TextToSqlRequest, context_addition: str
@@ -106,6 +156,76 @@ class TextToSqlService:
     ) -> TextToSqlResult:
         """Run one SQL generation call with an untrusted narrow plan aid."""
         return await self._run(request, result_shape_contract=False, operation_plan=operation_plan)
+
+    def _decorate_route_result(
+        self, request: TextToSqlRequest, decision: GovernedRouteDecision
+    ) -> TextToSqlResult:
+        if decision.path.value == "GOVERNED_METRIC":
+            if decision.status is GovernedRouteStatus.SUCCESS:
+                route_state = GovernedRuntimeRouteState.GOVERNED_SUCCESS
+            elif decision.status is GovernedRouteStatus.M1_REJECTION:
+                route_state = GovernedRuntimeRouteState.GOVERNED_POLICY_INVARIANT_FAILURE
+            elif decision.status is GovernedRouteStatus.EXECUTION_FAILURE:
+                route_state = GovernedRuntimeRouteState.GOVERNED_EXECUTION_FAILURE
+            else:
+                route_state = GovernedRuntimeRouteState.GOVERNED_EXECUTION_FAILURE
+        elif decision.fallback_reason is GovernedFallbackReason.FEATURE_OFF:
+            route_state = GovernedRuntimeRouteState.GOVERNED_FALLBACK_FEATURE_DISABLED
+        elif decision.fallback_reason is GovernedFallbackReason.NOT_APPLICABLE:
+            route_state = GovernedRuntimeRouteState.GOVERNED_FALLBACK_NOT_APPLICABLE
+        elif decision.fallback_reason is GovernedFallbackReason.PROVIDER_FAILURE:
+            route_state = GovernedRuntimeRouteState.GOVERNED_FALLBACK_PROVIDER_FAILURE
+        elif decision.fallback_reason in {
+            GovernedFallbackReason.UNKNOWN_METRIC,
+            GovernedFallbackReason.INVALID_DIMENSION,
+            GovernedFallbackReason.INVALID_GROUNDING,
+        }:
+            route_state = GovernedRuntimeRouteState.GOVERNED_FALLBACK_INVALID_PLAN
+        elif decision.fallback_reason in {
+            GovernedFallbackReason.COMPILER_FAILURE,
+            GovernedFallbackReason.AMBIGUOUS_RELATIONSHIP_PATH,
+            GovernedFallbackReason.FANOUT_UNSAFE_PATH,
+        }:
+            route_state = GovernedRuntimeRouteState.GOVERNED_FALLBACK_COMPILER_REJECTED
+        else:
+            route_state = GovernedRuntimeRouteState.GOVERNED_EXECUTION_FAILURE
+        diagnostics: dict[str, int | float | str] = {
+            **decision.user_result.diagnostics,
+            **decision.diagnostics,
+            "requested_execution_mode": request.execution_mode.value,
+            "actual_execution_path": decision.path.value,
+            "governed_metric_runtime_enabled": str(
+                self.settings.governed_metric_runtime_enabled
+            ).lower(),
+            "route_state": route_state.value,
+        }
+        if decision.fallback_reason is not None:
+            diagnostics["fallback_reason"] = decision.fallback_reason.value
+        if decision.metric_name is not None:
+            diagnostics["semantic_plan_metric"] = decision.metric_name
+        diagnostics["dimension_count"] = len(decision.dimensions)
+        if decision.governed_candidate is not None:
+            diagnostics["compiled_sql_hash"] = text_hash(decision.governed_candidate.sql)
+        if decision.semantic_provenance is not None:
+            diagnostics["compiler_version_hash"] = (
+                decision.semantic_provenance.semantic_contract_hash
+            )
+        if decision.grounding is not None:
+            diagnostics["semantic_plan_hash"] = semantic_hash(
+                decision.grounding.model_dump(mode="json")
+            )
+        return decision.user_result.model_copy(update={"diagnostics": diagnostics})
+
+    def _governed_metric_context(self, question: str) -> str:
+        """Render the M12R-equivalent glossary plus full schema context."""
+        context = self.context_resolver.resolve(question, SchemaContextMode.FULL_COMPACT)
+        schema = self.schema_serializer(context)
+        if schema.startswith("PUBLIC GOVERNED SEMANTIC CONTEXT:\n"):
+            return schema
+        return (
+            f"PUBLIC GOVERNED SEMANTIC CONTEXT:\n{self.governed_metric_route.glossary}\n\n"
+            f"FULL QUERYABLE POSTGRES SCHEMA:\n{schema}"
+        )
 
     async def _run(
         self,

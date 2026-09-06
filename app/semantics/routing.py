@@ -90,6 +90,20 @@ class GovernedFallbackReason(StrEnum):
     PROVIDER_FAILURE = "PROVIDER_FAILURE"
 
 
+class GovernedRuntimeRouteState(StrEnum):
+    """Bounded M13 route states recorded on the normal result envelope."""
+
+    DIRECT_REQUESTED = "DIRECT_REQUESTED"
+    GOVERNED_SUCCESS = "GOVERNED_SUCCESS"
+    GOVERNED_FALLBACK_FEATURE_DISABLED = "GOVERNED_FALLBACK_FEATURE_DISABLED"
+    GOVERNED_FALLBACK_PROVIDER_FAILURE = "GOVERNED_FALLBACK_PROVIDER_FAILURE"
+    GOVERNED_FALLBACK_NOT_APPLICABLE = "GOVERNED_FALLBACK_NOT_APPLICABLE"
+    GOVERNED_FALLBACK_INVALID_PLAN = "GOVERNED_FALLBACK_INVALID_PLAN"
+    GOVERNED_FALLBACK_COMPILER_REJECTED = "GOVERNED_FALLBACK_COMPILER_REJECTED"
+    GOVERNED_POLICY_INVARIANT_FAILURE = "GOVERNED_POLICY_INVARIANT_FAILURE"
+    GOVERNED_EXECUTION_FAILURE = "GOVERNED_EXECUTION_FAILURE"
+
+
 class ShadowComparison(StrEnum):
     MATCH = "SHADOW_MATCH"
     DIFFER = "SHADOW_DIFFER"
@@ -150,6 +164,8 @@ class GovernedMetricRouteService:
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
         verified_memory: _VerifiedMemoryResidualRunner | None = None,
         provenance_sink: ProvenanceSink | None = None,
+        allow_post_m1_fallback: bool = True,
+        metric_context_provider: Callable[[str], str] | None = None,
     ) -> None:
         self.direct_service = direct_service
         self.provider = provider
@@ -164,6 +180,8 @@ class GovernedMetricRouteService:
         self.result_comparator = result_comparator
         self.verified_memory = verified_memory
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
+        self.allow_post_m1_fallback = allow_post_m1_fallback
+        self.metric_context_provider = metric_context_provider
         self._metric_names = frozenset(metric.name for metric in self.catalog.metrics)
 
     @classmethod
@@ -179,6 +197,8 @@ class GovernedMetricRouteService:
         result_comparator: Callable[[QueryExecution, QueryExecution], bool] | None = None,
         verified_memory: _VerifiedMemoryResidualRunner | None = None,
         provenance_sink: ProvenanceSink | None = None,
+        allow_post_m1_fallback: bool = True,
+        metric_context_provider: Callable[[str], str] | None = None,
     ) -> "GovernedMetricRouteService":
         """Build a route from settings without changing the direct service defaults."""
         return cls(
@@ -192,6 +212,8 @@ class GovernedMetricRouteService:
             result_comparator=result_comparator,
             verified_memory=verified_memory,
             provenance_sink=provenance_sink,
+            allow_post_m1_fallback=allow_post_m1_fallback,
+            metric_context_provider=metric_context_provider,
         )
 
     async def run(self, request: TextToSqlRequest) -> GovernedRouteDecision:
@@ -211,7 +233,16 @@ class GovernedMetricRouteService:
                     else None
                 )
                 decision = await self._governed_attempt(request, shadow_direct)
-            self._record_route(span, decision, (perf_counter() - started) * 1000)
+            route_latency_ms = (perf_counter() - started) * 1000
+            decision = decision.model_copy(
+                update={
+                    "diagnostics": {
+                        **decision.diagnostics,
+                        "route_total_latency_ms": route_latency_ms,
+                    }
+                }
+            )
+            self._record_route(span, decision, route_latency_ms)
             event_recorder.emit(
                 ProvenanceStage.ROUTER,
                 ProvenanceEventType.ROUTE_DECIDED,
@@ -230,11 +261,16 @@ class GovernedMetricRouteService:
         grounding: GovernedMetricGroundingDTO | None = None
         event_recorder = recorder_for(self.provenance_sink, request)
         started = perf_counter()
+        metric_context = (
+            self.metric_context_provider(request.question)
+            if self.metric_context_provider is not None
+            else self.glossary
+        )
         grounding_request_hash = semantic_hash(
             {
                 "operation": "metric_grounding",
                 "question": request.question,
-                "glossary": self.glossary,
+                "context": metric_context,
             }
         )
         event_recorder.emit(
@@ -250,7 +286,7 @@ class GovernedMetricRouteService:
         with self.tracer.start_as_current_span("decision_sql.semantic.grounding") as span:
             try:
                 proposal = await self.provider.propose_metric_grounding(
-                    request.question, self.glossary
+                    request.question, metric_context
                 )
                 if not isinstance(proposal, GovernedMetricGroundingProposal):
                     raise TypeError("provider returned invalid governed grounding")
@@ -440,6 +476,18 @@ class GovernedMetricRouteService:
         planned = self.safety_service.plan(compiled)
         m1_latency = (perf_counter() - plan_started) * 1000
         if isinstance(planned, SqlPlanFailure):
+            if not self.allow_post_m1_fallback:
+                return self._governed_policy_failure(
+                    request,
+                    grounding,
+                    compiled,
+                    planned,
+                    provenance,
+                    diagnostics={
+                        "compile_latency_ms": compile_latency,
+                        "m1_latency_ms": m1_latency,
+                    },
+                )
             return await self._fallback(
                 request,
                 direct,
@@ -471,10 +519,24 @@ class GovernedMetricRouteService:
                 status=GovernedRouteStatus.READY,
                 provenance=provenance,
                 diagnostics={"compile_latency_ms": compile_latency, "m1_latency_ms": m1_latency},
+                proposal=proposal,
             )
 
         execution = self.safety_service.execute(planned)
         if isinstance(execution, SqlExecutionError):
+            if not self.allow_post_m1_fallback:
+                return self._governed_execution_failure(
+                    request,
+                    grounding,
+                    compiled,
+                    planned,
+                    execution,
+                    provenance,
+                    diagnostics={
+                        "compile_latency_ms": compile_latency,
+                        "m1_latency_ms": m1_latency,
+                    },
+                )
             return await self._fallback(
                 request,
                 direct,
@@ -508,6 +570,7 @@ class GovernedMetricRouteService:
             status=GovernedRouteStatus.SUCCESS,
             provenance=provenance,
             diagnostics={"compile_latency_ms": compile_latency, "m1_latency_ms": m1_latency},
+            proposal=proposal,
         )
 
     async def _fallback(
@@ -637,6 +700,7 @@ class GovernedMetricRouteService:
         status: GovernedRouteStatus,
         provenance: SemanticExecutionProvenance,
         diagnostics: dict[str, int | float | str | bool],
+        proposal: GovernedMetricGroundingProposal | None = None,
     ) -> GovernedRouteDecision:
         user_result = TextToSqlResult(
             status=(
@@ -648,8 +712,9 @@ class GovernedMetricRouteService:
             plan=plan,
             execution=execution,
             candidate=candidate,
-            provider="openai-compatible",
-            model=None,
+            provider=proposal.provider if proposal is not None else "openai-compatible",
+            model=proposal.model if proposal is not None else None,
+            generation_latency_ms=proposal.latency_ms if proposal is not None else None,
             provider_calls_attempted=1,
             provider_calls_succeeded=1,
             generation_path=GenerationPath.GOVERNED_METRIC,
@@ -666,6 +731,82 @@ class GovernedMetricRouteService:
             governed_candidate=candidate,
             governed_plan=plan,
             governed_execution=execution,
+            semantic_provenance=provenance,
+            diagnostics=diagnostics,
+        )
+
+    def _governed_policy_failure(
+        self,
+        request: TextToSqlRequest,
+        grounding: GovernedMetricGroundingDTO,
+        candidate: SqlCandidate,
+        failure: SqlPlanFailure,
+        provenance: SemanticExecutionProvenance,
+        diagnostics: dict[str, int | float | str | bool],
+    ) -> GovernedRouteDecision:
+        result = TextToSqlResult(
+            status=TextToSqlStatus.PLAN_REJECTED,
+            correlation_id=request.correlation_id,
+            failure_stage=failure.failure_stage,
+            error=failure.error,
+            plan_failure=failure,
+            candidate=candidate,
+            provider="openai-compatible",
+            provider_calls_attempted=1,
+            provider_calls_succeeded=1,
+            generation_path=GenerationPath.GOVERNED_METRIC,
+            diagnostics={**diagnostics, "governed_policy_invariant_failure": True},
+        )
+        return GovernedRouteDecision(
+            mode=self.mode,
+            path=GovernedRoutePath.GOVERNED_METRIC,
+            status=GovernedRouteStatus.M1_REJECTION,
+            applicable=True,
+            metric_name=grounding.metric_name,
+            dimensions=tuple(grounding.dimensions),
+            grounding=grounding,
+            fallback_reason=GovernedFallbackReason.M1_REJECTED,
+            user_result=result,
+            governed_candidate=candidate,
+            semantic_provenance=provenance,
+            diagnostics=diagnostics,
+        )
+
+    def _governed_execution_failure(
+        self,
+        request: TextToSqlRequest,
+        grounding: GovernedMetricGroundingDTO,
+        candidate: SqlCandidate,
+        plan: QueryPlan,
+        failure: SqlExecutionError,
+        provenance: SemanticExecutionProvenance,
+        diagnostics: dict[str, int | float | str | bool],
+    ) -> GovernedRouteDecision:
+        result = TextToSqlResult(
+            status=TextToSqlStatus.EXECUTION_ERROR,
+            correlation_id=request.correlation_id,
+            failure_stage=failure.failure_stage,
+            error=failure.error,
+            plan=plan,
+            execution_error=failure,
+            candidate=candidate,
+            provider="openai-compatible",
+            provider_calls_attempted=1,
+            provider_calls_succeeded=1,
+            generation_path=GenerationPath.GOVERNED_METRIC,
+            diagnostics=diagnostics,
+        )
+        return GovernedRouteDecision(
+            mode=self.mode,
+            path=GovernedRoutePath.GOVERNED_METRIC,
+            status=GovernedRouteStatus.EXECUTION_FAILURE,
+            applicable=True,
+            metric_name=grounding.metric_name,
+            dimensions=tuple(grounding.dimensions),
+            grounding=grounding,
+            user_result=result,
+            governed_candidate=candidate,
+            governed_plan=plan,
             semantic_provenance=provenance,
             diagnostics=diagnostics,
         )

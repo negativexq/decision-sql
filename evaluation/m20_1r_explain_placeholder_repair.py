@@ -133,10 +133,10 @@ def _compare_target(
     key = f"{kind}:{row['case_id']}"
     if key not in gold_cache:
         gold_cache[key] = _gold_result(question, kind, defog_executor, bird_executor)
-        gold = gold_cache[key]
-        if kind == "bird":
-            assert isinstance(generated, BirdResult)
-            outcome["correct"] = bird_execution_match(generated, cast(BirdResult, gold))
+    gold = gold_cache[key]
+    if kind == "bird":
+        assert isinstance(generated, BirdResult)
+        outcome["correct"] = bird_execution_match(generated, cast(BirdResult, gold))
     else:
         assert isinstance(question, BenchmarkQuestion)
         assert isinstance(generated, DefogResult)

@@ -254,6 +254,25 @@ def test_cost_gate_explains_multiple_percent_literals(service: SqlSafetyService)
     assert planned.statement_type == "Select"
 
 
+def test_reader_executes_multiple_percent_literals_without_mutating_plan(
+    service: SqlSafetyService,
+) -> None:
+    sql = """SELECT name
+              FROM products
+              WHERE name LIKE '%abc%'
+                 OR name LIKE 'foo%'
+                 OR name LIKE '%bar'"""
+    planned = service.plan(SqlCandidate(sql=sql))
+    assert isinstance(planned, QueryPlan)
+    logical_sql = planned.normalized_sql
+
+    result = service.execute(planned)
+
+    assert isinstance(result, QueryExecution)
+    assert "%abc%" in logical_sql
+    assert "%%abc%%" not in logical_sql
+
+
 def test_cost_gate_without_percent_and_policy_rejection_remain_unchanged(
     service: SqlSafetyService,
 ) -> None:

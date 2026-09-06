@@ -21,9 +21,7 @@ class ReadOnlyExecutor:
     ) -> QueryExecution | SqlExecutionError:
         """Execute after SqlSafetyService has established plan acceptance and EXPLAIN."""
         if not isinstance(plan, QueryPlan):
-            return SqlExecutionError(
-                error="Restricted execution requires an accepted QueryPlan."
-            )
+            return SqlExecutionError(error="Restricted execution requires an accepted QueryPlan.")
         try:
             # psycopg treats percent signs as DB-API placeholder syntax at
             # this driver boundary.  Escape only the transport copy; the

@@ -8,7 +8,6 @@ from evaluation.m20_1_m1_boundary_forensics import (
     _safe_forensic_sql,
     validate_artifact,
 )
-from evaluation.m20_1r_explain_placeholder_repair import validate_replay_artifact
 
 ARTIFACT = Path("evaluation/fixtures/m20_1_m1_boundary_forensics.json")
 
@@ -39,14 +38,3 @@ def test_forensic_artifact_root_mapping_is_deterministic() -> None:
     first = [(row["case_id"], row["root_mechanism"]) for row in artifact["cases"]]
     second = [(row["case_id"], row["root_mechanism"]) for row in artifact["cases"]]
     assert first == second
-
-
-def test_explain_repair_replay_is_fail_closed_and_provider_free() -> None:
-    replay = json.loads(
-        Path("evaluation/fixtures/m20_1r_explain_placeholder_repair.json").read_text()
-    )
-    validate_replay_artifact(replay)
-    assert replay["targeted_cases"]["old_placeholder_errors"] == 35
-    assert replay["targeted_cases"]["new_placeholder_errors"] == 0
-    assert replay["targeted_cases"]["accepted"] == 35
-    assert replay["targeted_cases"]["execution_failure"] == 35

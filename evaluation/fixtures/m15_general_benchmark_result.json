@@ -1,0 +1,129 @@
+{
+  "milestone": "M15",
+  "classification": "M15_GENERAL_BENCHMARK_MIXED",
+  "starting_sha": "6f310770984bb2a4c4cecbdffa6639867c8b71da",
+  "branch": "main",
+  "execution_mode": "DIRECT",
+  "governed_metric_used": false,
+  "provider": {
+    "identity": "OpenAI-compatible",
+    "model": "gpt-5.6-luna",
+    "resolved_model": "gpt-5.6-luna",
+    "reasoning": "none",
+    "temperature": "provider_default",
+    "k_shot": 0,
+    "technical_retries": 0,
+    "judge_calls": 0,
+    "repair_calls": 0,
+    "total_calls": 774
+  },
+  "prebenchmark_manifest": {
+    "protocol": "existing M2.13/M2.14 one-shot direct SQL runners",
+    "prompt_and_context_frozen": true,
+    "memory": "historical protocol; no benchmark memory/retrieval calls",
+    "retrieval": "historical protocol; no benchmark retrieval calls",
+    "sql_extraction": "existing benchmark extraction",
+    "evaluator": "existing Defog compare_df/subset_df and BIRD EX evaluators",
+    "m1_used": false,
+    "m3_metric_compiler_calls": 0,
+    "benchmark_runner_source_sha256": {
+      "defog": "c1e83d43321bc34eaa2aa997db32e4c35cd121dd51e683e7fa5032f1f76a72f9",
+      "bird": "8af371608296c9a32941e14c1ba57e69f35274010eb873815efc1d12d91d2d80"
+    },
+    "historical_protocol_model": "gpt-5.6-luna"
+  },
+  "datasets": {
+    "defog_classic": {
+      "questions": 210,
+      "sha256": "fee829a042766f3e75d1a453cf6ffd7f6830ae9d68967156caa00c647b5efd0d",
+      "current_run": "evaluation/results/m213/dev/m15-luna-20260906T1618Z",
+      "current_results_sha256": "809ebd6198305da634be0f4fc7825f06776e1d330aac5a97c7d8cb583daceb3d",
+      "current_summary": {
+        "exact": 141,
+        "subset": 156,
+        "provider_failures": 0,
+        "sql_parse_failures": 0,
+        "m1_rejections": 0,
+        "execution_errors": 3,
+        "result_mismatches": 39
+      }
+    },
+    "defog_advanced": {
+      "questions": 64,
+      "sha256": "566f5267119df0eceb32054037280c2fd5bc8c21b27e9ff6b068d11a47011934",
+      "current_run": "evaluation/results/m213/dev/m15-luna-20260906T1618Z",
+      "current_results_sha256": "033d7929b18670a4c60332647b2239640fa79612f87e040a8be341b079c62ca6",
+      "current_summary": {
+        "exact": 47,
+        "subset": 45,
+        "provider_failures": 0,
+        "sql_parse_failures": 0,
+        "m1_rejections": 0,
+        "execution_errors": 0,
+        "result_mismatches": 16
+      }
+    },
+    "bird_mini_dev": {
+      "questions": 500,
+      "sha256": "d2731292f20b8d8569cd956dd747ffe1df13cd625076263e38ae9ebcef50b1ab",
+      "postgres_dump_sha256": "31b1da211849d24a57c9af7636da46a5b82fc8a3ca1542bb3ebd8775e9a31cec",
+      "current_run": "evaluation/results/m214/dev/m15-luna-20260906T1627Z",
+      "current_results_sha256": "67b6add19191aae456d43d0cfb9ee497607a6a7d64e6331e377beb2801d2069c",
+      "current_summary": {
+        "execution_correct": 231,
+        "provider_failures": 0,
+        "sql_parse_failures": 1,
+        "m1_rejections": 0,
+        "execution_errors": 6,
+        "result_mismatches": 262
+      }
+    },
+    "integrity": {
+      "defog_classic": "210/210 rows; gold executable",
+      "defog_advanced": "64/64 rows; gold executable",
+      "bird_mini_dev": "500/500 rows; gold executable",
+      "duplicates": 0,
+      "gold_mutation": false,
+      "schema_mutation": false
+    }
+  },
+  "historical": {
+    "defog_classic": {"exact": 142, "subset": 158},
+    "defog_advanced": {"exact": 48, "subset": 45},
+    "bird_mini_dev": {
+      "execution_correct": 225,
+      "difficulty": {"simple": 87, "moderate": 108, "challenging": 30},
+      "slices": {"ratio": 17, "temporal": 4, "window": 1}
+    },
+    "artifact_paths": {
+      "defog_classic_summary": "evaluation/results/m213/dev/20260903T120700Z/classic_summary.json",
+      "defog_advanced_summary": "evaluation/results/m213/dev/20260903T120700Z/advanced_summary.json",
+      "bird_summary": "evaluation/results/m214/dev/20260903T130000Z/summary.json"
+    }
+  },
+  "comparison": {
+    "defog_classic_exact": {"current": "141/210", "historical": "142/210", "delta_cases": -1, "delta_pp": -0.476190},
+    "defog_classic_subset": {"current": "156/210", "historical": "158/210", "delta_cases": -2, "delta_pp": -0.952381},
+    "defog_advanced_exact": {"current": "47/64", "historical": "48/64", "delta_cases": -1, "delta_pp": -1.562500},
+    "defog_advanced_subset": {"current": "45/64", "historical": "45/64", "delta_cases": 0, "delta_pp": 0.000000},
+    "bird_execution": {"current": "231/500", "historical": "225/500", "delta_cases": 6, "delta_pp": 1.200000},
+    "bird_difficulty": {
+      "simple": {"current": "90/148", "historical": "87/148", "delta_cases": 3, "delta_pp": 2.027027},
+      "moderate": {"current": "109/250", "historical": "108/250", "delta_cases": 1, "delta_pp": 0.400000},
+      "challenging": {"current": "32/102", "historical": "30/102", "delta_cases": 2, "delta_pp": 1.960784}
+    },
+    "bird_slices": {
+      "ratio": {"current": "20/101", "historical": "17/101", "delta_cases": 3, "delta_pp": 2.970297},
+      "temporal": {"current": "5/19", "historical": "4/19", "delta_cases": 1, "delta_pp": 5.263158},
+      "window": {"current": "1/5", "historical": "1/5", "delta_cases": 0, "delta_pp": 0.000000}
+    }
+  },
+  "m12r_contrast": {
+    "direct": "45/109",
+    "governed": "109/109",
+    "delta_pp": 58.716,
+    "scope": "bounded internal M3 metric_name plus 0-2 dimensions"
+  },
+  "interpretation": "Defog exact and subset scores were slightly lower or unchanged, while BIRD execution accuracy increased by 6 cases. The current general DIRECT benchmark impact is mixed and does not establish a broad material improvement.",
+  "benchmark_status": {"defog": "RUN", "bird": "RUN", "m1_rejections": "not_applicable_external_runner"}
+}

@@ -1,0 +1,50 @@
+{
+  "canary_enabled": true,
+  "dataset_hash": "bb9bb2073a2b306ead76c97aac3332a1ea907121f8805ddf1f4c755ac5f2d76a",
+  "execution_mode": "GOVERNED_METRIC",
+  "fault_soak": {
+    "concurrency": 16,
+    "requests": 200
+  },
+  "feature_default": false,
+  "feature_flag": "DECISION_SQL_GOVERNED_METRIC_RUNTIME_ENABLED",
+  "gates": {
+    "correct": 178,
+    "fallback_max": 2,
+    "fault_soak": "100%",
+    "native": 178,
+    "p95_ratio_max": 2.0
+  },
+  "memory": "OFF",
+  "model": "gpt-5.6-terra",
+  "precanary_manifest_hash": "79a0e9d9b96d4a130ddc9a417f6d37f20d09e51888309de0d3ff17e9d684319a",
+  "provider": "openai-compatible",
+  "reranker": "OFF",
+  "retrieval": "OFF",
+  "rounds": [
+    {
+      "concurrency": 1,
+      "round": 1
+    },
+    {
+      "concurrency": 8,
+      "round": 2
+    },
+    {
+      "concurrency": 8,
+      "round": 3
+    }
+  ],
+  "source_hashes": {
+    "app/config.py": "6278266c6d90134ba2d10d3be020afd9678c38b89bd45057fcdaf20992ab0f2f",
+    "app/generation/governed_metric_grounding.py": "6ce1b749996e50ff2080963005872dc4eb742cafd42b282052f5b9e00ff89a4d",
+    "app/models/domain.py": "67f933e3f98dde4e3102ca5e225d918ca642c5af088f041db1da635f7004fca5",
+    "app/semantics/compiler.py": "eb318399a68431ea9d286a2e46d654847354e685313db0f8c29190e492377e50",
+    "app/semantics/routing.py": "a3e5458d350307b9b33052de4269e8de9ef1cc0b96ffe4c1a84799b65e2fd0c1",
+    "app/sql/service.py": "92d7f11cbb0ef30fd59f37bf52bc706c2792b679722acf9b19fdfd804a58da29",
+    "app/text_to_sql/service.py": "f1a3c19417013bd422ccf7b881143632b3b2bf94c37feec32c5f072f317ef9fd",
+    "evaluation/m14_governed_runtime_canary.py": "ec11dd9f64bb65d0f435b46502704000c359aaa512e4cc7d4e2b917a5a902597"
+  },
+  "temperature": 0.0,
+  "version": "m14-canary-contract-v1"
+}

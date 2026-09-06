@@ -43,12 +43,19 @@ On the representable slices, Classic was 1/1 direct and 1/1 QueryPlan. BIRD
 was 20/26 direct and 22/26 QueryPlan (A/B/C/D = 18/2/4/2, paired exact
 p=0.6875). The pooled descriptive result was 21/27 direct and 23/27
 QueryPlan (A/B/C/D = 19/2/4/2, p=0.6875). No Advanced case was
-representable. The resulting classification is
-`M19_QUERYPLAN_PUBLIC_BENCHMARK_TRANSFER_MIXED`: the supported BIRD slice
-was directionally positive, but the precommitted pooled significance gate was
-not met and coverage was very low.
+representable. These numbers are diagnostic measurements, not valid M19
+transfer evidence.
 
-The gold-based, non-deployable what-if upper bounds were 141/210 Classic
+The first provider attempt exposed a runner defect: the Defog gold-integrity
+preflight incorrectly rejected a valid lowered candidate, but the run still
+continued to provider calls for BIRD. The evaluator path was corrected and the
+27-case run was repeated. Because this changed the evaluator/runner after
+provider exposure, the attempt is classified `M19_VALIDATION_INVALID` under
+the milestone protocol. No public-transfer claim is made until a clean fresh
+attempt is run from the corrected pre-provider gate.
+
+The gold-based, non-deployable what-if upper bounds from the diagnostic rerun
+were 141/210 Classic
 exact, 47/64 Advanced exact, and 233/500 BIRD execution. The latter is only
 46.6%, because the frozen QueryPlan slice replaced 20 frozen M15 BIRD
 correct outcomes with 22 current QueryPlan outcomes. No gold-free

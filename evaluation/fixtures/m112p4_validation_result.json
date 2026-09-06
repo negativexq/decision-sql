@@ -1,0 +1,1811 @@
+{
+  "arbitrary_pair_search": false,
+  "candidate_regeneration": 0,
+  "classification": "M112P4_DEPENDENCY_BUNDLE_VALIDATION_PASSED",
+  "controls": 9,
+  "d2_fixture_bank_hash": "ea85428896cc7c611e14d84843b582ef491c6874846e2eb59c59344b96fe4cb7",
+  "d2_regression": true,
+  "d2_source_hash": "6cc7a54363c0c85627a4aac003901539978ca347f8603757254c33ebd8b04ccb",
+  "d3_regression": true,
+  "d3_source_hash": "be65200e865a74e0134a0aaffcdfa0d0f2aafbeea4740218ad553273831d11ff",
+  "d3_validation_result_hash": "f6bab3fbb14a7b5152414889066d8ccd3c10ad3b0648d89e515bfe1836e9da1a",
+  "dependency_proof": "4/4",
+  "false_bundle_isolation": 0,
+  "gates": {
+    "P4-V1_false_bundle_isolation": true,
+    "P4-V2_required_known_bundles": true,
+    "P4-V3_minimality": true,
+    "P4-V4_non_target_invariance": true,
+    "P4-V5_dependency_proof": true,
+    "P4-V6_reproducibility": true,
+    "P4-V7_d2_d3_regression": true,
+    "P4-V8_safety": true
+  },
+  "known_isolatable_bundles": 4,
+  "maximum_closure_size": 2,
+  "negative_controls": 5,
+  "negative_controls_correct": 4,
+  "non_target_invariance": "4/4",
+  "p1_controls": true,
+  "p4_source_hash": "e3fc6955ca62d9c3fb35078aeb2e9c2c1c1ef73cc4ea044945d77c6a3ee96c04",
+  "provider_calls": 0,
+  "reference_regeneration": 0,
+  "reproducibility_rate": "100%",
+  "required_isolation": 4,
+  "retrieval_calls": 0,
+  "runs": [
+    [
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "b352d78fadc4dfa0fd41a559edf5681ee9d2c522b792bc51c93a2da73907cd9d",
+        "baseline_reference_hash": "425914527e8f2c6630256880fb07adf0c29ff92500d734e76fffb04114cc5e03",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B01_PRODUCT_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "425914527e8f2c6630256880fb07adf0c29ff92500d734e76fffb04114cc5e03",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "b352d78fadc4dfa0fd41a559edf5681ee9d2c522b792bc51c93a2da73907cd9d",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "15b5fda33447ad226265b218a20d51588a3c7a8c69e71f91178f9cf3fb9d3793",
+        "baseline_reference_hash": "c6c9be7f5aea9380134636ef0a18b96b91974b48ff99693aa2bde8dbf86baf5a",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B02_ORDER_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "c6c9be7f5aea9380134636ef0a18b96b91974b48ff99693aa2bde8dbf86baf5a",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "15b5fda33447ad226265b218a20d51588a3c7a8c69e71f91178f9cf3fb9d3793",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "ec8d631fb9719e6ea9421c9e86c395e44d684e9c44e43b5814392404ffe04034",
+        "baseline_reference_hash": "79d35d64d809f002485e2c46a7480f159253002b75ae6a65a2b9ff9b5bff9634",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B03_CUSTOMER_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "79d35d64d809f002485e2c46a7480f159253002b75ae6a65a2b9ff9b5bff9634",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "ec8d631fb9719e6ea9421c9e86c395e44d684e9c44e43b5814392404ffe04034",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "aaa4cdf797cb7ca41a2db6f9a0d02e3ced5903e683943447dd40435b4d249028",
+        "baseline_reference_hash": "fee65b1804ea315b46824a0d412f86a6fb881887111489dcc849c7168fac134e",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B04_REP_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "fee65b1804ea315b46824a0d412f86a6fb881887111489dcc849c7168fac134e",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "aaa4cdf797cb7ca41a2db6f9a0d02e3ced5903e683943447dd40435b4d249028",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "6f7646de7f4ef54a4faf474de98a9f6d2ba827669ef192b01cd3af7f78f1116d",
+        "baseline_reference_hash": "7a6a3e98d1a945f315b35d7f2a0de085944f1e29644f1ce8369063a379758a88",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "N05_COOCCURRENCE",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_DEPENDENCY_BUNDLE_CANDIDATE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "e454f6b768f0c450e4f0680a012277af8df4205b6b0cfbc23c9562d9123c94be",
+        "baseline_reference_hash": "3597b7d4c4d962b913a86138acf8661053df139982d61e066b7315fc1d31d9be",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "N06_SINGLETON",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_DEPENDENCY_BUNDLE_CANDIDATE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "f73d2467117e24ff7cad5b0042c5e50c70db367b4ec3280ada52957c7915b5b0",
+        "baseline_reference_hash": "c5495f5de94ebe9c836399725680e4a4e5187924ec2bedeaa2f171860a8e89a0",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "L07_CLOSURE_THREE",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_GROUP_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": true
+          },
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": true
+          },
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_GROUP_BY",
+            "too_large": true
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_GROUP_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_GROUP_BY"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "DEPENDENCY_CLOSURE_TOO_LARGE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "5d4320e74800e4ca7cf742d1f22673e6742ea8a6960495e075b1df04d444c93f",
+        "baseline_reference_hash": "eecc87331bcd082ed468efd976636fbb2967bf14bf61adba6fc9c3d9bdc4315c",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "U08_UNSAFE_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY",
+          "RELATIONAL_FROM_JOIN_BLOCK"
+        ],
+        "closures": [
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": true
+          },
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": true
+          },
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "RELATIONAL_FROM_JOIN_BLOCK",
+            "too_large": true
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+            "source": "RELATIONAL_FROM_JOIN_BLOCK",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "RELATIONAL_FROM_JOIN_BLOCK"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "DEPENDENCY_CLOSURE_TOO_LARGE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "139b13296672f05e3df911f3823b2df7ac7f62ac2108fe66a7ae6a8bc6167d37",
+        "baseline_reference_hash": "e4a34736191c962197b1a298ebce7b24871e1e9800494dc485496f360496e87e",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "P09_P0_PROJECTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "CORE",
+        "reason": null,
+        "state": "P0_ENTITLEMENT_BLOCKED",
+        "trials": [
+          {
+            "admitted": false,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": false,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection component is not entitled by the governing P0 contract",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "P0_ENTITLEMENT_BLOCKED"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "b352d78fadc4dfa0fd41a559edf5681ee9d2c522b792bc51c93a2da73907cd9d",
+        "baseline_reference_hash": "425914527e8f2c6630256880fb07adf0c29ff92500d734e76fffb04114cc5e03",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B01_PRODUCT_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "425914527e8f2c6630256880fb07adf0c29ff92500d734e76fffb04114cc5e03",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "b352d78fadc4dfa0fd41a559edf5681ee9d2c522b792bc51c93a2da73907cd9d",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "15b5fda33447ad226265b218a20d51588a3c7a8c69e71f91178f9cf3fb9d3793",
+        "baseline_reference_hash": "c6c9be7f5aea9380134636ef0a18b96b91974b48ff99693aa2bde8dbf86baf5a",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B02_ORDER_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "c6c9be7f5aea9380134636ef0a18b96b91974b48ff99693aa2bde8dbf86baf5a",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "15b5fda33447ad226265b218a20d51588a3c7a8c69e71f91178f9cf3fb9d3793",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "ec8d631fb9719e6ea9421c9e86c395e44d684e9c44e43b5814392404ffe04034",
+        "baseline_reference_hash": "79d35d64d809f002485e2c46a7480f159253002b75ae6a65a2b9ff9b5bff9634",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B03_CUSTOMER_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "79d35d64d809f002485e2c46a7480f159253002b75ae6a65a2b9ff9b5bff9634",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "ec8d631fb9719e6ea9421c9e86c395e44d684e9c44e43b5814392404ffe04034",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "aaa4cdf797cb7ca41a2db6f9a0d02e3ced5903e683943447dd40435b4d249028",
+        "baseline_reference_hash": "fee65b1804ea315b46824a0d412f86a6fb881887111489dcc849c7168fac134e",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "B04_REP_ORDER_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "BIDIRECTIONAL_DEPENDENCY_BUNDLE_ISOLATED",
+        "trials": [
+          {
+            "admitted": true,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": true,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": true,
+            "reason": null,
+            "repair_equal_reference": true,
+            "repair_sql_hash": "fee65b1804ea315b46824a0d412f86a6fb881887111489dcc849c7168fac134e",
+            "repair_witness_removed": true,
+            "transfer_equal_candidate": true,
+            "transfer_sql_hash": "aaa4cdf797cb7ca41a2db6f9a0d02e3ced5903e683943447dd40435b4d249028",
+            "transfer_witness_reproduced": true,
+            "validation": "VALID"
+          }
+        ]
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "6f7646de7f4ef54a4faf474de98a9f6d2ba827669ef192b01cd3af7f78f1116d",
+        "baseline_reference_hash": "7a6a3e98d1a945f315b35d7f2a0de085944f1e29644f1ce8369063a379758a88",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "N05_COOCCURRENCE",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_DEPENDENCY_BUNDLE_CANDIDATE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "e454f6b768f0c450e4f0680a012277af8df4205b6b0cfbc23c9562d9123c94be",
+        "baseline_reference_hash": "3597b7d4c4d962b913a86138acf8661053df139982d61e066b7315fc1d31d9be",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "N06_SINGLETON",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "NO_DEPENDENCY_BUNDLE_CANDIDATE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "f73d2467117e24ff7cad5b0042c5e50c70db367b4ec3280ada52957c7915b5b0",
+        "baseline_reference_hash": "c5495f5de94ebe9c836399725680e4a4e5187924ec2bedeaa2f171860a8e89a0",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "L07_CLOSURE_THREE",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY",
+          "TOP_LEVEL_GROUP_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": true
+          },
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": true
+          },
+          {
+            "components": [
+              "TOP_LEVEL_GROUP_BY",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_GROUP_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_GROUP_BY"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_GROUP_BY",
+            "too_large": true
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_GROUP_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_GROUP_BY"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "DEPENDENCY_CLOSURE_TOO_LARGE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "5d4320e74800e4ca7cf742d1f22673e6742ea8a6960495e075b1df04d444c93f",
+        "baseline_reference_hash": "eecc87331bcd082ed468efd976636fbb2967bf14bf61adba6fc9c3d9bdc4315c",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "U08_UNSAFE_ALIAS",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY",
+          "RELATIONAL_FROM_JOIN_BLOCK"
+        ],
+        "closures": [
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": true
+          },
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": true
+          },
+          {
+            "components": [
+              "RELATIONAL_FROM_JOIN_BLOCK",
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "RELATIONAL_FROM_JOIN_BLOCK",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "RELATIONAL_FROM_JOIN_BLOCK"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "RELATIONAL_FROM_JOIN_BLOCK",
+            "too_large": true
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+            "source": "RELATIONAL_FROM_JOIN_BLOCK",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "IDENTIFIER_BINDING_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "RELATIONAL_FROM_JOIN_BLOCK"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "FULL",
+        "reason": null,
+        "state": "DEPENDENCY_CLOSURE_TOO_LARGE",
+        "trials": []
+      },
+      {
+        "arm": "CONTROL",
+        "baseline_candidate_hash": "139b13296672f05e3df911f3823b2df7ac7f62ac2108fe66a7ae6a8bc6167d37",
+        "baseline_reference_hash": "e4a34736191c962197b1a298ebce7b24871e1e9800494dc485496f360496e87e",
+        "baseline_witness_fixture_ids": [
+          "BASELINE_DENSE",
+          "SPARSE_RELATIONSHIPS",
+          "PARENT_WITHOUT_CHILD",
+          "DUPLICATE_CHILD_MULTIPLICITY",
+          "NULL_BOUNDARIES",
+          "ORDER_TIES",
+          "CASE_VARIANT_TEXT",
+          "OFFSET_DEPTH",
+          "PAYMENT_REFUND_MIX"
+        ],
+        "case_id": "P09_P0_PROJECTION",
+        "changed_components": [
+          "TOP_LEVEL_PROJECTION",
+          "TOP_LEVEL_ORDER_BY"
+        ],
+        "closures": [
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_PROJECTION",
+            "too_large": false
+          },
+          {
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "edges": [
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_ORDER_BY",
+                "target": "TOP_LEVEL_PROJECTION"
+              },
+              {
+                "reason": "ALIAS_REFERENCE_DEPENDENCY",
+                "source": "TOP_LEVEL_PROJECTION",
+                "target": "TOP_LEVEL_ORDER_BY"
+              }
+            ],
+            "target": "TOP_LEVEL_ORDER_BY",
+            "too_large": false
+          }
+        ],
+        "dependency_edges": [
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_ORDER_BY",
+            "target": "TOP_LEVEL_PROJECTION"
+          },
+          {
+            "reason": "ALIAS_REFERENCE_DEPENDENCY",
+            "source": "TOP_LEVEL_PROJECTION",
+            "target": "TOP_LEVEL_ORDER_BY"
+          }
+        ],
+        "isolated_bundle": null,
+        "p0_tier": "CORE",
+        "reason": null,
+        "state": "P0_ENTITLEMENT_BLOCKED",
+        "trials": [
+          {
+            "admitted": false,
+            "bundle_id": "TOP_LEVEL_ORDER_BY+TOP_LEVEL_PROJECTION",
+            "components": [
+              "TOP_LEVEL_ORDER_BY",
+              "TOP_LEVEL_PROJECTION"
+            ],
+            "dependency_closed": false,
+            "dependency_reasons": [
+              "ALIAS_REFERENCE_DEPENDENCY"
+            ],
+            "execution_inconclusive": false,
+            "invariance_checked": false,
+            "reason": "projection component is not entitled by the governing P0 contract",
+            "repair_equal_reference": null,
+            "repair_sql_hash": null,
+            "repair_witness_removed": false,
+            "transfer_equal_candidate": null,
+            "transfer_sql_hash": null,
+            "transfer_witness_reproduced": false,
+            "validation": "P0_ENTITLEMENT_BLOCKED"
+          }
+        ]
+      }
+    ]
+  ],
+  "version": "m112p4-validation-result-v1"
+}

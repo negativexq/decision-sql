@@ -1,0 +1,74 @@
+{
+  "version": "m112p4-validation-controls-v1",
+  "controls": [
+    {
+      "control_id": "B01_PRODUCT_ORDER_ALIAS",
+      "candidate_sql": "SELECT id AS product_key FROM products ORDER BY product_key DESC",
+      "reference_sql": "SELECT name AS product_name FROM products ORDER BY product_name ASC",
+      "expected_class": "KNOWN_DEPENDENCY_BUNDLE_ISOLATABLE",
+      "expected_bundle": ["TOP_LEVEL_ORDER_BY", "TOP_LEVEL_PROJECTION"],
+      "scenario_tags": ["alias", "order", "projection"]
+    },
+    {
+      "control_id": "B02_ORDER_ORDER_ALIAS",
+      "candidate_sql": "SELECT id AS order_key FROM orders ORDER BY order_key ASC",
+      "reference_sql": "SELECT order_number AS order_label FROM orders ORDER BY order_label DESC",
+      "expected_class": "KNOWN_DEPENDENCY_BUNDLE_ISOLATABLE",
+      "expected_bundle": ["TOP_LEVEL_ORDER_BY", "TOP_LEVEL_PROJECTION"],
+      "scenario_tags": ["alias", "order", "projection"]
+    },
+    {
+      "control_id": "B03_CUSTOMER_ORDER_ALIAS",
+      "candidate_sql": "SELECT id AS customer_key FROM customers ORDER BY customer_key ASC",
+      "reference_sql": "SELECT region_id AS region_key FROM customers ORDER BY region_key DESC",
+      "expected_class": "KNOWN_DEPENDENCY_BUNDLE_ISOLATABLE",
+      "expected_bundle": ["TOP_LEVEL_ORDER_BY", "TOP_LEVEL_PROJECTION"],
+      "scenario_tags": ["alias", "order", "projection"]
+    },
+    {
+      "control_id": "B04_REP_ORDER_ALIAS",
+      "candidate_sql": "SELECT id AS representative_key FROM sales_representatives ORDER BY representative_key ASC",
+      "reference_sql": "SELECT name AS representative_name FROM sales_representatives ORDER BY representative_name DESC",
+      "expected_class": "KNOWN_DEPENDENCY_BUNDLE_ISOLATABLE",
+      "expected_bundle": ["TOP_LEVEL_ORDER_BY", "TOP_LEVEL_PROJECTION"],
+      "scenario_tags": ["alias", "order", "projection"]
+    },
+    {
+      "control_id": "N05_COOCCURRENCE",
+      "candidate_sql": "SELECT id AS product_key FROM products ORDER BY id ASC",
+      "reference_sql": "SELECT name AS product_key FROM products ORDER BY id DESC",
+      "expected_class": "NO_DEPENDENCY_PAIR",
+      "scenario_tags": ["co-occurrence"]
+    },
+    {
+      "control_id": "N06_SINGLETON",
+      "candidate_sql": "SELECT id AS product_key FROM products ORDER BY product_key ASC",
+      "reference_sql": "SELECT name AS product_key FROM products ORDER BY product_key ASC",
+      "expected_class": "NO_DEPENDENCY_PAIR",
+      "scenario_tags": ["singleton", "minimality"]
+    },
+    {
+      "control_id": "L07_CLOSURE_THREE",
+      "candidate_sql": "SELECT id AS product_key, category AS category_key FROM products GROUP BY product_key, category_key ORDER BY product_key",
+      "reference_sql": "SELECT name AS product_name, category AS category_key FROM products GROUP BY product_name, category_key ORDER BY product_name",
+      "expected_class": "DEPENDENCY_CLOSURE_TOO_LARGE",
+      "scenario_tags": ["alias", "group", "order"]
+    },
+    {
+      "control_id": "U08_UNSAFE_ALIAS",
+      "candidate_sql": "SELECT p.id AS product_key FROM products AS p ORDER BY product_key",
+      "reference_sql": "SELECT x.name AS product_name FROM products AS x ORDER BY product_name",
+      "expected_class": "BUNDLE_SUBSTITUTION_UNSAFE",
+      "scenario_tags": ["unsafe", "duplicate-alias"]
+    },
+    {
+      "control_id": "P09_P0_PROJECTION",
+      "candidate_sql": "SELECT id AS product_key FROM products ORDER BY product_key",
+      "reference_sql": "SELECT name AS product_name FROM products ORDER BY product_name",
+      "expected_class": "P0_ENTITLEMENT_BLOCKED",
+      "p0_projection_entitled": false,
+      "p0_tier": "CORE",
+      "scenario_tags": ["p0", "projection", "order"]
+    }
+  ]
+}

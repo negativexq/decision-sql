@@ -10,6 +10,7 @@ from app.semantics.query_plan_v1 import (
     QueryPlanV1Catalog,
     QueryPlanV1Compiler,
     QueryPlanV1ValidationError,
+    render_query_plan_v1_context,
     validate_query_plan_v1,
 )
 
@@ -23,6 +24,14 @@ def test_catalog_has_server_owned_relationships(catalog: QueryPlanV1Catalog) -> 
     assert len(catalog.tables) == 8
     assert len(catalog.relationships) == 9
     assert catalog.relationship("orders.customer_id").right_column_id == "customers.id"
+
+
+def test_context_renders_explicit_relationship_endpoints(catalog: QueryPlanV1Catalog) -> None:
+    context = render_query_plan_v1_context(catalog)
+    assert (
+        "RELATIONSHIP orders.customer_id: LEFT_TABLE orders LEFT_COLUMN orders.customer_id "
+        "REFERENCES RIGHT_TABLE customers RIGHT_COLUMN customers.id"
+    ) in context
 
 
 def test_compiler_preserves_projection_and_join_ownership(catalog: QueryPlanV1Catalog) -> None:
@@ -122,9 +131,7 @@ async def test_provider_plan_adapter_is_strict(monkeypatch: pytest.MonkeyPatch) 
     assert proposal.plan.source == "orders"
 
     async def smuggled(_: object) -> dict[str, object]:
-        return {
-            "choices": [{"message": {"content": '{"applicable":true,"sql":"SELECT 1"}'}}]
-        }
+        return {"choices": [{"message": {"content": '{"applicable":true,"sql":"SELECT 1"}'}}]}
 
     monkeypatch.setattr(provider, "_post", smuggled)
     with pytest.raises(MalformedProviderResponse):

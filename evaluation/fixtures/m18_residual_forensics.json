@@ -1,0 +1,299 @@
+{
+  "m17_failure_stage_distribution": "M16/M17 compact artifacts do not preserve the full response plans for all four cases",
+  "mismatch_count": 4,
+  "records": [
+    {
+      "case_id": "m17-queryplan-primary-044",
+      "catalog_hash": "da29d283df9ebcf36dc4db8f193830c2632bd3b4b17756898abe2d2a72f3ba40",
+      "d2_witness": "NOT_NEEDED",
+      "differing_fields": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "execution": "SUCCESS",
+      "gold_columns": [
+        "id",
+        "name"
+      ],
+      "gold_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "sales_representatives.region_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.name"
+        ],
+        "source": "customers"
+      },
+      "gold_plan_hash": "5807968ed71ae79c6a6a5d1083effc0a009b9679c2740b442503c1f1d67feb6f",
+      "gold_result_hash": "65cdef02f033110ec5719fd0513ba0fea7f989c1cba0ef52b366b0817644a27a",
+      "gold_row_count": 80,
+      "gold_sql": "SELECT t0.id, t0.name FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t2.region_id = t1.id",
+      "gold_sql_hash": "ce812e74e401ab70e9ce132657a569f2199a5f6c6d3dd601bb6f8b363ef07998",
+      "gold_valid": true,
+      "m1": "PASS",
+      "predicted_columns": [
+        "id",
+        "name"
+      ],
+      "predicted_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.sales_rep_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.name"
+        ],
+        "source": "customers"
+      },
+      "predicted_plan_hash": "2caa3f3680e40c99aa18b0357f4662683cca99d60fe9356d6c111448e3495fce",
+      "predicted_result_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492",
+      "predicted_row_count": 40,
+      "predicted_sql": "SELECT t0.id, t0.name FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t0.sales_rep_id = t2.id",
+      "predicted_sql_hash": "140072ef4609349f9a8395962377d00cdc8bbb2ab210768ca4a5be40e1e668e0",
+      "question": "Return the customers id and customers name from customers connected with regions through its region id link, sales representatives through its region id link for this records lookup.",
+      "question_unambiguous": true,
+      "reconstruction": "FULL_PLAN_AND_EXECUTION",
+      "shape": "TWO_JOINS_PROJECTION",
+      "sql_structural_differences": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "typed_result_difference": {
+        "comparison_mode": "VALUE_BAG",
+        "equivalent": false,
+        "gold_hash": "65cdef02f033110ec5719fd0513ba0fea7f989c1cba0ef52b366b0817644a27a",
+        "predicted_hash": "dd1d6bf7ea25d1695be0a89c226bf89f41821dca73a361eb4a8666608291b492"
+      }
+    },
+    {
+      "case_id": "m17-queryplan-primary-048",
+      "catalog_hash": "da29d283df9ebcf36dc4db8f193830c2632bd3b4b17756898abe2d2a72f3ba40",
+      "d2_witness": "NOT_AVAILABLE",
+      "differing_fields": [
+        "UNRECOVERABLE_FROM_COMPACT_M17_ARTIFACT"
+      ],
+      "execution": "SUCCESS",
+      "gold_plan": {
+        "applicable": true,
+        "filters": [
+          {
+            "column_id": "order_items.order_id",
+            "operator": "NE",
+            "value": {
+              "kind": "integer",
+              "value": 1
+            }
+          }
+        ],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "order_items.product_id"
+          }
+        ],
+        "projection": [
+          "order_items.id"
+        ],
+        "source": "products"
+      },
+      "gold_plan_hash": "6066b4f3b429afe827a8d54b86a87ef17aea1c5ed7885c6c83b584197cea67f4",
+      "gold_result_hash": "9780e020277ecf68fd05f897aa76b08028946e2ffbda09032ecad063a40ed8fa",
+      "gold_sql_hash": "37eb2e5b05516c0e3e9a0d81222874b05d9e348c0da10b4a94fdf7c6da52e2d1",
+      "gold_valid": true,
+      "m1": "PASS",
+      "predicted_plan": null,
+      "predicted_plan_hash": "bc634f782fd121306764531d66f01ccef731828bbaffde6e6bade81295ecd27d",
+      "predicted_result_hash": "a4cbfaa4f206fa7e1d914f1d2a76525e651f9253211542149e70e9af968b1f11",
+      "predicted_sql_hash": "f1148a685f99acc9a704e629d036d0da89f3839899af6f316d60a960098d3bde",
+      "question": "Show the order items id from products connected with order items through its product id link when the records satisfy order items order id does not equal 1.",
+      "question_unambiguous": true,
+      "reconstruction": "PARTIAL_HASH_ONLY",
+      "shape": "ONE_JOIN_FILTER",
+      "sql_structural_differences": [
+        "UNRECOVERABLE_FROM_COMPACT_M17_ARTIFACT"
+      ],
+      "typed_result_difference": "HASH_DIFFERENCE_ONLY; ROW_VALUES_NOT_PERSISTED"
+    },
+    {
+      "case_id": "m17-queryplan-primary-078",
+      "catalog_hash": "da29d283df9ebcf36dc4db8f193830c2632bd3b4b17756898abe2d2a72f3ba40",
+      "d2_witness": "NOT_NEEDED",
+      "differing_fields": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "execution": "SUCCESS",
+      "gold_columns": [
+        "id",
+        "sales_rep_id"
+      ],
+      "gold_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "sales_representatives.region_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.sales_rep_id"
+        ],
+        "source": "customers"
+      },
+      "gold_plan_hash": "96a5bd45ae7f6f869af513bd2fa3228f744d20d5d0c26fe287f73935a2bc21a9",
+      "gold_result_hash": "24a96cd1857b044dbb0960f55b38b99824930204424a0463ab00b9ae14c59e49",
+      "gold_row_count": 80,
+      "gold_sql": "SELECT t0.id, t0.sales_rep_id FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t2.region_id = t1.id",
+      "gold_sql_hash": "dcbdbf716e8b08a1f99bc7a51b9565ab9b56e6e2e5e69a8c6784846652093b81",
+      "gold_valid": true,
+      "m1": "PASS",
+      "predicted_columns": [
+        "id",
+        "sales_rep_id"
+      ],
+      "predicted_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.sales_rep_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.sales_rep_id"
+        ],
+        "source": "customers"
+      },
+      "predicted_plan_hash": "214b37de9de3b01579c07c6c47453e91cd5cfd49ef5f91d22d7a28904b5ec279",
+      "predicted_result_hash": "4edc096eed411d7280125974a1ea9a4349c089daea7b75e4d409bd01ef1208ad",
+      "predicted_row_count": 40,
+      "predicted_sql": "SELECT t0.id, t0.sales_rep_id FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t0.sales_rep_id = t2.id",
+      "predicted_sql_hash": "00ebf835fbf78a5e7ea2d7d99689d741523cc021bdba8f81b045b832fec4b9b4",
+      "question": "List the customers id and customers sales rep id from customers connected with regions through its region id link, sales representatives through its region id link from the available business data.",
+      "question_unambiguous": true,
+      "reconstruction": "FULL_PLAN_AND_EXECUTION",
+      "shape": "TWO_JOINS_PROJECTION",
+      "sql_structural_differences": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "typed_result_difference": {
+        "comparison_mode": "VALUE_BAG",
+        "equivalent": false,
+        "gold_hash": "24a96cd1857b044dbb0960f55b38b99824930204424a0463ab00b9ae14c59e49",
+        "predicted_hash": "4edc096eed411d7280125974a1ea9a4349c089daea7b75e4d409bd01ef1208ad"
+      }
+    },
+    {
+      "case_id": "m17-queryplan-primary-091",
+      "catalog_hash": "da29d283df9ebcf36dc4db8f193830c2632bd3b4b17756898abe2d2a72f3ba40",
+      "d2_witness": "NOT_NEEDED",
+      "differing_fields": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "execution": "SUCCESS",
+      "gold_columns": [
+        "id",
+        "region_id"
+      ],
+      "gold_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "sales_representatives.region_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.region_id"
+        ],
+        "source": "customers"
+      },
+      "gold_plan_hash": "b5fcb851aa163d4f5130bae618cf3d6b213bad7e872fc1deb6e1eb50551beb5d",
+      "gold_result_hash": "17d353caaca7461c8c9f5bff3b9a2b1dac247905244389f7f741ed594eab7de0",
+      "gold_row_count": 80,
+      "gold_sql": "SELECT t0.id, t0.region_id FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t2.region_id = t1.id",
+      "gold_sql_hash": "32a89317fe517d889ab447d97b5306f89cdead48b240ea558f1cd97307099cfa",
+      "gold_valid": true,
+      "m1": "PASS",
+      "predicted_columns": [
+        "id",
+        "region_id"
+      ],
+      "predicted_plan": {
+        "applicable": true,
+        "filters": [],
+        "joins": [
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.region_id"
+          },
+          {
+            "join_type": "INNER",
+            "relationship_id": "customers.sales_rep_id"
+          }
+        ],
+        "projection": [
+          "customers.id",
+          "customers.region_id"
+        ],
+        "source": "customers"
+      },
+      "predicted_plan_hash": "0bb01111ce64c633f467c24ac1ac59873bee468fa4e133780b80f99113495da1",
+      "predicted_result_hash": "60fc11c2dc304334010876993f939ac681f905ebd412c28b9e4c2410bb815f6a",
+      "predicted_row_count": 40,
+      "predicted_sql": "SELECT t0.id, t0.region_id FROM customers AS t0 INNER JOIN regions AS t1 ON t0.region_id = t1.id INNER JOIN sales_representatives AS t2 ON t0.sales_rep_id = t2.id",
+      "predicted_sql_hash": "95788d68c73ecbd05c999ea8a38624b77f4088eebb87088a10a48f0cccfbfb53",
+      "question": "Retrieve the customers id and customers region id from customers connected with regions through its region id link, sales representatives through its region id link for the requested relational view.",
+      "question_unambiguous": true,
+      "reconstruction": "FULL_PLAN_AND_EXECUTION",
+      "shape": "TWO_JOINS_PROJECTION",
+      "sql_structural_differences": [
+        "RELATIONSHIP_DIFFERENCE"
+      ],
+      "typed_result_difference": {
+        "comparison_mode": "VALUE_BAG",
+        "equivalent": false,
+        "gold_hash": "17d353caaca7461c8c9f5bff3b9a2b1dac247905244389f7f741ed594eab7de0",
+        "predicted_hash": "60fc11c2dc304334010876993f939ac681f905ebd412c28b9e4c2410bb815f6a"
+      }
+    }
+  ],
+  "repeated_cases_with_full_reconstruction": 3,
+  "repeated_defect_candidate": "two-join relationship-selection ambiguity",
+  "source_result": "m17_result.json",
+  "version": "m18-residual-forensics-1"
+}

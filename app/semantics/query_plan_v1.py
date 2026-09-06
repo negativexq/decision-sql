@@ -41,9 +41,7 @@ class QueryPlanV1Operator(StrEnum):
     IS_NOT_NULL = "IS_NOT_NULL"
 
 
-QueryPlanV1ValueKind = Literal[
-    "string", "integer", "decimal", "boolean", "date", "timestamp"
-]
+QueryPlanV1ValueKind = Literal["string", "integer", "decimal", "boolean", "date", "timestamp"]
 
 
 class QueryPlanV1Value(BaseModel):
@@ -267,7 +265,10 @@ def render_query_plan_v1_context(catalog: QueryPlanV1Catalog) -> str:
     for relationship in catalog.relationships:
         lines.append(
             f"  RELATIONSHIP {relationship.relationship_id}: "
-            f"{relationship.left_column_id} = {relationship.right_column_id}"
+            f"LEFT_TABLE {relationship.left_table_id} "
+            f"LEFT_COLUMN {relationship.left_column_id} "
+            f"REFERENCES RIGHT_TABLE {relationship.right_table_id} "
+            f"RIGHT_COLUMN {relationship.right_column_id}"
         )
     return "\n".join(lines)
 

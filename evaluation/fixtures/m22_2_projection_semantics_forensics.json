@@ -1,0 +1,2561 @@
+{
+  "cases": [
+    {
+      "benchmark": "bird",
+      "case_id": "16",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "debit_card_specializing",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "customerid",
+                "table": "customers"
+              }
+            ],
+            "distinct": true,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(distinct customers.customerid)",
+            "position": 0,
+            "table_ownership": [
+              "customers"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "count(distinct customers.customerid)"
+        ]
+      },
+      "generated_sql_hash": "33fb946391161965b0f718cf8dc3c385316968a31e031de64ed44570810c56aa",
+      "generated_sql_preview": "SELECT COUNT(DISTINCT c.customerid)\nFROM public.customers AS c\nJOIN public.yearmonth AS y\n  ON y.customerid = c.customerid\nWHERE c.currency = 'EUR'\n  AND y.consumption > 1000;",
+      "primary_subtype": "WRONG_AGGREGATE_PROJECTION",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION",
+        "AGGREGATE"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_INSUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "Among the customers who paid in euro, how many of them have a monthly consumption of over 1000?",
+      "question_projection_alignment": "DERIVABLE",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [],
+            "distinct": false,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(*)",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "count(*)"
+        ]
+      },
+      "reference_sql_hash": "7267f9564d9573ff378e70d1d80779f2de8cf8a68444ae63b03a2619822fbd65",
+      "reference_sql_preview": "SELECT COUNT(*) FROM yearmonth AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND T1.Consumption > 1000.00",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "187",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "formula_1",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 3,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "forename",
+                "table": "drivers"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "drivers.forename",
+            "position": 0,
+            "table_ownership": [
+              "drivers"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "surname",
+                "table": "drivers"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "drivers.surname",
+            "position": 1,
+            "table_ownership": [
+              "drivers"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "dob",
+                "table": "drivers"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "drivers.dob",
+            "position": 2,
+            "table_ownership": [
+              "drivers"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "drivers.forename",
+          "drivers.surname",
+          "drivers.dob"
+        ]
+      },
+      "generated_sql_hash": "9320a15a4c97a0cc8e210194c15eb5bd178fb50e97bf1597febb452f732f48c3",
+      "generated_sql_preview": "SELECT d.forename, d.surname, d.dob\nFROM results r\nJOIN drivers d ON d.driverid = r.driverid\nWHERE r.raceid = 592\n  AND r.time IS NOT NULL\nORDER BY d.dob ASC\nLIMIT 1;",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "For all the drivers who finished the game in race No. 592, who is the oldest?",
+      "question_projection_alignment": "AMBIGUOUS",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "forename",
+                "table": "drivers"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "drivers.forename",
+            "position": 0,
+            "table_ownership": [
+              "drivers"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "surname",
+                "table": "drivers"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "drivers.surname",
+            "position": 1,
+            "table_ownership": [
+              "drivers"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "drivers.forename",
+          "drivers.surname"
+        ]
+      },
+      "reference_sql_hash": "bf6500b5a165f397d1ebc2875f988bb737c04877090fa8f693ba273e163673f3",
+      "reference_sql_preview": "SELECT T1.forename, T1.surname FROM drivers AS T1 INNER JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.raceId = 592 AND NOT T2.time IS NULL AND NOT T1.dob IS NULL ORDER BY T1.dob ASC NULLS FIRST LIMIT 1",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "264",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": false,
+          "status": "REUSED_M22_1"
+        },
+        {
+          "dimension": "DISTINCT",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "superhero",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "power_name",
+                "table": "superpower"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "superpower.power_name",
+            "position": 0,
+            "table_ownership": [
+              "superpower"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "superpower.power_name"
+        ]
+      },
+      "generated_sql_hash": "b17da729577a208a2483852cb1419b277fd3b42f32d6c81036f0fb6151e4783b",
+      "generated_sql_preview": "SELECT DISTINCT sp.power_name\nFROM public.superhero AS sh\nJOIN public.gender AS g ON g.id = sh.gender_id\nJOIN public.hero_power AS hp ON hp.hero_id = sh.id\nJOIN public.superpower AS sp ON sp.id = hp.power_id\nWHERE g.gender = 'Male'\n  AND sp.power_name IS NOT NULL\nLIMIT 5;",
+      "primary_subtype": "DISTINCT_PROJECTION_SEMANTICS",
+      "projection_causal": true,
+      "projection_deltas": [
+        "DISTINCT"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "List down at least five superpowers of male superheroes.",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "power_name",
+                "table": "superpower"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "superpower.power_name",
+            "position": 0,
+            "table_ownership": [
+              "superpower"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "superpower.power_name"
+        ]
+      },
+      "reference_sql_hash": "5245902571533c590b5bbfa4558cef0c9cb42306391df81a929afac9e99c94d0",
+      "reference_sql_preview": "SELECT T3.power_name FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T3.id = T2.power_id INNER JOIN gender AS T4 ON T4.id = T1.gender_id WHERE T4.gender = 'Male' LIMIT 5",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "288",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "superhero",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "superhero_name",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "superhero_name",
+            "position": 0,
+            "table_ownership": []
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "publisher_name",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "publisher_name",
+            "position": 1,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "superhero_name",
+          "publisher_name"
+        ]
+      },
+      "generated_sql_hash": "fecadb34d6fddda68b782f1619a47710771f4c62cf0f2687c76bae50559c931d",
+      "generated_sql_preview": "SELECT superhero_name, publisher_name\nFROM public.superhero\nLEFT JOIN public.publisher ON publisher.id = superhero.publisher_id\nWHERE superhero_name IN ('Hawkman', 'Karate Kid', 'Speedy');",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What is the publisher for Hawkman, Karate Kid and Speedy?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "publisher_name",
+                "table": "publisher"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "publisher.publisher_name",
+            "position": 0,
+            "table_ownership": [
+              "publisher"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "publisher.publisher_name"
+        ]
+      },
+      "reference_sql_hash": "ff5428f394b161a2f45afd7f466697e265e9e6a029cb8a543e1f2752f60b39b7",
+      "reference_sql_preview": "SELECT T2.publisher_name FROM superhero AS T1 INNER JOIN publisher AS T2 ON T1.publisher_id = T2.id WHERE T1.superhero_name IN ('Hawkman', 'Karate Kid', 'Speedy')",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "333",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "codebase_community",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": "user_count",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "id",
+                "table": "users"
+              }
+            ],
+            "distinct": true,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(distinct users.id)",
+            "position": 0,
+            "table_ownership": [
+              "users"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "count(distinct users.id)"
+        ]
+      },
+      "generated_sql_hash": "2750c8847fcc3863168fd2fdd74597fc1a316d329cf84d10dc415272fd3db453",
+      "generated_sql_preview": "SELECT COUNT(DISTINCT u.id) AS user_count\nFROM public.users AS u\nJOIN public.posts AS p\n  ON p.owneruserid = u.id\nWHERE u.location = 'United Kingdom'\n  AND p.favoritecount >= 4;",
+      "primary_subtype": "WRONG_AGGREGATE_PROJECTION",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION",
+        "AGGREGATE"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_INSUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "Among the users located in United Kingdom, how many users whose post have a total favorite amount of 4 or more?",
+      "question_projection_alignment": "DERIVABLE",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "id",
+                "table": "users"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(users.id)",
+            "position": 0,
+            "table_ownership": [
+              "users"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "count(users.id)"
+        ]
+      },
+      "reference_sql_hash": "7d1b77b6bd409f8d6b9da3afc3d62a0268bd9d24887c0ab9ee6ba8065d7a917c",
+      "reference_sql_preview": "SELECT COUNT(T1.Id) FROM users AS T1 INNER JOIN posts AS T2 ON T1.Id = T2.OwnerUserId WHERE T1.Location = 'United Kingdom' AND T2.FavoriteCount >= 4",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "346",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "m1_status": "ALLOWED",
+          "result_match": false,
+          "sql_hash": "faceb1de2bc74d717c8213cb484cfc137314718f75e9c5a4437661518cc03b48",
+          "status": "EXECUTED"
+        }
+      ],
+      "database": "card_games",
+      "evidence_strength": "STRUCTURALLY_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [],
+            "distinct": false,
+            "expression_type": "STAR",
+            "function_names": [],
+            "normalized_sql": "*",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "*"
+        ]
+      },
+      "generated_sql_hash": "e79985033f39a12cc5526c042030da6ec904dacdf976ffd37a63523f4c7f5dff",
+      "generated_sql_preview": "SELECT *\nFROM public.cards\nWHERE cardkingdomfoilid IS NOT NULL\n  AND cardkingdomid IS NOT NULL;",
+      "primary_subtype": "WRONG_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "Which are the cards that have incredibly powerful foils.",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "id",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "id",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "id"
+        ]
+      },
+      "reference_sql_hash": "78ecd653d2a10a79adc69d9f11fa3da22a850413263cbdf28e86ebece01cab55",
+      "reference_sql_preview": "SELECT id FROM cards WHERE NOT cardKingdomFoilId IS NULL AND NOT cardKingdomId IS NULL",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M20_2_PROJECTION"
+      ],
+      "structurally_confirmed": true
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "356",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "card_games",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 3,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "cards"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "cards.name",
+            "position": 0,
+            "table_ownership": [
+              "cards"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "format",
+                "table": "legalities"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "legalities.format",
+            "position": 1,
+            "table_ownership": [
+              "legalities"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "status",
+                "table": "legalities"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "legalities.status",
+            "position": 2,
+            "table_ownership": [
+              "legalities"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "cards.name",
+          "legalities.format",
+          "legalities.status"
+        ]
+      },
+      "generated_sql_hash": "0204effeea7abeae41a04aaa3b4502653bcd1a772e91a353a4b0ad2b60f008cf",
+      "generated_sql_preview": "SELECT c.name, l.format, l.status\nFROM public.cards AS c\nJOIN public.legalities AS l ON l.uuid = c.uuid\nWHERE c.name = 'Benalish Knight';",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What is the rule of playing card \"Benalish Knight\"?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "format",
+                "table": "legalities"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "legalities.format",
+            "position": 0,
+            "table_ownership": [
+              "legalities"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "legalities.format"
+        ]
+      },
+      "reference_sql_hash": "a2530c4394a88b2efaf2ead51d3b328a7d3f451919bfc5f44548995f00dfb22f",
+      "reference_sql_preview": "SELECT T2.format FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.name = 'Benalish Knight'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "397",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "card_games",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 3,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "frame_style",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "frameversion",
+                "table": "cards"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "cards.frameversion",
+            "position": 0,
+            "table_ownership": [
+              "cards"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "card_name",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "cards"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "cards.name",
+            "position": 1,
+            "table_ownership": [
+              "cards"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "is_banned",
+            "arithmetic": false,
+            "case": true,
+            "cast": false,
+            "columns": [
+              {
+                "column": "status",
+                "table": "legalities"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "CASE",
+            "function_names": [
+              "CASE",
+              "IF"
+            ],
+            "normalized_sql": "case when legalities.status = 'banned' then true else false end",
+            "position": 2,
+            "table_ownership": [
+              "legalities"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "cards.frameversion",
+          "cards.name",
+          "case when legalities.status = 'banned' then true else false end"
+        ]
+      },
+      "generated_sql_hash": "fcb26bebbc3c0137a38250c3debebe814a41e54dd0f8db422a092c9acb1ee8b5",
+      "generated_sql_preview": "SELECT DISTINCT\n  c.frameversion AS frame_style,\n  c.name AS card_name,\n  CASE WHEN l.status = 'Banned' THEN TRUE ELSE FALSE END AS is_banned\nFROM public.cards AS c\nLEFT JOIN public.legalities AS l\n  ON l.uuid = c.uuid\nWHERE c.artist = 'Allen Williams'\nORDER BY c.frameversion, c.name;",
+      "primary_subtype": "WRONG_DERIVED_EXPRESSION",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_INSUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "List all the frame styles and cards Allen Williams worked on and find any banned cards if there are any.",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 3,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "frameversion",
+                "table": "cards"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "cards.frameversion",
+            "position": 0,
+            "table_ownership": [
+              "cards"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "cards"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "cards.name",
+            "position": 1,
+            "table_ownership": [
+              "cards"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": true,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "cards"
+              },
+              {
+                "column": "status",
+                "table": "legalities"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "CASE",
+            "function_names": [
+              "CASE",
+              "IF"
+            ],
+            "normalized_sql": "case when legalities.status = 'banned' then cards.name else 'no' end",
+            "position": 2,
+            "table_ownership": [
+              "cards",
+              "legalities"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "cards.frameversion",
+          "cards.name",
+          "case when legalities.status = 'banned' then cards.name else 'no' end"
+        ]
+      },
+      "reference_sql_hash": "425eb81784804ba5541b7c3aee6d57099acff4c36120d1fb29deeeedcddcb0ef",
+      "reference_sql_preview": "SELECT DISTINCT T1.frameVersion, T1.name, CASE WHEN T2.status = 'Banned' THEN T1.name ELSE 'NO' END FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.artist = 'Allen Williams'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "427",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "toxicology",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "atom_id",
+                "table": "atom"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "atom.atom_id",
+            "position": 0,
+            "table_ownership": [
+              "atom"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "atom.atom_id"
+        ]
+      },
+      "generated_sql_hash": "2e8a53e005bece895a9a341465d2c1959e832732078764b6b4997754d0b77783",
+      "generated_sql_preview": "SELECT a.atom_id\nFROM public.connected AS c\nJOIN public.bond AS b\n  ON b.bond_id = c.bond_id\nJOIN public.atom AS a\n  ON a.atom_id = c.atom_id\nWHERE b.molecule_id = 'TR041'\n  AND b.bond_type = '#';",
+      "primary_subtype": "MISSING_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What are the atoms of the triple bond with the molecule \"TR041\"?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "atom_id",
+                "table": "connected"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "connected.atom_id",
+            "position": 0,
+            "table_ownership": [
+              "connected"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "atom_id2",
+                "table": "connected"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "connected.atom_id2",
+            "position": 1,
+            "table_ownership": [
+              "connected"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "connected.atom_id",
+          "connected.atom_id2"
+        ]
+      },
+      "reference_sql_hash": "6b467e1420d7aed49f42b85b3a9d6fe0aa4c82c93d582826c67f63a8aa77cff1",
+      "reference_sql_preview": "SELECT T2.atom_id, T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id INNER JOIN bond AS T3 ON T2.bond_id = T3.bond_id WHERE T3.bond_type = '#' AND T3.molecule_id = 'TR041'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "459",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "california_schools",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "school_name",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "school",
+                "table": "schools"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "schools.school",
+            "position": 0,
+            "table_ownership": [
+              "schools"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "postal_street_address",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "street",
+                "table": "schools"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "schools.street",
+            "position": 1,
+            "table_ownership": [
+              "schools"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "schools.school",
+          "schools.street"
+        ]
+      },
+      "generated_sql_hash": "ddf802c33c66db3d69d6058e9707a7928928de46c1b9fd7e5bb53b3e2874ee9c",
+      "generated_sql_preview": "SELECT s.school AS school_name,\n       s.street AS postal_street_address\nFROM public.satscores AS ss\nJOIN public.schools AS s\n  ON s.cdscode = ss.cds\nWHERE ss.avgscrmath IS NOT NULL\nORDER BY ss.avgscrmath DESC\nLIMIT 1 OFFSET 6;",
+      "primary_subtype": "WRONG_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What is the postal street address for the school with the 7th highest Math average? Indicate the school's name.",
+      "question_projection_alignment": "DERIVABLE",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "mailstreet",
+                "table": "schools"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "schools.mailstreet",
+            "position": 0,
+            "table_ownership": [
+              "schools"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "school",
+                "table": "schools"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "schools.school",
+            "position": 1,
+            "table_ownership": [
+              "schools"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "schools.mailstreet",
+          "schools.school"
+        ]
+      },
+      "reference_sql_hash": "84767e6311bf2f6fae4853411b0a6a368bc364d1d8b8ec8e66ed70589fb1bfd9",
+      "reference_sql_preview": "SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC NULLS LAST LIMIT 1 OFFSET 6",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "490",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        },
+        {
+          "dimension": "DISTINCT",
+          "execution_status": "SUCCESS",
+          "result_match": false,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "financial",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 2,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "average_income",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "a11",
+                "table": "district"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "district.a11",
+            "position": 0,
+            "table_ownership": [
+              "district"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": "account_type",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "type",
+                "table": "disp"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "disp.type",
+            "position": 1,
+            "table_ownership": [
+              "disp"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "district.a11",
+          "disp.type"
+        ]
+      },
+      "generated_sql_hash": "2761508f8ab95a6ad009fef8bf2a81558a71822c3e1e38092f7655f8792b190e",
+      "generated_sql_preview": "SELECT DISTINCT\n    d.a11 AS average_income,\n    disp.type AS account_type\nFROM public.account AS a\nJOIN public.disp AS disp\n    ON disp.account_id = a.account_id\nJOIN public.district AS d\n    ON d.district_id = a.district_id\nWHERE disp.type <> 'OWNER'\n  AND d.a11 > 8000\n  AND d.a11 <= 9000;",
+      "primary_subtype": "DISTINCT_PROJECTION_SEMANTICS",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION",
+        "DISTINCT"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "Please list the account types that are not eligible for loans, and the average income of residents in the district where the account is located exceeds $8000 but is no more than $9000.",
+      "question_projection_alignment": "DERIVABLE",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "type",
+                "table": "disp"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "disp.type",
+            "position": 0,
+            "table_ownership": [
+              "disp"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "disp.type"
+        ]
+      },
+      "reference_sql_hash": "7fd62fe4d0ebf095521aff8b69e51dbf728bbe6c128f8a4c66ea83b8d4f8c431",
+      "reference_sql_preview": "SELECT T3.type FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type <> 'OWNER' AND T1.A11 BETWEEN 8000 AND 9000",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "72",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "student_club",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "category",
+                "table": "budget"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "budget.category",
+            "position": 0,
+            "table_ownership": [
+              "budget"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "budget.category"
+        ]
+      },
+      "generated_sql_hash": "8c0a3705738257a4b1c54d39e0dce4fd1e4f373ee4ded0225612d966c9cb9266",
+      "generated_sql_preview": "SELECT DISTINCT b.category\nFROM public.event AS e\nJOIN public.budget AS b\n  ON b.link_to_event = e.event_id\nWHERE e.location = 'MU 215'\n  AND e.type = 'Guest Speaker'\n  AND b.spent = 0;",
+      "primary_subtype": "MISSING_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What are the budget category of the events located at MU 215 and a guest speaker type with a 0 budget spent?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "category",
+                "table": "budget"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "budget.category",
+            "position": 0,
+            "table_ownership": [
+              "budget"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "type",
+                "table": "event"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "event.type",
+            "position": 1,
+            "table_ownership": [
+              "event"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "budget.category",
+          "event.type"
+        ]
+      },
+      "reference_sql_hash": "69b2e815cda173f51b635108de9f65647ed604d6ce64dcf8910b306790333d2f",
+      "reference_sql_preview": "SELECT DISTINCT T2.category, T1.type FROM event AS T1 INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event WHERE T1.location = 'MU 215' AND T2.spent = 0 AND T1.type = 'Guest Speaker'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "bird",
+      "case_id": "87",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "thrombosis_prediction",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "symptoms",
+                "table": "examination"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "examination.symptoms",
+            "position": 0,
+            "table_ownership": [
+              "examination"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "diagnosis",
+                "table": "examination"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "examination.diagnosis",
+            "position": 1,
+            "table_ownership": [
+              "examination"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "examination.symptoms",
+          "examination.diagnosis"
+        ]
+      },
+      "generated_sql_hash": "afe80a5e03ebda29ba869c1fe0d439787b1e542f7b312b33c14846fa78f4ef29",
+      "generated_sql_preview": "SELECT e.symptoms, e.diagnosis\nFROM public.examination AS e\nJOIN public.patient AS p ON p.id = e.id\nWHERE e.symptoms IS NOT NULL\nORDER BY p.birthday DESC, e.\"Examination Date\" ASC\nLIMIT 1;",
+      "primary_subtype": "WRONG_PROJECTED_ENTITY",
+      "projection_causal": true,
+      "projection_deltas": [
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "What are the symptoms observed by the youngest patient to ever did a medical examination? Identify their diagnosis.",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "symptoms",
+                "table": "examination"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "examination.symptoms",
+            "position": 0,
+            "table_ownership": [
+              "examination"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "diagnosis",
+                "table": "patient"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "patient.diagnosis",
+            "position": 1,
+            "table_ownership": [
+              "patient"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "examination.symptoms",
+          "patient.diagnosis"
+        ]
+      },
+      "reference_sql_hash": "294af2993056d46c5bba8d70ab757e822377954a4fefa139303bda227ca7b248",
+      "reference_sql_preview": "SELECT T2.Symptoms, T1.Diagnosis FROM Patient AS T1 INNER JOIN Examination AS T2 ON T1.ID = T2.ID WHERE NOT T2.Symptoms IS NULL ORDER BY T1.Birthday DESC NULLS LAST LIMIT 1",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "defog_advanced",
+      "case_id": "advanced:44",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "m1_status": "ALLOWED",
+          "result_match": false,
+          "sql_hash": "608c03799f88543de7b259ae468a56884d1f0dc8e335eb01e1ccf1538b1061d8",
+          "status": "EXECUTED"
+        },
+        {
+          "dimension": "FILTER",
+          "execution_status": "SUCCESS",
+          "m1_status": "ALLOWED",
+          "result_match": true,
+          "sql_hash": "ec46f65e92b332888f655aa5c537c16d0d613ccb12fc7ffbfd411d2905c2c61d",
+          "status": "EXECUTED"
+        }
+      ],
+      "database": "derm_treatment",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": "pic",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [],
+            "distinct": false,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(*)",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "count(*)"
+        ]
+      },
+      "generated_sql_hash": "512f6c3a8158d99515ccb6363fc3d96b1bfe1c581906cd8847076386f0d1ef62",
+      "generated_sql_preview": "SELECT COUNT(*) AS pic FROM public.patients WHERE gender = 'Female' AND ins_type = 'Private';",
+      "primary_subtype": "UNDETERMINED",
+      "projection_causal": false,
+      "projection_deltas": [
+        "EXPRESSION",
+        "AGGREGATE"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_INSUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "What is the PIC for female patients?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": "FILTER_CAUSAL",
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": true,
+            "aggregate_function": "COUNT",
+            "alias": "pic",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "patient_id",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COUNT",
+            "function_names": [
+              "COUNT"
+            ],
+            "normalized_sql": "count(patient_id)",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "count(patient_id)"
+        ]
+      },
+      "reference_sql_hash": "ff530ef5be0d8bdc45ae31d921c01f58a862e0f91fbe504202b8f1ec8ed79bdf",
+      "reference_sql_preview": "SELECT COUNT(patient_id) AS pic FROM patients WHERE gender = 'Female' AND ins_type = 'private'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M20_2_PROJECTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "defog_classic",
+      "case_id": "classic:105",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "m1_status": "ALLOWED",
+          "result_match": true,
+          "sql_hash": "618e352786f0cc06c8dd4dfa0b4d51b5e8ebaea44b105c1e9fe8ba7cbe4d5c87",
+          "status": "EXECUTED"
+        }
+      ],
+      "database": "geography",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "state_name",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "state_name",
+            "position": 0,
+            "table_ownership": []
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "population",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "population",
+            "position": 1,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "state_name",
+          "population"
+        ]
+      },
+      "generated_sql_hash": "c7da588834d41d62f9a2c92ed06591def81ad44396b6eb0ae30e284c2a736db1",
+      "generated_sql_preview": "SELECT state_name, population FROM public.state WHERE population < 100000;",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "Which states have fewer than a hundred thousand people?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "state_name",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "state_name",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "state_name"
+        ]
+      },
+      "reference_sql_hash": "c385a916b59d7eb9b9698e07fea86bcdf536a886656fcc2161ac36b242737f99",
+      "reference_sql_preview": "SELECT state_name FROM state WHERE population < 100000",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M20_2_PROJECTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "defog_classic",
+      "case_id": "classic:20",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "academic",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 4,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "oid",
+                "table": "organization"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "organization.oid",
+            "position": 0,
+            "table_ownership": [
+              "organization"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "organization"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "organization.name",
+            "position": 1,
+            "table_ownership": [
+              "organization"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "homepage",
+                "table": "organization"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "organization.homepage",
+            "position": 2,
+            "table_ownership": [
+              "organization"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "continent",
+                "table": "organization"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "organization.continent",
+            "position": 3,
+            "table_ownership": [
+              "organization"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "organization.oid",
+          "organization.name",
+          "organization.homepage",
+          "organization.continent"
+        ]
+      },
+      "generated_sql_hash": "7081b1c0a5f5136b7c84c46d20cef89d6742d608aa4d0dfb49613645c3255d1c",
+      "generated_sql_preview": "SELECT DISTINCT o.oid, o.name, o.homepage, o.continent\nFROM public.organization AS o\nJOIN public.author AS a ON a.oid = o.oid\nJOIN public.writes AS w ON w.aid = a.aid\nJOIN public.domain_publication AS dp ON dp.pid = w.pid\nJOIN public.domain AS d ON d.did = dp.did\nWHERE d.name = 'Machine Learning';",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "Which organizations have authors who have written publications in the domain \"Machine Learning\"?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "organization"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "organization.name",
+            "position": 0,
+            "table_ownership": [
+              "organization"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "organization.name"
+        ]
+      },
+      "reference_sql_hash": "5cd94249f0af6316110df8cd990068fd9e5973a5a12f77dda6be1d610fc59b0f",
+      "reference_sql_preview": "SELECT DISTINCT organization.name FROM organization JOIN author ON organization.oid = author.oid JOIN writes ON author.aid = writes.aid JOIN domain_publication ON writes.pid = domain_publication.pid JOIN domain ON domain_publication.did = domain.did WHERE domain.name = 'Machine Learning'",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "defog_classic",
+      "case_id": "classic:22",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        },
+        {
+          "dimension": "DISTINCT",
+          "execution_status": "SUCCESS",
+          "result_match": false,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "academic",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 4,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "aid",
+                "table": "author"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "author.aid",
+            "position": 0,
+            "table_ownership": [
+              "author"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "author"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "author.name",
+            "position": 1,
+            "table_ownership": [
+              "author"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "homepage",
+                "table": "author"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "author.homepage",
+            "position": 2,
+            "table_ownership": [
+              "author"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "oid",
+                "table": "author"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "author.oid",
+            "position": 3,
+            "table_ownership": [
+              "author"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "author.aid",
+          "author.name",
+          "author.homepage",
+          "author.oid"
+        ]
+      },
+      "generated_sql_hash": "d67b2d075add7a1ac812f41c4b7d4696959b2572eba8b2a7a3e51f07590beec8",
+      "generated_sql_preview": "SELECT a.aid, a.name, a.homepage, a.oid\nFROM public.author AS a\nWHERE a.oid IS NULL;",
+      "primary_subtype": "DISTINCT_PROJECTION_SEMANTICS",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION",
+        "DISTINCT"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_SUFFICIENT",
+      "queryplan_v1_relevance": "SHAPE_COMPATIBLE_CATALOG_UNPROVEN",
+      "question": "Which authors are not part of any organization?",
+      "question_projection_alignment": "EXPLICIT",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 1,
+        "distinct_select": true,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": null
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "name",
+            "position": 0,
+            "table_ownership": []
+          }
+        ],
+        "normalized_expressions": [
+          "name"
+        ]
+      },
+      "reference_sql_hash": "f5331696c3e6abd71e1ce59deec7053881f78d680cd4f8254b4606743c32dfef",
+      "reference_sql_preview": "SELECT DISTINCT name FROM author WHERE oid IS NULL",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    },
+    {
+      "benchmark": "defog_classic",
+      "case_id": "classic:31",
+      "counterfactuals": [
+        {
+          "dimension": "PROJECTION",
+          "execution_status": "SUCCESS",
+          "result_match": true,
+          "status": "REUSED_M22_1"
+        }
+      ],
+      "database": "advising",
+      "evidence_strength": "COUNTERFACTUAL_CONFIRMED",
+      "evidence_sufficiency": "QUESTION_OR_REFERENCE_OFFLINE_ONLY",
+      "generated_projection": {
+        "arity": 4,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "instructor_id",
+                "table": "instructor"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "instructor.instructor_id",
+            "position": 0,
+            "table_ownership": [
+              "instructor"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "instructor"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "instructor.name",
+            "position": 1,
+            "table_ownership": [
+              "instructor"
+            ]
+          },
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "uniqname",
+                "table": "instructor"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "instructor.uniqname",
+            "position": 2,
+            "table_ownership": [
+              "instructor"
+            ]
+          },
+          {
+            "aggregate": true,
+            "aggregate_function": "AVG",
+            "alias": "average_clarity_score",
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "clarity_score",
+                "table": "course"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "AVG",
+            "function_names": [
+              "AVG"
+            ],
+            "normalized_sql": "avg(course.clarity_score)",
+            "position": 3,
+            "table_ownership": [
+              "course"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "instructor.instructor_id",
+          "instructor.name",
+          "instructor.uniqname",
+          "avg(course.clarity_score)"
+        ]
+      },
+      "generated_sql_hash": "cb89accf2b0564a1c49c7f68342d52bb6d490ed174573feb902fc9a932a37cad",
+      "generated_sql_preview": "SELECT i.instructor_id, i.name, i.uniqname, AVG(c.clarity_score) AS average_clarity_score\nFROM public.instructor AS i\nJOIN public.offering_instructor AS oi ON oi.instructor_id = i.instructor_id\nJOIN public.course_offering AS co ON co.offering_id = oi.offering_id\nJOIN public.course AS c ON c.course_id = co.course_id\nWHERE c.clarity_score IS NOT NULL\nGROUP BY i.instructor_id, i.name, i.uniqname\nORDER BY i.name, i.instructor_id;",
+      "primary_subtype": "EXTRA_PROJECTED_COLUMN",
+      "projection_causal": true,
+      "projection_deltas": [
+        "ARITY",
+        "EXPRESSION",
+        "AGGREGATE"
+      ],
+      "queryintent_relevance": "EXISTING_FIELD_INSUFFICIENT",
+      "queryplan_v1_relevance": "CONTRACT_EXPANSION_REQUIRED",
+      "question": "What is the average clarity score for each instructor who taught a course?",
+      "question_projection_alignment": "DERIVABLE",
+      "reclassified_cause": null,
+      "reference_projection": {
+        "arity": 2,
+        "distinct_select": false,
+        "expressions": [
+          {
+            "aggregate": false,
+            "aggregate_function": null,
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "name",
+                "table": "instructor"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "COLUMN",
+            "function_names": [],
+            "normalized_sql": "instructor.name",
+            "position": 0,
+            "table_ownership": [
+              "instructor"
+            ]
+          },
+          {
+            "aggregate": true,
+            "aggregate_function": "AVG",
+            "alias": null,
+            "arithmetic": false,
+            "case": false,
+            "cast": false,
+            "columns": [
+              {
+                "column": "clarity_score",
+                "table": "course"
+              }
+            ],
+            "distinct": false,
+            "expression_type": "AVG",
+            "function_names": [
+              "AVG"
+            ],
+            "normalized_sql": "avg(course.clarity_score)",
+            "position": 1,
+            "table_ownership": [
+              "course"
+            ]
+          }
+        ],
+        "normalized_expressions": [
+          "instructor.name",
+          "avg(course.clarity_score)"
+        ]
+      },
+      "reference_sql_hash": "9afb23b78d22340e8cdd861a69488583e3a8d3649ef10d28defc614ed556bd87",
+      "reference_sql_preview": "SELECT i.name, AVG(c.clarity_score) FROM course c JOIN course_offering co ON c.course_id = co.course_id JOIN offering_instructor oi ON co.offering_id = oi.offering_id JOIN instructor i ON oi.instructor_id = i.instructor_id GROUP BY i.name",
+      "secondary_tags": [],
+      "source_population": [
+        "SOURCE_M22_1_CAUSAL_RESOLUTION"
+      ],
+      "structurally_confirmed": false
+    }
+  ],
+  "causal_summary": {
+    "confirmed_projection_causal": 17,
+    "projection_not_single_causal": 1,
+    "reclassified_non_projection": 1,
+    "unresolved": 0
+  },
+  "classification": "M22_2_PROJECTION_SEMANTICS_FORENSICS_COMPLETED",
+  "correct_control": {
+    "AGGREGATE_PROJECTION": {
+      "correct": 55,
+      "error_rate": 0.225352,
+      "executed": 71,
+      "wrong": 16
+    },
+    "AGGREGATE_PROJECTION_WITH_JOIN": {
+      "correct": 86,
+      "error_rate": 0.414966,
+      "executed": 147,
+      "wrong": 61
+    },
+    "DISTINCT_PROJECTION": {
+      "correct": 3,
+      "error_rate": 0.4,
+      "executed": 5,
+      "wrong": 2
+    },
+    "DISTINCT_PROJECTION_WITH_JOIN": {
+      "correct": 28,
+      "error_rate": 0.416667,
+      "executed": 48,
+      "wrong": 20
+    },
+    "MULTIPLE_PROJECTED_FIELDS": {
+      "correct": 14,
+      "error_rate": 0.5625,
+      "executed": 32,
+      "wrong": 18
+    },
+    "MULTIPLE_PROJECTED_FIELDS_WITH_JOIN": {
+      "correct": 21,
+      "error_rate": 0.588235,
+      "executed": 51,
+      "wrong": 30
+    },
+    "SINGLE_PROJECTED_FIELD": {
+      "correct": 28,
+      "error_rate": 0.2,
+      "executed": 35,
+      "wrong": 7
+    },
+    "SINGLE_PROJECTED_FIELD_WITH_JOIN": {
+      "correct": 61,
+      "error_rate": 0.290698,
+      "executed": 86,
+      "wrong": 25
+    }
+  },
+  "counterfactual_summary": {
+    "cases_tested_or_reused": 18,
+    "multi_expression_projection_fixes": 0,
+    "new_native_counterfactuals": 3,
+    "projection_only_non_fixes": 1,
+    "reused_m22_1_confirmations": 15,
+    "single_expression_fixes": 16,
+    "structurally_confirmed": 1
+  },
+  "existing_capability_relevance": {
+    "queryintent_already_representable": 13,
+    "queryintent_grounding_missing": 0,
+    "queryintent_insufficient": 5,
+    "queryplan_v1_confirmed_covered": 0,
+    "queryplan_v1_contract_expansion_required": 6,
+    "queryplan_v1_shape_compatible_catalog_unproven": 12
+  },
+  "fresh_generation": 0,
+  "m20_2_artifact_hash": "fe03e7084215cff720028aefc12d6fd649597937461f3c157ef6b4aa763773b8",
+  "m20_manifest_hash": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a",
+  "m22_1_artifact_hash": "5c86fb716c8fd724f6d80defcf720a76003beb6ef74e70cb1b6c5804e3e1d084",
+  "method": {
+    "alias_policy": "aliases ignored for semantic projection comparison",
+    "counterfactuals": "AST-aware; M1 plus bounded read-only execution",
+    "reference_usage": "offline only",
+    "runtime_changes": "none"
+  },
+  "population": {
+    "confirmed_projection_causal": 17,
+    "m20_2_native_projection": 3,
+    "m22_1_projection_causal": 15,
+    "overlap": 0,
+    "projection_not_single_causal": 1,
+    "unique_candidates": 18
+  },
+  "primary_subtypes": {
+    "DISTINCT_PROJECTION_SEMANTICS": 3,
+    "EXTRA_PROJECTED_COLUMN": 6,
+    "MISSING_PROJECTED_COLUMN": 2,
+    "UNDETERMINED": 1,
+    "WRONG_AGGREGATE_PROJECTION": 2,
+    "WRONG_DERIVED_EXPRESSION": 1,
+    "WRONG_PROJECTED_COLUMN": 2,
+    "WRONG_PROJECTED_ENTITY": 1
+  },
+  "production_changes": 0,
+  "provider_calls": 0,
+  "question_projection_alignment": {
+    "AMBIGUOUS": 1,
+    "DERIVABLE": 5,
+    "EXPLICIT": 12
+  },
+  "recommended_next_intervention": {
+    "affected_cases": 8,
+    "family": "TYPED_OUTPUT_FIELD_CONTRACT",
+    "mechanism": "confirmed output-field presence/selection failures are the most coherent bounded family",
+    "rationale": "projection-specific output ownership is narrower than a combined schema/aggregation intervention; this remains a future experiment hypothesis",
+    "status": "RECOMMENDED_NOT_IMPLEMENTED"
+  },
+  "solution_family_mapping": {
+    "AGGREGATION_PROJECTION_CONTRACT": {
+      "confirmed_cases": 2,
+      "counterfactual_support": "confirmed where applicable",
+      "production_rationale": "aggregate output semantics",
+      "regression_surface": "grain/count semantics",
+      "runtime_cost": "future experiment required"
+    },
+    "OTHER_OR_UNRESOLVED": {
+      "confirmed_cases": 5,
+      "counterfactual_support": "mixed",
+      "production_rationale": "not selected",
+      "regression_surface": "unknown",
+      "runtime_cost": "unknown"
+    },
+    "QUERY_AWARE_PROJECTION_GROUNDING": {
+      "confirmed_cases": 3,
+      "counterfactual_support": "confirmed where projection substitution matched",
+      "production_rationale": "attribute/entity grounding",
+      "regression_surface": "column/entity selection",
+      "runtime_cost": "future experiment required"
+    },
+    "TYPED_OUTPUT_FIELD_CONTRACT": {
+      "confirmed_cases": 8,
+      "counterfactual_support": "confirmed where projection substitution matched",
+      "production_rationale": "bounded output ownership; not implemented",
+      "regression_surface": "output arity/order",
+      "runtime_cost": "future experiment required"
+    }
+  },
+  "starting_commit": "9e2531903efc40755e807fe84b6b974e497103e8"
+}

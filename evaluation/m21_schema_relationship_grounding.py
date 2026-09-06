@@ -479,7 +479,7 @@ def _write_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
 
 
 def preflight() -> dict[str, Any]:
-    if not _git_clean():
+    if not _git_clean_for_run():
         raise M20PreflightFailure("M21 requires the clean starting checkpoint")
     sql_eval, bird_root, _ = _dataset_roots()
     datasets = _load_all(sql_eval, bird_root)

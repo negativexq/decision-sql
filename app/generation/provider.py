@@ -786,7 +786,15 @@ class OpenAICompatibleProvider:
         started = perf_counter()
         try:
             payload = await self._post(body)
-        except Exception:
+        except Exception as error:
+            self._complete_model_io(
+                None,
+                parsed_sql=None,
+                raw_content=None,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PROVIDER_PROTOCOL",
+                failure_metadata={"exception_type": type(error).__name__},
+            )
             provenance.emit(
                 ProvenanceStage.PROVIDER_RESPONSE,
                 ProvenanceEventType.PROVIDER_RESPONSE_RECEIVED,
@@ -812,7 +820,15 @@ class OpenAICompatibleProvider:
         )
         try:
             proposal = _proposal_from_response(payload, self.settings.llm_model)
-        except Exception:
+        except Exception as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=raw_content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PROVIDER_PROTOCOL",
+                failure_metadata={"exception_type": type(error).__name__},
+            )
             provenance.emit(
                 ProvenanceStage.CANDIDATE_EXTRACTION,
                 ProvenanceEventType.CANDIDATE_EXTRACTION_COMPLETED,

@@ -1,10 +1,15 @@
+import pytest
+
 from app.semantics.query_plan_v1 import (
     QueryPlanV1Catalog,
     QueryPlanV1Column,
     QueryPlanV1Relationship,
     QueryPlanV1Table,
 )
-from evaluation.m19_queryplan_public_transfer import lower_gold_sql
+from evaluation.m19_queryplan_public_transfer import (
+    _assert_complete_preflight,
+    lower_gold_sql,
+)
 
 
 def catalog() -> QueryPlanV1Catalog:
@@ -89,3 +94,20 @@ def test_m19_rejects_unsupported_boolean_shape() -> None:
     )
     assert result.status == "UNSUPPORTED"
     assert "OR_BOOLEAN" in result.reasons
+
+
+def test_m19_preflight_rejects_partial_survivors_before_provider_boundary() -> None:
+    grouped = {"defog_classic": [{"case_id": "one"}]}
+    all_valid = {"defog_classic": []}
+    integrity = {"defog_classic": {"failures": [{"case_id": "one"}]}}
+
+    with pytest.raises(RuntimeError, match="no provider was constructed"):
+        _assert_complete_preflight(grouped, all_valid, integrity)
+
+
+def test_m19_preflight_allows_provider_boundary_only_when_complete() -> None:
+    grouped = {"defog_classic": [{"case_id": "one"}]}
+    all_valid = {"defog_classic": [{"case_id": "one"}]}
+    integrity = {"defog_classic": {"failures": []}}
+
+    _assert_complete_preflight(grouped, all_valid, integrity)

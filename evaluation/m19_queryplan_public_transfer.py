@@ -703,6 +703,29 @@ def _prepare_representable(
     return valid, {"candidate_count": len(valid), "failures": failures}
 
 
+def _assert_complete_preflight(
+    grouped: dict[str, list[dict[str, Any]]],
+    all_valid: dict[str, list[dict[str, Any]]],
+    integrity: dict[str, dict[str, Any]],
+) -> None:
+    """Fail closed before constructing a provider for a transfer run."""
+    failures = {
+        label: {
+            "candidate_count": len(grouped[label]),
+            "valid_count": len(all_valid.get(label, [])),
+            "integrity": integrity.get(label, {}),
+        }
+        for label in grouped
+        if len(all_valid.get(label, [])) != len(grouped[label])
+        or integrity.get(label, {}).get("failures")
+    }
+    if failures:
+        raise RuntimeError(
+            "M19 provider preflight failed closed; no provider was constructed: "
+            + json.dumps(failures, default=str, sort_keys=True)
+        )
+
+
 def run_command(sql_eval: Path, bird_path: Path) -> dict[str, Any]:
     """Run paired transfer calls for all gold-proven representable cases."""
     from app.config import get_settings
@@ -722,6 +745,7 @@ def run_command(sql_eval: Path, bird_path: Path) -> dict[str, Any]:
     for label, rows in grouped.items():
         kind = "bird" if label == "bird" else "defog"
         all_valid[label], integrity[label] = _prepare_representable(rows, catalogs, kind)
+    _assert_complete_preflight(grouped, all_valid, integrity)
     settings = get_settings().model_copy(
         update={
             "llm_model": "gpt-5.6-luna",

@@ -337,7 +337,7 @@ async def test_governed_execution_failure_does_not_bypass_to_execution() -> None
     decision = await route.run(TextToSqlRequest(question="show revenue"))
 
     assert decision.status is GovernedRouteStatus.EXECUTION_FAILURE
-    assert decision.fallback_reason is GovernedFallbackReason.COMPILER_FAILURE
+    assert decision.fallback_reason is GovernedFallbackReason.EXECUTION_FAILURE
     assert direct.calls == 1
     assert provider.calls == 1
     assert safety.execute_calls == 1

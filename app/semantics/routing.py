@@ -85,6 +85,7 @@ class GovernedFallbackReason(StrEnum):
     AMBIGUOUS_RELATIONSHIP_PATH = "AMBIGUOUS_RELATIONSHIP_PATH"
     FANOUT_UNSAFE_PATH = "FANOUT_UNSAFE_PATH"
     COMPILER_FAILURE = "COMPILER_FAILURE"
+    EXECUTION_FAILURE = "EXECUTION_FAILURE"
     M1_REJECTED = "M1_REJECTED"
     SHADOW_ONLY = "SHADOW_ONLY"
     PROVIDER_FAILURE = "PROVIDER_FAILURE"
@@ -541,7 +542,7 @@ class GovernedMetricRouteService:
                 request,
                 direct,
                 status=GovernedRouteStatus.EXECUTION_FAILURE,
-                reason=GovernedFallbackReason.COMPILER_FAILURE,
+                reason=GovernedFallbackReason.EXECUTION_FAILURE,
                 applicable=True,
                 grounding=grounding,
                 candidate=compiled,

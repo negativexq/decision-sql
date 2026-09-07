@@ -163,7 +163,9 @@ The tracked files are:
 The final manifest freezes the public/protected source hashes, exact merged
 SELECT population, database identities, renderer/evaluator identities, M1
 configuration, disabled capabilities, and the unchanged outcome-blind
-18-case pilot (one lexicographically first SELECT case per database).
+18-case pilot (one lexicographically first SELECT case per database). The final
+manifest hash is
+`eccf33940f1ecdcbe321da5e7f148e8f8be4658183d9d89cfc0a5363b7a7529c`.
 
 ## Future DIRECT baseline
 

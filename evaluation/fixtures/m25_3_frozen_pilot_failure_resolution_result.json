@@ -1,0 +1,118 @@
+{
+  "classification": "M25_3_FROZEN_PILOT_FAILURE_RESOLUTION_COMPLETED",
+  "provider_calls": 0,
+  "fresh_generation": 0,
+  "baseline": {
+    "cases": 18,
+    "correct": 6,
+    "m1_blocked": 5,
+    "executed_mismatch": 7
+  },
+  "failure_ledger": {
+    "total_failures": 12,
+    "primary_classes": {
+      "DETERMINISTIC_M1_IMPLEMENTATION_DEFECT": 0,
+      "DETERMINISTIC_M1_POLICY_GAP": 3,
+      "LEGITIMATE_M1_REJECTION": 0,
+      "RUNTIME_EXECUTION_DEFECT": 0,
+      "EVALUATOR_OR_REFERENCE_DEFECT": 0,
+      "SEMANTIC_CONTEXT_DEFECT": 0,
+      "EVIDENCE_APPLICATION_FAILURE": 0,
+      "MODEL_SEMANTIC_FAILURE": 9,
+      "MULTI_CAUSAL": 0,
+      "UNRESOLVED": 0
+    },
+    "m1_original": {
+      "FORBIDDEN_FUNCTION": 3,
+      "UNKNOWN_COLUMN": 1,
+      "EXECUTION_ERROR": 1
+    },
+    "jsonb_text_extraction": {
+      "function": "JSONB_EXTRACT_SCALAR",
+      "cases": 3,
+      "policy_gap": true,
+      "replayed_accepted": 3,
+      "replayed_correct": 0
+    }
+  },
+  "confirmed_defects": {
+    "m1_implementation": 0,
+    "m1_policy_gap": 3,
+    "runtime": 0,
+    "semantic_context": 1,
+    "semantic_context_note": "Duplicate KB records are now preserved; no frozen failure was attributed to the dropped duplicate."
+  },
+  "frozen_output_replay": {
+    "population": 18,
+    "m1_accepted": 16,
+    "m1_blocked": 2,
+    "execution_success": 16,
+    "official_correct": 6,
+    "official_mismatch": 10,
+    "known_reference_limitation": 1,
+    "failure_codes": {
+      "UNKNOWN_COLUMN": 1,
+      "EXECUTION_ERROR": 1
+    },
+    "is_fresh_model_score": false
+  },
+  "replay_transitions": {
+    "original_correct_to_replay_correct": 6,
+    "original_correct_to_replay_wrong": 0,
+    "original_m1_blocked_to_replay_correct": 0,
+    "original_m1_blocked_to_replay_mismatch": 3,
+    "original_m1_blocked_to_still_blocked": 2,
+    "original_mismatch_to_replay_correct": 0,
+    "original_mismatch_to_replay_mismatch": 7
+  },
+  "residual": {
+    "legitimate_m1_rejection_stage": 2,
+    "model_semantic_failure": 11,
+    "benchmark_reference_limitation": 1,
+    "evidence_application_failure": 0,
+    "unresolved": 0,
+    "endpoint_accounting": {
+      "correct": 6,
+      "still_blocked_invalid_generated_sql": 2,
+      "reference_limited": 1,
+      "semantic_mismatch": 9
+    }
+  },
+  "gold_180_replay": {
+    "population": 180,
+    "m1_accepted": 175,
+    "cost_blocked": 1,
+    "multi_statement": 4,
+    "other_blocked": 0,
+    "planning_errors": 0,
+    "accepted_executed": 175,
+    "execution_success": 175,
+    "reference_evaluator_pass": 170,
+    "known_temporal_empty_limitation": 5,
+    "unexpected_regression": 0
+  },
+  "historical_regression": {
+    "status": "NOT_RUN",
+    "measured_cases": 0,
+    "reason": "Historical BIRD/Defog database roots were unavailable."
+  },
+  "security_controls": {
+    "select_only": true,
+    "single_statement": true,
+    "ambiguous_columns_fail_closed": true,
+    "system_catalogs_denied": true,
+    "forbidden_columns_denied": true,
+    "unknown_functions_fail_closed": true,
+    "volatile_functions_denied": true,
+    "dangerous_stateful_functions_denied": true,
+    "cost_gate_unchanged": true,
+    "read_only_execution_unchanged": true
+  },
+  "protected_data_safety": {
+    "ignored": true,
+    "tracked_files": 0,
+    "gold_contents_committed": false,
+    "counterfactual_sql_committed": false,
+    "local_detail_tracked": false
+  }
+}

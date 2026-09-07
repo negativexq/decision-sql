@@ -66,12 +66,8 @@ class SemanticResourceStore:
         return json.dumps(dict(self.column_meanings), ensure_ascii=False, indent=2, sort_keys=True)
 
     def knowledge_json(self) -> str:
-        # The official baseline indexes records by the ``knowledge`` name.
-        # Preserve that observable behavior for duplicate names while retaining
-        # ID-based resolution for the protected reference audit.
-        by_name = {entry.knowledge: entry for entry in self.knowledge}
         return json.dumps(
-            [by_name[name].visible() for name in sorted(by_name)],
+            [entry.visible() for entry in sorted(self.knowledge, key=lambda item: item.id)],
             ensure_ascii=False,
             indent=2,
         )

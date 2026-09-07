@@ -47,6 +47,10 @@ SAFE_FUNCTION_FAMILIES = {
             "ARRAY_TO_STRING",
             "CONCAT_WS",
             "JSONB_EXTRACT_PATH_TEXT",
+            # SQLGlot represents PostgreSQL's read-only jsonb #>> operator
+            # as JSONB_EXTRACT_SCALAR.  It extracts text and has no side
+            # effects or external access.
+            "JSONB_EXTRACT_SCALAR",
             "JSON_EXTRACT",
             "JSON_EXTRACT_SCALAR",
             "ROW_TO_JSON",

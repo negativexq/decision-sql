@@ -67,6 +67,16 @@ def test_reviewed_analytical_function_families_are_allowed() -> None:
     assert sql_policy.validate(parsed(queries[-1])) is None
 
 
+def test_postgres_jsonb_text_extraction_is_read_only_and_reviewed() -> None:
+    sql_policy = policy()
+    query = (
+        "SELECT JSONB_BUILD_OBJECT('profile', JSONB_BUILD_OBJECT('display_name', 'x')) "
+        "#>> '{profile,display_name}'"
+    )
+
+    assert sql_policy.validate(parsed(query)) is None
+
+
 def test_function_policy_remains_deny_first() -> None:
     sql_policy = policy()
     rejected = {

@@ -46,13 +46,13 @@ def test_resource_loader_and_exact_id_resolution(tmp_path: Path) -> None:
     assert store.duplicate_knowledge_names == 0
 
 
-def test_duplicate_name_matches_official_name_indexing(tmp_path: Path) -> None:
+def test_duplicate_name_preserves_both_records(tmp_path: Path) -> None:
     _write_resources(tmp_path, duplicate_name=True)
     store = load_semantic_resources(tmp_path, "demo")
     assert store.duplicate_knowledge_names == 1
     rendered = store.knowledge_json()
     assert '"id": 1' in rendered
-    assert '"id": 0' not in rendered
+    assert '"id": 0' in rendered
 
 
 def test_ambiguous_reference_fails_closed() -> None:

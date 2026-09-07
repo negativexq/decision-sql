@@ -42,6 +42,7 @@ from app.semantics.query_plan_wire_v2 import (
     query_plan_wire_v2_prompt,
     wire_to_query_plan_v1,
 )
+from app.semantics.semantic_query import SemanticQueryPlan
 
 
 class SqlProposal(BaseModel):
@@ -84,6 +85,21 @@ class QueryPlanV1Proposal(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     plan: QueryPlanV1
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class SemanticQueryPlanProposal(BaseModel):
+    """One untrusted canonical semantic plan; it contains no SQL field."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    plan: SemanticQueryPlan
     provider: str
     model: str
     prompt_tokens: int | None = None
@@ -229,6 +245,11 @@ class QueryPlanProviderBoundaryError(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_semantic_query_plan(
+        self, question: str, schema_context: str
+    ) -> SemanticQueryPlanProposal:
+        """Return one untrusted canonical semantic plan, never SQL."""
+
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
     ) -> QueryPlanV1Proposal:
@@ -309,6 +330,59 @@ class OpenAICompatibleProvider:
             payload,
             parsed_sql=None,
             raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_semantic_query_plan(
+        self, question: str, schema_context: str
+    ) -> SemanticQueryPlanProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _semantic_query_plan_messages(question, schema_context)
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("semantic_query_plan", question, schema_context, messages)
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            plan = SemanticQueryPlan.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = SemanticQueryPlanProposal(
+                plan=plan,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="SEMANTIC_PLAN_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid semantic query plan"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=plan.model_dump(mode="json"),
+            raw_content=content,
             latency_ms=proposal.latency_ms,
         )
         return proposal
@@ -1163,10 +1237,15 @@ class StaticLLMProvider:
     """Deterministic provider useful for tests and explicit local evaluation fixtures."""
 
     def __init__(
-        self, sql: str, model: str = "static-test", query_plan: QueryPlanV1 | None = None
+        self,
+        sql: str,
+        model: str = "static-test",
+        query_plan: QueryPlanV1 | None = None,
+        semantic_plan: SemanticQueryPlan | None = None,
     ) -> None:
         self.proposal = SqlProposal(sql=sql, provider="static", model=model)
         self.query_plan = query_plan
+        self.semantic_plan = semantic_plan
 
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
@@ -1176,6 +1255,16 @@ class StaticLLMProvider:
             raise NotImplementedError("static QueryPlan V1 proposal is not configured")
         return QueryPlanV1Proposal(
             plan=self.query_plan, provider="static", model=self.proposal.model
+        )
+
+    async def propose_semantic_query_plan(
+        self, question: str, schema_context: str
+    ) -> SemanticQueryPlanProposal:
+        del question, schema_context
+        if self.semantic_plan is None:
+            raise NotImplementedError("static semantic query plan proposal is not configured")
+        return SemanticQueryPlanProposal(
+            plan=self.semantic_plan, provider="static", model=self.proposal.model
         )
 
     async def propose_query_plan_wire_v2(
@@ -1280,6 +1369,12 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_semantic_query_plan(
+        self, question: str, schema_context: str
+    ) -> SemanticQueryPlanProposal:
+        del question, schema_context
+        raise NotImplementedError("semantic query plan generation is not configured")
+
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
     ) -> QueryPlanV1Proposal:
@@ -1363,6 +1458,24 @@ def _query_plan_v1_messages(question: str, schema_context: str) -> list[dict[str
         "other field. All evaluation requests are pre-scoped as applicable; do not "
         "use applicability to select a runtime route."
         f"\n\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _semantic_query_plan_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    system = (
+        "Propose one bounded semantic query plan for the user's PostgreSQL question. "
+        "Return JSON only and never emit SQL, SQL fragments, ON predicates, physical "
+        "table names, physical column names, or arbitrary function names. Use only the "
+        "server-owned semantic IDs in the context. The plan contains database_id, "
+        "from_entity_id, population_contract, outputs, joins, where, group_by, having, "
+        "order_by, distinct, limit, offset, and optional calculation_contract. Expressions "
+        "must be typed nodes with kinds attribute, literal, aggregate, binary, logical, "
+        "not, between, in, is_null, cast, case, function, window, or exists. Functions "
+        "and operators must use the bounded enum values in the supplied contract. Join "
+        "objects contain only relationship_id and join_type; the server owns join paths "
+        "and predicates. Do not provide reasoning or extra fields."
+        f"\n\nSERVER-OWNED SEMANTIC CONTEXT:\n{schema_context}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
 

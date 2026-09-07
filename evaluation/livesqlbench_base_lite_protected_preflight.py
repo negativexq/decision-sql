@@ -407,12 +407,19 @@ def run_preflight(
         len(json.dumps(case.runtime.external_knowledge, ensure_ascii=False))
         for case in select_cases
     ]
-    context_sizes = [len(schema_contexts[case.database]) for case in select_cases]
+    # A missing benchmark database must produce a blocked preflight artifact,
+    # not a secondary KeyError while computing optional context statistics.
+    context_sizes = [
+        len(schema_contexts[case.database])
+        for case in select_cases
+        if case.database in schema_contexts
+    ]
     combined_sizes = [
         len(case.runtime.question)
         + len(json.dumps(case.runtime.external_knowledge, ensure_ascii=False))
         + len(schema_contexts[case.database])
         for case in select_cases
+        if case.database in schema_contexts
     ]
     test_case_sizes = [len(case.test_cases) for case in select_cases]
     m1_by_id = {record["case_id"]: record for record in safe_cases}

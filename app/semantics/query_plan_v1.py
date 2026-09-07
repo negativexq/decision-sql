@@ -385,46 +385,49 @@ class QueryPlanV1Compiler:
         validate_query_plan_v1(plan, self.catalog)
         if not plan.applicable:
             raise QueryPlanV1ValidationError("non-applicable plans cannot compile")
-        assert plan.source is not None
-        aliases = {plan.source: "t0"}
-        reachable = {plan.source}
-        join_specs: list[tuple[exp.Expression, exp.Expression, QueryPlanV1JoinType]] = []
-        for index, join in enumerate(plan.joins, start=1):
-            relationship = self.catalog.relationship(join.relationship_id)
-            new_table = next(
-                table
-                for table in (relationship.left_table_id, relationship.right_table_id)
-                if table not in reachable
-            )
-            aliases[new_table] = f"t{index}"
-            left = _column(relationship.left_column_id, aliases, self.catalog)
-            right = _column(relationship.right_column_id, aliases, self.catalog)
-            join_specs.append(
-                (
-                    exp.Table(this=_identifier(new_table)).as_(aliases[new_table]),
-                    exp.EQ(this=left, expression=right),
-                    join.join_type,
-                )
-            )
-            reachable.add(new_table)
-        query = exp.select(
-            *[_column(column, aliases, self.catalog) for column in plan.projection]
-        ).from_(exp.Table(this=_identifier(plan.source)).as_("t0"))
-        for table, condition, join_type in join_specs:
-            query = query.join(table, on=condition, join_type=join_type.value)
-        if plan.filters:
-            predicate_expressions = [
-                _predicate_expression(predicate, aliases, self.catalog)
-                for predicate in plan.filters
-            ]
-            query = query.where(predicate_expressions[0])
-            for predicate_expression in predicate_expressions[1:]:
-                query = query.where(predicate_expression)
-        sql = query.sql(dialect="postgres")
+        from app.semantics.compatibility import query_plan_v1_to_semantic_plan
+        from app.semantics.semantic_compiler import SemanticQueryCompiler
+        from app.semantics.semantic_mapping import SemanticMappingSnapshot
+        from app.semantics.semantic_query import plan_to_ir
+
+        semantic_plan = query_plan_v1_to_semantic_plan(plan, self.catalog)
+        mapping = SemanticMappingSnapshot.from_schema(_schema_from_v1(self.catalog))
+        sql = SemanticQueryCompiler(mapping).compile(plan_to_ir(semantic_plan)).sql
         return SqlCandidate(
             sql=sql,
             source=CandidateSource.QUERY_PLAN_V1_COMPILER,
         )
+
+
+def _schema_from_v1(catalog: QueryPlanV1Catalog) -> SchemaCatalog:
+    """Rehydrate only server-owned V1 metadata for the compatibility adapter."""
+    from app.catalog.models import ColumnMetadata, RelationshipMetadata, TableMetadata
+
+    tables = tuple(
+        TableMetadata(
+            name=table.table_id,
+            description=table.description,
+            columns=tuple(
+                ColumnMetadata(
+                    name=column.name,
+                    type=column.data_type,
+                    description=column.description,
+                )
+                for column in table.columns
+            ),
+            relationships=tuple(
+                RelationshipMetadata(
+                    column=relationship.left_column_id.split(".", 1)[1],
+                    referenced_table=relationship.right_table_id,
+                    referenced_column=relationship.right_column_id.split(".", 1)[1],
+                )
+                for relationship in catalog.relationships
+                if relationship.left_table_id == table.table_id
+            ),
+        )
+        for table in catalog.tables
+    )
+    return SchemaCatalog(tables=tables)
 
 
 def stable_hash(value: Any) -> str:

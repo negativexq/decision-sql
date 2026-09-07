@@ -47,6 +47,7 @@ SAFE_FUNCTION_FAMILIES = {
             "ARRAY_TO_STRING",
             "CONCAT_WS",
             "JSONB_EXTRACT_PATH_TEXT",
+            "JSONB_EXTRACT_PATH",
             # SQLGlot represents PostgreSQL's read-only jsonb #>> operator
             # as JSONB_EXTRACT_SCALAR.  It extracts text and has no side
             # effects or external access.
@@ -506,6 +507,14 @@ class SQLPolicy:
             return function.name.upper()
         if isinstance(function, exp.TimestampTrunc):
             return "DATE_TRUNC"
+        if isinstance(function, exp.JSONBExtract):
+            # SQLGlot lowers PostgreSQL's jsonb ``#>`` operator to this
+            # function class.  Keep the policy identity aligned with the
+            # already-reviewed read-only JSON extraction capability.
+            return "JSON_EXTRACT"
+        if isinstance(function, exp.JSONBExtractScalar):
+            # SQLGlot lowers PostgreSQL's jsonb ``#>>`` operator here.
+            return "JSON_EXTRACT_SCALAR"
         if isinstance(function, exp.JSONArrayAgg):
             return "JSON_AGG"
         if isinstance(function, exp.JSONObjectAgg):

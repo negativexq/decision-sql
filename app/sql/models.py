@@ -23,6 +23,7 @@ class CandidateSource(StrEnum):
     SEMANTIC_METRIC_COMPILER = "semantic_metric_compiler"
     FUTURE_LLM = "future_llm"
     QUERY_PLAN_V1_COMPILER = "query_plan_v1_compiler"
+    SEMANTIC_QUERY_COMPILER = "semantic_query_compiler"
 
 
 class SqlCandidate(BaseModel):

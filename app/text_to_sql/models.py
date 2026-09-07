@@ -8,6 +8,11 @@ from app.generation.provider import ProviderErrorDetail, SqlProposal
 from app.generation.result_shape import ResultShapeProposal, ResultShapeValidation
 from app.memory.provenance import VerifiedMemoryProvenance
 from app.models.domain import FailureStage
+from app.semantics.semantic_query import (
+    SemanticQueryIR,
+    SemanticQueryPlan,
+    SemanticQueryProvenance,
+)
 from app.sql.models import (
     QueryExecution,
     QueryPlan,
@@ -27,6 +32,10 @@ class TextToSqlStatus(StrEnum):
     EXECUTION_ERROR = "EXECUTION_ERROR"
     RESULT_SHAPE_GENERATION_ERROR = "RESULT_SHAPE_GENERATION_ERROR"
     RESULT_SHAPE_REJECTED = "RESULT_SHAPE_REJECTED"
+    SEMANTIC_PLAN_GENERATION_ERROR = "SEMANTIC_PLAN_GENERATION_ERROR"
+    SEMANTIC_PLAN_REJECTED = "SEMANTIC_PLAN_REJECTED"
+    SEMANTIC_COMPILATION_ERROR = "SEMANTIC_COMPILATION_ERROR"
+    SEMANTIC_CONSISTENCY_ERROR = "SEMANTIC_CONSISTENCY_ERROR"
 
 
 class GenerationStrategy(StrEnum):
@@ -53,6 +62,7 @@ class GenerationPath(StrEnum):
     DIRECT_SQL = "DIRECT_SQL"
     DIRECT_SQL_WITH_VERIFIED_MEMORY = "DIRECT_SQL_WITH_VERIFIED_MEMORY"
     GOVERNED_METRIC = "GOVERNED_METRIC"
+    SEMANTIC_QUERY_COMPILER = "SEMANTIC_QUERY_COMPILER"
 
 
 class TextToSqlResult(BaseModel):
@@ -88,3 +98,6 @@ class TextToSqlResult(BaseModel):
     generation_path: GenerationPath = GenerationPath.DIRECT_SQL
     verified_memory_used: bool = False
     verified_memory_provenance: VerifiedMemoryProvenance | None = None
+    semantic_plan: SemanticQueryPlan | None = None
+    semantic_ir: SemanticQueryIR | None = None
+    semantic_provenance: SemanticQueryProvenance | None = None

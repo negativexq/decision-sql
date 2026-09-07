@@ -11,7 +11,6 @@ from app.semantics.contract import (
     build_semantic_contract,
 )
 from app.semantics.models import (
-    Aggregation,
     DimensionDefinition,
     MeasureDefinition,
     MeasureMetricDefinition,
@@ -22,6 +21,7 @@ from app.semantics.models import (
 )
 from app.semantics.relationship_graph import PathStep, RelationshipGraph, RelationshipPathError
 from app.semantics.requests import MetricRequest
+from app.semantics.semantic_compiler import ExpressionCompiler
 from app.sql.models import CandidateSource, SqlCandidate
 
 
@@ -111,6 +111,7 @@ class MetricCompiler:
             this=exp.Div(
                 this=exp.Cast(this=numerator_value, to=exp.DataType.build("DECIMAL")),
                 expression=exp.Cast(this=denominator_value, to=exp.DataType.build("DECIMAL")),
+                typed=True,
             ),
             expression=_decimal_literal(metric.scale),
         )
@@ -181,7 +182,11 @@ class MetricCompiler:
             column = exp.column(dimension.physical_column, table=dimension_entity.physical_table)
             query = query.select(column.as_(f"dimension_{index}"))
         measure_column = exp.column(measure.physical_column, table=measure_entity.physical_table)
-        query = query.select(_aggregate(measure.aggregation, measure_column).as_("measure_value"))
+        query = query.select(
+            ExpressionCompiler.aggregate_value(measure.aggregation.value, measure_column).as_(
+                "measure_value"
+            )
+        )
         query = query.from_(measure_entity.physical_table)
         joined = {measure.entity}
         for step in steps:
@@ -230,12 +235,12 @@ class MetricCompiler:
         if operator is PredicateOperator.IS_NOT_NULL:
             return exp.Not(this=exp.Is(this=column, expression=exp.Null()))
         if operator in {PredicateOperator.IN, PredicateOperator.NOT_IN}:
-            values = [self._literal(value) for value in predicate.values]
+            values = [ExpressionCompiler.literal_value(value) for value in predicate.values]
             expression: exp.Expression = exp.In(this=column, expressions=values)
             return exp.Not(this=expression) if operator is PredicateOperator.NOT_IN else expression
         if predicate.value is None:
             raise ValueError("predicate value is missing")
-        right = self._literal(predicate.value)
+        right = ExpressionCompiler.literal_value(predicate.value)
         operators: dict[PredicateOperator, type[exp.Binary]] = {
             PredicateOperator.EQ: exp.EQ,
             PredicateOperator.NE: exp.NEQ,
@@ -248,9 +253,7 @@ class MetricCompiler:
 
     @staticmethod
     def _literal(value: str | int | Decimal) -> exp.Expression:
-        if isinstance(value, str):
-            return exp.Literal.string(value)
-        return _decimal_literal(value) if isinstance(value, Decimal) else exp.Literal.number(value)
+        return ExpressionCompiler.literal_value(value)
 
 
 def _unique_steps(paths: Iterable[tuple[PathStep, ...]]) -> tuple[PathStep, ...]:
@@ -263,16 +266,6 @@ def _unique_steps(paths: Iterable[tuple[PathStep, ...]]) -> tuple[PathStep, ...]
                 result.append(step)
                 seen.add(key)
     return tuple(result)
-
-
-def _aggregate(aggregation: Aggregation, column: exp.Expression) -> exp.Expression:
-    if aggregation is Aggregation.SUM:
-        return exp.Sum(this=column)
-    if aggregation is Aggregation.AVG:
-        return exp.Avg(this=column)
-    if aggregation is Aggregation.COUNT:
-        return exp.Count(this=column)
-    return exp.Count(this=exp.Distinct(expressions=[column]))
 
 
 def _and(predicates: list[exp.Expression]) -> exp.Expression:

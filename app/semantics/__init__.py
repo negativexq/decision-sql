@@ -1,5 +1,9 @@
 """Server-owned governed semantic definitions and deterministic compilation."""
 
+from app.semantics.compatibility import (
+    query_plan_v1_to_semantic_plan,
+    query_plan_wire_v2_to_semantic_plan,
+)
 from app.semantics.models import (
     Aggregation,
     Cardinality,
@@ -15,6 +19,45 @@ from app.semantics.models import (
     RelationshipDefinition,
     ZeroDenominatorPolicy,
 )
+from app.semantics.semantic_compiler import (
+    AggregationCompiler,
+    CalculationCompiler,
+    CompiledSemanticQuery,
+    ExpressionCompiler,
+    FunctionCapability,
+    SemanticPlanValidator,
+    SemanticQueryCompiler,
+)
+from app.semantics.semantic_mapping import (
+    SemanticAttributeMapping,
+    SemanticEntityMapping,
+    SemanticMappingSnapshot,
+    SemanticRelationshipMapping,
+    render_semantic_mapping_context,
+)
+from app.semantics.semantic_query import (
+    AggregateExpression,
+    AttributeRef,
+    BinaryExpression,
+    CalculationContract,
+    CalculationKind,
+    CommonTableExpression,
+    CTERelationSource,
+    DerivedRelation,
+    DerivedRelationSource,
+    EntityRelationSource,
+    ExportedAttribute,
+    IntervalExpression,
+    JoinKey,
+    NotExpression,
+    PopulationContract,
+    ScalarSubqueryExpression,
+    SemanticQueryIR,
+    SemanticQueryPlan,
+    SemanticQueryProvenance,
+    plan_to_ir,
+)
+from app.semantics.semantic_validation import SemanticConsistencyValidator
 
 __all__ = [
     "Aggregation",
@@ -30,4 +73,39 @@ __all__ = [
     "RelationshipDefinition",
     "RatioMetricDefinition",
     "ZeroDenominatorPolicy",
+    "AggregateExpression",
+    "AttributeRef",
+    "BinaryExpression",
+    "CalculationContract",
+    "CalculationKind",
+    "CTERelationSource",
+    "CommonTableExpression",
+    "CalculationCompiler",
+    "CompiledSemanticQuery",
+    "DerivedRelation",
+    "DerivedRelationSource",
+    "EntityRelationSource",
+    "ExportedAttribute",
+    "AggregationCompiler",
+    "ExpressionCompiler",
+    "FunctionCapability",
+    "PopulationContract",
+    "JoinKey",
+    "IntervalExpression",
+    "NotExpression",
+    "ScalarSubqueryExpression",
+    "SemanticAttributeMapping",
+    "SemanticConsistencyValidator",
+    "SemanticEntityMapping",
+    "SemanticMappingSnapshot",
+    "SemanticPlanValidator",
+    "SemanticQueryCompiler",
+    "SemanticQueryIR",
+    "SemanticQueryPlan",
+    "SemanticQueryProvenance",
+    "SemanticRelationshipMapping",
+    "render_semantic_mapping_context",
+    "plan_to_ir",
+    "query_plan_v1_to_semantic_plan",
+    "query_plan_wire_v2_to_semantic_plan",
 ]

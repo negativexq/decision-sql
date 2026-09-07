@@ -19,6 +19,7 @@ class ExecutionMode(StrEnum):
     """Server-owned execution scope for a text-to-SQL request."""
 
     DIRECT = "DIRECT"
+    SEMANTIC = "SEMANTIC"
     GOVERNED_METRIC = "GOVERNED_METRIC"
 
 

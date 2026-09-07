@@ -43,6 +43,8 @@ from app.semantics.routing import (
     GovernedRouteStatus,
     GovernedRuntimeRouteState,
 )
+from app.semantics.semantic_mapping import SemanticMappingSnapshot, render_semantic_mapping_context
+from app.semantics.service import SemanticQueryService
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError, SqlPlanFailure
 from app.sql.service import SqlSafetyService
 from app.text_to_sql.grounding import (
@@ -84,6 +86,7 @@ class TextToSqlService:
         schema_serializer: Callable[[SchemaContext], str] = serialize_schema_context,
         provenance_sink: ProvenanceSink | None = None,
         settings: Settings | None = None,
+        semantic_service: SemanticQueryService | None = None,
     ) -> None:
         self.context_resolver = context_resolver
         self.provider = provider
@@ -103,6 +106,11 @@ class TextToSqlService:
         self.schema_serializer = schema_serializer
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self.settings = settings or getattr(safety_service, "settings", None) or get_settings()
+        self.semantic_service = semantic_service or SemanticQueryService(
+            provider,
+            safety_service,
+            self._semantic_context,
+        )
         schema_catalog = getattr(safety_service, "catalog", None)
         self.governed_metric_route = GovernedMetricRouteService(
             _DirectOnlyRunner(self),
@@ -122,6 +130,15 @@ class TextToSqlService:
 
     async def run(self, request: TextToSqlRequest) -> TextToSqlResult:
         """Run direct SQL by default or the explicit bounded M13 route."""
+        if request.execution_mode is ExecutionMode.SEMANTIC:
+            if self.semantic_service is None:
+                return TextToSqlResult(
+                    status=TextToSqlStatus.SEMANTIC_PLAN_GENERATION_ERROR,
+                    correlation_id=request.correlation_id,
+                    failure_stage=FailureStage.SEMANTIC_RESOLUTION_ERROR,
+                    error="SEMANTIC mode is not configured for this service instance.",
+                )
+            return await self.semantic_service.run(request)
         if request.execution_mode is ExecutionMode.GOVERNED_METRIC:
             decision = await self.governed_metric_route.run(request)
             return self._decorate_route_result(request, decision)
@@ -563,6 +580,13 @@ class TextToSqlService:
         with self.tracer.start_as_current_span("decision_sql.context.resolve"):
             with self.tracer.start_as_current_span("decision_sql.schema.retrieve"):
                 return self.context_resolver.resolve(question, mode=self.context_mode)
+
+    def _semantic_context(self, question: str) -> str:
+        """Render live structural facts plus IDs for explicit SEMANTIC mode."""
+        context = self.context_resolver.resolve(question, mode=SchemaContextMode.FULL_COMPACT)
+        schema = self.schema_serializer(context)
+        mapping = SemanticMappingSnapshot.from_schema(self.safety_service.catalog)
+        return f"{schema}\n\n{render_semantic_mapping_context(mapping)}"
 
 
 def _validate_result_shape_visibility(

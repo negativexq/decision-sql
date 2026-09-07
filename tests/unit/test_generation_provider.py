@@ -2,6 +2,7 @@ import httpx
 import pytest
 
 from app.config import Settings
+from app.generation.blueprint import QueryBlueprint
 from app.generation.hard_query_plans import RatioPlan, TopKPlan, WindowPlan
 from app.generation.intent import QueryIntent
 from app.generation.provider import (
@@ -304,6 +305,53 @@ async def test_reasoning_effort_is_forwarded_without_changing_generation_contrac
     assert captured[0]["reasoning_effort"] == effort
     assert captured[0]["temperature"] == 0
     assert captured[0]["response_format"] == {"type": "json_object"}
+
+
+@pytest.mark.asyncio
+async def test_blueprint_sql_uses_one_json_request_and_returns_sql_unchanged(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    provider = OpenAICompatibleProvider(
+        Settings(
+            llm_api_key="test-key",
+            llm_model="gpt-5.6-luna",
+            llm_reasoning_effort="none",
+        )
+    )
+    bodies: list[dict[str, object]] = []
+
+    async def fake_post(body: dict[str, object]) -> dict[str, object]:
+        bodies.append(body)
+        return {
+            "choices": [
+                {
+                    "message": {
+                        "content": (
+                            '{"blueprint":{"population":"orders",'
+                            '"grain":["one row per order"],"projection":["order_id"]},'
+                            '"sql":"SELECT id AS order_id FROM orders"}'
+                        )
+                    }
+                }
+            ],
+            "usage": {"prompt_tokens": 10, "completion_tokens": 12},
+        }
+
+    monkeypatch.setattr(provider, "_post", fake_post)
+    proposal = await provider.propose_blueprint_sql(
+        QueryRequest(question="list orders"), "TABLE orders"
+    )
+
+    assert proposal.sql == "SELECT id AS order_id FROM orders"
+    assert proposal.blueprint.population == "orders"
+    assert len(bodies) == 1
+    assert bodies[0]["response_format"] == {"type": "json_object"}
+    assert bodies[0]["model"] == "gpt-5.6-luna"
+
+
+def test_blueprint_model_does_not_accept_unrelated_fields() -> None:
+    with pytest.raises(ValueError):
+        QueryBlueprint(population="orders", gold_sql="SELECT 1")
 
 
 @pytest.mark.asyncio

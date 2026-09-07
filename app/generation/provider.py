@@ -8,6 +8,11 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.config import Settings, get_settings
+from app.generation.blueprint import (
+    BlueprintSqlProposal,
+    blueprint_messages,
+    parse_blueprint_payload,
+)
 from app.generation.governed_metric_grounding import GovernedMetricGroundingDTO
 from app.generation.hard_query_plans import (
     OperationPlan,
@@ -155,6 +160,7 @@ class ModelIOCapture(BaseModel):
     parsed_operation_plan: dict[str, Any] | None = None
     parsed_window_ir: dict[str, Any] | None = None
     parsed_metric_grounding: dict[str, Any] | None = None
+    parsed_blueprint: dict[str, Any] | None = None
     usage: dict[str, int | None] = Field(default_factory=dict)
     latency_ms: float | None = None
     finish_reason: str | None = None
@@ -853,6 +859,76 @@ class OpenAICompatibleProvider:
         )
         return proposal
 
+    async def propose_blueprint_sql(
+        self, request: QueryRequest, schema_context: str
+    ) -> BlueprintSqlProposal:
+        """Return one untrusted semantic blueprint and SQL in one request."""
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = blueprint_messages(request.question, schema_context)
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("blueprint_sql", request.question, schema_context, messages)
+        started = perf_counter()
+        payload: Any = None
+        try:
+            payload = await self._post(body)
+        except Exception as error:
+            self._complete_model_io(
+                None,
+                parsed_sql=None,
+                parsed_blueprint=None,
+                raw_content=None,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PROVIDER_TRANSPORT",
+                failure_metadata={"exception_type": type(error).__name__},
+            )
+            raise
+        try:
+            usage = payload.get("usage") if isinstance(payload, dict) else {}
+            usage = usage if isinstance(usage, dict) else {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            raw_content = _assistant_content(payload)
+            proposal = parse_blueprint_payload(
+                raw_content,
+                model=self.settings.llm_model,
+                provider=self.provider_name,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except Exception as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                parsed_blueprint=None,
+                raw_content=_assistant_content(payload),
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PROVIDER_PROTOCOL",
+                failure_metadata={"exception_type": type(error).__name__},
+            )
+            if isinstance(error, MalformedProviderResponse):
+                raise
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid blueprint and SQL"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=proposal.sql,
+            parsed_blueprint=proposal.blueprint.model_dump(mode="json"),
+            raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
     def consume_model_io(self) -> ModelIOCapture | None:
         """Return and clear the latest capture for an evaluation harness."""
         capture = self._last_model_io
@@ -916,6 +992,7 @@ class OpenAICompatibleProvider:
         parsed_operation_plan: dict[str, Any] | None = None,
         parsed_window_ir: dict[str, Any] | None = None,
         parsed_metric_grounding: dict[str, Any] | None = None,
+        parsed_blueprint: dict[str, Any] | None = None,
         raw_content: str | None,
         latency_ms: float | None,
         failure_stage: str | None = None,
@@ -947,6 +1024,7 @@ class OpenAICompatibleProvider:
                 "parsed_operation_plan": parsed_operation_plan,
                 "parsed_window_ir": parsed_window_ir,
                 "parsed_metric_grounding": parsed_metric_grounding,
+                "parsed_blueprint": parsed_blueprint,
                 "usage": {
                     "prompt_tokens": _optional_int(usage.get("prompt_tokens")),
                     "completion_tokens": _optional_int(usage.get("completion_tokens")),

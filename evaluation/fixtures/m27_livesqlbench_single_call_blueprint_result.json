@@ -1,0 +1,151 @@
+{
+  "classification": "M27_SINGLE_CALL_BLUEPRINT_PILOT_COMPLETED",
+  "starting_head": "8a021cf2802aa146cfdcb19b9c12e8e89e99c97f",
+  "final_head": "cf39aab9e2fc43c669ee78deab0f65530ed20408",
+  "provider_calls": 18,
+  "fresh_generation": 18,
+  "experiment": {
+    "cases": 18,
+    "provider_calls": 18,
+    "calls_per_case_max": 1,
+    "route": "DIRECT",
+    "intervention": "SINGLE_CALL_QUERY_BLUEPRINT"
+  },
+  "baseline_m25_2": {
+    "correct": 6,
+    "total": 18
+  },
+  "m27": {
+    "correct": 0,
+    "total": 18,
+    "accuracy": 0.0
+  },
+  "pipeline": {
+    "total": 18,
+    "provider_success": 18,
+    "protocol_success": 0,
+    "sql_produced": 0,
+    "m1_accepted": 0,
+    "m1_rejected": 0,
+    "execution_attempted": 0,
+    "execution_success": 0,
+    "execution_failure": 0,
+    "timeout": 0
+  },
+  "official": {
+    "correct": 0,
+    "total": 18,
+    "accuracy": 0.0
+  },
+  "reference_valid_diagnostic": {
+    "correct": 0,
+    "total": 17,
+    "accuracy": 0.0,
+    "label": "DIAGNOSTIC ONLY"
+  },
+  "paired": {
+    "old_correct_new_correct": 0,
+    "old_correct_new_wrong": 6,
+    "old_wrong_new_correct": 0,
+    "old_wrong_new_wrong": 12,
+    "net_correct_delta": -6,
+    "mcnemar_exact_p": 0.03125
+  },
+  "blueprint": {
+    "parsed": 0,
+    "parse_failure": 18,
+    "consistent": 0,
+    "partial_mismatch": 0,
+    "strong_mismatch": 0,
+    "mismatch_checks": {}
+  },
+  "m1_failure_codes": {},
+  "sql_shapes": {},
+  "usage": {
+    "input": {
+      "total": 242825.0,
+      "median": 13430.0,
+      "p95": 15888.0,
+      "max": 16567.0
+    },
+    "output": {
+      "total": 8936.0,
+      "median": 481.0,
+      "p95": 737.0,
+      "max": 828.0
+    },
+    "reasoning": {
+      "total": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "cached": {
+      "total": 0.0,
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    }
+  },
+  "latency": {
+    "provider_ms": {
+      "total": 97662.27458463982,
+      "median": 5186.108625028282,
+      "p95": 7239.511457970366,
+      "max": 7436.464791884646
+    },
+    "execution_ms": {
+      "total": 0,
+      "median": null,
+      "p95": null,
+      "max": null
+    },
+    "m25_2_provider_ms": {
+      "median_ms": 2957.2020419873297,
+      "p95_ms": 3609.877583105117,
+      "max_ms": 4182.809208985418
+    },
+    "m25_2_end_to_end_ms": {
+      "median_ms": 2993.3985830284655,
+      "p95_ms": 3641.048749908805,
+      "max_ms": 4311.634415993467
+    }
+  },
+  "configuration": {
+    "provider": "openai-compatible",
+    "model": "gpt-5.6-luna",
+    "temperature": 0.0,
+    "reasoning_effort": "none",
+    "production_prompt_hash": "79430f8df0bbc66eaf6cfcff73b046af6b7330c85bbd6e938390d573ac82cf42",
+    "blueprint_prompt_hash": "f055b9a3da823bda2e1e2c482907758d4426fadf71fb8295c9ad852baf7059ae",
+    "pilot_manifest_hash": "eccf33940f1ecdcbe321da5e7f148e8f8be4658183d9d89cfc0a5363b7a7529c",
+    "full_semantic_context": true,
+    "m26_grounding": false
+  },
+  "context": {
+    "mode": "FULL_M25_2",
+    "column_meanings": true,
+    "all_database_kb": true,
+    "m26_query_aware_grounding": false,
+    "db_value_probing": false,
+    "old_m25_2_input_tokens": 239429,
+    "old_m25_2_median_input_tokens": 13212
+  },
+  "protected_data_safety": {
+    "protected_gt_ignored": true,
+    "protected_gt_tracked": [],
+    "gold_sql_committed": false,
+    "test_cases_committed": false,
+    "old_outputs_visible_to_provider": false,
+    "gold_leakage": false,
+    "local_detailed_artifact": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m27_blueprint_sql_cases.jsonl",
+    "local_detailed_artifact_tracked": false
+  },
+  "semantic_context_transfer": "NEGATIVE_TRANSFER",
+  "source_integrity": {
+    "m25_artifact_sha256": "e402322972cffc46d1740970d94c27f208d605ca8e36955fcb78f5a0f46368aa",
+    "m25_2_artifact_sha256": "f04c84516006bac3c68f700ab1efabb44e3dba4f9e1ea55794b2138108b42408",
+    "pilot_manifest_hash": "eccf33940f1ecdcbe321da5e7f148e8f8be4658183d9d89cfc0a5363b7a7529c",
+    "full_180_model_run": false
+  }
+}

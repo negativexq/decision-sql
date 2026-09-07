@@ -21,8 +21,9 @@ are recorded in the preflight manifest.
 
 The public artifact is licensed `CC BY-SA 4.0`. The official dataset card
 states that `sol_sql`, `test_cases`, and case-level `external_knowledge` are
-withheld/empty in the public release to limit answer leakage. Consequently,
-this milestone does not claim an accuracy score or reference-answer audit.
+withheld/empty in the public release to limit answer leakage. The protected
+artifact is therefore kept local-only and is never included in committed
+fixtures.
 
 ## Dataset population
 
@@ -70,20 +71,22 @@ The official Query default performs execution-based Soft EX comparison. It
 normalizes dates, rounds numeric values to two decimal places, compares ordered
 rows when `conditions.order` is true, and otherwise compares row sets. The
 adapter implements that post-execution comparison and rejects empty results,
-matching the official `ex_base` behavior. Official custom test-case Python and
-management semantics are not claimed from the public artifact because all
-public test-case/reference fields are empty.
+matching the official `ex_base` behavior. Query rows in the protected artifact
+use the official default `conditions` path; their custom `test_cases` arrays
+are empty. Management test-case execution is outside this SELECT-only
+integration.
 
 Known-good and wrong synthetic result controls passed the adapter tests. No
 benchmark score was produced.
 
 ## External knowledge
 
-All 270 public case-level knowledge fields are empty. Database HKB files are
-hashed and preserved as upstream metadata; they are not automatically injected
-into runtime context. A future complete, legitimately obtained task artifact
-may supply its own `external_knowledge` exactly as provided, but it must remain
-untrusted context rather than SQL authority.
+The public case-level knowledge fields are empty, while the protected merge
+contains non-empty official knowledge IDs for all 180 SELECT cases and all 90
+Management cases. The IDs are preserved exactly in memory for future runtime
+context; protected knowledge text/fields are never written to committed
+artifacts. Database HKB files are hashed and preserved as upstream metadata.
+Knowledge remains untrusted context rather than SQL authority.
 
 ## Schema context
 
@@ -97,19 +100,49 @@ context remains within the existing generic bounded context policy.
 Observed aggregate catalog size is 175 tables and 2,286 columns across the 18
 databases. Context statistics and per-database hashes are in the manifest.
 
+## Protected GT artifact
+
+The local-only file is:
+
+```text
+evaluation/external/livesqlbench/protected/livesqlbench_gt_kg_testcases_0528.jsonl
+```
+
+It is protected by `.gitignore`, is not tracked, and is merged with the public
+270 rows strictly by `instance_id`. The protected artifact has 270 rows and
+SHA-256 `eb3ddfff4371a5f7aeacefefbfc5ff039fbf5fec57ff69ae64c1b0378a3a94b2`.
+Only this hash, field names, counts, and safe per-case statuses are committed.
+
+## Gold SQL isolation
+
+The protected merge uses separate in-memory runtime and evaluation objects.
+Future provider input can contain only question, official external knowledge,
+and schema context. `sol_sql`, `test_cases`, and reference results remain
+offline-only. The protected preflight tests use sentinel values to verify this
+boundary without committing protected content.
+
 ## M1 compatibility
 
-`REFERENCE_M1_COMPATIBILITY = NOT_TESTABLE_FROM_PUBLIC_ARTIFACTS`: the public
-JSONL has no reference SQL. No hidden answers were scraped and no reference SQL
-was sent to a provider. A complete official GT/test-case artifact is required
-for the reference-M1 and reference-execution audits.
+The protected artifact makes the reference audit testable. All 180 gold SQL
+statements parse as PostgreSQL, but the unchanged M1 accepted only 21, rejected
+155 by existing policy, and returned 4 planning errors for multi-statement
+gold strings. The 155 policy outcomes were 142 forbidden-function and 13
+unknown-column outcomes; offline review identifies the 13 unknown-column
+outcomes as CTE/derived-scope alias-resolution implementation defects. The four
+multi-statement parse outcomes are an intentional M1 boundary. No allowlist,
+threshold, parser, or M1 behavior was changed.
+
+This is a final-preflight blocker: the official SELECT surface is not yet
+compatible enough with the frozen Decision-SQL M1 boundary for an interpretable
+provider baseline.
 
 ## Execution/evaluator sanity
 
 The official PostgreSQL catalog was read successfully for all 18 databases.
-The integration includes a PostgreSQL integration test (opt-in) and bounded
-known-good/wrong evaluator controls. No generated SQL was executed in this
-milestone, and no provider object was constructed.
+The 21 M1-accepted reference solutions executed successfully and passed the
+faithful Query evaluator. The remaining 159 references were not executed
+because M1 correctly stopped them at its frozen boundary. No generated SQL was
+executed in this milestone, and no provider object was constructed.
 
 ## Context-size statistics
 
@@ -124,20 +157,22 @@ The tracked files are:
 
 - `evaluation/fixtures/livesqlbench_base_lite_preflight_manifest.json`
 - `evaluation/fixtures/livesqlbench_base_lite_preflight_result.json`
+- `evaluation/fixtures/livesqlbench_base_lite_final_manifest.json`
+- `evaluation/fixtures/livesqlbench_base_lite_protected_preflight_result.json`
 
-The manifest freezes the source commits/hashes, image digest, exact SELECT
-population, database identities, renderer/evaluator identities, disabled
-capabilities, and an outcome-blind 18-case pilot (one lexicographically first
-SELECT case per database).
+The final manifest freezes the public/protected source hashes, exact merged
+SELECT population, database identities, renderer/evaluator identities, M1
+configuration, disabled capabilities, and the unchanged outcome-blind
+18-case pilot (one lexicographically first SELECT case per database).
 
 ## Future DIRECT baseline
 
-Only after a reviewed preflight should the next milestone run one fresh direct
-SQL provider call per eligible case: 180 calls for the current public
-population, beginning with the frozen 18-case pilot. The future baseline must
-use the current model/provider/settings, legitimate case knowledge, current
-schema context, unchanged M1, the existing read-only executor, and the
-official evaluator when complete test cases are legitimately available. It
+The final preflight is currently blocked by M1 compatibility. No provider run
+should begin until that blocker is resolved in a separate, explicitly reviewed
+infrastructure/policy milestone. If cleared, the next run is one fresh direct
+SQL provider call per eligible case, beginning with the unchanged 18-case
+pilot. It must use current legitimate knowledge, current schema context,
+unchanged M1, the existing read-only executor, and the official evaluator. It
 must not enable ResultShape, QueryPlan, Window IR, governed routing, repair,
 judge, retry-for-correctness, or routing.
 

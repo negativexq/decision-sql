@@ -60,15 +60,11 @@ def test_reviewed_analytical_function_families_are_allowed() -> None:
         "SELECT EXISTS(SELECT 1 FROM products), TO_CHAR(CURRENT_DATE, 'YYYY')",
     )
 
-    # CURRENT_DATE is intentionally a determinism boundary, so the last
-    # query is checked separately below with a literal date.
+    # Stable temporal context is safe; volatile time-dependent values remain
+    # a separate deny boundary.
     for query in queries[:-1]:
         assert sql_policy.validate(parsed(query)) is None
-    assert sql_policy.validate(parsed("SELECT TO_CHAR(DATE '2025-01-01', 'YYYY')")) is None
-    rejection = sql_policy.validate(parsed(queries[-1]))
-    assert rejection is not None
-    assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
-    assert rejection.object == "CURRENT_DATE"
+    assert sql_policy.validate(parsed(queries[-1])) is None
 
 
 def test_function_policy_remains_deny_first() -> None:
@@ -77,6 +73,7 @@ def test_function_policy_remains_deny_first() -> None:
         "SELECT PG_SLEEP(1)": "PG_SLEEP",
         "SELECT SET_CONFIG('x', 'y', false)": "SET_CONFIG",
         "SELECT RANDOM()": "RANDOM",
+        "SELECT CLOCK_TIMESTAMP()": "CLOCK_TIMESTAMP",
         "SELECT UNKNOWN_EXTENSION_FUNCTION(1)": "UNKNOWN_EXTENSION_FUNCTION",
     }
 
@@ -85,6 +82,27 @@ def test_function_policy_remains_deny_first() -> None:
         assert rejection is not None
         assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
         assert rejection.object == name
+
+
+def test_temporal_policy_distinguishes_stable_context_from_volatile_values() -> None:
+    sql_policy = policy()
+    stable = (
+        "SELECT CURRENT_DATE",
+        "SELECT CURRENT_TIME",
+        "SELECT CURRENT_TIMESTAMP",
+        "SELECT LOCALTIME",
+        "SELECT LOCALTIMESTAMP",
+        "SELECT NOW()",
+        "SELECT TRANSACTION_TIMESTAMP()",
+        "SELECT STATEMENT_TIMESTAMP()",
+    )
+    for query in stable:
+        assert sql_policy.validate(parsed(query)) is None
+
+    for query in ("SELECT RANDOM()", "SELECT CLOCK_TIMESTAMP()"):
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None
+        assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
 
 
 def test_scope_validation_supports_nested_relations_and_correlated_columns() -> None:

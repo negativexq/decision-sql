@@ -31,3 +31,11 @@ class SQLParser:
         if len(statements) != 1:
             raise SQLParseFailure("Multiple SQL statements are not allowed")
         return ParsedSQL(sql=sql, expression=cast(exp.Expression, statements[0]))
+
+    @staticmethod
+    def normalize(parsed: ParsedSQL) -> str:
+        """Render PostgreSQL SQL while preserving keyword-style temporal forms."""
+        normalized = parsed.expression.sql(dialect="postgres")
+        for keyword in ("CURRENT_TIME", "LOCALTIME", "LOCALTIMESTAMP"):
+            normalized = normalized.replace(f"{keyword}()", keyword)
+        return normalized

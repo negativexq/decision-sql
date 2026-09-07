@@ -72,23 +72,28 @@ SAFE_FUNCTION_FAMILIES = {
     ),
     "SAFE_SUBQUERY": frozenset({"EXISTS"}),
     "SAFE_CAST": frozenset({"CAST"}),
+    # These expressions are read-only; their execution context is recorded
+    # as provenance rather than treated as a safety violation.
+    "SAFE_STABLE_TEMPORAL": frozenset(
+        {
+            "CURRENT_DATE",
+            "CURRENT_TIME",
+            "CURRENT_TIMESTAMP",
+            "LOCALTIME",
+            "LOCALTIMESTAMP",
+            "NOW",
+            "STATEMENT_TIMESTAMP",
+            "TRANSACTION_TIMESTAMP",
+        }
+    ),
 }
 
 SAFE_FUNCTIONS = set().union(*SAFE_FUNCTION_FAMILIES.values())
 
+STABLE_TEMPORAL_FUNCTIONS = frozenset(SAFE_FUNCTION_FAMILIES["SAFE_STABLE_TEMPORAL"])
+VOLATILE_NONDETERMINISTIC_FUNCTIONS = frozenset({"CLOCK_TIMESTAMP", "RANDOM"})
 NONDETERMINISTIC_FUNCTIONS = frozenset(
-    {
-        "CLOCK_TIMESTAMP",
-        "CURRENT_DATE",
-        "CURRENT_TIME",
-        "CURRENT_TIMESTAMP",
-        "LOCALTIME",
-        "LOCALTIMESTAMP",
-        "NOW",
-        "RANDOM",
-        "STATEMENT_TIMESTAMP",
-        "TRANSACTION_TIMESTAMP",
-    }
+    {*STABLE_TEMPORAL_FUNCTIONS, *VOLATILE_NONDETERMINISTIC_FUNCTIONS}
 )
 STATEFUL_OR_DANGEROUS_FUNCTIONS = frozenset(
     {

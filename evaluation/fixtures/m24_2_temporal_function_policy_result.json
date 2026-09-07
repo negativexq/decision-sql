@@ -1,0 +1,180 @@
+{
+  "classification": "M24_2_TEMPORAL_POLICY_BLOCKED",
+  "starting_head": "592518afcf8e944ddc07948b99d829c215c65c9f",
+  "provider_calls": 0,
+  "fresh_generation": 0,
+  "temporal_policy": {
+    "stable_allowed": [
+      "CURRENT_DATE",
+      "CURRENT_TIME",
+      "CURRENT_TIMESTAMP",
+      "LOCALTIME",
+      "LOCALTIMESTAMP",
+      "NOW",
+      "STATEMENT_TIMESTAMP",
+      "TRANSACTION_TIMESTAMP"
+    ],
+    "volatile_denied": [
+      "CLOCK_TIMESTAMP",
+      "RANDOM"
+    ],
+    "stateful_denied": [
+      "ADVISORY_LOCK",
+      "PG_SLEEP",
+      "SET_CONFIG"
+    ],
+    "unknown_fail_closed": true,
+    "safe_function_count": 65,
+    "safe_family": "SAFE_STABLE_TEMPORAL"
+  },
+  "remaining_function_inventory": {
+    "cases": 9,
+    "total_function_occurrences": 117,
+    "distinct_functions_in_sql": [
+      "ABS",
+      "AGE",
+      "ARRAY_AGG",
+      "ARRAY_TO_STRING",
+      "AVG",
+      "CAST",
+      "COALESCE",
+      "COUNT",
+      "CURRENT_DATE",
+      "DENSE_RANK",
+      "EXTRACT",
+      "GREATEST",
+      "JSON_BUILD_OBJECT",
+      "JSON_EXTRACT",
+      "JSON_EXTRACT_SCALAR",
+      "MAX",
+      "NULLIF",
+      "RANK",
+      "ROUND",
+      "ROW_NUMBER",
+      "TO_CHAR"
+    ],
+    "remaining_function_occurrences": 14,
+    "distinct_remaining_functions": [
+      "CURRENT_DATE"
+    ],
+    "remaining_function_occurrences_by_name": {
+      "CURRENT_DATE": 14
+    },
+    "remaining_cases_containing": {
+      "CURRENT_DATE": 9
+    },
+    "stable_temporal": [
+      "CURRENT_DATE"
+    ],
+    "volatile": [],
+    "stateful_dangerous": [],
+    "unknown": []
+  },
+  "function_surface": {
+    "before_count": 57,
+    "after_count": 65,
+    "before_hash": "c624d1a494ccea91a0ebdfbc3cf0900efad231a73d32408972763fdc2ede8b0a",
+    "after_hash": "37ad7566ccd1229d4ef621a09f22e7f59f695bb1269b61f9ba893c601a6a78b3",
+    "added": [
+      "CURRENT_DATE",
+      "CURRENT_TIME",
+      "CURRENT_TIMESTAMP",
+      "LOCALTIME",
+      "LOCALTIMESTAMP",
+      "NOW",
+      "STATEMENT_TIMESTAMP",
+      "TRANSACTION_TIMESTAMP"
+    ],
+    "removed": [],
+    "unrelated_changes": []
+  },
+  "provenance": {
+    "existing_or_added": "ADDED_MINIMAL_EXECUTION_PROVENANCE",
+    "fields": [
+      "executed_at_utc",
+      "session_timezone"
+    ],
+    "source": "ReadOnlyExecutor; SHOW TIME ZONE plus timezone-aware UTC clock",
+    "timezone_semantics": "The database session timezone is captured; temporal results are not rewritten.",
+    "provider_prompt_effect": false
+  },
+  "livesqlbench_replay": {
+    "before": {
+      "accepted": 166,
+      "rejected": 10,
+      "planning_or_multistatement": 4,
+      "evaluator_pass": 166
+    },
+    "after": {
+      "gold_total": 180,
+      "accepted": 175,
+      "rejected": 1,
+      "planning_or_multistatement": 4,
+      "evaluator_pass": 170
+    },
+    "delta": {
+      "recovered_by_stable_temporal_policy": 9,
+      "still_volatile_blocked": 0,
+      "still_dangerous_stateful_blocked": 0,
+      "still_cost_blocked": 1,
+      "still_multi_statement": 4,
+      "new_failure_surfaced": 5,
+      "unexpected_regressions": 0
+    },
+    "failure_codes": {
+      "QUERY_TOO_EXPENSIVE": 1,
+      "SQL_PARSE_ERROR": 4
+    }
+  },
+  "reference_execution": {
+    "m1_accepted": 175,
+    "executed": 175,
+    "success": 175,
+    "failure": 0,
+    "timeout": 0
+  },
+  "evaluator": {
+    "reference_evaluable": 175,
+    "pass": 170,
+    "fail": 5,
+    "empty_result_failure_note": "The unchanged evaluator returns false for empty self-comparisons; no evaluator change was made."
+  },
+  "pilot_validation": {
+    "frozen_pilot_preserved": true,
+    "pilot_total": 18,
+    "gold_coverage": 18,
+    "knowledge_coverage": 18,
+    "m1_compatible": 18,
+    "reference_executable": 18,
+    "reference_pass": 17
+  },
+  "product_boundary": {
+    "official_denominator": 180,
+    "m1_compatible": 175,
+    "intentional_unsupported": 5,
+    "multi_statement": 4,
+    "volatile_nondeterminism": 0,
+    "stateful_dangerous": 0,
+    "cost": 1,
+    "other": 0
+  },
+  "security_controls": {
+    "select_only": true,
+    "single_statement": true,
+    "ambiguous_columns_fail_closed": true,
+    "system_catalogs_denied": true,
+    "forbidden_columns_denied": true,
+    "random_denied": true,
+    "clock_timestamp_denied": true,
+    "pg_sleep_denied": true,
+    "set_config_denied": true,
+    "unknown_functions_fail_closed": true,
+    "cost_gate_unchanged": true,
+    "read_only_execution_unchanged": true
+  },
+  "protected_data_safety": {
+    "ignored": true,
+    "tracked_files": [],
+    "gold_contents_committed": false
+  }
+}

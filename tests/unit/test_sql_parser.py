@@ -16,3 +16,10 @@ def test_parser_uses_postgres_and_requires_one_statement() -> None:
         parser.parse("SELECT 1; SELECT 2")
     with pytest.raises(SQLParseFailure):
         parser.parse("SELECT FROM")
+
+
+def test_parser_normalization_preserves_keyword_temporal_forms() -> None:
+    parser = SQLParser()
+    assert parser.normalize(parser.parse("SELECT CURRENT_TIME")) == "SELECT CURRENT_TIME"
+    assert parser.normalize(parser.parse("SELECT LOCALTIME")) == "SELECT LOCALTIME"
+    assert parser.normalize(parser.parse("SELECT LOCALTIMESTAMP")) == "SELECT LOCALTIMESTAMP"

@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 from sqlalchemy import Connection, Engine
 
 from app.sql.models import QueryExecution, QueryPlan, SqlExecutionError
@@ -27,6 +29,8 @@ class ReadOnlyExecutor:
             # this driver boundary.  Escape only the transport copy; the
             # accepted QueryPlan and its normalized SQL remain unchanged.
             transport_sql = plan.normalized_sql.replace("%", "%%")
+            executed_at_utc = datetime.now(UTC)
+            session_timezone = str(connection.exec_driver_sql("SHOW TIME ZONE").scalar_one())
             result = connection.exec_driver_sql(transport_sql)
             rows = result.fetchmany(self.max_rows + 1)
             truncated = len(rows) > self.max_rows
@@ -39,6 +43,8 @@ class ReadOnlyExecutor:
                 row_count=len(bounded_rows),
                 truncated=truncated,
                 latency_ms=0.0,
+                executed_at_utc=executed_at_utc,
+                session_timezone=session_timezone,
             )
         except Exception:
             return SqlExecutionError(

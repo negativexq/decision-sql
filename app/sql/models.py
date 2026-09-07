@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import StrEnum
 from typing import Literal
 from uuid import UUID
@@ -88,6 +89,8 @@ class QueryExecution(BaseModel):
     row_count: int = 0
     truncated: bool = False
     latency_ms: float
+    executed_at_utc: datetime | None = None
+    session_timezone: str | None = None
 
 
 class SqlPlanFailure(BaseModel):

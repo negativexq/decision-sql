@@ -27,7 +27,8 @@ def test_protected_preflight_reconciles_and_fails_closed_on_m1_boundary(tmp_path
     assert result["merge"]["exact_matches"] == 270
     assert result["select_population"]["select_cases"] == 180
     assert result["m1_compatibility"]["gold_total"] == 180
-    assert result["official_evaluator"]["reference_pass"] == 166
+    assert result["m1_compatibility"]["accepted"] == 175
+    assert result["official_evaluator"]["reference_pass"] == 170
     assert result["protected_git"]["ignored"] is True
     assert result["protected_git"]["tracked_files"] == []
     assert result["classification"] == "LIVESQLBENCH_BASE_LITE_FINAL_PREFLIGHT_BLOCKED"

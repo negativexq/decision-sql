@@ -109,7 +109,7 @@ class SqlSafetyService:
             with self.reader_engine.connect() as connection:
                 with connection.begin():
                     self.executor.configure_transaction(connection)
-                    normalized_sql = parsed.expression.sql(dialect="postgres")
+                    normalized_sql = self.parser.normalize(parsed)
                     with self.tracer.start_as_current_span("decision_sql.explain") as span:
                         try:
                             estimate = self.cost_gate.explain(connection, normalized_sql)
@@ -217,13 +217,13 @@ class SqlSafetyService:
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
 
-    def _record_plan(
-        self, candidate: SqlCandidate, result: QueryPlan | SqlPlanFailure
-    ) -> None:
+    def _record_plan(self, candidate: SqlCandidate, result: QueryPlan | SqlPlanFailure) -> None:
         rejection = (
             result.rejection.code.value
             if isinstance(result, SqlPlanFailure) and result.rejection
-            else result.status.value if isinstance(result, SqlPlanFailure) else None
+            else result.status.value
+            if isinstance(result, SqlPlanFailure)
+            else None
         )
         outcome = "ALLOWED" if isinstance(result, QueryPlan) else result.status.value
         recorder = recorder_for_identity(
@@ -285,10 +285,7 @@ class SqlSafetyService:
     def _referenced_functions(self, expression: exp.Expression) -> tuple[str, ...]:
         return tuple(
             sorted(
-                {
-                    self.policy.function_name(function)
-                    for function in expression.find_all(exp.Func)
-                }
+                {self.policy.function_name(function) for function in expression.find_all(exp.Func)}
             )
         )
 

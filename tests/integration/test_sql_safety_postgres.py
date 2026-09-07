@@ -88,6 +88,43 @@ def test_safe_select_join_cte_and_window_queries_execute(service: SqlSafetyServi
     assert results[3].row_count == 4
 
 
+@pytest.mark.parametrize(
+    "sql",
+    (
+        "SELECT CURRENT_DATE",
+        "SELECT CURRENT_TIME",
+        "SELECT CURRENT_TIMESTAMP",
+        "SELECT LOCALTIME",
+        "SELECT LOCALTIMESTAMP",
+        "SELECT NOW()",
+        "SELECT TRANSACTION_TIMESTAMP()",
+        "SELECT STATEMENT_TIMESTAMP()",
+    ),
+)
+def test_stable_temporal_functions_execute_read_only(service: SqlSafetyService, sql: str) -> None:
+    result = run_candidate(service, sql)
+    assert isinstance(result, QueryExecution)
+    assert result.executed_at_utc is not None
+    assert result.executed_at_utc.tzinfo is not None
+    assert result.session_timezone
+
+
+def test_stable_temporal_functions_are_consistent_within_one_statement(
+    service: SqlSafetyService,
+) -> None:
+    result = run_candidate(
+        service,
+        "SELECT CURRENT_TIMESTAMP AS current_ts, NOW() AS now_ts, "
+        "TRANSACTION_TIMESTAMP() AS transaction_ts, "
+        "STATEMENT_TIMESTAMP() AS statement_ts",
+    )
+    assert isinstance(result, QueryExecution)
+    assert len(result.rows) == 1
+    values = list(result.rows[0].values())
+    assert values[0] == values[1] == values[2]
+    assert values[3] >= values[0]
+
+
 def test_ambiguous_unqualified_column_fails_closed_like_postgres(
     service: SqlSafetyService,
 ) -> None:

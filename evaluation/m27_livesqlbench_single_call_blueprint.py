@@ -79,6 +79,17 @@ def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _upsert_jsonl(path: Path, row: dict[str, Any]) -> None:
+    """Refresh one local case detail without accumulating stale replay rows."""
+    rows = [item for item in _read_jsonl(path) if item.get("case_id") != row.get("case_id")]
+    rows.append(row)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "".join(json.dumps(item, ensure_ascii=False, default=str) + "\n" for item in rows),
+        encoding="utf-8",
+    )
+
+
 def _git_head() -> str:
     return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
 
@@ -192,6 +203,7 @@ class BlueprintJournalProvider:
                 "sql": proposal.sql,
                 "sql_hash": _sha256_text(proposal.sql),
                 "blueprint": proposal.blueprint.model_dump(mode="json"),
+                "blueprint_parse_warnings": list(proposal.parse_warnings),
                 "usage": _usage(proposal, capture),
                 "capture": capture.model_dump(mode="json") if capture is not None else None,
                 "wall_latency_ms": (time.perf_counter() - started) * 1000,
@@ -328,7 +340,16 @@ def _safe_record(
         "protocol_status": "SUCCESS"
         if sql
         else journal.get("protocol_status", "BLUEPRINT_PARSE_FAILURE"),
-        "blueprint_status": "PARSED" if blueprint else "NOT_PARSED",
+        "blueprint_status": (
+            "PARSED_WITH_WARNINGS"
+            if proposal is not None and proposal.parse_warnings
+            else "PARSED"
+            if blueprint
+            else "NOT_PARSED"
+        ),
+        "blueprint_parse_warnings": list(proposal.parse_warnings)
+        if proposal is not None
+        else journal.get("blueprint_parse_warnings", []),
         "consistency": consistency,
         "sql_hash": _sha256_text(sql) if isinstance(sql, str) else None,
         "m1_status": processed["m1_status"],
@@ -351,15 +372,25 @@ def _local_detail(
     case: LiveSqlBenchEvaluationCase,
     record: dict[str, Any],
     journal: dict[str, Any],
+    expected: LiveSqlBenchResult,
     proposal: BlueprintSqlProposal | None,
 ) -> dict[str, Any]:
     return {
         "case_id": case.instance_id,
         "database": case.database,
+        "expected_sql": list(case.sol_sql),
+        "expected_result": {
+            "columns": list(expected.columns),
+            "row_count": len(expected.rows),
+            "first_row": list(expected.rows[0]) if expected.rows else None,
+        },
         "generated_sql": proposal.sql if proposal is not None else journal.get("sql"),
         "blueprint": proposal.blueprint.model_dump(mode="json")
         if proposal is not None
         else journal.get("blueprint"),
+        "blueprint_parse_warnings": list(proposal.parse_warnings)
+        if proposal is not None
+        else journal.get("blueprint_parse_warnings", []),
         "m27": record,
     }
 
@@ -368,7 +399,9 @@ def _preflight_m27(
     public_root: Path, protected_path: Path
 ) -> tuple[list[LiveSqlBenchEvaluationCase], dict[str, Any], dict[str, Any], dict[str, Any]]:
     try:
-        pilot_cases, preflight, states, expected = _preflight(public_root, protected_path)
+        pilot_cases, preflight, states, expected = _preflight(
+            public_root, protected_path, validate_frozen_generation_prompt=False
+        )
     except Exception as error:
         raise M27PreflightError(str(error)) from error
     if len(pilot_cases) != 18 or len({case.instance_id for case in pilot_cases}) != 18:
@@ -475,6 +508,13 @@ def _aggregate(
         if record["execution_latency_ms"] is not None
     ]
     correct = sum(bool(record["correct"]) for record in records)
+    source_configs = [
+        row.get("capture", {}).get("request_config", {})
+        for row in preflight["journal"].values()
+        if isinstance(row.get("capture"), dict)
+        and isinstance(row.get("capture", {}).get("request_config"), dict)
+    ]
+    source_config = source_configs[0] if source_configs else {}
     if c > b and c >= 4 and b == 0:
         transfer = "STRONG_POSITIVE_TRANSFER"
     elif c > b:
@@ -517,8 +557,18 @@ def _aggregate(
             "mcnemar_exact_p": _exact_mcnemar_p(b, c),
         },
         "blueprint": {
-            "parsed": sum(record["blueprint_status"] == "PARSED" for record in records),
-            "parse_failure": sum(record["blueprint_status"] != "PARSED" for record in records),
+            "parsed": sum(
+                record["blueprint_status"] in {"PARSED", "PARSED_WITH_WARNINGS"}
+                for record in records
+            ),
+            "parsed_with_warnings": sum(
+                record["blueprint_status"] == "PARSED_WITH_WARNINGS" for record in records
+            ),
+            "parse_failure": sum(
+                record["blueprint_status"] not in {"PARSED", "PARSED_WITH_WARNINGS"}
+                for record in records
+            ),
+            "warning_count": sum(len(record["blueprint_parse_warnings"]) for record in records),
             "consistent": consistency["BLUEPRINT_SQL_CONSISTENT"],
             "partial_mismatch": consistency["BLUEPRINT_SQL_PARTIAL_MISMATCH"],
             "strong_mismatch": consistency["BLUEPRINT_SQL_STRONG_MISMATCH"],
@@ -553,10 +603,13 @@ def _aggregate(
         "configuration": {
             "provider": "openai-compatible",
             "model": settings.llm_model,
-            "temperature": settings.llm_temperature,
-            "reasoning_effort": settings.llm_reasoning_effort,
+            "temperature": source_config.get("temperature", settings.llm_temperature),
+            "reasoning_effort": source_config.get(
+                "reasoning_effort", settings.llm_reasoning_effort
+            ),
             "production_prompt_hash": preflight["prompt_hash"],
             "blueprint_prompt_hash": _sha256_text(inspect.getsource(blueprint_messages)),
+            "replay_source_request_config": source_config,
             "pilot_manifest_hash": preflight["final_manifest"]["manifest_hash"],
             "full_semantic_context": True,
             "m26_grounding": False,
@@ -599,6 +652,22 @@ def _replay_from_journal(
             model=EXPECTED_MODEL,
             provider="openai-compatible",
         )
+    elif isinstance(journal_row.get("capture"), dict):
+        raw_content = journal_row["capture"].get("raw_assistant_content")
+        if isinstance(raw_content, str):
+            try:
+                proposal = parse_blueprint_payload(
+                    raw_content,
+                    model=EXPECTED_MODEL,
+                    provider="openai-compatible",
+                    prompt_tokens=journal_row.get("usage", {}).get("input_tokens"),
+                    completion_tokens=journal_row.get("usage", {}).get("output_tokens"),
+                    reasoning_tokens=journal_row.get("usage", {}).get("reasoning_tokens"),
+                    cached_prompt_tokens=journal_row.get("usage", {}).get("cached_tokens"),
+                    latency_ms=journal_row.get("wall_latency_ms"),
+                )
+            except ValueError:
+                proposal = None
     processed = (
         _process_sql(case, proposal.sql, safety, expected)
         if proposal is not None
@@ -652,11 +721,6 @@ async def _run(args: argparse.Namespace) -> int:
         return 0
     provider = BlueprintJournalProvider(OpenAICompatibleProvider(settings), JOURNAL)
     records: list[dict[str, Any]] = []
-    local_existing = {
-        row["case_id"]: row
-        for row in _read_jsonl(LOCAL_CASES)
-        if isinstance(row.get("case_id"), str)
-    }
     try:
         for case in pilot_cases:
             context = preflight["corrected_contexts"][case.instance_id]
@@ -666,11 +730,10 @@ async def _run(args: argparse.Namespace) -> int:
                     case, existing, context, expected[case.instance_id], states[case.database][2]
                 )
                 records.append(record)
-                if case.instance_id not in local_existing:
-                    _append_jsonl(
-                        LOCAL_CASES,
-                        _local_detail(case, record, existing, proposal),
-                    )
+                _upsert_jsonl(
+                    LOCAL_CASES,
+                    _local_detail(case, record, existing, expected[case.instance_id], proposal),
+                )
                 continue
             if attempts >= MAX_PROVIDER_CALLS:
                 raise M27PreflightError("M27 provider call budget exhausted")
@@ -702,7 +765,10 @@ async def _run(args: argparse.Namespace) -> int:
                 case, journal_row, processed, expected[case.instance_id], context, proposal
             )
             records.append(record)
-            _append_jsonl(LOCAL_CASES, _local_detail(case, record, journal_row, proposal))
+            _upsert_jsonl(
+                LOCAL_CASES,
+                _local_detail(case, record, journal_row, expected[case.instance_id], proposal),
+            )
             journal = _read_unique_journal(JOURNAL)
         if attempts != 18 or len(records) != 18:
             raise M27PreflightError("M27 did not complete exactly one attempt for all cases")

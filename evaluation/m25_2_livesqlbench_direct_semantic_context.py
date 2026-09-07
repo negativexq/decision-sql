@@ -489,7 +489,7 @@ def _detail(
 
 
 def _preflight(
-    public_root: Path, protected_path: Path
+    public_root: Path, protected_path: Path, *, validate_frozen_generation_prompt: bool = True
 ) -> tuple[
     list[LiveSqlBenchEvaluationCase],
     dict[str, Any],
@@ -590,18 +590,25 @@ def _preflight(
     if any(not expected[case_id].columns and expected[case_id].rows for case_id in pilot_ids):
         raise M25_2PreflightError("reference result has rows without columns")
     settings = get_settings().model_copy(
-        update={"llm_model": EXPECTED_MODEL, "eval_capture_model_io": True}
+        update={
+            "llm_model": EXPECTED_MODEL,
+            "eval_capture_model_io": True,
+            "llm_prompt_profile": "legacy",
+        }
     )
     m25_config = old_artifact["configuration"]
-    if settings.llm_model != m25_config["model"]:
-        raise M25_2PreflightError("configured model differs from frozen M25 model")
-    if settings.llm_temperature != m25_config["temperature"]:
-        raise M25_2PreflightError("temperature differs from frozen M25")
-    if settings.llm_reasoning_effort != m25_config["reasoning_effort"]:
-        raise M25_2PreflightError("reasoning effort differs from frozen M25")
+    if validate_frozen_generation_prompt:
+        if settings.llm_model != m25_config["model"]:
+            raise M25_2PreflightError("configured model differs from frozen M25 model")
+        if settings.llm_temperature != m25_config["temperature"]:
+            raise M25_2PreflightError("temperature differs from frozen M25")
+        if settings.llm_reasoning_effort != m25_config["reasoning_effort"]:
+            raise M25_2PreflightError("reasoning effort differs from frozen M25")
     from app.generation.provider import _generation_messages
 
-    if sha256_text(inspect.getsource(_generation_messages)) != m25_config["prompt_hash"]:
+    if validate_frozen_generation_prompt and sha256_text(
+        inspect.getsource(_generation_messages)
+    ) != m25_config["prompt_hash"]:
         raise M25_2PreflightError("production prompt hash differs from M25")
     journal = _read_unique_journal(JOURNAL)
     if len(journal) > MAX_PROVIDER_CALLS or any(

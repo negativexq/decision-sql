@@ -28,8 +28,10 @@ M1.
 
 The contract covers population, grain, joins, filters, aggregations, temporal
 semantics, projection, ordering, limit, distinct, notes, and optional model
-self-check booleans. Strict validation rejects malformed or oversized objects;
-there is no retry or repair call.
+self-check booleans. The blueprint is diagnostic only: the receiver now
+performs bounded best-effort normalization for common string/list shape drift
+and records warnings. Invalid or missing SQL is still rejected, and there is
+no retry or repair call.
 
 ## Provider budget and integrity
 
@@ -40,16 +42,23 @@ protected GT artifact and M25.2 outputs were not sent to the provider.
 
 ## Results
 
-M25.2 produced 6/18 official raw correct. M27 produced 0/18: all 18 provider
-responses contained a blueprint and SQL-shaped content, but none matched the
-strict bounded object contract, so they were recorded as protocol failures and
-no SQL was handed to M1. This is a valid measurement of the implemented M27
-contract, but it is not evidence that the underlying SQL text would have scored
-zero under a different parser contract.
+M25.2 produced 6/18 official raw correct. The original M27 implementation
+reported 0/18 because all 18 provider responses contained SQL-shaped content
+but none matched the strict blueprint object contract; no SQL was handed to
+M1. After the structural parser fix, the same persisted responses were
+replayed without a provider call: 18/18 blueprints parsed (with bounded
+warnings), 18/18 SQL values reached the pipeline, 15/18 passed M1 and
+executed, and the official result was 6/18. This confirms that the original
+zero was a protocol artifact, not a SQL-quality score.
 
-The paired transitions were 0 old-correct/new-correct, 6 old-correct/new-wrong,
-0 old-wrong/new-correct, and 12 old-wrong/new-wrong. The exact two-sided
-McNemar p-value was 0.03125; with 18 cases this is descriptive only.
+The replay is a downstream diagnostic, not a fresh model run. It does not claim
+that the quality pack improved model accuracy; it removes a format failure and
+keeps malformed SQL subject to the unchanged M1 boundary.
+
+The corrected paired transitions were 5 old-correct/new-correct, 1
+old-correct/new-wrong, 1 old-wrong/new-correct, and 11 old-wrong/new-wrong.
+The exact two-sided McNemar p-value was 1.0; with 18 cases this is descriptive
+only.
 
 ## Claim boundary
 

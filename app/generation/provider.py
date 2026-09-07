@@ -24,6 +24,7 @@ from app.generation.hard_query_plans import (
     WindowPlanProposal,
 )
 from app.generation.intent import IntentProposal, QueryIntent
+from app.generation.quality_pack import render_query_quality_pack
 from app.generation.result_shape import ResultShapeProposal
 from app.generation.window_ir import WindowQueryIR, WindowQueryIRProposal
 from app.models.domain import QueryRequest, UserContext
@@ -161,6 +162,7 @@ class ModelIOCapture(BaseModel):
     parsed_window_ir: dict[str, Any] | None = None
     parsed_metric_grounding: dict[str, Any] | None = None
     parsed_blueprint: dict[str, Any] | None = None
+    parsed_blueprint_warnings: tuple[str, ...] = ()
     usage: dict[str, int | None] = Field(default_factory=dict)
     latency_ms: float | None = None
     finish_reason: str | None = None
@@ -771,6 +773,8 @@ class OpenAICompatibleProvider:
         messages = _generation_messages(
             request.question, schema_context, query_intent, result_shape, operation_plan
         )
+        if self.settings.llm_prompt_profile == "hardened":
+            messages = _harden_generation_messages(messages)
         body = {
             "model": self.settings.llm_model,
             "messages": messages,
@@ -924,6 +928,7 @@ class OpenAICompatibleProvider:
             payload,
             parsed_sql=proposal.sql,
             parsed_blueprint=proposal.blueprint.model_dump(mode="json"),
+            parsed_blueprint_warnings=proposal.parse_warnings,
             raw_content=_assistant_content(payload),
             latency_ms=proposal.latency_ms,
         )
@@ -970,6 +975,7 @@ class OpenAICompatibleProvider:
             "model": self.settings.llm_model,
             "reasoning_effort": self.settings.llm_reasoning_effort,
             "temperature": self.settings.llm_temperature,
+            "prompt_profile": self.settings.llm_prompt_profile,
             "endpoint_family": "chat_completions",
             "timeout_seconds": self.settings.llm_timeout_seconds,
         }
@@ -993,6 +999,7 @@ class OpenAICompatibleProvider:
         parsed_window_ir: dict[str, Any] | None = None,
         parsed_metric_grounding: dict[str, Any] | None = None,
         parsed_blueprint: dict[str, Any] | None = None,
+        parsed_blueprint_warnings: tuple[str, ...] = (),
         raw_content: str | None,
         latency_ms: float | None,
         failure_stage: str | None = None,
@@ -1025,6 +1032,7 @@ class OpenAICompatibleProvider:
                 "parsed_window_ir": parsed_window_ir,
                 "parsed_metric_grounding": parsed_metric_grounding,
                 "parsed_blueprint": parsed_blueprint,
+                "parsed_blueprint_warnings": parsed_blueprint_warnings,
                 "usage": {
                     "prompt_tokens": _optional_int(usage.get("prompt_tokens")),
                     "completion_tokens": _optional_int(usage.get("completion_tokens")),
@@ -1425,6 +1433,17 @@ def _generation_messages(
     return [
         {"role": "system", "content": system},
         {"role": "user", "content": question},
+    ]
+
+
+def _harden_generation_messages(messages: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Add audited generation guidance while preserving the frozen legacy builder."""
+    if not messages:
+        return messages
+    first = messages[0]
+    return [
+        {**first, "content": f"{first['content']}\n\n{render_query_quality_pack()}"},
+        *messages[1:],
     ]
 
 

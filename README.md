@@ -72,6 +72,9 @@ Governed applicability
   composition. M4 uses deterministic local retrieval and M4.1 integrates it
   behind explicit OFF/SHADOW/ON controls; it remains disabled by default.
   Retrieved SQL is context only and generated SQL still passes M1.
+- Shared direct/blueprint generation guidance and a tolerant, warning-producing
+  blueprint parser keep descriptive response formatting from discarding valid
+  SQL; see [`docs/query-quality-hardening.md`](docs/query-quality-hardening.md).
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
 - Evaluation-only versioned result evaluation: V1 preserves historical and

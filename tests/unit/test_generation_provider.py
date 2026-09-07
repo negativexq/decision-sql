@@ -2,7 +2,7 @@ import httpx
 import pytest
 
 from app.config import Settings
-from app.generation.blueprint import QueryBlueprint
+from app.generation.blueprint import QueryBlueprint, parse_blueprint_payload
 from app.generation.hard_query_plans import RatioPlan, TopKPlan, WindowPlan
 from app.generation.intent import QueryIntent
 from app.generation.provider import (
@@ -14,6 +14,7 @@ from app.generation.provider import (
     SqlProposal,
     StaticLLMProvider,
     UnconfiguredLLMProvider,
+    _harden_generation_messages,
     _intent_from_response,
     _operation_plan_messages,
     _proposal_from_response,
@@ -119,6 +120,13 @@ def test_narrow_operation_plan_prompts_and_models_are_category_specific() -> Non
     top_prompt = _operation_plan_messages("top_k", "top products", "TABLE products")[0]["content"]
     assert "TopKPlan" in top_prompt
     assert "complete SQL" in top_prompt
+
+
+def test_direct_generation_prompt_includes_query_quality_pack() -> None:
+    from app.generation.provider import _generation_messages
+
+    messages = _harden_generation_messages(_generation_messages("list products", "TABLE products"))
+    assert "QUERY QUALITY PACK" in messages[0]["content"]
 
 
 def test_window_ir_response_is_structured_and_contains_no_sql() -> None:
@@ -286,6 +294,7 @@ async def test_reasoning_effort_is_forwarded_without_changing_generation_contrac
         llm_api_key="test-key",
         llm_model="gpt-5.6-luna",
         llm_reasoning_effort=effort,
+        llm_temperature=0.0,
     )
     provider = OpenAICompatibleProvider(settings)
     captured: list[dict[str, object]] = []
@@ -354,6 +363,23 @@ def test_blueprint_model_does_not_accept_unrelated_fields() -> None:
         QueryBlueprint(population="orders", gold_sql="SELECT 1")
 
 
+def test_blueprint_sql_can_survive_descriptive_field_shape_drift() -> None:
+    proposal = parse_blueprint_payload(
+        {
+            "blueprint": {
+                "filters": ["status = completed"],
+                "ordering": "id DESC",
+                "checks": [True],
+            },
+            "sql": "SELECT id FROM orders",
+        },
+        model="test-model",
+        provider="openai-compatible",
+    )
+
+    assert proposal.sql == "SELECT id FROM orders"
+
+
 @pytest.mark.asyncio
 async def test_reasoning_arms_send_identical_prompts(monkeypatch: pytest.MonkeyPatch) -> None:
     bodies: list[dict[str, object]] = []
@@ -367,11 +393,12 @@ async def test_reasoning_arms_send_identical_prompts(monkeypatch: pytest.MonkeyP
 
     for effort in ("none", "low"):
         provider = OpenAICompatibleProvider(
-            Settings(
-                llm_api_key="test-key",
-                llm_model="gpt-5.6-luna",
-                llm_reasoning_effort=effort,
-            )
+        Settings(
+            llm_api_key="test-key",
+            llm_model="gpt-5.6-luna",
+            llm_reasoning_effort=effort,
+            llm_temperature=0.0,
+        )
         )
         monkeypatch.setattr(provider, "_post", fake_post)
         await provider.propose_sql(QueryRequest(question="constant"), None, "TABLE t")

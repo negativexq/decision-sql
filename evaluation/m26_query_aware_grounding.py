@@ -343,7 +343,9 @@ def _build_preflight(public_root: Path, protected_path: Path) -> dict[str, Any]:
     prompt_hash = sha256_text(inspect.getsource(_generation_messages))
     if prompt_hash != EXPECTED_PROMPT_HASH:
         raise M26PreflightError(f"production prompt hash changed: {prompt_hash}")
-    settings = get_settings().model_copy(update={"llm_model": EXPECTED_MODEL})
+    settings = get_settings().model_copy(
+        update={"llm_model": EXPECTED_MODEL, "llm_prompt_profile": "legacy"}
+    )
     if settings.llm_model != m25["configuration"]["model"]:
         raise M26PreflightError("M25.2 model differs from current model")
     if settings.llm_temperature != m25["configuration"]["temperature"]:

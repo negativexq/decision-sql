@@ -13,10 +13,10 @@ it is never guessed from aliases or values.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass, fields, is_dataclass, replace
 from enum import StrEnum
 from hashlib import sha256
-from collections.abc import Iterable
 from typing import Any
 
 from sqlglot import exp, parse_one

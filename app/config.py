@@ -1,5 +1,6 @@
 from enum import StrEnum
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -50,10 +51,13 @@ class Settings(BaseSettings):
         default=30.0, validation_alias="DECISION_SQL_LLM_TIMEOUT_SECONDS"
     )
     llm_temperature: float | None = Field(
-        default=0.0, validation_alias="DECISION_SQL_LLM_TEMPERATURE"
+        default=None, validation_alias="DECISION_SQL_LLM_TEMPERATURE"
     )
     llm_reasoning_effort: str | None = Field(
         default=None, validation_alias="DECISION_SQL_LLM_REASONING_EFFORT"
+    )
+    llm_prompt_profile: Literal["legacy", "hardened"] = Field(
+        default="hardened", validation_alias="DECISION_SQL_LLM_PROMPT_PROFILE"
     )
     eval_capture_model_io: bool = Field(
         default=False, validation_alias="DECISION_SQL_EVAL_CAPTURE_MODEL_IO"

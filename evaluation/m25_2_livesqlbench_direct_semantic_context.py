@@ -667,7 +667,8 @@ async def _run_one(
 
 
 def _classify_transition(old: dict[str, Any], new: dict[str, Any]) -> str:
-    return f"{bool(old.get('correct'))}:{bool(new.get('correct'))}"
+    old_correct = bool(old.get("correct")) or old.get("official_evaluator_status") == "PASS"
+    return f"{old_correct}:{bool(new.get('correct'))}"
 
 
 def _aggregate(
@@ -692,10 +693,16 @@ def _aggregate(
         else:
             old_wrong_new_wrong += 1
         if old.get("m1_status") == "REJECTED":
-            old_m1_reject_transitions[record["m1_status"]] += 1
+            if record["m1_status"] == "ACCEPTED":
+                old_m1_reject_transitions["ACCEPTED"] += 1
+            elif record["m1_status"] == "REJECTED":
+                # M25's protected ledger did not retain the old failure code.
+                old_m1_reject_transitions["CODE_UNAVAILABLE"] += 1
+        old_reference_rows = (old.get("reference_result_summary") or {}).get("row_count")
         if (
             old.get("execution_status") == "SUCCESS"
             and old.get("official_evaluator_status") == "FAIL"
+            and old_reference_rows != 0
         ):
             if record["correct"]:
                 old_mismatch_transitions["new_correct"] += 1
@@ -725,7 +732,6 @@ def _aggregate(
                 "current_date",
             ):
                 shape[key] += int(bool(data.get(key)))
-    m25_usage = preflight["old_artifact"]["usage"]
     usage_fields = ("input_tokens", "output_tokens", "reasoning_tokens", "cached_tokens")
     usage = {}
     for field in usage_fields:
@@ -803,8 +809,9 @@ def _aggregate(
         },
         "old_m1_rejection_transitions": {
             "old_reject_to_new_accept": old_m1_reject_transitions["ACCEPTED"],
-            "old_reject_to_same_reject": old_m1_reject_transitions["REJECTED"],
-            "old_reject_to_different_reject": old_m1_reject_transitions["OTHER"],
+            "old_reject_to_same_reject": 0,
+            "old_reject_to_different_reject": 0,
+            "old_reject_reject_code_unavailable": old_m1_reject_transitions["CODE_UNAVAILABLE"],
         },
         "old_result_mismatch_transitions": dict(old_mismatch_transitions),
         "m1_failure_codes": dict(sorted(failure_codes.items())),
@@ -813,7 +820,8 @@ def _aggregate(
         "latency": {
             "provider_ms": _summary(new_provider),
             "end_to_end_ms": _summary(new_e2e),
-            "m25_provider_ms": m25_usage,
+            "m25_provider_ms": preflight["old_artifact"]["latency"]["provider"],
+            "m25_end_to_end_ms": preflight["old_artifact"]["latency"]["end_to_end"],
         },
         "context": {
             "column_meanings": True,
@@ -907,6 +915,12 @@ async def _run(args: argparse.Namespace) -> int:
         )
         del catalog
     records: list[dict[str, Any]] = []
+    local_details: dict[str, dict[str, Any]] = {}
+    for row in _read_jsonl(LOCAL_CASES):
+        case_id = row.get("case_id")
+        detail = row.get("m25_2")
+        if isinstance(case_id, str) and isinstance(detail, dict):
+            local_details[case_id] = detail
     try:
         for case in pilot_cases:
             existing = journal.get(case.instance_id)
@@ -920,6 +934,8 @@ async def _run(args: argparse.Namespace) -> int:
                         sha256_text(preflight["corrected_contexts"][case.instance_id]),
                         None,
                     )
+                elif case.instance_id in local_details:
+                    record = local_details[case.instance_id]
                 else:
                     from evaluation.m25_livesqlbench_direct_pilot import _process_existing_sql
 

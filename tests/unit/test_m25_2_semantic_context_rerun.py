@@ -82,3 +82,29 @@ def test_prompt_hash_matches_frozen_m25() -> None:
         (ROOT / "evaluation/fixtures/m25_livesqlbench_direct_pilot_result.json").read_text()
     )
     assert prompt_hash == old["configuration"]["prompt_hash"]
+
+
+def test_completed_result_accounts_for_exactly_one_call_per_case() -> None:
+    result_path = (
+        ROOT / "evaluation/fixtures/m25_2_livesqlbench_direct_semantic_context_result.json"
+    )
+    if not result_path.exists():
+        pytest.skip("M25.2 provider output has not been materialized locally")
+    result = json.loads(result_path.read_text())
+    assert result["classification"] == (
+        "M25_2_LIVESQLBENCH_SEMANTIC_CONTEXT_PAIRED_RERUN_COMPLETED"
+    )
+    assert result["provider_calls"] == 18
+    assert result["experiment"]["calls_per_case_max"] == 1
+    assert (
+        sum(
+            result["paired"][key]
+            for key in (
+                "old_correct_new_correct",
+                "old_correct_new_wrong",
+                "old_wrong_new_correct",
+                "old_wrong_new_wrong",
+            )
+        )
+        == 18
+    )

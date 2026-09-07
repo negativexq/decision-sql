@@ -236,6 +236,12 @@ class SQLPolicy:
                 and self._is_projection_alias_reference(scope, column)
             ):
                 continue
+            if not qualifier and self._is_ambiguous_unqualified_column(scope, relations, name):
+                return self._reject(
+                    PolicyCode.UNKNOWN_COLUMN,
+                    f"Ambiguous unqualified column in the queryable scope: {column.sql()}",
+                    column.sql(),
+                )
             relation = self._resolve_relation(scope, relations, qualifier, name)
             if relation is None:
                 return self._reject(
@@ -292,7 +298,11 @@ class SQLPolicy:
 
     def _scope_relations(self, scope: Scope) -> dict[str, _Relation]:
         relations: dict[str, _Relation] = {}
-        for name, source in scope.sources.items():
+        source_keys = self._scope_source_keys(scope)
+        for name in source_keys:
+            source = scope.sources.get(name)
+            if source is None:
+                continue
             if isinstance(source, exp.Table):
                 metadata = self.catalog.get_table(source.name)
                 if metadata is not None:
@@ -300,6 +310,37 @@ class SQLPolicy:
             elif isinstance(source, Scope):
                 relations[name.lower()] = _Relation(columns=self._output_columns(source))
         return relations
+
+    @staticmethod
+    def _scope_source_keys(scope: Scope) -> tuple[str, ...]:
+        """Return relation aliases actually present in this SELECT's FROM list.
+
+        SQLGlot may index a CTE scope by both its CTE name and each alias that
+        references it.  Only the aliases in the current FROM/JOIN clauses are
+        visible relations; retaining the extra CTE key makes one relation look
+        like several and creates false ambiguity.
+        """
+        expression = scope.expression
+        if not isinstance(expression, exp.Select):
+            return tuple(scope.sources)
+        nodes: list[exp.Expression] = []
+        from_clause = expression.args.get("from_")
+        if isinstance(from_clause, exp.From) and from_clause.this is not None:
+            nodes.append(from_clause.this)
+        nodes.extend(
+            join.this for join in expression.args.get("joins", ()) if join.this is not None
+        )
+        keys: list[str] = []
+        for node in nodes:
+            name = node.alias_or_name
+            if not name and isinstance(node, exp.Table):
+                name = node.name
+            if not name:
+                continue
+            source_key = next((key for key in scope.sources if key.lower() == name.lower()), None)
+            if source_key is not None and source_key not in keys:
+                keys.append(source_key)
+        return tuple(keys)
 
     def _visible_columns(self, scope: Scope, scopes: tuple[Scope, ...]) -> tuple[exp.Column, ...]:
         """Return this scope's columns plus correlated references, not nested locals."""
@@ -348,11 +389,29 @@ class SQLPolicy:
             if len(local) == 1:
                 return local[0]
             if len(local) > 1:
-                return local[0]
+                return None
         parent = scope.parent
         if parent is not None:
             return self._resolve_relation(parent, self._scope_relations(parent), qualifier, name)
         return None
+
+    def _is_ambiguous_unqualified_column(
+        self, scope: Scope, relations: dict[str, _Relation], name: str
+    ) -> bool:
+        """Report ambiguity before resolution can fall through to a parent scope."""
+        if name in relations:
+            # A relation alias in expression position is a PostgreSQL row value,
+            # not an unqualified column competing with visible columns.
+            return False
+        local = [relation for relation in relations.values() if relation.has_column(name)]
+        if len(local) > 1:
+            return True
+        if local:
+            return False
+        parent = scope.parent
+        return parent is not None and self._is_ambiguous_unqualified_column(
+            parent, self._scope_relations(parent), name
+        )
 
     def _output_columns(self, scope: Scope) -> frozenset[str]:
         if isinstance(scope.expression, (exp.Unnest, exp.Explode)):

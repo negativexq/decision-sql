@@ -88,6 +88,26 @@ def test_safe_select_join_cte_and_window_queries_execute(service: SqlSafetyServi
     assert results[3].row_count == 4
 
 
+def test_ambiguous_unqualified_column_fails_closed_like_postgres(
+    service: SqlSafetyService,
+) -> None:
+    ambiguous = "SELECT id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
+    qualified = "SELECT p.id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
+
+    planned = service.plan(SqlCandidate(sql=ambiguous))
+    assert isinstance(planned, SqlPlanFailure)
+    assert planned.rejection is not None
+    assert planned.rejection.code is PolicyCode.UNKNOWN_COLUMN
+    assert "Ambiguous unqualified column" in planned.rejection.message
+
+    qualified_result = run_candidate(service, qualified)
+    assert isinstance(qualified_result, QueryExecution)
+
+    with service.reader_engine.connect() as connection:
+        with pytest.raises(SQLAlchemyError):
+            connection.exec_driver_sql(ambiguous)
+
+
 def test_m212_compiled_window_ir_remains_behind_m1(service: SqlSafetyService) -> None:
     ir = WindowQueryIR(
         source_relation="orders",

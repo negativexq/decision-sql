@@ -120,6 +120,32 @@ def test_scope_validation_rejects_invalid_derived_and_physical_columns() -> None
         assert rejection.code is PolicyCode.UNKNOWN_COLUMN
 
 
+def test_scope_validation_rejects_ambiguous_unqualified_columns() -> None:
+    sql_policy = policy()
+    valid = (
+        "SELECT unit_price FROM products p JOIN orders o ON o.id = p.id",
+        "SELECT p.id, o.id FROM products p JOIN orders o ON o.id = p.id",
+        "SELECT derived_col FROM (SELECT name AS derived_col FROM products) q",
+        "SELECT p.id FROM products p WHERE EXISTS "
+        "(SELECT 1 FROM order_items oi WHERE oi.product_id = p.id)",
+        "SELECT name AS product_name FROM products ORDER BY product_name",
+        "SELECT ROW_TO_JSON(p) FROM products p LIMIT 1",
+    )
+    invalid = (
+        "SELECT id FROM products p JOIN orders o ON o.id = p.id",
+        "SELECT metric FROM (SELECT unit_price AS metric FROM products) a "
+        "JOIN (SELECT total_amount AS metric FROM orders) b ON 1 = 1",
+    )
+
+    for query in valid:
+        assert sql_policy.validate(parsed(query)) is None
+    for query in invalid:
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None
+        assert rejection.code is PolicyCode.UNKNOWN_COLUMN
+        assert rejection.message.startswith("Ambiguous unqualified column")
+
+
 def test_mutation_and_multiple_statements_are_rejected_before_execution() -> None:
     sql_policy = policy()
     assert (

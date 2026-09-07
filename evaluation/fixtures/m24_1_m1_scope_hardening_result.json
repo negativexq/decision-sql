@@ -1,0 +1,1387 @@
+{
+  "classification": "M24_1_M1_SCOPE_HARDENING_VALIDATED",
+  "starting_head": "7d56bd11a953b3f13d6bd1fc571d1a62d3f9356c",
+  "provider_calls": 0,
+  "fresh_generation": 0,
+  "m24_reference": {
+    "commit": "7d56bd11a953b3f13d6bd1fc571d1a62d3f9356c",
+    "artifact_hash": "f73fbfe398931bba3be9a14dde861329d8ed656ef610a814d4cf1b022e58b488",
+    "manifest_hash": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a",
+    "before": {
+      "accepted": 166,
+      "evaluator_pass": 166
+    }
+  },
+  "ambiguity_fix": {
+    "behavior_before": "Multiple local matches returned the first relation.",
+    "behavior_after": "Multiple local matches fail closed as UNKNOWN_COLUMN with an explicit ambiguity message.",
+    "synthetic_tests": {
+      "unique_unqualified_allowed": true,
+      "ambiguous_unqualified_rejected": true,
+      "qualified_duplicate_name_allowed": true,
+      "ambiguous_derived_rejected": true,
+      "correlated_reference_preserved": true,
+      "projection_alias_preserved": true,
+      "row_composite_alias_preserved": true
+    }
+  },
+  "function_surface": {
+    "unchanged": true,
+    "before_count": 57,
+    "after_count": 57,
+    "before_hash": "c624d1a494ccea91a0ebdfbc3cf0900efad231a73d32408972763fdc2ede8b0a",
+    "after_hash": "c624d1a494ccea91a0ebdfbc3cf0900efad231a73d32408972763fdc2ede8b0a"
+  },
+  "livesqlbench_replay": {
+    "population": 180,
+    "m24": {
+      "accepted": 166,
+      "rejected": 10,
+      "planning_or_multistatement": 4,
+      "evaluator_pass": 166
+    },
+    "m24_1": {
+      "accepted": 166,
+      "rejected": 10,
+      "planning_or_multistatement": 4,
+      "evaluator_pass": 166
+    },
+    "delta": {
+      "accepted_delta": 0,
+      "rejected_delta": 0,
+      "planning_or_multistatement_delta": 0,
+      "evaluator_pass_delta": 0,
+      "status_transitions_available": false,
+      "reason": "M24 stored aggregate replay evidence only; no M24 per-case status ledger exists."
+    },
+    "status_transitions": {
+      "unchanged_accepted": 166,
+      "accepted_to_ambiguity_reject": 0,
+      "other_accepted_to_rejected": 0,
+      "rejected_to_accepted": 0,
+      "unexpected_deltas": [],
+      "per_case_statuses_measured": false,
+      "reason": "M24 aggregate artifact has no old per-case status ledger; aggregate replay deltas are zero."
+    }
+  },
+  "reference_execution": {
+    "m1_accepted": 166,
+    "executed": 166,
+    "success": 166,
+    "failure": 0,
+    "timeout": 0
+  },
+  "evaluator": {
+    "reference_evaluable": 166,
+    "pass": 166,
+    "fail": 0
+  },
+  "pilot_validation": {
+    "frozen_pilot_preserved": true,
+    "pilot_total": 18,
+    "gold_coverage": 18,
+    "knowledge_coverage": 18,
+    "m1_compatible": 16,
+    "reference_executable": 16,
+    "reference_pass": 16
+  },
+  "historical_regression": {
+    "status": "NOT_RUN",
+    "reason": "BIRD/Defog database roots were unavailable; historical provider-free SQL replay was not measured.",
+    "measured_cases": 0
+  },
+  "security_controls": {
+    "select_only": true,
+    "single_statement": true,
+    "ambiguous_columns_fail_closed": true,
+    "physical_columns_enforced": true,
+    "derived_columns_explicit": true,
+    "system_catalogs_denied": true,
+    "forbidden_columns_denied": true,
+    "dangerous_functions_denied": true,
+    "unknown_functions_fail_closed": true,
+    "cost_gate_unchanged": true,
+    "read_only_execution_unchanged": true
+  },
+  "protected_data_safety": {
+    "ignored": true,
+    "tracked_files": [],
+    "gold_contents_committed": false,
+    "protected_sha256": "eb3ddfff4371a5f7aeacefefbfc5ff039fbf5fec57ff69ae64c1b0378a3a94b2"
+  },
+  "current_replay_artifact": {
+    "classification": "LIVESQLBENCH_BASE_LITE_FINAL_PREFLIGHT_BLOCKED",
+    "failure_codes": {
+      "FORBIDDEN_FUNCTION": 9,
+      "QUERY_TOO_EXPENSIVE": 1,
+      "SQL_PARSE_ERROR": 4
+    },
+    "failure_review": {
+      "LEGITIMATE_M1_POLICY_REJECTION": 14
+    },
+    "database_coverage": [
+      {
+        "database": "alien",
+        "select_cases": 10,
+        "tables": 11,
+        "columns": 136,
+        "catalog_hash": "e0f44157d2adbf3debd8077b3c953b6853ca141e4075f277221cc8b4e2c5106c",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "archeology",
+        "select_cases": 10,
+        "tables": 14,
+        "columns": 151,
+        "catalog_hash": "c25ead93e0ac46dd99d03e093d577ca779100583937193f92f2addc486d426c6",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "credit",
+        "select_cases": 10,
+        "tables": 6,
+        "columns": 120,
+        "catalog_hash": "ee85145211d862204e29e90f13f2db0046e9786233aae596c04081dea5da15b6",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "cross_db",
+        "select_cases": 10,
+        "tables": 7,
+        "columns": 131,
+        "catalog_hash": "9ace28dccf45c34f5839f8c47efab03601e481264de3cd53f50b7fa1383bd68c",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "crypto",
+        "select_cases": 10,
+        "tables": 10,
+        "columns": 89,
+        "catalog_hash": "b62697460d58b9920f06abcd8cbb94a9b59d98f9e59101a789bfb4959e2f931e",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "cybermarket",
+        "select_cases": 10,
+        "tables": 9,
+        "columns": 132,
+        "catalog_hash": "6b25af3ec5ca341715f72242c19bd3ba4f626b6ded0380f2e40c020b2008f8a0",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "disaster",
+        "select_cases": 10,
+        "tables": 10,
+        "columns": 123,
+        "catalog_hash": "956f390ed5f0db6cfeca6b6f4db05ca27561229f74d806995a667f63d240a818",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "fake",
+        "select_cases": 10,
+        "tables": 9,
+        "columns": 99,
+        "catalog_hash": "36cfb49cb6ff5b9a54c3c9c7d41d375fc7172b6b7044e5504d3e870bb1b2ae7f",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "gaming",
+        "select_cases": 10,
+        "tables": 8,
+        "columns": 160,
+        "catalog_hash": "677183ca87e7b3aae9e4172397d32545075158239b68c42770861dd2474942b5",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "insider",
+        "select_cases": 10,
+        "tables": 7,
+        "columns": 105,
+        "catalog_hash": "5586355a167c4b676f138a15428a37bc67baf65f997a99d5b8a7a179580c5742",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "mental",
+        "select_cases": 10,
+        "tables": 9,
+        "columns": 107,
+        "catalog_hash": "b03a27bc87bff6a01a8252c0804707a6897eedd75c8fa143e692fda766af1253",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "museum",
+        "select_cases": 10,
+        "tables": 14,
+        "columns": 185,
+        "catalog_hash": "fec1cf1db449d41d29e38ab9159e4cfc5fc9540f5981dc173abb7611142f219a",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "news",
+        "select_cases": 10,
+        "tables": 8,
+        "columns": 108,
+        "catalog_hash": "35384f6babeca475002e459358bc02c6f62e68ea94a3bc868f2c4c4a8f2bdd68",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "polar",
+        "select_cases": 10,
+        "tables": 14,
+        "columns": 162,
+        "catalog_hash": "60a199c2dfc6c11ab215285ecac634440ab9041f4ea7d21be68aacd7acb4541f",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "robot",
+        "select_cases": 10,
+        "tables": 10,
+        "columns": 130,
+        "catalog_hash": "1983a34b54dd0ed742d936545312fa469446847f57fa8030b19d01b0291b54fe",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "solar",
+        "select_cases": 10,
+        "tables": 8,
+        "columns": 84,
+        "catalog_hash": "5b40d3f7ea68f2d031a1833ce5fff280f2fbc9e2b570cc79f94f49cb416be714",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "vaccine",
+        "select_cases": 10,
+        "tables": 7,
+        "columns": 134,
+        "catalog_hash": "a3e52089f46239e0971fa478b10781a2249a823f5a256da314655f3723eb87e2",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      },
+      {
+        "database": "virtual",
+        "select_cases": 10,
+        "tables": 14,
+        "columns": 130,
+        "catalog_hash": "bb7cf8288ec9bfa839564df7f2981f1a59715787304b90ea9920e02f517f44cb",
+        "gold_coverage": 10,
+        "test_case_coverage": 0,
+        "knowledge_non_empty": 10
+      }
+    ]
+  },
+  "case_statuses": [
+    {
+      "case_id": "alien_1",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_10",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_2",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_3",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_4",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_5",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_6",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_7",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_8",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "alien_9",
+      "database": "alien",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_1",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_10",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_2",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_3",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_4",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_5",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_6",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_7",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_8",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "archeology_9",
+      "database": "archeology",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_1",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_10",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_2",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_3",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_4",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_5",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_6",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_7",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_8",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "credit_9",
+      "database": "credit",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_1",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_10",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_2",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_3",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_4",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_5",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_6",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_7",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_8",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cross_db_9",
+      "database": "cross_db",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_1",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_10",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_2",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_3",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_4",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_5",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_6",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_7",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_8",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "crypto_9",
+      "database": "crypto",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_1",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_10",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_2",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_3",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_4",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_5",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_6",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_7",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_8",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "cybermarket_9",
+      "database": "cybermarket",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_1",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_10",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_2",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_3",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_4",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_5",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_6",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_7",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_8",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "disaster_9",
+      "database": "disaster",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_1",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_10",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_2",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_3",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_4",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_5",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_6",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_7",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_8",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "fake_9",
+      "database": "fake",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_1",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_10",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_2",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_3",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_4",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_5",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_6",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_7",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_8",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "gaming_9",
+      "database": "gaming",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_1",
+      "database": "insider",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "insider_10",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_2",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_3",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_4",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_5",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_6",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_7",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_8",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "insider_9",
+      "database": "insider",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_1",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_10",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_2",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_3",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_4",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_5",
+      "database": "mental",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "QUERY_TOO_EXPENSIVE"
+    },
+    {
+      "case_id": "mental_6",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_7",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_8",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "mental_9",
+      "database": "mental",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_1",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_10",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_2",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_3",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_4",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_5",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_6",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_7",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_8",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "museum_9",
+      "database": "museum",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_1",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_10",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_2",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_3",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_4",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_5",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_6",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_7",
+      "database": "news",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "news_8",
+      "database": "news",
+      "m1_status": "PLANNING_ERROR",
+      "m1_failure_code": "SQL_PARSE_ERROR"
+    },
+    {
+      "case_id": "news_9",
+      "database": "news",
+      "m1_status": "PLANNING_ERROR",
+      "m1_failure_code": "SQL_PARSE_ERROR"
+    },
+    {
+      "case_id": "polar_1",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_10",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_2",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_3",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_4",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_5",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_6",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_7",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_8",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "polar_9",
+      "database": "polar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_1",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_10",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_2",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_3",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_4",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_5",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_6",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_7",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_8",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "robot_9",
+      "database": "robot",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_1",
+      "database": "solar",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "solar_10",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_2",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_3",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_4",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_5",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_6",
+      "database": "solar",
+      "m1_status": "PLANNING_ERROR",
+      "m1_failure_code": "SQL_PARSE_ERROR"
+    },
+    {
+      "case_id": "solar_7",
+      "database": "solar",
+      "m1_status": "PLANNING_ERROR",
+      "m1_failure_code": "SQL_PARSE_ERROR"
+    },
+    {
+      "case_id": "solar_8",
+      "database": "solar",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "solar_9",
+      "database": "solar",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "vaccine_1",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_10",
+      "database": "vaccine",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "vaccine_2",
+      "database": "vaccine",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "vaccine_3",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_4",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_5",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_6",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_7",
+      "database": "vaccine",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "vaccine_8",
+      "database": "vaccine",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "vaccine_9",
+      "database": "vaccine",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "virtual_1",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_10",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_2",
+      "database": "virtual",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "virtual_3",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_4",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_5",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_6",
+      "database": "virtual",
+      "m1_status": "POLICY_REJECTED",
+      "m1_failure_code": "FORBIDDEN_FUNCTION"
+    },
+    {
+      "case_id": "virtual_7",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_8",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    },
+    {
+      "case_id": "virtual_9",
+      "database": "virtual",
+      "m1_status": "ACCEPTED",
+      "m1_failure_code": null
+    }
+  ]
+}

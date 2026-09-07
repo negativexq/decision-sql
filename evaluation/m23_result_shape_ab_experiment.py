@@ -98,8 +98,8 @@ def _case_id(question: Any, label: str) -> str:
 
 def _question_text(question: Any, label: str) -> str:
     if label == "bird":
-        return question.question + "\n\nBIRD expert evidence:\n" + question.evidence
-    return question.question
+        return str(question.question) + "\n\nBIRD expert evidence:\n" + str(question.evidence)
+    return str(question.question)
 
 
 def _strata(question: Any, label: str) -> set[str]:
@@ -411,9 +411,15 @@ def _proposal_quality(proposal: ResultShapeProposal | None, gold_sql: str) -> st
                 if columns[0].get("table")
                 else columns[0].get("column")
             )
-            if output.source_hint.lower() != str(expected).lower():
+            if _source_hint_key(output.source_hint) != _source_hint_key(str(expected)):
                 return "PROPOSAL_WRONG"
     return "PROPOSAL_CORRECT"
+
+
+def _source_hint_key(value: str) -> str:
+    """Compare physical hints independent of an optional PostgreSQL schema prefix."""
+    parts = [part for part in value.lower().split(".") if part]
+    return ".".join(parts[-2:]) if len(parts) >= 2 else value.lower()
 
 
 def _sql_component_presence(sql: str | None) -> dict[str, Any]:
@@ -770,7 +776,7 @@ def _aggregate(manifest: dict[str, Any], records: list[dict[str, Any]]) -> dict[
     matrix = Counter(record["paired_state"] for record in records)
     projection_metrics: dict[str, Any] = {}
     for arm in ("control", "resultshape"):
-        projection_metrics[arm] = {"extra": None, "missing": None, "wrong_or_expression": None}
+        projection_metrics[arm] = {"extra": 0, "missing": 0, "wrong_or_expression": 0}
     for record in records:
         validation = record["resultshape"].get("result_shape_validation")
         if validation:
@@ -778,12 +784,13 @@ def _aggregate(manifest: dict[str, Any], records: list[dict[str, Any]]) -> dict[
         for arm in ("control", "resultshape"):
             expected = record["reference_projection"]
             actual = _projection_facts_safe(record[arm].get("sql"))
+            projection_error: str | None
             if actual["arity"] is None or expected["arity"] is None:
-                error = "UNASSESSABLE"
+                projection_error = "UNASSESSABLE"
             elif actual["arity"] > expected["arity"]:
-                error = "EXTRA"
+                projection_error = "EXTRA"
             elif actual["arity"] < expected["arity"]:
-                error = "MISSING"
+                projection_error = "MISSING"
             else:
                 actual_sources = [
                     tuple(
@@ -799,44 +806,45 @@ def _aggregate(manifest: dict[str, Any], records: list[dict[str, Any]]) -> dict[
                     )
                     for item in expected["expressions"]
                 ]
-                error = None if actual_sources == expected_sources else "WRONG_OR_EXPRESSION"
-            record[arm]["projection_error"] = error
-            if error == "EXTRA":
+                projection_error = (
+                    None if actual_sources == expected_sources else "WRONG_OR_EXPRESSION"
+                )
+            record[arm]["projection_error"] = projection_error
+            if projection_error == "EXTRA":
                 projection_metrics[arm]["extra"] = (projection_metrics[arm]["extra"] or 0) + 1
-            elif error == "MISSING":
+            elif projection_error == "MISSING":
                 projection_metrics[arm]["missing"] = (projection_metrics[arm]["missing"] or 0) + 1
-            elif error == "WRONG_OR_EXPRESSION":
+            elif projection_error == "WRONG_OR_EXPRESSION":
                 projection_metrics[arm]["wrong_or_expression"] = (
                     projection_metrics[arm]["wrong_or_expression"] or 0
                 ) + 1
-    drift = Counter()
+    drift: Counter[str] = Counter()
     for record in records:
         for key, value in record["semantic_drift"].items():
             if value is True:
                 drift[key] += 1
     proposal_quality = Counter(record["resultshape"].get("proposal_quality") for record in records)
-    failure_stage = Counter()
+    failure_stage: Counter[str] = Counter()
     for record in records:
         if not record["resultshape"]["correct"]:
-            stage = record["resultshape"].get("failure_stage")
+            stage: str | None = record["resultshape"].get("failure_stage")
             if stage in {"PROVIDER_PROTOCOL", None}:
-                stage = (
-                    "S1_RESULTSHAPE_PROPOSAL_WRONG"
-                    if record["resultshape"].get("proposal_quality") == "PROPOSAL_WRONG"
-                    else "S6_OTHER"
-                )
+                stage = "S1_RESULTSHAPE_PROPOSAL_WRONG"
             elif stage == "M1":
                 stage = "S4_M1_REJECT"
             elif stage == "EXECUTION":
                 stage = "S5_EXECUTION_FAILURE"
             elif stage == "RESULT_EVALUATION":
-                validation = record["resultshape"].get("result_shape_validation") or {}
-                stage = (
-                    "S3_RESULTSHAPE_PROPOSAL_CORRECT_SQL_COMPLIANT_BUT_SEMANTICALLY_WRONG"
-                    if validation.get("accepted")
-                    else "S2_RESULTSHAPE_PROPOSAL_CORRECT_SQL_NONCOMPLIANT"
-                )
-            failure_stage[stage] += 1
+                if record["resultshape"].get("proposal_quality") == "PROPOSAL_WRONG":
+                    stage = "S1_RESULTSHAPE_PROPOSAL_WRONG"
+                else:
+                    validation = record["resultshape"].get("result_shape_validation") or {}
+                    stage = (
+                        "S3_RESULTSHAPE_PROPOSAL_CORRECT_SQL_COMPLIANT_BUT_SEMANTICALLY_WRONG"
+                        if validation.get("accepted")
+                        else "S2_RESULTSHAPE_PROPOSAL_CORRECT_SQL_NONCOMPLIANT"
+                    )
+            failure_stage[stage or "S6_OTHER"] += 1
     return {
         "classification": "M23_RESULTSHAPE_HYPOTHESIS_NOT_SUPPORTED",
         "starting_commit": manifest["starting_commit"],
@@ -895,7 +903,11 @@ def _aggregate(manifest: dict[str, Any], records: list[dict[str, Any]]) -> dict[
                 "median_latency_ms": _percentile(
                     [
                         float(
-                            (r["resultshape"].get("proposal_capture") or {}).get("wall_latency_ms")
+                            str(
+                                (r["resultshape"].get("proposal_capture") or {}).get(
+                                    "wall_latency_ms"
+                                )
+                            )
                         )
                         for r in records
                         if (r["resultshape"].get("proposal_capture") or {}).get("wall_latency_ms")
@@ -906,7 +918,11 @@ def _aggregate(manifest: dict[str, Any], records: list[dict[str, Any]]) -> dict[
                 "p95_latency_ms": _percentile(
                     [
                         float(
-                            (r["resultshape"].get("proposal_capture") or {}).get("wall_latency_ms")
+                            str(
+                                (r["resultshape"].get("proposal_capture") or {}).get(
+                                    "wall_latency_ms"
+                                )
+                            )
                         )
                         for r in records
                         if (r["resultshape"].get("proposal_capture") or {}).get("wall_latency_ms")

@@ -55,11 +55,55 @@ is not a byte-for-byte M20 baseline rerun.
 ## Results
 
 The authoritative numeric results are written to
-`evaluation/fixtures/m23_result_shape_ab_experiment.json` after the frozen run.
-The primary paired matrix is A/B/C/D: both correct, control-only correct,
-ResultShape-only correct, and both wrong. ResultShape proposal quality,
-projection compliance, M1 outcomes, execution outcomes, non-projection AST
-drift, latency, and token usage are reported separately.
+`evaluation/fixtures/m23_result_shape_ab_experiment.json`. All 90 planned
+calls completed: 30 control SQL calls, 30 ResultShape proposal calls, and 30
+ResultShape SQL calls. The primary result was:
+
+| State | Count |
+|---|---:|
+| A — control correct / ResultShape correct | 15 |
+| B — control correct / ResultShape wrong | 0 |
+| C — control wrong / ResultShape correct | 1 |
+| D — control wrong / ResultShape wrong | 14 |
+
+Control correctness was 15/30 (50.00%) and ResultShape correctness was 16/30
+(53.33%). The single recovery was not enough to support the hypothesis on this
+bounded holdout; no control-to-ResultShape regression occurred. ResultShape
+proposal quality was 8 correct, 1 partially correct, and 21 wrong under the
+offline physical-arity/source assessment. The ResultShape arm had 13 M1
+rejections versus 14 for control, and no execution failures in either arm.
+
+The primary classification is therefore
+`M23_RESULTSHAPE_HYPOTHESIS_NOT_SUPPORTED`: the experiment is valid, but the
+observed end-to-end gain is too small and is not supported by proposal quality
+or a broad recovery pattern. The primary paired matrix is A/B/C/D: both
+correct, control-only correct, ResultShape-only correct, and both wrong.
+ResultShape proposal quality, projection compliance, M1 outcomes, execution
+outcomes, non-projection AST drift, latency, and token usage are reported
+separately in the artifact.
+
+## Failure stages, drift, and cost
+
+The ResultShape arm had 17 M1 accepts, 13 M1 rejects, and no planning errors or
+execution failures. Its 14 incorrect cases decomposed into 13 M1 rejects and
+one semantically wrong result after a compliant ResultShape validation. The
+control arm had 16 M1 accepts, 14 M1 rejects, and no execution failures. There
+were no control-correct to ResultShape-wrong regressions.
+
+Offline proposal assessment found 8 correct, 1 partially correct, and 21
+wrong proposals. The generated ResultShape SQL had three extra-output cases
+and no missing-output cases under the bounded projection comparison; control
+had four extra-output cases and no missing-output cases. The ResultShape arm
+changed non-projection AST shape on 3 table sets, 2 join sets, 1 aggregation
+shape, 6 order/limit shapes, 1 subquery/window shape, and 1 filter shape. These
+are diagnostic observations, not routing signals.
+
+Control used 30 provider calls, 14,653 input tokens and 1,847 output tokens.
+ResultShape used 30 proposal calls plus 30 SQL calls, with 16,571 proposal
+input / 1,478 output tokens and 17,033 SQL input / 1,819 output tokens. Median
+provider latency was 1,563 ms for control, 1,451 ms for the proposal call,
+and 1,571 ms for ResultShape SQL; corresponding p95 values were 3,298 ms,
+1,853 ms, and 1,929 ms. No reasoning-token telemetry was recorded.
 
 The 10-case pilot is a continuation of the same frozen experiment, not a
 tuning checkpoint. No prompt, model, population, or validation rule may change

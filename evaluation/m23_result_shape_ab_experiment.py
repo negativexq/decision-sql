@@ -79,6 +79,17 @@ def _head() -> str:
     return subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
 
 
+def _clean_repository_observed() -> bool:
+    status = subprocess.check_output(
+        ["git", "-C", str(ROOT), "status", "--short"], text=True
+    ).splitlines()
+    ignored_outputs = {
+        "evaluation/fixtures/m23_result_shape_manifest.json",
+        "evaluation/fixtures/m23_result_shape_ab_experiment.json",
+    }
+    return not [line for line in status if line[3:] not in ignored_outputs]
+
+
 def _case_id(question: Any, label: str) -> str:
     if label == "bird":
         return f"bird:{question.index}"
@@ -207,9 +218,7 @@ def _manifest(
     return {
         "milestone": "M23",
         "starting_commit": _head(),
-        "repository_clean_observed": not subprocess.check_output(
-            ["git", "-C", str(ROOT), "status", "--short"], text=True
-        ).strip(),
+        "repository_clean_observed": _clean_repository_observed(),
         "historical_artifacts": {
             "m20_manifest_hash": M20_MANIFEST_HASH,
             "m22_3_artifact_sha256": sha256_file(M22_3),
@@ -616,13 +625,16 @@ async def run_experiment(
     safety_cache: dict[tuple[str, str], tuple[Engine, SqlSafetyService]],
     manifest: dict[str, Any],
     pilot_count: int = 10,
+    existing_records: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     del pilot_count
     provider = OpenAICompatibleProvider(_settings())
     questions = _question_maps(datasets)
     gold = _gold_preflight(selected, questions)
-    records: list[dict[str, Any]] = []
+    records: list[dict[str, Any]] = list(existing_records or [])
+    existing_ids = {record["case_id"] for record in records}
     ordered = sorted(selected, key=lambda row: (row["arm_order"], row["case_id"]))
+    ordered = [row for row in ordered if row["case_id"] not in existing_ids]
     for position, item in enumerate(ordered, 1):
         question = questions[item["case_id"]]
         key = (item["kind"], item["database"])
@@ -944,17 +956,23 @@ def build_preflight() -> tuple[
         safety_cache[(kind, name)] = (engine, safety)
     manifest = _manifest(datasets, contexts, selected, settings, sql_eval, bird_root)
     manifest["manifest_hash"] = sha256_json(manifest)
-    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+    if MANIFEST.exists():
+        existing = json.loads(MANIFEST.read_text())
+        if existing.get("manifest_hash") != manifest["manifest_hash"]:
+            raise M23PreflightError("existing M23 manifest differs from deterministic preflight")
+    else:
+        MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest, datasets, contexts, {"selected": selected}, safety_cache
 
 
 async def main_async() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--preflight", action="store_true")
-    parser.add_argument("--run", action="store_true")
+    parser.add_argument("--pilot", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
-    if args.preflight == args.run:
-        parser.error("choose exactly one of --preflight or --run")
+    if sum((args.preflight, args.pilot, args.resume)) != 1:
+        parser.error("choose exactly one of --preflight, --pilot, or --resume")
     try:
         manifest, datasets, contexts, selected_meta, safety_cache = build_preflight()
         if args.preflight:
@@ -970,9 +988,30 @@ async def main_async() -> int:
             for engine, _ in safety_cache.values():
                 engine.dispose()
             return 0
+        existing_records: list[dict[str, Any]] = []
+        if args.resume:
+            if not RESULT.exists():
+                raise M23PreflightError("pilot result is missing for resume")
+            pilot = json.loads(RESULT.read_text())
+            if pilot.get("manifest_hash") != manifest["manifest_hash"]:
+                raise M23PreflightError("pilot result manifest hash does not match preflight")
+            existing_records = pilot.get("cases", [])
+            if len(existing_records) != 10:
+                raise M23PreflightError("resume requires exactly 10 completed pilot cases")
+        run_selected = selected_meta["selected"][:10] if args.pilot else selected_meta["selected"]
         result = await run_experiment(
-            datasets, contexts, selected_meta["selected"], safety_cache, manifest
+            datasets,
+            contexts,
+            run_selected,
+            safety_cache,
+            manifest,
+            existing_records=existing_records,
         )
+        if args.pilot:
+            result["classification"] = "M23_PILOT_NON_AUTHORITATIVE"
+            result["pilot"] = {"cases": 10, "continuation_required": True}
+        elif args.resume:
+            result["pilot"] = {"cases": 10, "continuation_required": False}
         RESULT.write_text(json.dumps(result, indent=2, default=str) + "\n")
         print(
             json.dumps(

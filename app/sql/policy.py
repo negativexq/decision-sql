@@ -1,6 +1,8 @@
+from dataclasses import dataclass
 from typing import cast
 
 from sqlglot import exp
+from sqlglot.optimizer.scope import Scope, traverse_scope
 
 from app.catalog.models import SchemaCatalog, TableMetadata
 from app.sql.models import PolicyCode, PolicyRejection
@@ -15,27 +17,103 @@ FORBIDDEN_CATALOGS = {
     "information_schema",
 }
 
-SAFE_FUNCTIONS = {
-    "AVG",
-    "COALESCE",
-    "COUNT",
-    "DATE_TRUNC",
-    "EXTRACT",
-    "MAX",
-    "MIN",
-    "ROW_NUMBER",
-    "RANK",
-    "DENSE_RANK",
-    "LAG",
-    "LEAD",
-    "FIRST_VALUE",
-    "LAST_VALUE",
-    "NTH_VALUE",
-    "NTILE",
-    "SUM",
-    "CAST",
-    "TIMESTAMP_TRUNC",
+SAFE_FUNCTION_FAMILIES = {
+    "SAFE_AGGREGATE": frozenset(
+        {
+            "ARRAY_AGG",
+            "AVG",
+            "CORR",
+            "COUNT",
+            "JSON_AGG",
+            "JSONB_AGG",
+            "JSON_OBJECT_AGG",
+            "JSONB_OBJECT_AGG",
+            "MAX",
+            "MIN",
+            "PERCENTILE_CONT",
+            "REGR_SLOPE",
+            "STDDEV",
+            "STRING_AGG",
+            "SUM",
+        }
+    ),
+    "SAFE_DATETIME": frozenset({"AGE", "DATE_TRUNC", "EXTRACT", "TO_CHAR", "TIMESTAMP_TRUNC"}),
+    "SAFE_NULL_HANDLING": frozenset({"COALESCE", "NULLIF"}),
+    "SAFE_NUMERIC": frozenset(
+        {"ABS", "EXP", "GREATEST", "LEAST", "LN", "LOG", "POWER", "ROUND", "SQRT"}
+    ),
+    "SAFE_STRING": frozenset(
+        {
+            "ARRAY_TO_STRING",
+            "CONCAT_WS",
+            "JSONB_EXTRACT_PATH_TEXT",
+            "JSON_EXTRACT",
+            "JSON_EXTRACT_SCALAR",
+            "ROW_TO_JSON",
+            "STRING_TO_ARRAY",
+            "TRIM",
+        }
+    ),
+    "SAFE_ARRAY": frozenset({"ARRAY", "ARRAY_REMOVE", "CARDINALITY", "UNNEST"}),
+    "SAFE_JSON": frozenset({"JSON_BUILD_OBJECT", "JSONB_BUILD_OBJECT"}),
+    "SAFE_WINDOW": frozenset(
+        {
+            "DENSE_RANK",
+            "FIRST_VALUE",
+            "LAG",
+            "LAST_VALUE",
+            "LEAD",
+            "NTH_VALUE",
+            "NTILE",
+            "PERCENT_RANK",
+            "RANK",
+            "ROW_NUMBER",
+        }
+    ),
+    "SAFE_SUBQUERY": frozenset({"EXISTS"}),
+    "SAFE_CAST": frozenset({"CAST"}),
 }
+
+SAFE_FUNCTIONS = set().union(*SAFE_FUNCTION_FAMILIES.values())
+
+NONDETERMINISTIC_FUNCTIONS = frozenset(
+    {
+        "CLOCK_TIMESTAMP",
+        "CURRENT_DATE",
+        "CURRENT_TIME",
+        "CURRENT_TIMESTAMP",
+        "LOCALTIME",
+        "LOCALTIMESTAMP",
+        "NOW",
+        "RANDOM",
+        "STATEMENT_TIMESTAMP",
+        "TRANSACTION_TIMESTAMP",
+    }
+)
+STATEFUL_OR_DANGEROUS_FUNCTIONS = frozenset(
+    {
+        "ADVISORY_LOCK",
+        "PG_SLEEP",
+        "SET_CONFIG",
+    }
+)
+
+
+@dataclass(frozen=True)
+class _Relation:
+    table: TableMetadata | None = None
+    columns: frozenset[str] = frozenset()
+
+    def has_column(self, name: str) -> bool:
+        return (self.table is not None and self.table.get_column(name) is not None) or (
+            name in self.columns
+        )
+
+    def queryable_column(self, name: str) -> bool:
+        if self.table is None:
+            return name in self.columns
+        column = self.table.get_column(name)
+        return column is not None and column.queryable
 
 
 class SQLPolicy:
@@ -59,16 +137,29 @@ class SQLPolicy:
                 type(into).__name__ if into is not None else type(locks[0]).__name__,
             )
 
+        table_rejection = self._validate_tables(expression)
+        if table_rejection:
+            return table_rejection
+
+        function_rejection = self._validate_functions(expression)
+        if function_rejection:
+            return function_rejection
+        return self._validate_columns(expression)
+
+    def _validate_tables(self, expression: exp.Expression) -> PolicyRejection | None:
+        """Validate physical tables while leaving CTE names to scope resolution."""
         cte_names = {
             cte.alias_or_name.lower() for cte in expression.find_all(exp.CTE) if cte.alias_or_name
         }
-        tables = list(expression.find_all(exp.Table))
-        source_tables: list[TableMetadata] = []
-        aliases: dict[str, TableMetadata] = {}
-        for table in tables:
+        seen: set[tuple[str, str, str]] = set()
+        for table in expression.find_all(exp.Table):
             table_name = table.name.lower()
             schema_name = table.db.lower() if table.db else ""
             catalog_name = table.catalog.lower() if table.catalog else ""
+            identity = (catalog_name, schema_name, table_name)
+            if identity in seen:
+                continue
+            seen.add(identity)
             if schema_name in FORBIDDEN_CATALOGS or catalog_name in FORBIDDEN_CATALOGS:
                 return self._reject(
                     PolicyCode.FORBIDDEN_CATALOG,
@@ -102,15 +193,7 @@ class SQLPolicy:
                     f"Table is not queryable: {table_name}",
                     table_name,
                 )
-            if metadata not in source_tables:
-                source_tables.append(metadata)
-            aliases[table_name] = metadata
-            aliases[table.alias_or_name.lower()] = metadata
-
-        function_rejection = self._validate_functions(expression)
-        if function_rejection:
-            return function_rejection
-        return self._validate_columns(expression, source_tables, aliases, cte_names)
+        return None
 
     def _validate_functions(self, expression: exp.Expression) -> PolicyRejection | None:
         for function in expression.find_all(exp.Func):
@@ -127,65 +210,227 @@ class SQLPolicy:
                 )
         return None
 
-    def _validate_columns(
-        self,
-        expression: exp.Expression,
-        source_tables: list[TableMetadata],
-        aliases: dict[str, TableMetadata],
-        cte_names: set[str],
+    def _validate_columns(self, expression: exp.Expression) -> PolicyRejection | None:
+        scopes = tuple(traverse_scope(expression))
+        for scope in scopes:
+            rejection = self._validate_scope_columns(scope, scopes)
+            if rejection:
+                return rejection
+        return None
+
+    def _validate_scope_columns(
+        self, scope: Scope, scopes: tuple[Scope, ...]
     ) -> PolicyRejection | None:
+        relations = self._scope_relations(scope)
         output_aliases = {
-            alias.alias_or_name.lower()
-            for alias in expression.find_all(exp.Alias)
-            if alias.alias_or_name
+            item.alias_or_name.lower()
+            for item in scope.expression.selects
+            if isinstance(item, exp.Alias) and item.alias_or_name
         }
-        for column in expression.find_all(exp.Column):
-            column_name = column.name.lower()
+        for column in self._visible_columns(scope, scopes):
+            name = self._identifier_name(column.name)
             qualifier = column.table.lower()
-            if qualifier in cte_names or (not qualifier and column_name in output_aliases):
+            if (
+                not qualifier
+                and name in output_aliases
+                and self._is_projection_alias_reference(scope, column)
+            ):
                 continue
-            if qualifier:
-                candidates = [aliases[qualifier]] if qualifier in aliases else []
-            else:
-                candidates = [table for table in source_tables if table.get_column(column_name)]
-            if not candidates:
+            relation = self._resolve_relation(scope, relations, qualifier, name)
+            if relation is None:
                 return self._reject(
                     PolicyCode.UNKNOWN_COLUMN,
                     f"Column cannot be resolved in the queryable catalog: {column.sql()}",
                     column.sql(),
                 )
-            for table in candidates:
-                metadata = table.get_column(column_name)
-                if metadata is None:
-                    return self._reject(
-                        PolicyCode.UNKNOWN_COLUMN,
-                        f"Column cannot be resolved in table {table.name}: {column_name}",
-                        column.sql(),
-                    )
-                if not metadata.queryable:
-                    return self._reject(
-                        PolicyCode.FORBIDDEN_COLUMN,
-                        f"Column is not queryable: {table.name}.{column_name}",
-                        f"{table.name}.{column_name}",
-                    )
-
-        for star in expression.find_all(exp.Star):
-            if isinstance(star.parent, exp.Count):
+            if not qualifier and name in relations and not relation.has_column(name):
+                # PostgreSQL permits a relation alias as a composite/row value
+                # (for example, row_to_json(article_ars)).
                 continue
-            if isinstance(star.parent, exp.Column):
-                qualifier = star.parent.table.lower()
-                candidate_tables = [aliases[qualifier]] if qualifier in aliases else []
+            if not relation.has_column(name):
+                return self._reject(
+                    PolicyCode.UNKNOWN_COLUMN,
+                    f"Column cannot be resolved in the queryable scope: {column.sql()}",
+                    column.sql(),
+                )
+            if not relation.queryable_column(name):
+                table_name = relation.table.name if relation.table is not None else qualifier
+                return self._reject(
+                    PolicyCode.FORBIDDEN_COLUMN,
+                    f"Column is not queryable: {table_name}.{name}",
+                    f"{table_name}.{name}",
+                )
+
+        for item in scope.expression.selects if isinstance(scope.expression, exp.Select) else ():
+            if isinstance(item, exp.Star):
+                qualifier = ""
+            elif isinstance(item, exp.Column) and self._identifier_name(item.name) == "*":
+                qualifier = item.table.lower()
             else:
-                candidate_tables = source_tables
-            for table in candidate_tables:
-                denied = next((column for column in table.columns if not column.queryable), None)
+                continue
+            candidates = (
+                [relations[qualifier]]
+                if qualifier in relations
+                else list(relations.values())
+                if not qualifier
+                else []
+            )
+            for relation in candidates:
+                if relation.table is None:
+                    continue
+                denied = next(
+                    (column for column in relation.table.columns if not column.queryable), None
+                )
                 if denied:
                     return self._reject(
                         PolicyCode.FORBIDDEN_COLUMN,
-                        f"Wildcard would expose a non-queryable column: {table.name}.{denied.name}",
-                        f"{table.name}.{denied.name}",
+                        "Wildcard would expose a non-queryable column: "
+                        f"{relation.table.name}.{denied.name}",
+                        f"{relation.table.name}.{denied.name}",
                     )
         return None
+
+    def _scope_relations(self, scope: Scope) -> dict[str, _Relation]:
+        relations: dict[str, _Relation] = {}
+        for name, source in scope.sources.items():
+            if isinstance(source, exp.Table):
+                metadata = self.catalog.get_table(source.name)
+                if metadata is not None:
+                    relations[name.lower()] = _Relation(table=metadata)
+            elif isinstance(source, Scope):
+                relations[name.lower()] = _Relation(columns=self._output_columns(source))
+        return relations
+
+    def _visible_columns(self, scope: Scope, scopes: tuple[Scope, ...]) -> tuple[exp.Column, ...]:
+        """Return this scope's columns plus correlated references, not nested locals."""
+        descendants = [
+            candidate for candidate in scopes if SQLPolicy._is_descendant(candidate, scope)
+        ]
+        nested_local_ids = {
+            id(column)
+            for descendant in descendants
+            for column in descendant.columns
+            if self._is_local_column(descendant, column)
+        }
+        return tuple(column for column in scope.columns if id(column) not in nested_local_ids)
+
+    def _is_local_column(self, scope: Scope, column: exp.Column) -> bool:
+        relations = self._scope_relations(scope)
+        name = self._identifier_name(column.name)
+        qualifier = column.table.lower()
+        if qualifier:
+            return qualifier in relations
+        return any(relation.has_column(name) for relation in relations.values()) or (
+            name in relations
+        )
+
+    @staticmethod
+    def _is_descendant(candidate: Scope, ancestor: Scope) -> bool:
+        current = candidate.parent
+        while current is not None:
+            if current is ancestor:
+                return True
+            current = current.parent
+        return False
+
+    def _resolve_relation(
+        self, scope: Scope, relations: dict[str, _Relation], qualifier: str, name: str
+    ) -> _Relation | None:
+        if qualifier:
+            relation = relations.get(qualifier)
+            if relation is not None:
+                return relation
+        else:
+            relation = relations.get(name)
+            if relation is not None:
+                return relation
+            local = [relation for relation in relations.values() if relation.has_column(name)]
+            if len(local) == 1:
+                return local[0]
+            if len(local) > 1:
+                return local[0]
+        parent = scope.parent
+        if parent is not None:
+            return self._resolve_relation(parent, self._scope_relations(parent), qualifier, name)
+        return None
+
+    def _output_columns(self, scope: Scope) -> frozenset[str]:
+        if isinstance(scope.expression, (exp.Unnest, exp.Explode)):
+            alias = scope.expression.args.get("alias")
+            if isinstance(alias, exp.TableAlias) and alias.alias_or_name:
+                return frozenset({self._identifier_name(alias.alias_or_name)})
+            return frozenset({"unnest"})
+        if isinstance(scope.expression, exp.Lateral):
+            nested = scope.sources.get("")
+            if isinstance(nested, Scope):
+                return self._output_columns(nested)
+        if isinstance(scope.expression, exp.SetOperation):
+            left = scope.expression.args.get("this")
+            return (
+                self._output_names_from_select(left, scope)
+                if isinstance(left, exp.Select)
+                else frozenset()
+            )
+        parent = scope.expression.parent
+        if isinstance(parent, exp.CTE):
+            alias = parent.args.get("alias")
+        elif isinstance(parent, exp.Subquery):
+            alias = parent.args.get("alias")
+        else:
+            alias = None
+        explicit = alias.args.get("columns") if isinstance(alias, exp.TableAlias) else None
+        if explicit:
+            return frozenset(column.name.lower() for column in explicit)
+        return self._output_names_from_select(scope.expression, scope)
+
+    def _output_names_from_select(
+        self, expression: exp.Expression | None, scope: Scope | None
+    ) -> frozenset[str]:
+        names: set[str] = set()
+        if not isinstance(expression, exp.Select):
+            return frozenset()
+        for item in expression.selects:
+            if isinstance(item, exp.Star):
+                relations = self._scope_relations(scope) if scope is not None else {}
+                for source in relations.values():
+                    if source.table is not None:
+                        names.update(column.name.lower() for column in source.table.columns)
+                    else:
+                        names.update(source.columns)
+            elif isinstance(item, exp.Column):
+                if self._identifier_name(item.name) == "*":
+                    relations = self._scope_relations(scope) if scope is not None else {}
+                    selected = relations.get(item.table.lower()) if item.table else None
+                    sources = [selected] if selected is not None else list(relations.values())
+                    for source in sources:
+                        if source.table is not None:
+                            names.update(column.name.lower() for column in source.table.columns)
+                        else:
+                            names.update(source.columns)
+                else:
+                    names.add(self._identifier_name(item.name))
+            elif isinstance(item, exp.Alias):
+                names.add(self._identifier_name(item.alias_or_name))
+            else:
+                output_name = getattr(item, "output_name", "")
+                if output_name:
+                    names.add(self._identifier_name(str(output_name)))
+        return frozenset(names)
+
+    @staticmethod
+    def _is_projection_alias_reference(scope: Scope, column: exp.Column) -> bool:
+        for key in ("order", "group"):
+            clause = scope.expression.args.get(key)
+            if clause is not None and any(
+                candidate is column for candidate in clause.find_all(exp.Column)
+            ):
+                return True
+        return False
+
+    @staticmethod
+    def _identifier_name(value: str) -> str:
+        """Normalize SQLGlot identifier text when comments trail an identifier."""
+        return value.split("/*", 1)[0].strip().lower()
 
     @staticmethod
     def function_name(function: exp.Func) -> str:
@@ -193,6 +438,18 @@ class SQLPolicy:
             return function.name.upper()
         if isinstance(function, exp.TimestampTrunc):
             return "DATE_TRUNC"
+        if isinstance(function, exp.JSONArrayAgg):
+            return "JSON_AGG"
+        if isinstance(function, exp.JSONObjectAgg):
+            return "JSON_OBJECT_AGG"
+        if isinstance(function, exp.GroupConcat):
+            return "STRING_AGG"
+        if isinstance(function, exp.Explode):
+            return "UNNEST"
+        if isinstance(function, exp.TimeToStr):
+            return "TO_CHAR"
+        if isinstance(function, exp.Rand):
+            return "RANDOM"
         return cast(str, function.sql_name()).upper()  # type: ignore[no-untyped-call]
 
     @staticmethod

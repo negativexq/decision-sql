@@ -48,11 +48,82 @@ def test_predicates_and_case_expressions_are_not_treated_as_functions() -> None:
     )
 
 
+def test_reviewed_analytical_function_families_are_allowed() -> None:
+    sql_policy = policy()
+    queries = (
+        "SELECT ABS(unit_price), ROUND(unit_price, 2), POWER(unit_price, 2) FROM products",
+        "SELECT STRING_AGG(name, ', '), ARRAY_AGG(name), JSON_AGG(name) FROM products",
+        "SELECT JSON_BUILD_OBJECT('name', name), ARRAY_TO_STRING(ARRAY[name], ',') FROM products",
+        "SELECT NULLIF(unit_price, 0), GREATEST(unit_price, 0), "
+        "LEAST(unit_price, 100) FROM products",
+        "SELECT UNNEST(ARRAY[1, 2])",
+        "SELECT EXISTS(SELECT 1 FROM products), TO_CHAR(CURRENT_DATE, 'YYYY')",
+    )
+
+    # CURRENT_DATE is intentionally a determinism boundary, so the last
+    # query is checked separately below with a literal date.
+    for query in queries[:-1]:
+        assert sql_policy.validate(parsed(query)) is None
+    assert sql_policy.validate(parsed("SELECT TO_CHAR(DATE '2025-01-01', 'YYYY')")) is None
+    rejection = sql_policy.validate(parsed(queries[-1]))
+    assert rejection is not None
+    assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
+    assert rejection.object == "CURRENT_DATE"
+
+
+def test_function_policy_remains_deny_first() -> None:
+    sql_policy = policy()
+    rejected = {
+        "SELECT PG_SLEEP(1)": "PG_SLEEP",
+        "SELECT SET_CONFIG('x', 'y', false)": "SET_CONFIG",
+        "SELECT RANDOM()": "RANDOM",
+        "SELECT UNKNOWN_EXTENSION_FUNCTION(1)": "UNKNOWN_EXTENSION_FUNCTION",
+    }
+
+    for query, name in rejected.items():
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None
+        assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
+        assert rejection.object == name
+
+
+def test_scope_validation_supports_nested_relations_and_correlated_columns() -> None:
+    sql_policy = policy()
+    valid = (
+        "WITH named AS (SELECT name AS product_name FROM products) "
+        "SELECT named.product_name FROM named",
+        "SELECT p.product_name FROM (SELECT name AS product_name FROM products) AS p",
+        "WITH first_level AS (SELECT name AS product_name FROM products), "
+        "second_level AS (SELECT product_name FROM first_level) "
+        "SELECT second_level.product_name FROM second_level",
+        "SELECT p.id FROM products AS p WHERE EXISTS "
+        "(SELECT 1 FROM order_items AS oi WHERE oi.product_id = p.id)",
+        "WITH named(product_name) AS (SELECT name FROM products) "
+        "SELECT named.product_name FROM named",
+        "SELECT name AS product_name FROM products ORDER BY product_name",
+    )
+    for query in valid:
+        assert sql_policy.validate(parsed(query)) is None
+
+
+def test_scope_validation_rejects_invalid_derived_and_physical_columns() -> None:
+    sql_policy = policy()
+    invalid = (
+        "SELECT p.missing FROM (SELECT name AS product_name FROM products) AS p",
+        "SELECT products.missing FROM products",
+        "WITH named(product_name) AS (SELECT name FROM products) SELECT named.name FROM named",
+        "SELECT name AS product_name FROM products WHERE product_name = 'x'",
+    )
+    for query in invalid:
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None
+        assert rejection.code is PolicyCode.UNKNOWN_COLUMN
+
+
 def test_mutation_and_multiple_statements_are_rejected_before_execution() -> None:
     sql_policy = policy()
     assert (
-        sql_policy.validate(parsed("DELETE FROM orders")).code
-        is PolicyCode.NON_READ_ONLY_STATEMENT
+        sql_policy.validate(parsed("DELETE FROM orders")).code is PolicyCode.NON_READ_ONLY_STATEMENT
     )
     assert (
         sql_policy.validate(parsed("SELECT * INTO hacked FROM products")).code

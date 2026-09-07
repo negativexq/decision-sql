@@ -1,0 +1,329 @@
+{
+  "classification": "M24_M1_ANALYTICAL_COVERAGE_VALIDATED",
+  "starting_head": "9843c5d439c317ca3b981278072ea072214f8949",
+  "provider_calls": 0,
+  "fresh_generation": 0,
+  "production_changes": 0,
+  "m20_manifest_hash": "36e53850a704049cdf48453f8f3910eefeb877c9c57c342c0913674c8f13025a",
+  "protected_data_safety": {
+    "ignored": true,
+    "tracked_files": 0,
+    "gold_content_committed": false,
+    "case_mappings_committed": false
+  },
+  "before": {
+    "gold_total": 180,
+    "m1_accepted": 21,
+    "m1_rejected": 155,
+    "planning_or_multistatement": 4,
+    "forbidden_function": 142,
+    "unknown_column": 13
+  },
+  "after": {
+    "gold_total": 180,
+    "m1_accepted": 166,
+    "m1_rejected": 10,
+    "planning_or_multistatement": 4,
+    "failure_codes": {
+      "FORBIDDEN_FUNCTION": 9,
+      "QUERY_TOO_EXPENSIVE": 1,
+      "SQL_PARSE_ERROR": 4
+    },
+    "failure_classification": {
+      "INTENTIONAL_DETERMINISM_BOUNDARY": 9,
+      "OTHER_GENERAL_POLICY_BOUNDARY": 1
+    }
+  },
+  "function_inventory": {
+    "parseable_cases": 180,
+    "total_function_occurrences": 1417,
+    "distinct_functions": 54,
+    "currently_safe_distinct": 53,
+    "previously_unsupported_distinct": 38,
+    "reviewed_safe_distinct": 53,
+    "reviewed_unsafe_stateful_distinct": 1,
+    "unknown_fail_closed_distinct": 0,
+    "safe_family_occurrences": {
+      "SAFE_AGGREGATE": 348,
+      "SAFE_ARRAY": 13,
+      "SAFE_CAST": 278,
+      "SAFE_DATETIME": 17,
+      "SAFE_JSON": 10,
+      "SAFE_NULL_HANDLING": 183,
+      "SAFE_NUMERIC": 234,
+      "SAFE_STRING": 275,
+      "SAFE_SUBQUERY": 2,
+      "SAFE_WINDOW": 43,
+      "UNSUPPORTED_OR_UNKNOWN": 14
+    },
+    "safe_family_cases": {
+      "SAFE_AGGREGATE": 165,
+      "SAFE_ARRAY": 10,
+      "SAFE_CAST": 91,
+      "SAFE_DATETIME": 11,
+      "SAFE_JSON": 9,
+      "SAFE_NULL_HANDLING": 69,
+      "SAFE_NUMERIC": 138,
+      "SAFE_STRING": 92,
+      "SAFE_SUBQUERY": 2,
+      "SAFE_WINDOW": 35,
+      "UNSUPPORTED_OR_UNKNOWN": 9
+    }
+  },
+  "function_policy": {
+    "previous_safe_surface": [
+      "AVG",
+      "CAST",
+      "COALESCE",
+      "COUNT",
+      "DATE_TRUNC",
+      "DENSE_RANK",
+      "EXTRACT",
+      "FIRST_VALUE",
+      "LAG",
+      "LAST_VALUE",
+      "LEAD",
+      "MAX",
+      "MIN",
+      "NTH_VALUE",
+      "NTILE",
+      "RANK",
+      "ROW_NUMBER",
+      "SUM",
+      "TIMESTAMP_TRUNC"
+    ],
+    "new_safe_surface": [
+      "ABS",
+      "AGE",
+      "ARRAY",
+      "ARRAY_AGG",
+      "ARRAY_REMOVE",
+      "ARRAY_TO_STRING",
+      "AVG",
+      "CARDINALITY",
+      "CAST",
+      "COALESCE",
+      "CONCAT_WS",
+      "CORR",
+      "COUNT",
+      "DATE_TRUNC",
+      "DENSE_RANK",
+      "EXISTS",
+      "EXP",
+      "EXTRACT",
+      "FIRST_VALUE",
+      "GREATEST",
+      "JSONB_AGG",
+      "JSONB_BUILD_OBJECT",
+      "JSONB_EXTRACT_PATH_TEXT",
+      "JSONB_OBJECT_AGG",
+      "JSON_AGG",
+      "JSON_BUILD_OBJECT",
+      "JSON_EXTRACT",
+      "JSON_EXTRACT_SCALAR",
+      "JSON_OBJECT_AGG",
+      "LAG",
+      "LAST_VALUE",
+      "LEAD",
+      "LEAST",
+      "LN",
+      "LOG",
+      "MAX",
+      "MIN",
+      "NTH_VALUE",
+      "NTILE",
+      "NULLIF",
+      "PERCENTILE_CONT",
+      "PERCENT_RANK",
+      "POWER",
+      "RANK",
+      "REGR_SLOPE",
+      "ROUND",
+      "ROW_NUMBER",
+      "ROW_TO_JSON",
+      "SQRT",
+      "STDDEV",
+      "STRING_AGG",
+      "STRING_TO_ARRAY",
+      "SUM",
+      "TIMESTAMP_TRUNC",
+      "TO_CHAR",
+      "TRIM",
+      "UNNEST"
+    ],
+    "added_general_functions": [
+      "ABS",
+      "AGE",
+      "ARRAY",
+      "ARRAY_AGG",
+      "ARRAY_REMOVE",
+      "ARRAY_TO_STRING",
+      "CARDINALITY",
+      "CONCAT_WS",
+      "CORR",
+      "EXISTS",
+      "EXP",
+      "GREATEST",
+      "JSONB_AGG",
+      "JSONB_BUILD_OBJECT",
+      "JSONB_EXTRACT_PATH_TEXT",
+      "JSONB_OBJECT_AGG",
+      "JSON_AGG",
+      "JSON_BUILD_OBJECT",
+      "JSON_EXTRACT",
+      "JSON_EXTRACT_SCALAR",
+      "JSON_OBJECT_AGG",
+      "LEAST",
+      "LN",
+      "LOG",
+      "NULLIF",
+      "PERCENTILE_CONT",
+      "PERCENT_RANK",
+      "POWER",
+      "REGR_SLOPE",
+      "ROUND",
+      "ROW_TO_JSON",
+      "SQRT",
+      "STDDEV",
+      "STRING_AGG",
+      "STRING_TO_ARRAY",
+      "TO_CHAR",
+      "TRIM",
+      "UNNEST"
+    ],
+    "families": {
+      "SAFE_AGGREGATE": [
+        "ARRAY_AGG",
+        "AVG",
+        "CORR",
+        "COUNT",
+        "JSONB_AGG",
+        "JSONB_OBJECT_AGG",
+        "JSON_AGG",
+        "JSON_OBJECT_AGG",
+        "MAX",
+        "MIN",
+        "PERCENTILE_CONT",
+        "REGR_SLOPE",
+        "STDDEV",
+        "STRING_AGG",
+        "SUM"
+      ],
+      "SAFE_ARRAY": [
+        "ARRAY",
+        "ARRAY_REMOVE",
+        "CARDINALITY",
+        "UNNEST"
+      ],
+      "SAFE_CAST": [
+        "CAST"
+      ],
+      "SAFE_DATETIME": [
+        "AGE",
+        "DATE_TRUNC",
+        "EXTRACT",
+        "TIMESTAMP_TRUNC",
+        "TO_CHAR"
+      ],
+      "SAFE_JSON": [
+        "JSONB_BUILD_OBJECT",
+        "JSON_BUILD_OBJECT"
+      ],
+      "SAFE_NULL_HANDLING": [
+        "COALESCE",
+        "NULLIF"
+      ],
+      "SAFE_NUMERIC": [
+        "ABS",
+        "EXP",
+        "GREATEST",
+        "LEAST",
+        "LN",
+        "LOG",
+        "POWER",
+        "ROUND",
+        "SQRT"
+      ],
+      "SAFE_STRING": [
+        "ARRAY_TO_STRING",
+        "CONCAT_WS",
+        "JSONB_EXTRACT_PATH_TEXT",
+        "JSON_EXTRACT",
+        "JSON_EXTRACT_SCALAR",
+        "ROW_TO_JSON",
+        "STRING_TO_ARRAY",
+        "TRIM"
+      ],
+      "SAFE_SUBQUERY": [
+        "EXISTS"
+      ],
+      "SAFE_WINDOW": [
+        "DENSE_RANK",
+        "FIRST_VALUE",
+        "LAG",
+        "LAST_VALUE",
+        "LEAD",
+        "NTH_VALUE",
+        "NTILE",
+        "PERCENT_RANK",
+        "RANK",
+        "ROW_NUMBER"
+      ]
+    },
+    "restrictions_preserved": [
+      "nondeterministic functions",
+      "stateful and dangerous functions",
+      "unknown functions fail closed"
+    ]
+  },
+  "scope_fix": {
+    "unknown_column_before": 13,
+    "fixed_by_generic_scope_logic": 13,
+    "still_failing": 0,
+    "new_unknown_column_regressions": 0,
+    "scope_model": "SQLGlot traverse_scope with per-relation derived output schemas"
+  },
+  "delta_attribution": {
+    "function_policy_only_recoveries": 132,
+    "scope_only_recoveries": 13,
+    "both": 0,
+    "still_blocked": 14,
+    "next_failure_surfaced": 10
+  },
+  "reference_execution": {
+    "m1_accepted": 166,
+    "executed": 166,
+    "success": 166,
+    "failure": 0,
+    "timeout": 0,
+    "evaluator_pass": 166
+  },
+  "historical_regression": {
+    "status": "NOT_RUN",
+    "reason": "BIRD/Defog database roots were not provisioned in this environment",
+    "frozen_cases": 774,
+    "unexpected_regressions": [],
+    "newly_accepted_from_old_rejection": {
+      "FORBIDDEN_FUNCTION": 132,
+      "UNKNOWN_COLUMN": 13
+    },
+    "newly_rejected_from_old_acceptance": {}
+  },
+  "security_controls": {
+    "select_only": true,
+    "single_statement": true,
+    "system_catalogs_denied": true,
+    "physical_catalog_enforced": true,
+    "cost_gate_unchanged": true,
+    "read_only_execution_unchanged": true
+  },
+  "replay_population": {
+    "public_rows": 270,
+    "protected_rows": 270,
+    "exact_matches": 270,
+    "unmatched_public": 0,
+    "unmatched_protected": 0,
+    "duplicate_ids": 0,
+    "merge_key": "instance_id"
+  }
+}

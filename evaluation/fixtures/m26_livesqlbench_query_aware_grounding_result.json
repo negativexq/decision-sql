@@ -1,0 +1,135 @@
+{
+  "classification": "M26_QUERY_AWARE_GROUNDING_PILOT_COMPLETED",
+  "experiment": {
+    "cases": 18,
+    "provider_calls": 18,
+    "calls_per_case_max": 1,
+    "intervention": "QUERY_AWARE_GROUNDING"
+  },
+  "old_arm": {
+    "correct": 6,
+    "total": 18
+  },
+  "m26": {
+    "correct": 4,
+    "total": 18,
+    "accuracy": 0.2222222222222222
+  },
+  "grounding": {
+    "table_first": true,
+    "column_first": true,
+    "fk_closure": true,
+    "query_aware_kb": true,
+    "database_value_linking": true,
+    "raw_protected_refs_used_for_filtering": false,
+    "pilot_table_recall": 1.0,
+    "all_select_table_recall": 0.9585921325051759,
+    "all_select_column_recall": 0.9639407598197038,
+    "value_evidence_cases": 168
+  },
+  "context": {
+    "m25_2_median_input_tokens": 13212,
+    "m25_2_total_input_tokens": 239429,
+    "m26_estimated_tokens": {
+      "median": 9246.0,
+      "p95": 12586.0,
+      "max": 18629.0,
+      "total": 1683995.0
+    }
+  },
+  "paired": {
+    "old_correct_new_correct": 3,
+    "old_correct_new_wrong": 3,
+    "old_wrong_new_correct": 1,
+    "old_wrong_new_wrong": 11,
+    "net_correct_delta": -2,
+    "mcnemar_exact_p": 0.625
+  },
+  "pipeline": {
+    "provider_success": 18,
+    "protocol_success": 18,
+    "sql_produced": 18,
+    "m1_accepted": 16,
+    "m1_rejected": 2,
+    "execution_attempted": 16,
+    "execution_success": 16,
+    "execution_failure": 0,
+    "timeout": 0
+  },
+  "m1_rejections": {
+    "EXECUTION_ERROR": 1,
+    "UNKNOWN_COLUMN": 1
+  },
+  "sql_shapes": {
+    "0_join": 4,
+    "1_join": 3,
+    "2+_join": 11,
+    "aggregation": 12,
+    "cte": 14,
+    "current_date": 1,
+    "distinct": 3,
+    "group_by": 8,
+    "having": 0,
+    "limit": 7,
+    "order_by": 18,
+    "subquery": 0,
+    "temporal": 2,
+    "window": 7
+  },
+  "usage": {
+    "input_tokens": {
+      "median": 9363.5,
+      "p95": 13183.0,
+      "max": 13319.0,
+      "total": 175067.0
+    },
+    "output_tokens": {
+      "median": 193.0,
+      "p95": 390.0,
+      "max": 460.0,
+      "total": 3987.0
+    },
+    "reasoning_tokens": {
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0.0,
+      "total": 0.0
+    },
+    "cached_tokens": {
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0.0,
+      "total": 0.0
+    }
+  },
+  "latency": {
+    "provider_ms": {
+      "median": 2502.6931669563055,
+      "p95": 3904.961582971737,
+      "max": 4234.104292001575,
+      "total": 50268.014499219134
+    },
+    "end_to_end_ms": {
+      "median": 2528.820188017562,
+      "p95": 3950.8213330991566,
+      "max": 4275.242540985346,
+      "total": 50893.6620419845
+    }
+  },
+  "official": {
+    "correct": 4,
+    "total": 18,
+    "accuracy": 0.2222222222222222
+  },
+  "reference_valid_diagnostic": {
+    "correct": 4,
+    "total": 17,
+    "label": "DIAGNOSTIC ONLY"
+  },
+  "protected_data_safety": {
+    "ignored": true,
+    "tracked": [],
+    "gold_committed": false,
+    "details_tracked": false
+  }
+}

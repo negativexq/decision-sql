@@ -1,0 +1,119 @@
+{
+  "answerable_json_cases": [
+    "fleet_01",
+    "fleet_06",
+    "support_04",
+    "risk_04",
+    "risk_08",
+    "subscription_12",
+    "warehouse_09"
+  ],
+  "attributes": [
+    {
+      "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+      "database": "fleet_ops",
+      "documented_data_type": "NUMERIC",
+      "entity": "entity:fleet_ops:telemetry_events",
+      "json_extraction_form": "#>>",
+      "numeric_semantic_type": true,
+      "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+      "text_returning": true
+    },
+    {
+      "attribute_id": "attribute:support_ops:support_tickets:payload.channel",
+      "database": "support_ops",
+      "documented_data_type": "TEXT",
+      "entity": "entity:support_ops:support_tickets",
+      "json_extraction_form": "->>",
+      "numeric_semantic_type": false,
+      "physical_column_or_path": "payload ->> 'channel'",
+      "text_returning": true
+    },
+    {
+      "attribute_id": "attribute:subscription_billing:usage_events:payload",
+      "database": "subscription_billing",
+      "documented_data_type": "JSONB",
+      "entity": "entity:subscription_billing:usage_events",
+      "json_extraction_form": null,
+      "numeric_semantic_type": false,
+      "physical_column_or_path": "payload",
+      "text_returning": false
+    },
+    {
+      "attribute_id": "attribute:subscription_billing:usage_events:payload_#>>_'{units}'",
+      "database": "subscription_billing",
+      "documented_data_type": "INTEGER",
+      "entity": "entity:subscription_billing:usage_events",
+      "json_extraction_form": "#>>",
+      "numeric_semantic_type": true,
+      "physical_column_or_path": "payload #>> '{units}'",
+      "text_returning": true
+    },
+    {
+      "attribute_id": "attribute:warehouse_logistics:delivery_events:payload",
+      "database": "warehouse_logistics",
+      "documented_data_type": "JSONB",
+      "entity": "entity:warehouse_logistics:delivery_events",
+      "json_extraction_form": null,
+      "numeric_semantic_type": false,
+      "physical_column_or_path": "payload",
+      "text_returning": false
+    },
+    {
+      "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+      "database": "warehouse_logistics",
+      "documented_data_type": "NUMERIC",
+      "entity": "entity:warehouse_logistics:delivery_events",
+      "json_extraction_form": "#>>",
+      "numeric_semantic_type": true,
+      "physical_column_or_path": "payload #>> '{temperature_c}'",
+      "text_returning": true
+    },
+    {
+      "attribute_id": "attribute:risk_operations:transactions:payload",
+      "database": "risk_operations",
+      "documented_data_type": "JSONB",
+      "entity": "entity:risk_operations:transactions",
+      "json_extraction_form": null,
+      "numeric_semantic_type": false,
+      "physical_column_or_path": "payload",
+      "text_returning": false
+    },
+    {
+      "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+      "database": "risk_operations",
+      "documented_data_type": "NUMERIC",
+      "entity": "entity:risk_operations:transactions",
+      "json_extraction_form": "#>>",
+      "numeric_semantic_type": true,
+      "physical_column_or_path": "payload #>> '{risk_score}'",
+      "text_returning": true
+    }
+  ],
+  "counts": {
+    "answerable_cases_using_json": 7,
+    "arrow_extractors": 1,
+    "documented_numeric_json_attributes": 4,
+    "hash_extractors": 4,
+    "json_derived_attributes": 5,
+    "text_returning_extractions": 5
+  },
+  "hypothesis_status": "SUPPORTED_OFFLINE",
+  "provider_calls": 0,
+  "targets": [
+    {
+      "case_id": "fleet_06",
+      "m41_category": "RESULT_MISMATCH",
+      "m41_sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, t.payload #>> '{engine,temperature_c}' AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+      "numeric_coercion_present": false,
+      "text_extraction_present": true
+    },
+    {
+      "case_id": "warehouse_09",
+      "m41_category": "EXECUTION_FAILURE",
+      "m41_sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}') >= 7;",
+      "numeric_coercion_present": false,
+      "text_extraction_present": true
+    }
+  ]
+}

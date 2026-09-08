@@ -1,0 +1,30 @@
+[
+  {
+    "default_policy": "no implicit default",
+    "definition": "Alerts with status open.",
+    "description": "Alerts with status open.",
+    "formula": "COUNT(alert_id) FILTER (WHERE status = 'open')",
+    "grain": "case-defined",
+    "metric_id": "metric:risk_operations:open_alerts",
+    "name": "open_alerts",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  },
+  {
+    "default_policy": "no implicit default",
+    "definition": "Transaction amount for transactions whose visible risk score is high.",
+    "description": "Transaction amount for transactions whose visible risk score is high.",
+    "formula": "SUM(amount) FILTER (WHERE payload risk_score >= 70)",
+    "grain": "case-defined",
+    "metric_id": "metric:risk_operations:high_risk_amount",
+    "name": "high_risk_amount",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "risk_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "risk_08_cf1_c7f14c",
+      "patch_sql": [
+        "INSERT INTO transactions VALUES (9208,101,'2026-06-20 10:00+00',5000,'card','{\"risk_score\":\"95\"}')"
+      ],
+      "purpose": "adds a discriminating high or qualifying risk observation"
+    },
+    {
+      "fixture_id": "risk_08_cf2_23f78e",
+      "patch_sql": [
+        "INSERT INTO transactions VALUES (9258,102,'2026-06-21 10:00+00',10,'card','{\"risk_score\":\"5\"}')"
+      ],
+      "purpose": "adds a contrasting low or non-qualifying observation"
+    }
+  ]
+}

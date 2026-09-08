@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "risk_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "risk_06_cf1_c7f14c",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (9006,'Fixture Customer','SMB')",
+        "INSERT INTO accounts VALUES (9906,9006,'2026-06-20','open')"
+      ],
+      "purpose": "adds a discriminating high or qualifying risk observation"
+    },
+    {
+      "fixture_id": "risk_06_cf2_23f78e",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (9106,'Fixture Customer B','MID')",
+        "INSERT INTO accounts VALUES (9956,9106,'2026-06-21','open')"
+      ],
+      "purpose": "adds a contrasting low or non-qualifying observation"
+    }
+  ]
+}

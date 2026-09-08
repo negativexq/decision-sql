@@ -1,0 +1,134 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:accounts:customer_id",
+    "left_entity": "entity:risk_operations:accounts",
+    "relationship_id": "relationship:risk_operations:account_customer",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:transactions:account_id",
+    "left_entity": "entity:risk_operations:transactions",
+    "relationship_id": "relationship:risk_operations:transaction_account",
+    "right_attribute": "attribute:risk_operations:accounts:account_id",
+    "right_entity": "entity:risk_operations:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:risk_assessments:customer_id",
+    "left_entity": "entity:risk_operations:risk_assessments",
+    "relationship_id": "relationship:risk_operations:assessment_customer",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:alerts:customer_id",
+    "left_entity": "entity:risk_operations:alerts",
+    "relationship_id": "relationship:risk_operations:alert_customer",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:alert_events:alert_id",
+    "left_entity": "entity:risk_operations:alert_events",
+    "relationship_id": "relationship:risk_operations:event_alert",
+    "right_attribute": "attribute:risk_operations:alerts:alert_id",
+    "right_entity": "entity:risk_operations:alerts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:investigations:alert_id",
+    "left_entity": "entity:risk_operations:investigations",
+    "relationship_id": "relationship:risk_operations:investigation_alert",
+    "right_attribute": "attribute:risk_operations:alerts:alert_id",
+    "right_entity": "entity:risk_operations:alerts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:cases:customer_id",
+    "left_entity": "entity:risk_operations:cases",
+    "relationship_id": "relationship:risk_operations:case_customer",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:analyst_actions:investigation_id",
+    "left_entity": "entity:risk_operations:analyst_actions",
+    "relationship_id": "relationship:risk_operations:action_investigation",
+    "right_attribute": "attribute:risk_operations:investigations:investigation_id",
+    "right_entity": "entity:risk_operations:investigations"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:login_events:account_id",
+    "left_entity": "entity:risk_operations:login_events",
+    "relationship_id": "relationship:risk_operations:login_account",
+    "right_attribute": "attribute:risk_operations:accounts:account_id",
+    "right_entity": "entity:risk_operations:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:login_events:device_id",
+    "left_entity": "entity:risk_operations:login_events",
+    "relationship_id": "relationship:risk_operations:login_device",
+    "right_attribute": "attribute:risk_operations:devices:device_id",
+    "right_entity": "entity:risk_operations:devices"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:watchlist_matches:customer_id",
+    "left_entity": "entity:risk_operations:watchlist_matches",
+    "relationship_id": "relationship:risk_operations:watchlist_customer",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "A device is not directly authorized to join to a customer.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:risk_operations:devices:device_id",
+    "left_entity": "entity:risk_operations:devices",
+    "relationship_id": "relationship:risk_operations:device_customer_trap",
+    "right_attribute": "attribute:risk_operations:customers:customer_id",
+    "right_entity": "entity:risk_operations:customers"
+  }
+]

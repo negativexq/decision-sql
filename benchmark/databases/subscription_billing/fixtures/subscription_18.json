@@ -1,0 +1,17 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "subscription_18",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_18_ambiguity",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (9901,'Ambiguous Fixture','SMB','2026-06-20')",
+        "INSERT INTO subscriptions VALUES (9901,9901,1,'paused','2026-06-20','2027-01-01')"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ]
+}

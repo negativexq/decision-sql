@@ -1,0 +1,140 @@
+{
+  "case_id": "warehouse_13",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "warehouse_13_cf1_c305ad",
+      "patch_sql": [
+        "INSERT INTO shipments VALUES (9213,1,1,'2026-06-10 08:00+00','2026-06-10 09:00+00','delivered')",
+        "INSERT INTO delivery_events VALUES (9313,9213,'2026-06-10 10:00+00','delivered','{\"temperature_c\":\"9\"}')"
+      ],
+      "purpose": "adds a qualifying operational row"
+    },
+    {
+      "fixture_id": "warehouse_13_cf2_b6ed47",
+      "patch_sql": [
+        "INSERT INTO shipments VALUES (9213,2,2,'2026-06-11 08:00+00','2026-06-11 09:00+00','delivered')",
+        "INSERT INTO delivery_events VALUES (9313,9213,'2026-06-11 09:00+00','delivered','{\"temperature_c\":\"6\"}')"
+      ],
+      "purpose": "adds a non-qualifying or boundary row"
+    }
+  ],
+  "database_id": "warehouse_logistics",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT w.warehouse_id, COALESCE(s.shipped_qty,0)::NUMERIC/NULLIF(COALESCE(r.received_qty,0),0) AS shipped_to_received FROM warehouses w LEFT JOIN (SELECT warehouse_id,SUM(quantity) shipped_qty FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id GROUP BY warehouse_id) s ON s.warehouse_id=w.warehouse_id LEFT JOIN (SELECT po.warehouse_id,SUM(r.received_qty) received_qty FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id GROUP BY po.warehouse_id) r ON r.warehouse_id=w.warehouse_id ORDER BY w.warehouse_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT warehouse_id, shipped_qty/NULLIF(received_qty,0) AS shipped_to_received FROM (SELECT w.warehouse_id,COALESCE((SELECT SUM(i.quantity) FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id WHERE s.warehouse_id=w.warehouse_id),0)::NUMERIC shipped_qty,COALESCE((SELECT SUM(r.received_qty) FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id WHERE po.warehouse_id=w.warehouse_id),0) received_qty FROM warehouses w) x ORDER BY warehouse_id"
+  },
+  "required_context_facts": [
+    "relationships:warehouse_logistics:shipment_warehouse",
+    "relationships:warehouse_logistics:item_product"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Applies a plausible but incorrect semantic restriction to the requested result.",
+      "failure_category": "RELATIONSHIP_PATH_ERROR",
+      "mutant_id": "m38_warehouse_13_semantic",
+      "semantic_rationale": "Tests the case's RELATIONSHIP_PATH_ERROR contract against a deliberately over-restrictive interpretation.",
+      "sql": "SELECT * FROM (SELECT w.warehouse_id, COALESCE(s.shipped_qty,0)::NUMERIC/NULLIF(COALESCE(r.received_qty,0),0) AS shipped_to_received FROM warehouses w LEFT JOIN (SELECT warehouse_id,SUM(quantity) shipped_qty FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id GROUP BY warehouse_id) s ON s.warehouse_id=w.warehouse_id LEFT JOIN (SELECT po.warehouse_id,SUM(r.received_qty) received_qty FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id GROUP BY po.warehouse_id) r ON r.warehouse_id=w.warehouse_id ORDER BY w.warehouse_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "relationship"
+    },
+    {
+      "description": "Incorrectly keeps only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m38_warehouse_13_limit",
+      "semantic_rationale": "Tests that the full requested population is returned.",
+      "sql": "SELECT * FROM (SELECT w.warehouse_id, COALESCE(s.shipped_qty,0)::NUMERIC/NULLIF(COALESCE(r.received_qty,0),0) AS shipped_to_received FROM warehouses w LEFT JOIN (SELECT warehouse_id,SUM(quantity) shipped_qty FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id GROUP BY warehouse_id) s ON s.warehouse_id=w.warehouse_id LEFT JOIN (SELECT po.warehouse_id,SUM(r.received_qty) received_qty FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id GROUP BY po.warehouse_id) r ON r.warehouse_id=w.warehouse_id ORDER BY w.warehouse_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "limit"
+    },
+    {
+      "description": "Adds an unrequested helper or qualification field.",
+      "failure_category": "projection",
+      "mutant_id": "m38_warehouse_13_projection",
+      "semantic_rationale": "Tests the public exact final projection rule.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT w.warehouse_id, COALESCE(s.shipped_qty,0)::NUMERIC/NULLIF(COALESCE(r.received_qty,0),0) AS shipped_to_received FROM warehouses w LEFT JOIN (SELECT warehouse_id,SUM(quantity) shipped_qty FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id GROUP BY warehouse_id) s ON s.warehouse_id=w.warehouse_id LEFT JOIN (SELECT po.warehouse_id,SUM(r.received_qty) received_qty FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id GROUP BY po.warehouse_id) r ON r.warehouse_id=w.warehouse_id ORDER BY w.warehouse_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "warehouse_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "warehouse_id",
+        "shipped_to_received"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "warehouse_id",
+      "shipped_to_received"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "warehouse_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "shipped_to_received"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "multi-hop",
+      "ratio",
+      "null",
+      "aggregation"
+    ],
+    "reference_independence": "MODERATE",
+    "relationships": [
+      "relationships:warehouse_logistics:shipment_warehouse",
+      "relationships:warehouse_logistics:item_product"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

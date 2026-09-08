@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "warehouse_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "warehouse_03_cf1_c305ad",
+      "patch_sql": [
+        "INSERT INTO shipments VALUES (9203,1,1,'2026-06-10 08:00+00','2026-06-10 09:00+00','delivered')",
+        "INSERT INTO delivery_events VALUES (9303,9203,'2026-06-10 10:00+00','delivered','{\"temperature_c\":\"9\"}')"
+      ],
+      "purpose": "adds a qualifying operational row"
+    },
+    {
+      "fixture_id": "warehouse_03_cf2_b6ed47",
+      "patch_sql": [
+        "INSERT INTO shipments VALUES (9203,2,2,'2026-06-11 08:00+00','2026-06-11 09:00+00','delivered')",
+        "INSERT INTO delivery_events VALUES (9303,9203,'2026-06-11 09:00+00','delivered','{\"temperature_c\":\"6\"}')"
+      ],
+      "purpose": "adds a non-qualifying or boundary row"
+    }
+  ]
+}

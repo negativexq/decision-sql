@@ -1,0 +1,30 @@
+[
+  {
+    "default_policy": "no implicit default",
+    "definition": "Units shipped divided by units ordered for the warehouse population.",
+    "description": "Units shipped divided by units ordered for the warehouse population.",
+    "formula": "SUM(shipped quantity) / SUM(ordered quantity)",
+    "grain": "case-defined",
+    "metric_id": "metric:warehouse_logistics:fill_rate",
+    "name": "fill_rate",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  },
+  {
+    "default_policy": "no implicit default",
+    "definition": "Shipments with delivered event after promised_at.",
+    "description": "Shipments with delivered event after promised_at.",
+    "formula": "COUNT(delivered after promised_at)",
+    "grain": "case-defined",
+    "metric_id": "metric:warehouse_logistics:late_shipments",
+    "name": "late_shipments",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  }
+]

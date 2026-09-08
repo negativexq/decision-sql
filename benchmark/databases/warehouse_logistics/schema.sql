@@ -1,0 +1,15 @@
+CREATE SCHEMA IF NOT EXISTS m38_warehouse_logistics;
+SET search_path TO m38_warehouse_logistics;
+CREATE TABLE warehouses (warehouse_id INTEGER PRIMARY KEY, warehouse_name TEXT NOT NULL, region TEXT NOT NULL, capacity_units INTEGER NOT NULL);
+CREATE TABLE bins (bin_id INTEGER PRIMARY KEY, warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), bin_code TEXT NOT NULL, capacity_units INTEGER NOT NULL);
+CREATE TABLE products (product_id INTEGER PRIMARY KEY, sku TEXT NOT NULL, product_name TEXT NOT NULL, unit_cost NUMERIC(10,2) NOT NULL);
+CREATE TABLE inventory_snapshots (snapshot_id INTEGER PRIMARY KEY, warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), product_id INTEGER NOT NULL REFERENCES products(product_id), snapshot_at TIMESTAMPTZ NOT NULL, on_hand_qty INTEGER NOT NULL);
+CREATE TABLE purchase_orders (po_id INTEGER PRIMARY KEY, warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), ordered_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL, supplier_code TEXT NOT NULL);
+CREATE TABLE purchase_order_lines (po_line_id INTEGER PRIMARY KEY, po_id INTEGER NOT NULL REFERENCES purchase_orders(po_id), product_id INTEGER NOT NULL REFERENCES products(product_id), ordered_qty INTEGER NOT NULL);
+CREATE TABLE receipts (receipt_id INTEGER PRIMARY KEY, po_line_id INTEGER NOT NULL REFERENCES purchase_order_lines(po_line_id), received_at TIMESTAMPTZ NOT NULL, received_qty INTEGER NOT NULL);
+CREATE TABLE carriers (carrier_id INTEGER PRIMARY KEY, carrier_name TEXT NOT NULL, service_level TEXT NOT NULL);
+CREATE TABLE shipments (shipment_id INTEGER PRIMARY KEY, warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), carrier_id INTEGER NOT NULL REFERENCES carriers(carrier_id), shipped_at TIMESTAMPTZ NOT NULL, promised_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL);
+CREATE TABLE shipment_items (shipment_item_id INTEGER PRIMARY KEY, shipment_id INTEGER NOT NULL REFERENCES shipments(shipment_id), product_id INTEGER NOT NULL REFERENCES products(product_id), quantity INTEGER NOT NULL);
+CREATE TABLE pick_events (pick_id INTEGER PRIMARY KEY, shipment_item_id INTEGER NOT NULL REFERENCES shipment_items(shipment_item_id), picked_at TIMESTAMPTZ NOT NULL, picker_id INTEGER NOT NULL);
+CREATE TABLE stock_movements (movement_id INTEGER PRIMARY KEY, warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), product_id INTEGER NOT NULL REFERENCES products(product_id), moved_at TIMESTAMPTZ NOT NULL, quantity INTEGER NOT NULL, movement_type TEXT NOT NULL);
+CREATE TABLE delivery_events (delivery_id INTEGER PRIMARY KEY, shipment_id INTEGER NOT NULL REFERENCES shipments(shipment_id), event_at TIMESTAMPTZ NOT NULL, event_type TEXT NOT NULL, payload JSONB NOT NULL);

@@ -1,0 +1,16 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "risk_18",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "risk_18_ambiguity",
+      "patch_sql": [
+        "INSERT INTO alerts VALUES (9901,1,'2026-06-01 15:00+00','velocity','high','open')"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ]
+}

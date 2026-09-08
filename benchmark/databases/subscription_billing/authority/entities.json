@@ -1,0 +1,86 @@
+[
+  {
+    "description": "A customer billing account.",
+    "entity_id": "entity:subscription_billing:accounts",
+    "human_name": "Billing accounts",
+    "physical_table": "accounts",
+    "primary_semantic_role": "anchor entity"
+  },
+  {
+    "description": "A subscription price plan.",
+    "entity_id": "entity:subscription_billing:plans",
+    "human_name": "Plans",
+    "physical_table": "plans",
+    "primary_semantic_role": "reference entity"
+  },
+  {
+    "description": "A time-bounded account plan enrollment.",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "human_name": "Subscriptions",
+    "physical_table": "subscriptions",
+    "primary_semantic_role": "lifecycle entity"
+  },
+  {
+    "description": "A billed subscription charge.",
+    "entity_id": "entity:subscription_billing:invoices",
+    "human_name": "Invoices",
+    "physical_table": "invoices",
+    "primary_semantic_role": "transaction entity"
+  },
+  {
+    "description": "A line item on an invoice.",
+    "entity_id": "entity:subscription_billing:invoice_lines",
+    "human_name": "Invoice lines",
+    "physical_table": "invoice_lines",
+    "primary_semantic_role": "transaction detail"
+  },
+  {
+    "description": "A payment attempt or capture.",
+    "entity_id": "entity:subscription_billing:payments",
+    "human_name": "Payments",
+    "physical_table": "payments",
+    "primary_semantic_role": "transaction entity"
+  },
+  {
+    "description": "A refund against a captured payment.",
+    "entity_id": "entity:subscription_billing:refunds",
+    "human_name": "Refunds",
+    "physical_table": "refunds",
+    "primary_semantic_role": "transaction entity"
+  },
+  {
+    "description": "An account credit.",
+    "entity_id": "entity:subscription_billing:credits",
+    "human_name": "Credits",
+    "physical_table": "credits",
+    "primary_semantic_role": "adjustment entity"
+  },
+  {
+    "description": "An account usage observation.",
+    "entity_id": "entity:subscription_billing:usage_events",
+    "human_name": "Usage events",
+    "physical_table": "usage_events",
+    "primary_semantic_role": "event entity"
+  },
+  {
+    "description": "A feature entitlement granted by a subscription.",
+    "entity_id": "entity:subscription_billing:entitlements",
+    "human_name": "Entitlements",
+    "physical_table": "entitlements",
+    "primary_semantic_role": "state entity"
+  },
+  {
+    "description": "A subscription plan-change event.",
+    "entity_id": "entity:subscription_billing:plan_changes",
+    "human_name": "Plan changes",
+    "physical_table": "plan_changes",
+    "primary_semantic_role": "event entity"
+  },
+  {
+    "description": "A collection attempt for an invoice.",
+    "entity_id": "entity:subscription_billing:dunning_attempts",
+    "human_name": "Dunning attempts",
+    "physical_table": "dunning_attempts",
+    "primary_semantic_role": "event entity"
+  }
+]

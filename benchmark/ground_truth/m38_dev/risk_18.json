@@ -1,0 +1,83 @@
+{
+  "case_id": "risk_18",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "risk_18_ambiguity",
+      "patch_sql": [
+        "INSERT INTO alerts VALUES (9901,1,'2026-06-01 15:00+00','velocity','high','open')"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ],
+  "database_id": "risk_operations",
+  "evidence": {
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "repeat within a calendar day versus repeat over all history differs interpretation A",
+    "interpretation_b": "repeat within a calendar day versus repeat over all history differs interpretation B",
+    "proof_sql_a": "SELECT customer_id,DATE(created_at),COUNT(*) FROM alerts GROUP BY customer_id,DATE(created_at) HAVING COUNT(*)>1 ORDER BY customer_id",
+    "proof_sql_b": "SELECT customer_id,COUNT(*) FROM alerts GROUP BY customer_id HAVING COUNT(*)>1 ORDER BY customer_id"
+  },
+  "reference_implementation_a": {},
+  "reference_implementation_b": {},
+  "required_context_facts": [
+    "temporal_rules:risk_operations:clock"
+  ],
+  "semantic_mutants": [],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "AMBIGUOUS",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [],
+      "direction": "ASC"
+    },
+    "outputs": [],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "governance",
+      "ambiguity"
+    ],
+    "relationships": [
+      "temporal_rules:risk_operations:clock"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 0,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

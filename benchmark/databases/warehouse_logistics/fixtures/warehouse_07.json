@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "warehouse_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "warehouse_07_cf1_c305ad",
+      "patch_sql": [
+        "INSERT INTO products VALUES (9007,'FX-7','Fixture Product',5.00)"
+      ],
+      "purpose": "adds a qualifying operational row"
+    },
+    {
+      "fixture_id": "warehouse_07_cf2_b6ed47",
+      "patch_sql": [
+        "INSERT INTO warehouses VALUES (9107,'Fixture Warehouse','West',500)"
+      ],
+      "purpose": "adds a non-qualifying or boundary row"
+    }
+  ]
+}

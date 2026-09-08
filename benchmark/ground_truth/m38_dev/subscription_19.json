@@ -1,0 +1,83 @@
+{
+  "case_id": "subscription_19",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_19_ambiguity",
+      "patch_sql": [
+        "INSERT INTO plan_changes VALUES (9901,101,'2026-07-01 00:00+00',1,3)"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ],
+  "database_id": "subscription_billing",
+  "evidence": {
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "latest by start date versus latest change timestamp differ interpretation A",
+    "interpretation_b": "latest by start date versus latest change timestamp differ interpretation B",
+    "proof_sql_a": "SELECT DISTINCT ON (account_id) account_id,plan_id FROM subscriptions ORDER BY account_id,starts_on DESC,subscription_id DESC",
+    "proof_sql_b": "SELECT s.account_id,pc.new_plan_id FROM subscriptions s JOIN (SELECT DISTINCT ON (subscription_id) subscription_id,new_plan_id FROM plan_changes ORDER BY subscription_id,changed_at DESC,change_id DESC) pc ON pc.subscription_id=s.subscription_id ORDER BY s.account_id"
+  },
+  "reference_implementation_a": {},
+  "reference_implementation_b": {},
+  "required_context_facts": [
+    "temporal_rules:subscription_billing:clock"
+  ],
+  "semantic_mutants": [],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "AMBIGUOUS",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [],
+      "direction": "ASC"
+    },
+    "outputs": [],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "governance",
+      "ambiguity"
+    ],
+    "relationships": [
+      "temporal_rules:subscription_billing:clock"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 0,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

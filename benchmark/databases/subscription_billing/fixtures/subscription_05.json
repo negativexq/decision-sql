@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "subscription_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_05_cf1_2db794",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9005, 2, 1, 'active', '2026-06-20', NULL)"
+      ],
+      "purpose": "adds a relevant boundary or population row"
+    },
+    {
+      "fixture_id": "subscription_05_cf2_cf6ed1",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9005, 4, 2, 'paused', '2026-06-21', NULL)"
+      ],
+      "purpose": "adds a contrasting non-qualifying row"
+    }
+  ]
+}

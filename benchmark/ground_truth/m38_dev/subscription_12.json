@@ -1,0 +1,137 @@
+{
+  "case_id": "subscription_12",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_12_cf1_2db794",
+      "patch_sql": [
+        "INSERT INTO usage_events VALUES (9012, 2, '2026-06-20 10:00+00', 1200, '{\"units\":\"1200\"}')"
+      ],
+      "purpose": "adds a relevant boundary or population row"
+    },
+    {
+      "fixture_id": "subscription_12_cf2_cf6ed1",
+      "patch_sql": [
+        "INSERT INTO usage_events VALUES (9012, 4, '2026-06-21 10:00+00', 10, '{\"units\":\"10\"}')"
+      ],
+      "purpose": "adds a contrasting non-qualifying row"
+    }
+  ],
+  "database_id": "subscription_billing",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT account_id, COUNT(*) AS high_usage_events FROM usage_events WHERE (payload->>'units')::INTEGER >= 1000 GROUP BY account_id ORDER BY account_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT account_id, COUNT(usage_id) AS high_usage_events FROM (SELECT usage_id, account_id FROM usage_events WHERE CAST(payload->>'units' AS INTEGER) >= 1000) u GROUP BY account_id ORDER BY account_id"
+  },
+  "required_context_facts": [
+    "relationships:subscription_billing:subscription_account",
+    "metrics:subscription_billing:net_collected"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Applies a plausible but incorrect semantic restriction to the requested result.",
+      "failure_category": "JSON_TYPE_COERCION_ERROR",
+      "mutant_id": "m38_subscription_12_semantic",
+      "semantic_rationale": "Tests the case's JSON_TYPE_COERCION_ERROR contract against a deliberately over-restrictive interpretation.",
+      "sql": "SELECT * FROM (SELECT account_id, COUNT(*) AS high_usage_events FROM usage_events WHERE (payload->>'units')::INTEGER >= 1000 GROUP BY account_id ORDER BY account_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "json"
+    },
+    {
+      "description": "Incorrectly keeps only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m38_subscription_12_limit",
+      "semantic_rationale": "Tests that the full requested population is returned.",
+      "sql": "SELECT * FROM (SELECT account_id, COUNT(*) AS high_usage_events FROM usage_events WHERE (payload->>'units')::INTEGER >= 1000 GROUP BY account_id ORDER BY account_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "limit"
+    },
+    {
+      "description": "Adds an unrequested helper or qualification field.",
+      "failure_category": "projection",
+      "mutant_id": "m38_subscription_12_projection",
+      "semantic_rationale": "Tests the public exact final projection rule.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT account_id, COUNT(*) AS high_usage_events FROM usage_events WHERE (payload->>'units')::INTEGER >= 1000 GROUP BY account_id ORDER BY account_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "account_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "account_id",
+        "high_usage_events"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "account_id",
+      "high_usage_events"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "account_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "high_usage_events"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "json",
+      "aggregation",
+      "calculation"
+    ],
+    "reference_independence": "MODERATE",
+    "relationships": [
+      "relationships:subscription_billing:subscription_account",
+      "metrics:subscription_billing:net_collected"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

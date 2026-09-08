@@ -1,0 +1,14 @@
+CREATE SCHEMA IF NOT EXISTS m38_risk_operations;
+SET search_path TO m38_risk_operations;
+CREATE TABLE customers (customer_id INTEGER PRIMARY KEY, customer_name TEXT NOT NULL, segment TEXT NOT NULL);
+CREATE TABLE accounts (account_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), opened_on DATE NOT NULL, status TEXT NOT NULL);
+CREATE TABLE transactions (transaction_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), transacted_at TIMESTAMPTZ NOT NULL, amount NUMERIC(12,2) NOT NULL, channel TEXT NOT NULL, payload JSONB NOT NULL);
+CREATE TABLE risk_assessments (assessment_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), assessed_at TIMESTAMPTZ NOT NULL, risk_score NUMERIC(6,2) NOT NULL, band TEXT NOT NULL);
+CREATE TABLE alerts (alert_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), created_at TIMESTAMPTZ NOT NULL, alert_type TEXT NOT NULL, severity TEXT NOT NULL, status TEXT NOT NULL);
+CREATE TABLE alert_events (alert_event_id INTEGER PRIMARY KEY, alert_id INTEGER NOT NULL REFERENCES alerts(alert_id), event_at TIMESTAMPTZ NOT NULL, event_type TEXT NOT NULL);
+CREATE TABLE investigations (investigation_id INTEGER PRIMARY KEY, alert_id INTEGER NOT NULL REFERENCES alerts(alert_id), opened_at TIMESTAMPTZ NOT NULL, closed_at TIMESTAMPTZ, outcome TEXT);
+CREATE TABLE cases (case_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), opened_at TIMESTAMPTZ NOT NULL, resolved_at TIMESTAMPTZ, outcome TEXT);
+CREATE TABLE analyst_actions (action_id INTEGER PRIMARY KEY, investigation_id INTEGER NOT NULL REFERENCES investigations(investigation_id), analyst_id INTEGER NOT NULL, action_at TIMESTAMPTZ NOT NULL, action_type TEXT NOT NULL);
+CREATE TABLE devices (device_id INTEGER PRIMARY KEY, device_fingerprint TEXT NOT NULL, first_seen_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE login_events (login_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), device_id INTEGER NOT NULL REFERENCES devices(device_id), login_at TIMESTAMPTZ NOT NULL, result TEXT NOT NULL);
+CREATE TABLE watchlist_matches (match_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), matched_at TIMESTAMPTZ NOT NULL, list_name TEXT NOT NULL, cleared_at TIMESTAMPTZ);

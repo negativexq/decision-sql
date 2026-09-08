@@ -1,0 +1,17 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "warehouse_20",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "warehouse_20_ambiguity",
+      "patch_sql": [
+        "INSERT INTO shipments VALUES (9901,1,1,'2026-06-10 08:00+00','2026-06-10 09:00+00','delivered')",
+        "INSERT INTO delivery_events VALUES (9901,9901,'2026-06-10 10:00+00','delivered','{}')"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ]
+}

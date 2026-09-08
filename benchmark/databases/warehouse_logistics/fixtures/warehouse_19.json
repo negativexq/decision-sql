@@ -1,0 +1,16 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "warehouse_19",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "warehouse_19_ambiguity",
+      "patch_sql": [
+        "INSERT INTO inventory_snapshots VALUES (9901,1,1,'2026-07-03 00:00+00',5)"
+      ],
+      "purpose": "makes the competing interpretations return different results"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Each subscription belongs to its billing account.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:subscriptions:account_id",
+    "left_entity": "entity:subscription_billing:subscriptions",
+    "relationship_id": "relationship:subscription_billing:subscription_account",
+    "right_attribute": "attribute:subscription_billing:accounts:account_id",
+    "right_entity": "entity:subscription_billing:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Each subscription selects one plan.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:subscriptions:plan_id",
+    "left_entity": "entity:subscription_billing:subscriptions",
+    "relationship_id": "relationship:subscription_billing:subscription_plan",
+    "right_attribute": "attribute:subscription_billing:plans:plan_id",
+    "right_entity": "entity:subscription_billing:plans"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:invoices:account_id",
+    "left_entity": "entity:subscription_billing:invoices",
+    "relationship_id": "relationship:subscription_billing:invoice_account",
+    "right_attribute": "attribute:subscription_billing:accounts:account_id",
+    "right_entity": "entity:subscription_billing:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:invoices:subscription_id",
+    "left_entity": "entity:subscription_billing:invoices",
+    "relationship_id": "relationship:subscription_billing:invoice_subscription",
+    "right_attribute": "attribute:subscription_billing:subscriptions:subscription_id",
+    "right_entity": "entity:subscription_billing:subscriptions"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:invoice_lines:invoice_id",
+    "left_entity": "entity:subscription_billing:invoice_lines",
+    "relationship_id": "relationship:subscription_billing:invoice_line_invoice",
+    "right_attribute": "attribute:subscription_billing:invoices:invoice_id",
+    "right_entity": "entity:subscription_billing:invoices"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:payments:invoice_id",
+    "left_entity": "entity:subscription_billing:payments",
+    "relationship_id": "relationship:subscription_billing:payment_invoice",
+    "right_attribute": "attribute:subscription_billing:invoices:invoice_id",
+    "right_entity": "entity:subscription_billing:invoices"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:refunds:payment_id",
+    "left_entity": "entity:subscription_billing:refunds",
+    "relationship_id": "relationship:subscription_billing:refund_payment",
+    "right_attribute": "attribute:subscription_billing:payments:payment_id",
+    "right_entity": "entity:subscription_billing:payments"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:credits:account_id",
+    "left_entity": "entity:subscription_billing:credits",
+    "relationship_id": "relationship:subscription_billing:credit_account",
+    "right_attribute": "attribute:subscription_billing:accounts:account_id",
+    "right_entity": "entity:subscription_billing:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:usage_events:account_id",
+    "left_entity": "entity:subscription_billing:usage_events",
+    "relationship_id": "relationship:subscription_billing:usage_account",
+    "right_attribute": "attribute:subscription_billing:accounts:account_id",
+    "right_entity": "entity:subscription_billing:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:entitlements:subscription_id",
+    "left_entity": "entity:subscription_billing:entitlements",
+    "relationship_id": "relationship:subscription_billing:entitlement_subscription",
+    "right_attribute": "attribute:subscription_billing:subscriptions:subscription_id",
+    "right_entity": "entity:subscription_billing:subscriptions"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:plan_changes:subscription_id",
+    "left_entity": "entity:subscription_billing:plan_changes",
+    "relationship_id": "relationship:subscription_billing:change_subscription",
+    "right_attribute": "attribute:subscription_billing:subscriptions:subscription_id",
+    "right_entity": "entity:subscription_billing:subscriptions"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:dunning_attempts:invoice_id",
+    "left_entity": "entity:subscription_billing:dunning_attempts",
+    "relationship_id": "relationship:subscription_billing:dunning_invoice",
+    "right_attribute": "attribute:subscription_billing:invoices:invoice_id",
+    "right_entity": "entity:subscription_billing:invoices"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "No authorized usage-account to plan join exists.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:subscription_billing:usage_events:account_id",
+    "left_entity": "entity:subscription_billing:usage_events",
+    "relationship_id": "relationship:subscription_billing:usage_plan_trap",
+    "right_attribute": "attribute:subscription_billing:plans:plan_id",
+    "right_entity": "entity:subscription_billing:plans"
+  }
+]

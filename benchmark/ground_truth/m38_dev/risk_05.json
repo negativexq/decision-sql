@@ -1,0 +1,139 @@
+{
+  "case_id": "risk_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "risk_05_cf1_c7f14c",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (9005,'Fixture Customer','SMB')",
+        "INSERT INTO accounts VALUES (9905,9005,'2026-06-20','open')"
+      ],
+      "purpose": "adds a discriminating high or qualifying risk observation"
+    },
+    {
+      "fixture_id": "risk_05_cf2_23f78e",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (9105,'Fixture Customer B','MID')",
+        "INSERT INTO accounts VALUES (9955,9105,'2026-06-21','open')"
+      ],
+      "purpose": "adds a contrasting low or non-qualifying observation"
+    }
+  ],
+  "database_id": "risk_operations",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT a.severity,COUNT(i.investigation_id)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM alerts a LEFT JOIN investigations i ON i.alert_id=a.alert_id GROUP BY a.severity ORDER BY a.severity"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT severity,SUM(has_investigation)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM (SELECT a.severity,CASE WHEN EXISTS(SELECT 1 FROM investigations i WHERE i.alert_id=a.alert_id) THEN 1 ELSE 0 END has_investigation FROM alerts a) x GROUP BY severity ORDER BY severity"
+  },
+  "required_context_facts": [
+    "relationships:risk_operations:alert_customer",
+    "relationships:risk_operations:transaction_account"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Applies a plausible but incorrect semantic restriction to the requested result.",
+      "failure_category": "WRONG_AGGREGATION_GRAIN",
+      "mutant_id": "m38_risk_05_semantic",
+      "semantic_rationale": "Tests the case's WRONG_AGGREGATION_GRAIN contract against a deliberately over-restrictive interpretation.",
+      "sql": "SELECT * FROM (SELECT a.severity,COUNT(i.investigation_id)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM alerts a LEFT JOIN investigations i ON i.alert_id=a.alert_id GROUP BY a.severity ORDER BY a.severity) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "aggregation"
+    },
+    {
+      "description": "Incorrectly keeps only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m38_risk_05_limit",
+      "semantic_rationale": "Tests that the full requested population is returned.",
+      "sql": "SELECT * FROM (SELECT a.severity,COUNT(i.investigation_id)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM alerts a LEFT JOIN investigations i ON i.alert_id=a.alert_id GROUP BY a.severity ORDER BY a.severity) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "limit"
+    },
+    {
+      "description": "Adds an unrequested helper or qualification field.",
+      "failure_category": "projection",
+      "mutant_id": "m38_risk_05_projection",
+      "semantic_rationale": "Tests the public exact final projection rule.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT a.severity,COUNT(i.investigation_id)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM alerts a LEFT JOIN investigations i ON i.alert_id=a.alert_id GROUP BY a.severity ORDER BY a.severity) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "severity"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "severity",
+        "investigation_rate"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "severity",
+      "investigation_rate"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "MEASURE",
+          "semantic_name": "severity"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "investigation_rate"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "conditional aggregate",
+      "ratio",
+      "null"
+    ],
+    "reference_independence": "MODERATE",
+    "relationships": [
+      "relationships:risk_operations:alert_customer",
+      "relationships:risk_operations:transaction_account"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

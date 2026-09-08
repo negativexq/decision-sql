@@ -1,0 +1,14 @@
+CREATE SCHEMA IF NOT EXISTS m38_subscription_billing;
+SET search_path TO m38_subscription_billing;
+CREATE TABLE accounts (account_id INTEGER PRIMARY KEY, account_name TEXT NOT NULL, segment TEXT NOT NULL, created_on DATE NOT NULL);
+CREATE TABLE plans (plan_id INTEGER PRIMARY KEY, plan_name TEXT NOT NULL, monthly_price NUMERIC(10,2) NOT NULL, included_units INTEGER NOT NULL);
+CREATE TABLE subscriptions (subscription_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), plan_id INTEGER NOT NULL REFERENCES plans(plan_id), status TEXT NOT NULL, starts_on DATE NOT NULL, ends_on DATE);
+CREATE TABLE invoices (invoice_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), subscription_id INTEGER NOT NULL REFERENCES subscriptions(subscription_id), issued_on DATE NOT NULL, due_on DATE NOT NULL, status TEXT NOT NULL, total_due NUMERIC(10,2) NOT NULL);
+CREATE TABLE invoice_lines (line_id INTEGER PRIMARY KEY, invoice_id INTEGER NOT NULL REFERENCES invoices(invoice_id), description TEXT NOT NULL, quantity INTEGER NOT NULL, unit_price NUMERIC(10,2) NOT NULL);
+CREATE TABLE payments (payment_id INTEGER PRIMARY KEY, invoice_id INTEGER NOT NULL REFERENCES invoices(invoice_id), paid_at TIMESTAMPTZ, amount NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE refunds (refund_id INTEGER PRIMARY KEY, payment_id INTEGER NOT NULL REFERENCES payments(payment_id), refunded_at TIMESTAMPTZ NOT NULL, amount NUMERIC(10,2) NOT NULL);
+CREATE TABLE credits (credit_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), issued_on DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, reason TEXT NOT NULL);
+CREATE TABLE usage_events (usage_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), occurred_at TIMESTAMPTZ NOT NULL, units INTEGER NOT NULL, payload JSONB NOT NULL);
+CREATE TABLE entitlements (entitlement_id INTEGER PRIMARY KEY, subscription_id INTEGER NOT NULL REFERENCES subscriptions(subscription_id), feature_code TEXT NOT NULL, enabled BOOLEAN NOT NULL);
+CREATE TABLE plan_changes (change_id INTEGER PRIMARY KEY, subscription_id INTEGER NOT NULL REFERENCES subscriptions(subscription_id), changed_at TIMESTAMPTZ NOT NULL, old_plan_id INTEGER, new_plan_id INTEGER NOT NULL);
+CREATE TABLE dunning_attempts (attempt_id INTEGER PRIMARY KEY, invoice_id INTEGER NOT NULL REFERENCES invoices(invoice_id), attempted_at TIMESTAMPTZ NOT NULL, outcome TEXT NOT NULL);

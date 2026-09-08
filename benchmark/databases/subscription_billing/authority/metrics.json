@@ -1,0 +1,30 @@
+[
+  {
+    "default_policy": "no implicit default",
+    "definition": "Captured payments less refunds.",
+    "description": "Captured payments less refunds.",
+    "formula": "SUM(captured payments) - SUM(refunds)",
+    "grain": "case-defined",
+    "metric_id": "metric:subscription_billing:net_collected",
+    "name": "net_collected",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  },
+  {
+    "default_policy": "no implicit default",
+    "definition": "Monthly recurring revenue of active subscriptions.",
+    "description": "Monthly recurring revenue of active subscriptions.",
+    "formula": "SUM(active plan monthly_price)",
+    "grain": "case-defined",
+    "metric_id": "metric:subscription_billing:mrr",
+    "name": "mrr",
+    "null_policy": "preserve NULL unless explicitly defaulted",
+    "operands": [],
+    "precision": 4,
+    "rounding_stage": "display_only unless question says otherwise",
+    "temporal_basis": "case-defined"
+  }
+]

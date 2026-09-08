@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "subscription_14",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_14_cf1_2db794",
+      "patch_sql": [
+        "INSERT INTO credits VALUES (9014, 2, '2026-06-20', 20, 'fixture')"
+      ],
+      "purpose": "adds a relevant boundary or population row"
+    },
+    {
+      "fixture_id": "subscription_14_cf2_cf6ed1",
+      "patch_sql": [
+        "INSERT INTO credits VALUES (9014, 4, '2026-07-01', 20, 'fixture')"
+      ],
+      "purpose": "adds a contrasting non-qualifying row"
+    }
+  ]
+}

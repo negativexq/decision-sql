@@ -1,0 +1,202 @@
+[
+  {
+    "attribute_id": "attribute:risk_operations:customers:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:customers",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Stable customer identifier."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:customers:segment",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:customers",
+    "nullable": false,
+    "physical_column_or_path": "segment",
+    "semantic_description": "Customer segment."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:accounts:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:accounts",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:accounts:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:accounts",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Account state."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Transaction amount."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:transacted_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "transacted_at",
+    "semantic_description": "Transaction timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:payload",
+    "data_type": "JSONB",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "payload",
+    "semantic_description": "Provider risk payload."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:assessed_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "assessed_at",
+    "semantic_description": "Assessment timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:risk_score",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "risk_score",
+    "semantic_description": "Numeric risk score."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:created_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "created_at",
+    "semantic_description": "Alert timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:severity",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "severity",
+    "semantic_description": "Alert severity."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Alert state."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alert_events:alert_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:alert_events",
+    "nullable": false,
+    "physical_column_or_path": "alert_id",
+    "semantic_description": "Authorized alert reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:investigations:alert_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:investigations",
+    "nullable": false,
+    "physical_column_or_path": "alert_id",
+    "semantic_description": "Authorized alert reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:investigations:closed_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:investigations",
+    "nullable": true,
+    "physical_column_or_path": "closed_at",
+    "semantic_description": "Investigation close timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:analyst_actions:investigation_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:analyst_actions",
+    "nullable": false,
+    "physical_column_or_path": "investigation_id",
+    "semantic_description": "Authorized investigation reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:devices:device_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:devices",
+    "nullable": false,
+    "physical_column_or_path": "device_id",
+    "semantic_description": "Stable device identifier."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:login_events:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:login_events",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:login_events:device_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:login_events",
+    "nullable": false,
+    "physical_column_or_path": "device_id",
+    "semantic_description": "Authorized device reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:cleared_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": true,
+    "physical_column_or_path": "cleared_at",
+    "semantic_description": "Clear timestamp."
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "subscription_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "subscription_03_cf1_2db794",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (9901,'Fixture Account A','SMB','2026-06-20')"
+      ],
+      "purpose": "adds a relevant boundary or population row"
+    },
+    {
+      "fixture_id": "subscription_03_cf2_cf6ed1",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (9902,'Fixture Account B','MID','2026-06-21')"
+      ],
+      "purpose": "adds a contrasting non-qualifying row"
+    }
+  ]
+}

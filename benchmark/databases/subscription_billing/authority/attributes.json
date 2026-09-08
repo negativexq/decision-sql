@@ -1,0 +1,274 @@
+[
+  {
+    "attribute_id": "attribute:subscription_billing:accounts:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:accounts",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Stable billing account identifier."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:accounts:account_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:accounts",
+    "nullable": false,
+    "physical_column_or_path": "account_name",
+    "semantic_description": "Account display name."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:accounts:segment",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:accounts",
+    "nullable": false,
+    "physical_column_or_path": "segment",
+    "semantic_description": "Customer segment."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:plans:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:plans",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Stable plan identifier."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:plans:monthly_price",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:subscription_billing:plans",
+    "nullable": false,
+    "physical_column_or_path": "monthly_price",
+    "semantic_description": "Monthly recurring price."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Stable subscription identifier."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Authorized plan reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Lifecycle status."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:starts_on",
+    "data_type": "DATE",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "starts_on",
+    "semantic_description": "Effective start date."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:subscriptions:ends_on",
+    "data_type": "DATE",
+    "entity_id": "entity:subscription_billing:subscriptions",
+    "nullable": true,
+    "physical_column_or_path": "ends_on",
+    "semantic_description": "Effective end date."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:invoice_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "invoice_id",
+    "semantic_description": "Stable invoice identifier."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Authorized subscription reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:issued_on",
+    "data_type": "DATE",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "issued_on",
+    "semantic_description": "Issue date."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:due_on",
+    "data_type": "DATE",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "due_on",
+    "semantic_description": "Due date."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Invoice state."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:invoices:total_due",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:subscription_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "total_due",
+    "semantic_description": "Invoice amount due."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:payments:invoice_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "invoice_id",
+    "semantic_description": "Authorized invoice reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:payments:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:subscription_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Payment amount."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:payments:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Payment state."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:refunds:payment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:refunds",
+    "nullable": false,
+    "physical_column_or_path": "payment_id",
+    "semantic_description": "Authorized payment reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:refunds:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:subscription_billing:refunds",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Refund amount."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:credits:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:credits",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:credits:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:subscription_billing:credits",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Credit amount."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:usage_events:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:usage_events",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:usage_events:units",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:usage_events",
+    "nullable": false,
+    "physical_column_or_path": "units",
+    "semantic_description": "Usage units."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:usage_events:payload",
+    "data_type": "JSONB",
+    "entity_id": "entity:subscription_billing:usage_events",
+    "nullable": false,
+    "physical_column_or_path": "payload",
+    "semantic_description": "Provider payload containing a textual units mirror."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:entitlements:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:entitlements",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Authorized subscription reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:entitlements:feature_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:subscription_billing:entitlements",
+    "nullable": false,
+    "physical_column_or_path": "feature_code",
+    "semantic_description": "Feature identifier."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:entitlements:enabled",
+    "data_type": "BOOLEAN",
+    "entity_id": "entity:subscription_billing:entitlements",
+    "nullable": false,
+    "physical_column_or_path": "enabled",
+    "semantic_description": "Whether the feature is enabled."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:plan_changes:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:plan_changes",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Authorized subscription reference."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:plan_changes:changed_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:subscription_billing:plan_changes",
+    "nullable": false,
+    "physical_column_or_path": "changed_at",
+    "semantic_description": "Effective change timestamp."
+  },
+  {
+    "attribute_id": "attribute:subscription_billing:dunning_attempts:invoice_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:subscription_billing:dunning_attempts",
+    "nullable": false,
+    "physical_column_or_path": "invoice_id",
+    "semantic_description": "Authorized invoice reference."
+  }
+]

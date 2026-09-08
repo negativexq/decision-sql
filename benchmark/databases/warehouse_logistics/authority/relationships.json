@@ -1,0 +1,156 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:bins:warehouse_id",
+    "left_entity": "entity:warehouse_logistics:bins",
+    "relationship_id": "relationship:warehouse_logistics:bin_warehouse",
+    "right_attribute": "attribute:warehouse_logistics:warehouses:warehouse_id",
+    "right_entity": "entity:warehouse_logistics:warehouses"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:inventory_snapshots:warehouse_id",
+    "left_entity": "entity:warehouse_logistics:inventory_snapshots",
+    "relationship_id": "relationship:warehouse_logistics:snapshot_warehouse",
+    "right_attribute": "attribute:warehouse_logistics:warehouses:warehouse_id",
+    "right_entity": "entity:warehouse_logistics:warehouses"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:inventory_snapshots:product_id",
+    "left_entity": "entity:warehouse_logistics:inventory_snapshots",
+    "relationship_id": "relationship:warehouse_logistics:snapshot_product",
+    "right_attribute": "attribute:warehouse_logistics:products:product_id",
+    "right_entity": "entity:warehouse_logistics:products"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:purchase_orders:warehouse_id",
+    "left_entity": "entity:warehouse_logistics:purchase_orders",
+    "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+    "right_attribute": "attribute:warehouse_logistics:warehouses:warehouse_id",
+    "right_entity": "entity:warehouse_logistics:warehouses"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:purchase_order_lines:po_id",
+    "left_entity": "entity:warehouse_logistics:purchase_order_lines",
+    "relationship_id": "relationship:warehouse_logistics:line_po",
+    "right_attribute": "attribute:warehouse_logistics:purchase_orders:po_id",
+    "right_entity": "entity:warehouse_logistics:purchase_orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:purchase_order_lines:product_id",
+    "left_entity": "entity:warehouse_logistics:purchase_order_lines",
+    "relationship_id": "relationship:warehouse_logistics:line_product",
+    "right_attribute": "attribute:warehouse_logistics:products:product_id",
+    "right_entity": "entity:warehouse_logistics:products"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:receipts:po_line_id",
+    "left_entity": "entity:warehouse_logistics:receipts",
+    "relationship_id": "relationship:warehouse_logistics:receipt_line",
+    "right_attribute": "attribute:warehouse_logistics:purchase_order_lines:po_line_id",
+    "right_entity": "entity:warehouse_logistics:purchase_order_lines"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:shipments:warehouse_id",
+    "left_entity": "entity:warehouse_logistics:shipments",
+    "relationship_id": "relationship:warehouse_logistics:shipment_warehouse",
+    "right_attribute": "attribute:warehouse_logistics:warehouses:warehouse_id",
+    "right_entity": "entity:warehouse_logistics:warehouses"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:shipments:carrier_id",
+    "left_entity": "entity:warehouse_logistics:shipments",
+    "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+    "right_attribute": "attribute:warehouse_logistics:carriers:carrier_id",
+    "right_entity": "entity:warehouse_logistics:carriers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:shipment_items:shipment_id",
+    "left_entity": "entity:warehouse_logistics:shipment_items",
+    "relationship_id": "relationship:warehouse_logistics:item_shipment",
+    "right_attribute": "attribute:warehouse_logistics:shipments:shipment_id",
+    "right_entity": "entity:warehouse_logistics:shipments"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:shipment_items:product_id",
+    "left_entity": "entity:warehouse_logistics:shipment_items",
+    "relationship_id": "relationship:warehouse_logistics:item_product",
+    "right_attribute": "attribute:warehouse_logistics:products:product_id",
+    "right_entity": "entity:warehouse_logistics:products"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:pick_events:shipment_item_id",
+    "left_entity": "entity:warehouse_logistics:pick_events",
+    "relationship_id": "relationship:warehouse_logistics:pick_item",
+    "right_attribute": "attribute:warehouse_logistics:shipment_items:shipment_item_id",
+    "right_entity": "entity:warehouse_logistics:shipment_items"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:delivery_events:shipment_id",
+    "left_entity": "entity:warehouse_logistics:delivery_events",
+    "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+    "right_attribute": "attribute:warehouse_logistics:shipments:shipment_id",
+    "right_entity": "entity:warehouse_logistics:shipments"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Bin identifiers are not product identifiers.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:warehouse_logistics:bins:bin_id",
+    "left_entity": "entity:warehouse_logistics:bins",
+    "relationship_id": "relationship:warehouse_logistics:bin_product_trap",
+    "right_attribute": "attribute:warehouse_logistics:products:product_id",
+    "right_entity": "entity:warehouse_logistics:products"
+  }
+]

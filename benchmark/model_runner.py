@@ -76,7 +76,11 @@ def _request_audit(requests: list[BenchmarkRequest]) -> dict[str, Any]:
     schema_is_strict = (
         set(schema.get("required", [])) == {"case_id", "decision", "sql", "reason_code"}
         and schema.get("additionalProperties") is False
-        and len(schema.get("allOf", [])) == 4
+        and set(schema.get("properties", {})) == {"case_id", "decision", "sql", "reason_code"}
+        and not any(
+            keyword in schema
+            for keyword in ("allOf", "oneOf", "if", "then", "else", "dependentSchemas")
+        )
     )
     if not schema_is_strict:
         raise ValueError("SUBMISSION_SCHEMA_NOT_STRICT")

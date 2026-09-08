@@ -134,30 +134,61 @@ class Submission:
     }
 
     @classmethod
-    def from_dict(cls, value: dict[str, Any]) -> Submission:
+    def from_dict_unchecked(cls, value: dict[str, Any]) -> Submission:
         if set(value) != {"case_id", "decision", "sql", "reason_code"}:
             raise ValueError("SUBMISSION_FIELDS")
         if not isinstance(value["case_id"], str) or not value["case_id"]:
             raise ValueError("SUBMISSION_CASE_ID")
-        if not isinstance(value["decision"], str) or value["decision"] not in cls.ALLOWED_DECISIONS:
-            raise ValueError("SUBMISSION_DECISION")
+        if not isinstance(value["decision"], str):
+            raise ValueError("SUBMISSION_DECISION_TYPE")
         if value["sql"] is not None and not isinstance(value["sql"], str):
             raise ValueError("SUBMISSION_SQL_TYPE")
-        if value["decision"] == "ANSWER":
-            if not isinstance(value["sql"], str) or not value["sql"].strip() or value["reason_code"] is not None:
-                raise ValueError("SUBMISSION_ANSWER_INVARIANT")
-        else:
-            expected_reason = cls.REQUIRED_REASON_CODES[value["decision"]]
-            if value["sql"] is not None or value["reason_code"] != expected_reason:
-                raise ValueError("SUBMISSION_GOVERNED_INVARIANT")
-        if value["reason_code"] is not None and (
-            not isinstance(value["reason_code"], str)
-            or value["reason_code"] not in cls.ALLOWED_REASON_CODES
-        ):
-            raise ValueError("SUBMISSION_REASON_CODE")
+        if value["reason_code"] is not None and (not isinstance(value["reason_code"], str)):
+            raise ValueError("SUBMISSION_REASON_CODE_TYPE")
         return cls(
             case_id=value["case_id"],
             decision=value["decision"],
             sql=value.get("sql"),
             reason_code=value.get("reason_code"),
         )
+
+    @classmethod
+    def from_dict(cls, value: dict[str, Any]) -> Submission:
+        submission = cls.from_dict_unchecked(value)
+        errors = validate_submission_invariants(None, submission)
+        if errors:
+            raise ValueError(errors[0])
+        return submission
+
+
+def validate_submission_invariants(
+    request_case_id: str | None, parsed_submission: Submission
+) -> tuple[str, ...]:
+    """Validate cross-field semantics after provider-shaped JSON parsing."""
+    errors: list[str] = []
+    if request_case_id is not None and parsed_submission.case_id != request_case_id:
+        errors.append("CASE_ID_MISMATCH")
+    if parsed_submission.decision not in Submission.ALLOWED_DECISIONS:
+        errors.append("UNKNOWN_DECISION")
+    if (
+        parsed_submission.reason_code is not None
+        and parsed_submission.reason_code not in Submission.ALLOWED_REASON_CODES
+    ):
+        errors.append("UNKNOWN_REASON_CODE")
+    if parsed_submission.decision == "ANSWER":
+        if not isinstance(parsed_submission.sql, str) or not parsed_submission.sql.strip():
+            errors.append("ANSWER_SQL_REQUIRED")
+        if parsed_submission.reason_code is not None:
+            errors.append("ANSWER_REASON_MUST_BE_NULL")
+    elif parsed_submission.decision in Submission.REQUIRED_REASON_CODES:
+        if parsed_submission.sql is not None:
+            errors.append("NON_ANSWER_SQL_MUST_BE_NULL")
+        expected_reason = Submission.REQUIRED_REASON_CODES[parsed_submission.decision]
+        if parsed_submission.reason_code != expected_reason:
+            code = {
+                "BLOCKED_AUTHORITY": "AUTHORITY_REASON_MISMATCH",
+                "NEEDS_CLARIFICATION": "AMBIGUITY_REASON_MISMATCH",
+                "BLOCKED_POLICY": "POLICY_REASON_MISMATCH",
+            }[parsed_submission.decision]
+            errors.append(code)
+    return tuple(dict.fromkeys(errors))

@@ -1,19 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Decision-SQL M35 provider submission",
+  "title": "Decision-SQL provider-safe submission",
   "type": "object",
   "required": ["case_id", "decision", "sql", "reason_code"],
   "additionalProperties": false,
   "properties": {
-    "case_id": {"type": "string", "minLength": 1},
-    "decision": {"enum": ["ANSWER", "BLOCKED_AUTHORITY", "NEEDS_CLARIFICATION", "BLOCKED_POLICY"]},
+    "case_id": {"type": "string"},
+    "decision": {"type": "string", "enum": ["ANSWER", "BLOCKED_AUTHORITY", "NEEDS_CLARIFICATION", "BLOCKED_POLICY"]},
     "sql": {"type": ["string", "null"]},
-    "reason_code": {"enum": ["MISSING_AUTHORIZED_RELATIONSHIP", "AMBIGUOUS_SEMANTICS", "READ_ONLY_POLICY", "NO_REASON", null]}
-  },
-  "allOf": [
-    {"if": {"properties": {"decision": {"const": "ANSWER"}}}, "then": {"properties": {"sql": {"type": "string", "minLength": 1}, "reason_code": {"const": null}}}},
-    {"if": {"properties": {"decision": {"const": "BLOCKED_AUTHORITY"}}}, "then": {"properties": {"sql": {"const": null}, "reason_code": {"const": "MISSING_AUTHORIZED_RELATIONSHIP"}}}},
-    {"if": {"properties": {"decision": {"const": "NEEDS_CLARIFICATION"}}}, "then": {"properties": {"sql": {"const": null}, "reason_code": {"const": "AMBIGUOUS_SEMANTICS"}}}},
-    {"if": {"properties": {"decision": {"const": "BLOCKED_POLICY"}}}, "then": {"properties": {"sql": {"const": null}, "reason_code": {"const": "READ_ONLY_POLICY"}}}}
-  ]
+    "reason_code": {"type": ["string", "null"], "enum": ["MISSING_AUTHORIZED_RELATIONSHIP", "AMBIGUOUS_SEMANTICS", "READ_ONLY_POLICY", "NO_REASON", null]}
+  }
 }

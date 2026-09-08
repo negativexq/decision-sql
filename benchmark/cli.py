@@ -21,6 +21,7 @@ from benchmark.authoring import (
 from benchmark.context import load_authority
 from benchmark.evaluator import evaluate_file
 from benchmark.m35_runner import M35ProviderBlocked, run_m35
+from benchmark.m35r1_contract import freeze_m35r1_contract
 from benchmark.model_runner import dry_run
 from benchmark.validator import (
     EXPECTED_TAGS,
@@ -651,6 +652,11 @@ def main() -> int:
     run_model_parser.add_argument("--split", default="pilot")
     run_model_parser.add_argument("--experiment-config", required=True)
     run_model_parser.add_argument("--dry-run", action="store_true")
+    run_m35r1_parser = sub.add_parser("run-m35r1")
+    run_m35r1_parser.add_argument(
+        "--experiment-config", default=str(ROOT / "experiments" / "m35r1_luna_none.json")
+    )
+    run_m35r1_parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     if args.command == "build":
         build_all()
@@ -686,6 +692,54 @@ def main() -> int:
                     "status": result["status"],
                     "provider_calls_attempted": result["summary"]["provider_calls_attempted"],
                     "summary": str(ROOT / "experiments" / "results" / "m35" / "m35_summary.md"),
+                },
+                indent=2,
+            )
+        )
+        return 0
+    if args.command == "run-m35r1":
+        config_path = Path(args.experiment_config)
+        if args.dry_run:
+            result = freeze_m35r1_contract(config_path)
+            print(
+                json.dumps(
+                    {
+                        "status": result["report"]["status"],
+                        "provider_calls": result["manifest"]["provider_calls"],
+                        "report": str(ROOT / "reports" / "m35r1_contract_repair.md"),
+                    },
+                    indent=2,
+                )
+            )
+            return 0
+        try:
+            result = run_m35(
+                config_path,
+                contract_manifest_name="m35r1_contract.json",
+                contract_ledger_name="m35r1_request_ledger.json",
+                result_dir_name="m35r1",
+                artifact_stem="m35r1",
+                provider_schema_name="decision_sql_m35r1_submission",
+                experiment_heading="M35R1 — Luna / reasoning-none / first actual baseline",
+                history_lines=[
+                    "- M35: 30 provider attempts, 0 model responses, global `allOf` schema defect.",
+                    "- M35R1: provider-safe flat schema with local cross-field validation.",
+                ],
+            )
+        except M35ProviderBlocked as error:
+            print(
+                json.dumps(
+                    {"status": "M35R1_ABORTED_CONTRACT_DEFECT", "error": str(error)},
+                    indent=2,
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": result["status"],
+                    "provider_calls_attempted": result["summary"]["provider_calls_attempted"],
+                    "summary": str(ROOT / "experiments" / "results" / "m35r1" / "m35r1_summary.md"),
                 },
                 indent=2,
             )

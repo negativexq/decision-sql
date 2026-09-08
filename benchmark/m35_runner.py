@@ -45,7 +45,12 @@ from benchmark.model_runner import (
     _provider_config_projection,
     _request_audit,
 )
-from benchmark.models import ResultContract, Submission, compare_rows
+from benchmark.models import (
+    ResultContract,
+    Submission,
+    compare_rows,
+    validate_submission_invariants,
+)
 from benchmark.safety import SqlAdmissionError, execute_query, validate_read_only_select
 from benchmark.validator import load_pilot, mutation_test, validate_references
 
@@ -149,11 +154,12 @@ def _parse_submission(
     if not isinstance(value, dict):
         return None, "PROVIDER_SCHEMA_FAILURE", "JSON_OBJECT_REQUIRED", None
     try:
-        submission = Submission.from_dict(value)
+        submission = Submission.from_dict_unchecked(value)
     except ValueError as error:
         return None, "PROVIDER_SCHEMA_FAILURE", str(error), value
-    if submission.case_id != expected_case_id:
-        return submission, "INVALID_SUBMISSION", "CASE_ID_MISMATCH", value
+    invariant_errors = validate_submission_invariants(expected_case_id, submission)
+    if invariant_errors:
+        return submission, "INVALID_SUBMISSION", invariant_errors[0], value
     return submission, "PASS", None, value
 
 
@@ -274,11 +280,30 @@ def _failure_for_provider_error(error: Exception) -> tuple[str, bool]:
         return "TRANSPORT_FAILURE", True
     if isinstance(error, LLMProviderError):
         detail = error.detail
+        if (
+            detail is not None
+            and detail.status_code == 400
+            and detail.error_type == "invalid_request_error"
+            and "response_format" in detail.message
+        ):
+            return "PROVIDER_SCHEMA_FAILURE", True
         if detail is not None and detail.status_code in {401, 403, 404}:
             return "TRANSPORT_FAILURE", True
         if detail is not None and detail.retryable:
             return "TRANSPORT_FAILURE", False
     return "PROVIDER_SCHEMA_FAILURE", False
+
+
+def _provider_error_metadata(error: Exception | None) -> dict[str, Any]:
+    if not isinstance(error, LLMProviderError) or error.detail is None:
+        return {}
+    detail = error.detail
+    return {
+        "http_status": detail.status_code,
+        "error_type": detail.error_type,
+        "error_code": detail.error_code,
+        "retryable": detail.retryable,
+    }
 
 
 def _p90(values: list[float]) -> float | None:
@@ -306,6 +331,7 @@ def _contract_hashes(
         "serializer_hash": file_hash(ROOT / "model_contract.py"),
         "evaluator_hash": file_hash(ROOT / "evaluator.py"),
         "validator_hash": file_hash(ROOT / "validator.py"),
+        "provider_adapter_hash": file_hash(ROOT.parent / "app" / "generation" / "provider.py"),
         "provider_config": _provider_config_projection(config),
         "provider_config_hash": sha256_text(
             json.dumps(_provider_config_projection(config), sort_keys=True, separators=(",", ":"))
@@ -335,6 +361,8 @@ def _assert_contract(
         "provider_config_sha256": hashes["provider_config_hash"],
         "experiment_config_sha256": hashes["experiment_config_hash"],
     }
+    if "provider_adapter_hash" in frozen_manifest:
+        expected_values["provider_adapter_hash"] = hashes["provider_adapter_hash"]
     mismatches = [
         key for key, value in expected_values.items() if frozen_manifest.get(key) != value
     ]
@@ -362,12 +390,14 @@ def _summary_markdown(
     case_results: list[dict[str, Any]],
     hashes: dict[str, Any],
     config: dict[str, Any],
+    experiment_heading: str = "M35 — Luna / reasoning-none / single-call baseline",
+    history_lines: list[str] | None = None,
 ) -> str:
     scores = summary["scores"]
     lines = [
         "# Decision-SQL Bench v0.1.1-pilot",
         "",
-        "## M35 — Luna / reasoning-none / single-call baseline",
+        f"## {experiment_heading}",
         "",
         f"- Model: `{config['model']}`",
         f"- Provider: `{config['provider']}`",
@@ -395,6 +425,8 @@ def _summary_markdown(
         "| Category | Count |",
         "|---|---:|",
     ]
+    if history_lines:
+        lines[2:2] = ["", "## Experimental history", "", *history_lines, ""]
     for category in FAILURE_CATEGORIES:
         lines.append(f"| {category} | {summary['failure_counts'].get(category, 0)} |")
     lines += [
@@ -482,7 +514,17 @@ def _summary_markdown(
     return "\n".join(lines) + "\n"
 
 
-def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> dict[str, Any]:
+def run_m35(
+    config_path: Path = ROOT / "experiments" / "m35_luna_none.json",
+    *,
+    contract_manifest_name: str = "m34_3r_model_contract.json",
+    contract_ledger_name: str = "m34_3r_request_ledger.json",
+    result_dir_name: str = "m35",
+    artifact_stem: str = "m35",
+    provider_schema_name: str = "decision_sql_m35_submission",
+    experiment_heading: str = "M35 — Luna / reasoning-none / single-call baseline",
+    history_lines: list[str] | None = None,
+) -> dict[str, Any]:
     config = _experiment_config(config_path)
     expected = {
         "model": "gpt-5.6-luna",
@@ -502,8 +544,8 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
             raise RuntimeError(f"M35_CONFIG_MISMATCH:{key}")
 
     requests = build_all_requests()
-    manifest_path = ROOT / "manifests" / "m34_3r_model_contract.json"
-    ledger_path = ROOT / "manifests" / "m34_3r_request_ledger.json"
+    manifest_path = ROOT / "manifests" / contract_manifest_name
+    ledger_path = ROOT / "manifests" / contract_ledger_name
     if not manifest_path.exists() or not ledger_path.exists():
         raise RuntimeError("M34.3R_NO_GO:MISSING_FROZEN_ARTIFACTS")
     frozen_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -529,18 +571,18 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
     ):
         raise RuntimeError("M35_MUTATION_GATE_FAILED:" + json.dumps(mutations, sort_keys=True))
 
-    result_root = ROOT / "experiments" / "results" / "m35"
+    result_root = ROOT / "experiments" / "results" / result_dir_name
     result_root.mkdir(parents=True, exist_ok=True)
-    raw_path = result_root / "m35_raw_responses.jsonl"
-    parsed_path = result_root / "m35_parsed_submissions.jsonl"
+    raw_path = result_root / f"{artifact_stem}_raw_responses.jsonl"
+    parsed_path = result_root / f"{artifact_stem}_parsed_submissions.jsonl"
     for path in (
         raw_path,
         parsed_path,
-        result_root / "m35_case_results.json",
-        result_root / "m35_summary.json",
-        result_root / "m35_summary.md",
-        result_root / "m35_manifest.json",
-        result_root / "m35_request_ledger.json",
+        result_root / f"{artifact_stem}_case_results.json",
+        result_root / f"{artifact_stem}_summary.json",
+        result_root / f"{artifact_stem}_summary.md",
+        result_root / f"{artifact_stem}_manifest.json",
+        result_root / f"{artifact_stem}_request_ledger.json",
     ):
         _ensure_new_artifact(path)
     provider_key = get_settings().llm_api_key
@@ -577,10 +619,10 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
         try:
             payload = asyncio.run(
                 provider.complete_json_schema(
-                    operation="m35_governed_submission",
+                    operation=f"{artifact_stem}_governed_submission",
                     system_prompt=request.instructions,
                     user_prompt=request.user_text,
-                    schema_name="decision_sql_m35_submission",
+                    schema_name=provider_schema_name,
                     schema=submission_schema(),
                 )
             )
@@ -613,7 +655,11 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
             "usage": metadata["usage"],
             "provider_error": None
             if error is None
-            else {"type": type(error).__name__, "message": str(error)[:240]},
+            else {
+                "type": type(error).__name__,
+                "message": str(error)[:240],
+                **_provider_error_metadata(error),
+            },
             "response_sha256": response_hash,
         }
         call_ledger.append(call_row)
@@ -742,10 +788,13 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
             break
 
     if provider_blocked:
+        abort_status = (
+            "M35R1_ABORTED_CONTRACT_DEFECT" if artifact_stem == "m35r1" else "M35_PROVIDER_BLOCKED"
+        )
         _dump(
-            result_root / "m35_provider_blocked.json",
+            result_root / f"{artifact_stem}_abort.json",
             {
-                "status": "M35_PROVIDER_BLOCKED",
+                "status": abort_status,
                 "reason": provider_blocked,
                 "provider_calls_attempted": len(case_results),
                 "responses_received": successful_responses,
@@ -886,7 +935,7 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
     m35_manifest = {
         "experiment_id": config["experiment_id"],
         "benchmark_version": config["benchmark_version"],
-        "experiment_name": "m35_luna_none",
+        "experiment_name": config.get("experiment_name", config["experiment_id"]),
         "benchmark_content_hash": contract["hashes"]["benchmark_content_hash"],
         "contract_source_commit": frozen_manifest.get("contract_source_commit"),
         "execution_commit": git_revision(),
@@ -908,6 +957,7 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
         "serializer_hash": contract["hashes"]["serializer_hash"],
         "evaluator_hash": contract["hashes"]["evaluator_hash"],
         "validator_hash": contract["hashes"]["validator_hash"],
+        "provider_adapter_hash": contract["hashes"]["provider_adapter_hash"],
         "provider_config_hash": contract["hashes"]["provider_config_hash"],
         "experiment_config_hash": contract["hashes"]["experiment_config_hash"],
         "run_start": started_at,
@@ -928,15 +978,23 @@ def run_m35(config_path: Path = ROOT / "experiments" / "m35_luna_none.json") -> 
         "parsed_submission_artifact": str(parsed_path.relative_to(ROOT)),
     }
     _dump(
-        result_root / "m35_request_ledger.json",
+        result_root / f"{artifact_stem}_request_ledger.json",
         {"provider_calls_attempted": len(call_ledger), "requests": call_ledger},
     )
-    _dump(result_root / "m35_case_results.json", case_results)
-    _dump(result_root / "m35_summary.json", summary)
-    (result_root / "m35_summary.md").write_text(
-        _summary_markdown(summary, case_results, contract["hashes"], config), encoding="utf-8"
+    _dump(result_root / f"{artifact_stem}_case_results.json", case_results)
+    _dump(result_root / f"{artifact_stem}_summary.json", summary)
+    (result_root / f"{artifact_stem}_summary.md").write_text(
+        _summary_markdown(
+            summary,
+            case_results,
+            contract["hashes"],
+            config,
+            experiment_heading,
+            history_lines,
+        ),
+        encoding="utf-8",
     )
-    _dump(result_root / "m35_manifest.json", m35_manifest)
+    _dump(result_root / f"{artifact_stem}_manifest.json", m35_manifest)
     return {
         "status": "M35_COMPLETE",
         "manifest": m35_manifest,

@@ -28,6 +28,10 @@ from app.generation.quality_pack import render_query_quality_pack
 from app.generation.result_shape import ResultShapeProposal
 from app.generation.semantic_plan_protocol import (
     logical_query_plan_response_format,
+    logical_synthesis_response_format,
+    query_alignment_response_format,
+    query_sql_response_format,
+    schema_alignment_response_format,
     semantic_query_plan_response_format,
 )
 from app.generation.window_ir import WindowQueryIR, WindowQueryIRProposal
@@ -41,6 +45,7 @@ from app.provenance.models import (
 )
 from app.provenance.sink import NoOpProvenanceSink
 from app.semantics.logical_plan import LogicalQueryPlanV1
+from app.semantics.m32_alignment import LogicalSynthesisV1, QueryAlignmentV1, SchemaAlignmentV1
 from app.semantics.query_plan_v1 import QueryPlanV1
 from app.semantics.query_plan_wire_v2 import (
     QueryPlanWireV2,
@@ -120,6 +125,51 @@ class LogicalQueryPlanProposal(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     plan: LogicalQueryPlanV1
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class QueryAlignmentProposal(BaseModel):
+    """One untrusted M32 semantic alignment proposal."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    alignment: QueryAlignmentV1
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class SchemaAlignmentProposal(BaseModel):
+    """One untrusted M32 v2A schema-selection proposal."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    alignment: SchemaAlignmentV1
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class LogicalSynthesisProposal(BaseModel):
+    """One untrusted M32 v2A logical-synthesis proposal."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    synthesis: LogicalSynthesisV1
     provider: str
     model: str
     prompt_tokens: int | None = None
@@ -266,6 +316,34 @@ class QueryPlanProviderBoundaryError(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_schema_alignment(
+        self, question: str, schema_context: str
+    ) -> SchemaAlignmentProposal:
+        """Return one untrusted M32 v2A schema selection."""
+
+    async def propose_logical_synthesis(
+        self, question: str, grounded_schema_context: str
+    ) -> LogicalSynthesisProposal:
+        """Return one untrusted M32 v2A semantic computation."""
+
+    async def propose_query_alignment(
+        self, question: str, schema_context: str
+    ) -> QueryAlignmentProposal:
+        """Return one untrusted M32 semantic alignment."""
+
+    async def propose_aligned_sql(self, question: str, grounded_context: str) -> SqlProposal:
+        """Return one untrusted SQL proposal from grounded M32 context."""
+
+    async def review_aligned_sql(
+        self,
+        question: str,
+        grounded_context: str,
+        initial_sql: str,
+        m1_status: str,
+        explain_diagnostic: str,
+    ) -> SqlProposal:
+        """Return one bounded SQL revision using only server diagnostics."""
+
     async def propose_logical_query_plan(
         self, question: str, schema_context: str
     ) -> LogicalQueryPlanProposal:
@@ -356,6 +434,300 @@ class OpenAICompatibleProvider:
             payload,
             parsed_sql=None,
             raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_schema_alignment(
+        self, question: str, schema_context: str
+    ) -> SchemaAlignmentProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _schema_alignment_messages(question, schema_context)
+        response_format = schema_alignment_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "m32_schema_alignment", question, schema_context, messages, response_format
+        )
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            alignment = SchemaAlignmentV1.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = SchemaAlignmentProposal(
+                alignment=alignment,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                parsed_operation_plan=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="M32_SCHEMA_ALIGNMENT_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid M32 schema alignment"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=alignment.model_dump(mode="json"),
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_logical_synthesis(
+        self, question: str, grounded_schema_context: str
+    ) -> LogicalSynthesisProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _logical_synthesis_messages(question, grounded_schema_context)
+        response_format = logical_synthesis_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "m32_logical_synthesis",
+            question,
+            grounded_schema_context,
+            messages,
+            response_format,
+        )
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            synthesis = LogicalSynthesisV1.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = LogicalSynthesisProposal(
+                synthesis=synthesis,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                parsed_operation_plan=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="M32_LOGICAL_SYNTHESIS_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid M32 logical synthesis"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=synthesis.model_dump(mode="json"),
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_query_alignment(
+        self, question: str, schema_context: str
+    ) -> QueryAlignmentProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _query_alignment_messages(question, schema_context)
+        response_format = query_alignment_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("m32_alignment", question, schema_context, messages, response_format)
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            alignment = QueryAlignmentV1.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = QueryAlignmentProposal(
+                alignment=alignment,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                parsed_operation_plan=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="M32_ALIGNMENT_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid M32 query alignment"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=alignment.model_dump(mode="json"),
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_aligned_sql(self, question: str, grounded_context: str) -> SqlProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _aligned_sql_messages(question, grounded_context)
+        response_format = query_sql_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io("m32_sql", question, grounded_context, messages, response_format)
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            if not isinstance(data, dict):
+                raise TypeError("structured output is not an object")
+            sql = data.get("sql")
+            if not isinstance(sql, str) or not sql.strip():
+                raise TypeError("sql is missing")
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = SqlProposal(
+                sql=sql,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="M32_SQL_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid M32 SQL object"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=proposal.sql,
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def review_aligned_sql(
+        self,
+        question: str,
+        grounded_context: str,
+        initial_sql: str,
+        m1_status: str,
+        explain_diagnostic: str,
+    ) -> SqlProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _review_aligned_sql_messages(
+            question, grounded_context, initial_sql, m1_status, explain_diagnostic
+        )
+        response_format = query_sql_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "m32_sql_review", question, grounded_context, messages, response_format
+        )
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            if not isinstance(data, dict):
+                raise TypeError("structured output is not an object")
+            sql = data.get("sql")
+            if not isinstance(sql, str) or not sql.strip():
+                raise TypeError("sql is missing")
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = SqlProposal(
+                sql=sql,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="M32_SQL_REVIEW_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid M32 SQL review object"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=proposal.sql,
+            raw_content=content,
             latency_ms=proposal.latency_ms,
         )
         return proposal
@@ -1335,6 +1707,39 @@ class StaticLLMProvider:
         self.semantic_plan = semantic_plan
         self.logical_plan = logical_plan
 
+    async def propose_schema_alignment(
+        self, question: str, schema_context: str
+    ) -> SchemaAlignmentProposal:
+        del question, schema_context
+        raise NotImplementedError("static M32 schema alignment is not configured")
+
+    async def propose_logical_synthesis(
+        self, question: str, grounded_schema_context: str
+    ) -> LogicalSynthesisProposal:
+        del question, grounded_schema_context
+        raise NotImplementedError("static M32 logical synthesis is not configured")
+
+    async def propose_query_alignment(
+        self, question: str, schema_context: str
+    ) -> QueryAlignmentProposal:
+        del question, schema_context
+        raise NotImplementedError("static M32 alignment is not configured")
+
+    async def propose_aligned_sql(self, question: str, grounded_context: str) -> SqlProposal:
+        del question, grounded_context
+        return self.proposal
+
+    async def review_aligned_sql(
+        self,
+        question: str,
+        grounded_context: str,
+        initial_sql: str,
+        m1_status: str,
+        explain_diagnostic: str,
+    ) -> SqlProposal:
+        del question, grounded_context, initial_sql, m1_status, explain_diagnostic
+        return self.proposal
+
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
     ) -> QueryPlanV1Proposal:
@@ -1467,6 +1872,39 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_schema_alignment(
+        self, question: str, schema_context: str
+    ) -> SchemaAlignmentProposal:
+        del question, schema_context
+        raise NotImplementedError("M32 schema alignment generation is not configured")
+
+    async def propose_logical_synthesis(
+        self, question: str, grounded_schema_context: str
+    ) -> LogicalSynthesisProposal:
+        del question, grounded_schema_context
+        raise NotImplementedError("M32 logical synthesis generation is not configured")
+
+    async def propose_query_alignment(
+        self, question: str, schema_context: str
+    ) -> QueryAlignmentProposal:
+        del question, schema_context
+        raise NotImplementedError("M32 alignment generation is not configured")
+
+    async def propose_aligned_sql(self, question: str, grounded_context: str) -> SqlProposal:
+        del question, grounded_context
+        raise NotImplementedError("M32 aligned SQL generation is not configured")
+
+    async def review_aligned_sql(
+        self,
+        question: str,
+        grounded_context: str,
+        initial_sql: str,
+        m1_status: str,
+        explain_diagnostic: str,
+    ) -> SqlProposal:
+        del question, grounded_context, initial_sql, m1_status, explain_diagnostic
+        raise NotImplementedError("M32 SQL review generation is not configured")
+
     async def propose_logical_query_plan(
         self, question: str, schema_context: str
     ) -> LogicalQueryPlanProposal:
@@ -1618,6 +2056,90 @@ def _logical_query_plan_messages(question: str, schema_context: str) -> list[dic
         "raw expressions, or arbitrary function/operator names. Do not add operations not "
         "requested. Return JSON only; do not provide reasoning."
         f"\n\nBOUNDED SEMANTIC CATALOG:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _query_alignment_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    system = (
+        "Align the user's PostgreSQL question to the supplied semantic catalog. Return "
+        "only the QueryAlignmentV1 structured object. Select only supplied semantic entity, "
+        "attribute, and relationship IDs. Capture the requested population, explicit filters, "
+        "aggregations, grouping, calculation, temporal meaning, ordering, limit, and bounded "
+        "query shape. The short logic_summary must describe the intended computation in plain "
+        "language and must not contain SQL. Do not emit SQL, physical table or column names, "
+        "join conditions, aliases, CTE names, execution steps, compiler fields, or arbitrary "
+        "IDs. Do not add intent that is not present in the question. Return JSON only."
+        f"\n\nBOUNDED SEMANTIC DATABASE EVIDENCE:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _schema_alignment_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    system = (
+        "Select the semantic database objects needed to answer the user's PostgreSQL "
+        "question. Return only the SchemaAlignmentV1 structured object. Use only supplied "
+        "semantic entity and attribute IDs. Select the smallest sufficient set of entities "
+        "and attributes, including attributes needed as requested outputs, filters, grouping, "
+        "aggregation inputs, calculations, ordering, or temporal interpretation. Do not emit "
+        "relationship IDs, physical tables or columns, SQL, aliases, query steps, or execution "
+        "mechanics. The logic_summary is a short plain-language description, not SQL. Return "
+        "JSON only."
+        f"\n\nBOUNDED SEMANTIC DATABASE EVIDENCE:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _logical_synthesis_messages(
+    question: str, grounded_schema_context: str
+) -> list[dict[str, str]]:
+    system = (
+        "Describe the logical meaning of the user's PostgreSQL question using only the "
+        "validated, server-grounded schema below. Return only the LogicalSynthesisV1 "
+        "structured object. Express population, explicit filters, aggregation, grouping, "
+        "calculation, temporal meaning, ordering, limit, and bounded query shape. Use only "
+        "the supplied semantic attribute IDs. Do not select new entities or attributes, emit "
+        "SQL, physical names, join conditions, aliases, CTE names, execution steps, or raw "
+        "expressions. The logic_summary is short plain language and not SQL. Do not invent "
+        "intent not stated by the question. Return JSON only."
+        f"\n\nVALIDATED GROUNDED SCHEMA:\n{grounded_schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _aligned_sql_messages(question: str, grounded_context: str) -> list[dict[str, str]]:
+    system = (
+        "Generate one read-only PostgreSQL SELECT query answering the user's question. "
+        "Use the validated semantic alignment and server-grounded schema below. Use only "
+        "the supplied physical tables and columns, and only the authorized relationships. "
+        "Respect the population, filters, aggregation, grouping, calculation, temporal, "
+        "ordering, limit, nesting, and correlation semantics in the alignment. Do not invent "
+        "tables, columns, join keys, or values. Return exactly one JSON object with only a "
+        "non-empty sql string. Do not return Markdown or explanation."
+        f"\n\nGROUNDED SQL CONTEXT:\n{grounded_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _review_aligned_sql_messages(
+    question: str,
+    grounded_context: str,
+    initial_sql: str,
+    m1_status: str,
+    explain_diagnostic: str,
+) -> list[dict[str, str]]:
+    system = (
+        "Review one PostgreSQL SELECT query against the validated semantic alignment and "
+        "server-grounded schema. Return exactly one JSON object with only a non-empty sql "
+        "string. Correct the query if it fails the alignment, uses an unauthorized schema "
+        "object, or violates the supplied server diagnostic. Use only supplied physical "
+        "tables, columns, and authorized relationships. Do not use evaluator results, gold "
+        "SQL, expected rows, or unstated user intent. Preserve correct portions. Return JSON "
+        "only, with no explanation."
+        f"\n\nQUESTION:\n{question}"
+        f"\n\nGROUNDED CONTEXT:\n{grounded_context}"
+        f"\n\nINITIAL SQL:\n{initial_sql}"
+        f"\n\nM1 STATUS: {m1_status}\nEXPLAIN DIAGNOSTIC: {explain_diagnostic}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
 

@@ -1,0 +1,4518 @@
+{
+  "failures": [
+    {
+      "ast_diff": {
+        "differences": {
+          "columns": {
+            "extra": [
+              "average_snqi",
+              "observationalconditions.signalref"
+            ],
+            "missing": [
+              "avg_snqi",
+              "snqi",
+              "weathprofile"
+            ]
+          },
+          "ctes": {
+            "generated": 0,
+            "gold": 1
+          },
+          "group_by": {
+            "extra": [
+              "o.weathprofile"
+            ],
+            "missing": [
+              "weathprofile"
+            ]
+          },
+          "join_conditions": {
+            "extra": [
+              "o.observstation = t.observstation",
+              "oc.signalref = s.signalregistry",
+              "t.telescregistry = s.telescref"
+            ],
+            "missing": [
+              "s.telescref = t.telescregistry",
+              "t.observstation = o.observstation"
+            ]
+          },
+          "joins": {
+            "generated": 3,
+            "gold": 2
+          },
+          "order_by": {
+            "extra": [
+              "average_snqi desc"
+            ],
+            "missing": [
+              "avg_snqi desc"
+            ]
+          },
+          "select_expressions": {
+            "extra": [
+              "avg(s.snrratio - 0.1 * abs(s.noisefloordbm))",
+              "count(*)",
+              "o.weathprofile",
+              "percentile_cont(0.5) within group (order by (s.snrratio - 0.1 * abs(s.noisefloordbm)))"
+            ],
+            "missing": [
+              "avg(snqi)",
+              "count(*) filter(where snqi > 0)",
+              "percentile_cont(0.5) within group (order by snqi)",
+              "weathprofile"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "observationalconditions"
+            ],
+            "missing": [
+              "signal_quality"
+            ]
+          },
+          "where": {
+            "extra": [
+              "s.snrratio - 0.1 * abs(s.noisefloordbm) > 0"
+            ],
+            "missing": []
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "alien_1",
+      "database_id": "alien",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "weather_condition",
+          "average_snqi",
+          "median_snqi",
+          "analyzable_signal_count"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "analyzable_signal_count": 173,
+            "average_snqi": 13.76919653179192,
+            "median_snqi": 13.718999999999998,
+            "weather_condition": "Clear"
+          },
+          {
+            "analyzable_signal_count": 153,
+            "average_snqi": 13.695581699346405,
+            "median_snqi": 12.829,
+            "weather_condition": "Cloudy"
+          },
+          {
+            "analyzable_signal_count": 136,
+            "average_snqi": 12.484242647058819,
+            "median_snqi": 12.714,
+            "weather_condition": "Partially Cloudy"
+          }
+        ],
+        "generated_row_count": 3,
+        "gold_columns": [
+          "weathprofile",
+          "avg_snqi",
+          "median_snqi",
+          "analyzable_signals"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "analyzable_signals": 173,
+            "avg_snqi": -1.4274519774011312,
+            "median_snqi": -0.5435000000000016,
+            "weathprofile": "Clear"
+          },
+          {
+            "analyzable_signals": 153,
+            "avg_snqi": -2.7247484848484844,
+            "median_snqi": -2.2765000000000004,
+            "weathprofile": "Cloudy"
+          },
+          {
+            "analyzable_signals": 136,
+            "avg_snqi": -4.561768987341775,
+            "median_snqi": -4.737,
+            "weathprofile": "Partially Cloudy"
+          }
+        ],
+        "gold_row_count": 3,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "0",
+          "0.1",
+          "0.1",
+          "0.1",
+          "0.5"
+        ],
+        "generated_where": [
+          "s.snrratio - 0.1 * abs(s.noisefloordbm) > 0"
+        ],
+        "gold_having": [],
+        "gold_literals": [
+          "0",
+          "0.1",
+          "0.5"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "0.1 * abs(s.noisefloordbm)",
+          "0.1 * abs(s.noisefloordbm)",
+          "0.1 * abs(s.noisefloordbm)",
+          "s.snrratio - 0.1 * abs(s.noisefloordbm)",
+          "s.snrratio - 0.1 * abs(s.noisefloordbm)",
+          "s.snrratio - 0.1 * abs(s.noisefloordbm)"
+        ],
+        "generated_case": [],
+        "generated_division": [],
+        "generated_select_expressions": [
+          "o.weathprofile",
+          "avg(s.snrratio - 0.1 * abs(s.noisefloordbm))",
+          "percentile_cont(0.5) within group (order by (s.snrratio - 0.1 * abs(s.noisefloordbm)))",
+          "count(*)"
+        ],
+        "gold_arithmetic": [
+          "0.1 * abs(s.noisefloordbm)",
+          "s.snrratio - 0.1 * abs(s.noisefloordbm)"
+        ],
+        "gold_case": [],
+        "gold_division": [],
+        "gold_select_expressions": [
+          "weathprofile",
+          "avg(snqi)",
+          "percentile_cont(0.5) within group (order by snqi)",
+          "count(*) filter(where snqi > 0)"
+        ]
+      },
+      "generated_sql": "SELECT o.weathprofile AS weather_condition, AVG(s.snrratio - 0.1 * ABS(s.noisefloordbm)) AS average_snqi, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY (s.snrratio - 0.1 * ABS(s.noisefloordbm))) AS median_snqi, COUNT(*) AS analyzable_signal_count FROM signals AS s JOIN observationalconditions AS oc ON oc.signalref = s.signalregistry JOIN telescopes AS t ON t.telescregistry = s.telescref JOIN observatories AS o ON o.observstation = t.observstation WHERE s.snrratio - 0.1 * ABS(s.noisefloordbm) > 0 GROUP BY o.weathprofile ORDER BY average_snqi DESC;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "fcfb2c22e05e8035ee5715309eb1f1163164537d5a9bc717d0e940f85d6cd8c0",
+      "join_diff": {
+        "generated_join_conditions": [
+          "o.observstation = t.observstation",
+          "oc.signalref = s.signalregistry",
+          "t.telescregistry = s.telescref"
+        ],
+        "generated_join_count": 3,
+        "generated_join_table_pairs": [
+          {
+            "condition": "oc.signalref = s.signalregistry",
+            "left_table": "signals",
+            "right_table": "observationalconditions"
+          },
+          {
+            "condition": "t.telescregistry = s.telescref",
+            "left_table": "signals",
+            "right_table": "telescopes"
+          },
+          {
+            "condition": "o.observstation = t.observstation",
+            "left_table": "telescopes",
+            "right_table": "observatories"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "observationalconditions",
+          "observatories",
+          "signals",
+          "telescopes"
+        ],
+        "gold_join_conditions": [
+          "s.telescref = t.telescregistry",
+          "t.observstation = o.observstation"
+        ],
+        "gold_join_count": 2,
+        "gold_join_table_pairs": [
+          {
+            "condition": "s.TelescRef = t.TelescRegistry",
+            "left_table": "signals",
+            "right_table": "telescopes"
+          },
+          {
+            "condition": "t.ObservStation = o.ObservStation",
+            "left_table": "telescopes",
+            "right_table": "observatories"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "observatories",
+          "signal_quality",
+          "signals",
+          "telescopes"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "observationalconditions",
+            "raw_server_context": "RELATIONSHIP relationship:observationalconditions.signalref->signals.signalregistry: entity:observationalconditions -> entity:signals",
+            "relationship_id": "relationship:observationalconditions.signalref->signals.signalregistry",
+            "right_entity": "signals",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "signals",
+            "raw_server_context": "RELATIONSHIP relationship:signals.telescref->telescopes.telescregistry: entity:signals -> entity:telescopes",
+            "relationship_id": "relationship:signals.telescref->telescopes.telescregistry",
+            "right_entity": "telescopes",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "telescopes",
+            "raw_server_context": "RELATIONSHIP relationship:telescopes.observstation->observatories.observstation: entity:telescopes -> entity:observatories",
+            "relationship_id": "relationship:telescopes.observstation->observatories.observstation",
+            "right_entity": "observatories",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [
+          "average_snqi desc"
+        ],
+        "gold_limit": null,
+        "gold_order_by": [
+          "avg_snqi desc"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [
+              "o.weathprofile"
+            ],
+            "kind": "grouped"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [
+              "weathprofile"
+            ],
+            "kind": "grouped"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "bc6df36d198fd717d38a83ad7c622aeb32cd900ff546c9b7e3861aeca55f5be5",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG",
+            "COUNT",
+            "PERCENTILECONT"
+          ],
+          "ctes": 0,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "generated_shape": "grouped aggregate",
+        "gold_features": {
+          "aggregations": [
+            "AVG",
+            "COUNT",
+            "PERCENTILECONT"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "I want to analyze how the Signal-to-Noise Quality Indicator (SNQI) varies across different weather conditions. For each weather condition, give weather condition name, the average SNQI, the median SNQI, and count how many analyzable signals there are. Sort the result by average SNQI in descending order.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "aggregations": {
+            "extra": [
+              "RANK"
+            ],
+            "missing": []
+          },
+          "arithmetic": {
+            "extra": [
+              "(sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0",
+              "(sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0)",
+              "1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0)",
+              "1.0 - sp.coverpct / 100.0",
+              "1.0 - sp.noisedb / 30.0",
+              "10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)",
+              "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense)",
+              "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0",
+              "power((10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)), 1.5) * ((sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0)",
+              "power((10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)), 1.5) * ((sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0) * power((1.0 - sp.noisedb / 30.0), 2)",
+              "sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))",
+              "sp.coverpct / 100.0",
+              "sp.lappct / 100.0",
+              "sp.noisedb / 30.0",
+              "sp.scanresolmm * 1000.0"
+            ],
+            "missing": [
+              "1.0 - spc.noisedb / 30.0",
+              "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense))",
+              "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0",
+              "log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)",
+              "power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0)",
+              "power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0) * power(1.0 - spc.noisedb / 30.0, 2)",
+              "spc.coverpct / 100.0",
+              "spc.noisedb / 30.0",
+              "spc.scanresolmm * 1000.0"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "quality_rank",
+              "scan_metrics.scan_quality_score",
+              "scan_metrics.zoneref",
+              "scanpointcloud.lappct",
+              "site_code"
+            ],
+            "missing": [
+              "avg_sqs"
+            ]
+          },
+          "ctes": {
+            "generated": 1,
+            "gold": 0
+          },
+          "division": {
+            "extra": [
+              "(sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0",
+              "10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)",
+              "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense)",
+              "sp.coverpct / 100.0",
+              "sp.lappct / 100.0",
+              "sp.noisedb / 30.0"
+            ],
+            "missing": [
+              "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense))",
+              "log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)",
+              "spc.coverpct / 100.0",
+              "spc.noisedb / 30.0"
+            ]
+          },
+          "group_by": {
+            "extra": [
+              "si.zoneregistry"
+            ],
+            "missing": [
+              "s.zoneref"
+            ]
+          },
+          "join_conditions": {
+            "extra": [
+              "s.arcref = sp.arcref",
+              "si.zoneregistry = sm.zoneref"
+            ],
+            "missing": [
+              "s.arcref = spc.arcref",
+              "s.zoneref = si.zoneregistry"
+            ]
+          },
+          "order_by": {
+            "extra": [
+              "quality_rank",
+              "site_code"
+            ],
+            "missing": [
+              "avg_sqs desc"
+            ]
+          },
+          "select_count": {
+            "generated": 4,
+            "gold": 3
+          },
+          "select_expressions": {
+            "extra": [
+              "avg(sm.scan_quality_score)",
+              "rank() over (order by avg(sm.scan_quality_score) desc)",
+              "si.zoneregistry"
+            ],
+            "missing": [
+              "round(cast(avg(power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0) * power(1.0 - spc.noisedb / 30.0, 2)) as decimal), 2)",
+              "s.zoneref"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "scan_metrics"
+            ],
+            "missing": []
+          },
+          "window_functions": {
+            "extra": [
+              "RANK"
+            ],
+            "missing": []
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "archeology_1",
+      "database_id": "archeology",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "site_code",
+          "site_name",
+          "average_scan_quality_score",
+          "quality_rank"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "average_scan_quality_score": "11.2187412284390316610637569211684343514541192668879200000000000000000000000000000000",
+            "quality_rank": 1,
+            "site_code": "SC5984",
+            "site_name": "Site-South Tinaville"
+          },
+          {
+            "average_scan_quality_score": "11.2115614121656379789150992309318898104565414033812800000000000000000000000000000000",
+            "quality_rank": 2,
+            "site_code": "SC9423",
+            "site_name": "Site-Allenside"
+          },
+          {
+            "average_scan_quality_score": "11.0388598327174444956842063195381140477621965312000000000000000000000000000000000000",
+            "quality_rank": 3,
+            "site_code": "SC2038",
+            "site_name": "Site-Williamsmouth"
+          },
+          {
+            "average_scan_quality_score": "10.9392216641625123028975580005263691633706485652263200000000000000000000000000000000",
+            "quality_rank": 4,
+            "site_code": "SC8154",
+            "site_name": "Site-Lake Desireefort"
+          },
+          {
+            "average_scan_quality_score": "10.5093968819900083953865009753339064918786527644144000000000000000000000000000000000",
+            "quality_rank": 5,
+            "site_code": "SC9244",
+            "site_name": "Site-Port Rodneyborough"
+          },
+          {
+            "average_scan_quality_score": "10.4885805353082131226315203036797032502352153307196800000000000000000000000000000000",
+            "quality_rank": 6,
+            "site_code": "SC1974",
+            "site_name": "Site-West Williambury"
+          },
+          {
+            "average_scan_quality_score": "10.3809006673532527793009280413221947857562821891481600000000000000000000000000000000",
+            "quality_rank": 7,
+            "site_code": "SC9262",
+            "site_name": "Site-Frazierville"
+          },
+          {
+            "average_scan_quality_score": "10.1711112542210600475670314039651220798940550666474000000000000000000000000000000000",
+            "quality_rank": 8,
+            "site_code": "SC8789",
+            "site_name": "Site-North Ryanchester"
+          },
+          {
+            "average_scan_quality_score": "10.1711112542210600475670314039651220798940550666474000000000000000000000000000000000",
+            "quality_rank": 8,
+            "site_code": "SC9678",
+            "site_name": "Site-West William"
+          },
+          {
+            "average_scan_quality_score": "10.1109381434763894597982287707172177120000000000000000000000000000000000000000000000",
+            "quality_rank": 10,
+            "site_code": "SC2985",
+            "site_name": "Site-Hernandezview"
+          }
+        ],
+        "generated_row_count": 941,
+        "gold_columns": [
+          "site_code",
+          "site_name",
+          "avg_sqs"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "avg_sqs": "1388.36",
+            "site_code": "SC5984",
+            "site_name": "Site-South Tinaville"
+          },
+          {
+            "avg_sqs": "1357.62",
+            "site_code": "SC8154",
+            "site_name": "Site-Lake Desireefort"
+          },
+          {
+            "avg_sqs": "1330.88",
+            "site_code": "SC2038",
+            "site_name": "Site-Williamsmouth"
+          },
+          {
+            "avg_sqs": "1330.50",
+            "site_code": "SC9423",
+            "site_name": "Site-Allenside"
+          },
+          {
+            "avg_sqs": "1301.54",
+            "site_code": "SC1974",
+            "site_name": "Site-West Williambury"
+          },
+          {
+            "avg_sqs": "1272.31",
+            "site_code": "SC9244",
+            "site_name": "Site-Port Rodneyborough"
+          },
+          {
+            "avg_sqs": "1254.35",
+            "site_code": "SC8789",
+            "site_name": "Site-North Ryanchester"
+          },
+          {
+            "avg_sqs": "1254.35",
+            "site_code": "SC9678",
+            "site_name": "Site-West William"
+          },
+          {
+            "avg_sqs": "1244.10",
+            "site_code": "SC1165",
+            "site_name": "Site-Vaughnport"
+          },
+          {
+            "avg_sqs": "1236.39",
+            "site_code": "SC3284",
+            "site_name": "Site-North Linda"
+          }
+        ],
+        "gold_row_count": 941,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "0",
+          "1",
+          "1.0",
+          "1.0",
+          "1.0",
+          "1.5",
+          "10",
+          "10",
+          "10.0",
+          "100.0",
+          "100.0",
+          "100.0",
+          "1000.0",
+          "2",
+          "30.0",
+          "5.0"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [
+          "1.0",
+          "1.5",
+          "10",
+          "10",
+          "10.0",
+          "100.0",
+          "1000.0",
+          "2",
+          "2",
+          "30.0",
+          "5.0"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "(sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0",
+          "(sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0)",
+          "1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0)",
+          "1.0 - sp.coverpct / 100.0",
+          "1.0 - sp.noisedb / 30.0",
+          "10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)",
+          "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense)",
+          "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0",
+          "power((10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)), 1.5) * ((sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0)",
+          "power((10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)), 1.5) * ((sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0) * power((1.0 - sp.noisedb / 30.0), 2)",
+          "sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))",
+          "sp.coverpct / 100.0",
+          "sp.lappct / 100.0",
+          "sp.noisedb / 30.0",
+          "sp.scanresolmm * 1000.0"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "(sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0",
+          "10.0 / (log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense) * 5.0)",
+          "log(10, sp.scanresolmm * 1000.0) / log(10, sp.pointdense)",
+          "sp.coverpct / 100.0",
+          "sp.lappct / 100.0",
+          "sp.noisedb / 30.0"
+        ],
+        "generated_select_expressions": [
+          "si.zoneregistry",
+          "si.zonelabel",
+          "avg(sm.scan_quality_score)",
+          "rank() over (order by avg(sm.scan_quality_score) desc)"
+        ],
+        "gold_arithmetic": [
+          "1.0 - spc.noisedb / 30.0",
+          "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense))",
+          "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0",
+          "log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)",
+          "power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0)",
+          "power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0) * power(1.0 - spc.noisedb / 30.0, 2)",
+          "spc.coverpct / 100.0",
+          "spc.noisedb / 30.0",
+          "spc.scanresolmm * 1000.0"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense))",
+          "log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)",
+          "spc.coverpct / 100.0",
+          "spc.noisedb / 30.0"
+        ],
+        "gold_select_expressions": [
+          "s.zoneref",
+          "si.zonelabel",
+          "round(cast(avg(power(10.0 / (log(10, spc.scanresolmm * 1000.0) / log(10, spc.pointdense)) * 5.0, 1.5) * (spc.coverpct / 100.0) * power(1.0 - spc.noisedb / 30.0, 2)) as decimal), 2)"
+        ]
+      },
+      "generated_sql": "WITH scan_metrics AS (SELECT s.zoneref, (10.0 / (LOG(10, sp.scanresolmm * 1000.0) / LOG(10, sp.pointdense) * 5.0)) ^ 1.5 * ((sp.coverpct * (1.0 + (sp.lappct / 100.0) * (1.0 - sp.coverpct / 100.0))) / 100.0) * (1.0 - sp.noisedb / 30.0) ^ 2 AS scan_quality_score FROM scanpointcloud sp JOIN scans s ON s.arcref = sp.arcref WHERE sp.scanresolmm > 0 AND sp.pointdense > 1 AND sp.noisedb IS NOT NULL) SELECT si.zoneregistry AS site_code, si.zonelabel AS site_name, AVG(sm.scan_quality_score) AS average_scan_quality_score, RANK() OVER (ORDER BY AVG(sm.scan_quality_score) DESC) AS quality_rank FROM scan_metrics sm JOIN sites si ON si.zoneregistry = sm.zoneref GROUP BY si.zoneregistry, si.zonelabel ORDER BY quality_rank, site_code;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "acaf378ddeb6d8f05a1a346869de55e0fb2234450703f439026e57da009f845a",
+      "join_diff": {
+        "generated_join_conditions": [
+          "s.arcref = sp.arcref",
+          "si.zoneregistry = sm.zoneref"
+        ],
+        "generated_join_count": 2,
+        "generated_join_table_pairs": [
+          {
+            "condition": "si.zoneregistry = sm.zoneref",
+            "left_table": "scan_metrics",
+            "right_table": "sites"
+          },
+          {
+            "condition": "s.arcref = sp.arcref",
+            "left_table": "scanpointcloud",
+            "right_table": "scans"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "scan_metrics",
+          "scanpointcloud",
+          "scans",
+          "sites"
+        ],
+        "gold_join_conditions": [
+          "s.arcref = spc.arcref",
+          "s.zoneref = si.zoneregistry"
+        ],
+        "gold_join_count": 2,
+        "gold_join_table_pairs": [
+          {
+            "condition": "s.arcref = spc.arcref",
+            "left_table": "scans",
+            "right_table": "scanpointcloud"
+          },
+          {
+            "condition": "s.zoneref = si.zoneregistry",
+            "left_table": "scans",
+            "right_table": "sites"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [
+          {
+            "condition": "s.arcref = spc.arcref",
+            "left_table": "scans",
+            "right_table": "scanpointcloud"
+          }
+        ],
+        "gold_tables": [
+          "scanpointcloud",
+          "scans",
+          "sites"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "scans",
+            "raw_server_context": "RELATIONSHIP relationship:scans.zoneref->sites.zoneregistry: entity:scans -> entity:sites",
+            "relationship_id": "relationship:scans.zoneref->sites.zoneregistry",
+            "right_entity": "sites",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [
+          "quality_rank",
+          "site_code"
+        ],
+        "gold_limit": null,
+        "gold_order_by": [
+          "avg_sqs desc"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [
+              "si.zonelabel",
+              "si.zoneregistry"
+            ],
+            "kind": "grouped"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [
+              "s.zoneref",
+              "si.zonelabel"
+            ],
+            "kind": "grouped"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "89b0f72e01c0c53a9055918a0b4d3d8da872ab5ce48b932339757416b58de3e3",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG",
+            "AVG",
+            "RANK"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": [
+            "RANK"
+          ]
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "AVG"
+          ],
+          "ctes": 0,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "grouped aggregate"
+      },
+      "question": "I'd like to see a quality assessment of scans across our archaeological sites. Show site code, site name,  average Scan Quality Score for each site and rank them from highest to lowest quality.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "arithmetic": {
+            "extra": [
+              "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0)",
+              "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0) * 100",
+              "cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)"
+            ],
+            "missing": [
+              "(askquote - bidquote) / midquote",
+              "(askquote - bidquote) / midquote * 100",
+              "askquote - bidquote"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "marketdata.quote_depth_snapshot"
+            ],
+            "missing": [
+              "askquote",
+              "bidquote",
+              "exchange",
+              "marketdatanode",
+              "midquote",
+              "quote_depth_snapshot",
+              "timetrack"
+            ]
+          },
+          "ctes": {
+            "generated": 0,
+            "gold": 1
+          },
+          "division": {
+            "extra": [
+              "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0)"
+            ],
+            "missing": [
+              "(askquote - bidquote) / midquote"
+            ]
+          },
+          "limit": {
+            "generated": "LIMIT 1",
+            "gold": null
+          },
+          "order_by": {
+            "extra": [
+              "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp) desc"
+            ],
+            "missing": []
+          },
+          "select_expressions": {
+            "extra": [
+              "((cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0) * 100)",
+              "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp)",
+              "md.quote_depth_snapshot #>> '{metadata,exchnote}'"
+            ],
+            "missing": [
+              "((askquote - bidquote) / midquote * 100)",
+              "exchange",
+              "timetrack"
+            ]
+          },
+          "tables": {
+            "extra": [],
+            "missing": [
+              "snapshot"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "crypto_1",
+      "database_id": "crypto",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "exchange_code",
+          "snapshot_timestamp",
+          "spread_percentage"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "exchange_code": "EX829     ",
+            "snapshot_timestamp": "2025-02-19 08:29:46.132317",
+            "spread_percentage": "0.13963007593580842000"
+          }
+        ],
+        "generated_row_count": 1,
+        "gold_columns": [
+          "exchange",
+          "timetrack",
+          "spread_percentage"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "exchange": "EX369     ",
+            "spread_percentage": "0.14708495642424389600",
+            "timetrack": "2025-02-19T08:29:46.132317"
+          }
+        ],
+        "gold_row_count": 1,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "'{metadata,exchnote}'",
+          "'{metadata,timetrack}'",
+          "'{metadata,timetrack}'",
+          "'{metadata,timetrack}'",
+          "'{quotes,askquote}'",
+          "'{quotes,bidquote}'",
+          "'{quotes,midquote}'",
+          "0",
+          "1",
+          "100"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [
+          "1",
+          "100"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0)",
+          "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0) * 100",
+          "cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "(cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0)"
+        ],
+        "generated_select_expressions": [
+          "md.quote_depth_snapshot #>> '{metadata,exchnote}'",
+          "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp)",
+          "((cast((md.quote_depth_snapshot #>> '{quotes,askquote}') as decimal) - cast((md.quote_depth_snapshot #>> '{quotes,bidquote}') as decimal)) / nullif(cast((md.quote_depth_snapshot #>> '{quotes,midquote}') as decimal), 0) * 100)"
+        ],
+        "gold_arithmetic": [
+          "(askquote - bidquote) / midquote",
+          "(askquote - bidquote) / midquote * 100",
+          "askquote - bidquote"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "(askquote - bidquote) / midquote"
+        ],
+        "gold_select_expressions": [
+          "exchange",
+          "timetrack",
+          "((askquote - bidquote) / midquote * 100)"
+        ]
+      },
+      "generated_sql": "SELECT md.quote_depth_snapshot #>> '{metadata,exchnote}' AS exchange_code, (md.quote_depth_snapshot #>> '{metadata,timetrack}')::timestamp AS snapshot_timestamp, (((md.quote_depth_snapshot #>> '{quotes,askquote}')::numeric - (md.quote_depth_snapshot #>> '{quotes,bidquote}')::numeric) / NULLIF((md.quote_depth_snapshot #>> '{quotes,midquote}')::numeric, 0) * 100) AS spread_percentage FROM marketdata AS md WHERE md.quote_depth_snapshot #>> '{metadata,timetrack}' IS NOT NULL ORDER BY (md.quote_depth_snapshot #>> '{metadata,timetrack}')::timestamp DESC LIMIT 1;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "b1bfea1d32b2f20590df374cc48ebf96fd76dd423dffc2218177ebba6fbfe2e8",
+      "join_diff": {
+        "generated_join_conditions": [],
+        "generated_join_count": 0,
+        "generated_join_table_pairs": [],
+        "generated_join_types": [],
+        "generated_tables": [
+          "marketdata"
+        ],
+        "gold_join_conditions": [],
+        "gold_join_count": 0,
+        "gold_join_table_pairs": [],
+        "gold_join_types": [],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "marketdata",
+          "snapshot"
+        ],
+        "server_authorized_relationships": []
+      },
+      "ordering_limit_diff": {
+        "generated_limit": "LIMIT 1",
+        "generated_order_by": [
+          "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp) desc"
+        ],
+        "gold_limit": null,
+        "gold_order_by": []
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "row_level"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "row_level"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "8c600843a63c8d254d30fe8f6e64499de2ac389a3e409013e4546396396cd429",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [],
+          "ctes": 0,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "generated_shape": "simple",
+        "gold_features": {
+          "aggregations": [],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Could you calculate the Spread Percentage for the most recent market snapshot. Show me the exchange code of the most recent market snapshot with the timestamp of the snapshot, and the calculated percentage?",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [
+          "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp)",
+          "cast((md.quote_depth_snapshot #>> '{metadata,timetrack}') as timestamp) desc"
+        ],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": [
+          "timetrack"
+        ]
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "aggregations": {
+            "extra": [
+              "MAX"
+            ],
+            "missing": []
+          },
+          "arithmetic": {
+            "extra": [
+              "1 - avg(ma_conv.convnatval)",
+              "coalesce(1 - avg(ma_conv.convnatval), 1) * 0.3",
+              "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3",
+              "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4",
+              "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4 + coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3",
+              "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4 + coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3 + coalesce(1 - avg(ma_conv.convnatval), 1) * 0.3"
+            ],
+            "missing": [
+              "0.3 * (1 - ma.convnatval)",
+              "0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal)",
+              "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal)",
+              "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal) + 0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal)",
+              "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal) + 0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal) + 0.3 * (1 - ma.convnatval)",
+              "1 - ma.convnatval"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "accindex",
+              "account.accindex",
+              "account.platident",
+              "average_bbi",
+              "bbi",
+              "cluster_id",
+              "cluster_size",
+              "contentbehavior.cntref",
+              "contentbehavior.cntsessref",
+              "profile.profaccref",
+              "profile.profkey",
+              "sessionbehavior.sessprofref",
+              "sessionbehavior.sessref",
+              "total_account_count"
+            ],
+            "missing": [
+              "account_count",
+              "avg_bbi",
+              "bbi_calc.accindex",
+              "bbi_score",
+              "moderationaction.modactkey"
+            ]
+          },
+          "distinct": {
+            "generated": true,
+            "gold": false
+          },
+          "join_conditions": {
+            "extra": [
+              "cb.cntsessref = sb.sessref",
+              "ma.macntref = cb.cntref",
+              "ma_conv.msgcntref = cb.cntref",
+              "p.profaccref = a.accindex",
+              "sb.sessprofref = p.profkey",
+              "sd.secdetkey = ma.masedetref"
+            ],
+            "missing": [
+              "m.macntref = bc.accindex",
+              "m.macntref = ma.msgcntref",
+              "m.masedetref = sd.secdetkey"
+            ]
+          },
+          "joins": {
+            "generated": 6,
+            "gold": 3
+          },
+          "order_by": {
+            "extra": [
+              "average_bbi desc"
+            ],
+            "missing": [
+              "avg_bbi desc"
+            ]
+          },
+          "select_count": {
+            "generated": 4,
+            "gold": 3
+          },
+          "select_expressions": {
+            "extra": [
+              "average_bbi",
+              "cluster_id",
+              "cluster_size",
+              "total_account_count"
+            ],
+            "missing": [
+              "account_count",
+              "avg_bbi",
+              "clustsize"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "account",
+              "account_bbi",
+              "bot_networks",
+              "contentbehavior",
+              "profile",
+              "sessionbehavior"
+            ],
+            "missing": [
+              "bbi_calc",
+              "cluster_stats"
+            ]
+          },
+          "where": {
+            "extra": [],
+            "missing": [
+              "avg_bbi > 0.7"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "fake_1",
+      "database_id": "fake",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "cluster_id",
+          "cluster_size",
+          "average_bbi",
+          "total_account_count"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "average_bbi": "40.292000000000000000000",
+            "cluster_id": "PL731",
+            "cluster_size": 863,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "40.220200000000000000000",
+            "cluster_id": "PL202",
+            "cluster_size": 260,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "40.168700000000000000000",
+            "cluster_id": "PL649",
+            "cluster_size": 401,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.930400000000000000000",
+            "cluster_id": "PL462",
+            "cluster_size": 67,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.843100000000000000000",
+            "cluster_id": "PL842",
+            "cluster_size": 108,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.751600000000000000000",
+            "cluster_id": "PL960",
+            "cluster_size": 945,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.691700000000000000000",
+            "cluster_id": "PL437",
+            "cluster_size": 790,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.472200000000000000000",
+            "cluster_id": "PL416",
+            "cluster_size": 804,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.404200000000000000000",
+            "cluster_id": "PL802",
+            "cluster_size": 313,
+            "total_account_count": 1
+          },
+          {
+            "average_bbi": "39.261000000000000000000",
+            "cluster_id": "PL992",
+            "cluster_size": 346,
+            "total_account_count": 1
+          }
+        ],
+        "generated_row_count": 100,
+        "gold_columns": [
+          "clustsize",
+          "avg_bbi",
+          "account_count"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "account_count": 1,
+            "avg_bbi": "40.44",
+            "clustsize": 964
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "40.42",
+            "clustsize": 213
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "40.29",
+            "clustsize": 863
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "40.22",
+            "clustsize": 260
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.98",
+            "clustsize": 166
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.91",
+            "clustsize": 977
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.79",
+            "clustsize": 269
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.75",
+            "clustsize": 361
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.69",
+            "clustsize": 790
+          },
+          {
+            "account_count": 1,
+            "avg_bbi": "39.61",
+            "clustsize": 965
+          }
+        ],
+        "gold_row_count": 100,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "'{behavior_scores,autobehavscore}'",
+          "'{behavior_scores,botlikscore}'",
+          "0",
+          "0",
+          "0.3",
+          "0.3",
+          "0.4",
+          "0.7",
+          "1",
+          "1",
+          "10",
+          "100"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [
+          "0",
+          "0.3",
+          "0.3",
+          "0.4",
+          "0.7",
+          "1",
+          "10",
+          "100",
+          "2"
+        ],
+        "gold_where": [
+          "avg_bbi > 0.7"
+        ]
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "1 - avg(ma_conv.convnatval)",
+          "coalesce(1 - avg(ma_conv.convnatval), 1) * 0.3",
+          "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3",
+          "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4",
+          "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4 + coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3",
+          "coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,botlikscore}') as decimal)), 0) * 0.4 + coalesce(max(cast((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}') as decimal)), 0) * 0.3 + coalesce(1 - avg(ma_conv.convnatval), 1) * 0.3"
+        ],
+        "generated_case": [],
+        "generated_division": [],
+        "generated_select_expressions": [
+          "cluster_id",
+          "cluster_size",
+          "average_bbi",
+          "total_account_count"
+        ],
+        "gold_arithmetic": [
+          "0.3 * (1 - ma.convnatval)",
+          "0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal)",
+          "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal)",
+          "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal) + 0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal)",
+          "0.4 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'botlikscore') as decimal) + 0.3 * cast((sd.detection_score_profile -> 'behavior_scores' ->> 'autobehavscore') as decimal) + 0.3 * (1 - ma.convnatval)",
+          "1 - ma.convnatval"
+        ],
+        "gold_case": [],
+        "gold_division": [],
+        "gold_select_expressions": [
+          "clustsize",
+          "avg_bbi",
+          "account_count"
+        ]
+      },
+      "generated_sql": "WITH account_bbi AS (SELECT a.accindex, a.platident AS cluster_id, COALESCE(MAX((sd.detection_score_profile #>> '{behavior_scores,botlikscore}')::numeric), 0) * 0.4 + COALESCE(MAX((sd.detection_score_profile #>> '{behavior_scores,autobehavscore}')::numeric), 0) * 0.3 + COALESCE(1 - AVG(ma_conv.convnatval), 1) * 0.3 AS bbi, MAX(ma.clustsize) AS clustsize FROM account a JOIN profile p ON p.profaccref = a.accindex JOIN sessionbehavior sb ON sb.sessprofref = p.profkey JOIN contentbehavior cb ON cb.cntsessref = sb.sessref LEFT JOIN messaginganalysis ma_conv ON ma_conv.msgcntref = cb.cntref LEFT JOIN moderationaction ma ON ma.macntref = cb.cntref LEFT JOIN securitydetection sd ON sd.secdetkey = ma.masedetref GROUP BY a.accindex, a.platident), bot_networks AS (SELECT cluster_id, MAX(clustsize) AS cluster_size, AVG(bbi) AS average_bbi, COUNT(DISTINCT accindex) AS total_account_count FROM account_bbi WHERE cluster_id IS NOT NULL GROUP BY cluster_id HAVING MAX(clustsize) > 10 AND AVG(bbi) > 0.7) SELECT cluster_id, cluster_size, average_bbi, total_account_count FROM bot_networks ORDER BY average_bbi DESC LIMIT 100",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "9eaf29b3bb996b106802e9efcd7b3c3475ddf332ec65fa50fbe1a99c770e23cb",
+      "join_diff": {
+        "generated_join_conditions": [
+          "cb.cntsessref = sb.sessref",
+          "ma.macntref = cb.cntref",
+          "ma_conv.msgcntref = cb.cntref",
+          "p.profaccref = a.accindex",
+          "sb.sessprofref = p.profkey",
+          "sd.secdetkey = ma.masedetref"
+        ],
+        "generated_join_count": 6,
+        "generated_join_table_pairs": [
+          {
+            "condition": "p.profaccref = a.accindex",
+            "left_table": "account",
+            "right_table": "profile"
+          },
+          {
+            "condition": "sb.sessprofref = p.profkey",
+            "left_table": "profile",
+            "right_table": "sessionbehavior"
+          },
+          {
+            "condition": "cb.cntsessref = sb.sessref",
+            "left_table": "sessionbehavior",
+            "right_table": "contentbehavior"
+          },
+          {
+            "condition": "ma_conv.msgcntref = cb.cntref",
+            "left_table": "contentbehavior",
+            "right_table": "messaginganalysis"
+          },
+          {
+            "condition": "ma.macntref = cb.cntref",
+            "left_table": "contentbehavior",
+            "right_table": "moderationaction"
+          },
+          {
+            "condition": "sd.secdetkey = ma.masedetref",
+            "left_table": "moderationaction",
+            "right_table": "securitydetection"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "account",
+          "account_bbi",
+          "bot_networks",
+          "contentbehavior",
+          "messaginganalysis",
+          "moderationaction",
+          "profile",
+          "securitydetection",
+          "sessionbehavior"
+        ],
+        "gold_join_conditions": [
+          "m.macntref = bc.accindex",
+          "m.macntref = ma.msgcntref",
+          "m.masedetref = sd.secdetkey"
+        ],
+        "gold_join_count": 3,
+        "gold_join_table_pairs": [
+          {
+            "condition": "m.masedetref = sd.secdetkey",
+            "left_table": "moderationaction",
+            "right_table": "securitydetection"
+          },
+          {
+            "condition": "m.macntref = ma.msgcntref",
+            "left_table": "moderationaction",
+            "right_table": "messaginganalysis"
+          },
+          {
+            "condition": "m.macntref = bc.accindex",
+            "left_table": "moderationaction",
+            "right_table": "bbi_calc"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [
+          {
+            "condition": "m.macntref = ma.msgcntref",
+            "left_table": "moderationaction",
+            "right_table": "messaginganalysis"
+          }
+        ],
+        "gold_tables": [
+          "bbi_calc",
+          "cluster_stats",
+          "messaginganalysis",
+          "moderationaction",
+          "securitydetection"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "contentbehavior",
+            "raw_server_context": "RELATIONSHIP relationship:contentbehavior.cntsessref->sessionbehavior.sessref: entity:contentbehavior -> entity:sessionbehavior",
+            "relationship_id": "relationship:contentbehavior.cntsessref->sessionbehavior.sessref",
+            "right_entity": "sessionbehavior",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "messaginganalysis",
+            "raw_server_context": "RELATIONSHIP relationship:messaginganalysis.msgcntref->contentbehavior.cntref: entity:messaginganalysis -> entity:contentbehavior",
+            "relationship_id": "relationship:messaginganalysis.msgcntref->contentbehavior.cntref",
+            "right_entity": "contentbehavior",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "moderationaction",
+            "raw_server_context": "RELATIONSHIP relationship:moderationaction.macntref->contentbehavior.cntref: entity:moderationaction -> entity:contentbehavior",
+            "relationship_id": "relationship:moderationaction.macntref->contentbehavior.cntref",
+            "right_entity": "contentbehavior",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "moderationaction",
+            "raw_server_context": "RELATIONSHIP relationship:moderationaction.masedetref->securitydetection.secdetkey: entity:moderationaction -> entity:securitydetection",
+            "relationship_id": "relationship:moderationaction.masedetref->securitydetection.secdetkey",
+            "right_entity": "securitydetection",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "profile",
+            "raw_server_context": "RELATIONSHIP relationship:profile.profaccref->account.accindex: entity:profile -> entity:account",
+            "relationship_id": "relationship:profile.profaccref->account.accindex",
+            "right_entity": "account",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "sessionbehavior",
+            "raw_server_context": "RELATIONSHIP relationship:sessionbehavior.sessprofref->profile.profkey: entity:sessionbehavior -> entity:profile",
+            "relationship_id": "relationship:sessionbehavior.sessprofref->profile.profkey",
+            "right_entity": "profile",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": "LIMIT 100",
+        "generated_order_by": [
+          "average_bbi desc"
+        ],
+        "gold_limit": "LIMIT 100",
+        "gold_order_by": [
+          "avg_bbi desc"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "f37fadce562fd203da8b4135cef917305b7b1c049f22af737d1dd0965d03e429",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG",
+            "AVG",
+            "AVG",
+            "COUNT",
+            "MAX",
+            "MAX",
+            "MAX",
+            "MAX",
+            "MAX"
+          ],
+          "ctes": 2,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "AVG",
+            "COUNT"
+          ],
+          "ctes": 2,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Find all Bot Networks, and display the cluster size, average Bot Behavior Index score, and total account count for each cluster. Sort results by average BBI in descending order and limit to top 100 clusters.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "arithmetic": {
+            "extra": [
+              "current_date - interval '12 months'",
+              "t.voldaily / t.acctbal"
+            ],
+            "missing": [
+              "current_date - interval '1 year'",
+              "t.voldaily / nullif(t.acctbal, 0)"
+            ]
+          },
+          "columns": {
+            "extra": [],
+            "missing": [
+              "dtr",
+              "highriskprofile.tradereg",
+              "recentsignificantenforcements.tradereg",
+              "risk_level_text",
+              "tle",
+              "tradereg"
+            ]
+          },
+          "ctes": {
+            "generated": 0,
+            "gold": 3
+          },
+          "division": {
+            "extra": [
+              "t.voldaily / t.acctbal"
+            ],
+            "missing": [
+              "t.voldaily / nullif(t.acctbal, 0)"
+            ]
+          },
+          "join_conditions": {
+            "extra": [
+              "tr.trdref = t.tradereg"
+            ],
+            "missing": [
+              "hrp.tradereg = rse.tradereg"
+            ]
+          },
+          "limit": {
+            "generated": null,
+            "gold": "LIMIT 100"
+          },
+          "select_expressions": {
+            "extra": [
+              "t.tradereg"
+            ],
+            "missing": [
+              "hrp.tradereg"
+            ]
+          },
+          "tables": {
+            "extra": [],
+            "missing": [
+              "highriskprofile",
+              "recentsignificantenforcements",
+              "relevanttraders"
+            ]
+          },
+          "where": {
+            "extra": [
+              "(((cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5))) and (cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full')",
+              "(((cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5))) and (cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full') and cc.lastrevdt >= current_date - interval '12 months'",
+              "(cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5)",
+              "cast(ea.acttake as text) = 'suspension'",
+              "cast(ea.busrestr as text) = 'full'",
+              "cast(ea.penimp as text) in ('fine', 'ban')",
+              "cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension'",
+              "cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full'",
+              "cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0",
+              "cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive'",
+              "cc.lastrevdt >= current_date - interval '12 months'",
+              "t.acctbal <> 0",
+              "t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5",
+              "t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive'",
+              "t.voldaily / t.acctbal > 0.5"
+            ],
+            "missing": []
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "insider_1",
+      "database_id": "insider",
+      "execution": {
+        "empty_vs_non_empty": [
+          true,
+          true
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "tradereg"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [],
+        "generated_row_count": 0,
+        "gold_columns": [
+          "tradereg"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [],
+        "gold_row_count": 0,
+        "same_columns": true,
+        "same_row_set": true
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "''",
+          "'12'",
+          "'aggressive'",
+          "'ban'",
+          "'fine'",
+          "'full'",
+          "'suspension'",
+          "'{risklevel,levratio}'",
+          "'{risklevel,risklevel}'",
+          "0",
+          "0.5",
+          "5.0"
+        ],
+        "generated_where": [
+          "(((cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5))) and (cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full')",
+          "(((cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5))) and (cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full') and cc.lastrevdt >= current_date - interval '12 months'",
+          "(cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5)",
+          "cast(ea.acttake as text) = 'suspension'",
+          "cast(ea.busrestr as text) = 'full'",
+          "cast(ea.penimp as text) in ('fine', 'ban')",
+          "cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension'",
+          "cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full'",
+          "cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0",
+          "cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive'",
+          "cc.lastrevdt >= current_date - interval '12 months'",
+          "t.acctbal <> 0",
+          "t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5",
+          "t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive'",
+          "t.voldaily / t.acctbal > 0.5"
+        ],
+        "gold_having": [],
+        "gold_literals": [
+          "'1'",
+          "'aggressive'",
+          "'ban'",
+          "'fine'",
+          "'full'",
+          "'suspension'",
+          "0",
+          "0.5 /* kb id 10 definition */",
+          "100",
+          "5.0"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "current_date - interval '12 months'",
+          "t.voldaily / t.acctbal"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "t.voldaily / t.acctbal"
+        ],
+        "generated_select_expressions": [
+          "t.tradereg"
+        ],
+        "gold_arithmetic": [
+          "current_date - interval '1 year'",
+          "t.voldaily / nullif(t.acctbal, 0)"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "t.voldaily / nullif(t.acctbal, 0)"
+        ],
+        "gold_select_expressions": [
+          "hrp.tradereg"
+        ]
+      },
+      "generated_sql": "SELECT DISTINCT t.tradereg\nFROM trader AS t\nJOIN transactionrecord AS tr ON tr.trdref = t.tradereg\nJOIN compliancecase AS cc ON cc.transref = tr.transreg\nJOIN enforcementactions AS ea ON ea.compref2 = cc.compreg\nWHERE (\n  (\n    (NULLIF(t.trading_performance #>> '{risklevel,levratio}', '')::numeric > 5.0\n     AND t.trading_performance #>> '{risklevel,risklevel}' = 'Aggressive')\n    OR (t.acctbal <> 0 AND t.voldaily / t.acctbal > 0.5)\n  )\n)\nAND (\n  ea.penimp::text IN ('Fine', 'Ban')\n  OR ea.acttake::text = 'Suspension'\n  OR ea.busrestr::text = 'Full'\n)\nAND cc.lastrevdt >= CURRENT_DATE - INTERVAL '12 months';",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "b22b501cda88eb4f44deaf5f391cf5bd26bbe2c02bced7c0bbd569f89e7e62f4",
+      "join_diff": {
+        "generated_join_conditions": [
+          "cc.transref = tr.transreg",
+          "ea.compref2 = cc.compreg",
+          "tr.trdref = t.tradereg"
+        ],
+        "generated_join_count": 3,
+        "generated_join_table_pairs": [
+          {
+            "condition": "tr.trdref = t.tradereg",
+            "left_table": "trader",
+            "right_table": "transactionrecord"
+          },
+          {
+            "condition": "cc.transref = tr.transreg",
+            "left_table": "transactionrecord",
+            "right_table": "compliancecase"
+          },
+          {
+            "condition": "ea.compref2 = cc.compreg",
+            "left_table": "compliancecase",
+            "right_table": "enforcementactions"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "compliancecase",
+          "enforcementactions",
+          "trader",
+          "transactionrecord"
+        ],
+        "gold_join_conditions": [
+          "cc.transref = tr.transreg",
+          "ea.compref2 = cc.compreg",
+          "hrp.tradereg = rse.tradereg"
+        ],
+        "gold_join_count": 3,
+        "gold_join_table_pairs": [
+          {
+            "condition": "hrp.tradereg = rse.tradereg",
+            "left_table": "highriskprofile",
+            "right_table": "recentsignificantenforcements"
+          },
+          {
+            "condition": "ea.compref2 = cc.compreg",
+            "left_table": "enforcementactions",
+            "right_table": "compliancecase"
+          },
+          {
+            "condition": "cc.transref = tr.transreg",
+            "left_table": "compliancecase",
+            "right_table": "transactionrecord"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "compliancecase",
+          "enforcementactions",
+          "highriskprofile",
+          "recentsignificantenforcements",
+          "relevanttraders",
+          "trader",
+          "transactionrecord"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "compliancecase",
+            "raw_server_context": "RELATIONSHIP relationship:compliancecase.transref->transactionrecord.transreg: entity:compliancecase -> entity:transactionrecord",
+            "relationship_id": "relationship:compliancecase.transref->transactionrecord.transreg",
+            "right_entity": "transactionrecord",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "enforcementactions",
+            "raw_server_context": "RELATIONSHIP relationship:enforcementactions.compref2->compliancecase.compreg: entity:enforcementactions -> entity:compliancecase",
+            "relationship_id": "relationship:enforcementactions.compref2->compliancecase.compreg",
+            "right_entity": "compliancecase",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "transactionrecord",
+            "raw_server_context": "RELATIONSHIP relationship:transactionrecord.trdref->trader.tradereg: entity:transactionrecord -> entity:trader",
+            "relationship_id": "relationship:transactionrecord.trdref->trader.tradereg",
+            "right_entity": "trader",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [],
+        "gold_limit": "LIMIT 100",
+        "gold_order_by": []
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "row_level"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "row_level"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "bcfa79cfe5fe2e5f18f6ab7be07e587618706c3b7b6c3fafd53d6a4ef7bb9a17",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [],
+          "ctes": 0,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "generated_shape": "simple",
+        "gold_features": {
+          "aggregations": [],
+          "ctes": 3,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Can you generate a list of trader IDs for all traders who meet the criteria for our High-Risk Trader Profile? From that group, please only include those who have also faced a Significant Enforcement Action where the related compliance case was last reviewed within the past 12 months. Just provide the unique trader registration IDs.",
+      "temporal_diff": {
+        "generated_date_time_functions": [
+          "CURRENT_REFERENCE",
+          "INTERVAL"
+        ],
+        "generated_temporal_expressions": [
+          "(((cast(nullif(t.trading_performance #>> '{risklevel,levratio}', '') as decimal) > 5.0 and t.trading_performance #>> '{risklevel,risklevel}' = 'aggressive') or (t.acctbal <> 0 and t.voldaily / t.acctbal > 0.5))) and (cast(ea.penimp as text) in ('fine', 'ban') or cast(ea.acttake as text) = 'suspension' or cast(ea.busrestr as text) = 'full') and cc.lastrevdt >= current_date - interval '12 months'",
+          "cc.lastrevdt >= current_date - interval '12 months'"
+        ],
+        "gold_date_time_functions": [
+          "CURRENT_REFERENCE",
+          "INTERVAL"
+        ],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "case": {
+            "extra": [
+              "case tb.therapy_details ->> 'engagement' when 'high' then 3 when 'medium' then 2 when 'low' then 1 when 'non-compliant' then 0 end"
+            ],
+            "missing": [
+              "case (tb.therapy_details ->> 'engagement') when 'high' then 3 when 'medium' then 2 when 'low' then 1 when 'non-compliant' then 0 else 0 end"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "facilities.envstress",
+              "facilities.fackey",
+              "facilities.lifeimpact",
+              "high_risk.patient_id",
+              "patient_tes.assessment_date",
+              "patient_tes.assessment_id",
+              "patient_tes.average_tes",
+              "patient_tes.environmental_stress",
+              "patient_tes.life_impact",
+              "patient_tes.patient_id",
+              "patients.assessment_date",
+              "patients.assessment_id",
+              "patients.environmental_stress",
+              "patients.life_impact",
+              "patients.patient_id",
+              "patients.patkey",
+              "patients.rn"
+            ],
+            "missing": [
+              "avgpatientengagement.avg_engagement_score",
+              "avgpatientengagement.patkey",
+              "engagement_score",
+              "envstress",
+              "facilitystress.envstress",
+              "facilitystress.fackey",
+              "facilitystress.lifeimpact",
+              "fackey",
+              "lifeimpact",
+              "patientrisk.asrkey",
+              "patientrisk.is_high_risk",
+              "patientrisk.patkey",
+              "patkey",
+              "recentassessment.asrkey",
+              "recentassessment.facid",
+              "recentassessment.patkey",
+              "recentassessment.rn",
+              "recentassessment.timemark"
+            ]
+          },
+          "ctes": {
+            "generated": 3,
+            "gold": 5
+          },
+          "distinct": {
+            "generated": true,
+            "gold": false
+          },
+          "join_conditions": {
+            "extra": [
+              "ab.patownerref = p.patkey",
+              "ab.patownerref = pa.patkey",
+              "asr.asrkey = ab.abkey",
+              "e.abref = ab.abkey and e.patref = p.patkey",
+              "e.abref = pa.assessment_id and e.patref = pa.patient_id",
+              "f.fackey = e.facid",
+              "hr.patient_id = pt.patient_id"
+            ],
+            "missing": [
+              "ab.abkey = asr.asrkey",
+              "pr.asrkey = e.abref /* assuming asrkey links to assessmentbasics which links via abref in encounters */",
+              "ra.facid = fs.fackey /* join facility stress info */",
+              "ra.patkey = ape.patkey"
+            ]
+          },
+          "joins": {
+            "generated": 8,
+            "gold": 5
+          },
+          "order_by": {
+            "extra": [
+              "pt.assessment_date desc nulls last",
+              "pt.patient_id"
+            ],
+            "missing": [
+              "ra.timemark desc"
+            ]
+          },
+          "select_expressions": {
+            "extra": [
+              "pt.assessment_date",
+              "pt.assessment_id",
+              "pt.average_tes",
+              "pt.environmental_stress",
+              "pt.life_impact",
+              "pt.patient_id"
+            ],
+            "missing": [
+              "ape.avg_engagement_score",
+              "fs.envstress",
+              "fs.lifeimpact",
+              "ra.asrkey",
+              "ra.patkey",
+              "ra.timemark"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "high_risk",
+              "patient_assessments",
+              "patient_tes",
+              "patients"
+            ],
+            "missing": [
+              "avgpatientengagement",
+              "facilitystress",
+              "patientengagement",
+              "patientrisk",
+              "recentassessment"
+            ]
+          },
+          "where": {
+            "extra": [
+              "pt.average_tes < 2"
+            ],
+            "missing": [
+              "ape.avg_engagement_score < 2",
+              "ra.rn = 1 /* only the most recent assessment for the high-risk patient */",
+              "ra.rn = 1 /* only the most recent assessment for the high-risk patient */ and ape.avg_engagement_score < 2",
+              "ra.rn = 1 /* only the most recent assessment for the high-risk patient */ and ape.avg_engagement_score < 2 and not fs.fackey is null /* ensure they are in a facility with severe stress/impact */"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "mental_1",
+      "database_id": "mental",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "patient_id",
+          "assessment_id",
+          "most_recent_assessment_date",
+          "average_tes",
+          "environmental_stress",
+          "life_impact"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "assessment_id": "A621836",
+            "average_tes": "1.00",
+            "environmental_stress": "Mild",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P105181"
+          },
+          {
+            "assessment_id": "A670577",
+            "average_tes": "1.00",
+            "environmental_stress": "Moderate",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P118896"
+          },
+          {
+            "assessment_id": "A456144",
+            "average_tes": "0.00",
+            "environmental_stress": "Moderate",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P133416"
+          },
+          {
+            "assessment_id": "A515871",
+            "average_tes": "1.00",
+            "environmental_stress": "Severe",
+            "life_impact": "Mild",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P136511"
+          },
+          {
+            "assessment_id": "A624305",
+            "average_tes": "0.00",
+            "environmental_stress": "Severe",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P137794"
+          },
+          {
+            "assessment_id": "A144755",
+            "average_tes": "0.00",
+            "environmental_stress": "Moderate",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P141379"
+          },
+          {
+            "assessment_id": "A636881",
+            "average_tes": "0.00",
+            "environmental_stress": "Mild",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P146685"
+          },
+          {
+            "assessment_id": "A288074",
+            "average_tes": "1.00",
+            "environmental_stress": "Mild",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P152449"
+          },
+          {
+            "assessment_id": "A871768",
+            "average_tes": "1.00",
+            "environmental_stress": "Moderate",
+            "life_impact": "Severe",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P157622"
+          },
+          {
+            "assessment_id": "A882099",
+            "average_tes": "1.00",
+            "environmental_stress": "Severe",
+            "life_impact": "Moderate",
+            "most_recent_assessment_date": "2025-02-19",
+            "patient_id": "P158006"
+          }
+        ],
+        "generated_row_count": 50,
+        "gold_columns": [
+          "patkey",
+          "asrkey",
+          "last_assessment_date",
+          "patient_tes_avg",
+          "envstress",
+          "lifeimpact"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "asrkey": "A129670",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.967426",
+            "lifeimpact": "Moderate",
+            "patient_tes_avg": "1",
+            "patkey": "P359102"
+          },
+          {
+            "asrkey": "A692761",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.966492",
+            "lifeimpact": "Moderate",
+            "patient_tes_avg": "1",
+            "patkey": "P582833"
+          },
+          {
+            "asrkey": "A669613",
+            "envstress": "Moderate",
+            "last_assessment_date": "2025-02-19 08:30:58.966279",
+            "lifeimpact": "Severe",
+            "patient_tes_avg": "1",
+            "patkey": "P408027"
+          },
+          {
+            "asrkey": "A840929",
+            "envstress": "Mild",
+            "last_assessment_date": "2025-02-19 08:30:58.965230",
+            "lifeimpact": "Severe",
+            "patient_tes_avg": "0",
+            "patkey": "P588180"
+          },
+          {
+            "asrkey": "A323677",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.965230",
+            "lifeimpact": "Moderate",
+            "patient_tes_avg": "0",
+            "patkey": "P230156"
+          },
+          {
+            "asrkey": "A703463",
+            "envstress": "Mild",
+            "last_assessment_date": "2025-02-19 08:30:58.965230",
+            "lifeimpact": "Severe",
+            "patient_tes_avg": "0",
+            "patkey": "P585294"
+          },
+          {
+            "asrkey": "A637536",
+            "envstress": "Mild",
+            "last_assessment_date": "2025-02-19 08:30:58.965230",
+            "lifeimpact": "Severe",
+            "patient_tes_avg": "1",
+            "patkey": "P479778"
+          },
+          {
+            "asrkey": "A624305",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.964660",
+            "lifeimpact": "Severe",
+            "patient_tes_avg": "0",
+            "patkey": "P137794"
+          },
+          {
+            "asrkey": "A509235",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.964660",
+            "lifeimpact": "Mild",
+            "patient_tes_avg": "0",
+            "patkey": "P750697"
+          },
+          {
+            "asrkey": "A926121",
+            "envstress": "Severe",
+            "last_assessment_date": "2025-02-19 08:30:58.963439",
+            "lifeimpact": "Moderate",
+            "patient_tes_avg": "0",
+            "patkey": "P361800"
+          }
+        ],
+        "gold_row_count": 50,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "'high'",
+          "'high'",
+          "'low'",
+          "'medium'",
+          "'non-compliant'",
+          "'severe'",
+          "'severe'",
+          "'severe'",
+          "0",
+          "0",
+          "0",
+          "1",
+          "1",
+          "15",
+          "15",
+          "2",
+          "2",
+          "2",
+          "3",
+          "50"
+        ],
+        "generated_where": [
+          "pt.average_tes < 2"
+        ],
+        "gold_having": [],
+        "gold_literals": [
+          "'high'",
+          "'high'",
+          "'low'",
+          "'medium'",
+          "'non-compliant'",
+          "'severe'",
+          "'severe'",
+          "'severe'",
+          "0",
+          "0",
+          "1",
+          "1 /* only the most recent assessment for the high-risk patient */",
+          "15",
+          "15",
+          "2",
+          "2",
+          "3",
+          "50"
+        ],
+        "gold_where": [
+          "ape.avg_engagement_score < 2",
+          "ra.rn = 1 /* only the most recent assessment for the high-risk patient */",
+          "ra.rn = 1 /* only the most recent assessment for the high-risk patient */ and ape.avg_engagement_score < 2",
+          "ra.rn = 1 /* only the most recent assessment for the high-risk patient */ and ape.avg_engagement_score < 2 and not fs.fackey is null /* ensure they are in a facility with severe stress/impact */"
+        ]
+      },
+      "formula_diff": {
+        "generated_arithmetic": [],
+        "generated_case": [
+          "case tb.therapy_details ->> 'engagement' when 'high' then 3 when 'medium' then 2 when 'low' then 1 when 'non-compliant' then 0 end"
+        ],
+        "generated_division": [],
+        "generated_select_expressions": [
+          "pt.patient_id",
+          "pt.assessment_id",
+          "pt.assessment_date",
+          "pt.average_tes",
+          "pt.environmental_stress",
+          "pt.life_impact"
+        ],
+        "gold_arithmetic": [],
+        "gold_case": [
+          "case (tb.therapy_details ->> 'engagement') when 'high' then 3 when 'medium' then 2 when 'low' then 1 when 'non-compliant' then 0 else 0 end"
+        ],
+        "gold_division": [],
+        "gold_select_expressions": [
+          "ra.patkey",
+          "ra.asrkey",
+          "ra.timemark",
+          "ape.avg_engagement_score",
+          "fs.envstress",
+          "fs.lifeimpact"
+        ]
+      },
+      "generated_sql": "WITH patient_assessments AS (SELECT p.patkey AS patient_id, ab.abkey AS assessment_id, e.timemark::date AS assessment_date, f.envstress::text AS environmental_stress, f.lifeimpact::text AS life_impact, ROW_NUMBER() OVER (PARTITION BY p.patkey ORDER BY e.timemark DESC NULLS LAST, ab.abkey DESC) AS rn FROM patients p JOIN assessmentbasics ab ON ab.patownerref = p.patkey JOIN encounters e ON e.abref = ab.abkey AND e.patref = p.patkey JOIN facilities f ON f.fackey = e.facid WHERE f.envstress::text = 'Severe' OR f.lifeimpact::text = 'Severe'), patient_tes AS (SELECT pa.patient_id, pa.assessment_id, pa.assessment_date, pa.environmental_stress, pa.life_impact, ROUND(AVG(CASE tb.therapy_details->>'engagement' WHEN 'High' THEN 3 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 1 WHEN 'Non-compliant' THEN 0 END)::numeric, 2) AS average_tes FROM patient_assessments pa JOIN encounters e ON e.abref = pa.assessment_id AND e.patref = pa.patient_id JOIN treatmentbasics tb ON tb.encref = e.enckey WHERE pa.rn = 1 GROUP BY pa.patient_id, pa.assessment_id, pa.assessment_date, pa.environmental_stress, pa.life_impact), high_risk AS (SELECT DISTINCT pa.patkey AS patient_id FROM patients pa JOIN assessmentbasics ab ON ab.patownerref = pa.patkey JOIN assessmentsymptomsandrisk asr ON asr.asrkey = ab.abkey WHERE asr.suicrisk::text IN ('High', 'Severe') OR COALESCE((asr.mental_health_scores->'depression'->>'phq9_score')::numeric, 0) > 15 OR COALESCE((asr.mental_health_scores->'anxiety'->>'gad7_score')::numeric, 0) > 15) SELECT pt.patient_id, pt.assessment_id, pt.assessment_date AS most_recent_assessment_date, pt.average_tes, pt.environmental_stress, pt.life_impact FROM patient_tes pt JOIN high_risk hr ON hr.patient_id = pt.patient_id WHERE pt.average_tes < 2 ORDER BY pt.assessment_date DESC NULLS LAST, pt.patient_id LIMIT 50",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "9e3c991f2eeb9721f2e9ca5209018a2e2cabef390db10ceaf5ada29f36684c95",
+      "join_diff": {
+        "generated_join_conditions": [
+          "ab.patownerref = p.patkey",
+          "ab.patownerref = pa.patkey",
+          "asr.asrkey = ab.abkey",
+          "e.abref = ab.abkey and e.patref = p.patkey",
+          "e.abref = pa.assessment_id and e.patref = pa.patient_id",
+          "f.fackey = e.facid",
+          "hr.patient_id = pt.patient_id",
+          "tb.encref = e.enckey"
+        ],
+        "generated_join_count": 8,
+        "generated_join_table_pairs": [
+          {
+            "condition": "hr.patient_id = pt.patient_id",
+            "left_table": "patient_tes",
+            "right_table": "high_risk"
+          },
+          {
+            "condition": "ab.patownerref = p.patkey",
+            "left_table": "patients",
+            "right_table": "assessmentbasics"
+          },
+          {
+            "condition": "e.abref = ab.abkey AND e.patref = p.patkey",
+            "left_table": "assessmentbasics",
+            "right_table": "encounters"
+          },
+          {
+            "condition": "e.abref = ab.abkey AND e.patref = p.patkey",
+            "left_table": "patients",
+            "right_table": "encounters"
+          },
+          {
+            "condition": "f.fackey = e.facid",
+            "left_table": "encounters",
+            "right_table": "facilities"
+          },
+          {
+            "condition": "e.abref = pa.assessment_id AND e.patref = pa.patient_id",
+            "left_table": "patients",
+            "right_table": "encounters"
+          },
+          {
+            "condition": "tb.encref = e.enckey",
+            "left_table": "encounters",
+            "right_table": "treatmentbasics"
+          },
+          {
+            "condition": "ab.patownerref = pa.patkey",
+            "left_table": "patients",
+            "right_table": "assessmentbasics"
+          },
+          {
+            "condition": "asr.asrkey = ab.abkey",
+            "left_table": "assessmentbasics",
+            "right_table": "assessmentsymptomsandrisk"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "assessmentbasics",
+          "assessmentsymptomsandrisk",
+          "encounters",
+          "facilities",
+          "high_risk",
+          "patient_assessments",
+          "patient_tes",
+          "patients",
+          "treatmentbasics"
+        ],
+        "gold_join_conditions": [
+          "ab.abkey = asr.asrkey",
+          "pr.asrkey = e.abref /* assuming asrkey links to assessmentbasics which links via abref in encounters */",
+          "ra.facid = fs.fackey /* join facility stress info */",
+          "ra.patkey = ape.patkey",
+          "tb.encref = e.enckey"
+        ],
+        "gold_join_count": 5,
+        "gold_join_table_pairs": [
+          {
+            "condition": "ra.patkey = ape.patkey",
+            "left_table": "recentassessment",
+            "right_table": "avgpatientengagement"
+          },
+          {
+            "condition": "ra.facid = fs.fackey /* Join facility stress info */",
+            "left_table": "recentassessment",
+            "right_table": "facilitystress"
+          },
+          {
+            "condition": "ab.abkey = asr.asrkey",
+            "left_table": "assessmentbasics",
+            "right_table": "assessmentsymptomsandrisk"
+          },
+          {
+            "condition": "tb.encref = e.enckey",
+            "left_table": "treatmentbasics",
+            "right_table": "encounters"
+          },
+          {
+            "condition": "pr.asrkey = e.abref /* Assuming asrkey links to assessmentbasics which links via abref in encounters */",
+            "left_table": "patientrisk",
+            "right_table": "encounters"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "assessmentbasics",
+          "assessmentsymptomsandrisk",
+          "avgpatientengagement",
+          "encounters",
+          "facilities",
+          "facilitystress",
+          "patientengagement",
+          "patientrisk",
+          "recentassessment",
+          "treatmentbasics"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "assessmentbasics",
+            "raw_server_context": "RELATIONSHIP relationship:assessmentbasics.patownerref->patients.patkey: entity:assessmentbasics -> entity:patients",
+            "relationship_id": "relationship:assessmentbasics.patownerref->patients.patkey",
+            "right_entity": "patients",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "assessmentsymptomsandrisk",
+            "raw_server_context": "RELATIONSHIP relationship:assessmentsymptomsandrisk.asrkey->assessmentbasics.abkey: entity:assessmentsymptomsandrisk -> entity:assessmentbasics",
+            "relationship_id": "relationship:assessmentsymptomsandrisk.asrkey->assessmentbasics.abkey",
+            "right_entity": "assessmentbasics",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "encounters",
+            "raw_server_context": "RELATIONSHIP relationship:encounters.abref->assessmentbasics.abkey: entity:encounters -> entity:assessmentbasics",
+            "relationship_id": "relationship:encounters.abref->assessmentbasics.abkey",
+            "right_entity": "assessmentbasics",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "encounters",
+            "raw_server_context": "RELATIONSHIP relationship:encounters.patref->patients.patkey: entity:encounters -> entity:patients",
+            "relationship_id": "relationship:encounters.patref->patients.patkey",
+            "right_entity": "patients",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "treatmentbasics",
+            "raw_server_context": "RELATIONSHIP relationship:treatmentbasics.encref->encounters.enckey: entity:treatmentbasics -> entity:encounters",
+            "relationship_id": "relationship:treatmentbasics.encref->encounters.enckey",
+            "right_entity": "encounters",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": "LIMIT 50",
+        "generated_order_by": [
+          "pt.assessment_date desc nulls last",
+          "pt.patient_id"
+        ],
+        "gold_limit": "LIMIT 50",
+        "gold_order_by": [
+          "ra.timemark desc"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "18b26cf152057fc89f19c50b674e8d37e8ad0ea22aa907ca1608f4af7a2f7f44",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG"
+          ],
+          "ctes": 3,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": [
+            "ROWNUMBER"
+          ]
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "AVG"
+          ],
+          "ctes": 5,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": [
+            "ROWNUMBER"
+          ]
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "I want to identify High-Risk Patients from facilities experiencing Severe Environmental Stress or Severe Life Impact, who also exhibit low Therapy Engagement Scores (average TES is lower than 2). For each patient, include their patient ID, assessment ID, date of their most recent assessment, their average rounded TES score, and the environmental stress or life impact level of the facility they are associated with. Focus only on the most recent assessments and prioritize patients meeting all these criteria. Sort the results by the assessment date in descending order and limit to the top 50 results.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [
+          "pt.assessment_date",
+          "pt.assessment_date desc nulls last"
+        ],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": [
+          "ra.timemark",
+          "ra.timemark desc"
+        ]
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "arithmetic": {
+            "extra": [
+              "(cast(s.seshviews as decimal) * s.engscore) / nullif(s.seshdur, 0)",
+              "cast(s.seshviews as decimal) * s.engscore"
+            ],
+            "missing": [
+              "(seshviews * cast(engscore as double precision)) / seshdur",
+              "seshviews * cast(engscore as double precision)"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "session_date",
+              "session_uer.*",
+              "session_uer.uer",
+              "sessions.engscore",
+              "sessions.seshdur",
+              "sessions.seshkey",
+              "sessions.seshstart",
+              "sessions.seshviews",
+              "uer"
+            ],
+            "missing": [
+              "engscore",
+              "seshdur",
+              "seshkey",
+              "seshstart",
+              "seshviews",
+              "sess_date",
+              "user_engagement_rate"
+            ]
+          },
+          "ctes": {
+            "generated": 2,
+            "gold": 1
+          },
+          "division": {
+            "extra": [
+              "(cast(s.seshviews as decimal) * s.engscore) / nullif(s.seshdur, 0)"
+            ],
+            "missing": [
+              "(seshviews * cast(engscore as double precision)) / seshdur"
+            ]
+          },
+          "order_by": {
+            "extra": [
+              "session_date asc",
+              "uer asc"
+            ],
+            "missing": [
+              "sess_date"
+            ]
+          },
+          "select_expressions": {
+            "extra": [
+              "avg(uer) over (partition by session_date)",
+              "session_date",
+              "uer"
+            ],
+            "missing": [
+              "avg(user_engagement_rate) over (partition by sess_date)",
+              "sess_date",
+              "user_engagement_rate"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "above_average",
+              "session_uer"
+            ],
+            "missing": [
+              "session_engagement"
+            ]
+          },
+          "where": {
+            "extra": [],
+            "missing": [
+              "user_engagement_rate > (select cast(avg((seshviews * cast(engscore as double precision)) / seshdur) as double precision) from sessions)"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "news_1",
+      "database_id": "news",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "session_date",
+          "uer",
+          "daily_average_uer"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02099571734475374732"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02108108108108108108"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02118780096308186196"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02119336311423101468"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02144388849177984274"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02155370177267987487"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02161572052401746725"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02173498570066730219"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02179211469534050179"
+          },
+          {
+            "daily_average_uer": "0.09997729629439869185",
+            "session_date": "2025-02-19",
+            "uer": "0.02180691791430046464"
+          }
+        ],
+        "generated_row_count": 161,
+        "gold_columns": [
+          "sess_date",
+          "user_engagement_rate",
+          "avg_daily_uer"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.02286806883365201
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.026502732240437157
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.022435424354243543
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.06608695652173913
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.021615720524017466
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.04313993174061433
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.0969054441260745
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.02448
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.040830324909747286
+          },
+          {
+            "avg_daily_uer": 0.09997729629439872,
+            "sess_date": "2025-02-19",
+            "user_engagement_rate": 0.05118881118881119
+          }
+        ],
+        "gold_row_count": 161,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "0",
+          "0"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [],
+        "gold_where": [
+          "user_engagement_rate > (select cast(avg((seshviews * cast(engscore as double precision)) / seshdur) as double precision) from sessions)"
+        ]
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "(cast(s.seshviews as decimal) * s.engscore) / nullif(s.seshdur, 0)",
+          "cast(s.seshviews as decimal) * s.engscore"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "(cast(s.seshviews as decimal) * s.engscore) / nullif(s.seshdur, 0)"
+        ],
+        "generated_select_expressions": [
+          "session_date",
+          "uer",
+          "avg(uer) over (partition by session_date)"
+        ],
+        "gold_arithmetic": [
+          "(seshviews * cast(engscore as double precision)) / seshdur",
+          "(seshviews * cast(engscore as double precision)) / seshdur",
+          "seshviews * cast(engscore as double precision)",
+          "seshviews * cast(engscore as double precision)"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "(seshviews * cast(engscore as double precision)) / seshdur",
+          "(seshviews * cast(engscore as double precision)) / seshdur"
+        ],
+        "gold_select_expressions": [
+          "sess_date",
+          "user_engagement_rate",
+          "avg(user_engagement_rate) over (partition by sess_date)"
+        ]
+      },
+      "generated_sql": "WITH session_uer AS (SELECT s.seshkey, s.seshstart::date AS session_date, (s.seshviews::numeric * s.engscore) / NULLIF(s.seshdur, 0) AS uer FROM sessions AS s WHERE s.seshdur > 0), above_average AS (SELECT su.* FROM session_uer AS su WHERE su.uer > (SELECT AVG(uer) FROM session_uer)) SELECT session_date, uer, AVG(uer) OVER (PARTITION BY session_date) AS daily_average_uer FROM above_average ORDER BY session_date ASC, uer ASC;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "ac331f2fe5ea92dd41bfcfe0548259164d6fd3967301d42915a15280c2bfa96b",
+      "join_diff": {
+        "generated_join_conditions": [],
+        "generated_join_count": 0,
+        "generated_join_table_pairs": [],
+        "generated_join_types": [],
+        "generated_tables": [
+          "above_average",
+          "session_uer",
+          "sessions"
+        ],
+        "gold_join_conditions": [],
+        "gold_join_count": 0,
+        "gold_join_table_pairs": [],
+        "gold_join_types": [],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "session_engagement",
+          "sessions"
+        ],
+        "server_authorized_relationships": []
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [
+          "session_date asc",
+          "uer asc"
+        ],
+        "gold_limit": null,
+        "gold_order_by": [
+          "sess_date"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "32fdeeda9f72817e58943ac80103732fa4a51c33db82fd195b2c9b3822ae3bea",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG",
+            "AVG"
+          ],
+          "ctes": 2,
+          "set_operations": 0,
+          "subqueries": 1,
+          "window_functions": [
+            "AVG"
+          ]
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "AVG",
+            "AVG"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 1,
+          "window_functions": [
+            "AVG"
+          ]
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Show me daily User Engagement Rate (UER) trends, displaying only sessions with above-average engagement. Include the session date, calculated UER, and the daily average UER. Sort results chronologically to see how engagement evolves over time.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [
+          "avg(uer) over (partition by session_date)",
+          "session_date",
+          "session_date asc"
+        ],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": [
+          "avg(user_engagement_rate) over (partition by sess_date)",
+          "sess_date",
+          "sess_date"
+        ]
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "arithmetic": {
+            "extra": [
+              "((e.performanceindex + e.reliabilityindex) / 2.0) * (1 - e.environmentalimpactindex / 10.0)",
+              "(e.performanceindex + e.reliabilityindex) / 2.0",
+              "1 - e.environmentalimpactindex / 10.0",
+              "e.environmentalimpactindex / 10.0",
+              "e.performanceindex + e.reliabilityindex",
+              "efficiency_rank - safety_rank"
+            ],
+            "missing": [
+              "(performanceindex + reliabilityindex) / 2",
+              "(performanceindex + reliabilityindex) / 2 * (1 - environmentalimpactindex / 10)",
+              "1 - environmentalimpactindex / 10",
+              "environmentalimpactindex / 10",
+              "performanceindex + reliabilityindex",
+              "rank() over (partition by equipmenttype order by eer desc) - rank() over (partition by equipmenttype order by safetyindex desc)"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "efficiency_rank",
+              "equipment.environmentalimpactindex",
+              "equipment.equipmentcode",
+              "equipment.equipmenttype",
+              "equipment.performanceindex",
+              "equipment.reliabilityindex",
+              "equipment.safetyindex",
+              "safety_rank"
+            ],
+            "missing": [
+              "environmentalimpactindex",
+              "performanceindex",
+              "reliabilityindex"
+            ]
+          },
+          "division": {
+            "extra": [
+              "(e.performanceindex + e.reliabilityindex) / 2.0",
+              "e.environmentalimpactindex / 10.0"
+            ],
+            "missing": [
+              "(performanceindex + reliabilityindex) / 2",
+              "environmentalimpactindex / 10"
+            ]
+          },
+          "order_by": {
+            "extra": [
+              "eer desc nulls last"
+            ],
+            "missing": [
+              "eer desc"
+            ]
+          },
+          "select_expressions": {
+            "extra": [
+              "abs(efficiency_rank - safety_rank)",
+              "efficiency_rank",
+              "safety_rank"
+            ],
+            "missing": [
+              "abs(rank() over (partition by equipmenttype order by eer desc) - rank() over (partition by equipmenttype order by safetyindex desc))",
+              "rank() over (partition by equipmenttype order by eer desc)",
+              "rank() over (partition by equipmenttype order by safetyindex desc)"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "ranked"
+            ],
+            "missing": [
+              "equipment_efficiency"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "polar_1",
+      "database_id": "polar",
+      "execution": {
+        "empty_vs_non_empty": [
+          false,
+          false
+        ],
+        "frozen_official": "INCORRECT",
+        "frozen_primary_failure": "SQL_SYNTHESIS_ERROR",
+        "generated_columns": [
+          "equipmenttype",
+          "equipmentcode",
+          "equipment_efficiency_rating",
+          "safety_index",
+          "efficiency_rank",
+          "safety_rank",
+          "absolute_rank_difference"
+        ],
+        "generated_error": null,
+        "generated_execution_status": "SUCCESS",
+        "generated_explain_status": "ACCEPTED",
+        "generated_m1_failure_code": null,
+        "generated_m1_parse_status": "ACCEPTED",
+        "generated_m1_policy_status": "ALLOWED",
+        "generated_m1_status": "ACCEPTED",
+        "generated_result_sample": [
+          {
+            "absolute_rank_difference": 144,
+            "efficiency_rank": 1,
+            "equipment_efficiency_rating": 38.9455,
+            "equipmentcode": "PE936999",
+            "equipmenttype": "Shelter",
+            "safety_index": "26.100",
+            "safety_rank": 145
+          },
+          {
+            "absolute_rank_difference": 36,
+            "efficiency_rank": 2,
+            "equipment_efficiency_rating": 34.091,
+            "equipmentcode": "PE458264",
+            "equipmenttype": "Shelter",
+            "safety_index": "79.200",
+            "safety_rank": 38
+          },
+          {
+            "absolute_rank_difference": 84,
+            "efficiency_rank": 3,
+            "equipment_efficiency_rating": 27.048499999999997,
+            "equipmentcode": "PE317105",
+            "equipmenttype": "Shelter",
+            "safety_index": "52.700",
+            "safety_rank": 87
+          },
+          {
+            "absolute_rank_difference": 134,
+            "efficiency_rank": 4,
+            "equipment_efficiency_rating": 25.685000000000002,
+            "equipmentcode": "PE971856",
+            "equipmenttype": "Shelter",
+            "safety_index": "28.200",
+            "safety_rank": 138
+          },
+          {
+            "absolute_rank_difference": 153,
+            "efficiency_rank": 5,
+            "equipment_efficiency_rating": 12.177000000000001,
+            "equipmentcode": "PE839653",
+            "equipmenttype": "Shelter",
+            "safety_index": "19.300",
+            "safety_rank": 158
+          },
+          {
+            "absolute_rank_difference": 144,
+            "efficiency_rank": 6,
+            "equipment_efficiency_rating": 6.42,
+            "equipmentcode": "PE777367",
+            "equipmenttype": "Shelter",
+            "safety_index": "21.700",
+            "safety_rank": 150
+          },
+          {
+            "absolute_rank_difference": 136,
+            "efficiency_rank": 7,
+            "equipment_efficiency_rating": 5.908500000000005,
+            "equipmentcode": "PE220604",
+            "equipmenttype": "Shelter",
+            "safety_index": "26.800",
+            "safety_rank": 143
+          },
+          {
+            "absolute_rank_difference": 96,
+            "efficiency_rank": 8,
+            "equipment_efficiency_rating": 5.453500000000005,
+            "equipmentcode": "PE615712",
+            "equipmenttype": "Shelter",
+            "safety_index": "44.500",
+            "safety_rank": 104
+          },
+          {
+            "absolute_rank_difference": 122,
+            "efficiency_rank": 9,
+            "equipment_efficiency_rating": 1.9299999999999997,
+            "equipmentcode": "PE808819",
+            "equipmenttype": "Shelter",
+            "safety_index": "31.100",
+            "safety_rank": 131
+          },
+          {
+            "absolute_rank_difference": 71,
+            "efficiency_rank": 10,
+            "equipment_efficiency_rating": 1.093500000000001,
+            "equipmentcode": "PE770977",
+            "equipmenttype": "Shelter",
+            "safety_index": "56.600",
+            "safety_rank": 81
+          }
+        ],
+        "generated_row_count": 1000,
+        "gold_columns": [
+          "equipmenttype",
+          "equipmentcode",
+          "eer",
+          "safetyindex",
+          "efficiency_rank",
+          "safety_rank",
+          "rank_difference"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "eer": "38.95",
+            "efficiency_rank": 1,
+            "equipmentcode": "PE936999",
+            "equipmenttype": "Shelter",
+            "rank_difference": 144,
+            "safety_rank": 145,
+            "safetyindex": "26.100"
+          },
+          {
+            "eer": "34.09",
+            "efficiency_rank": 2,
+            "equipmentcode": "PE458264",
+            "equipmenttype": "Shelter",
+            "rank_difference": 36,
+            "safety_rank": 38,
+            "safetyindex": "79.200"
+          },
+          {
+            "eer": "27.05",
+            "efficiency_rank": 3,
+            "equipmentcode": "PE317105",
+            "equipmenttype": "Shelter",
+            "rank_difference": 84,
+            "safety_rank": 87,
+            "safetyindex": "52.700"
+          },
+          {
+            "eer": "25.69",
+            "efficiency_rank": 4,
+            "equipmentcode": "PE971856",
+            "equipmenttype": "Shelter",
+            "rank_difference": 134,
+            "safety_rank": 138,
+            "safetyindex": "28.200"
+          },
+          {
+            "eer": "12.18",
+            "efficiency_rank": 5,
+            "equipmentcode": "PE839653",
+            "equipmenttype": "Shelter",
+            "rank_difference": 153,
+            "safety_rank": 158,
+            "safetyindex": "19.300"
+          },
+          {
+            "eer": "6.42",
+            "efficiency_rank": 6,
+            "equipmentcode": "PE777367",
+            "equipmenttype": "Shelter",
+            "rank_difference": 144,
+            "safety_rank": 150,
+            "safetyindex": "21.700"
+          },
+          {
+            "eer": "5.91",
+            "efficiency_rank": 7,
+            "equipmentcode": "PE220604",
+            "equipmenttype": "Shelter",
+            "rank_difference": 136,
+            "safety_rank": 143,
+            "safetyindex": "26.800"
+          },
+          {
+            "eer": "5.45",
+            "efficiency_rank": 8,
+            "equipmentcode": "PE615712",
+            "equipmenttype": "Shelter",
+            "rank_difference": 96,
+            "safety_rank": 104,
+            "safetyindex": "44.500"
+          },
+          {
+            "eer": "1.93",
+            "efficiency_rank": 9,
+            "equipmentcode": "PE808819",
+            "equipmenttype": "Shelter",
+            "rank_difference": 122,
+            "safety_rank": 131,
+            "safetyindex": "31.100"
+          },
+          {
+            "eer": "1.09",
+            "efficiency_rank": 10,
+            "equipmentcode": "PE770977",
+            "equipmenttype": "Shelter",
+            "rank_difference": 71,
+            "safety_rank": 81,
+            "safetyindex": "56.600"
+          }
+        ],
+        "gold_row_count": 1000,
+        "same_columns": false,
+        "same_row_set": false
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "1",
+          "1",
+          "10.0",
+          "10.0",
+          "2.0",
+          "2.0"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [
+          "1",
+          "10",
+          "10",
+          "2",
+          "2"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "((e.performanceindex + e.reliabilityindex) / 2.0) * (1 - e.environmentalimpactindex / 10.0)",
+          "((e.performanceindex + e.reliabilityindex) / 2.0) * (1 - e.environmentalimpactindex / 10.0)",
+          "(e.performanceindex + e.reliabilityindex) / 2.0",
+          "(e.performanceindex + e.reliabilityindex) / 2.0",
+          "1 - e.environmentalimpactindex / 10.0",
+          "1 - e.environmentalimpactindex / 10.0",
+          "e.environmentalimpactindex / 10.0",
+          "e.environmentalimpactindex / 10.0",
+          "e.performanceindex + e.reliabilityindex",
+          "e.performanceindex + e.reliabilityindex",
+          "efficiency_rank - safety_rank"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "(e.performanceindex + e.reliabilityindex) / 2.0",
+          "(e.performanceindex + e.reliabilityindex) / 2.0",
+          "e.environmentalimpactindex / 10.0",
+          "e.environmentalimpactindex / 10.0"
+        ],
+        "generated_select_expressions": [
+          "equipmenttype",
+          "equipmentcode",
+          "eer",
+          "safetyindex",
+          "efficiency_rank",
+          "safety_rank",
+          "abs(efficiency_rank - safety_rank)"
+        ],
+        "gold_arithmetic": [
+          "(performanceindex + reliabilityindex) / 2",
+          "(performanceindex + reliabilityindex) / 2 * (1 - environmentalimpactindex / 10)",
+          "1 - environmentalimpactindex / 10",
+          "environmentalimpactindex / 10",
+          "performanceindex + reliabilityindex",
+          "rank() over (partition by equipmenttype order by eer desc) - rank() over (partition by equipmenttype order by safetyindex desc)"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "(performanceindex + reliabilityindex) / 2",
+          "environmentalimpactindex / 10"
+        ],
+        "gold_select_expressions": [
+          "equipmenttype",
+          "equipmentcode",
+          "eer",
+          "safetyindex",
+          "rank() over (partition by equipmenttype order by eer desc)",
+          "rank() over (partition by equipmenttype order by safetyindex desc)",
+          "abs(rank() over (partition by equipmenttype order by eer desc) - rank() over (partition by equipmenttype order by safetyindex desc))"
+        ]
+      },
+      "generated_sql": "WITH ranked AS (SELECT e.equipmenttype, e.equipmentcode, ((e.performanceindex + e.reliabilityindex) / 2.0) * (1 - e.environmentalimpactindex / 10.0) AS eer, e.safetyindex, RANK() OVER (PARTITION BY e.equipmenttype ORDER BY ((e.performanceindex + e.reliabilityindex) / 2.0) * (1 - e.environmentalimpactindex / 10.0) DESC NULLS LAST) AS efficiency_rank, RANK() OVER (PARTITION BY e.equipmenttype ORDER BY e.safetyindex DESC NULLS LAST) AS safety_rank FROM equipment AS e) SELECT equipmenttype, equipmentcode, eer AS equipment_efficiency_rating, safetyindex AS safety_index, efficiency_rank, safety_rank, ABS(efficiency_rank - safety_rank) AS absolute_rank_difference FROM ranked ORDER BY equipmenttype, eer DESC NULLS LAST;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "b2f5599ab209b2ef62c3b4aab7b60a3f9196b7c6ff3ef0b506a4a9d46eae0b4d",
+      "join_diff": {
+        "generated_join_conditions": [],
+        "generated_join_count": 0,
+        "generated_join_table_pairs": [],
+        "generated_join_types": [],
+        "generated_tables": [
+          "equipment",
+          "ranked"
+        ],
+        "gold_join_conditions": [],
+        "gold_join_count": 0,
+        "gold_join_table_pairs": [],
+        "gold_join_types": [],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "equipment",
+          "equipment_efficiency"
+        ],
+        "server_authorized_relationships": []
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [
+          "eer desc nulls last",
+          "equipmenttype"
+        ],
+        "gold_limit": null,
+        "gold_order_by": [
+          "eer desc",
+          "equipmenttype"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "base-from-observed"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "0b0df35965a6c4af4d5df169feb52340a7484fc07d16797a11ce740d88f533e8",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "RANK",
+            "RANK"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": [
+            "RANK",
+            "RANK"
+          ]
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "RANK",
+            "RANK",
+            "RANK",
+            "RANK"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": [
+            "RANK",
+            "RANK",
+            "RANK",
+            "RANK"
+          ]
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Show me the equipment type, equipment code, Equipment Efficiency Rating, safety index, efficiency rank, safety rank, and the absolute rank difference between them. Sort the results by equipment type and then by EER in descending order.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "arithmetic": {
+            "extra": [
+              "(1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0))",
+              "(1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(latest.critevents, 0) as decimal) / 10)",
+              "(1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(latest.critevents, 0) as decimal) / 10) * latest.tempstabidx",
+              "(1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(sd.critevents, 0) as decimal) / 10)",
+              "(1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(sd.critevents, 0) as decimal) / 10) * sd.tempstabidx",
+              "(abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)) * sd.tempdevcount",
+              "1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+              "1 - cast(coalesce(latest.critevents, 0) as decimal) / 10",
+              "1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+              "1 - cast(coalesce(sd.critevents, 0) as decimal) / 10",
+              "1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100",
+              "1 - coalesce(current_tss, 0)",
+              "abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)",
+              "cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+              "cast(coalesce(latest.critevents, 0) as decimal) / 10",
+              "cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+              "cast(coalesce(sd.critevents, 0) as decimal) / 10",
+              "cast(coalesce(sd.tempdevcount, 0) as decimal) / 100",
+              "current_date - interval '1 year'",
+              "sd.tempnowc - sd.storetempc"
+            ],
+            "missing": [
+              "(1 - ((1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1))) /* kb #2: calculate cri = (1 - tss) * (1 - coolremainpct/100) */ * (1 - coalesce(c.coolremainpct, 100) / 100)",
+              "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0))",
+              "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1)",
+              "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) /* kb #0: calculate tss = (1 - tempdevcount/100) * (1 - critevents/10) * tempstabidx */ * (1 - coalesce(cast(s.critevents as double precision) / 10, 0))",
+              "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) /* kb #0: calculate tss = (1 - tempdevcount/100) * (1 - critevents/10) * tempstabidx */ * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1)",
+              "1 - ((1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1))",
+              "1 - coalesce(c.coolremainpct, 100) / 100",
+              "1 - coalesce(cast(s.critevents as double precision) / 10, 0)",
+              "1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)",
+              "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0)",
+              "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0) * coalesce(s.tempdevcount, 0)",
+              "cast(s.critevents as double precision) / 10",
+              "cast(s.tempdevcount as double precision) / 100",
+              "coalesce(c.coolremainpct, 100) / 100",
+              "max(alerttime) - interval '1 year'",
+              "s.tempnowc - s.storetempc"
+            ]
+          },
+          "case": {
+            "extra": [
+              "case when (1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0)) > 0.6 or coalesce(current_tss, 0) < 0.4 then 'critical' when coalesce(avg_tss, 0) < 0.4 or coalesce(max_tbs, 0) > 1.5 then 'unstable' when coalesce(avg_tss, 0) >= 0.7 and coalesce(max_tbs, 0) <= 1.0 then 'stable' else 'moderate' end"
+            ],
+            "missing": [
+              "case when alerttime = (select max(alerttime) from sensormetrics as sm2 where sm2.containregistry = sm.containregistry) then cri end",
+              "case when alerttime = (select max(alerttime) from sensormetrics as sm2 where sm2.containregistry = sm.containregistry) then tss end",
+              "case when cri > 0.6 or current_tss < 0.4 then 'critical' /* kb #10: critical if cri > 0.6 or current tss < 0.4 */ when avg_tss < 0.4 or max_tbs > 1.5 then 'unstable' /* kb #10: unstable if avg_tss < 0.4 or max_tbs > 1.5, not critical */ when avg_tss >= 0.7 and max_tbs <= 1.0 then 'stable' /* kb #10: stable if avg_tss >= 0.7 and max_tbs <= 1.0, not critical */ else 'moderate' /* kb #10: moderate for remaining cases, not critical */ end"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "latest.critevents",
+              "latest.tempdevcount",
+              "latest.tempstabidx",
+              "sensor_metrics.containregistry",
+              "sensordata.sensortrack"
+            ],
+            "missing": [
+              "alerttime",
+              "cri",
+              "sensormetrics.containregistry",
+              "tbs",
+              "tss"
+            ]
+          },
+          "ctes": {
+            "generated": 1,
+            "gold": 2
+          },
+          "date_time_functions": {
+            "extra": [
+              "CURRENT_REFERENCE"
+            ],
+            "missing": []
+          },
+          "division": {
+            "extra": [
+              "abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)",
+              "cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+              "cast(coalesce(latest.critevents, 0) as decimal) / 10",
+              "cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+              "cast(coalesce(sd.critevents, 0) as decimal) / 10",
+              "cast(coalesce(sd.tempdevcount, 0) as decimal) / 100"
+            ],
+            "missing": [
+              "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0)",
+              "cast(s.critevents as double precision) / 10",
+              "cast(s.tempdevcount as double precision) / 100",
+              "coalesce(c.coolremainpct, 100) / 100"
+            ]
+          },
+          "join_conditions": {
+            "extra": [
+              "sd.containlink = c.containregistry",
+              "true"
+            ],
+            "missing": [
+              "c.containregistry = s.containlink and s.alerttime >= (select max(alerttime) - interval '1 year' from sensordata)"
+            ]
+          },
+          "joins": {
+            "generated": 2,
+            "gold": 1
+          },
+          "limit": {
+            "generated": "LIMIT 100",
+            "gold": "LIMIT 100 /* Limit to 100 containers for manageable output */"
+          },
+          "order_by": {
+            "extra": [
+              "containregistry"
+            ],
+            "missing": []
+          },
+          "select_expressions": {
+            "extra": [
+              "case when (1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0)) > 0.6 or coalesce(current_tss, 0) < 0.4 then 'critical' when coalesce(avg_tss, 0) < 0.4 or coalesce(max_tbs, 0) > 1.5 then 'unstable' when coalesce(avg_tss, 0) >= 0.7 and coalesce(max_tbs, 0) <= 1.0 then 'stable' else 'moderate' end",
+              "round(avg_tss, 2)",
+              "round(max_tbs, 2)"
+            ],
+            "missing": [
+              "case when cri > 0.6 or current_tss < 0.4 then 'critical' /* kb #10: critical if cri > 0.6 or current tss < 0.4 */ when avg_tss < 0.4 or max_tbs > 1.5 then 'unstable' /* kb #10: unstable if avg_tss < 0.4 or max_tbs > 1.5, not critical */ when avg_tss >= 0.7 and max_tbs <= 1.0 then 'stable' /* kb #10: stable if avg_tss >= 0.7 and max_tbs <= 1.0, not critical */ else 'moderate' /* kb #10: moderate for remaining cases, not critical */ end",
+              "round(cast(avg_tss as decimal), 2)",
+              "round(cast(max_tbs as decimal), 2)"
+            ]
+          },
+          "subqueries": {
+            "generated": 2,
+            "gold": 3
+          },
+          "tables": {
+            "extra": [
+              "sensor_metrics"
+            ],
+            "missing": [
+              "sensormetrics",
+              "stabilitymetrics"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "vaccine_1",
+      "database_id": "vaccine",
+      "execution": {
+        "empty_vs_non_empty": null,
+        "frozen_official": "NOT_REACHED",
+        "frozen_primary_failure": "M1_REJECT",
+        "generated_columns": [],
+        "generated_error": "Candidate SQL could not be explained by the restricted reader.",
+        "generated_explain_status": "NOT_REACHED",
+        "generated_m1_failure_code": "EXECUTION_ERROR",
+        "generated_m1_parse_status": null,
+        "generated_m1_policy_status": null,
+        "generated_m1_status": "REJECTED",
+        "generated_result_sample": [],
+        "generated_row_count": null,
+        "gold_columns": [
+          "containlink",
+          "avg_tss",
+          "max_tbs",
+          "container_health_status"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "avg_tss": "0.81",
+            "container_health_status": "Unstable",
+            "containlink": "C10354",
+            "max_tbs": "6.05"
+          },
+          {
+            "avg_tss": "0.69",
+            "container_health_status": "Unstable",
+            "containlink": "C10487",
+            "max_tbs": "17.45"
+          },
+          {
+            "avg_tss": "0.64",
+            "container_health_status": "Moderate",
+            "containlink": "C10510",
+            "max_tbs": "0.00"
+          },
+          {
+            "avg_tss": "0.37",
+            "container_health_status": "Critical",
+            "containlink": "C10514",
+            "max_tbs": "36.13"
+          },
+          {
+            "avg_tss": "0.66",
+            "container_health_status": "Unstable",
+            "containlink": "C10643",
+            "max_tbs": "6.59"
+          },
+          {
+            "avg_tss": "0.49",
+            "container_health_status": "Unstable",
+            "containlink": "C10909",
+            "max_tbs": "47.33"
+          },
+          {
+            "avg_tss": "0.45",
+            "container_health_status": "Unstable",
+            "containlink": "C11016",
+            "max_tbs": "34.87"
+          },
+          {
+            "avg_tss": "0.56",
+            "container_health_status": "Unstable",
+            "containlink": "C11046",
+            "max_tbs": "7.53"
+          },
+          {
+            "avg_tss": "0.58",
+            "container_health_status": "Unstable",
+            "containlink": "C11266",
+            "max_tbs": "4.93"
+          },
+          {
+            "avg_tss": "0.75",
+            "container_health_status": "Unstable",
+            "containlink": "C11279",
+            "max_tbs": "2.16"
+          }
+        ],
+        "gold_row_count": 100,
+        "same_columns": null,
+        "same_row_set": null
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "'1'",
+          "'1'",
+          "'critical'",
+          "'moderate'",
+          "'stable'",
+          "'unstable'",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0.4",
+          "0.4",
+          "0.6",
+          "0.7",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1.0",
+          "1.5",
+          "10",
+          "10",
+          "100",
+          "100",
+          "100",
+          "100",
+          "2",
+          "2"
+        ],
+        "generated_where": [],
+        "gold_having": [],
+        "gold_literals": [
+          "'1'",
+          "'critical' /* kb #10: critical if cri > 0.6 or current tss < 0.4 */",
+          "'moderate' /* kb #10: moderate for remaining cases, not critical */",
+          "'stable' /* kb #10: stable if avg_tss >= 0.7 and max_tbs <= 1.0, not critical */",
+          "'unstable' /* kb #10: unstable if avg_tss < 0.4 or max_tbs > 1.5, not critical */",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0.0",
+          "0.0",
+          "0.4",
+          "0.4",
+          "0.6",
+          "0.7",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1.0",
+          "1.0",
+          "1.0",
+          "1.5",
+          "10",
+          "10",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100 /* limit to 100 containers for manageable output */",
+          "2",
+          "2"
+        ],
+        "gold_where": []
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "(1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0))",
+          "(1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(latest.critevents, 0) as decimal) / 10)",
+          "(1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(latest.critevents, 0) as decimal) / 10) * latest.tempstabidx",
+          "(1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(sd.critevents, 0) as decimal) / 10)",
+          "(1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100) * (1 - cast(coalesce(sd.critevents, 0) as decimal) / 10) * sd.tempstabidx",
+          "(abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)) * sd.tempdevcount",
+          "1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+          "1 - cast(coalesce(latest.critevents, 0) as decimal) / 10",
+          "1 - cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+          "1 - cast(coalesce(sd.critevents, 0) as decimal) / 10",
+          "1 - cast(coalesce(sd.tempdevcount, 0) as decimal) / 100",
+          "1 - coalesce(current_tss, 0)",
+          "abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)",
+          "cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+          "cast(coalesce(latest.critevents, 0) as decimal) / 10",
+          "cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+          "cast(coalesce(sd.critevents, 0) as decimal) / 10",
+          "cast(coalesce(sd.tempdevcount, 0) as decimal) / 100",
+          "current_date - interval '1 year'",
+          "current_date - interval '1 year'",
+          "sd.tempnowc - sd.storetempc"
+        ],
+        "generated_case": [
+          "case when (1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0)) > 0.6 or coalesce(current_tss, 0) < 0.4 then 'critical' when coalesce(avg_tss, 0) < 0.4 or coalesce(max_tbs, 0) > 1.5 then 'unstable' when coalesce(avg_tss, 0) >= 0.7 and coalesce(max_tbs, 0) <= 1.0 then 'stable' else 'moderate' end"
+        ],
+        "generated_division": [
+          "abs(sd.tempnowc - sd.storetempc) / nullif(sd.temptolc, 0)",
+          "cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100",
+          "cast(coalesce(latest.critevents, 0) as decimal) / 10",
+          "cast(coalesce(latest.tempdevcount, 0) as decimal) / 100",
+          "cast(coalesce(sd.critevents, 0) as decimal) / 10",
+          "cast(coalesce(sd.tempdevcount, 0) as decimal) / 100"
+        ],
+        "generated_select_expressions": [
+          "containregistry",
+          "round(avg_tss, 2)",
+          "round(max_tbs, 2)",
+          "case when (1 - cast(coalesce((select c2.coolremainpct from container as c2 where c2.containregistry = sm.containregistry), 0) as decimal) / 100) * (1 - coalesce(current_tss, 0)) > 0.6 or coalesce(current_tss, 0) < 0.4 then 'critical' when coalesce(avg_tss, 0) < 0.4 or coalesce(max_tbs, 0) > 1.5 then 'unstable' when coalesce(avg_tss, 0) >= 0.7 and coalesce(max_tbs, 0) <= 1.0 then 'stable' else 'moderate' end"
+        ],
+        "gold_arithmetic": [
+          "(1 - ((1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1))) /* kb #2: calculate cri = (1 - tss) * (1 - coolremainpct/100) */ * (1 - coalesce(c.coolremainpct, 100) / 100)",
+          "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0))",
+          "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1)",
+          "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) /* kb #0: calculate tss = (1 - tempdevcount/100) * (1 - critevents/10) * tempstabidx */ * (1 - coalesce(cast(s.critevents as double precision) / 10, 0))",
+          "(1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) /* kb #0: calculate tss = (1 - tempdevcount/100) * (1 - critevents/10) * tempstabidx */ * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1)",
+          "1 - ((1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)) * (1 - coalesce(cast(s.critevents as double precision) / 10, 0)) * coalesce(s.tempstabidx, 1))",
+          "1 - coalesce(c.coolremainpct, 100) / 100",
+          "1 - coalesce(cast(s.critevents as double precision) / 10, 0)",
+          "1 - coalesce(cast(s.critevents as double precision) / 10, 0)",
+          "1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)",
+          "1 - coalesce(cast(s.tempdevcount as double precision) / 100, 0)",
+          "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0)",
+          "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0) * coalesce(s.tempdevcount, 0)",
+          "cast(s.critevents as double precision) / 10",
+          "cast(s.critevents as double precision) / 10",
+          "cast(s.tempdevcount as double precision) / 100",
+          "cast(s.tempdevcount as double precision) / 100",
+          "coalesce(c.coolremainpct, 100) / 100",
+          "max(alerttime) - interval '1 year'",
+          "s.tempnowc - s.storetempc"
+        ],
+        "gold_case": [
+          "case when alerttime = (select max(alerttime) from sensormetrics as sm2 where sm2.containregistry = sm.containregistry) then cri end",
+          "case when alerttime = (select max(alerttime) from sensormetrics as sm2 where sm2.containregistry = sm.containregistry) then tss end",
+          "case when cri > 0.6 or current_tss < 0.4 then 'critical' /* kb #10: critical if cri > 0.6 or current tss < 0.4 */ when avg_tss < 0.4 or max_tbs > 1.5 then 'unstable' /* kb #10: unstable if avg_tss < 0.4 or max_tbs > 1.5, not critical */ when avg_tss >= 0.7 and max_tbs <= 1.0 then 'stable' /* kb #10: stable if avg_tss >= 0.7 and max_tbs <= 1.0, not critical */ else 'moderate' /* kb #10: moderate for remaining cases, not critical */ end"
+        ],
+        "gold_division": [
+          "abs(s.tempnowc - s.storetempc) /* kb #9: calculate tbs = |tempnowc - storetempc| / temptolc * tempdevcount */ / nullif(s.temptolc, 0)",
+          "cast(s.critevents as double precision) / 10",
+          "cast(s.critevents as double precision) / 10",
+          "cast(s.tempdevcount as double precision) / 100",
+          "cast(s.tempdevcount as double precision) / 100",
+          "coalesce(c.coolremainpct, 100) / 100"
+        ],
+        "gold_select_expressions": [
+          "containregistry",
+          "round(cast(avg_tss as decimal), 2)",
+          "round(cast(max_tbs as decimal), 2)",
+          "case when cri > 0.6 or current_tss < 0.4 then 'critical' /* kb #10: critical if cri > 0.6 or current tss < 0.4 */ when avg_tss < 0.4 or max_tbs > 1.5 then 'unstable' /* kb #10: unstable if avg_tss < 0.4 or max_tbs > 1.5, not critical */ when avg_tss >= 0.7 and max_tbs <= 1.0 then 'stable' /* kb #10: stable if avg_tss >= 0.7 and max_tbs <= 1.0, not critical */ else 'moderate' /* kb #10: moderate for remaining cases, not critical */ end"
+        ]
+      },
+      "generated_sql": "WITH sensor_metrics AS (SELECT c.containregistry, AVG((1 - COALESCE(sd.tempdevcount, 0)::numeric / 100) * (1 - COALESCE(sd.critevents, 0)::numeric / 10) * sd.tempstabidx) FILTER (WHERE sd.alerttime >= CURRENT_DATE - INTERVAL '1 year') AS avg_tss, MAX((ABS(sd.tempnowc - sd.storetempc) / NULLIF(sd.temptolc, 0)) * sd.tempdevcount) FILTER (WHERE sd.alerttime >= CURRENT_DATE - INTERVAL '1 year') AS max_tbs, (1 - COALESCE(latest.tempdevcount, 0)::numeric / 100) * (1 - COALESCE(latest.critevents, 0)::numeric / 10) * latest.tempstabidx AS current_tss FROM container c LEFT JOIN sensordata sd ON sd.containlink = c.containregistry LEFT JOIN LATERAL (SELECT sd2.tempdevcount, sd2.critevents, sd2.tempstabidx FROM sensordata sd2 WHERE sd2.containlink = c.containregistry ORDER BY sd2.alerttime DESC NULLS LAST, sd2.sensortrack DESC LIMIT 1) latest ON TRUE GROUP BY c.containregistry, latest.tempdevcount, latest.critevents, latest.tempstabidx) SELECT containregistry AS container_id, ROUND(avg_tss, 2) AS average_temperature_stability_score, ROUND(max_tbs, 2) AS maximum_temperature_breach_severity, CASE WHEN (1 - COALESCE((SELECT c2.coolremainpct FROM container c2 WHERE c2.containregistry = sm.containregistry), 0)::numeric / 100) * (1 - COALESCE(current_tss, 0)) > 0.6 OR COALESCE(current_tss, 0) < 0.4 THEN 'Critical' WHEN COALESCE(avg_tss, 0) < 0.4 OR COALESCE(max_tbs, 0) > 1.5 THEN 'Unstable' WHEN COALESCE(avg_tss, 0) >= 0.7 AND COALESCE(max_tbs, 0) <= 1.0 THEN 'Stable' ELSE 'Moderate' END AS container_health_status FROM sensor_metrics sm ORDER BY containregistry LIMIT 100",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "972d6a8b21039ea42446bad3269209b614e026950e505d60c7d976017e402a50",
+      "join_diff": {
+        "generated_join_conditions": [
+          "sd.containlink = c.containregistry",
+          "true"
+        ],
+        "generated_join_count": 2,
+        "generated_join_table_pairs": [
+          {
+            "condition": "sd.containlink = c.containregistry",
+            "left_table": "container",
+            "right_table": "sensordata"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "container",
+          "sensor_metrics",
+          "sensordata"
+        ],
+        "gold_join_conditions": [
+          "c.containregistry = s.containlink and s.alerttime >= (select max(alerttime) - interval '1 year' from sensordata)"
+        ],
+        "gold_join_count": 1,
+        "gold_join_table_pairs": [
+          {
+            "condition": "c.ContainRegistry = s.ContainLink AND s.AlertTime >= (SELECT MAX(AlertTime) - INTERVAL '1 YEAR' FROM SensorData)",
+            "left_table": "container",
+            "right_table": "sensordata"
+          }
+        ],
+        "gold_join_types": [
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "container",
+          "sensordata",
+          "sensormetrics",
+          "stabilitymetrics"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "sensordata",
+            "raw_server_context": "RELATIONSHIP relationship:sensordata.containlink->container.containregistry: entity:sensordata -> entity:container",
+            "relationship_id": "relationship:sensordata.containlink->container.containregistry",
+            "right_entity": "container",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": "LIMIT 100",
+        "generated_order_by": [
+          "containregistry"
+        ],
+        "gold_limit": "LIMIT 100 /* Limit to 100 containers for manageable output */",
+        "gold_order_by": []
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "3fda9a4007167f859cbc427a28167d454451930b60e4b89863df9640fe89cbb5",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "AVG",
+            "MAX"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 2,
+          "window_functions": []
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [
+            "AVG",
+            "MAX",
+            "MAX",
+            "MAX",
+            "MAX",
+            "MAX",
+            "MAX"
+          ],
+          "ctes": 2,
+          "set_operations": 0,
+          "subqueries": 3,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "Show me the health status of all vaccine storage containers, including their ID, average Temperature Stability Score, maximum Temperature Breach Severity, and Container Health Status for the past 1 year. Round the scores to two decimals, include containers even if they have no sensor data, and limit to 100 containers.",
+      "temporal_diff": {
+        "generated_date_time_functions": [
+          "CURRENT_REFERENCE",
+          "CURRENT_REFERENCE",
+          "INTERVAL",
+          "INTERVAL"
+        ],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [
+          "INTERVAL"
+        ],
+        "gold_temporal_expressions": []
+      }
+    },
+    {
+      "ast_diff": {
+        "differences": {
+          "aggregations": {
+            "extra": [
+              "SUM"
+            ],
+            "missing": []
+          },
+          "arithmetic": {
+            "extra": [
+              "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0)",
+              "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0) / 100.0"
+            ],
+            "missing": [
+              "i.giftvalusd * i.gifttot",
+              "i.giftvalusd * i.gifttot / 100.0"
+            ]
+          },
+          "columns": {
+            "extra": [
+              "engagement.engageactivitypivot",
+              "engagement.engagememberpivot",
+              "interactions.activityreg",
+              "membershipandspending.memberreg",
+              "user_id"
+            ],
+            "missing": [
+              "interactions.interactfanpivot",
+              "userregistry"
+            ]
+          },
+          "division": {
+            "extra": [
+              "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0) / 100.0"
+            ],
+            "missing": [
+              "i.giftvalusd * i.gifttot / 100.0"
+            ]
+          },
+          "join_conditions": {
+            "extra": [
+              "e.engagememberpivot = m.memberreg",
+              "f.userregistry = m.memberfanpivot",
+              "i.activityreg = e.engageactivitypivot"
+            ],
+            "missing": [
+              "i.interactfanpivot = f.userregistry",
+              "ms.memberfanpivot = f.userregistry"
+            ]
+          },
+          "joins": {
+            "generated": 3,
+            "gold": 2
+          },
+          "select_expressions": {
+            "extra": [
+              "user_id"
+            ],
+            "missing": [
+              "userregistry"
+            ]
+          },
+          "tables": {
+            "extra": [
+              "engagement",
+              "member_gifts"
+            ],
+            "missing": [
+              "gift_metrics"
+            ]
+          },
+          "where": {
+            "extra": [],
+            "missing": [
+              "gift_impact_quotient > 50 and spendusd < 100 and membkind in ('free', 'basic')",
+              "membkind in ('free', 'basic')"
+            ]
+          }
+        },
+        "parse_comparable": true
+      },
+      "case_id": "virtual_1",
+      "database_id": "virtual",
+      "execution": {
+        "empty_vs_non_empty": null,
+        "frozen_official": "NOT_REACHED",
+        "frozen_primary_failure": "M1_REJECT",
+        "generated_columns": [],
+        "generated_error": null,
+        "generated_explain_status": "NOT_REACHED",
+        "generated_m1_failure_code": "UNKNOWN_COLUMN",
+        "generated_m1_parse_status": null,
+        "generated_m1_policy_status": null,
+        "generated_m1_status": "REJECTED",
+        "generated_result_sample": [],
+        "generated_row_count": null,
+        "gold_columns": [
+          "userregistry",
+          "nicklabel",
+          "giq",
+          "membkind"
+        ],
+        "gold_execution_status": "SUCCESS",
+        "gold_reference_error": null,
+        "gold_reference_plan_status": "ACCEPTED",
+        "gold_result_sample": [
+          {
+            "giq": "20386.41",
+            "membkind": "Free",
+            "nicklabel": "shane41",
+            "userregistry": "FAN76827"
+          },
+          {
+            "giq": "18315.48",
+            "membkind": "Free",
+            "nicklabel": "sarah11",
+            "userregistry": "FAN65506"
+          },
+          {
+            "giq": "15308.71",
+            "membkind": "Basic",
+            "nicklabel": "richardparker",
+            "userregistry": "FAN29932"
+          },
+          {
+            "giq": "15000.55",
+            "membkind": "Basic",
+            "nicklabel": "derekgraham",
+            "userregistry": "FAN95020"
+          },
+          {
+            "giq": "9728.92",
+            "membkind": "Basic",
+            "nicklabel": "caitlincabrera",
+            "userregistry": "FAN38539"
+          },
+          {
+            "giq": "2585.02",
+            "membkind": "Basic",
+            "nicklabel": "sknight",
+            "userregistry": "FAN69067"
+          }
+        ],
+        "gold_row_count": 6,
+        "same_columns": null,
+        "same_row_set": null
+      },
+      "filter_diff": {
+        "generated_having": [],
+        "generated_literals": [
+          "'basic'",
+          "'free'",
+          "0",
+          "0",
+          "0",
+          "0",
+          "100",
+          "100.0",
+          "2",
+          "50"
+        ],
+        "generated_where": [
+          "gift_impact_quotient > 50",
+          "gift_impact_quotient > 50 and spendusd < 100",
+          "spendusd < 100"
+        ],
+        "gold_having": [],
+        "gold_literals": [
+          "'basic'",
+          "'free'",
+          "100",
+          "100.0",
+          "2",
+          "50"
+        ],
+        "gold_where": [
+          "gift_impact_quotient > 50",
+          "gift_impact_quotient > 50 and spendusd < 100",
+          "gift_impact_quotient > 50 and spendusd < 100 and membkind in ('free', 'basic')",
+          "membkind in ('free', 'basic')",
+          "spendusd < 100"
+        ]
+      },
+      "formula_diff": {
+        "generated_arithmetic": [
+          "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0)",
+          "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0) / 100.0"
+        ],
+        "generated_case": [],
+        "generated_division": [
+          "coalesce(sum(i.giftvalusd), 0) * coalesce(sum(i.gifttot), 0) / 100.0"
+        ],
+        "generated_select_expressions": [
+          "user_id",
+          "nicklabel",
+          "round(gift_impact_quotient, 2)",
+          "membkind"
+        ],
+        "gold_arithmetic": [
+          "i.giftvalusd * i.gifttot",
+          "i.giftvalusd * i.gifttot / 100.0"
+        ],
+        "gold_case": [],
+        "gold_division": [
+          "i.giftvalusd * i.gifttot / 100.0"
+        ],
+        "gold_select_expressions": [
+          "userregistry",
+          "nicklabel",
+          "round(gift_impact_quotient, 2)",
+          "membkind"
+        ]
+      },
+      "generated_sql": "WITH member_gifts AS (SELECT m.memberfanpivot AS user_id, f.nicklabel, m.membkind, COALESCE(SUM(i.giftvalusd), 0) AS gift_value_usd, COALESCE(SUM(i.gifttot), 0) AS gift_total, COALESCE(SUM(i.giftvalusd), 0) * COALESCE(SUM(i.gifttot), 0) / 100.0 AS gift_impact_quotient FROM membershipandspending m JOIN fans f ON f.userregistry = m.memberfanpivot JOIN engagement e ON e.engagememberpivot = m.memberreg JOIN interactions i ON i.activityreg = e.engageactivitypivot WHERE m.membkind::text IN ('Free', 'Basic') GROUP BY m.memberfanpivot, f.nicklabel, m.membkind, m.memberreg, m.spendusd) SELECT user_id, nicklabel, ROUND(gift_impact_quotient, 2) AS gift_impact_quotient, membkind AS membership_type FROM member_gifts WHERE gift_impact_quotient > 50 AND spendusd < 100 ORDER BY gift_impact_quotient DESC;",
+      "gold_sql": null,
+      "gold_sql_protected_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "gold_sql_sha256": "108630e611a6f147b2860f86b29abcb550ed528666002e832bbecaf7789cebbb",
+      "join_diff": {
+        "generated_join_conditions": [
+          "e.engagememberpivot = m.memberreg",
+          "f.userregistry = m.memberfanpivot",
+          "i.activityreg = e.engageactivitypivot"
+        ],
+        "generated_join_count": 3,
+        "generated_join_table_pairs": [
+          {
+            "condition": "f.userregistry = m.memberfanpivot",
+            "left_table": "membershipandspending",
+            "right_table": "fans"
+          },
+          {
+            "condition": "e.engagememberpivot = m.memberreg",
+            "left_table": "membershipandspending",
+            "right_table": "engagement"
+          },
+          {
+            "condition": "i.activityreg = e.engageactivitypivot",
+            "left_table": "engagement",
+            "right_table": "interactions"
+          }
+        ],
+        "generated_join_types": [
+          "INNER",
+          "INNER",
+          "INNER"
+        ],
+        "generated_tables": [
+          "engagement",
+          "fans",
+          "interactions",
+          "member_gifts",
+          "membershipandspending"
+        ],
+        "gold_join_conditions": [
+          "i.interactfanpivot = f.userregistry",
+          "ms.memberfanpivot = f.userregistry"
+        ],
+        "gold_join_count": 2,
+        "gold_join_table_pairs": [
+          {
+            "condition": "i.interactfanpivot = f.userregistry",
+            "left_table": "fans",
+            "right_table": "interactions"
+          },
+          {
+            "condition": "ms.memberfanpivot = f.userregistry",
+            "left_table": "fans",
+            "right_table": "membershipandspending"
+          }
+        ],
+        "gold_join_types": [
+          "INNER",
+          "INNER"
+        ],
+        "gold_only_not_server_authorized": [],
+        "gold_tables": [
+          "fans",
+          "gift_metrics",
+          "interactions",
+          "membershipandspending"
+        ],
+        "server_authorized_relationships": [
+          {
+            "left_entity": "engagement",
+            "raw_server_context": "RELATIONSHIP relationship:engagement.engageactivitypivot->interactions.activityreg: entity:engagement -> entity:interactions",
+            "relationship_id": "relationship:engagement.engageactivitypivot->interactions.activityreg",
+            "right_entity": "interactions",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "engagement",
+            "raw_server_context": "RELATIONSHIP relationship:engagement.engagememberpivot->membershipandspending.memberreg: entity:engagement -> entity:membershipandspending",
+            "relationship_id": "relationship:engagement.engagememberpivot->membershipandspending.memberreg",
+            "right_entity": "membershipandspending",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "interactions",
+            "raw_server_context": "RELATIONSHIP relationship:interactions.interactfanpivot->fans.userregistry: entity:interactions -> entity:fans",
+            "relationship_id": "relationship:interactions.interactfanpivot->fans.userregistry",
+            "right_entity": "fans",
+            "source": "server-owned semantic context / RelationshipGraph"
+          },
+          {
+            "left_entity": "membershipandspending",
+            "raw_server_context": "RELATIONSHIP relationship:membershipandspending.memberfanpivot->fans.userregistry: entity:membershipandspending -> entity:fans",
+            "relationship_id": "relationship:membershipandspending.memberfanpivot->fans.userregistry",
+            "right_entity": "fans",
+            "source": "server-owned semantic context / RelationshipGraph"
+          }
+        ]
+      },
+      "ordering_limit_diff": {
+        "generated_limit": null,
+        "generated_order_by": [
+          "gift_impact_quotient desc"
+        ],
+        "gold_limit": null,
+        "gold_order_by": [
+          "gift_impact_quotient desc"
+        ]
+      },
+      "population_grain_diff": {
+        "generated": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "scalar"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "generated_base_from": null,
+        "gold": {
+          "grain_observation": {
+            "dimensions": [],
+            "kind": "row_level"
+          },
+          "population_observation": "matched-only-observed-from-join"
+        },
+        "gold_base_from": null
+      },
+      "protected_full_record_ref": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json",
+      "provider_response_hash": "0b16e60e9d88e79673a0855c89eb3fd178a3222aee80e18a3d37a6de080f7aca",
+      "query_shape_diff": {
+        "generated_features": {
+          "aggregations": [
+            "SUM",
+            "SUM",
+            "SUM",
+            "SUM"
+          ],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "generated_shape": "CTE",
+        "gold_features": {
+          "aggregations": [],
+          "ctes": 1,
+          "set_operations": 0,
+          "subqueries": 0,
+          "window_functions": []
+        },
+        "gold_shape": "CTE"
+      },
+      "question": "I want to identify all free and basic tier members who show traits of being Gift-Focused Supporters. Please list their user IDs, nicknames, Gift Impact Quotient (rounded to 2 decimal places), and current membership type, sorted by Gift Impact Quotient in descending order.",
+      "temporal_diff": {
+        "generated_date_time_functions": [],
+        "generated_temporal_expressions": [],
+        "gold_date_time_functions": [],
+        "gold_temporal_expressions": []
+      }
+    }
+  ],
+  "source_run": {
+    "case_order_hash": "94937e9e3a24e3862bd91bdfc408c957650d90ae411f82b70137693563ed1db9",
+    "cases": 18,
+    "db_image_digest": "sha256:1ae45d7aa5d64dd8eb82e4058f56b4b9625d5035b9b9dc0d2afa0295d9d3053c",
+    "experiment_id": "M32-DIRECT-FRESH",
+    "generation_prompt_hash": "79430f8df0bbc66eaf6cfcff73b046af6b7330c85bbd6e938390d573ac82cf42",
+    "manifest_path": "/Users/ofk/DecisionSQL/evaluation/fixtures/m32_direct_fresh_manifest.json",
+    "manifest_sha256": "47f719926f0e39c3f3f99b3d293bde8b7c8f00b3edd0a11c03fa5264778ac284",
+    "model": "gpt-5.6-luna",
+    "new_provider_calls": 0,
+    "non_correct": 10,
+    "official_correct": 8,
+    "provider": "openai-compatible",
+    "raw_artifact_root": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m32/direct_fresh",
+    "reasoning": "none",
+    "result_path": "/Users/ofk/DecisionSQL/evaluation/fixtures/m32_direct_fresh_result.json",
+    "result_sha256": "fc72e651828ef62bd112d6587c26bf5124eb44f2539a2cedf27af4f5233a3a2c",
+    "temperature": 0.0,
+    "timeout_seconds": 90
+  },
+  "summary": {
+    "correct": 8,
+    "failed_case_ids": [
+      "alien_1",
+      "archeology_1",
+      "crypto_1",
+      "fake_1",
+      "insider_1",
+      "mental_1",
+      "news_1",
+      "polar_1",
+      "vaccine_1",
+      "virtual_1"
+    ],
+    "gold_sql_in_public_artifact": false,
+    "non_correct": 10,
+    "protected_full_artifact": "/Users/ofk/DecisionSQL/evaluation/external/livesqlbench/protected/results/m33_fresh_direct_failure_review/m33_fresh_direct_failure_review.json"
+  }
+}

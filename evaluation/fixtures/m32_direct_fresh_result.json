@@ -1,0 +1,535 @@
+{
+  "executed": 16,
+  "latency_ms": {
+    "max": 5230.8697500266135,
+    "median": 3032.1758330101147,
+    "min": 2230.448041111231
+  },
+  "m1_accepted": 16,
+  "manifest": "/Users/ofk/DecisionSQL/evaluation/fixtures/m32_direct_fresh_manifest.json",
+  "milestone": "M32-DIRECT-FRESH",
+  "official": {
+    "CORRECT": 8,
+    "INCORRECT": 8,
+    "NOT_REACHED": 2
+  },
+  "official_correct": 8,
+  "authority_normalized": {
+    "cases": 15,
+    "executed": 13,
+    "official_correct": 7
+  },
+  "metadata_blocked_cases": [
+    "archeology_1",
+    "fake_1",
+    "mental_1"
+  ],
+  "primary_failures": {
+    "M1_REJECT": 2,
+    "SQL_SYNTHESIS_ERROR": 8
+  },
+  "provider_success": 18,
+  "reason": "Historical DIRECT used materially different base context; fresh paired control uses exact M32 base contexts.",
+  "requests": 18,
+  "responses": 18,
+  "rows": [
+    {
+      "case_id": "alien_1",
+      "database": "alien",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 3,
+        "top_level_node_type": "Sort",
+        "total_cost": 200.61
+      },
+      "generated_sql_hash": "73b80e1584e51afcb8c0b88081014b0fa6e504161a4a36298491ce075a0b750e",
+      "latency_ms": 3850.372707936913,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 1,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "bc6df36d198fd717d38a83ad7c622aeb32cd900ff546c9b7e3861aeca55f5be5",
+      "response_received": true,
+      "total_latency_ms": 3894.25441599451,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 178,
+        "prompt_tokens": 19054,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "archeology_1",
+      "database": "archeology",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 942,
+        "top_level_node_type": "Sort",
+        "total_cost": 334.61
+      },
+      "generated_sql_hash": "0c5e195503677975c39d7e180cba56bfb649f538454378e2b52e071e00c98d46",
+      "latency_ms": 3783.3773330785334,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 2,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "89b0f72e01c0c53a9055918a0b4d3d8da872ab5ce48b932339757416b58de3e3",
+      "response_received": true,
+      "total_latency_ms": 3970.790792023763,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 260,
+        "prompt_tokens": 19797,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "credit_1",
+      "database": "credit",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 10,
+        "top_level_node_type": "Limit",
+        "total_cost": 142.96
+      },
+      "generated_sql_hash": "c82a6d67ea5fb1d7332df5ffbf5848fa2b47ba4c34fca7fd9582edc1401a715c",
+      "latency_ms": 2314.234209014103,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 3,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "2331b0b194e2e4b79096ae7a86442fd4c95a8a3468a971259d136f2c8bda676d",
+      "response_received": true,
+      "total_latency_ms": 2350.8529579266906,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 95,
+        "prompt_tokens": 15121,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "cross_db_1",
+      "database": "cross_db",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 5,
+        "top_level_node_type": "Limit",
+        "total_cost": 132.65
+      },
+      "generated_sql_hash": "dd3ff76ce76706209fbb53a5a37b8c52b298a9326e0879a069711857ca7d0fd2",
+      "latency_ms": 2951.9816669635475,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 4,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "8d1e9885267c0a30d7f68fcdb84a9ba9d22c97ffbb637262ce9d0969173d6bb8",
+      "response_received": true,
+      "total_latency_ms": 3005.9864160139114,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 216,
+        "prompt_tokens": 16155,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "crypto_1",
+      "database": "crypto",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1,
+        "top_level_node_type": "Limit",
+        "total_cost": 94.48
+      },
+      "generated_sql_hash": "d6b841047a07f0bf04638492e3bc74b597333934267178e5f81b04dd2f7bdd73",
+      "latency_ms": 2611.3219999242574,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 5,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "8c600843a63c8d254d30fe8f6e64499de2ac389a3e409013e4546396396cd429",
+      "response_received": true,
+      "total_latency_ms": 2650.6616668775678,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 151,
+        "prompt_tokens": 14321,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "cybermarket_1",
+      "database": "cybermarket",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 14,
+        "top_level_node_type": "Sort",
+        "total_cost": 275.29
+      },
+      "generated_sql_hash": "e0c3a05eca19a3cc6b4ffa7a236864bf617d8c99fc7d5614e627e2a43cf06068",
+      "latency_ms": 2312.2158341575414,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 6,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "5c175b5c9adcc311ed3c1542eb978e73ccca2de67ae8a620b797f2c7f2b87522",
+      "response_received": true,
+      "total_latency_ms": 2346.690542064607,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 175,
+        "prompt_tokens": 17301,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "disaster_1",
+      "database": "disaster",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 999,
+        "top_level_node_type": "Sort",
+        "total_cost": 110.22
+      },
+      "generated_sql_hash": "27e2f49110a0f03cbc9e1723a6a2d441b2b546b30587771a2e8f1858dface6f2",
+      "latency_ms": 2172.480250010267,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 7,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "486b7e32d324b7387c64cdc0e58cefda6c27742ed6abe7fde6d51f6891606598",
+      "response_received": true,
+      "total_latency_ms": 2230.448041111231,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 139,
+        "prompt_tokens": 17106,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "fake_1",
+      "database": "fake",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 22,
+        "top_level_node_type": "Limit",
+        "total_cost": 553.91
+      },
+      "generated_sql_hash": "a2a9d1930e791d18084c8df574a23bbf58791023d5f7b27a5f2f5e86503bdc42",
+      "latency_ms": 4087.9352919291705,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 8,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "f37fadce562fd203da8b4135cef917305b7b1c049f22af737d1dd0965d03e429",
+      "response_received": true,
+      "total_latency_ms": 4146.668625064194,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 336,
+        "prompt_tokens": 16153,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "gaming_1",
+      "database": "gaming",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 5,
+        "top_level_node_type": "Sort",
+        "total_cost": 102.54
+      },
+      "generated_sql_hash": "37af8b9574b0d70a3b539949767430cb31cf4504e2b812f9e9330f5fe46e4488",
+      "latency_ms": 3524.7260411269963,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 9,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "23fbb6c47e7243835fd7186cab4b34735a4121b9b202ddde8b4b69f29bbc1d7f",
+      "response_received": true,
+      "total_latency_ms": 3590.4239169321954,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 318,
+        "prompt_tokens": 18614,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "insider_1",
+      "database": "insider",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1,
+        "top_level_node_type": "Unique",
+        "total_cost": 97.04
+      },
+      "generated_sql_hash": "05f89429939e91e21bd51e03e27457a70b645305bf49c5f66203e60eda1d9285",
+      "latency_ms": 3013.630250003189,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 10,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "bcfa79cfe5fe2e5f18f6ab7be07e587618706c3b7b6c3fafd53d6a4ef7bb9a17",
+      "response_received": true,
+      "total_latency_ms": 3058.365250006318,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 216,
+        "prompt_tokens": 16364,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "mental_1",
+      "database": "mental",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1,
+        "top_level_node_type": "Limit",
+        "total_cost": 304.19
+      },
+      "generated_sql_hash": "f510c50c0165368759bf7693cf1d58634ddd88b460a6b37c41276974fbebb1b7",
+      "latency_ms": 5168.631333159283,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 11,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "18b26cf152057fc89f19c50b674e8d37e8ad0ea22aa907ca1608f4af7a2f7f44",
+      "response_received": true,
+      "total_latency_ms": 5230.8697500266135,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 538,
+        "prompt_tokens": 16277,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "museum_1",
+      "database": "museum",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1,
+        "top_level_node_type": "Sort",
+        "total_cost": 117.1
+      },
+      "generated_sql_hash": "63483b5fa19e5f6f9a6fb72bb6ce3686e2bd43cdea4ad0f416fef768dcd3d155",
+      "latency_ms": 3106.719790957868,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 12,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "561304440ddf87e80c5771988996fb81bc16377066ae8c0ff3839709f3de6b37",
+      "response_received": true,
+      "total_latency_ms": 3152.741124853492,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 261,
+        "prompt_tokens": 21955,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "news_1",
+      "database": "news",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 333,
+        "top_level_node_type": "Incremental Sort",
+        "total_cost": 128.15
+      },
+      "generated_sql_hash": "dfad04c767f19bb8a8c5dee060f310ac03a2ed6b071d4662ece3bdc3162049ac",
+      "latency_ms": 2620.9954998921603,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 13,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "32fdeeda9f72817e58943ac80103732fa4a51c33db82fd195b2c9b3822ae3bea",
+      "response_received": true,
+      "total_latency_ms": 2667.0331659261137,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 137,
+        "prompt_tokens": 13527,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "polar_1",
+      "database": "polar",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1000,
+        "top_level_node_type": "Subquery Scan",
+        "total_cost": 245.94
+      },
+      "generated_sql_hash": "ea1ab7f5a91abc821ad9e3f2edf5db0b95869db19c79adf32e7029fdacadd519",
+      "latency_ms": 2924.2593748494983,
+      "m1": "ACCEPTED",
+      "official": "INCORRECT",
+      "ordinal": 14,
+      "primary_failure": "SQL_SYNTHESIS_ERROR",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "0b0df35965a6c4af4d5df169feb52340a7484fc07d16797a11ce740d88f533e8",
+      "response_received": true,
+      "total_latency_ms": 2992.389541817829,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 203,
+        "prompt_tokens": 21843,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "robot_1",
+      "database": "robot",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 1,
+        "top_level_node_type": "Limit",
+        "total_cost": 221.96
+      },
+      "generated_sql_hash": "f4a20d241b69baeb0c9a2aed1809426f1703e6f9116abc756442174cea1c1c08",
+      "latency_ms": 2880.8519579470158,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 15,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "34045bc123634c22ce4c2ea3dd98e8a20eea28d8bba09e249de71015ea90a0b3",
+      "response_received": true,
+      "total_latency_ms": 2939.292582916096,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 250,
+        "prompt_tokens": 17931,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "solar_1",
+      "database": "solar",
+      "executed": "SUCCESS",
+      "explain": "ACCEPTED",
+      "explain_estimate": {
+        "plan_rows": 200,
+        "top_level_node_type": "Sort",
+        "total_cost": 216.42
+      },
+      "generated_sql_hash": "ea3e90d167a1d4217120438336b5825409a295807f46ec18c77603396b5d4dca",
+      "latency_ms": 2419.515500077978,
+      "m1": "ACCEPTED",
+      "official": "CORRECT",
+      "ordinal": 16,
+      "primary_failure": null,
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "dcfd4b54a8c502bb7d2cd43b735a494dc291020810f2590b549b0f2dd77863cc",
+      "response_received": true,
+      "total_latency_ms": 2465.4106250964105,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 143,
+        "prompt_tokens": 12340,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "vaccine_1",
+      "database": "vaccine",
+      "executed": "NOT_REACHED",
+      "explain": "NOT_REACHED",
+      "generated_sql_hash": "2d58b9b0678fc4359626658b14311a4e071103d03f01e41086238f0110622973",
+      "latency_ms": 4663.975707953796,
+      "m1": "REJECTED",
+      "m1_failure": "EXECUTION_ERROR",
+      "official": "NOT_REACHED",
+      "ordinal": 17,
+      "primary_failure": "M1_REJECT",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "3fda9a4007167f859cbc427a28167d454451930b60e4b89863df9640fe89cbb5",
+      "response_received": true,
+      "total_latency_ms": 4693.274124991149,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 505,
+        "prompt_tokens": 14962,
+        "reasoning_tokens": 0
+      }
+    },
+    {
+      "case_id": "virtual_1",
+      "database": "virtual",
+      "executed": "NOT_REACHED",
+      "explain": "NOT_REACHED",
+      "generated_sql_hash": "09ed8f05b013f9828ee5ad5399c22966a1950dc29543f7624bd871f0e77f4f0f",
+      "latency_ms": 3554.5173331629485,
+      "m1": "REJECTED",
+      "m1_failure": "POLICY_REJECTION",
+      "official": "NOT_REACHED",
+      "ordinal": 18,
+      "primary_failure": "M1_REJECT",
+      "provider_status": "PROVIDER_SUCCESS",
+      "request_made": true,
+      "response_hash": "0b16e60e9d88e79673a0855c89eb3fd178a3222aee80e18a3d37a6de080f7aca",
+      "response_received": true,
+      "total_latency_ms": 3564.3557079602033,
+      "usage": {
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 256,
+        "prompt_tokens": 18861,
+        "reasoning_tokens": 0
+      }
+    }
+  ],
+  "status": "COMPLETED",
+  "total_cases": 18
+}

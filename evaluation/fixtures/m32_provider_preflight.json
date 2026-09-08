@@ -1,0 +1,472 @@
+{
+  "alignment_latency_ms": 3018.835166003555,
+  "alignment_response": true,
+  "alignment_response_hash": "977d3ef2d600782b9d8d0c649da1047d14dd56ff5041f1fa2e42ea3e9700fb8b",
+  "alignment_schema_valid": true,
+  "executed": true,
+  "explain": true,
+  "gold_derived_metadata_added": false,
+  "grounder_success": true,
+  "m1": true,
+  "milestone": "M32.0",
+  "model": "gpt-5.6-luna",
+  "reasoning": "none",
+  "response_format": {
+    "alignment": {
+      "json_schema": {
+        "name": "query_alignment_v1",
+        "schema": {
+          "$defs": {
+            "AlignmentAggregate": {
+              "additionalProperties": false,
+              "properties": {
+                "attribute_id": {
+                  "anyOf": [
+                    {
+                      "maxLength": 256,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Attribute Id"
+                },
+                "distinct": {
+                  "title": "Distinct",
+                  "type": "boolean"
+                },
+                "function": {
+                  "$ref": "#/$defs/AlignmentAggregateFunction"
+                }
+              },
+              "required": [
+                "function",
+                "attribute_id",
+                "distinct"
+              ],
+              "title": "AlignmentAggregate",
+              "type": "object"
+            },
+            "AlignmentAggregateFunction": {
+              "enum": [
+                "COUNT",
+                "COUNT_DISTINCT",
+                "SUM",
+                "AVG",
+                "MIN",
+                "MAX"
+              ],
+              "title": "AlignmentAggregateFunction",
+              "type": "string"
+            },
+            "AlignmentCalculation": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "$ref": "#/$defs/AlignmentCalculationKind"
+                },
+                "operand_attribute_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 8,
+                  "title": "Operand Attribute Ids",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "kind",
+                "operand_attribute_ids"
+              ],
+              "title": "AlignmentCalculation",
+              "type": "object"
+            },
+            "AlignmentCalculationKind": {
+              "enum": [
+                "NONE",
+                "RATIO",
+                "DIFFERENCE",
+                "PERCENTAGE",
+                "PERCENT_CHANGE"
+              ],
+              "title": "AlignmentCalculationKind",
+              "type": "string"
+            },
+            "AlignmentDirection": {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "title": "AlignmentDirection",
+              "type": "string"
+            },
+            "AlignmentFilter": {
+              "additionalProperties": false,
+              "properties": {
+                "field_id": {
+                  "anyOf": [
+                    {
+                      "maxLength": 256,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Field Id"
+                },
+                "operator": {
+                  "$ref": "#/$defs/AlignmentFilterOperator"
+                },
+                "result_label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 128,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Result Label"
+                },
+                "target_kind": {
+                  "enum": [
+                    "ATTRIBUTE",
+                    "DERIVED_RESULT"
+                  ],
+                  "title": "Target Kind",
+                  "type": "string"
+                },
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Value"
+                }
+              },
+              "required": [
+                "field_id",
+                "target_kind",
+                "result_label",
+                "operator",
+                "value"
+              ],
+              "title": "AlignmentFilter",
+              "type": "object"
+            },
+            "AlignmentFilterOperator": {
+              "enum": [
+                "EQ",
+                "NE",
+                "LT",
+                "LTE",
+                "GT",
+                "GTE",
+                "IS_NULL",
+                "IS_NOT_NULL",
+                "BETWEEN",
+                "IN",
+                "NOT_IN",
+                "LIKE",
+                "ILIKE"
+              ],
+              "title": "AlignmentFilterOperator",
+              "type": "string"
+            },
+            "AlignmentOrder": {
+              "additionalProperties": false,
+              "properties": {
+                "attribute_id": {
+                  "anyOf": [
+                    {
+                      "maxLength": 256,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Attribute Id"
+                },
+                "direction": {
+                  "$ref": "#/$defs/AlignmentDirection"
+                },
+                "result_label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 128,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Result Label"
+                },
+                "target_kind": {
+                  "enum": [
+                    "ATTRIBUTE",
+                    "AGGREGATE",
+                    "CALCULATION",
+                    "WINDOW",
+                    "EXPRESSION"
+                  ],
+                  "title": "Target Kind",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "attribute_id",
+                "target_kind",
+                "result_label",
+                "direction"
+              ],
+              "title": "AlignmentOrder",
+              "type": "object"
+            },
+            "AlignmentPopulationMode": {
+              "enum": [
+                "BASE_ENTITY",
+                "MATCHED_ONLY",
+                "PRESERVE_ANCHOR",
+                "SEMI",
+                "ANTI"
+              ],
+              "title": "AlignmentPopulationMode",
+              "type": "string"
+            },
+            "AlignmentQueryShape": {
+              "enum": [
+                "SIMPLE_SELECT",
+                "FILTERED_SELECT",
+                "AGGREGATE",
+                "GROUPED_AGGREGATE",
+                "TOP_K",
+                "WINDOW",
+                "SCALAR_SUBQUERY",
+                "CORRELATED_SUBQUERY",
+                "SET_OPERATION",
+                "MULTI_STAGE"
+              ],
+              "title": "AlignmentQueryShape",
+              "type": "string"
+            },
+            "AlignmentTemporal": {
+              "additionalProperties": false,
+              "properties": {
+                "attribute_id": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "title": "Attribute Id",
+                  "type": "string"
+                },
+                "kind": {
+                  "$ref": "#/$defs/AlignmentTemporalKind"
+                }
+              },
+              "required": [
+                "attribute_id",
+                "kind"
+              ],
+              "title": "AlignmentTemporal",
+              "type": "object"
+            },
+            "AlignmentTemporalKind": {
+              "enum": [
+                "FILTER",
+                "GROUP",
+                "ORDER",
+                "RANGE",
+                "EXTRACTION"
+              ],
+              "title": "AlignmentTemporalKind",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Compact semantic alignment; never an executable query representation.",
+          "properties": {
+            "aggregations": {
+              "items": {
+                "$ref": "#/$defs/AlignmentAggregate"
+              },
+              "maxItems": 8,
+              "title": "Aggregations",
+              "type": "array"
+            },
+            "anchor_entity_id": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Anchor Entity Id",
+              "type": "string"
+            },
+            "calculation": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AlignmentCalculation"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "filters": {
+              "items": {
+                "$ref": "#/$defs/AlignmentFilter"
+              },
+              "maxItems": 16,
+              "title": "Filters",
+              "type": "array"
+            },
+            "grouping_attribute_ids": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 16,
+              "title": "Grouping Attribute Ids",
+              "type": "array"
+            },
+            "grouping_result_labels": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 8,
+              "title": "Grouping Result Labels",
+              "type": "array"
+            },
+            "limit": {
+              "anyOf": [
+                {
+                  "maximum": 10000,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Limit"
+            },
+            "logic_summary": {
+              "maxLength": 600,
+              "minLength": 1,
+              "title": "Logic Summary",
+              "type": "string"
+            },
+            "ordering": {
+              "items": {
+                "$ref": "#/$defs/AlignmentOrder"
+              },
+              "maxItems": 8,
+              "title": "Ordering",
+              "type": "array"
+            },
+            "population_mode": {
+              "$ref": "#/$defs/AlignmentPopulationMode"
+            },
+            "query_shape": {
+              "$ref": "#/$defs/AlignmentQueryShape"
+            },
+            "relationship_ids": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 16,
+              "title": "Relationship Ids",
+              "type": "array"
+            },
+            "relevant_attribute_ids": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 32,
+              "title": "Relevant Attribute Ids",
+              "type": "array"
+            },
+            "relevant_entity_ids": {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 8,
+              "minItems": 1,
+              "title": "Relevant Entity Ids",
+              "type": "array"
+            },
+            "temporal": {
+              "items": {
+                "$ref": "#/$defs/AlignmentTemporal"
+              },
+              "maxItems": 8,
+              "title": "Temporal",
+              "type": "array"
+            }
+          },
+          "required": [
+            "anchor_entity_id",
+            "relevant_entity_ids",
+            "relevant_attribute_ids",
+            "relationship_ids",
+            "population_mode",
+            "filters",
+            "aggregations",
+            "grouping_attribute_ids",
+            "grouping_result_labels",
+            "calculation",
+            "ordering",
+            "limit",
+            "temporal",
+            "query_shape",
+            "logic_summary"
+          ],
+          "title": "QueryAlignmentV1",
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    },
+    "sql": {
+      "json_schema": {
+        "name": "m32_sql_v1",
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "sql": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "sql"
+          ],
+          "type": "object"
+        },
+        "strict": true
+      },
+      "type": "json_schema"
+    }
+  },
+  "sql_latency_ms": 1740.7857500948012,
+  "sql_response": true,
+  "sql_response_hash": "633a3d1ea6f604fa4da3025cf4f241a2dcd34d6e285df86d55e33cf59211d025",
+  "sql_schema_valid": true,
+  "status": "PASSED",
+  "temperature": 0.0,
+  "timeout_seconds": 90
+}

@@ -1,0 +1,40 @@
+{
+  "milestone": "M32.0",
+  "source": "M30 DIRECT forensic families and M31 failure evidence",
+  "model_facing_artifact": "QueryAlignmentV1",
+  "forbidden_in_alignment": [
+    "sql",
+    "join_on",
+    "physical_alias",
+    "cte_name",
+    "execution_step",
+    "compiler_scope_id",
+    "PopulationContract",
+    "SemanticQueryPlan"
+  ],
+  "fields": [
+    {"field": "anchor_entity_id", "owner": "MODEL", "reason": "question population anchor"},
+    {"field": "relevant_entity_ids", "owner": "MODEL", "reason": "semantic entity selection"},
+    {"field": "relevant_attribute_ids", "owner": "MODEL", "reason": "requested values and measures"},
+    {"field": "relationship_ids", "owner": "MODEL_OR_SERVER", "reason": "semantic relation need; server validates authority"},
+    {"field": "population_mode", "owner": "MODEL", "reason": "matching versus preserved population"},
+    {"field": "filters", "owner": "MODEL", "reason": "explicit predicates"},
+    {"field": "aggregations", "owner": "MODEL", "reason": "aggregate intent"},
+    {"field": "grouping_attribute_ids", "owner": "MODEL", "reason": "requested grouping dimensions"},
+    {"field": "calculation", "owner": "MODEL", "reason": "bounded mathematical intent"},
+    {"field": "ordering", "owner": "MODEL", "reason": "requested ordering"},
+    {"field": "limit", "owner": "MODEL", "reason": "explicit top-K limit"},
+    {"field": "temporal", "owner": "MODEL", "reason": "date/time interpretation"},
+    {"field": "query_shape", "owner": "MODEL", "reason": "bounded nesting/window/set requirement"},
+    {"field": "logic_summary", "owner": "MODEL", "reason": "short natural-language computation summary"}
+  ],
+  "grounder_outputs": [
+    "physical_tables",
+    "physical_columns",
+    "data_types",
+    "authorized_relationship_keys",
+    "relationship_cardinality",
+    "metadata_block_status"
+  ],
+  "gold_derived_metadata_added": false
+}

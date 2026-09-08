@@ -14,6 +14,7 @@ from typing import Any, cast
 
 from app.provenance.canonical import semantic_hash
 from app.semantics.logical_plan import LogicalQueryPlanV1
+from app.semantics.m32_alignment import LogicalSynthesisV1, QueryAlignmentV1, SchemaAlignmentV1
 from app.semantics.semantic_query import SemanticQueryPlan
 
 _PROVIDER_UNSUPPORTED_KEYS = frozenset(
@@ -66,6 +67,84 @@ def logical_query_plan_response_format() -> dict[str, Any]:
             "name": "logical_query_plan_v1",
             "strict": True,
             "schema": provider_logical_query_plan_schema(),
+        },
+    }
+
+
+def provider_query_alignment_schema() -> dict[str, Any]:
+    """Return the strict provider projection for M32 alignment."""
+
+    return cast(dict[str, Any], _project_schema(deepcopy(QueryAlignmentV1.model_json_schema())))
+
+
+def provider_query_alignment_schema_hash() -> str:
+    return semantic_hash(provider_query_alignment_schema())
+
+
+def query_alignment_response_format() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "query_alignment_v1",
+            "strict": True,
+            "schema": provider_query_alignment_schema(),
+        },
+    }
+
+
+def provider_schema_alignment_schema() -> dict[str, Any]:
+    """Strict provider projection for M32 v2A schema selection."""
+
+    return cast(dict[str, Any], _project_schema(deepcopy(SchemaAlignmentV1.model_json_schema())))
+
+
+def schema_alignment_response_format() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "m32_schema_alignment_v1",
+            "strict": True,
+            "schema": provider_schema_alignment_schema(),
+        },
+    }
+
+
+def provider_logical_synthesis_schema() -> dict[str, Any]:
+    """Strict provider projection for M32 v2A logical synthesis."""
+
+    return cast(dict[str, Any], _project_schema(deepcopy(LogicalSynthesisV1.model_json_schema())))
+
+
+def logical_synthesis_response_format() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "m32_logical_synthesis_v1",
+            "strict": True,
+            "schema": provider_logical_synthesis_schema(),
+        },
+    }
+
+
+def query_alignment_schema_errors(value: Any) -> tuple[str, ...]:
+    schema = provider_query_alignment_schema()
+    errors: list[str] = []
+    _validate_value(value, schema, schema, "$", errors)
+    return tuple(errors)
+
+
+def query_sql_response_format() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "m32_sql_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {"sql": {"type": "string", "minLength": 1}},
+                "required": ["sql"],
+                "additionalProperties": False,
+            },
         },
     }
 

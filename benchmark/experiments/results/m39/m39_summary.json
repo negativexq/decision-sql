@@ -1,0 +1,487 @@
+{
+  "all_cases_deterministically_classified": true,
+  "base_only_answerable": 33,
+  "base_only_false_positive_cases": [
+    "warehouse_11"
+  ],
+  "decision_confusion_matrix": {
+    "AMBIGUOUS": {
+      "ANSWER": 1,
+      "BLOCKED_AUTHORITY": 1,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 7
+    },
+    "ANSWERABLE": {
+      "ANSWER": 43,
+      "BLOCKED_AUTHORITY": 9,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 8
+    },
+    "AUTHORITY_BLOCKED": {
+      "ANSWER": 0,
+      "BLOCKED_AUTHORITY": 15,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 0
+    },
+    "POLICY_BLOCKED": {
+      "ANSWER": 0,
+      "BLOCKED_AUTHORITY": 0,
+      "BLOCKED_POLICY": 6,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 0
+    }
+  },
+  "decision_distribution": {
+    "ANSWER": 44,
+    "BLOCKED_AUTHORITY": 25,
+    "BLOCKED_POLICY": 6,
+    "NEEDS_CLARIFICATION": 15
+  },
+  "difficulty_breakdown": {
+    "UNSPECIFIED": {
+      "correct": 32,
+      "rate": "53.3%",
+      "total": 60
+    }
+  },
+  "domain_breakdown": {
+    "commerce_ops": {
+      "answerable": {
+        "correct": 7,
+        "total": 7
+      },
+      "governance_negative": {
+        "correct": 3,
+        "total": 3
+      },
+      "governed": {
+        "correct": 10,
+        "total": 10
+      }
+    },
+    "fleet_ops": {
+      "answerable": {
+        "correct": 5,
+        "total": 7
+      },
+      "governance_negative": {
+        "correct": 3,
+        "total": 3
+      },
+      "governed": {
+        "correct": 8,
+        "total": 10
+      }
+    },
+    "risk_operations": {
+      "answerable": {
+        "correct": 5,
+        "total": 13
+      },
+      "governance_negative": {
+        "correct": 7,
+        "total": 7
+      },
+      "governed": {
+        "correct": 12,
+        "total": 20
+      }
+    },
+    "subscription_billing": {
+      "answerable": {
+        "correct": 7,
+        "total": 14
+      },
+      "governance_negative": {
+        "correct": 5,
+        "total": 6
+      },
+      "governed": {
+        "correct": 12,
+        "total": 20
+      }
+    },
+    "support_ops": {
+      "answerable": {
+        "correct": 6,
+        "total": 6
+      },
+      "governance_negative": {
+        "correct": 4,
+        "total": 4
+      },
+      "governed": {
+        "correct": 10,
+        "total": 10
+      }
+    },
+    "warehouse_logistics": {
+      "answerable": {
+        "correct": 2,
+        "total": 13
+      },
+      "governance_negative": {
+        "correct": 6,
+        "total": 7
+      },
+      "governed": {
+        "correct": 8,
+        "total": 20
+      }
+    }
+  },
+  "execution_validity": {
+    "denominator": 43,
+    "full_suite_executed": 43,
+    "rate": "74.4%",
+    "sql_admission": 43,
+    "sql_executed": 43,
+    "valid": 32
+  },
+  "experiment_id": "m39_v020_luna_none",
+  "failure_counts": {
+    "CORRECT": 60,
+    "EXECUTION_FAILURE": 0,
+    "INVALID_SUBMISSION": 0,
+    "PROVIDER_SCHEMA_FAILURE": 0,
+    "RESULT_MISMATCH": 11,
+    "SQL_ADMISSION_FAILURE": 0,
+    "TRANSPORT_FAILURE": 0,
+    "WRONG_GOVERNED_DECISION": 19
+  },
+  "first_model_response_acquired": true,
+  "full_suite_answerable": 32,
+  "hashes": {
+    "benchmark_content_hash": "32fb1f941773f4ec7d7ccc1fa38525e2730509b00c5df1f5f7dbb72cc5c77226",
+    "case_order_hash": "3299ecb9046619cd7b2e2aed66ed2e4146e8286b0497202b3b3ebc151947c2c2",
+    "context_hashes": {
+      "commerce_ops": "f94bc724e404723969a74a5cfee0b02dd447112559ba9f00d39a54a90615417e",
+      "fleet_ops": "1fde312b7bc723ba877b26720519b9c123e347ec4bd1069f8ebb142d4cfc4ea6",
+      "risk_operations": "b9468c4078f732cdd1fdb41aa154d7156b585b40df19832240928245b2d01064",
+      "subscription_billing": "a8a4bc24e4d5b75c6c1fa4cde0d99fead7f5a2cfef40a94d0d23b37ac814ea0b",
+      "support_ops": "e78b61f854cd1b87f1a9fdc049c795974bc06888e62258bb4785842aadfa2c17",
+      "warehouse_logistics": "0aabc8e303fbace15ae2f9f983e6f537642bcd3e63c77f564bde7c1be67f149c"
+    },
+    "evaluator_hash": "ccc3175fde205630fe87717480e3e521be2cee8e6b4fb26c359448977d95e019",
+    "experiment_config_hash": "bfeecd4e290b1c981dae8244302b8e1242532186171968b811d6ad974f100cbd",
+    "governance_prompt_hash": "1407f33106506753ba4dd552c51ac6524133bc2789020237be5a64cf80aee544",
+    "postgresql_version": "16.15",
+    "provider_adapter_hash": "d8cabbbd146b54a7fdbd1d6b3c20ffeb712d7e01613cff997cb25fe3fb4efed7",
+    "provider_config": {
+      "base_url": "https://api.openai.com/v1",
+      "credential_configured": true,
+      "endpoint_family": "chat_completions",
+      "model": "gpt-5.6-luna",
+      "provider": "openai-compatible",
+      "reasoning": "none",
+      "temperature": 0.0,
+      "timeout_seconds": 90
+    },
+    "provider_config_hash": "7d97392c16f194d96d2a63af34e7403f2b38229ecefbc447dffeab5c3aba9ccb",
+    "serializer_hash": "19b398badcb193c2b3c20f11697155b184113a956b4b79f4e22ff0b20f6b47f2",
+    "submission_schema_hash": "a20bcacd0f9221b53ccf0b8ab860981956fa7eef36bcfb507ffd79453c52b240",
+    "validator_hash": "6949c380dddd2d9123a8dfcad2319496fd951bd43297b72851af099daba1b274"
+  },
+  "latency": {
+    "max_ms": 3844.964292133227,
+    "median_ms": 1735.7833330752328,
+    "min_ms": 1133.7474170140922,
+    "p90_ms": 2352.942104358226,
+    "successful_responses": 90
+  },
+  "mechanism_tag_breakdown": {
+    "aggregation": {
+      "correct": 19,
+      "rate": "61.3%",
+      "total": 31
+    },
+    "calculation": {
+      "correct": 6,
+      "rate": "46.2%",
+      "total": 13
+    },
+    "conditional aggregate": {
+      "correct": 0,
+      "rate": "0.0%",
+      "total": 2
+    },
+    "correlated": {
+      "correct": 2,
+      "rate": "50.0%",
+      "total": 4
+    },
+    "distinct": {
+      "correct": 2,
+      "rate": "100.0%",
+      "total": 2
+    },
+    "filter": {
+      "correct": 9,
+      "rate": "60.0%",
+      "total": 15
+    },
+    "filter_scope": {
+      "correct": 1,
+      "rate": "100.0%",
+      "total": 1
+    },
+    "grain": {
+      "correct": 1,
+      "rate": "100.0%",
+      "total": 1
+    },
+    "grouping": {
+      "correct": 8,
+      "rate": "80.0%",
+      "total": 10
+    },
+    "json": {
+      "correct": 2,
+      "rate": "28.6%",
+      "total": 7
+    },
+    "latest-row": {
+      "correct": 2,
+      "rate": "33.3%",
+      "total": 6
+    },
+    "limit": {
+      "correct": 3,
+      "rate": "75.0%",
+      "total": 4
+    },
+    "multi-hop": {
+      "correct": 2,
+      "rate": "40.0%",
+      "total": 5
+    },
+    "multi_filter": {
+      "correct": 1,
+      "rate": "100.0%",
+      "total": 1
+    },
+    "multi_hop": {
+      "correct": 5,
+      "rate": "100.0%",
+      "total": 5
+    },
+    "nested": {
+      "correct": 5,
+      "rate": "83.3%",
+      "total": 6
+    },
+    "null": {
+      "correct": 2,
+      "rate": "28.6%",
+      "total": 7
+    },
+    "null_semantics": {
+      "correct": 4,
+      "rate": "80.0%",
+      "total": 5
+    },
+    "ordering": {
+      "correct": 3,
+      "rate": "60.0%",
+      "total": 5
+    },
+    "population": {
+      "correct": 10,
+      "rate": "62.5%",
+      "total": 16
+    },
+    "precision": {
+      "correct": 6,
+      "rate": "100.0%",
+      "total": 6
+    },
+    "ratio": {
+      "correct": 1,
+      "rate": "33.3%",
+      "total": 3
+    },
+    "relationship": {
+      "correct": 16,
+      "rate": "69.6%",
+      "total": 23
+    },
+    "schema_linking": {
+      "correct": 2,
+      "rate": "100.0%",
+      "total": 2
+    },
+    "set_operation": {
+      "correct": 2,
+      "rate": "100.0%",
+      "total": 2
+    },
+    "simple_projection": {
+      "correct": 3,
+      "rate": "100.0%",
+      "total": 3
+    },
+    "temporal": {
+      "correct": 3,
+      "rate": "30.0%",
+      "total": 10
+    },
+    "tie-break": {
+      "correct": 0,
+      "rate": "0.0%",
+      "total": 2
+    },
+    "window": {
+      "correct": 3,
+      "rate": "42.9%",
+      "total": 7
+    }
+  },
+  "mutation_gate": {
+    "authored": 188,
+    "invalid": 0,
+    "killed": 188,
+    "survived": 0
+  },
+  "projection_diagnostics": {},
+  "provider_calls_attempted": 90,
+  "provider_responses_received": 90,
+  "provider_schema_accepted_calls": 90,
+  "quality_gates": {
+    "audit_clean": 90,
+    "authority_sufficient": 60,
+    "context_sufficient": 60,
+    "fixture_comparisons": 182,
+    "invalid_mutants": 0,
+    "leakage": 0,
+    "mutants": 188,
+    "mutants_killed": 188,
+    "projection_sufficient": 60,
+    "references": 120,
+    "surviving_mutants": 0
+  },
+  "raw_outputs_preserved": true,
+  "reference_gate": {
+    "fixture_comparisons": 182,
+    "reference_pairs": 120
+  },
+  "schema_failures": 0,
+  "scores": {
+    "ambiguity_accuracy": {
+      "correct": 7,
+      "rate": "77.8%",
+      "total": 9
+    },
+    "answerable_accuracy": {
+      "correct": 32,
+      "rate": "53.3%",
+      "total": 60
+    },
+    "authority_accuracy": {
+      "correct": 15,
+      "rate": "100.0%",
+      "total": 15
+    },
+    "governed_task_success": {
+      "correct": 60,
+      "rate": "66.7%",
+      "total": 90
+    },
+    "policy_accuracy": {
+      "correct": 6,
+      "rate": "100.0%",
+      "total": 6
+    }
+  },
+  "split_summary": {
+    "CONFIRMATION": {
+      "ambiguity": {
+        "correct": 3,
+        "rate": "75.0%",
+        "total": 4
+      },
+      "answerable": {
+        "correct": 7,
+        "rate": "26.9%",
+        "total": 26
+      },
+      "authority": {
+        "correct": 7,
+        "rate": "100.0%",
+        "total": 7
+      },
+      "governed_success": {
+        "correct": 20,
+        "rate": "50.0%",
+        "total": 40
+      },
+      "policy": {
+        "correct": 3,
+        "rate": "100.0%",
+        "total": 3
+      }
+    },
+    "DEV": {
+      "ambiguity": {
+        "correct": 4,
+        "rate": "80.0%",
+        "total": 5
+      },
+      "answerable": {
+        "correct": 25,
+        "rate": "73.5%",
+        "total": 34
+      },
+      "authority": {
+        "correct": 8,
+        "rate": "100.0%",
+        "total": 8
+      },
+      "governed_success": {
+        "correct": 40,
+        "rate": "80.0%",
+        "total": 50
+      },
+      "policy": {
+        "correct": 3,
+        "rate": "100.0%",
+        "total": 3
+      }
+    }
+  },
+  "token_usage": {
+    "completion_tokens": {
+      "available_cases": 90,
+      "median_per_case": 42.0,
+      "total": 5821
+    },
+    "prompt_tokens": {
+      "available_cases": 90,
+      "median_per_case": 5469.5,
+      "total": 489483
+    },
+    "reasoning_tokens": {
+      "available_cases": 90,
+      "median_per_case": 0.0,
+      "total": 0
+    },
+    "total_tokens": {
+      "available_cases": 90,
+      "median_per_case": 5546.0,
+      "total": 495304
+    }
+  },
+  "transport_failures": 0,
+  "unauthorized_answer_rate": {
+    "answered": 0,
+    "rate": "0.0%",
+    "total": 15
+  },
+  "wrong_refusal_rate": {
+    "rate": "28.3%",
+    "total": 60,
+    "wrong_refusals": 17
+  }
+}

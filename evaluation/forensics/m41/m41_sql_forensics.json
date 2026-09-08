@@ -1,0 +1,548 @@
+{
+  "cases": [
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "maintenance_events",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "maintenance_events",
+                "relationship_id": "relationship:fleet_ops:maintenance_vehicle",
+                "to": "vehicles"
+              }
+            ],
+            "target": "vehicles"
+          }
+        ]
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "fleet_04",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "fleet_ops",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "primary_mechanism": "TEMPORAL_BOUNDARY_ERROR",
+      "question": "For every vehicle, count maintenance events in the 30 days before the benchmark time, including vehicles with none. Return only the vehicle ID and maintenance-event count, in that order.",
+      "rationale": "The query starts the 30-day interval at June 1 instead of the declared May 31 benchmark-time boundary.",
+      "secondary_mechanisms": [
+        "FILTER_SCOPE_ERROR"
+      ],
+      "split": "DEV",
+      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-01 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id;",
+      "sql_decomposition": {
+        "aggregate_count": 1,
+        "columns": [
+          "m.maintenance_id",
+          "m.performed_at",
+          "m.vehicle_id",
+          "v.vehicle_id"
+        ],
+        "group_by_count": 1,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "maintenance_events",
+          "vehicles"
+        ],
+        "where_count": 0,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "telemetry_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "fleet_06",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "fleet_ops",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "primary_mechanism": "JSON_TYPE_COERCION_ERROR",
+      "question": "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID. Return only the vehicle ID, latest event timestamp, and documented engine temperature, in that order.",
+      "rationale": "The documented JSON scalar is extracted as text with #>>, without numeric coercion.",
+      "secondary_mechanisms": [
+        "JSON_PATH_ERROR"
+      ],
+      "split": "DEV",
+      "sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, t.payload #>> '{engine,temperature_c}' AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "event_at",
+          "event_id",
+          "payload",
+          "t.event_at",
+          "t.payload",
+          "t.vehicle_id",
+          "v.vehicle_id",
+          "vehicle_id"
+        ],
+        "group_by_count": 0,
+        "joins": 1,
+        "order_by_count": 2,
+        "parse_status": "PASS",
+        "subquery_count": 1,
+        "tables": [
+          "telemetry_events",
+          "vehicles"
+        ],
+        "where_count": 0,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              }
+            ],
+            "target": "purchase_orders"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          }
+        ]
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_04",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "primary_mechanism": "RELATIONSHIP_PATH_ERROR",
+      "question": "For each warehouse, return the warehouse ID and received quantity for open purchase orders. Include only groups represented by at least one qualifying source record.",
+      "rationale": "The query stops at purchase-order lines and sums ordered quantity; it omits the authorized receipt hop needed for received quantity.",
+      "secondary_mechanisms": [
+        "CALCULATION_ERROR"
+      ],
+      "split": "CONFIRMATION",
+      "sql": "SELECT po.warehouse_id, SUM(pol.ordered_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id",
+      "sql_decomposition": {
+        "aggregate_count": 1,
+        "columns": [
+          "po.po_id",
+          "po.status",
+          "po.warehouse_id",
+          "pol.ordered_qty",
+          "pol.po_id"
+        ],
+        "group_by_count": 1,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "purchase_order_lines",
+          "purchase_orders"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          }
+        ]
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_08",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "primary_mechanism": "AGGREGATION_GRAIN_ERROR",
+      "question": "For each product, return the product ID and the quantity ordered but not yet received. Include only groups represented by at least one qualifying source record.",
+      "rationale": "The query aggregates after joining receipts at product grain, so ordered quantity can be repeated per receipt instead of being computed per line first.",
+      "secondary_mechanisms": [
+        "FANOUT_ERROR"
+      ],
+      "split": "CONFIRMATION",
+      "sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) > 0",
+      "sql_decomposition": {
+        "aggregate_count": 4,
+        "columns": [
+          "pol.ordered_qty",
+          "pol.po_line_id",
+          "pol.product_id",
+          "r.po_line_id",
+          "r.received_qty"
+        ],
+        "group_by_count": 1,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "purchase_order_lines",
+          "receipts"
+        ],
+        "where_count": 0,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "delivery_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_09",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "EXECUTION_FAILURE",
+      "primary_mechanism": "JSON_TYPE_COERCION_ERROR",
+      "question": "Return only delivery IDs whose JSON temperature value is at least 7 degrees.",
+      "rationale": "The numeric JSON temperature comparison is performed on #>> text rather than an explicitly cast numeric value.",
+      "secondary_mechanisms": [
+        "JSON_PATH_ERROR"
+      ],
+      "split": "CONFIRMATION",
+      "sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}') >= 7;",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "delivery_id",
+          "payload"
+        ],
+        "group_by_count": 0,
+        "joins": 0,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "delivery_events"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": false,
+      "authority_path_depth": {
+        "anchor": "alerts",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:alert_customer",
+                "to": "customers"
+              },
+              {
+                "from": "customers",
+                "relationship_id": "relationship:risk_operations:watchlist_customer",
+                "to": "watchlist_matches"
+              }
+            ],
+            "target": "watchlist_matches"
+          }
+        ]
+      },
+      "base_passed": false,
+      "benchmark_review_candidate": false,
+      "case_id": "risk_10",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "risk_operations",
+      "first_failing_fixture": "base",
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "primary_mechanism": "NULL_SEMANTICS_ERROR",
+      "question": "Return only customer IDs that have an open alert and no cleared watchlist match.",
+      "rationale": "The anti-existence predicate tests cleared_at IS NULL, reversing the visible meaning of a cleared watchlist match.",
+      "secondary_mechanisms": [
+        "ANTI_JOIN_ERROR"
+      ],
+      "split": "CONFIRMATION",
+      "sql": "SELECT DISTINCT a.customer_id\nFROM alerts AS a\nJOIN customers AS c ON c.customer_id = a.customer_id\nWHERE a.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS wm\n    WHERE wm.customer_id = c.customer_id\n      AND wm.cleared_at IS NULL\n  )",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "a.customer_id",
+          "a.status",
+          "c.customer_id",
+          "wm.cleared_at",
+          "wm.customer_id"
+        ],
+        "group_by_count": 0,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "alerts",
+          "customers",
+          "watchlist_matches"
+        ],
+        "where_count": 2,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_18",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Return accounts whose active subscription is current.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "a.account_id",
+          "a.account_name",
+          "s.account_id",
+          "s.ends_on",
+          "s.starts_on",
+          "s.status"
+        ],
+        "group_by_count": 0,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "accounts",
+          "subscriptions"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_19",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Find the latest inventory for each product.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": "SELECT product_id, on_hand_qty\nFROM (\n    SELECT product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1;",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "on_hand_qty",
+          "product_id",
+          "rn",
+          "snapshot_at",
+          "snapshot_id"
+        ],
+        "group_by_count": 0,
+        "joins": 0,
+        "order_by_count": 1,
+        "parse_status": "PASS",
+        "subquery_count": 1,
+        "tables": [
+          "inventory_snapshots"
+        ],
+        "where_count": 1,
+        "window_count": 1
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "risk_19",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "risk_operations",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Show unresolved cases.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": "SELECT case_id FROM cases WHERE resolved_at IS NULL",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "case_id",
+          "resolved_at"
+        ],
+        "group_by_count": 0,
+        "joins": 0,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "cases"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    }
+  ],
+  "provider_calls": 0
+}

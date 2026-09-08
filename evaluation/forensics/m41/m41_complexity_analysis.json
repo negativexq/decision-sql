@@ -1,0 +1,2410 @@
+{
+  "cases": [
+    {
+      "answerable": true,
+      "case_id": "commerce_01",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "customers",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_02",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 4,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 1,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "orders",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_03",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "customers",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "customers",
+                "relationship_id": "relationship:commerce_ops:order_customer",
+                "to": "orders"
+              }
+            ],
+            "target": "orders"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_04",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 6,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "order_items",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "order_items",
+                "relationship_id": "relationship:commerce_ops:item_order",
+                "to": "orders"
+              }
+            ],
+            "target": "orders"
+          },
+          {
+            "path": [
+              {
+                "from": "order_items",
+                "relationship_id": "relationship:commerce_ops:item_product",
+                "to": "products"
+              }
+            ],
+            "target": "products"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_05",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 4,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 2,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "order_items",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "order_items",
+                "relationship_id": "relationship:commerce_ops:item_order",
+                "to": "orders"
+              },
+              {
+                "from": "orders",
+                "relationship_id": "relationship:commerce_ops:order_customer",
+                "to": "customers"
+              }
+            ],
+            "target": "customers"
+          },
+          {
+            "path": [
+              {
+                "from": "order_items",
+                "relationship_id": "relationship:commerce_ops:item_order",
+                "to": "orders"
+              }
+            ],
+            "target": "orders"
+          },
+          {
+            "path": [
+              {
+                "from": "order_items",
+                "relationship_id": "relationship:commerce_ops:item_product",
+                "to": "products"
+              }
+            ],
+            "target": "products"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_06",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 6,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "customers",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "customers",
+                "relationship_id": "relationship:commerce_ops:order_customer",
+                "to": "orders"
+              }
+            ],
+            "target": "orders"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "commerce_07",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 7,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "commerce_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "orders",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "orders",
+                "relationship_id": "relationship:commerce_ops:order_customer",
+                "to": "customers"
+              }
+            ],
+            "target": "customers"
+          },
+          {
+            "path": [
+              {
+                "from": "orders",
+                "relationship_id": "relationship:commerce_ops:item_order",
+                "to": "order_items"
+              }
+            ],
+            "target": "order_items"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_01",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "telemetry_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_02",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "vehicles",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "vehicles",
+                "relationship_id": "relationship:fleet_ops:vehicle_depot",
+                "to": "depots"
+              }
+            ],
+            "target": "depots"
+          },
+          {
+            "path": [
+              {
+                "from": "vehicles",
+                "relationship_id": "relationship:fleet_ops:fuel_vehicle",
+                "to": "fuel_events"
+              }
+            ],
+            "target": "fuel_events"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_03",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "routes",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "routes",
+                "relationship_id": "relationship:fleet_ops:trip_route",
+                "to": "trips"
+              }
+            ],
+            "target": "trips"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_04",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 1,
+        "window_count": 0
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "maintenance_events",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "maintenance_events",
+                "relationship_id": "relationship:fleet_ops:maintenance_vehicle",
+                "to": "vehicles"
+              }
+            ],
+            "target": "vehicles"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_05",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "trips",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "trips",
+                "relationship_id": "relationship:fleet_ops:trip_driver",
+                "to": "drivers"
+              }
+            ],
+            "target": "drivers"
+          },
+          {
+            "path": [
+              {
+                "from": "trips",
+                "relationship_id": "relationship:fleet_ops:trip_vehicle",
+                "to": "vehicles"
+              }
+            ],
+            "target": "vehicles"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_06",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 5,
+        "nested_depth": 1,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 1,
+        "window_count": 1
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "telemetry_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "fleet_07",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 9,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 1
+      },
+      "database_id": "fleet_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "trips",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_01",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 5,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "accounts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:support_ops:ticket_account",
+                "to": "support_tickets"
+              }
+            ],
+            "target": "support_tickets"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_02",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 4,
+        "grouping_keys": 0,
+        "mechanism_count": 6,
+        "nested_depth": 2,
+        "predicate_count": 2,
+        "relationship_hops": null,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 1,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "subscriptions",
+        "bucket": "3+-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "subscriptions",
+                "relationship_id": "relationship:support_ops:subscription_plan",
+                "to": "service_plans"
+              }
+            ],
+            "target": "service_plans"
+          },
+          {
+            "path": [
+              {
+                "from": "subscriptions",
+                "relationship_id": "relationship:support_ops:subscription_account",
+                "to": "accounts"
+              },
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:support_ops:ticket_account",
+                "to": "support_tickets"
+              }
+            ],
+            "target": "support_tickets"
+          },
+          {
+            "path": [
+              {
+                "from": "subscriptions",
+                "relationship_id": "relationship:support_ops:subscription_account",
+                "to": "accounts"
+              },
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:support_ops:ticket_account",
+                "to": "support_tickets"
+              },
+              {
+                "from": "support_tickets",
+                "relationship_id": "relationship:support_ops:event_ticket",
+                "to": "ticket_events"
+              }
+            ],
+            "target": "ticket_events"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_03",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 1,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 6,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "support_tickets",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_04",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "support_tickets",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_05",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "support_tickets",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "support_06",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 4,
+        "nested_depth": 0,
+        "predicate_count": 2,
+        "relationship_hops": 2,
+        "set_operation_count": 1,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "support_ops",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "incidents",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "incidents",
+                "relationship_id": "relationship:support_ops:incident_account",
+                "to": "accounts"
+              },
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:support_ops:ticket_account",
+                "to": "support_tickets"
+              }
+            ],
+            "target": "support_tickets"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_01",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 1,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "subscriptions",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_02",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "accounts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:subscription_billing:subscription_account",
+                "to": "subscriptions"
+              }
+            ],
+            "target": "subscriptions"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_03",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "accounts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:subscription_billing:invoice_account",
+                "to": "invoices"
+              }
+            ],
+            "target": "invoices"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_04",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "payments",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "payments",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "invoices"
+              }
+            ],
+            "target": "invoices"
+          },
+          {
+            "path": [
+              {
+                "from": "payments",
+                "relationship_id": "relationship:subscription_billing:refund_payment",
+                "to": "refunds"
+              }
+            ],
+            "target": "refunds"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_05",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "subscriptions",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_06",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "invoices",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              }
+            ],
+            "target": "payments"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_07",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "plans",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "plans",
+                "relationship_id": "relationship:subscription_billing:subscription_plan",
+                "to": "subscriptions"
+              }
+            ],
+            "target": "subscriptions"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_08",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "usage_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_09",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "invoices",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_10",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 4,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 2,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "invoices",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              }
+            ],
+            "target": "payments"
+          },
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              },
+              {
+                "from": "payments",
+                "relationship_id": "relationship:subscription_billing:refund_payment",
+                "to": "refunds"
+              }
+            ],
+            "target": "refunds"
+          },
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:invoice_subscription",
+                "to": "subscriptions"
+              }
+            ],
+            "target": "subscriptions"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_11",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "subscriptions",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "subscriptions",
+                "relationship_id": "relationship:subscription_billing:entitlement_subscription",
+                "to": "entitlements"
+              }
+            ],
+            "target": "entitlements"
+          },
+          {
+            "path": [
+              {
+                "from": "subscriptions",
+                "relationship_id": "relationship:subscription_billing:subscription_plan",
+                "to": "plans"
+              }
+            ],
+            "target": "plans"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_12",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "usage_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_13",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "dunning_attempts",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "subscription_14",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 2,
+        "relationship_hops": 2,
+        "set_operation_count": 0,
+        "split": "DEV",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "subscription_billing",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "credits",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "credits",
+                "relationship_id": "relationship:subscription_billing:credit_account",
+                "to": "accounts"
+              },
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:subscription_billing:invoice_account",
+                "to": "invoices"
+              }
+            ],
+            "target": "invoices"
+          }
+        ]
+      },
+      "split": "DEV"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_01",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "inventory_snapshots",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_02",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "shipment_items",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "shipment_items",
+                "relationship_id": "relationship:warehouse_logistics:item_shipment",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_03",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "shipments",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "shipments",
+                "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+                "to": "carriers"
+              }
+            ],
+            "target": "carriers"
+          },
+          {
+            "path": [
+              {
+                "from": "shipments",
+                "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+                "to": "delivery_events"
+              }
+            ],
+            "target": "delivery_events"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_04",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              }
+            ],
+            "target": "purchase_orders"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_05",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "inventory_snapshots",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_06",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "delivery_events",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "delivery_events",
+                "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_07",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "shipment_items",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "shipment_items",
+                "relationship_id": "relationship:warehouse_logistics:pick_item",
+                "to": "pick_events"
+              }
+            ],
+            "target": "pick_events"
+          },
+          {
+            "path": [
+              {
+                "from": "shipment_items",
+                "relationship_id": "relationship:warehouse_logistics:item_shipment",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_08",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 2,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_09",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "delivery_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_10",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "shipment_items",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_11",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 2,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "inventory_snapshots",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "inventory_snapshots",
+                "relationship_id": "relationship:warehouse_logistics:snapshot_warehouse",
+                "to": "warehouses"
+              }
+            ],
+            "target": "warehouses"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_12",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "carriers",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "carriers",
+                "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "warehouse_13",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 6,
+        "grouping_keys": 1,
+        "mechanism_count": 4,
+        "nested_depth": 2,
+        "predicate_count": 0,
+        "relationship_hops": null,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "warehouse_logistics",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "3+-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              }
+            ],
+            "target": "purchase_orders"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_product",
+                "to": "products"
+              },
+              {
+                "from": "products",
+                "relationship_id": "relationship:warehouse_logistics:item_product",
+                "to": "shipment_items"
+              }
+            ],
+            "target": "shipment_items"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              },
+              {
+                "from": "purchase_orders",
+                "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+                "to": "warehouses"
+              },
+              {
+                "from": "warehouses",
+                "relationship_id": "relationship:warehouse_logistics:shipment_warehouse",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              },
+              {
+                "from": "purchase_orders",
+                "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+                "to": "warehouses"
+              }
+            ],
+            "target": "warehouses"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_01",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 1,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "alerts",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_02",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "risk_assessments",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_03",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "alerts",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_04",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "transactions",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_05",
+      "complexity": {
+        "aggregate_count": 2,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "alerts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:investigation_alert",
+                "to": "investigations"
+              }
+            ],
+            "target": "investigations"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_06",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "investigations",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_07",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "login_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_08",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 0,
+        "mechanism_count": 2,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "transactions",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_09",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 1,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 1,
+        "predicate_count": 0,
+        "relationship_hops": 0,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "risk_assessments",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_10",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 2,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 2,
+        "relationship_hops": 2,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "alerts",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:alert_customer",
+                "to": "customers"
+              },
+              {
+                "from": "customers",
+                "relationship_id": "relationship:risk_operations:watchlist_customer",
+                "to": "watchlist_matches"
+              }
+            ],
+            "target": "watchlist_matches"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_11",
+      "complexity": {
+        "aggregate_count": 0,
+        "calculation_count": 0,
+        "correct": false,
+        "entity_count": 3,
+        "grouping_keys": 0,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 1,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_correct": false,
+      "path_depth": {
+        "anchor": "alerts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:alert_customer",
+                "to": "customers"
+              }
+            ],
+            "target": "customers"
+          },
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:investigation_alert",
+                "to": "investigations"
+              }
+            ],
+            "target": "investigations"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_12",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 2,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "customers",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "customers",
+                "relationship_id": "relationship:risk_operations:watchlist_customer",
+                "to": "watchlist_matches"
+              }
+            ],
+            "target": "watchlist_matches"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    },
+    {
+      "answerable": true,
+      "case_id": "risk_13",
+      "complexity": {
+        "aggregate_count": 1,
+        "calculation_count": 0,
+        "correct": true,
+        "entity_count": 3,
+        "grouping_keys": 1,
+        "mechanism_count": 3,
+        "nested_depth": 0,
+        "predicate_count": 0,
+        "relationship_hops": 1,
+        "set_operation_count": 0,
+        "split": "CONFIRMATION",
+        "temporal_rule_count": 0,
+        "window_count": 0
+      },
+      "database_id": "risk_operations",
+      "model_decision": "ANSWER",
+      "official_correct": true,
+      "path_depth": {
+        "anchor": "accounts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:risk_operations:account_customer",
+                "to": "customers"
+              }
+            ],
+            "target": "customers"
+          },
+          {
+            "path": [
+              {
+                "from": "accounts",
+                "relationship_id": "relationship:risk_operations:transaction_account",
+                "to": "transactions"
+              }
+            ],
+            "target": "transactions"
+          }
+        ]
+      },
+      "split": "CONFIRMATION"
+    }
+  ],
+  "comparisons": {
+    "CONFIRMATION_correct": {
+      "aggregate_count": 1,
+      "calculation_count": 0,
+      "entity_count": 1,
+      "grouping_keys": 1,
+      "mechanism_count": 3,
+      "nested_depth": 0,
+      "predicate_count": 0,
+      "relationship_hops": 0,
+      "set_operation_count": 0,
+      "temporal_rule_count": 0,
+      "window_count": 0
+    },
+    "CONFIRMATION_incorrect": {
+      "aggregate_count": 1,
+      "calculation_count": 0,
+      "entity_count": 3,
+      "grouping_keys": 1,
+      "mechanism_count": 3,
+      "nested_depth": 0,
+      "predicate_count": 1,
+      "relationship_hops": 1.0,
+      "set_operation_count": 0,
+      "temporal_rule_count": 0,
+      "window_count": 0
+    },
+    "DEV_correct": {
+      "aggregate_count": 1,
+      "calculation_count": 0,
+      "entity_count": 2,
+      "grouping_keys": 1,
+      "mechanism_count": 3,
+      "nested_depth": 0,
+      "predicate_count": 1,
+      "relationship_hops": 1.0,
+      "set_operation_count": 0,
+      "temporal_rule_count": 0,
+      "window_count": 0
+    },
+    "DEV_incorrect": {
+      "aggregate_count": 1,
+      "calculation_count": 0,
+      "entity_count": 2,
+      "grouping_keys": 1,
+      "mechanism_count": 3,
+      "nested_depth": 0,
+      "predicate_count": 1,
+      "relationship_hops": 1,
+      "set_operation_count": 0,
+      "temporal_rule_count": 0,
+      "window_count": 0
+    },
+    "overall_correct": {
+      "aggregate_count": 1.0,
+      "calculation_count": 0.0,
+      "entity_count": 2.0,
+      "grouping_keys": 1.0,
+      "mechanism_count": 3.0,
+      "nested_depth": 0.0,
+      "predicate_count": 1.0,
+      "relationship_hops": 1,
+      "set_operation_count": 0.0,
+      "temporal_rule_count": 0.0,
+      "window_count": 0.0
+    },
+    "overall_incorrect": {
+      "aggregate_count": 1.0,
+      "calculation_count": 0.0,
+      "entity_count": 2.0,
+      "grouping_keys": 1.0,
+      "mechanism_count": 3.0,
+      "nested_depth": 0.0,
+      "predicate_count": 1.0,
+      "relationship_hops": 1,
+      "set_operation_count": 0.0,
+      "temporal_rule_count": 0.0,
+      "window_count": 0.0
+    }
+  },
+  "note": "Structural reference/authority-path summaries; descriptive, not causal inference.",
+  "provider_calls": 0
+}

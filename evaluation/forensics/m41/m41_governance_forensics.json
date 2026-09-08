@@ -1,0 +1,656 @@
+{
+  "cases": [
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "invoices",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              }
+            ],
+            "target": "payments"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_06",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AMBIGUITY",
+      "question": "For each account, return the account ID and the number of failed payments. Include only groups represented by at least one qualifying source record.",
+      "rationale": "The repaired answerable contract has a single declared interpretation.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "usage_events",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_08",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AMBIGUITY",
+      "question": "Return only account IDs whose June usage exceeded 1,000 units.",
+      "rationale": "The repaired answerable contract has a single declared interpretation.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "invoices",
+        "bucket": "2-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              }
+            ],
+            "target": "payments"
+          },
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:payment_invoice",
+                "to": "payments"
+              },
+              {
+                "from": "payments",
+                "relationship_id": "relationship:subscription_billing:refund_payment",
+                "to": "refunds"
+              }
+            ],
+            "target": "refunds"
+          },
+          {
+            "path": [
+              {
+                "from": "invoices",
+                "relationship_id": "relationship:subscription_billing:invoice_subscription",
+                "to": "subscriptions"
+              }
+            ],
+            "target": "subscriptions"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_10",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AMBIGUITY",
+      "question": "For each plan, return the plan ID and the refund rate, defined as refunded captured dollars divided by captured dollars. Include only groups represented by at least one qualifying source record.",
+      "rationale": "The repaired answerable contract has a single declared interpretation.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "shipments",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "shipments",
+                "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+                "to": "carriers"
+              }
+            ],
+            "target": "carriers"
+          },
+          {
+            "path": [
+              {
+                "from": "shipments",
+                "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+                "to": "delivery_events"
+              }
+            ],
+            "target": "delivery_events"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_03",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AUTHORITY_BLOCK",
+      "question": "For each carrier, return the carrier ID and the number of shipments delivered after their promised time. Include only groups represented by at least one qualifying source record.",
+      "rationale": "An authorized answer path is present in the repaired public graph.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "shipment_items",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "shipment_items",
+                "relationship_id": "relationship:warehouse_logistics:pick_item",
+                "to": "pick_events"
+              }
+            ],
+            "target": "pick_events"
+          },
+          {
+            "path": [
+              {
+                "from": "shipment_items",
+                "relationship_id": "relationship:warehouse_logistics:item_shipment",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_07",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AUTHORITY_BLOCK",
+      "question": "For each warehouse, return the warehouse ID and average hours from shipment time to pick. Include only groups represented by at least one qualifying source record.",
+      "rationale": "An authorized answer path is present in the repaired public graph.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "purchase_order_lines",
+        "bucket": "3+-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              }
+            ],
+            "target": "purchase_orders"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:receipt_line",
+                "to": "receipts"
+              }
+            ],
+            "target": "receipts"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_product",
+                "to": "products"
+              },
+              {
+                "from": "products",
+                "relationship_id": "relationship:warehouse_logistics:item_product",
+                "to": "shipment_items"
+              }
+            ],
+            "target": "shipment_items"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              },
+              {
+                "from": "purchase_orders",
+                "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+                "to": "warehouses"
+              },
+              {
+                "from": "warehouses",
+                "relationship_id": "relationship:warehouse_logistics:shipment_warehouse",
+                "to": "shipments"
+              }
+            ],
+            "target": "shipments"
+          },
+          {
+            "path": [
+              {
+                "from": "purchase_order_lines",
+                "relationship_id": "relationship:warehouse_logistics:line_po",
+                "to": "purchase_orders"
+              },
+              {
+                "from": "purchase_orders",
+                "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+                "to": "warehouses"
+              }
+            ],
+            "target": "warehouses"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_13",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AUTHORITY_BLOCK",
+      "question": "For each warehouse, return the warehouse ID and the ratio of shipped quantity to received quantity. Include entities with no matching records, using the stated NULL or zero behavior.",
+      "rationale": "An authorized answer path is present in the repaired public graph.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "investigations",
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "risk_06",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "risk_operations",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AMBIGUITY",
+      "question": "For each investigation, return the investigation ID and resolution hours for investigations that are closed. Include only groups represented by at least one qualifying source record.",
+      "rationale": "The repaired answerable contract has a single declared interpretation.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": "alerts",
+        "bucket": "1-hop",
+        "paths": [
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:alert_customer",
+                "to": "customers"
+              }
+            ],
+            "target": "customers"
+          },
+          {
+            "path": [
+              {
+                "from": "alerts",
+                "relationship_id": "relationship:risk_operations:investigation_alert",
+                "to": "investigations"
+              }
+            ],
+            "target": "investigations"
+          }
+        ]
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "risk_11",
+      "coverage": {
+        "context_sufficient": true,
+        "json_sufficient": true,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": true,
+        "population_sufficient": true,
+        "temporal_sufficient": true
+      },
+      "database_id": "risk_operations",
+      "first_failing_fixture": null,
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "BLOCKED_AUTHORITY",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "FALSE_AUTHORITY_BLOCK",
+      "question": "Return only customer IDs that have both an open alert and an open investigation.",
+      "rationale": "An authorized answer path is present in the repaired public graph.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_17",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "AUTHORITY_BLOCKED",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Return the end user's identity behind each subscription.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": null,
+      "sql_decomposition": {
+        "parse_status": "NO_SQL"
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "subscription_18",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "subscription_billing",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Return accounts whose active subscription is current.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "DEV",
+      "sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "a.account_id",
+          "a.account_name",
+          "s.account_id",
+          "s.ends_on",
+          "s.starts_on",
+          "s.status"
+        ],
+        "group_by_count": 0,
+        "joins": 1,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "accounts",
+          "subscriptions"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "warehouse_19",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "warehouse_logistics",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Find the latest inventory for each product.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": "SELECT product_id, on_hand_qty\nFROM (\n    SELECT product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1;",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "on_hand_qty",
+          "product_id",
+          "rn",
+          "snapshot_at",
+          "snapshot_id"
+        ],
+        "group_by_count": 0,
+        "joins": 0,
+        "order_by_count": 1,
+        "parse_status": "PASS",
+        "subquery_count": 1,
+        "tables": [
+          "inventory_snapshots"
+        ],
+        "where_count": 1,
+        "window_count": 1
+      }
+    },
+    {
+      "all_fixtures_passed": null,
+      "authority_path_depth": {
+        "anchor": null,
+        "bucket": "0-hop",
+        "paths": []
+      },
+      "base_passed": null,
+      "benchmark_review_candidate": false,
+      "case_id": "risk_19",
+      "coverage": {
+        "context_sufficient": null,
+        "json_sufficient": null,
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "ordering_sufficient": null,
+        "population_sufficient": null,
+        "temporal_sufficient": null
+      },
+      "database_id": "risk_operations",
+      "first_failing_fixture": null,
+      "gold_behavior": "AMBIGUOUS",
+      "model_decision": "ANSWER",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "primary_mechanism": "WRONG_GOVERNANCE_DECISION",
+      "question": "Show unresolved cases.",
+      "rationale": "The model decision did not match the governed negative-case behavior.",
+      "secondary_mechanisms": [],
+      "split": "CONFIRMATION",
+      "sql": "SELECT case_id FROM cases WHERE resolved_at IS NULL",
+      "sql_decomposition": {
+        "aggregate_count": 0,
+        "columns": [
+          "case_id",
+          "resolved_at"
+        ],
+        "group_by_count": 0,
+        "joins": 0,
+        "order_by_count": 0,
+        "parse_status": "PASS",
+        "subquery_count": 0,
+        "tables": [
+          "cases"
+        ],
+        "where_count": 1,
+        "window_count": 0
+      }
+    }
+  ],
+  "provider_calls": 0
+}

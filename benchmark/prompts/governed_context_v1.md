@@ -30,6 +30,8 @@ Return one JSON object with exactly these four fields:
 }
 ```
 
+Copy the supplied Case ID exactly into `case_id`. Do not invent, modify, or infer a different identifier.
+
 For `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` statement and `reason_code` must be `null`. Do not include commentary, multiple candidates, analysis, a logical plan, a confidence value, or a second statement in `sql`.
 
 For `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: "MISSING_AUTHORIZED_RELATIONSHIP"`.

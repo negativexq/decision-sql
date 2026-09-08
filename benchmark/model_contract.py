@@ -8,7 +8,7 @@ import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # The contract intentionally keeps the generated request readable.
 # ruff: noqa: E501
@@ -47,7 +47,7 @@ def governance_instructions() -> str:
 
 
 def submission_schema() -> dict[str, Any]:
-    return json.loads(SUBMISSION_SCHEMA_PATH.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(SUBMISSION_SCHEMA_PATH.read_text(encoding="utf-8")))
 
 
 def _ordered_context(value: dict[str, Any]) -> dict[str, Any]:
@@ -90,7 +90,7 @@ def case_order_hash(case_ids: list[str] | None = None) -> str:
 
 def _load_model_case(case_id: str) -> dict[str, Any]:
     path = ROOT / "cases" / "pilot" / f"{case_id}.json"
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 @dataclass(frozen=True)
@@ -108,6 +108,18 @@ class BenchmarkRequest:
         return len(self.request_text.encode("utf-8"))
 
     @property
+    def user_text(self) -> str:
+        """The exact USER envelope sent to the provider chat message."""
+        return (
+            "Case ID:\n"
+            + self.case_id
+            + "\n\nQuestion:\n"
+            + self.question
+            + "\n\nGoverned context:\n"
+            + self.serialized_context
+        )
+
+    @property
     def request_sha256(self) -> str:
         return sha256_text(self.request_text)
 
@@ -120,7 +132,9 @@ def build_benchmark_request(case_id: str) -> BenchmarkRequest:
     request_text = (
         "SYSTEM:\n"
         + instructions
-        + "\n\nUSER:\nQuestion:\n"
+        + "\n\nUSER:\nCase ID:\n"
+        + case_id
+        + "\n\nQuestion:\n"
         + question
         + "\n\nGoverned context:\n"
         + context
@@ -174,7 +188,11 @@ def context_contains_fact(database_id: str, fact: str) -> bool:
 def git_revision() -> str:
     try:
         return subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT.parent, check=True, capture_output=True, text=True
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT.parent,
+            check=True,
+            capture_output=True,
+            text=True,
         ).stdout.strip()
     except Exception:
         return "UNAVAILABLE"
@@ -195,7 +213,12 @@ def frozen_benchmark_content_hash() -> str:
         + sorted((ROOT / "ground_truth").rglob("*"))
     )
     for path in paths:
-        if path.is_file() and path.name not in FROZEN_CONTENT_EXCLUDED:
+        if (
+            path.is_file()
+            and path.name not in FROZEN_CONTENT_EXCLUDED
+            and path.suffix != ".pyc"
+            and "__pycache__" not in path.parts
+        ):
             digest.update(str(path.relative_to(ROOT)).encode("utf-8"))
             digest.update(path.read_bytes())
     return digest.hexdigest()

@@ -30,7 +30,9 @@ from benchmark.validator import load_pilot
 
 def _dump(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
 
 def _postgres_version() -> str:
@@ -51,8 +53,17 @@ def _experiment_config(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError("EXPERIMENT_CONFIG_OBJECT_REQUIRED")
     required = {
-        "model", "provider", "reasoning", "temperature", "timeout_seconds",
-        "calls_per_case", "transport_retries", "semantic_retries", "repair", "selector", "judge",
+        "model",
+        "provider",
+        "reasoning",
+        "temperature",
+        "timeout_seconds",
+        "calls_per_case",
+        "transport_retries",
+        "semantic_retries",
+        "repair",
+        "selector",
+        "judge",
     }
     missing = sorted(required - set(value))
     if missing:
@@ -75,7 +86,19 @@ def _request_audit(requests: list[BenchmarkRequest]) -> dict[str, Any]:
     authority_leakage: dict[str, list[str]] = {}
     ambiguity_leakage: dict[str, list[str]] = {}
     policy_visibility: dict[str, bool] = {}
+    case_id_present = 0
+    exact_questions = 0
+    exact_instructions = 0
+    exact_contexts = 0
     for request in requests:
+        if f"Case ID:\n{request.case_id}\n" in request.request_text:
+            case_id_present += 1
+        if request.request_text.startswith("SYSTEM:\n" + request.instructions + "\n\nUSER:\n"):
+            exact_instructions += 1
+        if f"Question:\n{request.question}\n\nGoverned context:\n" in request.request_text:
+            exact_questions += 1
+        if request.request_text.endswith(request.serialized_context):
+            exact_contexts += 1
         case, truth = rows[request.case_id]
         hits = request_leakage(request, case)
         if hits:
@@ -91,17 +114,27 @@ def _request_audit(requests: list[BenchmarkRequest]) -> dict[str, Any]:
                 truth.get("evidence", {}).get(key, "")
                 for key in ("missing_authority", "tempting_physical_link")
             ]
-            hits = [value for value in hidden if value and value.lower() in request.request_text.lower()]
+            hits = [
+                value for value in hidden if value and value.lower() in request.request_text.lower()
+            ]
             if hits:
                 authority_leakage[request.case_id] = hits
         elif case["task_type"] == "AMBIGUOUS":
-            hidden = [truth.get("evidence", {}).get(key, "") for key in ("interpretation_a", "interpretation_b")]
-            hits = [value for value in hidden if value and value.lower() in request.request_text.lower()]
+            hidden = [
+                truth.get("evidence", {}).get(key, "")
+                for key in ("interpretation_a", "interpretation_b")
+            ]
+            hits = [
+                value for value in hidden if value and value.lower() in request.request_text.lower()
+            ]
             if hits:
                 ambiguity_leakage[request.case_id] = hits
         elif case["task_type"] == "POLICY_BLOCKED":
             policy_visibility[request.case_id] = "read-only" in request.request_text.lower()
-    context_hashes = {database_id: context_hash(database_id) for database_id in sorted({item.database_id for item in requests})}
+    context_hashes = {
+        database_id: context_hash(database_id)
+        for database_id in sorted({item.database_id for item in requests})
+    }
     same_database_context = all(
         len({item.serialized_context for item in requests if item.database_id == database_id}) == 1
         for database_id in context_hashes
@@ -110,9 +143,10 @@ def _request_audit(requests: list[BenchmarkRequest]) -> dict[str, Any]:
         "request_count": len(requests),
         "schema_validated": len(requests) if schema_is_strict else 0,
         "request_components_present": {
-            "instructions": sum(bool(item.instructions) for item in requests),
-            "question": sum(bool(item.question) for item in requests),
-            "serialized_context": sum(bool(item.serialized_context) for item in requests),
+            "case_id": case_id_present,
+            "instructions": exact_instructions,
+            "question": exact_questions,
+            "serialized_context": exact_contexts,
         },
         "context_hashes": context_hashes,
         "unique_context_count": len(set(context_hashes.values())),
@@ -132,11 +166,15 @@ def _request_audit(requests: list[BenchmarkRequest]) -> dict[str, Any]:
         "evaluator_only_leakage": leakage,
         "passed": (
             len(requests) == 30
-            and all(value == 30 for value in {
-                "instructions": sum(bool(item.instructions) for item in requests),
-                "question": sum(bool(item.question) for item in requests),
-                "serialized_context": sum(bool(item.serialized_context) for item in requests),
-            }.values())
+            and all(
+                value == 30
+                for value in {
+                    "case_id": case_id_present,
+                    "instructions": exact_instructions,
+                    "question": exact_questions,
+                    "serialized_context": exact_contexts,
+                }.values()
+            )
             and same_database_context
             and not leakage
             and not authority_leakage
@@ -166,6 +204,36 @@ def _ledger(requests: list[BenchmarkRequest]) -> list[dict[str, Any]]:
     ]
 
 
+def _provider_config_projection(config: dict[str, Any]) -> dict[str, Any]:
+    """Hash provider routing/configuration without persisting credentials."""
+    try:
+        from app.config import get_settings
+
+        settings = get_settings().model_copy(
+            update={
+                "llm_model": config["model"],
+                "llm_timeout_seconds": config["timeout_seconds"],
+                "llm_temperature": config["temperature"],
+                "llm_reasoning_effort": config["reasoning"],
+            }
+        )
+        return {
+            "provider": config["provider"],
+            "endpoint_family": "chat_completions",
+            "base_url": settings.llm_base_url,
+            "model": settings.llm_model,
+            "reasoning": settings.llm_reasoning_effort,
+            "temperature": settings.llm_temperature,
+            "timeout_seconds": settings.llm_timeout_seconds,
+            "credential_configured": bool(settings.llm_api_key),
+        }
+    except Exception:
+        return {
+            key: config[key]
+            for key in ("provider", "model", "reasoning", "temperature", "timeout_seconds")
+        }
+
+
 def _evaluator_contract_audit() -> dict[str, Any]:
     contracts = [
         {"feature": "answerable_base_and_counterfactual_execution", "status": "SUPPORTED_AND_USED"},
@@ -173,8 +241,14 @@ def _evaluator_contract_audit() -> dict[str, Any]:
         {"feature": "governed_decision_mapping", "status": "SUPPORTED_AND_USED"},
         {"feature": "row_order", "status": "SUPPORTED_AND_USED"},
         {"feature": "numeric_tolerance", "status": "IMPLEMENTED_BUT_UNUSED_IN_PILOT"},
-        {"feature": "aliases_significant", "status": "DECLARED_BUT_UNSUPPORTED_FOR_CANDIDATE_SCORING; UNUSED_IN_PILOT"},
-        {"feature": "duplicates_significant_false", "status": "DECLARED_BUT_UNSUPPORTED; UNUSED_IN_PILOT"},
+        {
+            "feature": "aliases_significant",
+            "status": "DECLARED_BUT_UNSUPPORTED_FOR_CANDIDATE_SCORING; UNUSED_IN_PILOT",
+        },
+        {
+            "feature": "duplicates_significant_false",
+            "status": "DECLARED_BUT_UNSUPPORTED; UNUSED_IN_PILOT",
+        },
         {"feature": "gold_sql_string_comparison", "status": "NOT_USED"},
         {"feature": "llm_judge_or_semantic_repair", "status": "NOT_USED"},
     ]
@@ -201,14 +275,12 @@ def validate_frozen_manifest(manifest: dict[str, Any], experiment_path: Path) ->
         "validator_version_hash": file_hash(ROOT / "validator.py"),
         "experiment_config_sha256": file_hash(experiment_path),
     }
-    mismatches = sorted(
-        key for key, value in expected.items() if manifest.get(key) != value
-    )
+    mismatches = sorted(key for key, value in expected.items() if manifest.get(key) != value)
     if mismatches:
         raise ValueError(f"FROZEN_CONTRACT_HASH_MISMATCH:{','.join(mismatches)}")
 
 
-def dry_run(experiment_path: Path) -> dict[str, Any]:
+def dry_run(experiment_path: Path, artifact_stem: str = "m34_3") -> dict[str, Any]:
     config = _experiment_config(experiment_path)
     current_content_hash = frozen_benchmark_content_hash()
     if config.get("expected_benchmark_content_hash") != current_content_hash:
@@ -221,22 +293,22 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
     result_schema_hash = file_hash(ROOT / "schemas" / "m35_model_result.schema.json")
     contexts = audit["context_hashes"]
     context_bytes = {
-        database_id: len(next(
-            request.serialized_context.encode("utf-8")
-            for request in requests
-            if request.database_id == database_id
-        ))
+        database_id: len(
+            next(
+                request.serialized_context.encode("utf-8")
+                for request in requests
+                if request.database_id == database_id
+            )
+        )
         for database_id in contexts
     }
-    config_projection = {
-        key: config[key]
-        for key in ("model", "provider", "reasoning", "temperature", "timeout_seconds")
-    }
+    config_projection = _provider_config_projection(config)
     manifest = {
-        "milestone": "M34.3",
+        "milestone": artifact_stem.upper().replace("_", "."),
         "benchmark_version": "0.1.1-pilot",
         "benchmark_content_hash": current_content_hash,
-        "commit": git_revision(),
+        "contract_source_commit": git_revision(),
+        "execution_commit": None,
         "governance_prompt_sha256": instruction_hash,
         "submission_schema_sha256": schema_hash,
         "result_schema_sha256": result_schema_hash,
@@ -250,19 +322,30 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
         "validator_version_hash": file_hash(ROOT / "validator.py"),
         "serializer_version_hash": file_hash(ROOT / "model_contract.py"),
         "experiment_config_sha256": file_hash(experiment_path),
-        "provider_config_sha256": sha256_text(json.dumps(config_projection, sort_keys=True, separators=(",", ":"))),
+        "provider_config": config_projection,
+        "provider_config_sha256": sha256_text(
+            json.dumps(config_projection, sort_keys=True, separators=(",", ":"))
+        ),
         "provider_calls": 0,
         "dry_run": True,
     }
-    _dump(ROOT / "manifests" / "m34_3_request_ledger.json", {"provider_calls": 0, "requests": ledger})
-    _dump(ROOT / "manifests" / "m34_3_model_contract.json", manifest)
+    ledger_path = ROOT / "manifests" / f"{artifact_stem}_request_ledger.json"
+    manifest_path = ROOT / "manifests" / f"{artifact_stem}_model_contract.json"
+    _dump(ledger_path, {"provider_calls": 0, "requests": ledger})
+    _dump(manifest_path, manifest)
     sizes = [item["request_bytes"] for item in ledger]
     representatives = []
     for database_id in ("commerce_ops", "fleet_ops", "support_ops"):
         request = next(item for item in requests if item.database_id == database_id)
-        representatives.append({"case_id": request.case_id, "database_id": database_id, "request": request.request_text})
+        representatives.append(
+            {
+                "case_id": request.case_id,
+                "database_id": database_id,
+                "request": request.request_text,
+            }
+        )
     report = {
-        "milestone": "M34.3",
+        "milestone": artifact_stem.upper().replace("_", "."),
         "benchmark_content_hash": current_content_hash,
         "governance_prompt_sha256": instruction_hash,
         "submission_schema_sha256": schema_hash,
@@ -280,7 +363,12 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
         },
         "request_completeness": audit["request_components_present"],
         "submission_invariants": {
-            "strict_decisions": ["ANSWER", "BLOCKED_AUTHORITY", "NEEDS_CLARIFICATION", "BLOCKED_POLICY"],
+            "strict_decisions": [
+                "ANSWER",
+                "BLOCKED_AUTHORITY",
+                "NEEDS_CLARIFICATION",
+                "BLOCKED_POLICY",
+            ],
             "strict_reason_mapping": True,
             "sql_decision_invariants": True,
         },
@@ -296,12 +384,14 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
         ],
         "evaluator_contract_audit": _evaluator_contract_audit(),
         "manifest": manifest,
-        "request_ledger_path": "benchmark/manifests/m34_3_request_ledger.json",
+        "request_ledger_path": f"benchmark/manifests/{artifact_stem}_request_ledger.json",
         "representative_requests": representatives,
         "provider_calls": 0,
         "passed": audit["passed"] and len(ledger) == 30,
     }
-    _dump(ROOT / "reports" / "m34_3_model_contract_report.json", report)
+    report_json_path = ROOT / "reports" / f"{artifact_stem}_model_contract_report.json"
+    report_md_path = ROOT / "reports" / f"{artifact_stem}_model_contract_report.md"
+    _dump(report_json_path, report)
     lines = [
         "# M34.3 Model Contract and Evaluation Harness Report",
         "",
@@ -318,6 +408,7 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
         "## Dry-run gates",
         "",
         f"- Requests built: {len(requests)}/30",
+        f"- Exact Case ID in request: {audit['request_components_present']['case_id']}/30",
         f"- Request schema validation: {audit['schema_validated']}/30",
         f"- Instructions/question/context present: {audit['request_components_present']}",
         f"- Answerable actual-request context sufficiency: {audit['answerable_context_sufficient']['passed']}/{audit['answerable_context_sufficient']['total']}",
@@ -335,9 +426,22 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
     ]
     for feature in report["evaluator_contract_audit"]["features"]:
         lines.append(f"- {feature['feature']}: {feature['status']}")
-    lines += ["", "## Three representative model requests", "", "The following are the first case in each database's frozen order; selection is not based on gold behavior.", ""]
+    lines += [
+        "",
+        "## Three representative model requests",
+        "",
+        "The following are the first case in each database's frozen order; selection is not based on gold behavior.",
+        "",
+    ]
     for representative in representatives:
-        lines += [f"### {representative['case_id']} ({representative['database_id']})", "", "```text", representative["request"], "```", ""]
+        lines += [
+            f"### {representative['case_id']} ({representative['database_id']})",
+            "",
+            "```text",
+            representative["request"],
+            "```",
+            "",
+        ]
     lines += [
         "## Readiness",
         "",
@@ -346,5 +450,5 @@ def dry_run(experiment_path: Path) -> dict[str, Any]:
         "- Human acceptance: 0/30; not part of M34.3",
         "- M35 baseline: one independent call per case, no semantic retries, repair, selector, judge, or pass@K.",
     ]
-    (ROOT / "reports" / "m34_3_model_contract_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    report_md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return report

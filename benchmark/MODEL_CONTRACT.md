@@ -11,6 +11,9 @@ SYSTEM:
 <governed_context_v1 instructions>
 
 USER:
+Case ID:
+<the exact persisted case identifier>
+
 Question:
 <the exact persisted question>
 
@@ -19,6 +22,8 @@ Governed context:
 ```
 
 The question is sent byte-for-byte from the persisted benchmark case. The context is the full database-level package: schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, and visible read-only policy. No case-specific retrieval or hidden target filtering is used.
+
+The supplied `Case ID:` is an envelope identifier. Copy it exactly into the output `case_id`; do not invent, modify, or infer another identifier. The evaluator rejects any output whose `case_id` differs from the request case.
 
 ## Governance behavior
 

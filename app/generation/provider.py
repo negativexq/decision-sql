@@ -412,6 +412,58 @@ class OpenAICompatibleProvider:
         self._last_model_io: ModelIOCapture | None = None
         self._model_io_history: list[ModelIOCapture] = []
         self._response_metadata: dict[str, str | None] = {}
+        self._last_response_wire: bytes | None = None
+
+    async def complete_json_schema(
+        self,
+        *,
+        operation: str,
+        system_prompt: str,
+        user_prompt: str,
+        schema_name: str,
+        schema: dict[str, Any],
+    ) -> Any:
+        """Make one provider-native strict JSON Schema request.
+
+        This is intentionally a transport-only primitive for benchmark adapters.
+        It does not parse, repair, retry, or otherwise interpret the response.
+        """
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        response_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": schema_name,
+                "strict": True,
+                "schema": schema,
+            },
+        }
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(operation, user_prompt, system_prompt, messages, response_format)
+        started = perf_counter()
+        try:
+            payload = await self._post(body)
+        except Exception:
+            # The caller consumes the capture and wire bytes for deterministic
+            # failure accounting; no retry or repair is performed here.
+            raise
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            raw_content=_assistant_content(payload),
+            latency_ms=(perf_counter() - started) * 1000,
+        )
+        return payload
 
     async def propose_intent(self, question: str, schema_context: str) -> IntentProposal:
         if not self.settings.llm_api_key:
@@ -1481,6 +1533,12 @@ class OpenAICompatibleProvider:
         self._last_model_io = None
         return captures
 
+    def consume_response_wire(self) -> bytes | None:
+        """Return and clear the exact most recent HTTP response body bytes."""
+        wire = self._last_response_wire
+        self._last_response_wire = None
+        return wire
+
     def _begin_model_io(
         self,
         operation: str,
@@ -1604,6 +1662,7 @@ class OpenAICompatibleProvider:
                     },
                     json=body,
                 )
+                self._last_response_wire = bytes(response.content)
                 response.raise_for_status()
                 payload = response.json()
                 self._response_metadata = {

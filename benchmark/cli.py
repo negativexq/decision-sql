@@ -20,6 +20,7 @@ from benchmark.authoring import (
 )
 from benchmark.context import load_authority
 from benchmark.evaluator import evaluate_file
+from benchmark.m35_runner import M35ProviderBlocked, run_m35
 from benchmark.model_runner import dry_run
 from benchmark.validator import (
     EXPECTED_TAGS,
@@ -661,22 +662,35 @@ def main() -> int:
     if args.command == "run-model":
         if args.split != "pilot":
             parser.error("M34.3 model contract currently supports only --split pilot")
-        if not args.dry_run:
-            parser.error(
-                "M34.3 refuses provider execution; pass --dry-run. M35 is not run yet."
+        if args.dry_run:
+            result = dry_run(Path(args.experiment_config), artifact_stem="m34_3r")
+            print(
+                json.dumps(
+                    {
+                        "passed": result["passed"],
+                        "provider_calls": result["provider_calls"],
+                        "report": str(ROOT / "reports" / "m34_3r_model_contract_report.md"),
+                    },
+                    indent=2,
+                )
             )
-        result = dry_run(Path(args.experiment_config))
+            return 0 if result["passed"] else 1
+        try:
+            result = run_m35(Path(args.experiment_config))
+        except M35ProviderBlocked as error:
+            print(json.dumps({"status": "M35_PROVIDER_BLOCKED", "error": str(error)}, indent=2))
+            return 2
         print(
             json.dumps(
                 {
-                    "passed": result["passed"],
-                    "provider_calls": result["provider_calls"],
-                    "report": str(ROOT / "reports" / "m34_3_model_contract_report.md"),
+                    "status": result["status"],
+                    "provider_calls_attempted": result["summary"]["provider_calls_attempted"],
+                    "summary": str(ROOT / "experiments" / "results" / "m35" / "m35_summary.md"),
                 },
                 indent=2,
             )
         )
-        return 0 if result["passed"] else 1
+        return 0
     if args.command in {"validate", "report"}:
         return run_all()
     if args.command == "validate-references":

@@ -1,0 +1,273 @@
+[
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "maintenance_events",
+            "vehicles"
+          ],
+          "from": "maintenance_events",
+          "to": "vehicles"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "maintenance_events",
+        "vehicles"
+      ]
+    },
+    "case_id": "fleet_04",
+    "category": "RESULT_MISMATCH",
+    "observable_diagnostics": {
+      "observable_mismatch": "RESULT_MISMATCH"
+    },
+    "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-01 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "telemetry_events",
+            "vehicles"
+          ],
+          "from": "telemetry_events",
+          "to": "vehicles"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "telemetry_events",
+        "vehicles"
+      ]
+    },
+    "case_id": "fleet_06",
+    "category": "RESULT_MISMATCH",
+    "observable_diagnostics": {
+      "observable_mismatch": "RESULT_MISMATCH"
+    },
+    "sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, t.payload #>> '{engine,temperature_c}' AS documented_engine_temperature\nFROM vehicles AS v\nJOIN (\n    SELECT DISTINCT ON (vehicle_id)\n           vehicle_id,\n           event_at,\n           payload\n    FROM telemetry_events\n    ORDER BY vehicle_id, event_at DESC, event_id DESC\n) AS t ON t.vehicle_id = v.vehicle_id\nORDER BY v.vehicle_id;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "purchase_order_lines",
+            "purchase_orders"
+          ],
+          "from": "purchase_order_lines",
+          "to": "purchase_orders"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "purchase_order_lines",
+        "purchase_orders"
+      ]
+    },
+    "case_id": "warehouse_04",
+    "category": "RESULT_MISMATCH",
+    "observable_diagnostics": {
+      "observable_mismatch": "RESULT_MISMATCH"
+    },
+    "sql": "SELECT po.warehouse_id, SUM(pol.ordered_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "purchase_order_lines",
+            "receipts"
+          ],
+          "from": "purchase_order_lines",
+          "to": "receipts"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "purchase_order_lines",
+        "receipts"
+      ]
+    },
+    "case_id": "warehouse_08",
+    "category": "EXECUTION_FAILURE",
+    "observable_diagnostics": {},
+    "sql": "SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(pol.po_line_id) > 0"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 0,
+      "paths": [],
+      "status": "OK",
+      "tables": [
+        "delivery_events"
+      ]
+    },
+    "case_id": "warehouse_09",
+    "category": "EXECUTION_FAILURE",
+    "observable_diagnostics": {},
+    "sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}') >= 7"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 0,
+      "paths": [
+        {
+          "authorized_path": [
+            "alerts",
+            "customers"
+          ],
+          "from": "alerts",
+          "to": "customers"
+        },
+        {
+          "authorized_path": [
+            "alerts",
+            "customers",
+            "watchlist_matches"
+          ],
+          "from": "alerts",
+          "to": "watchlist_matches"
+        },
+        {
+          "authorized_path": [
+            "customers",
+            "watchlist_matches"
+          ],
+          "from": "customers",
+          "to": "watchlist_matches"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "alerts",
+        "customers",
+        "watchlist_matches"
+      ]
+    },
+    "case_id": "risk_10",
+    "category": "RESULT_MISMATCH",
+    "observable_diagnostics": {
+      "observable_mismatch": "RESULT_MISMATCH"
+    },
+    "sql": "SELECT c.customer_id\nFROM customers AS c\nWHERE EXISTS (\n    SELECT 1\n    FROM alerts AS a\n    WHERE a.customer_id = c.customer_id\n      AND a.status = 'open'\n)\nAND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS wm\n    WHERE wm.customer_id = c.customer_id\n      AND wm.cleared_at IS NULL\n);"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "accounts",
+            "subscriptions"
+          ],
+          "from": "accounts",
+          "to": "subscriptions"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "accounts",
+        "subscriptions"
+      ]
+    },
+    "case_id": "subscription_17",
+    "category": "WRONG_GOVERNED_DECISION",
+    "observable_diagnostics": {},
+    "sql": "SELECT s.subscription_id, a.account_name\nFROM subscriptions AS s\nJOIN accounts AS a ON a.account_id = s.account_id;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "accounts",
+            "subscriptions"
+          ],
+          "from": "accounts",
+          "to": "subscriptions"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "accounts",
+        "subscriptions"
+      ]
+    },
+    "case_id": "subscription_18",
+    "category": "WRONG_GOVERNED_DECISION",
+    "observable_diagnostics": {},
+    "sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 0,
+      "paths": [],
+      "status": "OK",
+      "tables": [
+        "inventory_snapshots"
+      ]
+    },
+    "case_id": "warehouse_19",
+    "category": "WRONG_GOVERNED_DECISION",
+    "observable_diagnostics": {},
+    "sql": "SELECT product_id, on_hand_qty\nFROM (\n  SELECT product_id, on_hand_qty,\n         ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY snapshot_at DESC, snapshot_id DESC) AS rn\n  FROM inventory_snapshots\n) AS ranked\nWHERE rn = 1;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 1,
+      "paths": [
+        {
+          "authorized_path": [
+            "delivery_events",
+            "shipments"
+          ],
+          "from": "delivery_events",
+          "to": "shipments"
+        }
+      ],
+      "status": "OK",
+      "tables": [
+        "delivery_events",
+        "shipments"
+      ]
+    },
+    "case_id": "warehouse_20",
+    "category": "WRONG_GOVERNED_DECISION",
+    "observable_diagnostics": {},
+    "sql": "SELECT DISTINCT s.shipment_id\nFROM shipments AS s\nJOIN delivery_events AS d ON d.shipment_id = s.shipment_id\nWHERE d.event_type = 'delivered'\n  AND d.event_at > s.promised_at;"
+  },
+  {
+    "authority_mapping": {
+      "fully_authorized": true,
+      "join_count": 0,
+      "paths": [],
+      "status": "OK",
+      "tables": [
+        "cases"
+      ]
+    },
+    "case_id": "risk_19",
+    "category": "WRONG_GOVERNED_DECISION",
+    "observable_diagnostics": {},
+    "sql": "SELECT case_id FROM cases WHERE resolved_at IS NULL"
+  }
+]

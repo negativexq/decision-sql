@@ -1,0 +1,551 @@
+{
+  "ambiguity_safety": [
+    {
+      "case_id": "commerce_09",
+      "database_id": "commerce_ops",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": true,
+      "m42_decision": "NEEDS_CLARIFICATION"
+    },
+    {
+      "case_id": "fleet_10",
+      "database_id": "fleet_ops",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": true,
+      "m42_decision": "NEEDS_CLARIFICATION"
+    },
+    {
+      "case_id": "support_09",
+      "database_id": "support_ops",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": true,
+      "m42_decision": "NEEDS_CLARIFICATION"
+    },
+    {
+      "case_id": "subscription_18",
+      "database_id": "subscription_billing",
+      "m41_correct": false,
+      "m41_decision": "ANSWER",
+      "m42_correct": false,
+      "m42_decision": "ANSWER"
+    },
+    {
+      "case_id": "subscription_19",
+      "database_id": "subscription_billing",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": true,
+      "m42_decision": "NEEDS_CLARIFICATION"
+    },
+    {
+      "case_id": "warehouse_19",
+      "database_id": "warehouse_logistics",
+      "m41_correct": false,
+      "m41_decision": "ANSWER",
+      "m42_correct": false,
+      "m42_decision": "ANSWER"
+    },
+    {
+      "case_id": "warehouse_20",
+      "database_id": "warehouse_logistics",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": false,
+      "m42_decision": "ANSWER"
+    },
+    {
+      "case_id": "risk_18",
+      "database_id": "risk_operations",
+      "m41_correct": true,
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_correct": true,
+      "m42_decision": "NEEDS_CLARIFICATION"
+    },
+    {
+      "case_id": "risk_19",
+      "database_id": "risk_operations",
+      "m41_correct": false,
+      "m41_decision": "ANSWER",
+      "m42_correct": false,
+      "m42_decision": "ANSWER"
+    }
+  ],
+  "authority_blocked_safety": [
+    {
+      "authority_safety_regression": false,
+      "case_id": "commerce_08",
+      "database_id": "commerce_ops",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "fleet_08",
+      "database_id": "fleet_ops",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "fleet_09",
+      "database_id": "fleet_ops",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "support_07",
+      "database_id": "support_ops",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "support_08",
+      "database_id": "support_ops",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "subscription_15",
+      "database_id": "subscription_billing",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "subscription_16",
+      "database_id": "subscription_billing",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": true,
+      "case_id": "subscription_17",
+      "database_id": "subscription_billing",
+      "m41_decision": "NEEDS_CLARIFICATION",
+      "m42_decision": "ANSWER",
+      "m42_sql": "SELECT s.subscription_id, a.account_name\nFROM subscriptions AS s\nJOIN accounts AS a ON a.account_id = s.account_id;",
+      "m42_sql_authority": {
+        "fully_authorized": true,
+        "join_count": 1,
+        "paths": [
+          {
+            "authorized_path": [
+              "accounts",
+              "subscriptions"
+            ],
+            "from": "accounts",
+            "to": "subscriptions"
+          }
+        ],
+        "status": "OK",
+        "tables": [
+          "accounts",
+          "subscriptions"
+        ]
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "warehouse_15",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "warehouse_16",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "warehouse_17",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "warehouse_18",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "risk_15",
+      "database_id": "risk_operations",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "risk_16",
+      "database_id": "risk_operations",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "NEEDS_CLARIFICATION",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authority_safety_regression": false,
+      "case_id": "risk_17",
+      "database_id": "risk_operations",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    }
+  ],
+  "authority_safety_regression_count": 1,
+  "m41_false_authority_count": 4,
+  "m42_false_authority_cases": [
+    "warehouse_03",
+    "warehouse_07",
+    "warehouse_12",
+    "risk_11"
+  ],
+  "m42_false_authority_count": 4,
+  "target_cases_corrected": 1,
+  "target_false_authority_cases": [
+    {
+      "authorized_relationship_ids": [
+        "relationship:warehouse_logistics:delivery_shipment",
+        "relationship:warehouse_logistics:shipment_carrier"
+      ],
+      "case_id": "warehouse_03",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m41_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_official_category": "WRONG_GOVERNED_DECISION",
+      "m42_official_correct": false,
+      "m42_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authorized_relationship_ids": [
+        "relationship:warehouse_logistics:item_shipment",
+        "relationship:warehouse_logistics:pick_item"
+      ],
+      "case_id": "warehouse_07",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m41_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_official_category": "WRONG_GOVERNED_DECISION",
+      "m42_official_correct": false,
+      "m42_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    },
+    {
+      "authorized_relationship_ids": [
+        "relationship:warehouse_logistics:item_product",
+        "relationship:warehouse_logistics:item_shipment",
+        "relationship:warehouse_logistics:line_po",
+        "relationship:warehouse_logistics:line_product",
+        "relationship:warehouse_logistics:po_warehouse",
+        "relationship:warehouse_logistics:receipt_line",
+        "relationship:warehouse_logistics:shipment_warehouse"
+      ],
+      "case_id": "warehouse_13",
+      "database_id": "warehouse_logistics",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m41_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_decision": "ANSWER",
+      "m42_official_category": "CORRECT",
+      "m42_official_correct": true,
+      "m42_reason": null,
+      "m42_sql": "WITH received AS (SELECT po.warehouse_id, SUM(r.received_qty) AS received_qty FROM purchase_orders po JOIN purchase_order_lines pol ON pol.po_id = po.po_id JOIN receipts r ON r.po_line_id = pol.po_line_id GROUP BY po.warehouse_id), shipped AS (SELECT s.warehouse_id, SUM(si.quantity) AS shipped_qty FROM shipments s JOIN shipment_items si ON si.shipment_id = s.shipment_id GROUP BY s.warehouse_id) SELECT w.warehouse_id, CASE WHEN COALESCE(received.received_qty, 0) = 0 THEN NULL ELSE COALESCE(shipped.shipped_qty, 0)::numeric / received.received_qty END AS shipped_to_received_ratio FROM warehouses w LEFT JOIN received ON received.warehouse_id = w.warehouse_id LEFT JOIN shipped ON shipped.warehouse_id = w.warehouse_id",
+      "m42_sql_authority": {
+        "fully_authorized": true,
+        "join_count": 5,
+        "paths": [
+          {
+            "authorized_path": [
+              "purchase_order_lines",
+              "purchase_orders"
+            ],
+            "from": "purchase_order_lines",
+            "to": "purchase_orders"
+          },
+          {
+            "authorized_path": [
+              "purchase_order_lines",
+              "receipts"
+            ],
+            "from": "purchase_order_lines",
+            "to": "receipts"
+          },
+          {
+            "authorized_path": [
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses",
+              "shipments",
+              "shipment_items"
+            ],
+            "from": "purchase_order_lines",
+            "to": "shipment_items"
+          },
+          {
+            "authorized_path": [
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses",
+              "shipments"
+            ],
+            "from": "purchase_order_lines",
+            "to": "shipments"
+          },
+          {
+            "authorized_path": [
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses"
+            ],
+            "from": "purchase_order_lines",
+            "to": "warehouses"
+          },
+          {
+            "authorized_path": [
+              "purchase_orders",
+              "purchase_order_lines",
+              "receipts"
+            ],
+            "from": "purchase_orders",
+            "to": "receipts"
+          },
+          {
+            "authorized_path": [
+              "purchase_orders",
+              "warehouses",
+              "shipments",
+              "shipment_items"
+            ],
+            "from": "purchase_orders",
+            "to": "shipment_items"
+          },
+          {
+            "authorized_path": [
+              "purchase_orders",
+              "warehouses",
+              "shipments"
+            ],
+            "from": "purchase_orders",
+            "to": "shipments"
+          },
+          {
+            "authorized_path": [
+              "purchase_orders",
+              "warehouses"
+            ],
+            "from": "purchase_orders",
+            "to": "warehouses"
+          },
+          {
+            "authorized_path": [
+              "receipts",
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses",
+              "shipments",
+              "shipment_items"
+            ],
+            "from": "receipts",
+            "to": "shipment_items"
+          },
+          {
+            "authorized_path": [
+              "receipts",
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses",
+              "shipments"
+            ],
+            "from": "receipts",
+            "to": "shipments"
+          },
+          {
+            "authorized_path": [
+              "receipts",
+              "purchase_order_lines",
+              "purchase_orders",
+              "warehouses"
+            ],
+            "from": "receipts",
+            "to": "warehouses"
+          },
+          {
+            "authorized_path": [
+              "shipment_items",
+              "shipments"
+            ],
+            "from": "shipment_items",
+            "to": "shipments"
+          },
+          {
+            "authorized_path": [
+              "shipment_items",
+              "shipments",
+              "warehouses"
+            ],
+            "from": "shipment_items",
+            "to": "warehouses"
+          },
+          {
+            "authorized_path": [
+              "shipments",
+              "warehouses"
+            ],
+            "from": "shipments",
+            "to": "warehouses"
+          }
+        ],
+        "status": "OK",
+        "tables": [
+          "purchase_order_lines",
+          "purchase_orders",
+          "receipts",
+          "shipment_items",
+          "shipments",
+          "warehouses"
+        ]
+      }
+    },
+    {
+      "authorized_relationship_ids": [
+        "relationship:risk_operations:alert_customer",
+        "relationship:risk_operations:investigation_alert"
+      ],
+      "case_id": "risk_11",
+      "database_id": "risk_operations",
+      "m41_decision": "BLOCKED_AUTHORITY",
+      "m41_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_decision": "BLOCKED_AUTHORITY",
+      "m42_official_category": "WRONG_GOVERNED_DECISION",
+      "m42_official_correct": false,
+      "m42_reason": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "m42_sql": null,
+      "m42_sql_authority": {
+        "fully_authorized": null,
+        "paths": [],
+        "status": "NO_SQL",
+        "tables": []
+      }
+    }
+  ]
+}

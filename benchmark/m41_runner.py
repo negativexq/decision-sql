@@ -711,6 +711,7 @@ def run_m41() -> dict[str, Any]:
     }
     _dump(_artifact("case_results.json"), case_results)
     _dump(_artifact("summary.json"), summary)
+    _dump(_artifact("manifest.json"), manifest)
     _artifact("summary.md").write_text(
         _markdown(summary, case_results, config), encoding="utf-8"
     )

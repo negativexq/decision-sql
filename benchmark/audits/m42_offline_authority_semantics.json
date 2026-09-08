@@ -1,0 +1,45 @@
+{
+  "authorized_edge_count": 63,
+  "cardinality_field_observed": {
+    "many_to_one": 71,
+    "one_to_one": 1
+  },
+  "direction_field_observed": {
+    "left_to_right": 72
+  },
+  "direction_interpretation": "referential/cardinality orientation; no evaluator or validator rule prohibits reverse SQL traversal",
+  "evidence": [
+    "Relationship objects carry direction and cardinality, but authorization is checked by explicit relationship ID.",
+    "The governed context exposes authorized relationship objects without a directional SQL prohibition.",
+    "Existing answerable semantic targets and references use multiple declared relationship IDs for multi-hop tasks.",
+    "Undeclared relationship IDs are rejected by benchmark validation; visible attributes do not create relationship authorization."
+  ],
+  "hypothesis_status": "SUPPORTED_OFFLINE",
+  "multi_hop_composition": {
+    "answerable_cases_with_two_or_more_declared_edges": 17,
+    "case_ids": [
+      "commerce_04",
+      "commerce_05",
+      "commerce_07",
+      "fleet_02",
+      "fleet_05",
+      "support_02",
+      "risk_10",
+      "risk_11",
+      "risk_13",
+      "subscription_04",
+      "subscription_10",
+      "subscription_11",
+      "subscription_14",
+      "warehouse_03",
+      "warehouse_04",
+      "warehouse_07",
+      "warehouse_13"
+    ],
+    "supported_by_authoring_targets": true
+  },
+  "provider_calls": 0,
+  "same_entity_attributes_require_relationship": false,
+  "unauthorized_edge_count": 9,
+  "undeclared_direct_shortcut_authorized_by_composition": false
+}

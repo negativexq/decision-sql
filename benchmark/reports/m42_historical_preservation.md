@@ -1,0 +1,26 @@
+# M42 historical preservation
+
+M39 and M41 artifacts were hashed before the M42 prompt edit. Provider calls: 0.
+
+| Artifact | SHA-256 |
+|---|---|
+| `benchmark/experiments/results/m39/m39_manifest.json` | `d91b2c0078dae257ff25b9429bf534426836ce7564f6e18af72bf33b63c2cdfc` |
+| `benchmark/experiments/results/m39/m39_raw_responses.jsonl` | `25d27f9b0ff1e0856119ca3326c29cc2e79544a191f34235ed579b42c3ca8fb2` |
+| `benchmark/experiments/results/m39/m39_parsed_submissions.jsonl` | `c391c4ee85e7a0e4f46a43e8aeefdbe6df0c0f136734794f6399a984295608e1` |
+| `benchmark/experiments/results/m39/m39_case_results.json` | `15e3ad764c7d73dee941528f492fa1f27b78d071814413ef0b829984fed0ece3` |
+| `benchmark/experiments/results/m39/m39_summary.json` | `503e6c0464d1e572e9c8c9b9a5438ceaaa17569b06f9789f2f03e0fa2e4f82b1` |
+| `benchmark/experiments/results/m39/m39_summary.md` | `0556f9470620eebf7f4660ecea20a7ad2e6da98f979c3b5bdc599a02978ba70a` |
+| `benchmark/experiments/results/m39/m39_request_ledger.json` | `226e24c319cfca74fb5031fca16a09eefa0be4e0f136ec6e4236501dc4dd9aaa` |
+| `benchmark/experiments/results/m41/m41_manifest.json` | `337198c3228035b352819f9f88b398d1e85cc4275b0b80e8a700aa4fb39fca7d` |
+| `benchmark/experiments/results/m41/m41_raw_responses.jsonl` | `9cce622d509559ddddcd243e9cf06734d16dae3da0bc53adc703cb01bd4e5635` |
+| `benchmark/experiments/results/m41/m41_parsed_submissions.jsonl` | `a2d270e5c12a873854f96a6ba75e4bc7f788c54f1ddc36ab3bafc7689cf60c0a` |
+| `benchmark/experiments/results/m41/m41_case_results.json` | `ba43a5c8ddde25651aa10bf3fb9ad46532a250b8620c98708c96718ab4fb2f6b` |
+| `benchmark/experiments/results/m41/m41_summary.json` | `75ce70161d3765bf53f966ff488e2b4189fa1d0c839336cd216372c85c87f2e2` |
+| `benchmark/experiments/results/m41/m41_summary.md` | `e1c92be9bc8ffc0265d4debd4aea1cb1c39ea8054a6ecdaf4256775ae4ca171f` |
+| `benchmark/experiments/results/m41/m41_request_ledger.json` | `35e1d956eed09f3a4e6249748fb240ab635e0c1275b8325718c31fffcdc4e4cf` |
+| `evaluation/forensics/m41/m41_failure_forensics.json` | `88fe507d55f3f01aa06a4fcce3c65a23b08d334a5761035cbd4edf5c7c87e9c9` |
+| `evaluation/forensics/m41/m41_failure_forensics.md` | `ea855c95d65e517e32502ad1b520a753c9b261d32ed8dddd786c05f35782d333` |
+| `evaluation/forensics/m41/m41_governance_forensics.json` | `513513a28a8af0c77366c91caf4dad44077d2d1523266171bb82a982800ea4c4` |
+| `evaluation/forensics/m41/m41_sql_forensics.json` | `ed5317f3edb5969ca486a98f997ed9877698894f98cce30237f6335405bf437c` |
+| `evaluation/forensics/m41/m41_complexity_analysis.json` | `5aed87ac9d6fd5f97f8ca0b76ba6e15b7092937ee4fa4013384cf477e304b416` |
+| `evaluation/forensics/m41/m41_authority_path_depth.json` | `da17d96fde288560e00882e97d29fd9ba76aa070c2479286d9cf60085e430f3c` |

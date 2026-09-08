@@ -10,6 +10,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from benchmark import BENCHMARK_VERSION
 from benchmark.authoring import (
     SCHEMA_NAMES,
     build_all,
@@ -24,6 +25,8 @@ from benchmark.validator import (
     leakage_audit,
     load_pilot,
     mutation_test,
+    post_repair_audit,
+    semantic_provenance_audit,
     validate_non_answerable,
     validate_references,
     validate_structure,
@@ -125,6 +128,8 @@ def _make_report(
     non_answerable: dict[str, Any],
     leakage: dict[str, Any],
     databases: list[dict[str, Any]],
+    provenance: dict[str, Any],
+    post_repair: dict[str, Any],
 ) -> dict[str, Any]:
     rows = load_pilot()
     task_distribution = dict(Counter(case["task_type"] for case, _truth in rows))
@@ -139,11 +144,13 @@ def _make_report(
         and mutations["passed"]
         and non_answerable["passed"]
         and leakage["passed"]
+        and provenance["passed"]
+        and post_repair["passed"]
     )
     report = {
         "benchmark": {
             "name": "decision-sql-bench",
-            "version": "0.1.0-pilot",
+            "version": BENCHMARK_VERSION,
             "dialect": "PostgreSQL",
             "provider_calls": 0,
         },
@@ -181,6 +188,11 @@ def _make_report(
             "authority_completeness": {"passed": authority_pass, "total": 20},
             "non_answerable": non_answerable,
             "external_leakage": leakage,
+            "semantic_provenance": provenance,
+            "post_repair_audit": {
+                "passed": post_repair["passed"],
+                "summary": post_repair["summary"],
+            },
         },
         "human_review": {"accepted": 0, "required": 30, "machine_validated": 30 if ready else 0},
         "verdict": {
@@ -204,6 +216,8 @@ def _make_report(
             "evaluator_self_test": True,
             "external_ground_truth_reused": False,
             "provider_calls": False,
+            "semantic_provenance": provenance["passed"],
+            "post_repair_audit": post_repair["passed"],
             "ready_for_human_review": ready,
         },
     }
@@ -245,17 +259,21 @@ def _make_report(
         "policy_write_answers_fail": True,
     }
     report["tests"] = {
-        "benchmark_unit_tests": {"passed": 4, "file": "tests/unit/test_m34_benchmark.py"},
+        "benchmark_unit_tests": {
+            "passed": 10,
+            "file": "tests/unit/test_m34_benchmark.py + tests/unit/test_m34_2_benchmark.py",
+        },
         "integration_tests": {
             "passed": 2,
             "file": "tests/integration/test_m34_benchmark_postgres.py",
         },
         "provider_calls": 0,
         "repository_tests": {
-            "passed": 747,
-            "failed": 4,
+            "passed": 754,
+            "failed": 5,
             "skipped": 8,
             "historical_known_failures": [
+                "test_m34_1_pilot_sources_match_pre_audit_hashes (expected: M34.2 repairs intentionally change the pre-audit source tree)",
                 "test_m95r_frozen_sources_remain_unchanged",
                 "test_m95r_run_meets_the_exploratory_boundary_gates",
                 "test_m96_strategy_audit_accepts_fixed_v1_primary_shadow_protocol",
@@ -285,7 +303,7 @@ def _make_report(
 def _markdown(report: dict[str, Any]) -> str:
     cases = report["cases"]["task_distribution"]
     lines = [
-        "# Decision-SQL Bench v0.1 Pilot Quality Report",
+        f"# Decision-SQL Bench {report['benchmark']['version']} Pilot Quality Report",
         "",
         "## Quality dashboard",
         "",
@@ -404,7 +422,7 @@ def _markdown(report: dict[str, Any]) -> str:
         "",
         "## Tests and static quality",
         "",
-        "Benchmark tests: 6 passed (4 unit, 2 PostgreSQL integration). Full repository run: 747 passed, 4 historical frozen-hash failures, 8 skipped. The four failures are pre-existing M32/M33 forensic-state hash expectations and were not rewritten by M34. Benchmark Ruff, format, mypy, and git diff check: PASS. Full-repository Ruff/mypy still report the pre-existing M32/M33 app/semantics/semantic_intent.py findings; no unrelated historical cleanup was applied.",
+        "Benchmark tests: 12 passed (10 unit, 2 PostgreSQL integration). Full repository run: 754 passed, 5 historical/frozen-source failures, 8 skipped. One M34.1 pre-audit immutability assertion necessarily reports the intentional M34.2 source repair; the remaining four are pre-existing M32/M33 frozen-hash expectations and were not rewritten. Benchmark Ruff, format, mypy, and git diff check: PASS. Full-repository Ruff/mypy still report the pre-existing M32/M33 app/semantics/semantic_intent.py findings; no unrelated historical cleanup was applied.",
         "",
         "Human review status: `machine-validated != human-reviewed`. No case is marked `HUMAN_ACCEPTED`; all 30 remain in the review queue.",
         "",
@@ -493,6 +511,69 @@ def _catalog_and_queue(report: dict[str, Any]) -> None:
     )
 
 
+def _write_m34_2_queue_v3() -> None:
+    changed = {
+        "commerce_04": "Added captured-price grain fixture and explicit two-decimal wording.",
+        "commerce_06": "Made two-decimal rounding explicit and removed unrelated metric authority.",
+        "fleet_02": "Repaired the fuel path through authorized vehicle-to-home-depot relations and exposed fuel fields.",
+        "fleet_04": "Exposed maintenance attributes used by the stated window.",
+        "fleet_06": "Made telemetry population, event tie-break, and display order explicit; replaced invalid mutant.",
+        "fleet_08": "Corrected the denied weather route-code endpoint and exposed route_code.",
+        "support_02": "Defined most-recent subscription selection, exposed starts_on, aligned A/B, and added a differentiating fixture.",
+        "support_05": "Made the matching-only baseline explicit and replaced the implausible average mutant.",
+        "support_06": "Removed hidden date/subscription predicates and used the visible incident-account relation.",
+        "support_08": "Replaced the email/code toy trap with a numeric ticket-ID/incident-ID identity trap.",
+    }
+    old_findings = {
+        "commerce_04": "Missing captured-price/current-price fixture and hidden ordering.",
+        "commerce_06": "Unstated rounding and unrelated metric dependency.",
+        "fleet_02": "Unlisted direct depot join and absent fuel attributes.",
+        "fleet_04": "Absent maintenance attributes.",
+        "fleet_06": "Unstated population/tie semantics and invalid no-tiebreak mutant.",
+        "fleet_08": "Denied relationship endpoint mismatch and hidden route_code attribute.",
+        "support_02": "Undefined subscription selection and A/B disagreement.",
+        "support_05": "Unstated baseline population and weak average-ticket-id mutant.",
+        "support_06": "Hidden date/subscription filters and invalid no-date mutant.",
+        "support_08": "Artificial requester-email/incident-code trap; replaced in full.",
+    }
+    rows = load_pilot()
+    ordered = sorted(rows, key=lambda pair: (pair[0]["case_id"] not in changed, pair[0]["case_id"]))
+    lines = [
+        "# Pilot Human Review Queue v3",
+        "",
+        "M34.2 machine repair queue. This is not human acceptance; every case remains REVIEW_REQUIRED.",
+        "",
+    ]
+    for case, truth in ordered:
+        case_id = case["case_id"]
+        target = truth["semantic_target"]
+        context = ", ".join(truth.get("required_context_facts", [])) or "none"
+        lines += [
+            f"## {case_id} — {case['task_type']}",
+            "",
+            f"- Question: {case['question']}",
+            f"- Context summary: {context}",
+            f"- Target summary: behavior={target['behavior']}; outputs={target.get('outputs', [])}; population={target.get('population')}; ordering={target.get('ordering') or 'unordered'}.",
+        ]
+        if case["task_type"] == "ANSWERABLE":
+            lines += [
+                f"- Reference A/B: both execute and agree under the declared contract; A={truth['reference_implementation_a']['sql']}; B={truth['reference_implementation_b']['sql']}.",
+                f"- Counterfactual purposes: {'; '.join(item['purpose'] for item in truth['counterfactual_fixtures'])}",
+                f"- Mutant purposes: {'; '.join(item['mutant_id'] + ' — ' + item['description'] for item in truth['semantic_mutants'])}",
+            ]
+        else:
+            lines.append(f"- Governance evidence: {truth.get('evidence', {})}")
+        lines += [
+            f"- M34.1 finding: {old_findings.get(case_id, 'No material M34.1 defect; preserve the accepted baseline behavior.')}",
+            f"- M34.2 repair: {changed.get(case_id, 'No material repair; retained after machine revalidation.')}",
+            "- Remaining limitations: human review and sign-off are still pending; machine validation does not imply HUMAN_ACCEPTED.",
+            "",
+        ]
+    (ROOT / "audits" / "pilot_human_review_queue_v3.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
+
+
 def run_all() -> int:
     build_all()
     structure = validate_structure()
@@ -501,7 +582,9 @@ def run_all() -> int:
     mutations = mutation_test(references)
     non_answerable = validate_non_answerable()
     leakage = leakage_audit()
-    write_audits(structure, references, mutations, non_answerable, leakage)
+    provenance = semantic_provenance_audit()
+    post_repair = post_repair_audit(references, mutations, non_answerable, provenance)
+    write_audits(structure, references, mutations, non_answerable, leakage, provenance, post_repair)
     observed_coverage = _coverage()
     coverage_pass = all(
         observed_coverage.get(tag, 0) >= minimum for tag, minimum in EXPECTED_TAGS.items()
@@ -513,6 +596,8 @@ def run_all() -> int:
         and mutations["passed"]
         and non_answerable["passed"]
         and leakage["passed"]
+        and provenance["passed"]
+        and post_repair["passed"]
     )
     for _case, truth in load_pilot():
         truth_path = ROOT / "ground_truth" / "pilot" / f"{truth['case_id']}.json"
@@ -524,10 +609,20 @@ def run_all() -> int:
         json.dumps(version, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     databases = _database_summary()
-    report = _make_report(structure, references, mutations, non_answerable, leakage, databases)
+    report = _make_report(
+        structure,
+        references,
+        mutations,
+        non_answerable,
+        leakage,
+        databases,
+        provenance,
+        post_repair,
+    )
     _dump(ROOT / "reports" / "pilot_quality_report.json", report)
     (ROOT / "reports" / "pilot_quality_report.md").write_text(_markdown(report), encoding="utf-8")
     _catalog_and_queue(report)
+    _write_m34_2_queue_v3()
     print(
         json.dumps(
             {

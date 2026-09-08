@@ -9,21 +9,19 @@
       "fixture_id": "cf01",
       "patch_sql": [
         "INSERT INTO accounts VALUES (900841, 'Fixture Incident', 'North', DATE '2026-06-20')",
-        "INSERT INTO subscriptions VALUES (900841, 900841, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
         "INSERT INTO incidents VALUES (900841, 900841, 'INC-900841', TIMESTAMPTZ '2026-06-20 00:00:00+00', 'high')",
         "INSERT INTO support_tickets VALUES (900842, 900841, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
       ],
-      "purpose": "Adds one account to each set and one overlap, proving UNION distinct semantics."
+      "purpose": "Adds one high-severity incident account and one open-ticket overlap, proving direct account linkage and UNION distinct semantics."
     },
     {
       "fixture_id": "cf02",
       "patch_sql": [
         "INSERT INTO accounts VALUES (900843, 'Fixture Old', 'North', DATE '2026-06-20')",
-        "INSERT INTO subscriptions VALUES (900843, 900843, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
         "INSERT INTO support_tickets VALUES (900843, 900843, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'closed', NULL, '{}')",
-        "INSERT INTO incidents VALUES (900843, 900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'high')"
+        "INSERT INTO incidents VALUES (900843, 900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'medium')"
       ],
-      "purpose": "Adds a closed-only ticket and an old incident that must not qualify."
+      "purpose": "Adds a closed-only ticket and a medium-severity incident; neither qualifies."
     }
   ],
   "database_id": "support_ops",
@@ -37,11 +35,11 @@
   ],
   "reference_implementation_a": {
     "kind": "REFERENCE_IMPLEMENTATION_A",
-    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT a.account_id FROM accounts a JOIN subscriptions s ON s.account_id = a.account_id JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id"
+    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id"
   },
   "reference_implementation_b": {
     "kind": "REFERENCE_IMPLEMENTATION_B",
-    "sql": "SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT s.account_id FROM subscriptions s JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01') AS ids ORDER BY account_id"
+    "sql": "SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high') AS ids ORDER BY account_id"
   },
   "reference_result_summaries": {
     "base": {
@@ -68,29 +66,37 @@
   },
   "required_authority": [],
   "required_context_facts": [
-    "relationships.relationship:support_ops:subscription_account",
     "business_rules.rule:support_open",
-    "temporal_rules.time:support_now",
-    "relationships.relationship:support_ops:incident_account"
+    "relationships.relationship:support_ops:incident_account",
+    "attributes.incidents.severity"
   ],
   "semantic_mutants": [
     {
       "description": "Requires membership in both sets.",
       "failure_category": "set_operation",
       "mutant_id": "m26_intersect",
-      "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') INTERSECT SELECT s.account_id FROM subscriptions s JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id"
+      "semantic_rationale": "Requires membership in both sets.",
+      "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') INTERSECT SELECT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "set_operation"
     },
     {
       "description": "Includes closed tickets.",
       "failure_category": "remove_predicate",
       "mutant_id": "m26_all_tickets",
-      "sql": "SELECT DISTINCT account_id FROM support_tickets UNION SELECT DISTINCT s.account_id FROM subscriptions s JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id"
+      "semantic_rationale": "Includes closed tickets.",
+      "sql": "SELECT DISTINCT account_id FROM support_tickets UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     },
     {
-      "description": "Includes high-severity incidents from any date.",
-      "failure_category": "wrong_temporal_anchor",
-      "mutant_id": "m26_no_date",
-      "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT s.account_id FROM subscriptions s JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' ORDER BY account_id"
+      "description": "Selects medium-severity incidents instead of high-severity incidents.",
+      "failure_category": "wrong_literal",
+      "mutant_id": "m26_medium_incident",
+      "semantic_rationale": "Selects medium-severity incidents instead of high-severity incidents.",
+      "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'medium' ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "wrong_literal"
     }
   ],
   "semantic_target": {
@@ -106,12 +112,19 @@
           "open",
           "pending"
         ]
+      },
+      {
+        "field": "incidents.severity",
+        "operator": "=",
+        "scope": "row",
+        "value": "high"
       }
     ],
     "grouping": [],
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "account_id"
     ],
@@ -122,8 +135,10 @@
       "relationship",
       "population"
     ],
+    "reference_relationships": [
+      "relationship:support_ops:incident_account"
+    ],
     "relationships": [
-      "relationship:support_ops:subscription_account",
       "relationship:support_ops:incident_account"
     ],
     "result_comparison_contract": {
@@ -131,8 +146,34 @@
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

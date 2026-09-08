@@ -1,0 +1,50 @@
+{
+  "milestone": "M34.2",
+  "baseline_commit": "caa97316d6d312f9ccc9bcef9e3d44b0f9c8d4cd",
+  "commit_message": "fix: repair governed benchmark pilot after audit",
+  "old_content_hash": "4e28b456e67c21675ea7baf4db900db3c50cfd3d5e30d17968cb0f7534d69332",
+  "new_content_hash": "f30f5bc061920c59f7a7b58e85d8fcb911ab7dbd83fb1505a2412c7043dba9a8",
+  "tree_hashes_after_repair": {
+    "benchmark/cases/pilot": "4d37c37dfc69072fee17e977e3e6f2b7cecb341df8de5ea7abee392c2fcce052",
+    "benchmark/ground_truth/pilot": "9ab4b7ca16aac769a774ac5a1fec71a044282da55eaa1bb031b1455dc73596d5",
+    "benchmark/databases/fleet_ops/authority": "809286550809a8036ddcde7d6798536c15fde82b48885b2e1765af3faf1777a6",
+    "benchmark/databases/support_ops/authority": "ff2ecfa57ea221e98494cac65c3d05eab0dd157748666f33c80b9c52b7abcc2e"
+  },
+  "historical_artifacts_preserved": [
+    "benchmark/audits/m34_1_human_audit.json",
+    "benchmark/audits/pilot_human_review_queue_v2.md",
+    "benchmark/reports/m34_1_human_audit_summary.md",
+    "benchmark/reports/m34_1_human_audit_summary.json"
+  ],
+  "missing_historical_artifact_not_overwritten": "benchmark/audits/m34_1_human_audit.md was absent at baseline and remains absent.",
+  "ordering_repairs": {
+    "answerable_total": 20,
+    "ordered_cases": ["commerce_07", "fleet_06", "fleet_07"],
+    "unordered_cases": 17,
+    "rule": "Only question-explicit ordering has row_order=true; all other result order is unordered duplicate-preserving comparison."
+  },
+  "temporal_filter_repairs": [
+    "commerce_06 now states two-decimal output and no longer depends on the unrelated net-value metric.",
+    "fleet_02 uses authorized vehicle home-depot semantics and visible fuel attributes.",
+    "fleet_04 exposes maintenance attributes used by the stated window.",
+    "support_02 defines most-recent subscription selection and tests it with a stricter later plan.",
+    "support_06 removes the hidden incident date and subscription predicates; severity and account linkage are visible."
+  ],
+  "mutant_repairs": {
+    "replaced": ["fleet_06/m16_no_tiebreak", "support_06/m26_no_date", "support_05/m25_global_avg"],
+    "active_mutants": 61,
+    "invalid_active_mutants": 0,
+    "kill_rate": 1.0
+  },
+  "authority_repairs": [
+    "Added maintenance, fuel, weather route_code, subscription starts_on, and incident severity/time attributes.",
+    "Corrected the denied weather relationship endpoint to routes.route_code.",
+    "Replaced support_08 with a numeric ticket-ID/incident-ID identity trap with no equivalent authorized path."
+  ],
+  "support_08_replacement": {
+    "slot_preserved": true,
+    "task_type_preserved": true,
+    "mechanism": "Fail closed when stable numeric identifiers overlap without an authorized identity relation."
+  },
+  "human_acceptance": false
+}

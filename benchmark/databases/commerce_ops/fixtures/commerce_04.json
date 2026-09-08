@@ -20,6 +20,15 @@
         "INSERT INTO order_items VALUES (900031, 900031, 1, 100, 100.00)"
       ],
       "purpose": "Adds a pending high-value line so status scope is observable."
+    },
+    {
+      "fixture_id": "cf03",
+      "patch_sql": [
+        "INSERT INTO products VALUES (900032, 'Fixture Price Changed', 'home', 999.00, TRUE)",
+        "INSERT INTO orders VALUES (900032, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900032')",
+        "INSERT INTO order_items VALUES (900032, 900032, 900032, 1, 10.00)"
+      ],
+      "purpose": "Changes the current catalog price while keeping a different captured line price, distinguishing order-line grain from catalog grain."
     }
   ]
 }

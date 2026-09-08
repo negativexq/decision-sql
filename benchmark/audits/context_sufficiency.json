@@ -68,8 +68,7 @@
       "passes": true,
       "required_facts": [
         "relationships.relationship:commerce_ops:order_customer",
-        "business_rules.rule:completed_orders",
-        "metrics.metric:commerce_net_order_value"
+        "business_rules.rule:completed_orders"
       ],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
@@ -133,7 +132,9 @@
       "passes": true,
       "required_facts": [
         "relationships.relationship:fleet_ops:fuel_vehicle",
-        "relationships.relationship:fleet_ops:vehicle_depot"
+        "relationships.relationship:fleet_ops:vehicle_depot",
+        "attributes.fuel_events.liters",
+        "attributes.fuel_events.price_per_liter"
       ],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
@@ -155,7 +156,9 @@
       "passes": true,
       "required_facts": [
         "relationships.relationship:fleet_ops:maintenance_vehicle",
-        "temporal_rules.time:fleet_now"
+        "temporal_rules.time:fleet_now",
+        "attributes.maintenance_events.maintenance_id",
+        "attributes.maintenance_events.performed_at"
       ],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
@@ -243,8 +246,9 @@
         "relationships.relationship:support_ops:subscription_account",
         "relationships.relationship:support_ops:subscription_plan",
         "relationships.relationship:support_ops:event_ticket",
-        "metrics.metric:support_escalation_rate",
-        "business_rules.rule:support_sla"
+        "business_rules.rule:support_sla",
+        "business_rules.rule:support_subscription_selection",
+        "attributes.subscriptions.starts_on"
       ],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
@@ -273,9 +277,7 @@
       "case_id": "support_05",
       "missing": [],
       "passes": true,
-      "required_facts": [
-        "relationships.relationship:support_ops:ticket_account"
-      ],
+      "required_facts": [],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
     },
@@ -284,10 +286,9 @@
       "missing": [],
       "passes": true,
       "required_facts": [
-        "relationships.relationship:support_ops:subscription_account",
         "business_rules.rule:support_open",
-        "temporal_rules.time:support_now",
-        "relationships.relationship:support_ops:incident_account"
+        "relationships.relationship:support_ops:incident_account",
+        "attributes.incidents.severity"
       ],
       "task_type": "ANSWERABLE",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"
@@ -307,7 +308,7 @@
       "missing": [],
       "passes": true,
       "required_facts": [
-        "relationships.relationship:support_ops:tempting_incident_code"
+        "relationships.relationship:support_ops:tempting_ticket_incident_id"
       ],
       "task_type": "AUTHORITY_BLOCKED",
       "visible_context_profile": "GOVERNED_CONTEXT_V1"

@@ -17,19 +17,36 @@
     {
       "fixture_id": "cf02",
       "patch_sql": [
-        "INSERT INTO accounts VALUES (900834, 'Fixture No Tickets', 'East', DATE '2026-06-20')"
+        "INSERT INTO accounts VALUES (900834, 'Fixture No Tickets 1', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900835, 'Fixture No Tickets 2', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900836, 'Fixture No Tickets 3', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900837, 'Fixture No Tickets 4', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900838, 'Fixture No Tickets 5', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900839, 'Fixture No Tickets 6', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900840, 'Fixture No Tickets 7', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900844, 'Fixture No Tickets 8', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900845, 'Fixture No Tickets 9', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900846, 'Fixture No Tickets 10', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900847, 'Fixture No Tickets 11', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900848, 'Fixture No Tickets 12', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900849, 'Fixture No Tickets 13', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900850, 'Fixture No Tickets 14', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900851, 'Fixture No Tickets 15', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900852, 'Fixture No Tickets 16', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900853, 'Fixture No Tickets 17', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900854, 'Fixture No Tickets 18', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900855, 'Fixture No Tickets 19', 'East', DATE '2026-06-20')",
+        "INSERT INTO accounts VALUES (900856, 'Fixture No Tickets 20', 'East', DATE '2026-06-20')"
       ],
-      "purpose": "Adds a no-ticket account; it must not be part of the per-account average because the question says per account with tickets."
+      "purpose": "Adds a no-ticket cohort; those accounts must not be part of the per-account average because the question says accounts with at least one ticket."
     }
   ],
   "database_id": "support_ops",
   "difficulty": "HARD",
   "evidence": {},
   "mechanism_tags": [
-    "relationship",
     "aggregation",
     "nested",
-    "correlated",
     "population"
   ],
   "reference_implementation_a": {
@@ -67,27 +84,34 @@
     }
   },
   "required_authority": [],
-  "required_context_facts": [
-    "relationships.relationship:support_ops:ticket_account"
-  ],
+  "required_context_facts": [],
   "semantic_mutants": [
     {
       "description": "Returns below-average accounts.",
       "failure_category": "wrong_comparison_operator",
       "mutant_id": "m25_below",
-      "sql": "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count < baseline.average_count ORDER BY account_id"
+      "semantic_rationale": "Returns below-average accounts.",
+      "sql": "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count < baseline.average_count ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "wrong_comparison_operator"
     },
     {
-      "description": "Compares each account to the global ticket-row average, not average account count.",
+      "description": "Includes zero-ticket accounts in the baseline population.",
       "failure_category": "wrong_population",
-      "mutant_id": "m25_global_avg",
-      "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id HAVING COUNT(*) > (SELECT AVG(ticket_id) FROM support_tickets) ORDER BY account_id"
+      "mutant_id": "m25_all_accounts_baseline",
+      "semantic_rationale": "Includes zero-ticket accounts in the baseline population.",
+      "sql": "WITH counts AS (SELECT a.account_id, COUNT(t.ticket_id) AS ticket_count FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "wrong_population"
     },
     {
       "description": "Returns all account counts.",
       "failure_category": "remove_predicate",
       "mutant_id": "m25_no_having",
-      "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id ORDER BY account_id"
+      "semantic_rationale": "Returns all account counts.",
+      "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     }
   ],
   "semantic_target": {
@@ -104,28 +128,52 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "account_id",
       "ticket_count"
     ],
     "population": "matching-only",
     "query_shape_tags": [
-      "relationship",
       "aggregation",
       "nested",
-      "correlated",
       "population"
     ],
-    "relationships": [
-      "relationship:support_ops:ticket_account"
-    ],
+    "reference_relationships": [],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

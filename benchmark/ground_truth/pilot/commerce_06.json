@@ -69,27 +69,35 @@
   "required_authority": [],
   "required_context_facts": [
     "relationships.relationship:commerce_ops:order_customer",
-    "business_rules.rule:completed_orders",
-    "metrics.metric:commerce_net_order_value"
+    "business_rules.rule:completed_orders"
   ],
   "semantic_mutants": [
     {
       "description": "Drops zero-order customers.",
       "failure_category": "inner_left_join",
       "mutant_id": "m06_inner",
-      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+      "semantic_rationale": "Drops zero-order customers.",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region",
+      "status": "VALID",
+      "target_component": "inner_left_join"
     },
     {
       "description": "Moves status filtering to WHERE.",
       "failure_category": "where_filter_scope",
       "mutant_id": "m06_where_scope",
-      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+      "semantic_rationale": "Moves status filtering to WHERE.",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region",
+      "status": "VALID",
+      "target_component": "where_filter_scope"
     },
     {
       "description": "Counts every order status.",
       "failure_category": "remove_predicate",
       "mutant_id": "m06_all_orders",
-      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+      "semantic_rationale": "Counts every order status.",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     }
   ],
   "semantic_target": {
@@ -98,13 +106,21 @@
     ],
     "behavior": "ANSWERABLE",
     "calculations": [],
-    "filters": [],
+    "filters": [
+      {
+        "field": "orders.status",
+        "operator": "=",
+        "scope": "row",
+        "value": "completed"
+      }
+    ],
     "grouping": [
       "customers.region"
     ],
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "region",
       "avg_completed_orders"
@@ -118,6 +134,9 @@
       "null_semantics",
       "nested"
     ],
+    "reference_relationships": [
+      "relationship:commerce_ops:order_customer"
+    ],
     "relationships": [
       "relationship:commerce_ops:order_customer"
     ],
@@ -126,8 +145,34 @@
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "QUESTION"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

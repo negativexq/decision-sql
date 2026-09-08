@@ -8,9 +8,10 @@
   "database_id": "support_ops",
   "difficulty": "MEDIUM",
   "evidence": {
+    "authorized_alternative_not_equivalent": "The authorized ticket-account and incident-account paths identify shared accounts, not the requested ticket-to-incident identity.",
     "expected_behavior": "BLOCKED_AUTHORITY",
-    "missing_authority": "No authorized relationship maps ticket requester_email to incidents.incident_code.",
-    "tempting_physical_link": "Both are free-text identifiers but have no semantic link."
+    "missing_authority": "No authorized relationship maps support_tickets.ticket_id to incidents.incident_id.",
+    "tempting_physical_link": "Both systems expose stable numeric identifiers and seeded values overlap, but identifier shape alone does not establish event identity."
   },
   "mechanism_tags": [
     "authority",
@@ -26,10 +27,10 @@
     "sql": null
   },
   "required_authority": [
-    "relationship:support_ops:tempting_incident_code"
+    "relationship:support_ops:tempting_ticket_incident_id"
   ],
   "required_context_facts": [
-    "relationships.relationship:support_ops:tempting_incident_code"
+    "relationships.relationship:support_ops:tempting_ticket_incident_id"
   ],
   "semantic_mutants": [],
   "semantic_target": {
@@ -41,6 +42,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [],
     "population": "matching-only",
     "query_shape_tags": [
@@ -48,6 +50,7 @@
       "relationship",
       "fail_closed"
     ],
+    "reference_relationships": [],
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
@@ -56,6 +59,32 @@
       "numeric_tolerance": null,
       "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

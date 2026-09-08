@@ -78,19 +78,28 @@
       "description": "Counts qualifying lines rather than distinct orders.",
       "failure_category": "count_vs_count_distinct",
       "mutant_id": "m05_count_lines",
-      "sql": "SELECT c.customer_id, COUNT(o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id"
+      "semantic_rationale": "Counts qualifying lines rather than distinct orders.",
+      "sql": "SELECT c.customer_id, COUNT(o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id",
+      "status": "VALID",
+      "target_component": "count_vs_count_distinct"
     },
     {
       "description": "Includes pending orders.",
       "failure_category": "remove_predicate",
       "mutant_id": "m05_all_status",
-      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id"
+      "semantic_rationale": "Includes pending orders.",
+      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     },
     {
       "description": "Counts completed orders containing any category.",
       "failure_category": "remove_predicate",
       "mutant_id": "m05_no_category",
-      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY c.customer_id ORDER BY c.customer_id"
+      "semantic_rationale": "Counts completed orders containing any category.",
+      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY c.customer_id ORDER BY c.customer_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     }
   ],
   "semantic_target": {
@@ -113,6 +122,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "customer_id",
       "home_orders"
@@ -125,6 +135,11 @@
       "population",
       "set_operation"
     ],
+    "reference_relationships": [
+      "relationship:commerce_ops:order_customer",
+      "relationship:commerce_ops:item_order",
+      "relationship:commerce_ops:item_product"
+    ],
     "relationships": [
       "relationship:commerce_ops:order_customer",
       "relationship:commerce_ops:item_order",
@@ -135,8 +150,34 @@
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

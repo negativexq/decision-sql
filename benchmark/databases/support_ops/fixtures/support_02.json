@@ -21,6 +21,15 @@
         "INSERT INTO support_tickets VALUES (900804, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"phone\"}')"
       ],
       "purpose": "Adds an unanswered ticket; NULL first response must not be a breach."
+    },
+    {
+      "fixture_id": "cf03",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (900205, 1, 3, 'active', DATE '2026-06-19', DATE '2027-01-01')",
+        "INSERT INTO support_tickets VALUES (900805, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900805, 900805, TIMESTAMPTZ '2026-06-20 03:00:00+00', 'agent_response', '{}')"
+      ],
+      "purpose": "Adds a later subscription with a stricter SLA and a three-hour response, proving the most-recent-subscription rule."
     }
   ]
 }

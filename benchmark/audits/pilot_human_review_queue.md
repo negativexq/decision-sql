@@ -35,6 +35,7 @@ Machine validation is not human acceptance. Review every case before using this 
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "customer_id",
     "customer_name"
@@ -45,14 +46,41 @@ Machine validation is not human acceptance. Review every case before using this 
     "simple_projection",
     "filter"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -111,6 +139,7 @@ SELECT c.customer_id, c.customer_name FROM (SELECT * FROM customers WHERE region
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "order_id"
   ],
@@ -121,14 +150,41 @@ SELECT c.customer_id, c.customer_name FROM (SELECT * FROM customers WHERE region
     "temporal",
     "filter"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 1,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "Declared temporal wording.",
+      "source": "QUESTION"
+    }
   },
   "temporal_semantics": {
     "basis": "wall_clock_benchmark_time",
@@ -182,6 +238,7 @@ WITH june AS (SELECT * FROM orders WHERE ordered_at >= TIMESTAMPTZ '2026-06-01 0
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "region",
     "completed_orders"
@@ -194,6 +251,9 @@ WITH june AS (SELECT * FROM orders WHERE ordered_at >= TIMESTAMPTZ '2026-06-01 0
     "aggregation",
     "null_semantics"
   ],
+  "reference_relationships": [
+    "relationship:commerce_ops:order_customer"
+  ],
   "relationships": [
     "relationship:commerce_ops:order_customer"
   ],
@@ -202,8 +262,34 @@ WITH june AS (SELECT * FROM orders WHERE ordered_at >= TIMESTAMPTZ '2026-06-01 0
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -231,7 +317,7 @@ WITH completed AS (SELECT customer_id, COUNT(*) AS n FROM orders WHERE status = 
 
 ## commerce_04 — ANSWERABLE
 
-**Question:** For each product category, calculate the rounded net value of completed order lines after the order discount.
+**Question:** For each product category, calculate completed-order value after discounts using each line's captured unit price; report totals to two decimal places.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `commerce_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -258,13 +344,21 @@ WITH completed AS (SELECT customer_id, COUNT(*) AS n FROM orders WHERE status = 
       "rounding_stage": "before_ordering_and_display"
     }
   ],
-  "filters": [],
+  "filters": [
+    {
+      "field": "orders.status",
+      "operator": "=",
+      "scope": "row",
+      "value": "completed"
+    }
+  ],
   "grouping": [
     "products.category"
   ],
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "category",
     "net_value"
@@ -278,6 +372,10 @@ WITH completed AS (SELECT customer_id, COUNT(*) AS n FROM orders WHERE status = 
     "grain",
     "precision"
   ],
+  "reference_relationships": [
+    "relationship:commerce_ops:item_order",
+    "relationship:commerce_ops:item_product"
+  ],
   "relationships": [
     "relationship:commerce_ops:item_order",
     "relationship:commerce_ops:item_product"
@@ -287,8 +385,34 @@ WITH completed AS (SELECT customer_id, COUNT(*) AS n FROM orders WHERE status = 
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "VISIBLE_AUTHORITY"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -306,7 +430,7 @@ SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct /
 WITH lines AS (SELECT p.category, oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0) AS line_value FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed') SELECT category, ROUND(SUM(line_value)::numeric, 2) AS net_value FROM lines GROUP BY category ORDER BY category
 ```
 
-**Counterfactual purposes:** Adds a discounted completed line so SUM(raw line value) and undiscounted value diverge.; Adds a pending high-value line so status scope is observable.
+**Counterfactual purposes:** Adds a discounted completed line so SUM(raw line value) and undiscounted value diverge.; Adds a pending high-value line so status scope is observable.; Changes the current catalog price while keeping a different captured line price, distinguishing order-line grain from catalog grain.
 
 **Mutants:** m04_no_discount — Omits the order discount.; m04_all_status — Includes non-completed orders.; m04_wrong_grain — Uses product current price instead of captured line price.
 
@@ -345,6 +469,7 @@ WITH lines AS (SELECT p.category, oi.quantity * oi.unit_price * (1 - o.discount_
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "customer_id",
     "home_orders"
@@ -357,6 +482,11 @@ WITH lines AS (SELECT p.category, oi.quantity * oi.unit_price * (1 - o.discount_
     "population",
     "set_operation"
   ],
+  "reference_relationships": [
+    "relationship:commerce_ops:order_customer",
+    "relationship:commerce_ops:item_order",
+    "relationship:commerce_ops:item_product"
+  ],
   "relationships": [
     "relationship:commerce_ops:order_customer",
     "relationship:commerce_ops:item_order",
@@ -367,8 +497,34 @@ WITH lines AS (SELECT p.category, oi.quantity * oi.unit_price * (1 - o.discount_
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -396,7 +552,7 @@ WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOI
 
 ## commerce_06 — ANSWERABLE
 
-**Question:** For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders.
+**Question:** For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders; report the average to two decimal places.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `commerce_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -411,13 +567,21 @@ WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOI
   ],
   "behavior": "ANSWERABLE",
   "calculations": [],
-  "filters": [],
+  "filters": [
+    {
+      "field": "orders.status",
+      "operator": "=",
+      "scope": "row",
+      "value": "completed"
+    }
+  ],
   "grouping": [
     "customers.region"
   ],
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "region",
     "avg_completed_orders"
@@ -431,6 +595,9 @@ WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOI
     "null_semantics",
     "nested"
   ],
+  "reference_relationships": [
+    "relationship:commerce_ops:order_customer"
+  ],
   "relationships": [
     "relationship:commerce_ops:order_customer"
   ],
@@ -439,8 +606,34 @@ WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOI
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -468,7 +661,7 @@ SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = 
 
 ## commerce_07 — ANSWERABLE
 
-**Question:** Show the three customers with the highest rounded completed-order net value, returning customer ID and net value.
+**Question:** Show the three customers with the highest rounded completed-order net value, listed in descending net value; break ties by customer ID. Return customer ID and net value.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `commerce_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -495,7 +688,14 @@ SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = 
       "rounding_stage": "before_ordering_and_display"
     }
   ],
-  "filters": [],
+  "filters": [
+    {
+      "field": "orders.status",
+      "operator": "=",
+      "scope": "row",
+      "value": "completed"
+    }
+  ],
   "grouping": [
     "customers.customer_id"
   ],
@@ -508,6 +708,7 @@ SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = 
     ],
     "tie_break": "customer_id ASC"
   },
+  "ordering_provenance": "QUESTION_EXPLICIT",
   "outputs": [
     "customer_id",
     "net_value"
@@ -522,6 +723,10 @@ SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = 
     "limit",
     "precision"
   ],
+  "reference_relationships": [
+    "relationship:commerce_ops:order_customer",
+    "relationship:commerce_ops:item_order"
+  ],
   "relationships": [
     "relationship:commerce_ops:order_customer",
     "relationship:commerce_ops:item_order"
@@ -533,6 +738,32 @@ SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = 
     "numeric_tolerance": null,
     "row_order": true,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "Declared result limit.",
+      "source": "QUESTION"
+    },
+    "ordering": {
+      "evidence": "Declared result ordering.",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -653,6 +884,7 @@ SELECT customer_id, net_value FROM (SELECT c.customer_id, ROUND(SUM(oi.quantity 
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "event_id",
     "vehicle_id"
@@ -663,14 +895,41 @@ SELECT customer_id, net_value FROM (SELECT c.customer_id, ROUND(SUM(oi.quantity 
     "filter",
     "simple_projection"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -698,7 +957,7 @@ WITH readings AS (SELECT event_id, vehicle_id, (payload #>> '{engine,temperature
 
 ## fleet_02 — ANSWERABLE
 
-**Question:** For each depot, return the rounded average fuel purchase cost, calculated as liters times price per liter.
+**Question:** For each vehicle home depot, return the rounded average fuel purchase cost, calculated as liters times price per liter for vehicles assigned to that depot.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `fleet_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -731,6 +990,7 @@ WITH readings AS (SELECT event_id, vehicle_id, (payload #>> '{engine,temperature
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "depot_id",
     "average_cost"
@@ -743,16 +1003,47 @@ WITH readings AS (SELECT event_id, vehicle_id, (payload #>> '{engine,temperature
     "calculation",
     "precision"
   ],
+  "reference_relationships": [
+    "relationship:fleet_ops:vehicle_depot",
+    "relationship:fleet_ops:fuel_vehicle"
+  ],
   "relationships": [
-    "relationship:fleet_ops:vehicle_depot"
+    "relationship:fleet_ops:vehicle_depot",
+    "relationship:fleet_ops:fuel_vehicle"
   ],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -761,16 +1052,16 @@ WITH readings AS (SELECT event_id, vehicle_id, (payload #>> '{engine,temperature
 **Reference SQL A:**
 
 ```sql
-SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id
+SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id
 ```
 
 **Reference SQL B:**
 
 ```sql
-WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN costs ON costs.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id
+WITH costs AS (SELECT vehicle_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN costs ON costs.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id
 ```
 
-**Counterfactual purposes:** Adds a high-price purchase to distinguish average row costs from average component values.; Adds a zero-liter purchase; multiplication remains zero and is part of the population.
+**Counterfactual purposes:** Adds a high-price purchase to a vehicle and distinguishes average row costs from average component values within its home depot.; Adds a zero-liter purchase to a vehicle; multiplication remains zero and is part of the home-depot population.
 
 **Mutants:** m12_sum — Sums costs rather than averaging them.; m12_sum_components — Averages liters and price separately then multiplies.; m12_no_round — Leaves the declared two-decimal display unrounded.
 
@@ -813,6 +1104,7 @@ WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_event
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "route_id",
     "km_per_liter"
@@ -825,6 +1117,9 @@ WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_event
     "calculation",
     "null_semantics"
   ],
+  "reference_relationships": [
+    "relationship:fleet_ops:trip_route"
+  ],
   "relationships": [
     "relationship:fleet_ops:trip_route"
   ],
@@ -833,8 +1128,34 @@ WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_event
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -882,6 +1203,7 @@ WITH ratios AS (SELECT route_id, distance_km / NULLIF(fuel_liters, 0) AS ratio F
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "vehicle_id",
     "maintenance_count"
@@ -894,6 +1216,9 @@ WITH ratios AS (SELECT route_id, distance_km / NULLIF(fuel_liters, 0) AS ratio F
     "aggregation",
     "null_semantics"
   ],
+  "reference_relationships": [
+    "relationship:fleet_ops:maintenance_vehicle"
+  ],
   "relationships": [
     "relationship:fleet_ops:maintenance_vehicle"
   ],
@@ -902,10 +1227,40 @@ WITH ratios AS (SELECT route_id, distance_km / NULLIF(fuel_liters, 0) AS ratio F
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
   },
-  "temporal_semantics": {}
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "Declared temporal wording.",
+      "source": "QUESTION"
+    }
+  },
+  "temporal_semantics": {
+    "basis": "30 days before benchmark_now",
+    "lower_inclusive": true,
+    "upper_exclusive": true
+  }
 }
 ```
 
@@ -951,6 +1306,7 @@ WITH recent AS (SELECT vehicle_id, COUNT(*) AS maintenance_count FROM maintenanc
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "driver_id",
     "cargo_trips"
@@ -963,6 +1319,10 @@ WITH recent AS (SELECT vehicle_id, COUNT(*) AS maintenance_count FROM maintenanc
     "grouping",
     "filter"
   ],
+  "reference_relationships": [
+    "relationship:fleet_ops:trip_vehicle",
+    "relationship:fleet_ops:trip_driver"
+  ],
   "relationships": [
     "relationship:fleet_ops:trip_vehicle",
     "relationship:fleet_ops:trip_driver"
@@ -972,8 +1332,34 @@ WITH recent AS (SELECT vehicle_id, COUNT(*) AS maintenance_count FROM maintenanc
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1001,7 +1387,7 @@ WITH cargo AS (SELECT t.driver_id FROM trips t JOIN vehicles v ON v.vehicle_id =
 
 ## fleet_06 — ANSWERABLE
 
-**Question:** For every vehicle, return its latest telemetry timestamp and documented engine temperature.
+**Question:** For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `fleet_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -1027,6 +1413,7 @@ WITH cargo AS (SELECT t.driver_id FROM trips t JOIN vehicles v ON v.vehicle_id =
       "vehicle_id"
     ]
   },
+  "ordering_provenance": "QUESTION_EXPLICIT",
   "outputs": [
     "vehicle_id",
     "event_at",
@@ -1040,6 +1427,9 @@ WITH cargo AS (SELECT t.driver_id FROM trips t JOIN vehicles v ON v.vehicle_id =
     "json",
     "ordering"
   ],
+  "reference_relationships": [
+    "relationship:fleet_ops:telemetry_vehicle"
+  ],
   "relationships": [
     "relationship:fleet_ops:telemetry_vehicle"
   ],
@@ -1051,7 +1441,36 @@ WITH cargo AS (SELECT t.driver_id FROM trips t JOIN vehicles v ON v.vehicle_id =
     "row_order": true,
     "timestamp_timezone": "UTC"
   },
-  "temporal_semantics": {}
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "Declared result ordering.",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "Declared temporal wording.",
+      "source": "QUESTION"
+    }
+  },
+  "temporal_semantics": {
+    "basis": "latest telemetry event per vehicle",
+    "tie_break": "event_id DESC"
+  }
 }
 ```
 
@@ -1069,7 +1488,7 @@ SELECT t.vehicle_id, t.event_at, (t.payload #>> '{engine,temperature_c}')::numer
 
 **Counterfactual purposes:** Adds a later reading for vehicle 1 and an older reading for vehicle 2.; Adds equal-timestamp events, proving the event ID tie-break is part of the result.
 
-**Mutants:** m16_oldest — Chooses the oldest event.; m16_no_tiebreak — Omits deterministic event ID tie-breaking.; m16_global — Ranks all telemetry globally.
+**Mutants:** m16_oldest — Chooses the oldest event.; m16_returns_all_events — Returns every telemetry event instead of the latest event per vehicle.; m16_global — Ranks all telemetry globally.
 
 **Acceptance checklist:** visible context sufficient; authority complete; A/B execute and agree; at least two counterfactuals; every accepted mutant killed; human sign-off pending.
 
@@ -1116,6 +1535,7 @@ SELECT t.vehicle_id, t.event_at, (t.payload #>> '{engine,temperature_c}')::numer
     ],
     "tie_break": "route_id ASC"
   },
+  "ordering_provenance": "QUESTION_EXPLICIT",
   "outputs": [
     "route_id",
     "efficiency"
@@ -1132,6 +1552,7 @@ SELECT t.vehicle_id, t.event_at, (t.payload #>> '{engine,temperature_c}')::numer
     "window",
     "window"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
@@ -1140,6 +1561,32 @@ SELECT t.vehicle_id, t.event_at, (t.payload #>> '{engine,temperature_c}')::numer
     "numeric_tolerance": null,
     "row_order": true,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "Declared result limit.",
+      "source": "QUESTION"
+    },
+    "ordering": {
+      "evidence": "Declared result ordering.",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1167,7 +1614,7 @@ SELECT route_id, efficiency FROM (SELECT route_id, ROUND(AVG(distance_km / NULLI
 
 ## fleet_08 — AUTHORITY_BLOCKED
 
-**Question:** Join weather snapshots to routes through their matching free-text route code and show route names.
+**Question:** Join weather snapshots to routes through their matching route code and show route names.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `fleet_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -1178,7 +1625,7 @@ SELECT route_id, efficiency FROM (SELECT route_id, ROUND(AVG(distance_km / NULLI
 ```json
 {
   "expected_behavior": "BLOCKED_AUTHORITY",
-  "missing_authority": "No authorized relationship maps weather_snapshots.route_code to routes.route_name.",
+  "missing_authority": "No authorized relationship maps weather_snapshots.route_code to routes.route_code.",
   "tempting_physical_link": "Route codes look like route names but are not an authority relationship."
 }
 ```
@@ -1257,6 +1704,7 @@ SELECT route_id, efficiency FROM (SELECT route_id, ROUND(AVG(distance_km / NULLI
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "account_id",
     "urgent_tickets"
@@ -1269,6 +1717,9 @@ SELECT route_id, efficiency FROM (SELECT route_id, ROUND(AVG(distance_km / NULLI
     "grouping",
     "filter_scope"
   ],
+  "reference_relationships": [
+    "relationship:support_ops:ticket_account"
+  ],
   "relationships": [
     "relationship:support_ops:ticket_account"
   ],
@@ -1277,8 +1728,34 @@ SELECT route_id, efficiency FROM (SELECT route_id, ROUND(AVG(distance_km / NULLI
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1306,7 +1783,7 @@ WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_ticke
 
 ## support_02 — ANSWERABLE
 
-**Question:** List tickets whose first agent response exceeded the subscribed plan's first-response SLA.
+**Question:** List tickets whose first agent response exceeded the first-response SLA of the account's most recently started subscription.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `support_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -1324,6 +1801,7 @@ WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_ticke
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "ticket_id"
   ],
@@ -1336,6 +1814,12 @@ WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_ticke
     "nested",
     "correlated"
   ],
+  "reference_relationships": [
+    "relationship:support_ops:ticket_account",
+    "relationship:support_ops:subscription_account",
+    "relationship:support_ops:subscription_plan",
+    "relationship:support_ops:event_ticket"
+  ],
   "relationships": [
     "relationship:support_ops:ticket_account",
     "relationship:support_ops:subscription_account",
@@ -1347,8 +1831,34 @@ WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_ticke
     "column_count": 1,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "Declared temporal wording.",
+      "source": "QUESTION"
+    }
   },
   "temporal_semantics": {
     "basis": "opened_at plus plan SLA",
@@ -1360,7 +1870,7 @@ WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_ticke
 **Reference SQL A:**
 
 ```sql
-SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id
+SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id
 ```
 
 **Reference SQL B:**
@@ -1369,9 +1879,9 @@ SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id =
 SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id
 ```
 
-**Counterfactual purposes:** Adds a ticket with a response exactly at the SLA and one just after it.; Adds an unanswered ticket; NULL first response must not be a breach.
+**Counterfactual purposes:** Adds a ticket with a response exactly at the SLA and one just after it.; Adds an unanswered ticket; NULL first response must not be a breach.; Adds a later subscription with a stricter SLA and a three-hour response, proving the most-recent-subscription rule.
 
-**Mutants:** m22_at_or_before — Treats the exact SLA boundary as a breach.; m22_any_response — Uses the latest response instead of the first response.; m22_no_sla — Returns every ticket with a response.
+**Mutants:** m22_at_or_before — Treats the exact SLA boundary as a breach.; m22_any_response — Uses the latest response instead of the first response.; m22_no_sla — Returns every ticket with a response.; m22_oldest_subscription — Uses the oldest subscription instead of the most recently started subscription.
 
 **Acceptance checklist:** visible context sufficient; authority complete; A/B execute and agree; at least two counterfactuals; every accepted mutant killed; human sign-off pending.
 
@@ -1412,6 +1922,7 @@ SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM tic
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "account_id",
     "urgent_share"
@@ -1425,14 +1936,41 @@ SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM tic
     "precision",
     "null_semantics"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "Declared calculation precision or visible metric rule.",
+      "source": "QUESTION"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1485,6 +2023,7 @@ WITH counts AS (SELECT account_id, COUNT(*) AS total, COUNT(*) FILTER (WHERE pri
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "ticket_id",
     "status"
@@ -1495,14 +2034,41 @@ WITH counts AS (SELECT account_id, COUNT(*) AS total, COUNT(*) FILTER (WHERE pri
     "filter",
     "simple_projection"
   ],
+  "reference_relationships": [],
   "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1530,11 +2096,11 @@ WITH chat AS (SELECT ticket_id, status, payload ->> 'channel' AS channel FROM su
 
 ## support_05 — ANSWERABLE
 
-**Question:** Find accounts whose ticket count is above the average ticket count per account.
+**Question:** Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `support_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
-**Difficulty / tags:** HARD / relationship, aggregation, nested, correlated, population
+**Difficulty / tags:** HARD / aggregation, nested, population
 
 **Semantic target:**
 
@@ -1553,28 +2119,52 @@ WITH chat AS (SELECT ticket_id, status, payload ->> 'channel' AS channel FROM su
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "account_id",
     "ticket_count"
   ],
   "population": "matching-only",
   "query_shape_tags": [
-    "relationship",
     "aggregation",
     "nested",
-    "correlated",
     "population"
   ],
-  "relationships": [
-    "relationship:support_ops:ticket_account"
-  ],
+  "reference_relationships": [],
+  "relationships": [],
   "result_comparison_contract": {
     "aliases_significant": false,
     "column_count": 2,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "No semantic filter.",
+      "source": "NOT_APPLICABLE"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1592,9 +2182,9 @@ WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets
 SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id HAVING COUNT(*) > (SELECT AVG(ticket_count) FROM (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) AS per_account) ORDER BY account_id
 ```
 
-**Counterfactual purposes:** Adds a burst of tickets to one account, making above-average membership observable.; Adds a no-ticket account; it must not be part of the per-account average because the question says per account with tickets.
+**Counterfactual purposes:** Adds a burst of tickets to one account, making above-average membership observable.; Adds a no-ticket cohort; those accounts must not be part of the per-account average because the question says accounts with at least one ticket.
 
-**Mutants:** m25_below — Returns below-average accounts.; m25_global_avg — Compares each account to the global ticket-row average, not average account count.; m25_no_having — Returns all account counts.
+**Mutants:** m25_below — Returns below-average accounts.; m25_all_accounts_baseline — Includes zero-ticket accounts in the baseline population.; m25_no_having — Returns all account counts.
 
 **Acceptance checklist:** visible context sufficient; authority complete; A/B execute and agree; at least two counterfactuals; every accepted mutant killed; human sign-off pending.
 
@@ -1624,12 +2214,19 @@ SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY accoun
         "open",
         "pending"
       ]
+    },
+    {
+      "field": "incidents.severity",
+      "operator": "=",
+      "scope": "row",
+      "value": "high"
     }
   ],
   "grouping": [],
   "limit": null,
   "null_default_semantics": "NULL remains NULL",
   "ordering": {},
+  "ordering_provenance": "NOT_APPLICABLE",
   "outputs": [
     "account_id"
   ],
@@ -1640,8 +2237,10 @@ SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY accoun
     "relationship",
     "population"
   ],
+  "reference_relationships": [
+    "relationship:support_ops:incident_account"
+  ],
   "relationships": [
-    "relationship:support_ops:subscription_account",
     "relationship:support_ops:incident_account"
   ],
   "result_comparison_contract": {
@@ -1649,8 +2248,34 @@ SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY accoun
     "column_count": 1,
     "duplicates_significant": true,
     "numeric_tolerance": null,
-    "row_order": true,
+    "row_order": false,
     "timestamp_timezone": "UTC"
+  },
+  "semantic_provenance": {
+    "filters": {
+      "evidence": "Declared filter wording.",
+      "source": "QUESTION"
+    },
+    "limit": {
+      "evidence": "No result limit.",
+      "source": "NOT_APPLICABLE"
+    },
+    "ordering": {
+      "evidence": "No requested display order.",
+      "source": "NOT_APPLICABLE"
+    },
+    "population": {
+      "evidence": "Declared population wording.",
+      "source": "QUESTION"
+    },
+    "rounding": {
+      "evidence": "No semantic rounding rule.",
+      "source": "NOT_APPLICABLE"
+    },
+    "temporal": {
+      "evidence": "No semantic time rule.",
+      "source": "NOT_APPLICABLE"
+    }
   },
   "temporal_semantics": {}
 }
@@ -1659,18 +2284,18 @@ SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY accoun
 **Reference SQL A:**
 
 ```sql
-SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT a.account_id FROM accounts a JOIN subscriptions s ON s.account_id = a.account_id JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id
+SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id
 ```
 
 **Reference SQL B:**
 
 ```sql
-SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT s.account_id FROM subscriptions s JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01') AS ids ORDER BY account_id
+SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high') AS ids ORDER BY account_id
 ```
 
-**Counterfactual purposes:** Adds one account to each set and one overlap, proving UNION distinct semantics.; Adds a closed-only ticket and an old incident that must not qualify.
+**Counterfactual purposes:** Adds one high-severity incident account and one open-ticket overlap, proving direct account linkage and UNION distinct semantics.; Adds a closed-only ticket and a medium-severity incident; neither qualifies.
 
-**Mutants:** m26_intersect — Requires membership in both sets.; m26_all_tickets — Includes closed tickets.; m26_no_date — Includes high-severity incidents from any date.
+**Mutants:** m26_intersect — Requires membership in both sets.; m26_all_tickets — Includes closed tickets.; m26_medium_incident — Selects medium-severity incidents instead of high-severity incidents.
 
 **Acceptance checklist:** visible context sufficient; authority complete; A/B execute and agree; at least two counterfactuals; every accepted mutant killed; human sign-off pending.
 
@@ -1700,7 +2325,7 @@ SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN (
 
 ## support_08 — AUTHORITY_BLOCKED
 
-**Question:** Join ticket requester email to incident code and list incident severities.
+**Question:** For the legacy import, match support tickets to incidents where the numeric ticket ID equals the incident ID and return incident severity.
 
 **Exact model-visible context:** `GOVERNED_CONTEXT_V1` for `support_ops` authority package (schema catalog, attributes, authorized relationships, metrics, business rules, temporal rules, policy).
 
@@ -1710,9 +2335,10 @@ SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN (
 
 ```json
 {
+  "authorized_alternative_not_equivalent": "The authorized ticket-account and incident-account paths identify shared accounts, not the requested ticket-to-incident identity.",
   "expected_behavior": "BLOCKED_AUTHORITY",
-  "missing_authority": "No authorized relationship maps ticket requester_email to incidents.incident_code.",
-  "tempting_physical_link": "Both are free-text identifiers but have no semantic link."
+  "missing_authority": "No authorized relationship maps support_tickets.ticket_id to incidents.incident_id.",
+  "tempting_physical_link": "Both systems expose stable numeric identifiers and seeded values overlap, but identifier shape alone does not establish event identity."
 }
 ```
 

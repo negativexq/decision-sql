@@ -72,19 +72,28 @@
       "description": "Selects email tickets.",
       "failure_category": "wrong_literal",
       "mutant_id": "m24_email",
-      "sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'channel' = 'email' ORDER BY ticket_id"
+      "semantic_rationale": "Selects email tickets.",
+      "sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'channel' = 'email' ORDER BY ticket_id",
+      "status": "VALID",
+      "target_component": "wrong_literal"
     },
     {
       "description": "Filters by product area instead of channel.",
       "failure_category": "wrong_nested_field",
       "mutant_id": "m24_wrong_path",
-      "sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'product_area' = 'chat' ORDER BY ticket_id"
+      "semantic_rationale": "Filters by product area instead of channel.",
+      "sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'product_area' = 'chat' ORDER BY ticket_id",
+      "status": "VALID",
+      "target_component": "wrong_nested_field"
     },
     {
       "description": "Treats missing channel as chat.",
       "failure_category": "null_default_policy",
       "mutant_id": "m24_coalesce",
-      "sql": "SELECT ticket_id, status FROM support_tickets WHERE COALESCE(payload ->> 'channel', 'chat') = 'chat' ORDER BY ticket_id"
+      "semantic_rationale": "Treats missing channel as chat.",
+      "sql": "SELECT ticket_id, status FROM support_tickets WHERE COALESCE(payload ->> 'channel', 'chat') = 'chat' ORDER BY ticket_id",
+      "status": "VALID",
+      "target_component": "null_default_policy"
     }
   ],
   "semantic_target": {
@@ -103,6 +112,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "ticket_id",
       "status"
@@ -113,14 +123,41 @@
       "filter",
       "simple_projection"
     ],
+    "reference_relationships": [],
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

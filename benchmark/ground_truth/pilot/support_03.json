@@ -77,19 +77,28 @@
       "description": "Uses urgent count as the denominator.",
       "failure_category": "ratio_numerator_denominator",
       "mutant_id": "m23_sum",
-      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*) FILTER (WHERE priority <> 'urgent'), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+      "semantic_rationale": "Uses urgent count as the denominator.",
+      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*) FILTER (WHERE priority <> 'urgent'), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "ratio_numerator_denominator"
     },
     {
       "description": "Returns urgent counts rather than a share.",
       "failure_category": "wrong_metric_operand",
       "mutant_id": "m23_all_one",
-      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric, 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+      "semantic_rationale": "Returns urgent counts rather than a share.",
+      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric, 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "wrong_metric_operand"
     },
     {
       "description": "Does not apply the declared display precision.",
       "failure_category": "rounding_stage",
       "mutant_id": "m23_no_round",
-      "sql": "SELECT account_id, (COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+      "semantic_rationale": "Does not apply the declared display precision.",
+      "sql": "SELECT account_id, (COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "rounding_stage"
     }
   ],
   "semantic_target": {
@@ -116,6 +125,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "account_id",
       "urgent_share"
@@ -129,14 +139,41 @@
       "precision",
       "null_semantics"
     ],
+    "reference_relationships": [],
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "Declared calculation precision or visible metric rule.",
+        "source": "QUESTION"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

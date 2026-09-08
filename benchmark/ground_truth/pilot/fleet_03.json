@@ -75,19 +75,28 @@
       "description": "Sums ratios.",
       "failure_category": "avg_vs_sum",
       "mutant_id": "m13_sum",
-      "sql": "SELECT r.route_id, ROUND(SUM(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+      "semantic_rationale": "Sums ratios.",
+      "sql": "SELECT r.route_id, ROUND(SUM(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id",
+      "status": "VALID",
+      "target_component": "avg_vs_sum"
     },
     {
       "description": "Divides total distance by total fuel.",
       "failure_category": "wrong_aggregation_grain",
       "mutant_id": "m13_ratio_of_avgs",
-      "sql": "SELECT r.route_id, ROUND((SUM(t.distance_km) / NULLIF(SUM(t.fuel_liters), 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+      "semantic_rationale": "Divides total distance by total fuel.",
+      "sql": "SELECT r.route_id, ROUND((SUM(t.distance_km) / NULLIF(SUM(t.fuel_liters), 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id",
+      "status": "VALID",
+      "target_component": "wrong_aggregation_grain"
     },
     {
       "description": "Uses zero as a default for zero-fuel ratio.",
       "failure_category": "null_default_policy",
       "mutant_id": "m13_include_zero",
-      "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / COALESCE(NULLIF(t.fuel_liters, 0), 1))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+      "semantic_rationale": "Uses zero as a default for zero-fuel ratio.",
+      "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / COALESCE(NULLIF(t.fuel_liters, 0), 1))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id",
+      "status": "VALID",
+      "target_component": "null_default_policy"
     }
   ],
   "semantic_target": {
@@ -114,6 +123,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "route_id",
       "km_per_liter"
@@ -126,6 +136,9 @@
       "calculation",
       "null_semantics"
     ],
+    "reference_relationships": [
+      "relationship:fleet_ops:trip_route"
+    ],
     "relationships": [
       "relationship:fleet_ops:trip_route"
     ],
@@ -134,8 +147,34 @@
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "Declared calculation precision or visible metric rule.",
+        "source": "QUESTION"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

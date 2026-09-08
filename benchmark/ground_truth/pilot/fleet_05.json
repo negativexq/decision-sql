@@ -74,19 +74,28 @@
       "description": "Counts trips from every vehicle class.",
       "failure_category": "remove_predicate",
       "mutant_id": "m15_all_classes",
-      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id GROUP BY d.driver_id ORDER BY d.driver_id"
+      "semantic_rationale": "Counts trips from every vehicle class.",
+      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id GROUP BY d.driver_id ORDER BY d.driver_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
     },
     {
       "description": "Counts vans.",
       "failure_category": "wrong_literal",
       "mutant_id": "m15_wrong_class",
-      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'van' GROUP BY d.driver_id ORDER BY d.driver_id"
+      "semantic_rationale": "Counts vans.",
+      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'van' GROUP BY d.driver_id ORDER BY d.driver_id",
+      "status": "VALID",
+      "target_component": "wrong_literal"
     },
     {
       "description": "Uses depot equality rather than vehicle identity.",
       "failure_category": "wrong_join_path",
       "mutant_id": "m15_wrong_join",
-      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.depot_id = t.depot_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id ORDER BY d.driver_id"
+      "semantic_rationale": "Uses depot equality rather than vehicle identity.",
+      "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.depot_id = t.depot_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id ORDER BY d.driver_id",
+      "status": "VALID",
+      "target_component": "wrong_join_path"
     }
   ],
   "semantic_target": {
@@ -100,6 +109,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "driver_id",
       "cargo_trips"
@@ -112,6 +122,10 @@
       "grouping",
       "filter"
     ],
+    "reference_relationships": [
+      "relationship:fleet_ops:trip_vehicle",
+      "relationship:fleet_ops:trip_driver"
+    ],
     "relationships": [
       "relationship:fleet_ops:trip_vehicle",
       "relationship:fleet_ops:trip_driver"
@@ -121,8 +135,34 @@
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

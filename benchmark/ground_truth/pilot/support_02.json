@@ -21,6 +21,15 @@
         "INSERT INTO support_tickets VALUES (900804, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"phone\"}')"
       ],
       "purpose": "Adds an unanswered ticket; NULL first response must not be a breach."
+    },
+    {
+      "fixture_id": "cf03",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (900205, 1, 3, 'active', DATE '2026-06-19', DATE '2027-01-01')",
+        "INSERT INTO support_tickets VALUES (900805, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900805, 900805, TIMESTAMPTZ '2026-06-20 03:00:00+00', 'agent_response', '{}')"
+      ],
+      "purpose": "Adds a later subscription with a stricter SLA and a three-hour response, proving the most-recent-subscription rule."
     }
   ],
   "database_id": "support_ops",
@@ -36,7 +45,7 @@
   ],
   "reference_implementation_a": {
     "kind": "REFERENCE_IMPLEMENTATION_A",
-    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
   },
   "reference_implementation_b": {
     "kind": "REFERENCE_IMPLEMENTATION_B",
@@ -63,6 +72,13 @@
       ],
       "result_sha256": "18f58d17cf5efe3a039a338277f753ec40fd3a148f9acd89d6624d73e47f2047",
       "row_count": 1
+    },
+    "cf03": {
+      "columns": [
+        "ticket_id"
+      ],
+      "result_sha256": "5c2a6f4ac0370cd5f40af004c47a83438408e8200af7133a8f9015e3c6b9b356",
+      "row_count": 2
     }
   },
   "required_authority": [],
@@ -71,27 +87,46 @@
     "relationships.relationship:support_ops:subscription_account",
     "relationships.relationship:support_ops:subscription_plan",
     "relationships.relationship:support_ops:event_ticket",
-    "metrics.metric:support_escalation_rate",
-    "business_rules.rule:support_sla"
+    "business_rules.rule:support_sla",
+    "business_rules.rule:support_subscription_selection",
+    "attributes.subscriptions.starts_on"
   ],
   "semantic_mutants": [
     {
       "description": "Treats the exact SLA boundary as a breach.",
       "failure_category": "wrong_comparison_operator",
       "mutant_id": "m22_at_or_before",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+      "semantic_rationale": "Treats the exact SLA boundary as a breach.",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "status": "VALID",
+      "target_component": "wrong_comparison_operator"
     },
     {
       "description": "Uses the latest response instead of the first response.",
       "failure_category": "wrong_aggregation_grain",
       "mutant_id": "m22_any_response",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MAX(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+      "semantic_rationale": "Uses the latest response instead of the first response.",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MAX(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "status": "VALID",
+      "target_component": "wrong_aggregation_grain"
     },
     {
       "description": "Returns every ticket with a response.",
       "failure_category": "remove_predicate",
       "mutant_id": "m22_no_sla",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id"
+      "semantic_rationale": "Returns every ticket with a response.",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
+      "status": "VALID",
+      "target_component": "remove_predicate"
+    },
+    {
+      "description": "Uses the oldest subscription instead of the most recently started subscription.",
+      "failure_category": "wrong_population",
+      "mutant_id": "m22_oldest_subscription",
+      "semantic_rationale": "Uses the oldest subscription instead of the most recently started subscription.",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "status": "VALID",
+      "target_component": "wrong_population"
     }
   ],
   "semantic_target": {
@@ -103,6 +138,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "ticket_id"
     ],
@@ -115,6 +151,12 @@
       "nested",
       "correlated"
     ],
+    "reference_relationships": [
+      "relationship:support_ops:ticket_account",
+      "relationship:support_ops:subscription_account",
+      "relationship:support_ops:subscription_plan",
+      "relationship:support_ops:event_ticket"
+    ],
     "relationships": [
       "relationship:support_ops:ticket_account",
       "relationship:support_ops:subscription_account",
@@ -126,8 +168,34 @@
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "Declared temporal wording.",
+        "source": "QUESTION"
+      }
     },
     "temporal_semantics": {
       "basis": "opened_at plus plan SLA",

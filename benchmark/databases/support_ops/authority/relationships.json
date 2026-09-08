@@ -110,6 +110,17 @@
     "right_entity": "entity:support_ops:incidents"
   },
   {
+    "authorized": false,
+    "cardinality": "one_to_one",
+    "description": "Numeric identifiers from separate systems are not an authorized identity relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:support_tickets:ticket_id",
+    "left_entity": "entity:support_ops:support_tickets",
+    "relationship_id": "relationship:support_ops:tempting_ticket_incident_id",
+    "right_attribute": "attribute:support_ops:incidents:incident_id",
+    "right_entity": "entity:support_ops:incidents"
+  },
+  {
     "authorized": true,
     "cardinality": "many_to_one",
     "description": "Incidents belong to accounts.",

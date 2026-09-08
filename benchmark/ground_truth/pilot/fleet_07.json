@@ -78,19 +78,28 @@
       "description": "Ranks lowest efficiency first.",
       "failure_category": "asc_desc",
       "mutant_id": "m17_ascending",
-      "sql": "WITH route_values AS (SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency ASC, route_id ASC LIMIT 3"
+      "semantic_rationale": "Ranks lowest efficiency first.",
+      "sql": "WITH route_values AS (SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency ASC, route_id ASC LIMIT 3",
+      "status": "VALID",
+      "target_component": "asc_desc"
     },
     {
       "description": "Returns every route.",
       "failure_category": "remove_limit",
       "mutant_id": "m17_no_limit",
-      "sql": "WITH route_values AS (SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency DESC, route_id ASC"
+      "semantic_rationale": "Returns every route.",
+      "sql": "WITH route_values AS (SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency DESC, route_id ASC",
+      "status": "VALID",
+      "target_component": "remove_limit"
     },
     {
       "description": "Uses summed efficiency.",
       "failure_category": "avg_vs_sum",
       "mutant_id": "m17_sum",
-      "sql": "WITH route_values AS (SELECT route_id, ROUND(SUM(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency DESC, route_id ASC LIMIT 3"
+      "semantic_rationale": "Uses summed efficiency.",
+      "sql": "WITH route_values AS (SELECT route_id, ROUND(SUM(distance_km / NULLIF(fuel_liters, 0))::numeric, 2) AS efficiency FROM trips GROUP BY route_id) SELECT route_id, efficiency FROM route_values ORDER BY efficiency DESC, route_id ASC LIMIT 3",
+      "status": "VALID",
+      "target_component": "avg_vs_sum"
     }
   ],
   "semantic_target": {
@@ -123,6 +132,7 @@
       ],
       "tie_break": "route_id ASC"
     },
+    "ordering_provenance": "QUESTION_EXPLICIT",
     "outputs": [
       "route_id",
       "efficiency"
@@ -139,6 +149,7 @@
       "window",
       "window"
     ],
+    "reference_relationships": [],
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
@@ -147,6 +158,32 @@
       "numeric_tolerance": null,
       "row_order": true,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "Declared result limit.",
+        "source": "QUESTION"
+      },
+      "ordering": {
+        "evidence": "Declared result ordering.",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "Declared calculation precision or visible metric rule.",
+        "source": "QUESTION"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

@@ -68,26 +68,37 @@
   "required_authority": [],
   "required_context_facts": [
     "relationships.relationship:fleet_ops:maintenance_vehicle",
-    "temporal_rules.time:fleet_now"
+    "temporal_rules.time:fleet_now",
+    "attributes.maintenance_events.maintenance_id",
+    "attributes.maintenance_events.performed_at"
   ],
   "semantic_mutants": [
     {
       "description": "Drops vehicles with no recent maintenance.",
       "failure_category": "inner_left_join",
       "mutant_id": "m14_inner",
-      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at < TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id"
+      "semantic_rationale": "Drops vehicles with no recent maintenance.",
+      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at < TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id",
+      "status": "VALID",
+      "target_component": "inner_left_join"
     },
     {
       "description": "Moves window predicate to WHERE.",
       "failure_category": "where_filter_scope",
       "mutant_id": "m14_where_scope",
-      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v LEFT JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id WHERE m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at < TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id"
+      "semantic_rationale": "Moves window predicate to WHERE.",
+      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v LEFT JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id WHERE m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at < TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id",
+      "status": "VALID",
+      "target_component": "where_filter_scope"
     },
     {
       "description": "Includes the upper boundary.",
       "failure_category": "wrong_temporal_anchor",
       "mutant_id": "m14_upper_inclusive",
-      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v LEFT JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at <= TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id"
+      "semantic_rationale": "Includes the upper boundary.",
+      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_count FROM vehicles v LEFT JOIN maintenance_events m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND m.performed_at <= TIMESTAMPTZ '2026-06-30 12:00:00+00' GROUP BY v.vehicle_id ORDER BY v.vehicle_id",
+      "status": "VALID",
+      "target_component": "wrong_temporal_anchor"
     }
   ],
   "semantic_target": {
@@ -101,6 +112,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "vehicle_id",
       "maintenance_count"
@@ -113,6 +125,9 @@
       "aggregation",
       "null_semantics"
     ],
+    "reference_relationships": [
+      "relationship:fleet_ops:maintenance_vehicle"
+    ],
     "relationships": [
       "relationship:fleet_ops:maintenance_vehicle"
     ],
@@ -121,10 +136,40 @@
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
-    "temporal_semantics": {}
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "Declared temporal wording.",
+        "source": "QUESTION"
+      }
+    },
+    "temporal_semantics": {
+      "basis": "30 days before benchmark_now",
+      "lower_inclusive": true,
+      "upper_exclusive": true
+    }
   },
   "status": "MACHINE_VALIDATED"
 }

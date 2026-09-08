@@ -513,6 +513,87 @@ def authority(database_id: str) -> dict[str, Any]:
                     True,
                 ),
                 (
+                    "maintenance_events",
+                    "maintenance_id",
+                    "maintenance_id",
+                    "INTEGER",
+                    "Stable maintenance identifier.",
+                    False,
+                ),
+                (
+                    "maintenance_events",
+                    "vehicle_id",
+                    "vehicle_id",
+                    "INTEGER",
+                    "Authorized vehicle reference.",
+                    False,
+                ),
+                (
+                    "maintenance_events",
+                    "performed_at",
+                    "performed_at",
+                    "TIMESTAMP",
+                    "UTC maintenance time.",
+                    False,
+                ),
+                (
+                    "maintenance_events",
+                    "maintenance_type",
+                    "maintenance_type",
+                    "TEXT",
+                    "Maintenance category.",
+                    False,
+                ),
+                (
+                    "maintenance_events",
+                    "cost",
+                    "cost",
+                    "NUMERIC",
+                    "Recorded maintenance cost.",
+                    False,
+                ),
+                (
+                    "fuel_events",
+                    "fuel_event_id",
+                    "fuel_event_id",
+                    "INTEGER",
+                    "Stable fuel event identifier.",
+                    False,
+                ),
+                (
+                    "fuel_events",
+                    "vehicle_id",
+                    "vehicle_id",
+                    "INTEGER",
+                    "Authorized vehicle reference.",
+                    False,
+                ),
+                ("fuel_events", "liters", "liters", "NUMERIC", "Fuel volume purchased.", False),
+                (
+                    "fuel_events",
+                    "price_per_liter",
+                    "price_per_liter",
+                    "NUMERIC",
+                    "Captured purchase price per liter.",
+                    False,
+                ),
+                (
+                    "weather_snapshots",
+                    "weather_id",
+                    "weather_id",
+                    "INTEGER",
+                    "Stable weather observation identifier.",
+                    False,
+                ),
+                (
+                    "weather_snapshots",
+                    "route_code",
+                    "route_code",
+                    "TEXT",
+                    "Weather route code; no authorized route relationship is declared.",
+                    False,
+                ),
+                (
                     "telemetry_events",
                     "device_code",
                     "device_code",
@@ -628,7 +709,7 @@ def authority(database_id: str) -> dict[str, Any]:
                 "weather_snapshots",
                 "route_code",
                 "routes",
-                "route_name",
+                "route_code",
                 "many_to_one",
                 False,
                 "Free-text route code resemblance is intentionally not an authorized relationship.",
@@ -791,6 +872,14 @@ def authority(database_id: str) -> dict[str, Any]:
                     "Subscription lifecycle status.",
                     False,
                 ),
+                (
+                    "subscriptions",
+                    "starts_on",
+                    "starts_on",
+                    "DATE",
+                    "Subscription start date used by the support SLA selection rule.",
+                    False,
+                ),
                 ("subscriptions", "ends_on", "ends_on", "DATE", "Contract end date.", True),
                 (
                     "support_tickets",
@@ -873,6 +962,22 @@ def authority(database_id: str) -> dict[str, Any]:
                     "incident_id",
                     "INTEGER",
                     "Stable incident identifier.",
+                    False,
+                ),
+                (
+                    "incidents",
+                    "started_at",
+                    "started_at",
+                    "TIMESTAMP",
+                    "UTC incident start time.",
+                    False,
+                ),
+                (
+                    "incidents",
+                    "severity",
+                    "severity",
+                    "TEXT",
+                    "Incident severity classification.",
                     False,
                 ),
                 (
@@ -996,6 +1101,17 @@ def authority(database_id: str) -> dict[str, Any]:
                 False,
                 "Free-text code resemblance is not an authorized relationship.",
             ),
+            _rel(
+                database_id,
+                "tempting_ticket_incident_id",
+                "support_tickets",
+                "ticket_id",
+                "incidents",
+                "incident_id",
+                "one_to_one",
+                False,
+                "Numeric identifiers from separate systems are not an authorized identity relationship.",
+            ),
         ]
         metrics = [
             {
@@ -1022,6 +1138,11 @@ def authority(database_id: str) -> dict[str, Any]:
                 "rule_id": "rule:support_sla",
                 "name": "SLA breach",
                 "definition": "The first agent_response event later than opened_at plus the plan SLA is a breach; tickets without a response are not counted in the pilot metric.",
+            },
+            {
+                "rule_id": "rule:support_subscription_selection",
+                "name": "SLA subscription selection",
+                "definition": "For SLA reporting, an account's most recently started subscription supplies the service plan.",
             },
         ]
         temporal = [
@@ -1685,6 +1806,63 @@ def _case(
     required_facts: list[str],
     **extra: Any,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
+    ordering = extra.get("ordering", {})
+    ordering_source = extra.get(
+        "ordering_provenance", "QUESTION_EXPLICIT" if ordering else "NOT_APPLICABLE"
+    )
+    semantic_provenance = extra.get(
+        "semantic_provenance",
+        {
+            "population": {"source": "QUESTION", "evidence": "Declared population wording."},
+            "filters": {
+                "source": "QUESTION" if extra.get("filters", []) else "NOT_APPLICABLE",
+                "evidence": "Declared filter wording."
+                if extra.get("filters", [])
+                else "No semantic filter.",
+            },
+            "ordering": {
+                "source": ordering_source,
+                "evidence": "Declared result ordering."
+                if ordering
+                else "No requested display order.",
+            },
+            "limit": {
+                "source": "QUESTION" if extra.get("limit") is not None else "NOT_APPLICABLE",
+                "evidence": "Declared result limit."
+                if extra.get("limit") is not None
+                else "No result limit.",
+            },
+            "temporal": {
+                "source": extra.get(
+                    "temporal_provenance",
+                    "QUESTION" if extra.get("temporal_semantics") else "NOT_APPLICABLE",
+                ),
+                "evidence": "Declared temporal wording."
+                if extra.get("temporal_semantics")
+                else "No semantic time rule.",
+            },
+            "rounding": {
+                "source": extra.get(
+                    "rounding_provenance",
+                    "QUESTION"
+                    if "round" in question.lower()
+                    else ("VISIBLE_AUTHORITY" if extra.get("calculations") else "NOT_APPLICABLE"),
+                ),
+                "evidence": "Declared calculation precision or visible metric rule."
+                if (extra.get("calculations") or "round" in question.lower())
+                else "No semantic rounding rule.",
+            },
+        },
+    )
+    normalized_mutants = []
+    for mutant in mutants:
+        normalized = dict(mutant)
+        normalized.setdefault("status", "VALID")
+        normalized.setdefault("target_component", normalized.get("failure_category", "semantic"))
+        normalized.setdefault(
+            "semantic_rationale", normalized.get("description", "Declared semantic counterexample.")
+        )
+        normalized_mutants.append(normalized)
     case = {
         "case_id": case_id,
         "database_id": database_id,
@@ -1714,13 +1892,18 @@ def _case(
             "grouping": extra.get("grouping", []),
             "calculations": extra.get("calculations", []),
             "temporal_semantics": extra.get("temporal_semantics", {}),
-            "ordering": extra.get("ordering", {}),
+            "ordering": ordering,
             "limit": extra.get("limit"),
+            "ordering_provenance": ordering_source,
+            "semantic_provenance": semantic_provenance,
+            "reference_relationships": extra.get(
+                "reference_relationships", extra.get("relationships", [])
+            ),
             "query_shape_tags": tags,
             "null_default_semantics": extra.get("null_default_semantics", "NULL remains NULL"),
             "result_comparison_contract": {
                 "column_count": extra.get("column_count", 1),
-                "row_order": extra.get("row_order", False),
+                "row_order": bool(extra.get("row_order", False) and ordering),
                 "aliases_significant": False,
                 "duplicates_significant": True,
                 "numeric_tolerance": None,
@@ -1731,7 +1914,7 @@ def _case(
         "reference_implementation_a": {"kind": "REFERENCE_IMPLEMENTATION_A", "sql": ref_a},
         "reference_implementation_b": {"kind": "REFERENCE_IMPLEMENTATION_B", "sql": ref_b},
         "counterfactual_fixtures": fixtures,
-        "semantic_mutants": mutants,
+        "semantic_mutants": normalized_mutants,
         "authoring_integrity": {"human_independent_review": False, "human_reviewed": False},
         "required_authority": extra.get("required_authority", []),
         "evidence": extra.get("evidence", {}),
@@ -1938,7 +2121,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_04",
             "commerce_ops",
-            "For each product category, calculate the rounded net value of completed order lines after the order discount.",
+            "For each product category, calculate completed-order value after discounts using each line's captured unit price; report totals to two decimal places.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "aggregation", "calculation", "grain", "precision"],
             "HARD",
@@ -1959,6 +2142,15 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "patch_sql": [
                         "INSERT INTO orders VALUES (900031, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900031')",
                         "INSERT INTO order_items VALUES (900031, 900031, 1, 100, 100.00)",
+                    ],
+                },
+                {
+                    "fixture_id": "cf03",
+                    "purpose": "Changes the current catalog price while keeping a different captured line price, distinguishing order-line grain from catalog grain.",
+                    "patch_sql": [
+                        "INSERT INTO products VALUES (900032, 'Fixture Price Changed', 'home', 999.00, TRUE)",
+                        "INSERT INTO orders VALUES (900032, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900032')",
+                        "INSERT INTO order_items VALUES (900032, 900032, 900032, 1, 10.00)",
                     ],
                 },
             ],
@@ -2003,6 +2195,9 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "aggregation_stage": "post_discount_line",
                     "rounding_stage": "before_ordering_and_display",
                 }
+            ],
+            filters=[
+                {"field": "orders.status", "operator": "=", "value": "completed", "scope": "row"}
             ],
             column_count=2,
             row_order=True,
@@ -2081,7 +2276,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_06",
             "commerce_ops",
-            "For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders.",
+            "For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders; report the average to two decimal places.",
             "ANSWERABLE",
             ["relationship", "population", "aggregation", "grouping", "null_semantics", "nested"],
             "HARD",
@@ -2127,22 +2322,25 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             [
                 "relationships.relationship:commerce_ops:order_customer",
                 "business_rules.rule:completed_orders",
-                "metrics.metric:commerce_net_order_value",
             ],
             outputs=["region", "avg_completed_orders"],
             relationships=["relationship:commerce_ops:order_customer"],
             aggregations=["AVG(completed order count)"],
             grouping=["customers.region"],
             population="preserve-anchor",
+            filters=[
+                {"field": "orders.status", "operator": "=", "value": "completed", "scope": "row"}
+            ],
             column_count=2,
-            row_order=True,
+            rounding_provenance="QUESTION",
+            row_order=False,
         )
     )
     out.append(
         _case(
             "commerce_07",
             "commerce_ops",
-            "Show the three customers with the highest rounded completed-order net value, returning customer ID and net value.",
+            "Show the three customers with the highest rounded completed-order net value, listed in descending net value; break ties by customer ID. Return customer ID and net value.",
             "ANSWERABLE",
             [
                 "relationship",
@@ -2225,7 +2423,11 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                 "keys": ["net_value DESC", "customer_id ASC"],
                 "tie_break": "customer_id ASC",
             },
+            filters=[
+                {"field": "orders.status", "operator": "=", "value": "completed", "scope": "row"}
+            ],
             limit=3,
+            ordering_provenance="QUESTION_EXPLICIT",
             column_count=2,
             row_order=True,
         )
@@ -2371,23 +2573,23 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_02",
             "fleet_ops",
-            "For each depot, return the rounded average fuel purchase cost, calculated as liters times price per liter.",
+            "For each vehicle home depot, return the rounded average fuel purchase cost, calculated as liters times price per liter for vehicles assigned to that depot.",
             "ANSWERABLE",
             ["relationship", "aggregation", "grouping", "calculation", "precision"],
             "MEDIUM",
-            "SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id",
-            "WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN costs ON costs.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id",
+            "SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
+            "WITH costs AS (SELECT vehicle_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN costs ON costs.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
             [
                 {
                     "fixture_id": "cf01",
-                    "purpose": "Adds a high-price purchase to distinguish average row costs from average component values.",
+                    "purpose": "Adds a high-price purchase to a vehicle and distinguishes average row costs from average component values within its home depot.",
                     "patch_sql": [
                         "INSERT INTO fuel_events VALUES (900201, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1.00, 100.00)"
                     ],
                 },
                 {
                     "fixture_id": "cf02",
-                    "purpose": "Adds a zero-liter purchase; multiplication remains zero and is part of the population.",
+                    "purpose": "Adds a zero-liter purchase to a vehicle; multiplication remains zero and is part of the home-depot population.",
                     "patch_sql": [
                         "INSERT INTO fuel_events VALUES (900202, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 0.00, 100.00)"
                     ],
@@ -2398,27 +2600,32 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "mutant_id": "m12_sum",
                     "failure_category": "avg_vs_sum",
                     "description": "Sums costs rather than averaging them.",
-                    "sql": "SELECT d.depot_id, ROUND(SUM(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id",
+                    "sql": "SELECT d.depot_id, ROUND(SUM(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
                 },
                 {
                     "mutant_id": "m12_sum_components",
                     "failure_category": "wrong_metric_operand",
                     "description": "Averages liters and price separately then multiplies.",
-                    "sql": "SELECT d.depot_id, ROUND((AVG(f.liters) * AVG(f.price_per_liter))::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id",
+                    "sql": "SELECT d.depot_id, ROUND((AVG(f.liters) * AVG(f.price_per_liter))::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
                 },
                 {
                     "mutant_id": "m12_no_round",
                     "failure_category": "rounding_stage",
                     "description": "Leaves the declared two-decimal display unrounded.",
-                    "sql": "SELECT d.depot_id, AVG(f.liters * f.price_per_liter) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id",
+                    "sql": "SELECT d.depot_id, AVG(f.liters * f.price_per_liter) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
                 },
             ],
             [
                 "relationships.relationship:fleet_ops:fuel_vehicle",
                 "relationships.relationship:fleet_ops:vehicle_depot",
+                "attributes.fuel_events.liters",
+                "attributes.fuel_events.price_per_liter",
             ],
             outputs=["depot_id", "average_cost"],
-            relationships=["relationship:fleet_ops:vehicle_depot"],
+            relationships=[
+                "relationship:fleet_ops:vehicle_depot",
+                "relationship:fleet_ops:fuel_vehicle",
+            ],
             aggregations=["AVG(fuel cost)"],
             grouping=["depots.depot_id"],
             calculations=[
@@ -2431,7 +2638,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                 }
             ],
             column_count=2,
-            row_order=True,
+            row_order=False,
         )
     )
     out.append(
@@ -2549,13 +2756,20 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             [
                 "relationships.relationship:fleet_ops:maintenance_vehicle",
                 "temporal_rules.time:fleet_now",
+                "attributes.maintenance_events.maintenance_id",
+                "attributes.maintenance_events.performed_at",
             ],
             outputs=["vehicle_id", "maintenance_count"],
             relationships=["relationship:fleet_ops:maintenance_vehicle"],
             grouping=["vehicles.vehicle_id"],
             population="preserve-anchor",
+            temporal_semantics={
+                "basis": "30 days before benchmark_now",
+                "lower_inclusive": True,
+                "upper_exclusive": True,
+            },
             column_count=2,
-            row_order=True,
+            row_order=False,
         )
     )
     out.append(
@@ -2622,7 +2836,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_06",
             "fleet_ops",
-            "For every vehicle, return its latest telemetry timestamp and documented engine temperature.",
+            "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID.",
             "ANSWERABLE",
             ["relationship", "temporal", "window", "json", "ordering"],
             "HARD",
@@ -2654,10 +2868,10 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at ASC, event_id ASC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
                 },
                 {
-                    "mutant_id": "m16_no_tiebreak",
-                    "failure_category": "ordering",
-                    "description": "Omits deterministic event ID tie-breaking.",
-                    "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+                    "mutant_id": "m16_returns_all_events",
+                    "failure_category": "remove_filter",
+                    "description": "Returns every telemetry event instead of the latest event per vehicle.",
+                    "sql": "SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC",
                 },
                 {
                     "mutant_id": "m16_global",
@@ -2673,7 +2887,12 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             ],
             outputs=["vehicle_id", "event_at", "temperature_c"],
             relationships=["relationship:fleet_ops:telemetry_vehicle"],
+            temporal_semantics={
+                "basis": "latest telemetry event per vehicle",
+                "tie_break": "event_id DESC",
+            },
             ordering={"keys": ["event_at DESC", "event_id DESC"], "partition_by": ["vehicle_id"]},
+            ordering_provenance="QUESTION_EXPLICIT",
             column_count=3,
             row_order=True,
         )
@@ -2756,7 +2975,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_08",
             "fleet_ops",
-            "Join weather snapshots to routes through their matching free-text route code and show route names.",
+            "Join weather snapshots to routes through their matching route code and show route names.",
             "AUTHORITY_BLOCKED",
             ["authority", "relationship", "fail_closed"],
             "MEDIUM",
@@ -2767,7 +2986,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             ["relationships.relationship:fleet_ops:weather_route"],
             required_authority=["relationship:fleet_ops:weather_route"],
             evidence={
-                "missing_authority": "No authorized relationship maps weather_snapshots.route_code to routes.route_name.",
+                "missing_authority": "No authorized relationship maps weather_snapshots.route_code to routes.route_code.",
                 "tempting_physical_link": "Route codes look like route names but are not an authority relationship.",
                 "expected_behavior": "BLOCKED_AUTHORITY",
             },
@@ -2896,11 +3115,11 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_02",
             "support_ops",
-            "List tickets whose first agent response exceeded the subscribed plan's first-response SLA.",
+            "List tickets whose first agent response exceeded the first-response SLA of the account's most recently started subscription.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "temporal", "aggregation", "nested", "correlated"],
             "HARD",
-            "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+            "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
             "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id",
             [
                 {
@@ -2918,6 +3137,15 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "purpose": "Adds an unanswered ticket; NULL first response must not be a breach.",
                     "patch_sql": [
                         "INSERT INTO support_tickets VALUES (900804, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"phone\"}')"
+                    ],
+                },
+                {
+                    "fixture_id": "cf03",
+                    "purpose": "Adds a later subscription with a stricter SLA and a three-hour response, proving the most-recent-subscription rule.",
+                    "patch_sql": [
+                        "INSERT INTO subscriptions VALUES (900205, 1, 3, 'active', DATE '2026-06-19', DATE '2027-01-01')",
+                        "INSERT INTO support_tickets VALUES (900805, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+                        "INSERT INTO ticket_events VALUES (900805, 900805, TIMESTAMPTZ '2026-06-20 03:00:00+00', 'agent_response', '{}')",
                     ],
                 },
             ],
@@ -2940,14 +3168,21 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "description": "Returns every ticket with a response.",
                     "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
                 },
+                {
+                    "mutant_id": "m22_oldest_subscription",
+                    "failure_category": "wrong_population",
+                    "description": "Uses the oldest subscription instead of the most recently started subscription.",
+                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+                },
             ],
             [
                 "relationships.relationship:support_ops:ticket_account",
                 "relationships.relationship:support_ops:subscription_account",
                 "relationships.relationship:support_ops:subscription_plan",
                 "relationships.relationship:support_ops:event_ticket",
-                "metrics.metric:support_escalation_rate",
                 "business_rules.rule:support_sla",
+                "business_rules.rule:support_subscription_selection",
+                "attributes.subscriptions.starts_on",
             ],
             outputs=["ticket_id"],
             relationships=[
@@ -2958,7 +3193,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             ],
             temporal_semantics={"basis": "opened_at plus plan SLA", "lower_inclusive": False},
             column_count=1,
-            row_order=True,
+            row_order=False,
         )
     )
     out.append(
@@ -3099,9 +3334,9 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_05",
             "support_ops",
-            "Find accounts whose ticket count is above the average ticket count per account.",
+            "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket.",
             "ANSWERABLE",
-            ["relationship", "aggregation", "nested", "correlated", "population"],
+            ["aggregation", "nested", "population"],
             "HARD",
             "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
             "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id HAVING COUNT(*) > (SELECT AVG(ticket_count) FROM (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) AS per_account) ORDER BY account_id",
@@ -3117,9 +3352,28 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                 },
                 {
                     "fixture_id": "cf02",
-                    "purpose": "Adds a no-ticket account; it must not be part of the per-account average because the question says per account with tickets.",
+                    "purpose": "Adds a no-ticket cohort; those accounts must not be part of the per-account average because the question says accounts with at least one ticket.",
                     "patch_sql": [
-                        "INSERT INTO accounts VALUES (900834, 'Fixture No Tickets', 'East', DATE '2026-06-20')"
+                        "INSERT INTO accounts VALUES (900834, 'Fixture No Tickets 1', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900835, 'Fixture No Tickets 2', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900836, 'Fixture No Tickets 3', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900837, 'Fixture No Tickets 4', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900838, 'Fixture No Tickets 5', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900839, 'Fixture No Tickets 6', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900840, 'Fixture No Tickets 7', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900844, 'Fixture No Tickets 8', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900845, 'Fixture No Tickets 9', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900846, 'Fixture No Tickets 10', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900847, 'Fixture No Tickets 11', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900848, 'Fixture No Tickets 12', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900849, 'Fixture No Tickets 13', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900850, 'Fixture No Tickets 14', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900851, 'Fixture No Tickets 15', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900852, 'Fixture No Tickets 16', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900853, 'Fixture No Tickets 17', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900854, 'Fixture No Tickets 18', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900855, 'Fixture No Tickets 19', 'East', DATE '2026-06-20')",
+                        "INSERT INTO accounts VALUES (900856, 'Fixture No Tickets 20', 'East', DATE '2026-06-20')",
                     ],
                 },
             ],
@@ -3131,10 +3385,10 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "sql": "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count < baseline.average_count ORDER BY account_id",
                 },
                 {
-                    "mutant_id": "m25_global_avg",
+                    "mutant_id": "m25_all_accounts_baseline",
                     "failure_category": "wrong_population",
-                    "description": "Compares each account to the global ticket-row average, not average account count.",
-                    "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id HAVING COUNT(*) > (SELECT AVG(ticket_id) FROM support_tickets) ORDER BY account_id",
+                    "description": "Includes zero-ticket accounts in the baseline population.",
+                    "sql": "WITH counts AS (SELECT a.account_id, COUNT(t.ticket_id) AS ticket_count FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
                 },
                 {
                     "mutant_id": "m25_no_having",
@@ -3143,14 +3397,14 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id ORDER BY account_id",
                 },
             ],
-            ["relationships.relationship:support_ops:ticket_account"],
+            [],
             outputs=["account_id", "ticket_count"],
-            relationships=["relationship:support_ops:ticket_account"],
+            relationships=[],
             aggregations=["COUNT per account", "AVG per-account count"],
             grouping=["support_tickets.account_id"],
             population="matching-only",
             column_count=2,
-            row_order=True,
+            row_order=False,
         )
     )
     out.append(
@@ -3161,26 +3415,25 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             "ANSWERABLE",
             ["set_operation", "filter", "relationship", "population"],
             "MEDIUM",
-            "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT a.account_id FROM accounts a JOIN subscriptions s ON s.account_id = a.account_id JOIN incidents i ON i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id",
-            "SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT s.account_id FROM subscriptions s JOIN incidents i ON i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01') AS ids ORDER BY account_id",
+            "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id",
+            "SELECT account_id FROM (SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high') AS ids ORDER BY account_id",
             [
                 {
                     "fixture_id": "cf01",
-                    "purpose": "Adds one account to each set and one overlap, proving UNION distinct semantics.",
+                    "purpose": "Adds one high-severity incident account and one open-ticket overlap, proving direct account linkage and UNION distinct semantics.",
                     "patch_sql": [
                         "INSERT INTO accounts VALUES (900841, 'Fixture Incident', 'North', DATE '2026-06-20')",
-                        "INSERT INTO subscriptions VALUES (900841, 900841, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
-                        "INSERT INTO incidents VALUES (900841, 'INC-900841', TIMESTAMPTZ '2026-06-20 00:00:00+00', 'high')",
+                        "INSERT INTO incidents VALUES (900841, 900841, 'INC-900841', TIMESTAMPTZ '2026-06-20 00:00:00+00', 'high')",
                         "INSERT INTO support_tickets VALUES (900842, 900841, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')",
                     ],
                 },
                 {
                     "fixture_id": "cf02",
-                    "purpose": "Adds a closed-only ticket and an old incident that must not qualify.",
+                    "purpose": "Adds a closed-only ticket and a medium-severity incident; neither qualifies.",
                     "patch_sql": [
                         "INSERT INTO accounts VALUES (900843, 'Fixture Old', 'North', DATE '2026-06-20')",
                         "INSERT INTO support_tickets VALUES (900843, 900843, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'closed', NULL, '{}')",
-                        "INSERT INTO incidents VALUES (900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'high')",
+                        "INSERT INTO incidents VALUES (900843, 900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'medium')",
                     ],
                 },
             ],
@@ -3189,38 +3442,44 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "mutant_id": "m26_intersect",
                     "failure_category": "set_operation",
                     "description": "Requires membership in both sets.",
-                    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') INTERSECT SELECT s.account_id FROM subscriptions s JOIN incidents i ON i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id",
+                    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') INTERSECT SELECT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id",
                 },
                 {
                     "mutant_id": "m26_all_tickets",
                     "failure_category": "remove_predicate",
                     "description": "Includes closed tickets.",
-                    "sql": "SELECT DISTINCT account_id FROM support_tickets UNION SELECT DISTINCT s.account_id FROM subscriptions s JOIN incidents i ON i.severity = 'high' WHERE i.started_at >= DATE '2026-06-01' ORDER BY account_id",
+                    "sql": "SELECT DISTINCT account_id FROM support_tickets UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'high' ORDER BY account_id",
                 },
                 {
-                    "mutant_id": "m26_no_date",
-                    "failure_category": "wrong_temporal_anchor",
-                    "description": "Includes high-severity incidents from any date.",
-                    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT s.account_id FROM subscriptions s JOIN incidents i ON i.severity = 'high' ORDER BY account_id",
+                    "mutant_id": "m26_medium_incident",
+                    "failure_category": "wrong_literal",
+                    "description": "Selects medium-severity incidents instead of high-severity incidents.",
+                    "sql": "SELECT DISTINCT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT DISTINCT account_id FROM incidents WHERE severity = 'medium' ORDER BY account_id",
                 },
             ],
             [
-                "relationships.relationship:support_ops:subscription_account",
                 "business_rules.rule:support_open",
-                "temporal_rules.time:support_now",
+                "relationships.relationship:support_ops:incident_account",
+                "attributes.incidents.severity",
             ],
             outputs=["account_id"],
-            relationships=["relationship:support_ops:subscription_account"],
+            relationships=["relationship:support_ops:incident_account"],
             filters=[
                 {
                     "field": "support_tickets.status",
                     "operator": "IN",
                     "value": ["open", "pending"],
                     "scope": "row",
-                }
+                },
+                {
+                    "field": "incidents.severity",
+                    "operator": "=",
+                    "value": "high",
+                    "scope": "row",
+                },
             ],
             column_count=1,
-            row_order=True,
+            row_order=False,
         )
     )
     out.append(
@@ -3248,7 +3507,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_08",
             "support_ops",
-            "Join ticket requester email to incident code and list incident severities.",
+            "For the legacy import, match support tickets to incidents where the numeric ticket ID equals the incident ID and return incident severity.",
             "AUTHORITY_BLOCKED",
             ["authority", "relationship", "fail_closed"],
             "MEDIUM",
@@ -3256,11 +3515,12 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             None,
             [],
             [],
-            ["relationships.relationship:support_ops:tempting_incident_code"],
-            required_authority=["relationship:support_ops:tempting_incident_code"],
+            ["relationships.relationship:support_ops:tempting_ticket_incident_id"],
+            required_authority=["relationship:support_ops:tempting_ticket_incident_id"],
             evidence={
-                "missing_authority": "No authorized relationship maps ticket requester_email to incidents.incident_code.",
-                "tempting_physical_link": "Both are free-text identifiers but have no semantic link.",
+                "missing_authority": "No authorized relationship maps support_tickets.ticket_id to incidents.incident_id.",
+                "tempting_physical_link": "Both systems expose stable numeric identifiers and seeded values overlap, but identifier shape alone does not establish event identity.",
+                "authorized_alternative_not_equivalent": "The authorized ticket-account and incident-account paths identify shared accounts, not the requested ticket-to-incident identity.",
                 "expected_behavior": "BLOCKED_AUTHORITY",
             },
         )
@@ -3329,37 +3589,6 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
 def build_cases() -> None:
     all_cases = cases()
     for case, truth in all_cases:
-        if truth["case_id"] == "support_06":
-            for implementation in (
-                truth["reference_implementation_a"],
-                truth["reference_implementation_b"],
-            ):
-                implementation["sql"] = implementation["sql"].replace(
-                    "JOIN incidents i ON i.severity = 'high'",
-                    "JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high'",
-                )
-            for mutant in truth["semantic_mutants"]:
-                mutant["sql"] = mutant["sql"].replace(
-                    "JOIN incidents i ON i.severity = 'high'",
-                    "JOIN incidents i ON i.account_id = s.account_id AND i.severity = 'high'",
-                )
-            for fixture in truth["counterfactual_fixtures"]:
-                fixture["patch_sql"] = [
-                    item.replace(
-                        "INSERT INTO incidents VALUES (900841, '",
-                        "INSERT INTO incidents VALUES (900841, 900841, '",
-                    ).replace(
-                        "INSERT INTO incidents VALUES (900843, '",
-                        "INSERT INTO incidents VALUES (900843, 900843, '",
-                    )
-                    for item in fixture["patch_sql"]
-                ]
-            truth["required_context_facts"].append(
-                "relationships.relationship:support_ops:incident_account"
-            )
-            truth["semantic_target"]["relationships"].append(
-                "relationship:support_ops:incident_account"
-            )
         if truth["case_id"] == "commerce_05":
             for fixture in truth["counterfactual_fixtures"]:
                 fixture["patch_sql"] = [
@@ -3370,10 +3599,6 @@ def build_cases() -> None:
                 ]
         if truth["case_id"] == "fleet_06":
             for mutant in truth["semantic_mutants"]:
-                if mutant["mutant_id"] == "m16_no_tiebreak":
-                    mutant["sql"] = mutant["sql"].replace(
-                        "ORDER BY event_at DESC)", "ORDER BY event_at DESC, event_id ASC)"
-                    )
                 if mutant["mutant_id"] == "m16_global":
                     mutant["sql"] = mutant["sql"].replace(
                         "(payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER()",
@@ -3391,11 +3616,6 @@ def build_cases() -> None:
             )
             truth["counterfactual_fixtures"][1]["patch_sql"].append(
                 "INSERT INTO accounts VALUES (900805, 'Fixture Truly Empty 2', 'South', DATE '2026-06-20')"
-            )
-        if truth["case_id"] == "support_06":
-            truth["counterfactual_fixtures"][1]["patch_sql"].insert(
-                1,
-                "INSERT INTO subscriptions VALUES (900843, 900843, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
             )
         _dump(ROOT / "cases" / "pilot" / f"{case['case_id']}.json", case)
         _dump(ROOT / "ground_truth" / "pilot" / f"{truth['case_id']}.json", truth)

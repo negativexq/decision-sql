@@ -10,14 +10,14 @@
       "patch_sql": [
         "INSERT INTO fuel_events VALUES (900201, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1.00, 100.00)"
       ],
-      "purpose": "Adds a high-price purchase to distinguish average row costs from average component values."
+      "purpose": "Adds a high-price purchase to a vehicle and distinguishes average row costs from average component values within its home depot."
     },
     {
       "fixture_id": "cf02",
       "patch_sql": [
         "INSERT INTO fuel_events VALUES (900202, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 0.00, 100.00)"
       ],
-      "purpose": "Adds a zero-liter purchase; multiplication remains zero and is part of the population."
+      "purpose": "Adds a zero-liter purchase to a vehicle; multiplication remains zero and is part of the home-depot population."
     }
   ],
   "database_id": "fleet_ops",
@@ -32,11 +32,11 @@
   ],
   "reference_implementation_a": {
     "kind": "REFERENCE_IMPLEMENTATION_A",
-    "sql": "SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id"
+    "sql": "SELECT d.depot_id, ROUND(AVG(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id"
   },
   "reference_implementation_b": {
     "kind": "REFERENCE_IMPLEMENTATION_B",
-    "sql": "WITH costs AS (SELECT depot_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN costs ON costs.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id"
+    "sql": "WITH costs AS (SELECT vehicle_id, liters * price_per_liter AS cost FROM fuel_events) SELECT d.depot_id, ROUND(AVG(cost)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN costs ON costs.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id"
   },
   "reference_result_summaries": {
     "base": {
@@ -44,7 +44,7 @@
         "depot_id",
         "average_cost"
       ],
-      "result_sha256": "69c5dcd407d81a9f119d4db02b42f78840046ae1e4f99a1fd26cd2abd83da3d6",
+      "result_sha256": "90cceff937ccbf6550dabfc332d3e952dde04246390d55749ad848f5abc5e188",
       "row_count": 8
     },
     "cf01": {
@@ -52,7 +52,7 @@
         "depot_id",
         "average_cost"
       ],
-      "result_sha256": "c448f66c560b102fef660e99c11216439c8501aa50efa05003d2f6c93ebb2440",
+      "result_sha256": "67025b3e2248fd19645a1f96968057bde66d93965305ff56584524d8bbd4191f",
       "row_count": 8
     },
     "cf02": {
@@ -60,33 +60,44 @@
         "depot_id",
         "average_cost"
       ],
-      "result_sha256": "2b207f6d6f6b9c131c3e324400286f6fc6c94910bf3acf15b8211afc67725f25",
+      "result_sha256": "081439f023deb27ed9a3285609345ec968cd5bfdae3f17b199cca65077810de0",
       "row_count": 8
     }
   },
   "required_authority": [],
   "required_context_facts": [
     "relationships.relationship:fleet_ops:fuel_vehicle",
-    "relationships.relationship:fleet_ops:vehicle_depot"
+    "relationships.relationship:fleet_ops:vehicle_depot",
+    "attributes.fuel_events.liters",
+    "attributes.fuel_events.price_per_liter"
   ],
   "semantic_mutants": [
     {
       "description": "Sums costs rather than averaging them.",
       "failure_category": "avg_vs_sum",
       "mutant_id": "m12_sum",
-      "sql": "SELECT d.depot_id, ROUND(SUM(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id"
+      "semantic_rationale": "Sums costs rather than averaging them.",
+      "sql": "SELECT d.depot_id, ROUND(SUM(f.liters * f.price_per_liter)::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
+      "status": "VALID",
+      "target_component": "avg_vs_sum"
     },
     {
       "description": "Averages liters and price separately then multiplies.",
       "failure_category": "wrong_metric_operand",
       "mutant_id": "m12_sum_components",
-      "sql": "SELECT d.depot_id, ROUND((AVG(f.liters) * AVG(f.price_per_liter))::numeric, 2) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id"
+      "semantic_rationale": "Averages liters and price separately then multiplies.",
+      "sql": "SELECT d.depot_id, ROUND((AVG(f.liters) * AVG(f.price_per_liter))::numeric, 2) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
+      "status": "VALID",
+      "target_component": "wrong_metric_operand"
     },
     {
       "description": "Leaves the declared two-decimal display unrounded.",
       "failure_category": "rounding_stage",
       "mutant_id": "m12_no_round",
-      "sql": "SELECT d.depot_id, AVG(f.liters * f.price_per_liter) AS average_cost FROM depots d JOIN fuel_events f ON f.depot_id = d.depot_id GROUP BY d.depot_id ORDER BY d.depot_id"
+      "semantic_rationale": "Leaves the declared two-decimal display unrounded.",
+      "sql": "SELECT d.depot_id, AVG(f.liters * f.price_per_liter) AS average_cost FROM depots d JOIN vehicles v ON v.depot_id = d.depot_id JOIN fuel_events f ON f.vehicle_id = v.vehicle_id GROUP BY d.depot_id ORDER BY d.depot_id",
+      "status": "VALID",
+      "target_component": "rounding_stage"
     }
   ],
   "semantic_target": {
@@ -113,6 +124,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "depot_id",
       "average_cost"
@@ -125,16 +137,47 @@
       "calculation",
       "precision"
     ],
+    "reference_relationships": [
+      "relationship:fleet_ops:vehicle_depot",
+      "relationship:fleet_ops:fuel_vehicle"
+    ],
     "relationships": [
-      "relationship:fleet_ops:vehicle_depot"
+      "relationship:fleet_ops:vehicle_depot",
+      "relationship:fleet_ops:fuel_vehicle"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "Declared calculation precision or visible metric rule.",
+        "source": "QUESTION"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

@@ -71,19 +71,28 @@
       "description": "Reads battery temperature rather than engine temperature.",
       "failure_category": "wrong_nested_field",
       "mutant_id": "m11_wrong_json_path",
-      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE (payload #>> '{battery,temperature_c}')::numeric >= 100 ORDER BY event_id"
+      "semantic_rationale": "Reads battery temperature rather than engine temperature.",
+      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE (payload #>> '{battery,temperature_c}')::numeric >= 100 ORDER BY event_id",
+      "status": "VALID",
+      "target_component": "wrong_nested_field"
     },
     {
       "description": "Excludes exactly 100 Celsius.",
       "failure_category": "wrong_comparison_operator",
       "mutant_id": "m11_strict",
-      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE (payload #>> '{engine,temperature_c}')::numeric > 100 ORDER BY event_id"
+      "semantic_rationale": "Excludes exactly 100 Celsius.",
+      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE (payload #>> '{engine,temperature_c}')::numeric > 100 ORDER BY event_id",
+      "status": "VALID",
+      "target_component": "wrong_comparison_operator"
     },
     {
       "description": "Compares JSON text lexically.",
       "failure_category": "wrong_type",
       "mutant_id": "m11_no_cast",
-      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE payload #>> '{engine,temperature_c}' >= '100' ORDER BY event_id"
+      "semantic_rationale": "Compares JSON text lexically.",
+      "sql": "SELECT event_id, vehicle_id FROM telemetry_events WHERE payload #>> '{engine,temperature_c}' >= '100' ORDER BY event_id",
+      "status": "VALID",
+      "target_component": "wrong_type"
     }
   ],
   "semantic_target": {
@@ -102,6 +111,7 @@
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
     "ordering": {},
+    "ordering_provenance": "NOT_APPLICABLE",
     "outputs": [
       "event_id",
       "vehicle_id"
@@ -112,14 +122,41 @@
       "filter",
       "simple_projection"
     ],
+    "reference_relationships": [],
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "No requested display order.",
+        "source": "NOT_APPLICABLE"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "No semantic time rule.",
+        "source": "NOT_APPLICABLE"
+      }
     },
     "temporal_semantics": {}
   },

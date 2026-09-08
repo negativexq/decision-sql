@@ -80,19 +80,28 @@
       "description": "Chooses the oldest event.",
       "failure_category": "asc_desc",
       "mutant_id": "m16_oldest",
-      "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at ASC, event_id ASC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id"
+      "semantic_rationale": "Chooses the oldest event.",
+      "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at ASC, event_id ASC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+      "status": "VALID",
+      "target_component": "asc_desc"
     },
     {
-      "description": "Omits deterministic event ID tie-breaking.",
-      "failure_category": "ordering",
-      "mutant_id": "m16_no_tiebreak",
-      "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id ASC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id"
+      "description": "Returns every telemetry event instead of the latest event per vehicle.",
+      "failure_category": "remove_filter",
+      "mutant_id": "m16_returns_all_events",
+      "semantic_rationale": "Returns every telemetry event instead of the latest event per vehicle.",
+      "sql": "SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC",
+      "status": "VALID",
+      "target_component": "remove_filter"
     },
     {
       "description": "Ranks all telemetry globally.",
       "failure_category": "window_partition",
       "mutant_id": "m16_global",
-      "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, temperature_c, ROW_NUMBER() OVER (ORDER BY event_at DESC, event_id DESC) AS rn FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, event_id FROM telemetry_events) x) AS latest WHERE rn = 1 ORDER BY vehicle_id"
+      "semantic_rationale": "Ranks all telemetry globally.",
+      "sql": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, temperature_c, ROW_NUMBER() OVER (ORDER BY event_at DESC, event_id DESC) AS rn FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, event_id FROM telemetry_events) x) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+      "status": "VALID",
+      "target_component": "window_partition"
     }
   ],
   "semantic_target": {
@@ -112,6 +121,7 @@
         "vehicle_id"
       ]
     },
+    "ordering_provenance": "QUESTION_EXPLICIT",
     "outputs": [
       "vehicle_id",
       "event_at",
@@ -125,6 +135,9 @@
       "json",
       "ordering"
     ],
+    "reference_relationships": [
+      "relationship:fleet_ops:telemetry_vehicle"
+    ],
     "relationships": [
       "relationship:fleet_ops:telemetry_vehicle"
     ],
@@ -136,7 +149,36 @@
       "row_order": true,
       "timestamp_timezone": "UTC"
     },
-    "temporal_semantics": {}
+    "semantic_provenance": {
+      "filters": {
+        "evidence": "No semantic filter.",
+        "source": "NOT_APPLICABLE"
+      },
+      "limit": {
+        "evidence": "No result limit.",
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "evidence": "Declared result ordering.",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "evidence": "Declared population wording.",
+        "source": "QUESTION"
+      },
+      "rounding": {
+        "evidence": "No semantic rounding rule.",
+        "source": "NOT_APPLICABLE"
+      },
+      "temporal": {
+        "evidence": "Declared temporal wording.",
+        "source": "QUESTION"
+      }
+    },
+    "temporal_semantics": {
+      "basis": "latest telemetry event per vehicle",
+      "tie_break": "event_id DESC"
+    }
   },
   "status": "MACHINE_VALIDATED"
 }

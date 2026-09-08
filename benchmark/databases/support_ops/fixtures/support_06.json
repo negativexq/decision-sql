@@ -9,21 +9,19 @@
       "fixture_id": "cf01",
       "patch_sql": [
         "INSERT INTO accounts VALUES (900841, 'Fixture Incident', 'North', DATE '2026-06-20')",
-        "INSERT INTO subscriptions VALUES (900841, 900841, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
         "INSERT INTO incidents VALUES (900841, 900841, 'INC-900841', TIMESTAMPTZ '2026-06-20 00:00:00+00', 'high')",
         "INSERT INTO support_tickets VALUES (900842, 900841, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
       ],
-      "purpose": "Adds one account to each set and one overlap, proving UNION distinct semantics."
+      "purpose": "Adds one high-severity incident account and one open-ticket overlap, proving direct account linkage and UNION distinct semantics."
     },
     {
       "fixture_id": "cf02",
       "patch_sql": [
         "INSERT INTO accounts VALUES (900843, 'Fixture Old', 'North', DATE '2026-06-20')",
-        "INSERT INTO subscriptions VALUES (900843, 900843, 1, 'active', DATE '2026-06-20', DATE '2027-01-01')",
         "INSERT INTO support_tickets VALUES (900843, 900843, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'closed', NULL, '{}')",
-        "INSERT INTO incidents VALUES (900843, 900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'high')"
+        "INSERT INTO incidents VALUES (900843, 900843, 'INC-900843', TIMESTAMPTZ '2025-01-01 00:00:00+00', 'medium')"
       ],
-      "purpose": "Adds a closed-only ticket and an old incident that must not qualify."
+      "purpose": "Adds a closed-only ticket and a medium-severity incident; neither qualifies."
     }
   ]
 }

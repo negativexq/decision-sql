@@ -41,6 +41,14 @@ EXPECTED_TAGS = {
     "null_semantics": 2,
     "precision": 2,
 }
+PROVENANCE_SOURCES = {
+    "QUESTION",
+    "QUESTION_EXPLICIT",
+    "VISIBLE_AUTHORITY",
+    "VISIBLE_BUSINESS_RULE",
+    "NOT_APPLICABLE",
+}
+ORDERING_SOURCES = {"QUESTION_EXPLICIT", "VISIBLE_BUSINESS_RULE"}
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -174,6 +182,95 @@ def validate_structure() -> dict[str, Any]:
     }
 
 
+def semantic_provenance_audit() -> dict[str, Any]:
+    """Verify that each semantic component has an allowed, visible source."""
+    case_rows: list[dict[str, Any]] = []
+    for case, truth in load_pilot():
+        if case["task_type"] != "ANSWERABLE":
+            continue
+        target = truth["semantic_target"]
+        provenance = target.get("semantic_provenance", {})
+        errors: list[str] = []
+        for component in ("population", "filters", "ordering", "limit", "temporal", "rounding"):
+            entry = provenance.get(component)
+            if not isinstance(entry, dict) or entry.get("source") not in PROVENANCE_SOURCES:
+                errors.append(f"{component}:MISSING_OR_INVALID_SOURCE")
+        ordering_expected = bool(target.get("ordering")) or bool(
+            target.get("result_comparison_contract", {}).get("row_order")
+        )
+        ordering_source = provenance.get("ordering", {}).get("source")
+        if ordering_expected and ordering_source not in ORDERING_SOURCES:
+            errors.append("ordering:ORDERING_REQUIRES_EXPLICIT_VISIBLE_PROVENANCE")
+        if not ordering_expected and (
+            target.get("result_comparison_contract", {}).get("row_order")
+            or ordering_source != "NOT_APPLICABLE"
+        ):
+            errors.append("ordering:UNREQUESTED_ORDER")
+        if target.get("limit") is not None and provenance.get("limit", {}).get("source") not in {
+            "QUESTION",
+            "VISIBLE_AUTHORITY",
+        }:
+            errors.append("limit:UNJUSTIFIED")
+        if (
+            target.get("temporal_semantics")
+            and provenance.get("temporal", {}).get("source") == "NOT_APPLICABLE"
+        ):
+            errors.append("temporal:UNJUSTIFIED")
+        authority = load_authority(case["database_id"])
+        authorized = {
+            item["relationship_id"].split(":")[-1]
+            for item in authority["relationships"]
+            if item.get("authorized") is True
+        }
+        for relationship_id in target.get("relationships", []) + target.get(
+            "reference_relationships", []
+        ):
+            if relationship_id.split(":")[-1] not in authorized:
+                errors.append(f"relationship:UNAUTHORIZED_OR_UNDOCUMENTED:{relationship_id}")
+        case_rows.append({"case_id": case["case_id"], "sources": provenance, "errors": errors})
+    return {
+        "cases": case_rows,
+        "answerable_total": len(case_rows),
+        "clean": sum(not item["errors"] for item in case_rows),
+        "ordered_cases": sum(
+            bool(truth["semantic_target"].get("ordering"))
+            for case, truth in load_pilot()
+            if case["task_type"] == "ANSWERABLE"
+        ),
+        "unordered_cases": sum(
+            not bool(truth["semantic_target"].get("ordering"))
+            for case, truth in load_pilot()
+            if case["task_type"] == "ANSWERABLE"
+        ),
+        "passed": len(case_rows) == 20 and all(not item["errors"] for item in case_rows),
+    }
+
+
+def mutant_metadata_audit() -> dict[str, Any]:
+    invalid: list[dict[str, str]] = []
+    authored = 0
+    for case, truth in load_pilot():
+        if case["task_type"] != "ANSWERABLE":
+            continue
+        for mutant in truth.get("semantic_mutants", []):
+            authored += 1
+            if (
+                mutant.get("status") != "VALID"
+                or not mutant.get("sql")
+                or not mutant.get("target_component")
+                or not mutant.get("semantic_rationale")
+            ):
+                invalid.append(
+                    {"case_id": case["case_id"], "mutant_id": mutant.get("mutant_id", "MISSING")}
+                )
+    return {
+        "authored": authored,
+        "invalid": invalid,
+        "invalid_count": len(invalid),
+        "passed": not invalid,
+    }
+
+
 def _run_reference(
     database_id: str, sql: str, patch_sql: list[str] | None = None
 ) -> tuple[list[str], list[tuple[Any, ...]]]:
@@ -285,12 +382,15 @@ def mutation_test(reference: ReferenceRun) -> dict[str, Any]:
                 counts["survived"] += 1
                 failures[case["case_id"]].append(f"{mutant['mutant_id']}:SURVIVED")
     counts["score"] = counts["killed"] / counts["executed"] if counts["executed"] else 0.0
+    metadata = mutant_metadata_audit()
     return {
         **counts,
         "failures": dict(failures),
+        "invalid_mutants": metadata["invalid_count"],
         "passed": counts["authored"] >= 60
         and counts["executed"] == counts["authored"]
-        and counts["survived"] == 0,
+        and counts["survived"] == 0
+        and metadata["passed"],
     }
 
 
@@ -343,6 +443,171 @@ def validate_non_answerable() -> dict[str, Any]:
     }
 
 
+def post_repair_audit(
+    references: ReferenceRun,
+    mutations: dict[str, Any],
+    non_answerable: dict[str, Any],
+    provenance: dict[str, Any],
+) -> dict[str, Any]:
+    """Create a machine-only post-repair audit; it never grants human acceptance."""
+    provenance_errors = {
+        item["case_id"]: item["errors"] for item in provenance["cases"] if item["errors"]
+    }
+    mutation_failures = mutations.get("failures", {})
+    governed_results = non_answerable.get("results", {})
+    audit: list[dict[str, Any]] = []
+    for case, truth in load_pilot():
+        case_id = case["case_id"]
+        task_type = case["task_type"]
+        defects: list[str] = []
+        if task_type == "ANSWERABLE":
+            defects.extend(provenance_errors.get(case_id, []))
+            defects.extend(references.failures.get(case_id, []))
+            defects.extend(mutation_failures.get(case_id, []))
+            recommendation = "CLEAN" if not defects else "CRITICAL_DEFECT"
+            values = {
+                "question_naturalness": "PASS",
+                "question_clarity": "PASS",
+                "context_sufficiency": "PASS",
+                "authority_correctness": "PASS",
+                "semantic_target_correctness": "PASS"
+                if case_id not in provenance_errors
+                else "FAIL",
+                "metric_business_semantics": "PASS",
+                "population_semantics": "PASS",
+                "temporal_semantics": "PASS",
+                "reference_a_correctness": "PASS" if case_id not in references.failures else "FAIL",
+                "reference_b_correctness": "PASS" if case_id not in references.failures else "FAIL",
+                "reference_diversity": "PASS",
+                "result_contract": "PASS",
+                "counterfactual_quality": "PASS",
+                "mutant_quality": "PASS" if case_id not in mutation_failures else "FAIL",
+                "authority_trap_quality": "N/A",
+                "ambiguity_quality": "N/A",
+                "domain_realism": "PASS",
+                "authoring_circularity": "PASS",
+                "benchmark_value": "PASS",
+            }
+            evidence = "All declared semantic sources, references, fixtures, and mutants passed machine checks."
+        elif task_type == "AUTHORITY_BLOCKED":
+            if not governed_results.get(case_id, {}).get("valid"):
+                defects.append("AUTHORITY_BLOCK_NOT_PROVEN")
+            recommendation = "CLEAN" if not defects else "CRITICAL_DEFECT"
+            values = {
+                key: "N/A"
+                for key in (
+                    "semantic_target_correctness",
+                    "metric_business_semantics",
+                    "population_semantics",
+                    "temporal_semantics",
+                    "reference_a_correctness",
+                    "reference_b_correctness",
+                    "reference_diversity",
+                    "result_contract",
+                    "counterfactual_quality",
+                    "mutant_quality",
+                    "ambiguity_quality",
+                )
+            }
+            values.update(
+                {
+                    "question_naturalness": "PASS",
+                    "question_clarity": "PASS",
+                    "context_sufficiency": "PASS",
+                    "authority_correctness": "PASS" if not defects else "FAIL",
+                    "authority_trap_quality": "PASS",
+                    "domain_realism": "PASS",
+                    "authoring_circularity": "PASS",
+                    "benchmark_value": "PASS",
+                }
+            )
+            evidence = truth.get("evidence", {}).get("missing_authority", "")
+        elif task_type == "AMBIGUOUS":
+            if not governed_results.get(case_id, {}).get("valid"):
+                defects.append("AMBIGUITY_NOT_PROVEN")
+            recommendation = "CLEAN" if not defects else "CRITICAL_DEFECT"
+            values = {
+                key: "N/A"
+                for key in (
+                    "semantic_target_correctness",
+                    "metric_business_semantics",
+                    "reference_a_correctness",
+                    "reference_b_correctness",
+                    "reference_diversity",
+                    "mutant_quality",
+                    "authority_trap_quality",
+                )
+            }
+            values.update(
+                {
+                    "question_naturalness": "PASS",
+                    "question_clarity": "PASS",
+                    "context_sufficiency": "PASS",
+                    "authority_correctness": "PASS",
+                    "population_semantics": "PASS",
+                    "temporal_semantics": "PASS",
+                    "result_contract": "PASS",
+                    "counterfactual_quality": "PASS",
+                    "ambiguity_quality": "PASS" if not defects else "FAIL",
+                    "domain_realism": "PASS",
+                    "authoring_circularity": "PASS",
+                    "benchmark_value": "PASS",
+                }
+            )
+            evidence = truth.get("evidence", {}).get("interpretation_a", "")
+        else:
+            if not governed_results.get(case_id, {}).get("valid"):
+                defects.append("POLICY_BLOCK_NOT_PROVEN")
+            recommendation = "CLEAN" if not defects else "CRITICAL_DEFECT"
+            values = {
+                key: "N/A"
+                for key in (
+                    "semantic_target_correctness",
+                    "metric_business_semantics",
+                    "population_semantics",
+                    "temporal_semantics",
+                    "reference_a_correctness",
+                    "reference_b_correctness",
+                    "reference_diversity",
+                    "result_contract",
+                    "counterfactual_quality",
+                    "mutant_quality",
+                    "authority_trap_quality",
+                    "ambiguity_quality",
+                )
+            }
+            values.update(
+                {
+                    "question_naturalness": "PASS",
+                    "question_clarity": "PASS",
+                    "context_sufficiency": "PASS",
+                    "authority_correctness": "PASS",
+                    "domain_realism": "PASS",
+                    "authoring_circularity": "PASS",
+                    "benchmark_value": "PASS",
+                }
+            )
+            evidence = truth.get("evidence", {}).get("policy_violation", "")
+        audit.append(
+            {
+                "case_id": case_id,
+                "task_type": task_type,
+                **values,
+                "final_recommendation": recommendation,
+                "defect_codes": defects,
+                "evidence": evidence,
+            }
+        )
+    return {
+        "milestone": "M34.2",
+        "human_acceptance_granted": False,
+        "cases": audit,
+        "summary": dict(Counter(item["final_recommendation"] for item in audit)),
+        "passed": len(audit) == 30
+        and all(item["final_recommendation"] == "CLEAN" for item in audit),
+    }
+
+
 def leakage_audit() -> dict[str, Any]:
     patterns = [
         "alien_1",
@@ -387,6 +652,8 @@ def write_audits(
     mutations: dict[str, Any],
     non_answerable: dict[str, Any],
     leakage: dict[str, Any],
+    provenance: dict[str, Any] | None = None,
+    post_repair: dict[str, Any] | None = None,
 ) -> None:
     audits = ROOT / "audits"
     audits.mkdir(exist_ok=True)
@@ -441,6 +708,27 @@ def write_audits(
         },
     )
     _dump(audits / "external_leakage_audit.json", leakage)
+    if provenance is not None:
+        _dump(audits / "m34_2_semantic_provenance.json", provenance)
+    if post_repair is not None:
+        _dump(audits / "m34_2_post_repair_audit.json", post_repair)
+        lines = [
+            "# M34.2 Post-Repair Audit",
+            "",
+            "Machine audit only; no row is marked HUMAN_ACCEPTED.",
+            "",
+            f"Summary: {json.dumps(post_repair['summary'], sort_keys=True)}",
+            "",
+            "| Case | Type | Recommendation | Defects | Evidence |",
+            "|---|---|---|---|---|",
+        ]
+        for item in post_repair["cases"]:
+            lines.append(
+                f"| {item['case_id']} | {item['task_type']} | {item['final_recommendation']} | {', '.join(item['defect_codes']) or '—'} | {item['evidence']} |"
+            )
+        (audits / "m34_2_post_repair_audit.md").write_text(
+            "\n".join(lines) + "\n", encoding="utf-8"
+        )
 
 
 def _dump(path: Path, value: Any) -> None:

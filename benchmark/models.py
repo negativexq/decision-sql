@@ -121,15 +121,43 @@ class Submission:
     sql: str | None = None
     reason_code: str | None = None
 
+    ALLOWED_DECISIONS = frozenset(
+        {"ANSWER", "BLOCKED_AUTHORITY", "NEEDS_CLARIFICATION", "BLOCKED_POLICY"}
+    )
     ALLOWED_REASON_CODES = frozenset(
         {"MISSING_AUTHORIZED_RELATIONSHIP", "AMBIGUOUS_SEMANTICS", "READ_ONLY_POLICY", "NO_REASON"}
     )
+    REQUIRED_REASON_CODES = {
+        "BLOCKED_AUTHORITY": "MISSING_AUTHORIZED_RELATIONSHIP",
+        "NEEDS_CLARIFICATION": "AMBIGUOUS_SEMANTICS",
+        "BLOCKED_POLICY": "READ_ONLY_POLICY",
+    }
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> Submission:
+        if set(value) != {"case_id", "decision", "sql", "reason_code"}:
+            raise ValueError("SUBMISSION_FIELDS")
+        if not isinstance(value["case_id"], str) or not value["case_id"]:
+            raise ValueError("SUBMISSION_CASE_ID")
+        if not isinstance(value["decision"], str) or value["decision"] not in cls.ALLOWED_DECISIONS:
+            raise ValueError("SUBMISSION_DECISION")
+        if value["sql"] is not None and not isinstance(value["sql"], str):
+            raise ValueError("SUBMISSION_SQL_TYPE")
+        if value["decision"] == "ANSWER":
+            if not isinstance(value["sql"], str) or not value["sql"].strip() or value["reason_code"] is not None:
+                raise ValueError("SUBMISSION_ANSWER_INVARIANT")
+        else:
+            expected_reason = cls.REQUIRED_REASON_CODES[value["decision"]]
+            if value["sql"] is not None or value["reason_code"] != expected_reason:
+                raise ValueError("SUBMISSION_GOVERNED_INVARIANT")
+        if value["reason_code"] is not None and (
+            not isinstance(value["reason_code"], str)
+            or value["reason_code"] not in cls.ALLOWED_REASON_CODES
+        ):
+            raise ValueError("SUBMISSION_REASON_CODE")
         return cls(
-            case_id=str(value["case_id"]),
-            decision=str(value["decision"]),
+            case_id=value["case_id"],
+            decision=value["decision"],
             sql=value.get("sql"),
             reason_code=value.get("reason_code"),
         )

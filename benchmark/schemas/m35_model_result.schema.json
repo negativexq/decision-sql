@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decision-SQL M35 model result record",
+  "type": "object",
+  "required": ["case_id", "request_sha256", "provider_response_sha256", "parsed_submission", "transport_status", "schema_validation", "failure_category", "benchmark_result", "latency_ms"],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "request_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "provider_response_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "parsed_submission": {"anyOf": [{"$ref": "model_submission.schema.json"}, {"type": "null"}]},
+    "transport_status": {"enum": ["SUCCESS", "TRANSPORT_FAILURE"]},
+    "schema_validation": {"enum": ["PASS", "PROVIDER_SCHEMA_FAILURE", "INVALID_SUBMISSION"]},
+    "failure_category": {"enum": ["TRANSPORT_FAILURE", "PROVIDER_SCHEMA_FAILURE", "INVALID_SUBMISSION", "WRONG_GOVERNED_DECISION", "SQL_ADMISSION_FAILURE", "EXECUTION_FAILURE", "RESULT_MISMATCH", "CORRECT"]},
+    "benchmark_result": {"enum": ["CORRECT", "WRONG_GOVERNED_DECISION", "SQL_ADMISSION_FAILURE", "EXECUTION_FAILURE", "RESULT_MISMATCH", null]},
+    "fixture_failure": {"type": ["string", "null"]},
+    "latency_ms": {"type": ["number", "null"], "minimum": 0},
+    "token_usage": {"type": ["object", "null"]}
+  }
+}

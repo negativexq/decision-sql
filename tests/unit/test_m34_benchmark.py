@@ -41,7 +41,7 @@ def test_submission_contract_and_mutation_vocabulary() -> None:
             "case_id": "commerce_10",
             "decision": "BLOCKED_POLICY",
             "sql": None,
-            "reason_code": "READ_ONLY",
+            "reason_code": "READ_ONLY_POLICY",
         }
     )
     assert submission.decision == "BLOCKED_POLICY"

@@ -20,6 +20,7 @@ from benchmark.authoring import (
 )
 from benchmark.context import load_authority
 from benchmark.evaluator import evaluate_file
+from benchmark.model_runner import dry_run
 from benchmark.validator import (
     EXPECTED_TAGS,
     leakage_audit,
@@ -645,6 +646,10 @@ def main() -> int:
     evaluate_parser = sub.add_parser("evaluate")
     evaluate_parser.add_argument("--submission", required=True)
     evaluate_parser.add_argument("--split", default="pilot")
+    run_model_parser = sub.add_parser("run-model")
+    run_model_parser.add_argument("--split", default="pilot")
+    run_model_parser.add_argument("--experiment-config", required=True)
+    run_model_parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     if args.command == "build":
         build_all()
@@ -653,6 +658,25 @@ def main() -> int:
         result = evaluate_file(Path(args.submission))
         print(json.dumps(result, indent=2, default=str))
         return 0 if result["submissions"] == result["passed"] else 1
+    if args.command == "run-model":
+        if args.split != "pilot":
+            parser.error("M34.3 model contract currently supports only --split pilot")
+        if not args.dry_run:
+            parser.error(
+                "M34.3 refuses provider execution; pass --dry-run. M35 is not run yet."
+            )
+        result = dry_run(Path(args.experiment_config))
+        print(
+            json.dumps(
+                {
+                    "passed": result["passed"],
+                    "provider_calls": result["provider_calls"],
+                    "report": str(ROOT / "reports" / "m34_3_model_contract_report.md"),
+                },
+                indent=2,
+            )
+        )
+        return 0 if result["passed"] else 1
     if args.command in {"validate", "report"}:
         return run_all()
     if args.command == "validate-references":

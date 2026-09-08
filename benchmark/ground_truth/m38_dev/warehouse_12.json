@@ -27,8 +27,11 @@
     "sql": "SELECT carrier_id, carrier_name FROM (SELECT c.carrier_id,c.carrier_name,ROW_NUMBER() OVER (ORDER BY COUNT(s.shipment_id) DESC,c.carrier_id) rn FROM carriers c LEFT JOIN shipments s ON s.carrier_id=c.carrier_id GROUP BY c.carrier_id,c.carrier_name) x WHERE rn<=2 ORDER BY rn"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:carriers:carrier_id",
+    "attributes:warehouse_logistics:carriers:carrier_name",
+    "attributes:warehouse_logistics:shipments:carrier_id",
+    "attributes:warehouse_logistics:shipments:shipment_id",
+    "relationship:warehouse_logistics:shipment_carrier"
   ],
   "semantic_mutants": [
     {
@@ -103,8 +106,7 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
+      "relationship:warehouse_logistics:shipment_carrier"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,

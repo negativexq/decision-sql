@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 from benchmark.m38_authoring import new_cases
-from benchmark.model_contract import frozen_benchmark_content_hash
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -43,7 +42,12 @@ def test_m38_offline_quality_artifacts_are_clean() -> None:
     assert leakage["passed"] is True
     assert manifest["provider_calls"] == 0
     assert manifest["model_baseline"] == "NOT_RUN"
-    assert manifest["benchmark_content_hash"] == frozen_benchmark_content_hash()
+    # M38 is historical evidence.  M40 intentionally creates a new content
+    # hash after repairing model-visible context and semantic contracts.
+    assert (
+        manifest["benchmark_content_hash"]
+        == "32fb1f941773f4ec7d7ccc1fa38525e2730509b00c5df1f5f7dbb72cc5c77226"
+    )
 
 
 def test_m38_new_cases_have_required_answerable_contracts_and_mutation_gate() -> None:

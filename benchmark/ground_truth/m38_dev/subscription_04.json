@@ -25,8 +25,18 @@
     "sql": "SELECT account_id, SUM(net_amount) AS net_collected FROM (SELECT i.account_id, p.amount - COALESCE((SELECT SUM(r.amount) FROM refunds r WHERE r.payment_id = p.payment_id),0) AS net_amount FROM invoices i JOIN payments p ON p.invoice_id=i.invoice_id WHERE p.status='captured') x GROUP BY account_id ORDER BY account_id"
   },
   "required_context_facts": [
-    "relationships:subscription_billing:subscription_account",
-    "metrics:subscription_billing:net_collected"
+    "attributes:subscription_billing:invoices:account_id",
+    "attributes:subscription_billing:invoices:invoice_id",
+    "attributes:subscription_billing:payments:amount",
+    "attributes:subscription_billing:payments:invoice_id",
+    "attributes:subscription_billing:payments:payment_id",
+    "attributes:subscription_billing:payments:status",
+    "attributes:subscription_billing:refunds:amount",
+    "attributes:subscription_billing:refunds:payment_id",
+    "metrics:subscription_billing:net_collected",
+    "relationship:subscription_billing:payment_invoice",
+    "relationship:subscription_billing:refund_payment",
+    "temporal_rules:subscription_billing:clock"
   ],
   "semantic_mutants": [
     {
@@ -67,13 +77,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "account_id",
-        "net_collected"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "account_id",
       "net_collected"
@@ -101,15 +105,15 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:subscription_billing:subscription_account",
-      "metrics:subscription_billing:net_collected"
+      "relationship:subscription_billing:payment_invoice",
+      "relationship:subscription_billing:refund_payment"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -120,7 +124,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

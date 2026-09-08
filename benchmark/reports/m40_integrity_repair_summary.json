@@ -1,0 +1,668 @@
+{
+  "benchmark_content_hash": "aeea34b3b71d90806ee18a6bd3d3dd29ab0f06b5e8e7d8fd47119bb5031d5281",
+  "benchmark_version": "0.2.1-dev",
+  "cases": 90,
+  "context_coverage": {
+    "answerable": 60,
+    "complete": 60,
+    "required_fields": 278,
+    "required_json_paths": 5,
+    "required_tie_break_fields": 19,
+    "visible_fields": 278,
+    "visible_json_paths": 5,
+    "visible_tie_break_fields": 19
+  },
+  "databases": 6,
+  "distribution": {
+    "AMBIGUOUS": 9,
+    "ANSWERABLE": 60,
+    "AUTHORITY_BLOCKED": 15,
+    "POLICY_BLOCKED": 6
+  },
+  "governance": {
+    "distribution": {
+      "AMBIGUOUS": 9,
+      "ANSWERABLE": 60,
+      "AUTHORITY_BLOCKED": 15,
+      "POLICY_BLOCKED": 6
+    },
+    "invalid": {},
+    "passed": true
+  },
+  "historical_m39": {
+    "benchmark_content_hash": "32fb1f941773f4ec7d7ccc1fa38525e2730509b00c5df1f5f7dbb72cc5c77226",
+    "benchmark_version": "0.2.0-dev",
+    "official_answerable_tsa": "32/60",
+    "official_governed_success": "60/90",
+    "provider_calls": 90
+  },
+  "leakage": {
+    "cases": 90,
+    "details": {},
+    "leakage_cases": 0,
+    "passed": true
+  },
+  "mutants": {
+    "authored": 188,
+    "executed": 188,
+    "failures": {},
+    "families": {
+      "FILTER_SCOPE_ERROR": 7,
+      "JSON_TYPE_COERCION_ERROR": 4,
+      "LATEST_ROW_ERROR": 6,
+      "LIMIT_SEMANTICS_ERROR": 40,
+      "RELATIONSHIP_PATH_ERROR": 13,
+      "TEMPORAL_BOUNDARY_ERROR": 3,
+      "WRONG_AGGREGATION_GRAIN": 7,
+      "asc_desc": 3,
+      "avg_vs_sum": 3,
+      "count_vs_count_distinct": 1,
+      "inner_left_join": 4,
+      "null_default_policy": 2,
+      "projection": 47,
+      "ratio_numerator_denominator": 1,
+      "remove_filter": 1,
+      "remove_limit": 2,
+      "remove_predicate": 12,
+      "rounding_stage": 2,
+      "set_operation": 1,
+      "where_filter_scope": 4,
+      "window_partition": 1,
+      "wrong_aggregation_grain": 3,
+      "wrong_comparison_operator": 4,
+      "wrong_join_path": 1,
+      "wrong_literal": 5,
+      "wrong_metric_operand": 4,
+      "wrong_nested_field": 2,
+      "wrong_population": 2,
+      "wrong_temporal_anchor": 2,
+      "wrong_type": 1
+    },
+    "invalid": 0,
+    "killed": 188,
+    "killed_by_fixture": {
+      "base": 171,
+      "cf01": 62,
+      "cf02": 60,
+      "cf03": 7,
+      "risk_01_cf1_c7f14c": 3,
+      "risk_01_cf2_23f78e": 3,
+      "risk_02_cf1_c7f14c": 3,
+      "risk_02_cf2_23f78e": 3,
+      "risk_03_cf1_c7f14c": 3,
+      "risk_03_cf2_23f78e": 3,
+      "risk_04_cf1_c7f14c": 3,
+      "risk_04_cf2_23f78e": 3,
+      "risk_05_cf1_c7f14c": 3,
+      "risk_05_cf2_23f78e": 3,
+      "risk_06_cf1_c7f14c": 3,
+      "risk_06_cf2_23f78e": 3,
+      "risk_07_cf1_c7f14c": 3,
+      "risk_07_cf2_23f78e": 3,
+      "risk_08_cf1_c7f14c": 3,
+      "risk_08_cf2_23f78e": 3,
+      "risk_09_cf1_c7f14c": 3,
+      "risk_09_cf2_23f78e": 3,
+      "risk_10_cf1_c7f14c": 3,
+      "risk_10_cf2_23f78e": 3,
+      "risk_11_cf1_c7f14c": 3,
+      "risk_11_cf2_23f78e": 3,
+      "risk_12_cf1_c7f14c": 3,
+      "risk_12_cf2_23f78e": 3,
+      "risk_13_cf1_c7f14c": 3,
+      "risk_13_cf2_23f78e": 3,
+      "subscription_01_cf1_2db794": 3,
+      "subscription_01_cf2_cf6ed1": 3,
+      "subscription_02_cf1_2db794": 3,
+      "subscription_02_cf2_cf6ed1": 3,
+      "subscription_03_cf1_2db794": 3,
+      "subscription_03_cf2_cf6ed1": 3,
+      "subscription_04_cf1_2db794": 3,
+      "subscription_04_cf2_cf6ed1": 3,
+      "subscription_05_cf1_2db794": 3,
+      "subscription_05_cf2_cf6ed1": 3,
+      "subscription_06_cf1_2db794": 3,
+      "subscription_06_cf2_cf6ed1": 3,
+      "subscription_07_cf1_2db794": 3,
+      "subscription_07_cf2_cf6ed1": 3,
+      "subscription_08_cf1_2db794": 3,
+      "subscription_08_cf2_cf6ed1": 3,
+      "subscription_09_cf1_2db794": 3,
+      "subscription_09_cf2_cf6ed1": 3,
+      "subscription_10_cf1_2db794": 3,
+      "subscription_10_cf2_cf6ed1": 3,
+      "subscription_11_cf1_2db794": 3,
+      "subscription_11_cf2_cf6ed1": 3,
+      "subscription_12_cf1_2db794": 3,
+      "subscription_12_cf2_cf6ed1": 3,
+      "subscription_13_cf1_2db794": 3,
+      "subscription_13_cf2_cf6ed1": 3,
+      "subscription_14_cf1_2db794": 2,
+      "subscription_14_cf2_cf6ed1": 3,
+      "warehouse_01_cf1_c305ad": 3,
+      "warehouse_01_cf2_b6ed47": 3,
+      "warehouse_02_cf1_c305ad": 3,
+      "warehouse_02_cf2_b6ed47": 3,
+      "warehouse_03_cf1_c305ad": 3,
+      "warehouse_03_cf2_b6ed47": 3,
+      "warehouse_04_cf1_c305ad": 3,
+      "warehouse_04_cf2_b6ed47": 3,
+      "warehouse_05_cf1_c305ad": 3,
+      "warehouse_05_cf2_b6ed47": 3,
+      "warehouse_06_cf1_c305ad": 3,
+      "warehouse_06_cf2_b6ed47": 2,
+      "warehouse_07_cf1_c305ad": 3,
+      "warehouse_07_cf2_b6ed47": 3,
+      "warehouse_08_cf1_c305ad": 3,
+      "warehouse_08_cf2_b6ed47": 3,
+      "warehouse_09_cf1_c305ad": 3,
+      "warehouse_09_cf2_b6ed47": 2,
+      "warehouse_10_cf1_c305ad": 3,
+      "warehouse_10_cf2_b6ed47": 3,
+      "warehouse_11_cf1_c305ad": 3,
+      "warehouse_11_cf2_b6ed47": 3,
+      "warehouse_12_cf1_c305ad": 3,
+      "warehouse_12_cf2_b6ed47": 3,
+      "warehouse_13_cf1_c305ad": 3,
+      "warehouse_13_cf2_b6ed47": 3
+    },
+    "passed": true,
+    "survived": 0
+  },
+  "ordering_population": {
+    "cases": [
+      {
+        "case_id": "commerce_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_03",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_06",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "fleet_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_04",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": true
+      },
+      {
+        "case_id": "fleet_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": true
+      },
+      {
+        "case_id": "support_01",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_12",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_13",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_14",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_12",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "warehouse_13",
+        "ordering_valid": true,
+        "population": "all-anchors",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "risk_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_12",
+        "ordering_valid": true,
+        "population": "all-anchors",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_13",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      }
+    ],
+    "ordering_valid": 60,
+    "passed": true,
+    "population_valid": 60
+  },
+  "passed": true,
+  "provider_calls": 0,
+  "references": {
+    "answerable_cases": 60,
+    "failures": {},
+    "fixture_comparisons": 182,
+    "passed": true,
+    "reference_pairs": 120
+  }
+}

@@ -27,8 +27,13 @@
     "sql": "SELECT shipment_id FROM (SELECT s.shipment_id, d.event_at, s.promised_at FROM shipments s JOIN delivery_events d ON d.shipment_id=s.shipment_id AND d.event_type='delivered') x WHERE event_at>promised_at ORDER BY shipment_id"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:delivery_events:event_at",
+    "attributes:warehouse_logistics:delivery_events:event_type",
+    "attributes:warehouse_logistics:delivery_events:shipment_id",
+    "attributes:warehouse_logistics:shipments:promised_at",
+    "attributes:warehouse_logistics:shipments:shipment_id",
+    "relationship:warehouse_logistics:delivery_shipment",
+    "temporal_rules:warehouse_logistics:clock"
   ],
   "semantic_mutants": [
     {
@@ -67,12 +72,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "shipment_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "shipment_id"
     ],
@@ -94,15 +94,14 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
+      "relationship:warehouse_logistics:delivery_shipment"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -113,7 +112,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

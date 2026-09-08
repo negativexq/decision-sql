@@ -27,8 +27,9 @@
     "sql": "SELECT device_id FROM (SELECT DISTINCT device_id,account_id FROM login_events WHERE result='success') x GROUP BY device_id HAVING COUNT(*)>1 ORDER BY device_id"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:login_events:account_id",
+    "attributes:risk_operations:login_events:device_id",
+    "attributes:risk_operations:login_events:result"
   ],
   "semantic_mutants": [
     {
@@ -67,12 +68,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "device_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "device_id"
     ],
@@ -94,16 +90,13 @@
       "aggregation"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -114,7 +107,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

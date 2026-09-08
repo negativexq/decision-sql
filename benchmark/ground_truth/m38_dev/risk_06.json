@@ -27,8 +27,10 @@
     "sql": "SELECT investigation_id,resolution_hours FROM (SELECT investigation_id,EXTRACT(EPOCH FROM (closed_at-opened_at))/3600 resolution_hours FROM investigations) x WHERE resolution_hours IS NOT NULL ORDER BY investigation_id"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:investigations:closed_at",
+    "attributes:risk_operations:investigations:investigation_id",
+    "attributes:risk_operations:investigations:opened_at",
+    "temporal_rules:risk_operations:clock"
   ],
   "semantic_mutants": [
     {
@@ -69,13 +71,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "investigation_id",
-        "resolution_hours"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "investigation_id",
       "resolution_hours"
@@ -102,16 +98,13 @@
       "filter"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -122,7 +115,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

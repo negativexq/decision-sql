@@ -27,8 +27,11 @@
     "sql": "SELECT customer_id,COUNT(alert_id) AS open_alert_count FROM (SELECT customer_id,alert_id FROM alerts WHERE status='open') x GROUP BY customer_id ORDER BY customer_id"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:alerts:alert_id",
+    "attributes:risk_operations:alerts:customer_id",
+    "attributes:risk_operations:alerts:status",
+    "business_rules:risk_operations:open_alert",
+    "metrics:risk_operations:open_alerts"
   ],
   "semantic_mutants": [
     {
@@ -69,13 +72,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "customer_id",
-        "open_alert_count"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "customer_id",
       "open_alert_count"
@@ -101,16 +98,13 @@
       "grouping"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -121,7 +115,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

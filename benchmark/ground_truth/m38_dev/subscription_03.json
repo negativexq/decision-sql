@@ -25,8 +25,11 @@
     "sql": "SELECT a.account_id, p.paid_total FROM accounts a JOIN (SELECT account_id, SUM(total_due) AS paid_total FROM invoices WHERE status = 'paid' GROUP BY account_id) p ON p.account_id = a.account_id ORDER BY a.account_id"
   },
   "required_context_facts": [
-    "relationships:subscription_billing:subscription_account",
-    "metrics:subscription_billing:net_collected"
+    "attributes:subscription_billing:accounts:account_id",
+    "attributes:subscription_billing:invoices:account_id",
+    "attributes:subscription_billing:invoices:status",
+    "attributes:subscription_billing:invoices:total_due",
+    "relationship:subscription_billing:invoice_account"
   ],
   "semantic_mutants": [
     {
@@ -67,13 +70,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "account_id",
-        "paid_total"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "account_id",
       "paid_total"
@@ -100,15 +97,14 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:subscription_billing:subscription_account",
-      "metrics:subscription_billing:net_collected"
+      "relationship:subscription_billing:invoice_account"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -119,7 +115,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

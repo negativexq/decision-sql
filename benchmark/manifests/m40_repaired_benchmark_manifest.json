@@ -1,0 +1,1692 @@
+{
+  "benchmark_content_hash": "aeea34b3b71d90806ee18a6bd3d3dd29ab0f06b5e8e7d8fd47119bb5031d5281",
+  "benchmark_name": "decision-sql-bench",
+  "benchmark_version": "0.2.1-dev",
+  "case_count": 90,
+  "case_order_sha256": "3299ecb9046619cd7b2e2aed66ed2e4146e8286b0497202b3b3ebc151947c2c2",
+  "context_coverage": {
+    "answerable_cases": 60,
+    "cases": [
+      {
+        "case_id": "commerce_01",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "customers.customer_name",
+          "customers.is_active",
+          "customers.region"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_02",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "orders.order_id",
+          "orders.ordered_at",
+          "orders.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_03",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "customers.region",
+          "orders.customer_id",
+          "orders.order_id",
+          "orders.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_04",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "order_items.order_id",
+          "order_items.product_id",
+          "order_items.quantity",
+          "order_items.unit_price",
+          "orders.discount_pct",
+          "orders.order_id",
+          "orders.status",
+          "products.category",
+          "products.product_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_05",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "order_items.order_id",
+          "order_items.product_id",
+          "orders.customer_id",
+          "orders.order_id",
+          "orders.status",
+          "products.category",
+          "products.product_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_06",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "customers.region",
+          "orders.customer_id",
+          "orders.order_id",
+          "orders.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "commerce_07",
+        "database_id": "commerce_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "order_items.order_id",
+          "order_items.quantity",
+          "order_items.unit_price",
+          "orders.customer_id",
+          "orders.discount_pct",
+          "orders.order_id",
+          "orders.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_01",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "telemetry_events.event_id",
+          "telemetry_events.payload",
+          "telemetry_events.vehicle_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_02",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "depots.depot_id",
+          "fuel_events.liters",
+          "fuel_events.price_per_liter",
+          "fuel_events.vehicle_id",
+          "vehicles.depot_id",
+          "vehicles.vehicle_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_03",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "routes.route_id",
+          "trips.distance_km",
+          "trips.fuel_liters",
+          "trips.route_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_04",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "maintenance_events.maintenance_id",
+          "maintenance_events.performed_at",
+          "maintenance_events.vehicle_id",
+          "vehicles.vehicle_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_05",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "drivers.driver_id",
+          "trips.driver_id",
+          "trips.trip_id",
+          "trips.vehicle_id",
+          "vehicles.vehicle_class",
+          "vehicles.vehicle_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_06",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "telemetry_events.event_at",
+          "telemetry_events.event_id",
+          "telemetry_events.payload",
+          "telemetry_events.vehicle_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "fleet_07",
+        "database_id": "fleet_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "trips.distance_km",
+          "trips.fuel_liters",
+          "trips.route_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "support_01",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "accounts.account_id",
+          "support_tickets.account_id",
+          "support_tickets.priority",
+          "support_tickets.ticket_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "support_02",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "service_plans.first_response_sla_hours",
+          "service_plans.plan_id",
+          "subscriptions.account_id",
+          "subscriptions.plan_id",
+          "subscriptions.starts_on",
+          "subscriptions.subscription_id",
+          "support_tickets.account_id",
+          "support_tickets.opened_at",
+          "support_tickets.ticket_id",
+          "ticket_events.event_at",
+          "ticket_events.event_type",
+          "ticket_events.ticket_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "support_03",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "support_tickets.account_id",
+          "support_tickets.priority"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "support_04",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "support_tickets.payload",
+          "support_tickets.status",
+          "support_tickets.ticket_id"
+        ],
+        "required_json_paths": [
+          "support_tickets.payload #>> '{channel}'"
+        ]
+      },
+      {
+        "case_id": "support_05",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "support_tickets.account_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "support_06",
+        "database_id": "support_ops",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "incidents.severity",
+          "support_tickets.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_01",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "subscriptions.status",
+          "subscriptions.subscription_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_02",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "accounts.account_id",
+          "subscriptions.account_id",
+          "subscriptions.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_03",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "accounts.account_id",
+          "invoices.account_id",
+          "invoices.status",
+          "invoices.total_due"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_04",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "invoices.account_id",
+          "invoices.invoice_id",
+          "payments.amount",
+          "payments.invoice_id",
+          "payments.payment_id",
+          "payments.status",
+          "refunds.amount",
+          "refunds.payment_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_05",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "subscriptions.account_id",
+          "subscriptions.plan_id",
+          "subscriptions.starts_on",
+          "subscriptions.subscription_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_06",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "invoices.account_id",
+          "invoices.invoice_id",
+          "payments.invoice_id",
+          "payments.payment_id",
+          "payments.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_07",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "plans.monthly_price",
+          "plans.plan_id",
+          "subscriptions.account_id",
+          "subscriptions.plan_id",
+          "subscriptions.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_08",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "usage_events.account_id",
+          "usage_events.occurred_at",
+          "usage_events.units"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_09",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "invoices.due_on",
+          "invoices.invoice_id",
+          "invoices.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_10",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "invoices.invoice_id",
+          "invoices.subscription_id",
+          "payments.amount",
+          "payments.invoice_id",
+          "payments.payment_id",
+          "payments.status",
+          "refunds.amount",
+          "refunds.payment_id",
+          "subscriptions.plan_id",
+          "subscriptions.subscription_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_11",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "entitlements.enabled",
+          "entitlements.subscription_id",
+          "plans.plan_id",
+          "subscriptions.plan_id",
+          "subscriptions.status",
+          "subscriptions.subscription_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_12",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "usage_events.account_id",
+          "usage_events.payload",
+          "usage_events.units",
+          "usage_events.usage_id"
+        ],
+        "required_json_paths": [
+          "usage_events.payload #>> '{units}'"
+        ]
+      },
+      {
+        "case_id": "subscription_13",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "dunning_attempts.attempt_id",
+          "dunning_attempts.attempted_at",
+          "dunning_attempts.invoice_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "subscription_14",
+        "database_id": "subscription_billing",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "credits.account_id",
+          "credits.credit_id",
+          "credits.issued_on",
+          "invoices.account_id",
+          "invoices.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_01",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "inventory_snapshots.on_hand_qty",
+          "inventory_snapshots.product_id",
+          "inventory_snapshots.snapshot_at",
+          "inventory_snapshots.snapshot_id",
+          "inventory_snapshots.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_02",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "shipment_items.quantity",
+          "shipment_items.shipment_id",
+          "shipments.shipment_id",
+          "shipments.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_03",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "carriers.carrier_id",
+          "delivery_events.event_at",
+          "delivery_events.event_type",
+          "delivery_events.shipment_id",
+          "shipments.carrier_id",
+          "shipments.promised_at",
+          "shipments.shipment_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_04",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "purchase_order_lines.po_id",
+          "purchase_order_lines.po_line_id",
+          "purchase_orders.po_id",
+          "purchase_orders.status",
+          "purchase_orders.warehouse_id",
+          "receipts.po_line_id",
+          "receipts.received_qty"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_05",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "inventory_snapshots.on_hand_qty",
+          "inventory_snapshots.product_id",
+          "inventory_snapshots.snapshot_at",
+          "inventory_snapshots.snapshot_id",
+          "inventory_snapshots.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_06",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "delivery_events.event_at",
+          "delivery_events.event_type",
+          "delivery_events.shipment_id",
+          "shipments.promised_at",
+          "shipments.shipment_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_07",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "pick_events.picked_at",
+          "pick_events.shipment_item_id",
+          "shipment_items.shipment_id",
+          "shipment_items.shipment_item_id",
+          "shipments.shipment_id",
+          "shipments.shipped_at",
+          "shipments.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_08",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "purchase_order_lines.ordered_qty",
+          "purchase_order_lines.po_line_id",
+          "purchase_order_lines.product_id",
+          "receipts.po_line_id",
+          "receipts.received_qty"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_09",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "delivery_events.delivery_id",
+          "delivery_events.payload"
+        ],
+        "required_json_paths": [
+          "delivery_events.payload #>> '{temperature_c}'"
+        ]
+      },
+      {
+        "case_id": "warehouse_10",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "shipment_items.product_id",
+          "shipment_items.shipment_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_11",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "inventory_snapshots.on_hand_qty",
+          "inventory_snapshots.snapshot_id",
+          "inventory_snapshots.warehouse_id",
+          "warehouses.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_12",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "carriers.carrier_id",
+          "carriers.carrier_name",
+          "shipments.carrier_id",
+          "shipments.shipment_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "warehouse_13",
+        "database_id": "warehouse_logistics",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "purchase_order_lines.po_id",
+          "purchase_order_lines.po_line_id",
+          "purchase_orders.po_id",
+          "purchase_orders.warehouse_id",
+          "receipts.po_line_id",
+          "receipts.received_qty",
+          "shipment_items.quantity",
+          "shipment_items.shipment_id",
+          "shipments.shipment_id",
+          "shipments.warehouse_id",
+          "warehouses.warehouse_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_01",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "alerts.alert_id",
+          "alerts.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_02",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "risk_assessments.assessed_at",
+          "risk_assessments.assessment_id",
+          "risk_assessments.customer_id",
+          "risk_assessments.risk_score"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_03",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "alerts.alert_id",
+          "alerts.customer_id",
+          "alerts.status"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_04",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "transactions.account_id",
+          "transactions.amount",
+          "transactions.payload"
+        ],
+        "required_json_paths": [
+          "transactions.payload #>> '{risk_score}'"
+        ]
+      },
+      {
+        "case_id": "risk_05",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "alerts.alert_id",
+          "alerts.severity",
+          "investigations.alert_id",
+          "investigations.investigation_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_06",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "investigations.closed_at",
+          "investigations.investigation_id",
+          "investigations.opened_at"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_07",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "login_events.account_id",
+          "login_events.device_id",
+          "login_events.result"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_08",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "transactions.payload",
+          "transactions.transaction_id"
+        ],
+        "required_json_paths": [
+          "transactions.payload #>> '{risk_score}'"
+        ]
+      },
+      {
+        "case_id": "risk_09",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "risk_assessments.assessed_at",
+          "risk_assessments.assessment_id",
+          "risk_assessments.customer_id",
+          "risk_assessments.risk_score"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_10",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "alerts.customer_id",
+          "alerts.status",
+          "watchlist_matches.cleared_at",
+          "watchlist_matches.customer_id",
+          "watchlist_matches.match_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_11",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "alerts.alert_id",
+          "alerts.customer_id",
+          "alerts.status",
+          "customers.customer_id",
+          "investigations.alert_id",
+          "investigations.closed_at"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_12",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "customers.customer_id",
+          "watchlist_matches.cleared_at",
+          "watchlist_matches.customer_id",
+          "watchlist_matches.match_id"
+        ],
+        "required_json_paths": []
+      },
+      {
+        "case_id": "risk_13",
+        "database_id": "risk_operations",
+        "invalid_required_context_facts": [],
+        "missing_fields": [],
+        "missing_json_paths": [],
+        "missing_tie_break_fields": [],
+        "passed": true,
+        "physical_fields": [
+          "accounts.account_id",
+          "accounts.customer_id",
+          "customers.customer_id",
+          "customers.segment",
+          "transactions.account_id",
+          "transactions.amount"
+        ],
+        "required_json_paths": []
+      }
+    ],
+    "complete_cases": 60,
+    "passed": true,
+    "required_context_facts_valid": 60,
+    "required_fields": 278,
+    "required_json_paths": 5,
+    "required_tie_break_fields": 19,
+    "visible_fields": 278,
+    "visible_json_paths": 5,
+    "visible_tie_break_fields": 19
+  },
+  "context_hashes": {
+    "commerce_ops": "f94bc724e404723969a74a5cfee0b02dd447112559ba9f00d39a54a90615417e",
+    "fleet_ops": "1fde312b7bc723ba877b26720519b9c123e347ec4bd1069f8ebb142d4cfc4ea6",
+    "risk_operations": "a344f0f3d703cff915f4e860d0a3588b7f429228bff8d88c7bd052a096e09d88",
+    "subscription_billing": "873417f35e0da237902d7b264f4095704a8c0a32eb737ab3f08df21b5f8bec7b",
+    "support_ops": "e78b61f854cd1b87f1a9fdc049c795974bc06888e62258bb4785842aadfa2c17",
+    "warehouse_logistics": "40177331a4c82522c229b73635305ced633217c661a3bd9aa5dba07d157b87a9"
+  },
+  "contract_source_commit": "a5baf2a44bbfe2ee94588030242efee13bbda386",
+  "database_count": 6,
+  "evaluator_sha256": "ccc3175fde205630fe87717480e3e521be2cee8e6b4fb26c359448977d95e019",
+  "governance": {
+    "distribution": {
+      "AMBIGUOUS": 9,
+      "ANSWERABLE": 60,
+      "AUTHORITY_BLOCKED": 15,
+      "POLICY_BLOCKED": 6
+    },
+    "invalid": {},
+    "passed": true
+  },
+  "governance_prompt_sha256": "1407f33106506753ba4dd552c51ac6524133bc2789020237be5a64cf80aee544",
+  "leakage": {
+    "cases": 90,
+    "details": {},
+    "leakage_cases": 0,
+    "passed": true
+  },
+  "model_baseline": "NOT_RUN",
+  "mutation_validation": {
+    "authored": 188,
+    "executed": 188,
+    "failures": {},
+    "families": {
+      "FILTER_SCOPE_ERROR": 7,
+      "JSON_TYPE_COERCION_ERROR": 4,
+      "LATEST_ROW_ERROR": 6,
+      "LIMIT_SEMANTICS_ERROR": 40,
+      "RELATIONSHIP_PATH_ERROR": 13,
+      "TEMPORAL_BOUNDARY_ERROR": 3,
+      "WRONG_AGGREGATION_GRAIN": 7,
+      "asc_desc": 3,
+      "avg_vs_sum": 3,
+      "count_vs_count_distinct": 1,
+      "inner_left_join": 4,
+      "null_default_policy": 2,
+      "projection": 47,
+      "ratio_numerator_denominator": 1,
+      "remove_filter": 1,
+      "remove_limit": 2,
+      "remove_predicate": 12,
+      "rounding_stage": 2,
+      "set_operation": 1,
+      "where_filter_scope": 4,
+      "window_partition": 1,
+      "wrong_aggregation_grain": 3,
+      "wrong_comparison_operator": 4,
+      "wrong_join_path": 1,
+      "wrong_literal": 5,
+      "wrong_metric_operand": 4,
+      "wrong_nested_field": 2,
+      "wrong_population": 2,
+      "wrong_temporal_anchor": 2,
+      "wrong_type": 1
+    },
+    "invalid": 0,
+    "killed": 188,
+    "killed_by_fixture": {
+      "base": 171,
+      "cf01": 62,
+      "cf02": 60,
+      "cf03": 7,
+      "risk_01_cf1_c7f14c": 3,
+      "risk_01_cf2_23f78e": 3,
+      "risk_02_cf1_c7f14c": 3,
+      "risk_02_cf2_23f78e": 3,
+      "risk_03_cf1_c7f14c": 3,
+      "risk_03_cf2_23f78e": 3,
+      "risk_04_cf1_c7f14c": 3,
+      "risk_04_cf2_23f78e": 3,
+      "risk_05_cf1_c7f14c": 3,
+      "risk_05_cf2_23f78e": 3,
+      "risk_06_cf1_c7f14c": 3,
+      "risk_06_cf2_23f78e": 3,
+      "risk_07_cf1_c7f14c": 3,
+      "risk_07_cf2_23f78e": 3,
+      "risk_08_cf1_c7f14c": 3,
+      "risk_08_cf2_23f78e": 3,
+      "risk_09_cf1_c7f14c": 3,
+      "risk_09_cf2_23f78e": 3,
+      "risk_10_cf1_c7f14c": 3,
+      "risk_10_cf2_23f78e": 3,
+      "risk_11_cf1_c7f14c": 3,
+      "risk_11_cf2_23f78e": 3,
+      "risk_12_cf1_c7f14c": 3,
+      "risk_12_cf2_23f78e": 3,
+      "risk_13_cf1_c7f14c": 3,
+      "risk_13_cf2_23f78e": 3,
+      "subscription_01_cf1_2db794": 3,
+      "subscription_01_cf2_cf6ed1": 3,
+      "subscription_02_cf1_2db794": 3,
+      "subscription_02_cf2_cf6ed1": 3,
+      "subscription_03_cf1_2db794": 3,
+      "subscription_03_cf2_cf6ed1": 3,
+      "subscription_04_cf1_2db794": 3,
+      "subscription_04_cf2_cf6ed1": 3,
+      "subscription_05_cf1_2db794": 3,
+      "subscription_05_cf2_cf6ed1": 3,
+      "subscription_06_cf1_2db794": 3,
+      "subscription_06_cf2_cf6ed1": 3,
+      "subscription_07_cf1_2db794": 3,
+      "subscription_07_cf2_cf6ed1": 3,
+      "subscription_08_cf1_2db794": 3,
+      "subscription_08_cf2_cf6ed1": 3,
+      "subscription_09_cf1_2db794": 3,
+      "subscription_09_cf2_cf6ed1": 3,
+      "subscription_10_cf1_2db794": 3,
+      "subscription_10_cf2_cf6ed1": 3,
+      "subscription_11_cf1_2db794": 3,
+      "subscription_11_cf2_cf6ed1": 3,
+      "subscription_12_cf1_2db794": 3,
+      "subscription_12_cf2_cf6ed1": 3,
+      "subscription_13_cf1_2db794": 3,
+      "subscription_13_cf2_cf6ed1": 3,
+      "subscription_14_cf1_2db794": 2,
+      "subscription_14_cf2_cf6ed1": 3,
+      "warehouse_01_cf1_c305ad": 3,
+      "warehouse_01_cf2_b6ed47": 3,
+      "warehouse_02_cf1_c305ad": 3,
+      "warehouse_02_cf2_b6ed47": 3,
+      "warehouse_03_cf1_c305ad": 3,
+      "warehouse_03_cf2_b6ed47": 3,
+      "warehouse_04_cf1_c305ad": 3,
+      "warehouse_04_cf2_b6ed47": 3,
+      "warehouse_05_cf1_c305ad": 3,
+      "warehouse_05_cf2_b6ed47": 3,
+      "warehouse_06_cf1_c305ad": 3,
+      "warehouse_06_cf2_b6ed47": 2,
+      "warehouse_07_cf1_c305ad": 3,
+      "warehouse_07_cf2_b6ed47": 3,
+      "warehouse_08_cf1_c305ad": 3,
+      "warehouse_08_cf2_b6ed47": 3,
+      "warehouse_09_cf1_c305ad": 3,
+      "warehouse_09_cf2_b6ed47": 2,
+      "warehouse_10_cf1_c305ad": 3,
+      "warehouse_10_cf2_b6ed47": 3,
+      "warehouse_11_cf1_c305ad": 3,
+      "warehouse_11_cf2_b6ed47": 3,
+      "warehouse_12_cf1_c305ad": 3,
+      "warehouse_12_cf2_b6ed47": 3,
+      "warehouse_13_cf1_c305ad": 3,
+      "warehouse_13_cf2_b6ed47": 3
+    },
+    "passed": true,
+    "survived": 0
+  },
+  "ordering_population": {
+    "cases": [
+      {
+        "case_id": "commerce_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_03",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_06",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "commerce_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "fleet_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_04",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "fleet_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": true
+      },
+      {
+        "case_id": "fleet_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": true
+      },
+      {
+        "case_id": "support_01",
+        "ordering_valid": true,
+        "population": "preserve-anchor",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "support_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_12",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_13",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "subscription_14",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "warehouse_12",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "warehouse_13",
+        "ordering_valid": true,
+        "population": "all-anchors",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_01",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_02",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_03",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_04",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_05",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_06",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_07",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_08",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_09",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": true,
+        "row_order": true
+      },
+      {
+        "case_id": "risk_10",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_11",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_12",
+        "ordering_valid": true,
+        "population": "all-anchors",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      },
+      {
+        "case_id": "risk_13",
+        "ordering_valid": true,
+        "population": "matching-only",
+        "population_valid": true,
+        "question_explicit_order": false,
+        "row_order": false
+      }
+    ],
+    "ordering_valid": 60,
+    "passed": true,
+    "population_valid": 60
+  },
+  "parent_benchmark_hash": "32fb1f941773f4ec7d7ccc1fa38525e2730509b00c5df1f5f7dbb72cc5c77226",
+  "parent_version": "0.2.0-dev",
+  "postgresql_version": "16.15",
+  "provider_calls": 0,
+  "reference_validation": {
+    "answerable_cases": 60,
+    "failures": {},
+    "fixture_comparisons": 182,
+    "passed": true,
+    "reference_pairs": 120
+  },
+  "serializer_sha256": "6bbbd62498a29a7364c94aa1c8dcbd0106db1cbe9fe98fafc6e170d4d16bbec7",
+  "submission_schema_sha256": "a20bcacd0f9221b53ccf0b8ab860981956fa7eef36bcfb507ffd79453c52b240",
+  "task_distribution": {
+    "AMBIGUOUS": 9,
+    "ANSWERABLE": 60,
+    "AUTHORITY_BLOCKED": 15,
+    "POLICY_BLOCKED": 6
+  },
+  "validator_sha256": "6949c380dddd2d9123a8dfcad2319496fd951bd43297b72851af099daba1b274"
+}

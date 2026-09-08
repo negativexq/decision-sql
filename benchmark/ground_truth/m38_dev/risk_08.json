@@ -25,8 +25,9 @@
     "sql": "SELECT transaction_id FROM (SELECT transaction_id,CAST(payload->>'risk_score' AS NUMERIC) score FROM transactions) x WHERE score>=80 ORDER BY transaction_id"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:transactions:payload",
+    "attributes:risk_operations:transactions:payload #>> '{risk_score}'",
+    "attributes:risk_operations:transactions:transaction_id"
   ],
   "semantic_mutants": [
     {
@@ -65,12 +66,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "transaction_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "transaction_id"
     ],
@@ -91,16 +87,13 @@
       "calculation"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -111,7 +104,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

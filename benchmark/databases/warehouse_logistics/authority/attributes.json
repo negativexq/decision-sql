@@ -1,19 +1,12 @@
 [
   {
-    "attribute_id": "attribute:warehouse_logistics:warehouses:warehouse_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:warehouses",
+    "attribute_id": "attribute:warehouse_logistics:bins:bin_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:bins",
     "nullable": false,
-    "physical_column_or_path": "warehouse_id",
-    "semantic_description": "Stable warehouse identifier."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:warehouses:capacity_units",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:warehouses",
-    "nullable": false,
-    "physical_column_or_path": "capacity_units",
-    "semantic_description": "Storage capacity in units."
+    "physical_column_or_path": "bin_code",
+    "semantic_description": "Physical bin_code field on bins.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:warehouse_logistics:bins:bin_id",
@@ -24,6 +17,15 @@
     "semantic_description": "Stable bin identifier; not a product identifier."
   },
   {
+    "attribute_id": "attribute:warehouse_logistics:bins:capacity_units",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:bins",
+    "nullable": false,
+    "physical_column_or_path": "capacity_units",
+    "semantic_description": "Physical capacity_units field on bins.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
     "attribute_id": "attribute:warehouse_logistics:bins:warehouse_id",
     "data_type": "INTEGER",
     "entity_id": "entity:warehouse_logistics:bins",
@@ -32,20 +34,91 @@
     "semantic_description": "Authorized warehouse reference."
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:products:product_id",
+    "attribute_id": "attribute:warehouse_logistics:carriers:carrier_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:products",
+    "entity_id": "entity:warehouse_logistics:carriers",
     "nullable": false,
-    "physical_column_or_path": "product_id",
-    "semantic_description": "Stable product identifier."
+    "physical_column_or_path": "carrier_id",
+    "semantic_description": "Physical carrier_id field on carriers.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:warehouse_id",
+    "attribute_id": "attribute:warehouse_logistics:carriers:carrier_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:carriers",
+    "nullable": false,
+    "physical_column_or_path": "carrier_name",
+    "semantic_description": "Physical carrier_name field on carriers.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:carriers:service_level",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:carriers",
+    "nullable": false,
+    "physical_column_or_path": "service_level",
+    "semantic_description": "Physical service_level field on carriers.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:delivery_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "delivery_id",
+    "semantic_description": "Physical delivery_id field on delivery_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:event_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "event_at",
+    "semantic_description": "Physical event_at field on delivery_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:event_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "event_type",
+    "semantic_description": "Physical event_type field on delivery_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:payload",
+    "data_type": "JSONB",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "payload",
+    "semantic_description": "Carrier event payload."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "payload #>> '{temperature_c}'",
+    "semantic_description": "Documented JSON scalar at payload #>> '{temperature_c}' on delivery_events.payload.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:delivery_events:shipment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "nullable": false,
+    "physical_column_or_path": "shipment_id",
+    "semantic_description": "Authorized shipment reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:on_hand_qty",
     "data_type": "INTEGER",
     "entity_id": "entity:warehouse_logistics:inventory_snapshots",
     "nullable": false,
-    "physical_column_or_path": "warehouse_id",
-    "semantic_description": "Authorized warehouse reference."
+    "physical_column_or_path": "on_hand_qty",
+    "semantic_description": "Observed quantity on hand."
   },
   {
     "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:product_id",
@@ -64,36 +137,91 @@
     "semantic_description": "Observation timestamp."
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:on_hand_qty",
+    "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:snapshot_id",
     "data_type": "INTEGER",
     "entity_id": "entity:warehouse_logistics:inventory_snapshots",
     "nullable": false,
-    "physical_column_or_path": "on_hand_qty",
-    "semantic_description": "Observed quantity on hand."
+    "physical_column_or_path": "snapshot_id",
+    "semantic_description": "Physical snapshot_id field on inventory_snapshots.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:purchase_orders:warehouse_id",
+    "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:warehouse_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "entity_id": "entity:warehouse_logistics:inventory_snapshots",
     "nullable": false,
     "physical_column_or_path": "warehouse_id",
     "semantic_description": "Authorized warehouse reference."
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_id",
+    "attribute_id": "attribute:warehouse_logistics:pick_events:pick_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+    "entity_id": "entity:warehouse_logistics:pick_events",
     "nullable": false,
-    "physical_column_or_path": "po_id",
-    "semantic_description": "Authorized purchase-order reference."
+    "physical_column_or_path": "pick_id",
+    "semantic_description": "Physical pick_id field on pick_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:product_id",
+    "attribute_id": "attribute:warehouse_logistics:pick_events:picked_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:pick_events",
+    "nullable": false,
+    "physical_column_or_path": "picked_at",
+    "semantic_description": "Physical picked_at field on pick_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:pick_events:picker_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+    "entity_id": "entity:warehouse_logistics:pick_events",
+    "nullable": false,
+    "physical_column_or_path": "picker_id",
+    "semantic_description": "Physical picker_id field on pick_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:pick_events:shipment_item_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:pick_events",
+    "nullable": false,
+    "physical_column_or_path": "shipment_item_id",
+    "semantic_description": "Authorized shipment-item reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:products:product_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:products",
     "nullable": false,
     "physical_column_or_path": "product_id",
-    "semantic_description": "Authorized product reference."
+    "semantic_description": "Stable product identifier."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:products:product_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:products",
+    "nullable": false,
+    "physical_column_or_path": "product_name",
+    "semantic_description": "Physical product_name field on products.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:products:sku",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:products",
+    "nullable": false,
+    "physical_column_or_path": "sku",
+    "semantic_description": "Physical sku field on products.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:products:unit_cost",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:warehouse_logistics:products",
+    "nullable": false,
+    "physical_column_or_path": "unit_cost",
+    "semantic_description": "Physical unit_cost field on products.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:ordered_qty",
@@ -104,6 +232,75 @@
     "semantic_description": "Quantity ordered."
   },
   {
+    "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+    "nullable": false,
+    "physical_column_or_path": "po_id",
+    "semantic_description": "Authorized purchase-order reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_line_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+    "nullable": false,
+    "physical_column_or_path": "po_line_id",
+    "semantic_description": "Physical po_line_id field on purchase_order_lines.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:product_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+    "nullable": false,
+    "physical_column_or_path": "product_id",
+    "semantic_description": "Authorized product reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_orders:ordered_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "ordered_at",
+    "semantic_description": "Physical ordered_at field on purchase_orders.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_orders:po_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "po_id",
+    "semantic_description": "Physical po_id field on purchase_orders.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_orders:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Physical status field on purchase_orders.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_orders:supplier_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "supplier_code",
+    "semantic_description": "Physical supplier_code field on purchase_orders.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:purchase_orders:warehouse_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "warehouse_id",
+    "semantic_description": "Authorized warehouse reference."
+  },
+  {
     "attribute_id": "attribute:warehouse_logistics:receipts:po_line_id",
     "data_type": "INTEGER",
     "entity_id": "entity:warehouse_logistics:receipts",
@@ -112,52 +309,30 @@
     "semantic_description": "Authorized purchase-order line reference."
   },
   {
+    "attribute_id": "attribute:warehouse_logistics:receipts:receipt_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:receipts",
+    "nullable": false,
+    "physical_column_or_path": "receipt_id",
+    "semantic_description": "Physical receipt_id field on receipts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:receipts:received_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:receipts",
+    "nullable": false,
+    "physical_column_or_path": "received_at",
+    "semantic_description": "Physical received_at field on receipts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
     "attribute_id": "attribute:warehouse_logistics:receipts:received_qty",
     "data_type": "INTEGER",
     "entity_id": "entity:warehouse_logistics:receipts",
     "nullable": false,
     "physical_column_or_path": "received_qty",
     "semantic_description": "Quantity received."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:shipments:warehouse_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:shipments",
-    "nullable": false,
-    "physical_column_or_path": "warehouse_id",
-    "semantic_description": "Authorized warehouse reference."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:shipments:carrier_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:shipments",
-    "nullable": false,
-    "physical_column_or_path": "carrier_id",
-    "semantic_description": "Authorized carrier reference."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:shipments:promised_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:warehouse_logistics:shipments",
-    "nullable": false,
-    "physical_column_or_path": "promised_at",
-    "semantic_description": "Promised delivery timestamp."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:shipments:status",
-    "data_type": "TEXT",
-    "entity_id": "entity:warehouse_logistics:shipments",
-    "nullable": false,
-    "physical_column_or_path": "status",
-    "semantic_description": "Shipment status."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:shipment_items",
-    "nullable": false,
-    "physical_column_or_path": "shipment_id",
-    "semantic_description": "Authorized shipment reference."
   },
   {
     "attribute_id": "attribute:warehouse_logistics:shipment_items:product_id",
@@ -176,27 +351,158 @@
     "semantic_description": "Quantity shipped."
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:pick_events:shipment_item_id",
+    "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:pick_events",
-    "nullable": false,
-    "physical_column_or_path": "shipment_item_id",
-    "semantic_description": "Authorized shipment-item reference."
-  },
-  {
-    "attribute_id": "attribute:warehouse_logistics:delivery_events:shipment_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "entity_id": "entity:warehouse_logistics:shipment_items",
     "nullable": false,
     "physical_column_or_path": "shipment_id",
     "semantic_description": "Authorized shipment reference."
   },
   {
-    "attribute_id": "attribute:warehouse_logistics:delivery_events:payload",
-    "data_type": "JSONB",
-    "entity_id": "entity:warehouse_logistics:delivery_events",
+    "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_item_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:shipment_items",
     "nullable": false,
-    "physical_column_or_path": "payload",
-    "semantic_description": "Carrier event payload."
+    "physical_column_or_path": "shipment_item_id",
+    "semantic_description": "Physical shipment_item_id field on shipment_items.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:carrier_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "carrier_id",
+    "semantic_description": "Authorized carrier reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:promised_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "promised_at",
+    "semantic_description": "Promised delivery timestamp."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:shipment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "shipment_id",
+    "semantic_description": "Physical shipment_id field on shipments.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:shipped_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "shipped_at",
+    "semantic_description": "Physical shipped_at field on shipments.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Shipment status."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:shipments:warehouse_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:shipments",
+    "nullable": false,
+    "physical_column_or_path": "warehouse_id",
+    "semantic_description": "Authorized warehouse reference."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:moved_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "moved_at",
+    "semantic_description": "Physical moved_at field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:movement_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "movement_id",
+    "semantic_description": "Physical movement_id field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:movement_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "movement_type",
+    "semantic_description": "Physical movement_type field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:product_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "product_id",
+    "semantic_description": "Physical product_id field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:quantity",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "quantity",
+    "semantic_description": "Physical quantity field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:stock_movements:warehouse_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:stock_movements",
+    "nullable": false,
+    "physical_column_or_path": "warehouse_id",
+    "semantic_description": "Physical warehouse_id field on stock_movements.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:warehouses:capacity_units",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:warehouses",
+    "nullable": false,
+    "physical_column_or_path": "capacity_units",
+    "semantic_description": "Storage capacity in units."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:warehouses:region",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:warehouses",
+    "nullable": false,
+    "physical_column_or_path": "region",
+    "semantic_description": "Physical region field on warehouses.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:warehouses:warehouse_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:warehouse_logistics:warehouses",
+    "nullable": false,
+    "physical_column_or_path": "warehouse_id",
+    "semantic_description": "Stable warehouse identifier."
+  },
+  {
+    "attribute_id": "attribute:warehouse_logistics:warehouses:warehouse_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:warehouse_logistics:warehouses",
+    "nullable": false,
+    "physical_column_or_path": "warehouse_name",
+    "semantic_description": "Physical warehouse_name field on warehouses.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   }
 ]

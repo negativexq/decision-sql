@@ -27,8 +27,12 @@
     "sql": "SELECT customer_id,risk_score FROM (SELECT customer_id,risk_score,ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY assessed_at DESC,assessment_id DESC) rn FROM risk_assessments) x WHERE rn=1 ORDER BY risk_score DESC,customer_id LIMIT 3"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:risk_assessments:assessed_at",
+    "attributes:risk_operations:risk_assessments:assessment_id",
+    "attributes:risk_operations:risk_assessments:customer_id",
+    "attributes:risk_operations:risk_assessments:risk_score",
+    "business_rules:risk_operations:latest_assessment",
+    "temporal_rules:risk_operations:clock"
   ],
   "semantic_mutants": [
     {
@@ -102,10 +106,7 @@
       "limit"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,

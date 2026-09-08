@@ -27,8 +27,11 @@
     "sql": "SELECT warehouse_id, SUM(quantity) AS shipped_qty FROM (SELECT s.warehouse_id, si.quantity FROM shipments s JOIN shipment_items si ON si.shipment_id=s.shipment_id) x GROUP BY warehouse_id ORDER BY warehouse_id"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:shipment_items:quantity",
+    "attributes:warehouse_logistics:shipment_items:shipment_id",
+    "attributes:warehouse_logistics:shipments:shipment_id",
+    "attributes:warehouse_logistics:shipments:warehouse_id",
+    "relationship:warehouse_logistics:item_shipment"
   ],
   "semantic_mutants": [
     {
@@ -69,13 +72,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "warehouse_id",
-        "shipped_qty"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "warehouse_id",
       "shipped_qty"
@@ -102,15 +99,14 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
+      "relationship:warehouse_logistics:item_shipment"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -121,7 +117,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

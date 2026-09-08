@@ -1,19 +1,12 @@
 [
   {
-    "attribute_id": "attribute:risk_operations:customers:customer_id",
+    "attribute_id": "attribute:risk_operations:accounts:account_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:customers",
+    "entity_id": "entity:risk_operations:accounts",
     "nullable": false,
-    "physical_column_or_path": "customer_id",
-    "semantic_description": "Stable customer identifier."
-  },
-  {
-    "attribute_id": "attribute:risk_operations:customers:segment",
-    "data_type": "TEXT",
-    "entity_id": "entity:risk_operations:customers",
-    "nullable": false,
-    "physical_column_or_path": "segment",
-    "semantic_description": "Customer segment."
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Physical account_id field on accounts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:risk_operations:accounts:customer_id",
@@ -24,6 +17,15 @@
     "semantic_description": "Authorized customer reference."
   },
   {
+    "attribute_id": "attribute:risk_operations:accounts:opened_on",
+    "data_type": "DATE",
+    "entity_id": "entity:risk_operations:accounts",
+    "nullable": false,
+    "physical_column_or_path": "opened_on",
+    "semantic_description": "Physical opened_on field on accounts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
     "attribute_id": "attribute:risk_operations:accounts:status",
     "data_type": "TEXT",
     "entity_id": "entity:risk_operations:accounts",
@@ -32,68 +34,57 @@
     "semantic_description": "Account state."
   },
   {
-    "attribute_id": "attribute:risk_operations:transactions:account_id",
+    "attribute_id": "attribute:risk_operations:alert_events:alert_event_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:transactions",
+    "entity_id": "entity:risk_operations:alert_events",
     "nullable": false,
-    "physical_column_or_path": "account_id",
-    "semantic_description": "Authorized account reference."
+    "physical_column_or_path": "alert_event_id",
+    "semantic_description": "Physical alert_event_id field on alert_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:risk_operations:transactions:amount",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:risk_operations:transactions",
-    "nullable": false,
-    "physical_column_or_path": "amount",
-    "semantic_description": "Transaction amount."
-  },
-  {
-    "attribute_id": "attribute:risk_operations:transactions:transacted_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:risk_operations:transactions",
-    "nullable": false,
-    "physical_column_or_path": "transacted_at",
-    "semantic_description": "Transaction timestamp."
-  },
-  {
-    "attribute_id": "attribute:risk_operations:transactions:payload",
-    "data_type": "JSONB",
-    "entity_id": "entity:risk_operations:transactions",
-    "nullable": false,
-    "physical_column_or_path": "payload",
-    "semantic_description": "Provider risk payload."
-  },
-  {
-    "attribute_id": "attribute:risk_operations:risk_assessments:customer_id",
+    "attribute_id": "attribute:risk_operations:alert_events:alert_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:risk_assessments",
+    "entity_id": "entity:risk_operations:alert_events",
     "nullable": false,
-    "physical_column_or_path": "customer_id",
-    "semantic_description": "Authorized customer reference."
+    "physical_column_or_path": "alert_id",
+    "semantic_description": "Authorized alert reference."
   },
   {
-    "attribute_id": "attribute:risk_operations:risk_assessments:assessed_at",
+    "attribute_id": "attribute:risk_operations:alert_events:event_at",
     "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:risk_operations:risk_assessments",
+    "entity_id": "entity:risk_operations:alert_events",
     "nullable": false,
-    "physical_column_or_path": "assessed_at",
-    "semantic_description": "Assessment timestamp."
+    "physical_column_or_path": "event_at",
+    "semantic_description": "Physical event_at field on alert_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:risk_operations:risk_assessments:risk_score",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:risk_operations:risk_assessments",
+    "attribute_id": "attribute:risk_operations:alert_events:event_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:alert_events",
     "nullable": false,
-    "physical_column_or_path": "risk_score",
-    "semantic_description": "Numeric risk score."
+    "physical_column_or_path": "event_type",
+    "semantic_description": "Physical event_type field on alert_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:risk_operations:alerts:customer_id",
+    "attribute_id": "attribute:risk_operations:alerts:alert_id",
     "data_type": "INTEGER",
     "entity_id": "entity:risk_operations:alerts",
     "nullable": false,
-    "physical_column_or_path": "customer_id",
-    "semantic_description": "Authorized customer reference."
+    "physical_column_or_path": "alert_id",
+    "semantic_description": "Physical alert_id field on alerts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:alert_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "alert_type",
+    "semantic_description": "Physical alert_type field on alerts.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:risk_operations:alerts:created_at",
@@ -102,6 +93,14 @@
     "nullable": false,
     "physical_column_or_path": "created_at",
     "semantic_description": "Alert timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:alerts:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:alerts",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
   },
   {
     "attribute_id": "attribute:risk_operations:alerts:severity",
@@ -120,12 +119,143 @@
     "semantic_description": "Alert state."
   },
   {
-    "attribute_id": "attribute:risk_operations:alert_events:alert_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:alert_events",
+    "attribute_id": "attribute:risk_operations:analyst_actions:action_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:analyst_actions",
     "nullable": false,
-    "physical_column_or_path": "alert_id",
-    "semantic_description": "Authorized alert reference."
+    "physical_column_or_path": "action_at",
+    "semantic_description": "Physical action_at field on analyst_actions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:analyst_actions:action_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:analyst_actions",
+    "nullable": false,
+    "physical_column_or_path": "action_id",
+    "semantic_description": "Physical action_id field on analyst_actions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:analyst_actions:action_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:analyst_actions",
+    "nullable": false,
+    "physical_column_or_path": "action_type",
+    "semantic_description": "Physical action_type field on analyst_actions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:analyst_actions:analyst_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:analyst_actions",
+    "nullable": false,
+    "physical_column_or_path": "analyst_id",
+    "semantic_description": "Physical analyst_id field on analyst_actions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:analyst_actions:investigation_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:analyst_actions",
+    "nullable": false,
+    "physical_column_or_path": "investigation_id",
+    "semantic_description": "Authorized investigation reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:case_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "case_id",
+    "semantic_description": "Physical case_id field on cases.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:opened_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "opened_at",
+    "semantic_description": "Physical opened_at field on cases.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:outcome",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "outcome",
+    "semantic_description": "Physical outcome field on cases.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:cases:resolved_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:cases",
+    "nullable": false,
+    "physical_column_or_path": "resolved_at",
+    "semantic_description": "Physical resolved_at field on cases.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:customers:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:customers",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Stable customer identifier."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:customers:customer_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:customers",
+    "nullable": false,
+    "physical_column_or_path": "customer_name",
+    "semantic_description": "Physical customer_name field on customers.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:customers:segment",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:customers",
+    "nullable": false,
+    "physical_column_or_path": "segment",
+    "semantic_description": "Customer segment."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:devices:device_fingerprint",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:devices",
+    "nullable": false,
+    "physical_column_or_path": "device_fingerprint",
+    "semantic_description": "Physical device_fingerprint field on devices.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:devices:device_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:devices",
+    "nullable": false,
+    "physical_column_or_path": "device_id",
+    "semantic_description": "Stable device identifier."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:devices:first_seen_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:devices",
+    "nullable": false,
+    "physical_column_or_path": "first_seen_at",
+    "semantic_description": "Physical first_seen_at field on devices.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:risk_operations:investigations:alert_id",
@@ -144,28 +274,31 @@
     "semantic_description": "Investigation close timestamp."
   },
   {
-    "attribute_id": "attribute:risk_operations:cases:customer_id",
+    "attribute_id": "attribute:risk_operations:investigations:investigation_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:cases",
-    "nullable": false,
-    "physical_column_or_path": "customer_id",
-    "semantic_description": "Authorized customer reference."
-  },
-  {
-    "attribute_id": "attribute:risk_operations:analyst_actions:investigation_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:analyst_actions",
+    "entity_id": "entity:risk_operations:investigations",
     "nullable": false,
     "physical_column_or_path": "investigation_id",
-    "semantic_description": "Authorized investigation reference."
+    "semantic_description": "Physical investigation_id field on investigations.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
-    "attribute_id": "attribute:risk_operations:devices:device_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:devices",
+    "attribute_id": "attribute:risk_operations:investigations:opened_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:investigations",
     "nullable": false,
-    "physical_column_or_path": "device_id",
-    "semantic_description": "Stable device identifier."
+    "physical_column_or_path": "opened_at",
+    "semantic_description": "Physical opened_at field on investigations.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:investigations:outcome",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:investigations",
+    "nullable": false,
+    "physical_column_or_path": "outcome",
+    "semantic_description": "Physical outcome field on investigations.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:risk_operations:login_events:account_id",
@@ -184,12 +317,132 @@
     "semantic_description": "Authorized device reference."
   },
   {
-    "attribute_id": "attribute:risk_operations:watchlist_matches:customer_id",
+    "attribute_id": "attribute:risk_operations:login_events:login_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:login_events",
+    "nullable": false,
+    "physical_column_or_path": "login_at",
+    "semantic_description": "Physical login_at field on login_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:login_events:login_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:risk_operations:watchlist_matches",
+    "entity_id": "entity:risk_operations:login_events",
+    "nullable": false,
+    "physical_column_or_path": "login_id",
+    "semantic_description": "Physical login_id field on login_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:login_events:result",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:login_events",
+    "nullable": false,
+    "physical_column_or_path": "result",
+    "semantic_description": "Physical result field on login_events.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:assessed_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "assessed_at",
+    "semantic_description": "Assessment timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:assessment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "assessment_id",
+    "semantic_description": "Physical assessment_id field on risk_assessments.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:band",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "band",
+    "semantic_description": "Physical band field on risk_assessments.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:risk_assessments",
     "nullable": false,
     "physical_column_or_path": "customer_id",
     "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:risk_assessments:risk_score",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:risk_operations:risk_assessments",
+    "nullable": false,
+    "physical_column_or_path": "risk_score",
+    "semantic_description": "Numeric risk score."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Transaction amount."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:channel",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "channel",
+    "semantic_description": "Physical channel field on transactions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:payload",
+    "data_type": "JSONB",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "payload",
+    "semantic_description": "Provider risk payload."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "payload #>> '{risk_score}'",
+    "semantic_description": "Documented JSON scalar at payload #>> '{risk_score}' on transactions.payload.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:transacted_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "transacted_at",
+    "semantic_description": "Transaction timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:transactions:transaction_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:transactions",
+    "nullable": false,
+    "physical_column_or_path": "transaction_id",
+    "semantic_description": "Physical transaction_id field on transactions.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   },
   {
     "attribute_id": "attribute:risk_operations:watchlist_matches:cleared_at",
@@ -198,5 +451,40 @@
     "nullable": true,
     "physical_column_or_path": "cleared_at",
     "semantic_description": "Clear timestamp."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:list_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": false,
+    "physical_column_or_path": "list_name",
+    "semantic_description": "Physical list_name field on watchlist_matches.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:match_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": false,
+    "physical_column_or_path": "match_id",
+    "semantic_description": "Physical match_id field on watchlist_matches.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
+  },
+  {
+    "attribute_id": "attribute:risk_operations:watchlist_matches:matched_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:risk_operations:watchlist_matches",
+    "nullable": false,
+    "physical_column_or_path": "matched_at",
+    "semantic_description": "Physical matched_at field on watchlist_matches.",
+    "visibility_provenance": "M40_SCHEMA_AND_PUBLIC_SEMANTICS"
   }
 ]

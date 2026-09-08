@@ -25,8 +25,16 @@
     "sql": "SELECT warehouse_id, AVG(pick_hours) AS avg_pick_hours FROM (SELECT s.warehouse_id, EXTRACT(EPOCH FROM (p.picked_at-s.shipped_at))/3600 pick_hours FROM shipments s JOIN shipment_items si ON si.shipment_id=s.shipment_id JOIN pick_events p ON p.shipment_item_id=si.shipment_item_id) x GROUP BY warehouse_id ORDER BY warehouse_id"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:pick_events:picked_at",
+    "attributes:warehouse_logistics:pick_events:shipment_item_id",
+    "attributes:warehouse_logistics:shipment_items:shipment_id",
+    "attributes:warehouse_logistics:shipment_items:shipment_item_id",
+    "attributes:warehouse_logistics:shipments:shipment_id",
+    "attributes:warehouse_logistics:shipments:shipped_at",
+    "attributes:warehouse_logistics:shipments:warehouse_id",
+    "relationship:warehouse_logistics:item_shipment",
+    "relationship:warehouse_logistics:pick_item",
+    "temporal_rules:warehouse_logistics:clock"
   ],
   "semantic_mutants": [
     {
@@ -67,13 +75,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "warehouse_id",
-        "avg_pick_hours"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "warehouse_id",
       "avg_pick_hours"
@@ -101,15 +103,15 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
+      "relationship:warehouse_logistics:item_shipment",
+      "relationship:warehouse_logistics:pick_item"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -120,7 +122,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

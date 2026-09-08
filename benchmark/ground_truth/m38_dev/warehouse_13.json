@@ -27,8 +27,24 @@
     "sql": "SELECT warehouse_id, shipped_qty/NULLIF(received_qty,0) AS shipped_to_received FROM (SELECT w.warehouse_id,COALESCE((SELECT SUM(i.quantity) FROM shipments s JOIN shipment_items i ON i.shipment_id=s.shipment_id WHERE s.warehouse_id=w.warehouse_id),0)::NUMERIC shipped_qty,COALESCE((SELECT SUM(r.received_qty) FROM purchase_orders po JOIN purchase_order_lines l ON l.po_id=po.po_id JOIN receipts r ON r.po_line_id=l.po_line_id WHERE po.warehouse_id=w.warehouse_id),0) received_qty FROM warehouses w) x ORDER BY warehouse_id"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:purchase_order_lines:po_id",
+    "attributes:warehouse_logistics:purchase_order_lines:po_line_id",
+    "attributes:warehouse_logistics:purchase_orders:po_id",
+    "attributes:warehouse_logistics:purchase_orders:warehouse_id",
+    "attributes:warehouse_logistics:receipts:po_line_id",
+    "attributes:warehouse_logistics:receipts:received_qty",
+    "attributes:warehouse_logistics:shipment_items:quantity",
+    "attributes:warehouse_logistics:shipment_items:shipment_id",
+    "attributes:warehouse_logistics:shipments:shipment_id",
+    "attributes:warehouse_logistics:shipments:warehouse_id",
+    "attributes:warehouse_logistics:warehouses:warehouse_id",
+    "relationship:warehouse_logistics:item_product",
+    "relationship:warehouse_logistics:item_shipment",
+    "relationship:warehouse_logistics:line_po",
+    "relationship:warehouse_logistics:line_product",
+    "relationship:warehouse_logistics:po_warehouse",
+    "relationship:warehouse_logistics:receipt_line",
+    "relationship:warehouse_logistics:shipment_warehouse"
   ],
   "semantic_mutants": [
     {
@@ -69,18 +85,12 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "warehouse_id",
-        "shipped_to_received"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "warehouse_id",
       "shipped_to_received"
     ],
-    "population": "matching-only",
+    "population": "all-anchors",
     "projection_contract": {
       "extra_fields_allowed": false,
       "fields": [
@@ -104,15 +114,20 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
+      "relationship:warehouse_logistics:item_product",
+      "relationship:warehouse_logistics:item_shipment",
+      "relationship:warehouse_logistics:line_po",
+      "relationship:warehouse_logistics:line_product",
+      "relationship:warehouse_logistics:po_warehouse",
+      "relationship:warehouse_logistics:receipt_line",
+      "relationship:warehouse_logistics:shipment_warehouse"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -123,7 +138,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

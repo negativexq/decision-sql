@@ -27,8 +27,9 @@
     "sql": "SELECT delivery_id FROM (SELECT delivery_id, CAST(payload->>'temperature_c' AS NUMERIC) AS temperature FROM delivery_events) x WHERE temperature>=7 ORDER BY delivery_id"
   },
   "required_context_facts": [
-    "relationships:warehouse_logistics:shipment_warehouse",
-    "relationships:warehouse_logistics:item_product"
+    "attributes:warehouse_logistics:delivery_events:delivery_id",
+    "attributes:warehouse_logistics:delivery_events:payload",
+    "attributes:warehouse_logistics:delivery_events:payload #>> '{temperature_c}'"
   ],
   "semantic_mutants": [
     {
@@ -67,12 +68,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "delivery_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "delivery_id"
     ],
@@ -93,16 +89,13 @@
       "calculation"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:warehouse_logistics:shipment_warehouse",
-      "relationships:warehouse_logistics:item_product"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -113,7 +106,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

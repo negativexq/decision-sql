@@ -165,24 +165,99 @@ def request_leakage(request: BenchmarkRequest, case: dict[str, Any] | None = Non
 
 
 def context_contains_fact(database_id: str, fact: str) -> bool:
-    context = serialize_governed_context_v1(database_id)
-    section, _, raw_id = fact.partition(".")
-    suffix = raw_id.replace(".", ":")
-    if section == "relationships":
+    """Check a required context fact against structured authority.
+
+    M38 introduced colon-delimited fact IDs while the historical pilot uses
+    dotted legacy IDs.  Both are accepted, but neither is checked by raw
+    substring containment.  Unknown or malformed facts fail closed.
+    """
+    authority = load_authority(database_id)
+    section, separator, raw = fact.partition(":")
+    if not separator:
+        section, separator, raw = fact.partition(".")
+    if not section or not raw:
+        return False
+
+    normalized_section = section
+    if section in {"relationships", "relationship"}:
+        relationship_id = raw if raw.startswith("relationship:") else f"relationship:{raw}"
         return any(
-            str(item.get("relationship_id", "")).endswith(suffix)
-            for item in load_authority(database_id)["relationships"]
-            if item.get("authorized") is True
+            str(item.get("relationship_id", "")) == relationship_id
+            and item.get("authorized") is True
+            for item in authority["relationships"]
         )
-    if section == "policy":
-        return "readonly" in context.lower()
-    return (
-        suffix in context
-        or raw_id in context
-        or raw_id.replace(".", ":", 1) in context
-        or raw_id.replace(".", ":") in context
-        or raw_id.replace(":", ".") in context
-    )
+
+    legacy_prefixes = {
+        "relationships.relationship": "relationships",
+        "metrics.metric": "metrics",
+        "business_rules.rule": "business_rules",
+        "temporal_rules.time": "temporal_rules",
+        "policy.policy": "policy",
+    }
+    if section in legacy_prefixes:
+        normalized_section = legacy_prefixes[section]
+
+    if normalized_section == "relationships":
+        relationship_id = raw if raw.startswith("relationship:") else f"relationship:{raw}"
+        return any(
+            str(item.get("relationship_id", "")) == relationship_id
+            and item.get("authorized") is True
+            for item in authority["relationships"]
+        )
+
+    if normalized_section == "attributes":
+        pieces = raw.split(":")
+        if len(pieces) == 3:
+            db, entity, physical = pieces
+            if db != database_id or not entity or not physical:
+                return False
+            return any(
+                str(item.get("entity_id", "")).endswith(f":{entity}")
+                and str(item.get("physical_column_or_path", "")) == physical
+                for item in authority["attributes"]
+            )
+        # Historical dotted form: attributes.table.column or attributes.table.payload.path
+        pieces = raw.split(".")
+        if len(pieces) >= 2:
+            entity, physical = pieces[0], ".".join(pieces[1:])
+            return any(
+                str(item.get("entity_id", "")).endswith(f":{entity}")
+                and (
+                    str(item.get("physical_column_or_path", "")) == physical
+                    or str(item.get("attribute_id", "")).endswith(f":{physical}")
+                )
+                for item in authority["attributes"]
+            )
+        return False
+
+    if normalized_section == "entities":
+        return any(
+            str(item.get("entity_id", "")) == raw
+            or str(item.get("entity_id", "")).endswith(f":{raw}")
+            for item in authority["entities"]
+        )
+
+    collections = {
+        "metrics": "metric_id",
+        "business_rules": "rule_id",
+        "temporal_rules": "temporal_rule_id",
+    }
+    if normalized_section in collections:
+        key = collections[normalized_section]
+        if raw.startswith(f"{normalized_section[:-1]}:"):
+            expected = raw
+        else:
+            expected = raw
+        return any(
+            str(item.get(key, "")) == expected
+            or str(item.get(key, "")).endswith(f":{expected.split(':')[-1]}")
+            for item in authority[normalized_section]
+        )
+
+    if normalized_section == "policy":
+        policy_id = str(authority["policy"].get("policy_id", ""))
+        return raw == policy_id or raw == policy_id.split(":")[-1] or raw.endswith(":readonly")
+    return False
 
 
 def git_revision() -> str:

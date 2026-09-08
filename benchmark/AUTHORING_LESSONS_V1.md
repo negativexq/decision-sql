@@ -26,3 +26,12 @@ final partitions must be isolated at the database level.
 - Treat counterfactuals as minimal discriminating fixtures and record their semantic purpose.
 - Keep mutation families executable and require a full base-plus-fixture kill gate before freezing.
 - Do not use model outputs to author schemas, questions, references, fixtures, or mutants.
+
+## M40 integrity-repair lessons
+
+- Treat the serialized governed context, rather than the physical schema file, as the model's actual evidence boundary.
+- Validate source-column, JSON-path, and latest-row tie-break visibility against both independent references.
+- Parse required-context fact identifiers structurally and fail closed on malformed, unknown, unauthorized, or wrong-database facts.
+- Keep semantic ordering separate from deterministic reference ordering; an `ORDER BY` in a reference is not by itself a public row-order contract.
+- Make population choices explicit in natural language; do not hide all-anchor versus matching-only behavior in the evaluator.
+- Preserve historical model evidence byte-for-byte and create a new benchmark version whenever contract repairs change request bytes.

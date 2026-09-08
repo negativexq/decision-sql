@@ -27,8 +27,11 @@
     "sql": "SELECT severity,SUM(has_investigation)::NUMERIC/NULLIF(COUNT(*),0) AS investigation_rate FROM (SELECT a.severity,CASE WHEN EXISTS(SELECT 1 FROM investigations i WHERE i.alert_id=a.alert_id) THEN 1 ELSE 0 END has_investigation FROM alerts a) x GROUP BY severity ORDER BY severity"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:alerts:alert_id",
+    "attributes:risk_operations:alerts:severity",
+    "attributes:risk_operations:investigations:alert_id",
+    "attributes:risk_operations:investigations:investigation_id",
+    "relationship:risk_operations:investigation_alert"
   ],
   "semantic_mutants": [
     {
@@ -69,13 +72,7 @@
     ],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "severity",
-        "investigation_rate"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "severity",
       "investigation_rate"
@@ -103,15 +100,14 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
+      "relationship:risk_operations:investigation_alert"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 2,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -122,7 +118,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

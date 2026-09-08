@@ -27,8 +27,15 @@
     "sql": "SELECT customer_id FROM customers c WHERE EXISTS (SELECT 1 FROM alerts a JOIN investigations i ON i.alert_id=a.alert_id WHERE a.customer_id=c.customer_id AND a.status='open' AND i.closed_at IS NULL) ORDER BY customer_id"
   },
   "required_context_facts": [
-    "relationships:risk_operations:alert_customer",
-    "relationships:risk_operations:transaction_account"
+    "attributes:risk_operations:alerts:alert_id",
+    "attributes:risk_operations:alerts:customer_id",
+    "attributes:risk_operations:alerts:status",
+    "attributes:risk_operations:customers:customer_id",
+    "attributes:risk_operations:investigations:alert_id",
+    "attributes:risk_operations:investigations:closed_at",
+    "business_rules:risk_operations:open_alert",
+    "relationship:risk_operations:alert_customer",
+    "relationship:risk_operations:investigation_alert"
   ],
   "semantic_mutants": [
     {
@@ -67,12 +74,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "customer_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "customer_id"
     ],
@@ -95,15 +97,15 @@
     ],
     "reference_independence": "MODERATE",
     "relationships": [
-      "relationships:risk_operations:alert_customer",
-      "relationships:risk_operations:transaction_account"
+      "relationship:risk_operations:alert_customer",
+      "relationship:risk_operations:investigation_alert"
     ],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -114,7 +116,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

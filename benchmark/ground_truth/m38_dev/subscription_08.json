@@ -25,8 +25,10 @@
     "sql": "SELECT account_id FROM (SELECT account_id, SUM(units) AS units FROM usage_events WHERE occurred_at >= TIMESTAMPTZ '2026-06-01' AND occurred_at < TIMESTAMPTZ '2026-07-01' GROUP BY account_id) u WHERE units > 1000 ORDER BY account_id"
   },
   "required_context_facts": [
-    "relationships:subscription_billing:subscription_account",
-    "metrics:subscription_billing:net_collected"
+    "attributes:subscription_billing:usage_events:account_id",
+    "attributes:subscription_billing:usage_events:occurred_at",
+    "attributes:subscription_billing:usage_events:units",
+    "temporal_rules:subscription_billing:clock"
   ],
   "semantic_mutants": [
     {
@@ -65,12 +67,7 @@
     "grouping": [],
     "limit": null,
     "null_default_semantics": "preserve SQL NULL semantics",
-    "ordering": {
-      "columns": [
-        "account_id"
-      ],
-      "direction": "ASC"
-    },
+    "ordering": {},
     "outputs": [
       "account_id"
     ],
@@ -92,16 +89,13 @@
       "filter"
     ],
     "reference_independence": "MODERATE",
-    "relationships": [
-      "relationships:subscription_billing:subscription_account",
-      "metrics:subscription_billing:net_collected"
-    ],
+    "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
       "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
-      "row_order": true,
+      "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
@@ -112,7 +106,7 @@
         "source": "NOT_APPLICABLE"
       },
       "ordering": {
-        "source": "QUESTION_EXPLICIT"
+        "source": "NOT_APPLICABLE"
       },
       "population": {
         "source": "QUESTION_EXPLICIT"

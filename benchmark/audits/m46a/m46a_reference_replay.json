@@ -106,24 +106,29 @@
       "case_id": "commerce_04",
       "database_id": "commerce_ops",
       "diagnostic": {
-        "aggregate_expressions": [
-          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))"
-        ],
-        "code": "UNSAFE_ROLLUP",
+        "aggregate_expressions": [],
+        "code": "PASS",
         "evidence": {},
         "fanout_edges": [],
         "grouping_columns": [
           "p.category"
         ],
         "measure_ids": [
-          "measure:commerce_ops:orders:discount_pct"
+          "measure:commerce_ops:order_items:quantity",
+          "measure:commerce_ops:order_items:unit_price"
         ],
-        "message": "A non-additive or derived measure is being rolled up.",
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
         "native_grains": [
           {
-            "entity_id": "entity:commerce_ops:orders",
+            "entity_id": "entity:commerce_ops:order_items",
             "key_attribute_ids": [
-              "attribute:commerce_ops:orders:order_id"
+              "attribute:commerce_ops:order_items:item_id"
+            ]
+          },
+          {
+            "entity_id": "entity:commerce_ops:order_items",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:order_items:item_id"
             ]
           }
         ]
@@ -221,24 +226,29 @@
       "case_id": "commerce_07",
       "database_id": "commerce_ops",
       "diagnostic": {
-        "aggregate_expressions": [
-          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))"
-        ],
-        "code": "UNSAFE_ROLLUP",
+        "aggregate_expressions": [],
+        "code": "PASS",
         "evidence": {},
         "fanout_edges": [],
         "grouping_columns": [
           "c.customer_id"
         ],
         "measure_ids": [
-          "measure:commerce_ops:orders:discount_pct"
+          "measure:commerce_ops:order_items:quantity",
+          "measure:commerce_ops:order_items:unit_price"
         ],
-        "message": "A non-additive or derived measure is being rolled up.",
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
         "native_grains": [
           {
-            "entity_id": "entity:commerce_ops:orders",
+            "entity_id": "entity:commerce_ops:order_items",
             "key_attribute_ids": [
-              "attribute:commerce_ops:orders:order_id"
+              "attribute:commerce_ops:order_items:item_id"
+            ]
+          },
+          {
+            "entity_id": "entity:commerce_ops:order_items",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:order_items:item_id"
             ]
           }
         ]
@@ -251,22 +261,27 @@
       "case_id": "commerce_07",
       "database_id": "commerce_ops",
       "diagnostic": {
-        "aggregate_expressions": [
-          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))"
-        ],
-        "code": "UNSAFE_ROLLUP",
+        "aggregate_expressions": [],
+        "code": "PASS",
         "evidence": {},
         "fanout_edges": [],
         "grouping_columns": [],
         "measure_ids": [
-          "measure:commerce_ops:orders:discount_pct"
+          "measure:commerce_ops:order_items:quantity",
+          "measure:commerce_ops:order_items:unit_price"
         ],
-        "message": "A non-additive or derived measure is being rolled up.",
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
         "native_grains": [
           {
-            "entity_id": "entity:commerce_ops:orders",
+            "entity_id": "entity:commerce_ops:order_items",
             "key_attribute_ids": [
-              "attribute:commerce_ops:orders:order_id"
+              "attribute:commerce_ops:order_items:item_id"
+            ]
+          },
+          {
+            "entity_id": "entity:commerce_ops:order_items",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:order_items:item_id"
             ]
           }
         ]
@@ -2307,7 +2322,6 @@
   "summary": {
     "NOT_APPLICABLE": 102,
     "PARENT_MEASURE_FANOUT": 2,
-    "PASS": 13,
-    "UNSAFE_ROLLUP": 3
+    "PASS": 16
   }
 }

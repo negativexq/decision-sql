@@ -1,0 +1,2215 @@
+{
+  "answerable_cases": 60,
+  "cases": [
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "commerce_01",
+      "classification": "NO_FANOUT_RISK",
+      "database": "commerce_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "schema_linking",
+        "simple_projection",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "customers"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "commerce_02",
+      "classification": "NO_FANOUT_RISK",
+      "database": "commerce_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "schema_linking",
+        "multi_filter",
+        "temporal",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "june",
+        "orders"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count",
+        "sum"
+      ],
+      "case_id": "commerce_03",
+      "classification": "FANOUT_SAFE",
+      "database": "commerce_ops",
+      "measure_source": [],
+      "output_grain": [
+        "customers.region"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "population",
+        "grouping",
+        "aggregation",
+        "null_semantics"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "orders",
+              "relationship_id": "relationship:commerce_ops:order_customer",
+              "right_entity": "customers"
+            }
+          ],
+          "right_table": "orders"
+        }
+      ],
+      "tables": [
+        "completed",
+        "customers",
+        "orders"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "commerce_04",
+      "classification": "FANOUT_SAFE",
+      "database": "commerce_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "post_discount_line",
+          "calculation_id": "metric:commerce_net_order_value",
+          "grain": "order_item",
+          "operands": [
+            "quantity",
+            "unit_price",
+            "discount_pct"
+          ],
+          "rounding_stage": "before_ordering_and_display"
+        }
+      ],
+      "output_grain": [
+        "products.category"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "multi_hop",
+        "aggregation",
+        "calculation",
+        "grain",
+        "precision"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_order",
+              "right_entity": "orders"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_product",
+              "right_entity": "products"
+            }
+          ],
+          "right_table": "order_items"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_product",
+              "right_entity": "products"
+            }
+          ],
+          "right_table": "products"
+        }
+      ],
+      "tables": [
+        "lines",
+        "order_items",
+        "orders",
+        "products"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "commerce_05",
+      "classification": "FANOUT_SAFE",
+      "database": "commerce_ops",
+      "measure_source": [],
+      "output_grain": [
+        "customers.customer_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "multi_hop",
+        "aggregation",
+        "population",
+        "set_operation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "orders",
+              "relationship_id": "relationship:commerce_ops:order_customer",
+              "right_entity": "customers"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_order",
+              "right_entity": "orders"
+            }
+          ],
+          "right_table": "orders"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_order",
+              "right_entity": "orders"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_product",
+              "right_entity": "products"
+            }
+          ],
+          "right_table": "order_items"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_product",
+              "right_entity": "products"
+            }
+          ],
+          "right_table": "products"
+        }
+      ],
+      "tables": [
+        "customers",
+        "home_orders",
+        "order_items",
+        "orders",
+        "products"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg",
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "avg",
+        "count"
+      ],
+      "case_id": "commerce_06",
+      "classification": "FANOUT_SAFE",
+      "database": "commerce_ops",
+      "measure_source": [],
+      "output_grain": [
+        "customers.region"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "population",
+        "aggregation",
+        "grouping",
+        "null_semantics",
+        "nested"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "orders",
+              "relationship_id": "relationship:commerce_ops:order_customer",
+              "right_entity": "customers"
+            }
+          ],
+          "right_table": "orders"
+        }
+      ],
+      "tables": [
+        "customers",
+        "orders",
+        "per_customer"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "commerce_07",
+      "classification": "FANOUT_SAFE",
+      "database": "commerce_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "post_discount_line",
+          "calculation_id": "metric:commerce_net_order_value",
+          "grain": "order_item",
+          "operands": [
+            "quantity",
+            "unit_price",
+            "discount_pct"
+          ],
+          "rounding_stage": "before_ordering_and_display"
+        }
+      ],
+      "output_grain": [
+        "customers.customer_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "multi_hop",
+        "aggregation",
+        "calculation",
+        "ordering",
+        "limit",
+        "precision"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "orders",
+              "relationship_id": "relationship:commerce_ops:order_customer",
+              "right_entity": "customers"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_order",
+              "right_entity": "orders"
+            }
+          ],
+          "right_table": "orders"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "order_items",
+              "relationship_id": "relationship:commerce_ops:item_order",
+              "right_entity": "orders"
+            }
+          ],
+          "right_table": "order_items"
+        }
+      ],
+      "tables": [
+        "customer_value",
+        "customers",
+        "order_items",
+        "orders"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "fleet_01",
+      "classification": "NO_FANOUT_RISK",
+      "database": "fleet_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "json",
+        "filter",
+        "simple_projection"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "readings",
+        "telemetry_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg"
+      ],
+      "aggregates_reference_b": [
+        "avg"
+      ],
+      "case_id": "fleet_02",
+      "classification": "FANOUT_SAFE",
+      "database": "fleet_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "row_product_then_average",
+          "calculation_id": "fuel_cost",
+          "grain": "fuel_event",
+          "operands": [
+            "liters",
+            "price_per_liter"
+          ],
+          "rounding_stage": "display_only"
+        }
+      ],
+      "output_grain": [
+        "depots.depot_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "grouping",
+        "calculation",
+        "precision"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "vehicles",
+              "relationship_id": "relationship:fleet_ops:vehicle_depot",
+              "right_entity": "depots"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "fuel_events",
+              "relationship_id": "relationship:fleet_ops:fuel_vehicle",
+              "right_entity": "vehicles"
+            }
+          ],
+          "right_table": "vehicles"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "fuel_events",
+              "relationship_id": "relationship:fleet_ops:fuel_vehicle",
+              "right_entity": "vehicles"
+            }
+          ],
+          "right_table": "fuel_events"
+        }
+      ],
+      "tables": [
+        "costs",
+        "depots",
+        "fuel_events",
+        "vehicles"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg"
+      ],
+      "aggregates_reference_b": [
+        "avg"
+      ],
+      "case_id": "fleet_03",
+      "classification": "FANOUT_SAFE",
+      "database": "fleet_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "row_ratio_then_average",
+          "calculation_id": "metric:fleet_route_efficiency",
+          "grain": "trip",
+          "operands": [
+            "distance_km",
+            "fuel_liters"
+          ],
+          "rounding_stage": "display_only"
+        }
+      ],
+      "output_grain": [
+        "routes.route_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "grouping",
+        "calculation",
+        "null_semantics"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "trips",
+              "relationship_id": "relationship:fleet_ops:trip_route",
+              "right_entity": "routes"
+            }
+          ],
+          "right_table": "trips"
+        }
+      ],
+      "tables": [
+        "ratios",
+        "routes",
+        "trips"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "fleet_04",
+      "classification": "FANOUT_SAFE",
+      "database": "fleet_ops",
+      "measure_source": [],
+      "output_grain": [
+        "vehicles.vehicle_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "population",
+        "temporal",
+        "aggregation",
+        "null_semantics"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "maintenance_events",
+              "relationship_id": "relationship:fleet_ops:maintenance_vehicle",
+              "right_entity": "vehicles"
+            }
+          ],
+          "right_table": "maintenance_events"
+        }
+      ],
+      "tables": [
+        "maintenance_events",
+        "recent",
+        "vehicles"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "fleet_05",
+      "classification": "FANOUT_SAFE",
+      "database": "fleet_ops",
+      "measure_source": [],
+      "output_grain": [
+        "drivers.driver_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "multi_hop",
+        "aggregation",
+        "grouping",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "trips",
+              "relationship_id": "relationship:fleet_ops:trip_driver",
+              "right_entity": "drivers"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "trips",
+              "relationship_id": "relationship:fleet_ops:trip_vehicle",
+              "right_entity": "vehicles"
+            }
+          ],
+          "right_table": "trips"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "trips",
+              "relationship_id": "relationship:fleet_ops:trip_vehicle",
+              "right_entity": "vehicles"
+            }
+          ],
+          "right_table": "vehicles"
+        }
+      ],
+      "tables": [
+        "cargo",
+        "drivers",
+        "trips",
+        "vehicles"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "fleet_06",
+      "classification": "NO_FANOUT_RISK",
+      "database": "fleet_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "relationship",
+        "temporal",
+        "window",
+        "json",
+        "ordering"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "telemetry_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg"
+      ],
+      "aggregates_reference_b": [
+        "avg"
+      ],
+      "case_id": "fleet_07",
+      "classification": "NO_FANOUT_RISK",
+      "database": "fleet_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "row_ratio_then_average",
+          "calculation_id": "metric:fleet_route_efficiency",
+          "grain": "trip",
+          "operands": [
+            "distance_km",
+            "fuel_liters"
+          ],
+          "rounding_stage": "before_ordering"
+        }
+      ],
+      "output_grain": [
+        "routes.route_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "calculation",
+        "ordering",
+        "limit",
+        "precision",
+        "nested",
+        "window",
+        "window"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "ranked",
+        "route_values",
+        "trips"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "support_01",
+      "classification": "FANOUT_SAFE",
+      "database": "support_ops",
+      "measure_source": [],
+      "output_grain": [
+        "accounts.account_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "population",
+        "aggregation",
+        "grouping",
+        "filter_scope"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "support_tickets",
+              "relationship_id": "relationship:support_ops:ticket_account",
+              "right_entity": "accounts"
+            }
+          ],
+          "right_table": "support_tickets"
+        }
+      ],
+      "tables": [
+        "accounts",
+        "support_tickets",
+        "urgent"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "min"
+      ],
+      "aggregates_reference_b": [
+        "min"
+      ],
+      "case_id": "support_02",
+      "classification": "FANOUT_SAFE",
+      "database": "support_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "relationship",
+        "multi_hop",
+        "temporal",
+        "aggregation",
+        "nested",
+        "correlated"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [],
+          "right_table": null
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "subscriptions",
+              "relationship_id": "relationship:support_ops:subscription_plan",
+              "right_entity": "service_plans"
+            }
+          ],
+          "right_table": "service_plans"
+        },
+        {
+          "candidate_relationships": [],
+          "right_table": null
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "ticket_events",
+              "relationship_id": "relationship:support_ops:event_ticket",
+              "right_entity": "support_tickets"
+            }
+          ],
+          "right_table": "support_tickets"
+        }
+      ],
+      "tables": [
+        "service_plans",
+        "subscriptions",
+        "support_tickets",
+        "ticket_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "support_03",
+      "classification": "NO_FANOUT_RISK",
+      "database": "support_ops",
+      "measure_source": [
+        {
+          "aggregation_stage": "post_count_ratio",
+          "calculation_id": "metric:support_escalation_rate",
+          "grain": "support_ticket",
+          "operands": [
+            "urgent_count",
+            "ticket_count"
+          ],
+          "rounding_stage": "display_only"
+        }
+      ],
+      "output_grain": [
+        "support_tickets.account_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "grouping",
+        "calculation",
+        "precision",
+        "null_semantics"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "counts",
+        "support_tickets"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "support_04",
+      "classification": "NO_FANOUT_RISK",
+      "database": "support_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "json",
+        "filter",
+        "simple_projection"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "chat",
+        "support_tickets"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg",
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "avg",
+        "count"
+      ],
+      "case_id": "support_05",
+      "classification": "NO_FANOUT_RISK",
+      "database": "support_ops",
+      "measure_source": [],
+      "output_grain": [
+        "support_tickets.account_id"
+      ],
+      "query_shape_tags": [
+        "aggregation",
+        "nested",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [],
+          "right_table": "baseline"
+        }
+      ],
+      "tables": [
+        "baseline",
+        "counts",
+        "support_tickets"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "support_06",
+      "classification": "NO_FANOUT_RISK",
+      "database": "support_ops",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "set_operation",
+        "filter",
+        "relationship",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "incidents",
+        "support_tickets"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_01",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "alerts"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_02",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "customer_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "window",
+        "tie-break"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "risk_assessments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "risk_03",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "customer_id"
+      ],
+      "query_shape_tags": [
+        "aggregation",
+        "grouping"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "alerts"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "risk_04",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "json",
+        "aggregation",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "transactions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count",
+        "sum"
+      ],
+      "case_id": "risk_05",
+      "classification": "FANOUT_SENSITIVE",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "severity"
+      ],
+      "query_shape_tags": [
+        "conditional aggregate",
+        "ratio",
+        "null"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "investigations",
+              "relationship_id": "relationship:risk_operations:investigation_alert",
+              "right_entity": "alerts"
+            }
+          ],
+          "right_table": "investigations"
+        }
+      ],
+      "tables": [
+        "alerts",
+        "investigations"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_06",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "investigation_id"
+      ],
+      "query_shape_tags": [
+        "temporal",
+        "calculation",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "investigations"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "risk_07",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "relationship",
+        "distinct",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "login_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_08",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "json",
+        "calculation"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "transactions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_09",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "customer_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "ordering",
+        "limit"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "risk_assessments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "risk_10",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "correlated",
+        "null",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "alerts",
+        "watchlist_matches"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "risk_11",
+      "classification": "NO_FANOUT_RISK",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "nested",
+        "population",
+        "relationship"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "investigations",
+              "relationship_id": "relationship:risk_operations:investigation_alert",
+              "right_entity": "alerts"
+            }
+          ],
+          "right_table": "investigations"
+        }
+      ],
+      "tables": [
+        "alerts",
+        "customers",
+        "investigations"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "risk_12",
+      "classification": "FANOUT_SAFE",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "customer_id"
+      ],
+      "query_shape_tags": [
+        "null",
+        "population",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "watchlist_matches",
+              "relationship_id": "relationship:risk_operations:watchlist_customer",
+              "right_entity": "customers"
+            }
+          ],
+          "right_table": "watchlist_matches"
+        }
+      ],
+      "tables": [
+        "customers",
+        "watchlist_matches"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg"
+      ],
+      "aggregates_reference_b": [
+        "avg"
+      ],
+      "case_id": "risk_13",
+      "classification": "FANOUT_SAFE",
+      "database": "risk_operations",
+      "measure_source": [],
+      "output_grain": [
+        "segment"
+      ],
+      "query_shape_tags": [
+        "multi-hop",
+        "aggregation",
+        "precision"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "accounts",
+              "relationship_id": "relationship:risk_operations:account_customer",
+              "right_entity": "customers"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "transactions",
+              "relationship_id": "relationship:risk_operations:transaction_account",
+              "right_entity": "accounts"
+            }
+          ],
+          "right_table": "accounts"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "transactions",
+              "relationship_id": "relationship:risk_operations:transaction_account",
+              "right_entity": "accounts"
+            }
+          ],
+          "right_table": "transactions"
+        }
+      ],
+      "tables": [
+        "accounts",
+        "customers",
+        "transactions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_01",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_02",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "relationship",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "accounts",
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "subscription_03",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "aggregation",
+        "grouping"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "accounts",
+        "invoices"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "subscription_04",
+      "classification": "FANOUT_SENSITIVE",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "calculation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "payments",
+              "relationship_id": "relationship:subscription_billing:payment_invoice",
+              "right_entity": "invoices"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "refunds",
+              "relationship_id": "relationship:subscription_billing:refund_payment",
+              "right_entity": "payments"
+            }
+          ],
+          "right_table": "payments"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "refunds",
+              "relationship_id": "relationship:subscription_billing:refund_payment",
+              "right_entity": "payments"
+            }
+          ],
+          "right_table": "refunds"
+        }
+      ],
+      "tables": [
+        "invoices",
+        "payments",
+        "refunds"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_05",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "window"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "subscription_06",
+      "classification": "FANOUT_SAFE",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "payments",
+              "relationship_id": "relationship:subscription_billing:payment_invoice",
+              "right_entity": "invoices"
+            }
+          ],
+          "right_table": "payments"
+        }
+      ],
+      "tables": [
+        "invoices",
+        "payments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "subscription_07",
+      "classification": "FANOUT_SAFE",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "subscriptions",
+              "relationship_id": "relationship:subscription_billing:subscription_plan",
+              "right_entity": "plans"
+            }
+          ],
+          "right_table": "plans"
+        }
+      ],
+      "tables": [
+        "plans",
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "subscription_08",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "temporal",
+        "aggregation",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "usage_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_09",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "temporal",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "invoices"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "subscription_10",
+      "classification": "FANOUT_SENSITIVE",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "plan_id"
+      ],
+      "query_shape_tags": [
+        "ratio",
+        "multi-hop",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "payments",
+              "relationship_id": "relationship:subscription_billing:payment_invoice",
+              "right_entity": "invoices"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "invoices",
+              "relationship_id": "relationship:subscription_billing:invoice_subscription",
+              "right_entity": "subscriptions"
+            }
+          ],
+          "right_table": "invoices"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "payments",
+              "relationship_id": "relationship:subscription_billing:payment_invoice",
+              "right_entity": "invoices"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "refunds",
+              "relationship_id": "relationship:subscription_billing:refund_payment",
+              "right_entity": "payments"
+            }
+          ],
+          "right_table": "payments"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "refunds",
+              "relationship_id": "relationship:subscription_billing:refund_payment",
+              "right_entity": "payments"
+            }
+          ],
+          "right_table": "refunds"
+        }
+      ],
+      "tables": [
+        "invoices",
+        "payments",
+        "refunds",
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_11",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "nested",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "entitlements",
+              "relationship_id": "relationship:subscription_billing:entitlement_subscription",
+              "right_entity": "subscriptions"
+            }
+          ],
+          "right_table": "entitlements"
+        }
+      ],
+      "tables": [
+        "entitlements",
+        "plans",
+        "subscriptions"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "subscription_12",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "account_id"
+      ],
+      "query_shape_tags": [
+        "json",
+        "aggregation",
+        "calculation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "usage_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "max"
+      ],
+      "aggregates_reference_b": [],
+      "case_id": "subscription_13",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [
+        "invoice_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "window",
+        "temporal"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "dunning_attempts"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "subscription_14",
+      "classification": "NO_FANOUT_RISK",
+      "database": "subscription_billing",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "correlated",
+        "null",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "credits",
+        "invoices"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "warehouse_01",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "inventory_snapshots"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "warehouse_02",
+      "classification": "FANOUT_SAFE",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "shipment_items",
+              "relationship_id": "relationship:warehouse_logistics:item_shipment",
+              "right_entity": "shipments"
+            }
+          ],
+          "right_table": "shipment_items"
+        }
+      ],
+      "tables": [
+        "shipment_items",
+        "shipments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "warehouse_03",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "carrier_id"
+      ],
+      "query_shape_tags": [
+        "relationship",
+        "temporal",
+        "conditional aggregate"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "shipments",
+              "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+              "right_entity": "carriers"
+            }
+          ],
+          "right_table": "carriers"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "delivery_events",
+              "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+              "right_entity": "shipments"
+            }
+          ],
+          "right_table": "delivery_events"
+        }
+      ],
+      "tables": [
+        "carriers",
+        "delivery_events",
+        "shipments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "warehouse_04",
+      "classification": "FANOUT_SAFE",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "multi-hop",
+        "aggregation",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "purchase_order_lines",
+              "relationship_id": "relationship:warehouse_logistics:line_po",
+              "right_entity": "purchase_orders"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "receipts",
+              "relationship_id": "relationship:warehouse_logistics:receipt_line",
+              "right_entity": "purchase_order_lines"
+            }
+          ],
+          "right_table": "purchase_order_lines"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "receipts",
+              "relationship_id": "relationship:warehouse_logistics:receipt_line",
+              "right_entity": "purchase_order_lines"
+            }
+          ],
+          "right_table": "receipts"
+        }
+      ],
+      "tables": [
+        "purchase_order_lines",
+        "purchase_orders",
+        "receipts"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "warehouse_05",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "latest-row",
+        "window",
+        "tie-break"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "inventory_snapshots"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "warehouse_06",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "temporal",
+        "filter"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "delivery_events",
+              "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+              "right_entity": "shipments"
+            }
+          ],
+          "right_table": "delivery_events"
+        }
+      ],
+      "tables": [
+        "delivery_events",
+        "shipments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "avg"
+      ],
+      "aggregates_reference_b": [
+        "avg"
+      ],
+      "case_id": "warehouse_07",
+      "classification": "FANOUT_SAFE",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "multi-hop",
+        "calculation",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "pick_events",
+              "relationship_id": "relationship:warehouse_logistics:pick_item",
+              "right_entity": "shipment_items"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "shipment_items",
+              "relationship_id": "relationship:warehouse_logistics:item_shipment",
+              "right_entity": "shipments"
+            }
+          ],
+          "right_table": "shipment_items"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "pick_events",
+              "relationship_id": "relationship:warehouse_logistics:pick_item",
+              "right_entity": "shipment_items"
+            }
+          ],
+          "right_table": "pick_events"
+        }
+      ],
+      "tables": [
+        "pick_events",
+        "shipment_items",
+        "shipments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "warehouse_08",
+      "classification": "FANOUT_SENSITIVE",
+      "database": "warehouse_logistics",
+      "hypothesis_evidence": {
+        "cardinality": "many_to_one from receipts to purchase_order_lines; one-to-many from line to receipts",
+        "child_measure": "received_qty",
+        "child_relation": "receipts.po_line_id",
+        "hypothesis_status": "SUPPORTED_OFFLINE",
+        "m43_observed_pattern": "direct line-to-receipt join with SUM(ordered_qty) at product grain",
+        "native_measure_grain": "purchase_order_lines.po_line_id",
+        "parent_measure": "ordered_qty",
+        "reference_a_preserves_grain": "correlated receipt sum per purchase-order line",
+        "reference_b_preserves_grain": "GROUP BY po_line_id, product_id, ordered_qty before product rollup",
+        "relationship_id": "relationship:warehouse_logistics:receipt_line"
+      },
+      "measure_source": [],
+      "output_grain": [
+        "product_id"
+      ],
+      "query_shape_tags": [
+        "population",
+        "null",
+        "calculation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "per_line",
+        "purchase_order_lines",
+        "receipts"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [],
+      "case_id": "warehouse_09",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "json",
+        "calculation"
+      ],
+      "references_differ_in_grain_strategy": false,
+      "relationship_edges": [],
+      "tables": [
+        "delivery_events"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "warehouse_10",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "product_id"
+      ],
+      "query_shape_tags": [
+        "distinct",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "shipment_items"
+      ]
+    },
+    {
+      "aggregates_reference_a": [],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "warehouse_11",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [],
+      "query_shape_tags": [
+        "correlated",
+        "null",
+        "population"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [],
+      "tables": [
+        "inventory_snapshots",
+        "warehouses"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "count"
+      ],
+      "aggregates_reference_b": [
+        "count"
+      ],
+      "case_id": "warehouse_12",
+      "classification": "NO_FANOUT_RISK",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "carrier_id"
+      ],
+      "query_shape_tags": [
+        "ordering",
+        "limit",
+        "grouping"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "shipments",
+              "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+              "right_entity": "carriers"
+            }
+          ],
+          "right_table": "shipments"
+        }
+      ],
+      "tables": [
+        "carriers",
+        "shipments"
+      ]
+    },
+    {
+      "aggregates_reference_a": [
+        "sum"
+      ],
+      "aggregates_reference_b": [
+        "sum"
+      ],
+      "case_id": "warehouse_13",
+      "classification": "MULTI_GRAIN_CALCULATION",
+      "database": "warehouse_logistics",
+      "measure_source": [],
+      "output_grain": [
+        "warehouse_id"
+      ],
+      "query_shape_tags": [
+        "multi-hop",
+        "ratio",
+        "null",
+        "aggregation"
+      ],
+      "references_differ_in_grain_strategy": true,
+      "relationship_edges": [
+        {
+          "candidate_relationships": [],
+          "right_table": null
+        },
+        {
+          "candidate_relationships": [],
+          "right_table": null
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "shipment_items",
+              "relationship_id": "relationship:warehouse_logistics:item_shipment",
+              "right_entity": "shipments"
+            }
+          ],
+          "right_table": "shipment_items"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "purchase_order_lines",
+              "relationship_id": "relationship:warehouse_logistics:line_po",
+              "right_entity": "purchase_orders"
+            },
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "receipts",
+              "relationship_id": "relationship:warehouse_logistics:receipt_line",
+              "right_entity": "purchase_order_lines"
+            }
+          ],
+          "right_table": "purchase_order_lines"
+        },
+        {
+          "candidate_relationships": [
+            {
+              "cardinality": "many_to_one",
+              "left_entity": "receipts",
+              "relationship_id": "relationship:warehouse_logistics:receipt_line",
+              "right_entity": "purchase_order_lines"
+            }
+          ],
+          "right_table": "receipts"
+        }
+      ],
+      "tables": [
+        "purchase_order_lines",
+        "purchase_orders",
+        "receipts",
+        "shipment_items",
+        "shipments",
+        "warehouses"
+      ]
+    }
+  ],
+  "counts": {
+    "FANOUT_SAFE": 18,
+    "FANOUT_SENSITIVE": 4,
+    "MULTI_GRAIN_CALCULATION": 1,
+    "NO_FANOUT_RISK": 37
+  },
+  "fanout_sensitive_cases": [
+    "risk_05",
+    "subscription_04",
+    "subscription_10",
+    "warehouse_08"
+  ],
+  "multi_grain_cases": [
+    "warehouse_13"
+  ],
+  "mutant_alignment": {
+    "benchmark_mutants_changed": false,
+    "mutation_gate_remains": "188/188 killed, 0 invalid, 0 surviving",
+    "warehouse_08_has_aggregation_grain_mutant": true,
+    "warehouse_08_mutant_count": 3
+  },
+  "provider_calls": 0,
+  "warehouse_08": {
+    "aggregates_reference_a": [
+      "sum"
+    ],
+    "aggregates_reference_b": [
+      "sum"
+    ],
+    "case_id": "warehouse_08",
+    "classification": "FANOUT_SENSITIVE",
+    "database": "warehouse_logistics",
+    "hypothesis_evidence": {
+      "cardinality": "many_to_one from receipts to purchase_order_lines; one-to-many from line to receipts",
+      "child_measure": "received_qty",
+      "child_relation": "receipts.po_line_id",
+      "hypothesis_status": "SUPPORTED_OFFLINE",
+      "m43_observed_pattern": "direct line-to-receipt join with SUM(ordered_qty) at product grain",
+      "native_measure_grain": "purchase_order_lines.po_line_id",
+      "parent_measure": "ordered_qty",
+      "reference_a_preserves_grain": "correlated receipt sum per purchase-order line",
+      "reference_b_preserves_grain": "GROUP BY po_line_id, product_id, ordered_qty before product rollup",
+      "relationship_id": "relationship:warehouse_logistics:receipt_line"
+    },
+    "measure_source": [],
+    "output_grain": [
+      "product_id"
+    ],
+    "query_shape_tags": [
+      "population",
+      "null",
+      "calculation"
+    ],
+    "references_differ_in_grain_strategy": true,
+    "relationship_edges": [],
+    "tables": [
+      "per_line",
+      "purchase_order_lines",
+      "receipts"
+    ]
+  }
+}

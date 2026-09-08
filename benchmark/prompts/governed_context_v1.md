@@ -17,6 +17,14 @@ You are answering one independent Decision-SQL benchmark question. Use only the 
 - Do not infer a JSON path or type that is not explicitly documented in the governed context.
 - Use the exact documented JSON path and documented semantic type.
 
+## Native measure grain and fanout
+
+- When a measure originates on one side of a one-to-many relationship, do not aggregate that measure after joining to multiple child rows if the join would duplicate the original measure.
+- Preserve each measure at its native semantic grain.
+- When a calculation combines measures from different grains across a one-to-many relationship, first reduce or aggregate the many-side data to the grain required by the one-side measure, or compute the intended result at the native grain before rolling it up to a higher output grain.
+- A parent-grain value must not be counted once per matching child row merely because of join fanout.
+- Do not use `DISTINCT` as a generic substitute for correct grain handling. `DISTINCT` is appropriate only when the requested semantics themselves require distinctness.
+
 ## Decisions and output
 
 Allowed decisions are exactly:

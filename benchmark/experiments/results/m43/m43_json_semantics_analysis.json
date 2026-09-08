@@ -1,0 +1,286 @@
+{
+  "all_json_cases": [
+    {
+      "case_id": "fleet_01",
+      "database_id": "fleet_ops",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+          "database": "fleet_ops",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:fleet_ops:telemetry_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "CORRECT",
+      "m41_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m41_correct": true,
+      "m41_sql": "SELECT event_id, vehicle_id\nFROM telemetry_events\nWHERE (payload #>> '{engine,temperature_c}')::numeric >= 100",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT event_id, vehicle_id\nFROM telemetry_events\nWHERE (payload #>> '{engine,temperature_c}')::NUMERIC >= 100",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+          "database": "fleet_ops",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:fleet_ops:telemetry_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+          "text_returning": true
+        }
+      ]
+    },
+    {
+      "case_id": "fleet_06",
+      "database_id": "fleet_ops",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+          "database": "fleet_ops",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:fleet_ops:telemetry_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "RESULT_MISMATCH",
+      "m41_coercion_status": "MISSING_NUMERIC_COERCION",
+      "m41_correct": false,
+      "m41_sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, t.payload #>> '{engine,temperature_c}' AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, (t.payload #>> '{engine,temperature_c}')::NUMERIC AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+          "database": "fleet_ops",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:fleet_ops:telemetry_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+          "text_returning": true
+        }
+      ]
+    },
+    {
+      "case_id": "support_04",
+      "database_id": "support_ops",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:support_ops:support_tickets:payload.channel",
+          "database": "support_ops",
+          "documented_data_type": "TEXT",
+          "entity": "entity:support_ops:support_tickets",
+          "json_extraction_form": "->>",
+          "numeric_semantic_type": false,
+          "physical_column_or_path": "payload ->> 'channel'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "CORRECT",
+      "m41_coercion_status": "MISSING_NUMERIC_COERCION",
+      "m41_correct": true,
+      "m41_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat';",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "MISSING_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat';",
+      "null_default_added": false,
+      "numeric_json_attributes": []
+    },
+    {
+      "case_id": "risk_04",
+      "database_id": "risk_operations",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+          "database": "risk_operations",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:risk_operations:transactions",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{risk_score}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "CORRECT",
+      "m41_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m41_correct": true,
+      "m41_sql": "SELECT account_id, SUM(amount) AS total_transaction_amount\nFROM transactions\nWHERE (payload #>> '{risk_score}')::numeric >= 70\nGROUP BY account_id",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT t.account_id, SUM(t.amount) AS total_transaction_amount\nFROM transactions AS t\nWHERE (t.payload #>> '{risk_score}')::NUMERIC >= 70\nGROUP BY t.account_id",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+          "database": "risk_operations",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:risk_operations:transactions",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{risk_score}'",
+          "text_returning": true
+        }
+      ]
+    },
+    {
+      "case_id": "risk_08",
+      "database_id": "risk_operations",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+          "database": "risk_operations",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:risk_operations:transactions",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{risk_score}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "CORRECT",
+      "m41_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m41_correct": true,
+      "m41_sql": "SELECT transaction_id\nFROM transactions\nWHERE (payload #>> '{risk_score}')::numeric >= 80",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT transaction_id\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 80",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+          "database": "risk_operations",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:risk_operations:transactions",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{risk_score}'",
+          "text_returning": true
+        }
+      ]
+    },
+    {
+      "case_id": "subscription_12",
+      "database_id": "subscription_billing",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:subscription_billing:usage_events:payload_#>>_'{units}'",
+          "database": "subscription_billing",
+          "documented_data_type": "INTEGER",
+          "entity": "entity:subscription_billing:usage_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{units}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "CORRECT",
+      "m41_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m41_correct": true,
+      "m41_sql": "SELECT account_id, COUNT(*) AS usage_event_count\nFROM usage_events\nWHERE (payload #>> '{units}')::integer >= 1000\nGROUP BY account_id",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT account_id, COUNT(*) AS usage_event_count\nFROM usage_events\nWHERE (payload #>> '{units}')::INTEGER >= 1000\nGROUP BY account_id",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:subscription_billing:usage_events:payload_#>>_'{units}'",
+          "database": "subscription_billing",
+          "documented_data_type": "INTEGER",
+          "entity": "entity:subscription_billing:usage_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{units}'",
+          "text_returning": true
+        }
+      ]
+    },
+    {
+      "case_id": "warehouse_09",
+      "database_id": "warehouse_logistics",
+      "documented_json_attributes": [
+        {
+          "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+          "database": "warehouse_logistics",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:warehouse_logistics:delivery_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{temperature_c}'",
+          "text_returning": true
+        }
+      ],
+      "documented_path_preserved": true,
+      "m41_category": "EXECUTION_FAILURE",
+      "m41_coercion_status": "MISSING_NUMERIC_COERCION",
+      "m41_correct": false,
+      "m41_sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}') >= 7;",
+      "m43_category": "CORRECT",
+      "m43_coercion_status": "CORRECT_NUMERIC_COERCION",
+      "m43_correct": true,
+      "m43_sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}')::NUMERIC >= 7",
+      "null_default_added": false,
+      "numeric_json_attributes": [
+        {
+          "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+          "database": "warehouse_logistics",
+          "documented_data_type": "NUMERIC",
+          "entity": "entity:warehouse_logistics:delivery_events",
+          "json_extraction_form": "#>>",
+          "numeric_semantic_type": true,
+          "physical_column_or_path": "payload #>> '{temperature_c}'",
+          "text_returning": true
+        }
+      ]
+    }
+  ],
+  "experiment_id": "m43_typed_json_numeric_semantics",
+  "json_cases": [
+    "fleet_01",
+    "fleet_06",
+    "support_04",
+    "risk_04",
+    "risk_08",
+    "subscription_12",
+    "warehouse_09"
+  ],
+  "json_regressions": [],
+  "m41_json_type_failures": 2,
+  "m43_json_type_failures": 0,
+  "new_non_json_regressions": [
+    "risk_03",
+    "subscription_04",
+    "subscription_14",
+    "warehouse_12",
+    "warehouse_20"
+  ],
+  "numeric_json_case_count": 6,
+  "static_analysis_is_diagnostic_only": true,
+  "target_fix_cases": [
+    "fleet_06",
+    "warehouse_09"
+  ],
+  "target_fixes": 2
+}

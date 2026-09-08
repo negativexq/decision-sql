@@ -149,6 +149,25 @@ def validate_structure() -> dict[str, Any]:
                 case_errors.append("MUTANT_MINIMUM")
             if not target.get("result_comparison_contract"):
                 case_errors.append("RESULT_CONTRACT")
+            projection = target.get("projection_contract")
+            if not isinstance(projection, dict):
+                case_errors.append("PROJECTION_CONTRACT")
+            else:
+                if projection.get("mode") != "EXACT":
+                    case_errors.append("PROJECTION_MODE")
+                if projection.get("extra_fields_allowed") is not False:
+                    case_errors.append("PROJECTION_EXTRA_FIELDS_POLICY")
+                if projection.get("source") not in {
+                    "QUESTION_EXPLICIT",
+                    "QUESTION_CLEARLY_IMPLIED",
+                    "VISIBLE_BUSINESS_RULE",
+                }:
+                    case_errors.append("PROJECTION_PROVENANCE")
+                fields = projection.get("fields")
+                if not isinstance(fields, list) or [
+                    field.get("semantic_name") for field in fields if isinstance(field, dict)
+                ] != target.get("outputs", []):
+                    case_errors.append("PROJECTION_FIELDS")
         elif target.get("behavior") == "AUTHORITY_BLOCKED":
             if not truth.get("evidence", {}).get("missing_authority"):
                 case_errors.append("AUTHORITY_EVIDENCE")

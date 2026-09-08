@@ -45,40 +45,40 @@
   ],
   "reference_implementation_a": {
     "kind": "REFERENCE_IMPLEMENTATION_A",
-    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
   },
   "reference_implementation_b": {
     "kind": "REFERENCE_IMPLEMENTATION_B",
-    "sql": "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id"
+    "sql": "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at) > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id"
   },
   "reference_result_summaries": {
     "base": {
       "columns": [
         "ticket_id"
       ],
-      "result_sha256": "18f58d17cf5efe3a039a338277f753ec40fd3a148f9acd89d6624d73e47f2047",
-      "row_count": 1
+      "result_sha256": "b983bc4fa164fc1553d6b01c48999d1dd18850ad0a30114397ce8cba9c0259d4",
+      "row_count": 125
     },
     "cf01": {
       "columns": [
         "ticket_id"
       ],
-      "result_sha256": "001af9ce65e0ffd33f93dde0eff74206f5607b23e886fb67a0d78c201ab0a31e",
-      "row_count": 2
+      "result_sha256": "ce3f8648231d83a20cfa00a67ff078c9f3ab407261fbd01177273938762dbff2",
+      "row_count": 126
     },
     "cf02": {
       "columns": [
         "ticket_id"
       ],
-      "result_sha256": "18f58d17cf5efe3a039a338277f753ec40fd3a148f9acd89d6624d73e47f2047",
-      "row_count": 1
+      "result_sha256": "b983bc4fa164fc1553d6b01c48999d1dd18850ad0a30114397ce8cba9c0259d4",
+      "row_count": 125
     },
     "cf03": {
       "columns": [
         "ticket_id"
       ],
-      "result_sha256": "5c2a6f4ac0370cd5f40af004c47a83438408e8200af7133a8f9015e3c6b9b356",
-      "row_count": 2
+      "result_sha256": "e056ace66736d97838d6f76e5d72e986b743dc726df215a34ad3edc8f3a80c1b",
+      "row_count": 126
     }
   },
   "required_authority": [],
@@ -97,7 +97,7 @@
       "failure_category": "wrong_comparison_operator",
       "mutant_id": "m22_at_or_before",
       "semantic_rationale": "Treats the exact SLA boundary as a breach.",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
       "status": "VALID",
       "target_component": "wrong_comparison_operator"
     },
@@ -106,7 +106,7 @@
       "failure_category": "wrong_aggregation_grain",
       "mutant_id": "m22_any_response",
       "semantic_rationale": "Uses the latest response instead of the first response.",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MAX(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MAX(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
       "status": "VALID",
       "target_component": "wrong_aggregation_grain"
     },
@@ -115,7 +115,7 @@
       "failure_category": "remove_predicate",
       "mutant_id": "m22_no_sla",
       "semantic_rationale": "Returns every ticket with a response.",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
       "status": "VALID",
       "target_component": "remove_predicate"
     },
@@ -124,16 +124,32 @@
       "failure_category": "wrong_population",
       "mutant_id": "m22_oldest_subscription",
       "semantic_rationale": "Uses the oldest subscription instead of the most recently started subscription.",
-      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
       "status": "VALID",
       "target_component": "wrong_population"
+    },
+    {
+      "description": "Adds the account identifier to the exact ticket identifier projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_support02_extra_account",
+      "semantic_rationale": "Adds the account identifier to the exact ticket identifier projection.",
+      "sql": "SELECT t.ticket_id, t.account_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
     "aggregations": [],
     "behavior": "ANSWERABLE",
     "calculations": [],
-    "filters": [],
+    "filters": [
+      {
+        "field": "ticket_events.event_at",
+        "operator": ">",
+        "scope": "first_response_population",
+        "value": "support_tickets.opened_at"
+      }
+    ],
     "grouping": [],
     "limit": null,
     "null_default_semantics": "NULL remains NULL",
@@ -143,6 +159,17 @@
       "ticket_id"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "ticket_id"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "multi_hop",
@@ -173,8 +200,8 @@
     },
     "semantic_provenance": {
       "filters": {
-        "evidence": "No semantic filter.",
-        "source": "NOT_APPLICABLE"
+        "evidence": "Declared filter wording.",
+        "source": "QUESTION"
       },
       "limit": {
         "evidence": "No result limit.",
@@ -199,7 +226,8 @@
     },
     "temporal_semantics": {
       "basis": "opened_at plus plan SLA",
-      "lower_inclusive": false
+      "lower_inclusive": false,
+      "response_population": "agent_response events after opened_at"
     }
   },
   "status": "MACHINE_VALIDATED"

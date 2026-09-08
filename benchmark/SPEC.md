@@ -10,6 +10,19 @@ The four and only four pilot behaviors are `ANSWERABLE`, `AUTHORITY_BLOCKED`, `A
 
 `semantic_target` is the authoring and audit truth. Reference SQL A and B are implementation witnesses. An answerable case is machine-valid only if both references execute and agree on base data and every counterfactual fixture. Candidate SQL is never compared as a string or required to match an AST. Typed comparison preserves INTEGER/NUMERIC/TEXT/BOOLEAN/DATE/TIMESTAMP/NULL, duplicates, and declared order semantics. Aliases are non-semantic by default; unordered results are duplicate-preserving multisets.
 
+## Projection policy
+
+The final projection is strict when the question defines the requested output. A
+candidate must return only the fields requested by the question and visible task
+semantics. Descriptive, diagnostic, intermediate, helper, grouping, ordering, and
+qualification fields are not automatically part of the answer. A field used only
+for filtering, joining, grouping, ordering, qualification, or an intermediate
+calculation must be omitted unless the question explicitly requests it. Each
+answerable case carries evaluator-only projection metadata with visible provenance;
+that metadata is never sent to the model. Aliases are non-semantic. Column order is
+semantic when the question names output fields in order, while row order remains a
+separate contract and is unordered unless requested.
+
 ## Authority and metrics
 
 Every relationship has a stable ID and explicit `authorized` flag. Similar physical columns do not imply a join. Metric metadata records operands, grain, NULL/default behavior, precision, rounding stage, and temporal basis. Filter scope distinguishes row predicates from aggregate filters and HAVING conditions. Every database has a fixed UTC benchmark clock and explicit boundary rules.

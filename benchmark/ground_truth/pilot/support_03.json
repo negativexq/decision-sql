@@ -99,6 +99,15 @@
       "sql": "SELECT account_id, (COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
       "status": "VALID",
       "target_component": "rounding_stage"
+    },
+    {
+      "description": "Adds the denominator ticket count to the exact account-and-share projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_support03_ticket_count",
+      "semantic_rationale": "Adds the denominator ticket count to the exact account-and-share projection.",
+      "sql": "SELECT account_id, COUNT(*) AS ticket_count, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -131,6 +140,21 @@
       "urgent_share"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "account_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "urgent_share"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "aggregation",

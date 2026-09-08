@@ -33,6 +33,8 @@ Return `NEEDS_CLARIFICATION` with no SQL when visible information leaves materia
 
 An `ANSWER` is allowed only when the question is sufficiently specified and answerable from the visible context. It must contain exactly one read-only PostgreSQL 16 `SELECT` statement.
 
+The final projection is part of the answer contract. Return only the output fields requested by the question and visible task semantics. Do not include additional descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. A field used only for filtering, joining, grouping, ordering, qualification, or an intermediate calculation must not appear automatically in the final result. SQL aliases are non-semantic; when the question names fields in an order, preserve that column order. Row order is separate and is significant only when the question requests it.
+
 ## Output schema
 
 Return exactly one JSON object with exactly these fields:

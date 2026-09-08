@@ -100,6 +100,15 @@
       "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY c.customer_id ORDER BY c.customer_id",
       "status": "VALID",
       "target_component": "remove_predicate"
+    },
+    {
+      "description": "Adds the customer's descriptive name to an exact customer-and-measure projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_commerce05_extra_name",
+      "semantic_rationale": "Adds the customer's descriptive name to an exact customer-and-measure projection.",
+      "sql": "SELECT c.customer_id, c.customer_name, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id, c.customer_name ORDER BY c.customer_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -128,6 +137,21 @@
       "home_orders"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "customer_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "home_orders"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "multi_hop",

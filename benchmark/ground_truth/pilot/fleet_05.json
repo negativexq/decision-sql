@@ -96,6 +96,15 @@
       "sql": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.depot_id = t.depot_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id ORDER BY d.driver_id",
       "status": "VALID",
       "target_component": "wrong_join_path"
+    },
+    {
+      "description": "Adds the driver's descriptive name to the exact driver-and-measure projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_fleet05_extra_name",
+      "semantic_rationale": "Adds the driver's descriptive name to the exact driver-and-measure projection.",
+      "sql": "SELECT d.driver_id, d.driver_name, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id, d.driver_name ORDER BY d.driver_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -115,6 +124,21 @@
       "cargo_trips"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "driver_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "cargo_trips"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "multi_hop",

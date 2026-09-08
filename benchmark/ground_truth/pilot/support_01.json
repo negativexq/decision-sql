@@ -100,6 +100,15 @@
       "sql": "SELECT a.account_id, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id ORDER BY a.account_id",
       "status": "VALID",
       "target_component": "inner_left_join"
+    },
+    {
+      "description": "Adds the account name to the exact account-and-measure projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_support01_extra_name",
+      "semantic_rationale": "Adds the account name to the exact account-and-measure projection.",
+      "sql": "SELECT a.account_id, a.account_name, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id, a.account_name ORDER BY a.account_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -121,6 +130,21 @@
       "urgent_tickets"
     ],
     "population": "preserve-anchor",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "account_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "urgent_tickets"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "population",

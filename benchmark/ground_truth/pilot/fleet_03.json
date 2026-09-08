@@ -97,6 +97,15 @@
       "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / COALESCE(NULLIF(t.fuel_liters, 0), 1))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id",
       "status": "VALID",
       "target_component": "null_default_policy"
+    },
+    {
+      "description": "Adds the route name to the exact route-and-efficiency projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_fleet03_extra_name",
+      "semantic_rationale": "Adds the route name to the exact route-and-efficiency projection.",
+      "sql": "SELECT r.route_id, r.route_name, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id, r.route_name ORDER BY r.route_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -129,6 +138,21 @@
       "km_per_liter"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "route_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "km_per_liter"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "relationship",
       "aggregation",

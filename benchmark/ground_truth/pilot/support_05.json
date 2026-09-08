@@ -112,6 +112,15 @@
       "sql": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id ORDER BY account_id",
       "status": "VALID",
       "target_component": "remove_predicate"
+    },
+    {
+      "description": "Adds a ticket identifier helper to the exact qualifying-account projection.",
+      "failure_category": "projection",
+      "mutant_id": "m36p_support05_min_ticket",
+      "semantic_rationale": "Adds a ticket identifier helper to the exact qualifying-account projection.",
+      "sql": "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count, MIN(ticket_id) AS first_ticket_id FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count, first_ticket_id FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
+      "status": "VALID",
+      "target_component": "projection"
     }
   ],
   "semantic_target": {
@@ -134,6 +143,21 @@
       "ticket_count"
     ],
     "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "account_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "ticket_count"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
     "query_shape_tags": [
       "aggregation",
       "nested",

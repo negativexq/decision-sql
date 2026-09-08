@@ -1,0 +1,1237 @@
+{
+  "answerable_total": 20,
+  "benchmark_version": "0.1.2-pilot",
+  "cases": [
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "customer_id",
+          "customer_name"
+        ]
+      },
+      "case_id": "commerce_01",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "customer_id",
+        "customer_name"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "customer_id"
+          },
+          {
+            "role": "ATTRIBUTE",
+            "semantic_name": "customer_name"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "customer_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "customer_name",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "List active customers in the North region with their customer identifiers and names. Return only the customer identifier and customer name, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "712b21f9a3173519e9ca50d34d75a5ff57b33a2f626f591fa019525a85c056ba",
+      "reference_a_columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "reference_b_columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "entities.customers",
+        "attributes.customers.region",
+        "attributes.customers.is_active"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "order_id"
+        ]
+      },
+      "case_id": "commerce_02",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "order_id"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "order_id"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "order_id",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "Return order IDs for completed orders created during June 2026, including June 1 and excluding July 1. Return only the order ID.",
+      "question_projection_sufficient": true,
+      "question_sha256": "4ae419915aec0d58f9668cbc78b3bfaa79e0a24a1159598b62ba8381d8950aa5",
+      "reference_a_columns": [
+        "order_id"
+      ],
+      "reference_b_columns": [
+        "order_id"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "temporal_rules.time:commerce_now",
+        "attributes.orders.ordered_at",
+        "business_rules.rule:completed_orders"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "region",
+          "completed_orders"
+        ]
+      },
+      "case_id": "commerce_03",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "region",
+        "completed_orders"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "ATTRIBUTE",
+            "semantic_name": "region"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "completed_orders"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "region",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "completed_orders",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For every customer region, count completed orders and keep regions with no completed orders. Return only the region and its completed-order count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "6897269ba431498796ccdc951e55378ab32826db1f8fe141c340df544c266cad",
+      "reference_a_columns": [
+        "region",
+        "completed_orders"
+      ],
+      "reference_b_columns": [
+        "region",
+        "completed_orders"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "business_rules.rule:completed_orders"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "category",
+          "net_value"
+        ]
+      },
+      "case_id": "commerce_04",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "category",
+        "net_value"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "ATTRIBUTE",
+            "semantic_name": "category"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "net_value"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "category",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "net_value",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each product category, calculate completed-order value after discounts using each line's captured unit price; report totals to two decimal places. Return only the product category and its net value, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "0920d019b6390c8a990442ef4ce8d698b4bb42a076cae5f6050f23f66982ef3e",
+      "reference_a_columns": [
+        "category",
+        "net_value"
+      ],
+      "reference_b_columns": [
+        "category",
+        "net_value"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:commerce_ops:item_order",
+        "relationships.relationship:commerce_ops:item_product",
+        "metrics.metric:commerce_net_order_value",
+        "business_rules.rule:net_value"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "customer_id",
+          "home_orders"
+        ]
+      },
+      "case_id": "commerce_05",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "customer_id",
+        "home_orders"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "customer_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "home_orders"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "customer_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "home_orders",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each customer who bought a home product in a completed order, count distinct completed orders containing a home product. Return only the customer ID and that count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "80416c4f99cfcb4cc0957ff27b557d8cd35e3232857f26432d068ae8d0541d6b",
+      "reference_a_columns": [
+        "customer_id",
+        "home_orders"
+      ],
+      "reference_b_columns": [
+        "customer_id",
+        "home_orders"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "relationships.relationship:commerce_ops:item_order",
+        "relationships.relationship:commerce_ops:item_product"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "region",
+          "avg_completed_orders"
+        ]
+      },
+      "case_id": "commerce_06",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "ATTRIBUTE",
+            "semantic_name": "region"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "avg_completed_orders"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "region",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "avg_completed_orders",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders; report the average to two decimal places. Return only the region and its average completed-order count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "de5fbb0de5dee4e2a913c6191f3ed479b981851d883077f0abc0107ffbd76bf9",
+      "reference_a_columns": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "reference_b_columns": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "business_rules.rule:completed_orders"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "customer_id",
+          "net_value"
+        ]
+      },
+      "case_id": "commerce_07",
+      "database_id": "commerce_ops",
+      "gold_outputs": [
+        "customer_id",
+        "net_value"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "customer_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "net_value"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "customer_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "net_value",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "Show the three customers with the highest rounded completed-order net value, listed in descending net value; break ties by customer ID. Return only customer ID and net value, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "d03c7800fcab46dcded1024096142938702ded73df0c450e04934a3227d18b1a",
+      "reference_a_columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "reference_b_columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "relationships.relationship:commerce_ops:item_order",
+        "metrics.metric:commerce_net_order_value",
+        "business_rules.rule:net_value"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "event_id",
+          "vehicle_id"
+        ]
+      },
+      "case_id": "fleet_01",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "event_id"
+          },
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "vehicle_id"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "event_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "vehicle_id",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "List telemetry event IDs and vehicle IDs where documented engine temperature is at least 100 Celsius. Return only the telemetry event ID and vehicle ID, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "65a8b7141bd6fea8affb873eff569815a88a34c3f3601efc96183aeaf3e6fcef",
+      "reference_a_columns": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "reference_b_columns": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "attributes.telemetry_events.payload.engine.temperature_c"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "depot_id",
+          "average_cost"
+        ]
+      },
+      "case_id": "fleet_02",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "depot_id",
+        "average_cost"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "depot_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "average_cost"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "depot_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "average_cost",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each vehicle home depot, return the rounded average fuel purchase cost, calculated as liters times price per liter for vehicles assigned to that depot. Return only the depot ID and its average cost, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "68acf93b7789820fefc6e09b5bea2385f953b3a71a0dd01be1fd77c6783d8277",
+      "reference_a_columns": [
+        "depot_id",
+        "average_cost"
+      ],
+      "reference_b_columns": [
+        "depot_id",
+        "average_cost"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:fleet_ops:fuel_vehicle",
+        "relationships.relationship:fleet_ops:vehicle_depot",
+        "attributes.fuel_events.liters",
+        "attributes.fuel_events.price_per_liter"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "route_id",
+          "km_per_liter"
+        ]
+      },
+      "case_id": "fleet_03",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "route_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "km_per_liter"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "route_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "km_per_liter",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each route, calculate rounded average kilometres per litre across its trips, excluding zero-fuel ratios. Return only the route ID and its rounded kilometres-per-litre value, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "4221342d730aa5d714a306d971f55da90951118029795556752f8c382f7a8f23",
+      "reference_a_columns": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "reference_b_columns": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "metrics.metric:fleet_route_efficiency",
+        "business_rules.rule:fleet_trip"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "vehicle_id",
+          "maintenance_count"
+        ]
+      },
+      "case_id": "fleet_04",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "vehicle_id",
+        "maintenance_count"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "vehicle_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "maintenance_count"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "vehicle_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "maintenance_count",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For every vehicle, count maintenance events in the 30 days before the benchmark time, including vehicles with none. Return only the vehicle ID and maintenance-event count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "435233ae0c2197d6206e5100a689c44df4a0495b152982a0c2d0e99013e887d5",
+      "reference_a_columns": [
+        "vehicle_id",
+        "maintenance_count"
+      ],
+      "reference_b_columns": [
+        "vehicle_id",
+        "maintenance_count"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:fleet_ops:maintenance_vehicle",
+        "temporal_rules.time:fleet_now",
+        "attributes.maintenance_events.maintenance_id",
+        "attributes.maintenance_events.performed_at"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "driver_id",
+          "cargo_trips"
+        ]
+      },
+      "case_id": "fleet_05",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "driver_id",
+        "cargo_trips"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "driver_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "cargo_trips"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "driver_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "cargo_trips",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each driver, count trips made in cargo vehicles, returning only drivers with at least one such trip. Return only the driver ID and cargo-trip count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "c27f8c7f8c7b421040ecd935f06ee7d1f618f81c2fffb771be4985664e00573c",
+      "reference_a_columns": [
+        "driver_id",
+        "cargo_trips"
+      ],
+      "reference_b_columns": [
+        "driver_id",
+        "cargo_trips"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:fleet_ops:trip_vehicle",
+        "relationships.relationship:fleet_ops:trip_driver"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "vehicle_id",
+          "event_at",
+          "temperature_c"
+        ]
+      },
+      "case_id": "fleet_06",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "vehicle_id",
+        "event_at",
+        "temperature_c"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "vehicle_id"
+          },
+          {
+            "role": "TEMPORAL",
+            "semantic_name": "event_at"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "temperature_c"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "vehicle_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "event_at",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "temperature_c",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID. Return only the vehicle ID, latest event timestamp, and documented engine temperature, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "9152cc6b219a528cc3b325942d7ad734fe83193cdce74f07c5d5af1df0a3d16c",
+      "reference_a_columns": [
+        "vehicle_id",
+        "event_at",
+        "temperature_c"
+      ],
+      "reference_b_columns": [
+        "vehicle_id",
+        "event_at",
+        "temperature_c"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:fleet_ops:telemetry_vehicle",
+        "attributes.telemetry_events.payload.engine.temperature_c",
+        "temporal_rules.time:fleet_now"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "route_id",
+          "efficiency"
+        ]
+      },
+      "case_id": "fleet_07",
+      "database_id": "fleet_ops",
+      "gold_outputs": [
+        "route_id",
+        "efficiency"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "route_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "efficiency"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "route_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "efficiency",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "Return the three routes with the highest rounded average kilometres per litre, breaking ties by route ID. Return only the route ID and rounded efficiency, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "6d3280a30f8b141dc98c539542b1fa899824d8b7a5738d6e2a7e3a5ed60e3cf4",
+      "reference_a_columns": [
+        "route_id",
+        "efficiency"
+      ],
+      "reference_b_columns": [
+        "route_id",
+        "efficiency"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "metrics.metric:fleet_route_efficiency"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "account_id",
+          "urgent_tickets"
+        ]
+      },
+      "case_id": "support_01",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "account_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "urgent_tickets"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "account_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "urgent_tickets",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For every account, count urgent support tickets, including accounts with zero urgent tickets. Return only the account ID and urgent-ticket count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "4959214d8638a439c64215f23a1dc0b63d0402c4b267132e5dbf4018e5442179",
+      "reference_a_columns": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "reference_b_columns": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:support_ops:ticket_account",
+        "business_rules.rule:support_open"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "ticket_id"
+        ]
+      },
+      "case_id": "support_02",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "ticket_id"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "ticket_id"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "ticket_id",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "List tickets whose first agent response after the ticket was opened exceeded the first-response SLA of the account's most recently started subscription. Return only the ticket ID.",
+      "question_projection_sufficient": true,
+      "question_sha256": "443b1791f6dd3872086898a4e3884719e6c7c40730e133af265a5e95a4926d4d",
+      "reference_a_columns": [
+        "ticket_id"
+      ],
+      "reference_b_columns": [
+        "ticket_id"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "relationships.relationship:support_ops:ticket_account",
+        "relationships.relationship:support_ops:subscription_account",
+        "relationships.relationship:support_ops:subscription_plan",
+        "relationships.relationship:support_ops:event_ticket",
+        "business_rules.rule:support_sla",
+        "business_rules.rule:support_subscription_selection",
+        "attributes.subscriptions.starts_on"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "account_id",
+          "urgent_share"
+        ]
+      },
+      "case_id": "support_03",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "account_id",
+        "urgent_share"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "account_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "urgent_share"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "account_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "urgent_share",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "For each account with tickets, report the urgent-ticket share rounded to four decimals. Return only the account ID and urgent-ticket share, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "316371be0889d825146d2ca0fa92f9f165465704c650dce009fb48086ca9d164",
+      "reference_a_columns": [
+        "account_id",
+        "urgent_share"
+      ],
+      "reference_b_columns": [
+        "account_id",
+        "urgent_share"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "metrics.metric:support_escalation_rate"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "ticket_id",
+          "status"
+        ]
+      },
+      "case_id": "support_04",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "ticket_id",
+        "status"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "ticket_id"
+          },
+          {
+            "role": "ATTRIBUTE",
+            "semantic_name": "status"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "ticket_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "status",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "List ticket IDs opened through the documented chat channel and their status. Return only the ticket ID and status, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "3d264a6549fd27b8da0645c75beeec8f0421cc7b94ca518e4b9e36f27eb30696",
+      "reference_a_columns": [
+        "ticket_id",
+        "status"
+      ],
+      "reference_b_columns": [
+        "ticket_id",
+        "status"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "attributes.support_tickets.payload.channel"
+      ]
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "account_id",
+          "ticket_count"
+        ]
+      },
+      "case_id": "support_05",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "account_id",
+        "ticket_count"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "account_id"
+          },
+          {
+            "role": "MEASURE",
+            "semantic_name": "ticket_count"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "account_id",
+          "source": "QUESTION_EXPLICIT"
+        },
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "ticket_count",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket. Return only each qualifying account ID and its ticket count, in that order.",
+      "question_projection_sufficient": true,
+      "question_sha256": "7fa7d12ca76ff609f5a5a6454e9f5ab7d035c3c295255df2ceded9563857fb79",
+      "reference_a_columns": [
+        "account_id",
+        "ticket_count"
+      ],
+      "reference_b_columns": [
+        "account_id",
+        "ticket_count"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": []
+    },
+    {
+      "blind_pass": {
+        "conclusion": "EXACT_PROJECTION_VISIBLE",
+        "method": "question_and_visible_context_only",
+        "optional_outputs": [],
+        "required_outputs": [
+          "account_id"
+        ]
+      },
+      "case_id": "support_06",
+      "database_id": "support_ops",
+      "gold_outputs": [
+        "account_id"
+      ],
+      "hidden_exact_projection_requirement": false,
+      "label": "EXPLICIT_SUFFICIENT",
+      "projection_contract": {
+        "extra_fields_allowed": false,
+        "fields": [
+          {
+            "role": "IDENTIFIER",
+            "semantic_name": "account_id"
+          }
+        ],
+        "mode": "EXACT",
+        "source": "QUESTION_EXPLICIT"
+      },
+      "projection_provenance": [
+        {
+          "evidence": "The repaired question names this final output field.",
+          "semantic_name": "account_id",
+          "source": "QUESTION_EXPLICIT"
+        }
+      ],
+      "question": "Return distinct account IDs that have an open ticket or a high-severity incident. Return only the account ID.",
+      "question_projection_sufficient": true,
+      "question_sha256": "0dc3c19f71813a02b75455bf58cc5505d2b58bdd4757fc0f99bf0bf8b1f0cefa",
+      "reference_a_columns": [
+        "account_id"
+      ],
+      "reference_b_columns": [
+        "account_id"
+      ],
+      "repair": "Clarified final output fields and order in the question.",
+      "required_context_facts": [
+        "business_rules.rule:support_open",
+        "relationships.relationship:support_ops:incident_account",
+        "attributes.incidents.severity"
+      ]
+    }
+  ],
+  "hidden_exact_projection_requirements": 0,
+  "passed": true,
+  "policy": "CLARIFY_STRICT_PROJECTION",
+  "projection_contracts": 20,
+  "unresolved_ambiguities": 0,
+  "visible_projection_provenance": 20
+}

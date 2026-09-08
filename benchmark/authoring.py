@@ -1137,7 +1137,7 @@ def authority(database_id: str) -> dict[str, Any]:
             {
                 "rule_id": "rule:support_sla",
                 "name": "SLA breach",
-                "definition": "The first agent_response event later than opened_at plus the plan SLA is a breach; tickets without a response are not counted in the pilot metric.",
+                "definition": "Among agent_response events after opened_at, the first response later than opened_at plus the plan SLA is a breach; tickets without such a response are not counted in the pilot metric.",
             },
             {
                 "rule_id": "rule:support_subscription_selection",
@@ -1863,6 +1863,17 @@ def _case(
             "semantic_rationale", normalized.get("description", "Declared semantic counterexample.")
         )
         normalized_mutants.append(normalized)
+    outputs = list(extra.get("outputs", []))
+
+    def projection_role(field: str) -> str:
+        if field.endswith("_id") or field == "id":
+            return "IDENTIFIER"
+        if field.endswith("_at") or field.endswith("_on"):
+            return "TEMPORAL"
+        if field in {"customer_name", "status", "category", "region"}:
+            return "ATTRIBUTE"
+        return "MEASURE"
+
     case = {
         "case_id": case_id,
         "database_id": database_id,
@@ -1885,7 +1896,22 @@ def _case(
         "semantic_target": {
             "behavior": task_type,
             "population": extra.get("population", "matching-only"),
-            "outputs": extra.get("outputs", []),
+            "outputs": outputs,
+            **(
+                {
+                    "projection_contract": {
+                        "mode": "EXACT",
+                        "fields": [
+                            {"semantic_name": field, "role": projection_role(field)}
+                            for field in outputs
+                        ],
+                        "extra_fields_allowed": False,
+                        "source": "QUESTION_EXPLICIT",
+                    }
+                }
+                if task_type == "ANSWERABLE"
+                else {}
+            ),
             "relationships": extra.get("relationships", []),
             "filters": extra.get("filters", []),
             "aggregations": extra.get("aggregations", []),
@@ -1929,7 +1955,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_01",
             "commerce_ops",
-            "List active customers in the North region with their customer identifiers and names.",
+            "List active customers in the North region with their customer identifiers and names. Return only the customer identifier and customer name, in that order.",
             "ANSWERABLE",
             ["schema_linking", "simple_projection", "filter"],
             "EASY",
@@ -1987,7 +2013,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_02",
             "commerce_ops",
-            "Return order IDs for completed orders created during June 2026, including June 1 and excluding July 1.",
+            "Return order IDs for completed orders created during June 2026, including June 1 and excluding July 1. Return only the order ID.",
             "ANSWERABLE",
             ["schema_linking", "multi_filter", "temporal", "filter"],
             "EASY",
@@ -2059,7 +2085,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_03",
             "commerce_ops",
-            "For every customer region, count completed orders and keep regions with no completed orders.",
+            "For every customer region, count completed orders and keep regions with no completed orders. Return only the region and its completed-order count, in that order.",
             "ANSWERABLE",
             ["relationship", "population", "grouping", "aggregation", "null_semantics"],
             "MEDIUM",
@@ -2121,7 +2147,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_04",
             "commerce_ops",
-            "For each product category, calculate completed-order value after discounts using each line's captured unit price; report totals to two decimal places.",
+            "For each product category, calculate completed-order value after discounts using each line's captured unit price; report totals to two decimal places. Return only the product category and its net value, in that order.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "aggregation", "calculation", "grain", "precision"],
             "HARD",
@@ -2207,7 +2233,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_05",
             "commerce_ops",
-            "For each customer who bought a home product in a completed order, count distinct completed orders containing a home product.",
+            "For each customer who bought a home product in a completed order, count distinct completed orders containing a home product. Return only the customer ID and that count, in that order.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "aggregation", "population", "set_operation"],
             "HARD",
@@ -2276,7 +2302,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_06",
             "commerce_ops",
-            "For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders; report the average to two decimal places.",
+            "For every region, report the average number of completed orders per customer, including customers and regions with zero completed orders; report the average to two decimal places. Return only the region and its average completed-order count, in that order.",
             "ANSWERABLE",
             ["relationship", "population", "aggregation", "grouping", "null_semantics", "nested"],
             "HARD",
@@ -2340,7 +2366,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "commerce_07",
             "commerce_ops",
-            "Show the three customers with the highest rounded completed-order net value, listed in descending net value; break ties by customer ID. Return customer ID and net value.",
+            "Show the three customers with the highest rounded completed-order net value, listed in descending net value; break ties by customer ID. Return only customer ID and net value, in that order.",
             "ANSWERABLE",
             [
                 "relationship",
@@ -2513,7 +2539,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_01",
             "fleet_ops",
-            "List telemetry event IDs and vehicle IDs where documented engine temperature is at least 100 Celsius.",
+            "List telemetry event IDs and vehicle IDs where documented engine temperature is at least 100 Celsius. Return only the telemetry event ID and vehicle ID, in that order.",
             "ANSWERABLE",
             ["json", "filter", "simple_projection"],
             "MEDIUM",
@@ -2573,7 +2599,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_02",
             "fleet_ops",
-            "For each vehicle home depot, return the rounded average fuel purchase cost, calculated as liters times price per liter for vehicles assigned to that depot.",
+            "For each vehicle home depot, return the rounded average fuel purchase cost, calculated as liters times price per liter for vehicles assigned to that depot. Return only the depot ID and its average cost, in that order.",
             "ANSWERABLE",
             ["relationship", "aggregation", "grouping", "calculation", "precision"],
             "MEDIUM",
@@ -2645,7 +2671,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_03",
             "fleet_ops",
-            "For each route, calculate rounded average kilometres per litre across its trips, excluding zero-fuel ratios.",
+            "For each route, calculate rounded average kilometres per litre across its trips, excluding zero-fuel ratios. Return only the route ID and its rounded kilometres-per-litre value, in that order.",
             "ANSWERABLE",
             ["relationship", "aggregation", "grouping", "calculation", "null_semantics"],
             "MEDIUM",
@@ -2710,7 +2736,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_04",
             "fleet_ops",
-            "For every vehicle, count maintenance events in the 30 days before the benchmark time, including vehicles with none.",
+            "For every vehicle, count maintenance events in the 30 days before the benchmark time, including vehicles with none. Return only the vehicle ID and maintenance-event count, in that order.",
             "ANSWERABLE",
             ["relationship", "population", "temporal", "aggregation", "null_semantics"],
             "HARD",
@@ -2776,7 +2802,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_05",
             "fleet_ops",
-            "For each driver, count trips made in cargo vehicles, returning only drivers with at least one such trip.",
+            "For each driver, count trips made in cargo vehicles, returning only drivers with at least one such trip. Return only the driver ID and cargo-trip count, in that order.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "aggregation", "grouping", "filter"],
             "MEDIUM",
@@ -2836,7 +2862,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_06",
             "fleet_ops",
-            "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID.",
+            "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID. Return only the vehicle ID, latest event timestamp, and documented engine temperature, in that order.",
             "ANSWERABLE",
             ["relationship", "temporal", "window", "json", "ordering"],
             "HARD",
@@ -2901,7 +2927,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "fleet_07",
             "fleet_ops",
-            "Return the three routes with the highest rounded average kilometres per litre, breaking ties by route ID.",
+            "Return the three routes with the highest rounded average kilometres per litre, breaking ties by route ID. Return only the route ID and rounded efficiency, in that order.",
             "ANSWERABLE",
             [
                 "relationship",
@@ -3054,7 +3080,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_01",
             "support_ops",
-            "For every account, count urgent support tickets, including accounts with zero urgent tickets.",
+            "For every account, count urgent support tickets, including accounts with zero urgent tickets. Return only the account ID and urgent-ticket count, in that order.",
             "ANSWERABLE",
             ["relationship", "population", "aggregation", "grouping", "filter_scope"],
             "MEDIUM",
@@ -3115,12 +3141,12 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_02",
             "support_ops",
-            "List tickets whose first agent response exceeded the first-response SLA of the account's most recently started subscription.",
+            "List tickets whose first agent response after the ticket was opened exceeded the first-response SLA of the account's most recently started subscription. Return only the ticket ID.",
             "ANSWERABLE",
             ["relationship", "multi_hop", "temporal", "aggregation", "nested", "correlated"],
             "HARD",
-            "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
-            "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id",
+            "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+            "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at) > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id",
             [
                 {
                     "fixture_id": "cf01",
@@ -3154,25 +3180,25 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                     "mutant_id": "m22_at_or_before",
                     "failure_category": "wrong_comparison_operator",
                     "description": "Treats the exact SLA boundary as a breach.",
-                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
                 },
                 {
                     "mutant_id": "m22_any_response",
                     "failure_category": "wrong_aggregation_grain",
                     "description": "Uses the latest response instead of the first response.",
-                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MAX(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MAX(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
                 },
                 {
                     "mutant_id": "m22_no_sla",
                     "failure_category": "remove_predicate",
                     "description": "Returns every ticket with a response.",
-                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
+                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id",
                 },
                 {
                     "mutant_id": "m22_oldest_subscription",
                     "failure_category": "wrong_population",
                     "description": "Uses the oldest subscription instead of the most recently started subscription.",
-                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+                    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on ASC, subscription_id ASC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
                 },
             ],
             [
@@ -3191,7 +3217,19 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
                 "relationship:support_ops:subscription_plan",
                 "relationship:support_ops:event_ticket",
             ],
-            temporal_semantics={"basis": "opened_at plus plan SLA", "lower_inclusive": False},
+            filters=[
+                {
+                    "field": "ticket_events.event_at",
+                    "operator": ">",
+                    "value": "support_tickets.opened_at",
+                    "scope": "first_response_population",
+                }
+            ],
+            temporal_semantics={
+                "basis": "opened_at plus plan SLA",
+                "lower_inclusive": False,
+                "response_population": "agent_response events after opened_at",
+            },
             column_count=1,
             row_order=False,
         )
@@ -3200,7 +3238,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_03",
             "support_ops",
-            "For each account with tickets, report the urgent-ticket share rounded to four decimals.",
+            "For each account with tickets, report the urgent-ticket share rounded to four decimals. Return only the account ID and urgent-ticket share, in that order.",
             "ANSWERABLE",
             [
                 "relationship",
@@ -3273,7 +3311,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_04",
             "support_ops",
-            "List ticket IDs opened through the documented chat channel and their status.",
+            "List ticket IDs opened through the documented chat channel and their status. Return only the ticket ID and status, in that order.",
             "ANSWERABLE",
             ["json", "filter", "simple_projection"],
             "EASY",
@@ -3334,7 +3372,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_05",
             "support_ops",
-            "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket.",
+            "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket. Return only each qualifying account ID and its ticket count, in that order.",
             "ANSWERABLE",
             ["aggregation", "nested", "population"],
             "HARD",
@@ -3411,7 +3449,7 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
         _case(
             "support_06",
             "support_ops",
-            "Return distinct account IDs that have an open ticket or a high-severity incident.",
+            "Return distinct account IDs that have an open ticket or a high-severity incident. Return only the account ID.",
             "ANSWERABLE",
             ["set_operation", "filter", "relationship", "population"],
             "MEDIUM",
@@ -3588,7 +3626,57 @@ def cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
 
 def build_cases() -> None:
     all_cases = cases()
+    projection_mutants = {
+        "commerce_05": (
+            "m36p_commerce05_extra_name",
+            "Adds the customer's descriptive name to an exact customer-and-measure projection.",
+            "SELECT c.customer_id, c.customer_name, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id, c.customer_name ORDER BY c.customer_id",
+        ),
+        "fleet_03": (
+            "m36p_fleet03_extra_name",
+            "Adds the route name to the exact route-and-efficiency projection.",
+            "SELECT r.route_id, r.route_name, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id, r.route_name ORDER BY r.route_id",
+        ),
+        "fleet_05": (
+            "m36p_fleet05_extra_name",
+            "Adds the driver's descriptive name to the exact driver-and-measure projection.",
+            "SELECT d.driver_id, d.driver_name, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id, d.driver_name ORDER BY d.driver_id",
+        ),
+        "support_01": (
+            "m36p_support01_extra_name",
+            "Adds the account name to the exact account-and-measure projection.",
+            "SELECT a.account_id, a.account_name, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id, a.account_name ORDER BY a.account_id",
+        ),
+        "support_02": (
+            "m36p_support02_extra_account",
+            "Adds the account identifier to the exact ticket identifier projection.",
+            "SELECT t.ticket_id, t.account_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT e.ticket_id, MIN(e.event_at) AS first_response_at FROM ticket_events e JOIN support_tickets t2 ON t2.ticket_id = e.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY e.ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+        ),
+        "support_03": (
+            "m36p_support03_ticket_count",
+            "Adds the denominator ticket count to the exact account-and-share projection.",
+            "SELECT account_id, COUNT(*) AS ticket_count, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+        ),
+        "support_05": (
+            "m36p_support05_min_ticket",
+            "Adds a ticket identifier helper to the exact qualifying-account projection.",
+            "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count, MIN(ticket_id) AS first_ticket_id FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count, first_ticket_id FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
+        ),
+    }
     for case, truth in all_cases:
+        if truth["case_id"] in projection_mutants:
+            mutant_id, rationale, sql = projection_mutants[truth["case_id"]]
+            truth["semantic_mutants"].append(
+                {
+                    "mutant_id": mutant_id,
+                    "failure_category": "projection",
+                    "description": rationale,
+                    "semantic_rationale": rationale,
+                    "sql": sql,
+                    "status": "VALID",
+                    "target_component": "projection",
+                }
+            )
         if truth["case_id"] == "commerce_05":
             for fixture in truth["counterfactual_fixtures"]:
                 fixture["patch_sql"] = [

@@ -1,0 +1,60 @@
+{
+  "milestone": "M34.1",
+  "benchmark_commit": "10e014f",
+  "audit_parent": "10e014f",
+  "provider_calls": 0,
+  "machine_validated_cases": 30,
+  "human_recommendations": {"ACCEPT":8,"REVISE":21,"REJECT":1},
+  "critical_defects": {
+    "RESULT_CONTRACT_SEMANTIC_ERROR": {"count":19,"cases":["commerce_01","commerce_02","commerce_03","commerce_04","commerce_05","commerce_06","commerce_07","fleet_01","fleet_02","fleet_03","fleet_04","fleet_05","fleet_06","support_01","support_02","support_03","support_04","support_05","support_06"]},
+    "SEMANTIC_TARGET_NOT_JUSTIFIED": {"count":5,"cases":["commerce_07","fleet_02","fleet_06","support_02","support_06"]},
+    "HIDDEN_REQUIRED_KNOWLEDGE_ANSWERABLE": {"count":4,"cases":["fleet_02","fleet_04","support_02","support_06"]},
+    "REFERENCE_SEMANTIC_ERROR": {"count":2,"cases":["support_02","support_06"]},
+    "INVALID_MUTANT": {"count":2,"cases":["fleet_06","support_06"]},
+    "UNAUTHORIZED_REFERENCE_JOIN": {"count":1,"cases":["fleet_02"]},
+    "METRIC_UNDERSPECIFIED": {"count":1,"cases":["commerce_06"]},
+    "MUTANT_COVERAGE_GAP": {"count":4,"cases":["commerce_04","fleet_02","support_02","support_06"]},
+    "ARTIFICIAL_AUTHORITY_BLOCK": {"count":2,"cases":["fleet_08","support_08"]}
+  },
+  "warning_counts": {"ARTIFICIAL_QUESTION":7,"WEAK_MUTANT":1,"TAG_FALSE_POSITIVE":1,"AMBIGUITY_QUALITY_WEAK":1},
+  "reference_diversity_distribution": {"HIGH":12,"MEDIUM":2,"LOW":6},
+  "counterfactual_quality_distribution_answerable": {"STRONG":8,"ADEQUATE":10,"WEAK":2},
+  "mutant_quality_distribution": {"STRONG":26,"USEFUL":31,"WEAK":1,"INVALID":2},
+  "authoring_circularity_distribution_all_cases": {"LOW":13,"MEDIUM":13,"HIGH":4},
+  "benchmark_value_distribution_all_cases": {"HIGH_VALUE":23,"MEDIUM_VALUE":6,"LOW_VALUE":1},
+  "mutant_quality_exceptions": {
+    "weak":["support_05/m25_global_avg"],
+    "invalid":["fleet_06/m16_no_tiebreak","support_06/m26_no_date"]
+  },
+  "weak_counterfactual_cases":["fleet_02","support_06"],
+  "high_circularity_cases":["fleet_02","support_02","support_05","support_06"],
+  "low_value_cases":["support_08"],
+  "authority_quality": {"answerable_hidden_authority_cases":["fleet_02"],"answerable_hidden_required_knowledge_cases":["fleet_02","fleet_04","support_02","support_06"],"internal_target_leakage_cases":[]},
+  "ambiguity_quality": {"genuine":["commerce_09","support_09"],"weakly_grounded":["fleet_10"],"better_answerable_candidate":[]},
+  "domain_realism": {
+    "commerce_ops":{"question":"MEDIUM","schema":"MEDIUM","data":"LOW","business_rules":"MEDIUM"},
+    "fleet_ops":{"question":"MEDIUM","schema":"MEDIUM","data":"LOW","business_rules":"MEDIUM"},
+    "support_ops":{"question":"MEDIUM","schema":"MEDIUM","data":"LOW","business_rules":"MEDIUM"}
+  },
+  "coverage_audit":[
+    {"mechanism":"schema_linking","declared":2,"meaningfully_verified":2,"weak_or_questionable":0},
+    {"mechanism":"relationship","declared":21,"meaningfully_verified":18,"weak_or_questionable":3},
+    {"mechanism":"multi_hop","declared":5,"meaningfully_verified":5,"weak_or_questionable":0},
+    {"mechanism":"population","declared":10,"meaningfully_verified":9,"weak_or_questionable":1},
+    {"mechanism":"filter_scope","declared":1,"meaningfully_verified":1,"weak_or_questionable":0},
+    {"mechanism":"aggregation","declared":14,"meaningfully_verified":14,"weak_or_questionable":0},
+    {"mechanism":"grain","declared":1,"meaningfully_verified":1,"weak_or_questionable":0},
+    {"mechanism":"calculation","declared":6,"meaningfully_verified":6,"weak_or_questionable":0},
+    {"mechanism":"temporal","declared":8,"meaningfully_verified":7,"weak_or_questionable":1},
+    {"mechanism":"json","declared":3,"meaningfully_verified":3,"weak_or_questionable":0},
+    {"mechanism":"window","declared":3,"meaningfully_verified":2,"weak_or_questionable":1},
+    {"mechanism":"nested","declared":4,"meaningfully_verified":4,"weak_or_questionable":0},
+    {"mechanism":"correlated","declared":2,"meaningfully_verified":0,"weak_or_questionable":2},
+    {"mechanism":"set_operation","declared":2,"meaningfully_verified":1,"weak_or_questionable":1},
+    {"mechanism":"ordering","declared":3,"meaningfully_verified":2,"weak_or_questionable":1},
+    {"mechanism":"null_semantics","declared":5,"meaningfully_verified":5,"weak_or_questionable":0},
+    {"mechanism":"precision","declared":5,"meaningfully_verified":4,"weak_or_questionable":1}
+  ],
+  "scale_decision":"NO",
+  "repair_gate":"M34.2: repair disputed cases, replace support_08, rerun machine gates and targeted human audit; require 30/30 human accepted before scaling."
+}

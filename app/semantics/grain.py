@@ -390,10 +390,15 @@ class GrainSafetyValidator:
                 for measure in measures:
                     if measure.aggregation_behavior is AggregationBehavior.ADDITIVE:
                         parent_measures.append((measure, aggregate, column.sql(dialect="postgres")))
-                    elif isinstance(aggregate, exp.Sum) and measure.aggregation_behavior in {
-                        AggregationBehavior.NON_ADDITIVE,
-                        AggregationBehavior.DERIVED,
-                    }:
+                    elif (
+                        isinstance(aggregate, exp.Sum)
+                        and isinstance(expression, exp.Column)
+                        and measure.aggregation_behavior
+                        in {
+                            AggregationBehavior.NON_ADDITIVE,
+                            AggregationBehavior.DERIVED,
+                        }
+                    ):
                         return GrainDiagnostic(
                             code=GrainDiagnosticCode.UNSAFE_ROLLUP,
                             message="A non-additive or derived measure is being rolled up.",

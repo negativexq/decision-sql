@@ -1,0 +1,134 @@
+{
+  "benchmark": {
+    "cases": 90,
+    "content_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+    "databases": 6,
+    "distribution": {
+      "AMBIGUOUS": 9,
+      "ANSWERABLE": 60,
+      "AUTHORITY_BLOCKED": 15,
+      "POLICY_BLOCKED": 6
+    },
+    "version": "0.2.2-dev"
+  },
+  "determinism": {
+    "first_hash": "c2765add0ae981ddb7224207e7ae7416db382967c5b8360c7ea9f6f26727a8ea",
+    "identical": true,
+    "provider_calls": 0,
+    "runs": 2,
+    "second_hash": "c2765add0ae981ddb7224207e7ae7416db382967c5b8360c7ea9f6f26727a8ea"
+  },
+  "historical_preservation": {
+    "files_checked": 104,
+    "historical_unchanged": true,
+    "mismatches": [],
+    "model_calls": 0,
+    "provider_calls": 0
+  },
+  "historical_scores_rescored": false,
+  "m46b_ready": true,
+  "milestone": "M46A.1",
+  "model_calls": 0,
+  "model_visible_context_changed": false,
+  "parent_benchmark": {
+    "content_hash": "aeea34b3b71d90806ee18a6bd3d3dd29ab0f06b5e8e7d8fd47119bb5031d5281",
+    "version": "0.2.1-dev"
+  },
+  "provider_calls": 0,
+  "quality": {
+    "fanout_fixture_coverage": {
+      "cases": [
+        {
+          "case_id": "subscription_04",
+          "child_entity": "refunds",
+          "child_measures": [
+            "measure:subscription_billing:refunds:amount"
+          ],
+          "coverage": true,
+          "database_id": "subscription_billing",
+          "discriminating_fixtures": [
+            "subscription_04_cf3_multi_refund"
+          ],
+          "fanout_sensitive": true,
+          "parent_entity": "payments",
+          "parent_measures": [
+            "measure:subscription_billing:payments:amount"
+          ],
+          "references": [
+            "A",
+            "B"
+          ],
+          "relationship_id": "relationship:subscription_billing:refund_payment"
+        },
+        {
+          "case_id": "subscription_10",
+          "child_entity": "refunds",
+          "child_measures": [
+            "measure:subscription_billing:refunds:amount"
+          ],
+          "coverage": true,
+          "database_id": "subscription_billing",
+          "discriminating_fixtures": [
+            "subscription_10_cf3_multi_refund"
+          ],
+          "fanout_sensitive": true,
+          "parent_entity": "payments",
+          "parent_measures": [
+            "measure:subscription_billing:payments:amount"
+          ],
+          "references": [
+            "A",
+            "B"
+          ],
+          "relationship_id": "relationship:subscription_billing:refund_payment"
+        },
+        {
+          "case_id": "warehouse_08",
+          "child_entity": "receipts",
+          "child_measures": [
+            "measure:warehouse_logistics:receipts:received_qty"
+          ],
+          "coverage": true,
+          "database_id": "warehouse_logistics",
+          "discriminating_fixtures": [
+            "base",
+            "warehouse_08_cf1_c305ad",
+            "warehouse_08_cf2_b6ed47"
+          ],
+          "fanout_sensitive": true,
+          "parent_entity": "purchase_order_lines",
+          "parent_measures": [
+            "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+          ],
+          "references": [
+            "A",
+            "B"
+          ],
+          "relationship_id": "relationship:warehouse_logistics:receipt_line"
+        }
+      ],
+      "cases_with_discriminator": 3,
+      "fanout_sensitive_answerable_cases": 3,
+      "passed": true,
+      "uncovered": []
+    },
+    "fixture_comparisons": 184,
+    "leakage": 0,
+    "mutants": 190,
+    "mutants_invalid": 0,
+    "mutants_killed": 190,
+    "mutants_surviving": 0,
+    "mutants_valid": 190,
+    "reference_agreement": true,
+    "references_analyzed": 120
+  },
+  "reference_adjudication": {
+    "confirmed_defective_references_repaired": 2,
+    "review_required": 0,
+    "subscription_04_reference_a": "REFERENCE_DEFECT",
+    "subscription_04_reference_b": "REFERENCE_CORRECT",
+    "subscription_10_reference_a": "REFERENCE_DEFECT",
+    "subscription_10_reference_b": "REFERENCE_CORRECT"
+  },
+  "verdict": "REFERENCE_GRAIN_REPAIR_SUPPORTED"
+}

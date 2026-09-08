@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "case_id": "subscription_04",
+      "child_entity": "refunds",
+      "child_measures": [
+        "measure:subscription_billing:refunds:amount"
+      ],
+      "coverage": true,
+      "database_id": "subscription_billing",
+      "discriminating_fixtures": [
+        "subscription_04_cf3_multi_refund"
+      ],
+      "fanout_sensitive": true,
+      "parent_entity": "payments",
+      "parent_measures": [
+        "measure:subscription_billing:payments:amount"
+      ],
+      "references": [
+        "A",
+        "B"
+      ],
+      "relationship_id": "relationship:subscription_billing:refund_payment"
+    },
+    {
+      "case_id": "subscription_10",
+      "child_entity": "refunds",
+      "child_measures": [
+        "measure:subscription_billing:refunds:amount"
+      ],
+      "coverage": true,
+      "database_id": "subscription_billing",
+      "discriminating_fixtures": [
+        "subscription_10_cf3_multi_refund"
+      ],
+      "fanout_sensitive": true,
+      "parent_entity": "payments",
+      "parent_measures": [
+        "measure:subscription_billing:payments:amount"
+      ],
+      "references": [
+        "A",
+        "B"
+      ],
+      "relationship_id": "relationship:subscription_billing:refund_payment"
+    },
+    {
+      "case_id": "warehouse_08",
+      "child_entity": "receipts",
+      "child_measures": [
+        "measure:warehouse_logistics:receipts:received_qty"
+      ],
+      "coverage": true,
+      "database_id": "warehouse_logistics",
+      "discriminating_fixtures": [
+        "base",
+        "warehouse_08_cf1_c305ad",
+        "warehouse_08_cf2_b6ed47"
+      ],
+      "fanout_sensitive": true,
+      "parent_entity": "purchase_order_lines",
+      "parent_measures": [
+        "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+      ],
+      "references": [
+        "A",
+        "B"
+      ],
+      "relationship_id": "relationship:warehouse_logistics:receipt_line"
+    }
+  ],
+  "cases_with_discriminator": 3,
+  "fanout_sensitive_answerable_cases": 3,
+  "passed": true,
+  "uncovered": []
+}

@@ -14,12 +14,40 @@
         "INSERT INTO accounts VALUES (9902,'Fixture Account B','MID','2026-06-21')"
       ],
       "purpose": "adds a contrasting non-qualifying row"
+    },
+    {
+      "adversarial_contract": {
+        "affected_measures": [
+          "payments.amount",
+          "refunds.amount"
+        ],
+        "discriminating_condition": "one captured payment has two refund rows",
+        "expected_behavioral_distinction": "safe plan-level rate is 0.30; direct-fanout rate is 0.15",
+        "fanout_relationship": "refunds.payment_id -> payments.payment_id",
+        "known_bad_mechanism": "aggregate captured denominator after refund fanout",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS",
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "target_failure_family": "PARENT_MEASURE_FANOUT"
+      },
+      "fixture_id": "subscription_10_cf3_multi_refund",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (9910,'Refund Rate Fixture Account','SMB','2026-06-22')",
+        "INSERT INTO plans VALUES (99010,'Refund Rate Fixture Plan',100.00,1000)",
+        "INSERT INTO subscriptions VALUES (9910,9910,99010,'active','2026-06-22',NULL)",
+        "INSERT INTO invoices VALUES (9910,9910,9910,'2026-06-22','2026-07-01','paid',100.00)",
+        "INSERT INTO payments VALUES (9910,9910,'2026-06-22 10:00+00',100.00,'captured')",
+        "INSERT INTO refunds VALUES (99101,9910,'2026-06-23 10:00+00',20.00),(99102,9910,'2026-06-24 10:00+00',10.00)"
+      ],
+      "purpose": "creates one captured payment with multiple refunds to discriminate payment-counted refund rate from denominator fanout"
     }
   ],
   "database_id": "subscription_billing",
   "evidence": {},
   "reference_implementation_a": {
-    "sql": "SELECT s.plan_id, COALESCE(SUM(r.amount),0) / NULLIF(SUM(p.amount),0) AS refund_rate FROM subscriptions s JOIN invoices i ON i.subscription_id=s.subscription_id JOIN payments p ON p.invoice_id=i.invoice_id AND p.status='captured' LEFT JOIN refunds r ON r.payment_id=p.payment_id GROUP BY s.plan_id ORDER BY s.plan_id"
+    "sql": "SELECT x.plan_id, SUM(x.refunded_amount) / NULLIF(SUM(x.payment_amount), 0) AS refund_rate FROM (SELECT s.plan_id, p.payment_id, p.amount AS payment_amount, COALESCE(SUM(r.amount), 0) AS refunded_amount FROM subscriptions s JOIN invoices i ON i.subscription_id = s.subscription_id JOIN payments p ON p.invoice_id = i.invoice_id AND p.status = 'captured' LEFT JOIN refunds r ON r.payment_id = p.payment_id GROUP BY s.plan_id, p.payment_id, p.amount) x GROUP BY x.plan_id ORDER BY x.plan_id"
   },
   "reference_implementation_b": {
     "sql": "SELECT plan_id, SUM(refunded) / NULLIF(SUM(captured),0) AS refund_rate FROM (SELECT s.plan_id, p.amount AS captured, COALESCE((SELECT SUM(r.amount) FROM refunds r WHERE r.payment_id=p.payment_id),0) AS refunded FROM subscriptions s JOIN invoices i ON i.subscription_id=s.subscription_id JOIN payments p ON p.invoice_id=i.invoice_id WHERE p.status='captured') q GROUP BY plan_id ORDER BY plan_id"
@@ -66,6 +94,15 @@
       "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT s.plan_id, COALESCE(SUM(r.amount),0) / NULLIF(SUM(p.amount),0) AS refund_rate FROM subscriptions s JOIN invoices i ON i.subscription_id=s.subscription_id JOIN payments p ON p.invoice_id=i.invoice_id AND p.status='captured' LEFT JOIN refunds r ON r.payment_id=p.payment_id GROUP BY s.plan_id ORDER BY s.plan_id) AS candidate",
       "status": "VALID",
       "target_component": "projection"
+    },
+    {
+      "description": "Aggregates captured payment denominator after refund fanout.",
+      "failure_category": "PARENT_MEASURE_FANOUT",
+      "mutant_id": "m46a1_subscription_10_denominator_fanout",
+      "semantic_rationale": "Tests whether repeated refund rows duplicate the captured payment denominator.",
+      "sql": "SELECT s.plan_id, COALESCE(SUM(r.amount), 0) / NULLIF(SUM(p.amount), 0) AS refund_rate FROM subscriptions s JOIN invoices i ON i.subscription_id = s.subscription_id JOIN payments p ON p.invoice_id = i.invoice_id AND p.status = 'captured' LEFT JOIN refunds r ON r.payment_id = p.payment_id GROUP BY s.plan_id ORDER BY s.plan_id",
+      "status": "VALID",
+      "target_component": "grain"
     }
   ],
   "semantic_target": {

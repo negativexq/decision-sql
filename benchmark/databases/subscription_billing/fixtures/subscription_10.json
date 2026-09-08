@@ -18,6 +18,34 @@
         "INSERT INTO accounts VALUES (9902,'Fixture Account B','MID','2026-06-21')"
       ],
       "purpose": "adds a contrasting non-qualifying row"
+    },
+    {
+      "adversarial_contract": {
+        "affected_measures": [
+          "payments.amount",
+          "refunds.amount"
+        ],
+        "discriminating_condition": "one captured payment has two refund rows",
+        "expected_behavioral_distinction": "safe plan-level rate is 0.30; direct-fanout rate is 0.15",
+        "fanout_relationship": "refunds.payment_id -> payments.payment_id",
+        "known_bad_mechanism": "aggregate captured denominator after refund fanout",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS",
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "target_failure_family": "PARENT_MEASURE_FANOUT"
+      },
+      "fixture_id": "subscription_10_cf3_multi_refund",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (9910,'Refund Rate Fixture Account','SMB','2026-06-22')",
+        "INSERT INTO plans VALUES (99010,'Refund Rate Fixture Plan',100.00,1000)",
+        "INSERT INTO subscriptions VALUES (9910,9910,99010,'active','2026-06-22',NULL)",
+        "INSERT INTO invoices VALUES (9910,9910,9910,'2026-06-22','2026-07-01','paid',100.00)",
+        "INSERT INTO payments VALUES (9910,9910,'2026-06-22 10:00+00',100.00,'captured')",
+        "INSERT INTO refunds VALUES (99101,9910,'2026-06-23 10:00+00',20.00),(99102,9910,'2026-06-24 10:00+00',10.00)"
+      ],
+      "purpose": "creates one captured payment with multiple refunds to discriminate payment-counted refund rate from denominator fanout"
     }
   ]
 }

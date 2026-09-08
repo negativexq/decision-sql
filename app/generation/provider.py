@@ -26,7 +26,10 @@ from app.generation.hard_query_plans import (
 from app.generation.intent import IntentProposal, QueryIntent
 from app.generation.quality_pack import render_query_quality_pack
 from app.generation.result_shape import ResultShapeProposal
-from app.generation.semantic_plan_protocol import semantic_query_plan_response_format
+from app.generation.semantic_plan_protocol import (
+    logical_query_plan_response_format,
+    semantic_query_plan_response_format,
+)
 from app.generation.window_ir import WindowQueryIR, WindowQueryIRProposal
 from app.models.domain import QueryRequest, UserContext
 from app.provenance.canonical import bounded_text, semantic_hash, text_hash
@@ -37,6 +40,7 @@ from app.provenance.models import (
     recorder_for_identity,
 )
 from app.provenance.sink import NoOpProvenanceSink
+from app.semantics.logical_plan import LogicalQueryPlanV1
 from app.semantics.query_plan_v1 import QueryPlanV1
 from app.semantics.query_plan_wire_v2 import (
     QueryPlanWireV2,
@@ -101,6 +105,21 @@ class SemanticQueryPlanProposal(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     plan: SemanticQueryPlan
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
+
+
+class LogicalQueryPlanProposal(BaseModel):
+    """One untrusted compositional logical plan proposal for M31."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    plan: LogicalQueryPlanV1
     provider: str
     model: str
     prompt_tokens: int | None = None
@@ -247,6 +266,11 @@ class QueryPlanProviderBoundaryError(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_logical_query_plan(
+        self, question: str, schema_context: str
+    ) -> LogicalQueryPlanProposal:
+        """Return one untrusted compositional logical plan."""
+
     async def propose_semantic_query_plan(
         self, question: str, schema_context: str
     ) -> SemanticQueryPlanProposal:
@@ -332,6 +356,62 @@ class OpenAICompatibleProvider:
             payload,
             parsed_sql=None,
             raw_content=_assistant_content(payload),
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
+
+    async def propose_logical_query_plan(
+        self, question: str, schema_context: str
+    ) -> LogicalQueryPlanProposal:
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _logical_query_plan_messages(question, schema_context)
+        response_format = logical_query_plan_response_format()
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "logical_query_plan_v1", question, schema_context, messages, response_format
+        )
+        started = perf_counter()
+        payload = await self._post(body)
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            plan = LogicalQueryPlanV1.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = LogicalQueryPlanProposal(
+                plan=plan,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="LOGICAL_PLAN_PROTOCOL",
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid logical query plan"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=None,
+            parsed_operation_plan=plan.model_dump(mode="json"),
+            raw_content=content,
             latency_ms=proposal.latency_ms,
         )
         return proposal
@@ -1248,10 +1328,12 @@ class StaticLLMProvider:
         model: str = "static-test",
         query_plan: QueryPlanV1 | None = None,
         semantic_plan: SemanticQueryPlan | None = None,
+        logical_plan: LogicalQueryPlanV1 | None = None,
     ) -> None:
         self.proposal = SqlProposal(sql=sql, provider="static", model=model)
         self.query_plan = query_plan
         self.semantic_plan = semantic_plan
+        self.logical_plan = logical_plan
 
     async def propose_query_plan_v1(
         self, question: str, schema_context: str
@@ -1271,6 +1353,16 @@ class StaticLLMProvider:
             raise NotImplementedError("static semantic query plan proposal is not configured")
         return SemanticQueryPlanProposal(
             plan=self.semantic_plan, provider="static", model=self.proposal.model
+        )
+
+    async def propose_logical_query_plan(
+        self, question: str, schema_context: str
+    ) -> LogicalQueryPlanProposal:
+        del question, schema_context
+        if self.logical_plan is None:
+            raise NotImplementedError("static logical query plan proposal is not configured")
+        return LogicalQueryPlanProposal(
+            plan=self.logical_plan, provider="static", model=self.proposal.model
         )
 
     async def propose_query_plan_wire_v2(
@@ -1375,6 +1467,12 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_logical_query_plan(
+        self, question: str, schema_context: str
+    ) -> LogicalQueryPlanProposal:
+        del question, schema_context
+        raise NotImplementedError("logical query plan generation is not configured")
+
     async def propose_semantic_query_plan(
         self, question: str, schema_context: str
     ) -> SemanticQueryPlanProposal:
@@ -1494,6 +1592,32 @@ def _semantic_query_plan_messages(question: str, schema_context: str) -> list[di
         "owns join paths and predicates. Populate optional fields with their schema-defined "
         "null or empty value when applicable. Do not provide reasoning or extra fields."
         f"\n\nSERVER-OWNED SEMANTIC CONTEXT:\n{schema_context}"
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _logical_query_plan_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    system = (
+        "Translate the question into the provided LogicalQueryPlanV1. Express only the "
+        "logical query meaning and return exactly the structured plan required by the "
+        "schema. Use only supplied semantic entity and attribute IDs. Build the minimum "
+        "necessary ordered sequence of SCAN, RELATE, FILTER, PROJECT, AGGREGATE, COMPUTE, "
+        "WINDOW, SORT, and TOP steps. Earlier step results may be referenced only by their "
+        "integer step index. Use MATCHING when the question asks for entities with a "
+        "matching relation; use PRESERVE_LEFT when it explicitly asks to include unmatched "
+        "left-side entities. Filters, typed values, grouping, calculations, windows, order, "
+        "and limits must be represented structurally. When a nested scalar/filter explicitly "
+        "refers to an enclosing row, use the bounded outer_attribute reference with its "
+        "semantic attribute ID and scope depth; do not use it for hidden server mechanics. "
+        "A scalar_result reference is valid only when its referenced step produces exactly "
+        "one scalar output; use result with a slot for a multi-output step. Keep the final "
+        "step as the smallest result needed by the question, and use PROJECT to expose the "
+        "requested values. "
+        "Do not emit SQL, physical table or "
+        "column names, relationship IDs, join keys, aliases, output positions, CTE names, "
+        "raw expressions, or arbitrary function/operator names. Do not add operations not "
+        "requested. Return JSON only; do not provide reasoning."
+        f"\n\nBOUNDED SEMANTIC CATALOG:\n{schema_context}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
 

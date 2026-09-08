@@ -1,0 +1,51 @@
+{
+  "milestone": "M31.0R",
+  "status": "NO_GO",
+  "provider_calls": 0,
+  "initial": {
+    "logical_fixtures": 16,
+    "resolver_success": 12,
+    "compiled": 12,
+    "semantic_validator": 10
+  },
+  "after_generic_lowering": {
+    "logical_fixtures": 16,
+    "resolver_success": 15,
+    "compiled": 15,
+    "semantic_validator": 15,
+    "m1_diagnostic_repaired_cases": 15,
+    "diagnostic_official_correct": 13,
+    "diagnostic_evaluator_limitation": 1,
+    "diagnostic_semantic_mismatch": 1
+  },
+  "failures": [
+    {
+      "case_id": "mental_1",
+      "old_failure": "no authorized relationship between logical results",
+      "root_cause": "missing server-owned relationship metadata",
+      "layer": "relationship metadata boundary",
+      "required_join": "encounters.facid = facilities.fackey",
+      "existing_server_owned_source": [
+        "clinicians.facconnect -> facilities.fackey"
+      ],
+      "gold_derived_metadata_added": false
+    },
+    {
+      "case_id": "vaccine_1",
+      "old_failure": "nested scalar CTE scope differed from compiled table set",
+      "root_cause": "correlated scalar outer reference is not distinguishable from an inner logical result reference",
+      "layer": "logical reference type / lowering boundary",
+      "required_capability": "correlated outer-row reference",
+      "gold_derived_metadata_added": false
+    }
+  ],
+  "fixed_mechanisms": [
+    "CTE source relationship lineage",
+    "hidden relationship-key propagation",
+    "prior-result output scope",
+    "visible-result candidate filtering",
+    "scalar CTE dependency scope",
+    "multi-key logical sort lowering",
+    "typed aggregate FILTER payload"
+  ]
+}

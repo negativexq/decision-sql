@@ -246,7 +246,16 @@ class SemanticPlanValidator:
                 self._expression(calculation.numerator)
             if calculation.denominator is not None:
                 self._expression(calculation.denominator)
-        joined: set[str] = {root_entity} if root_entity is not None else set()
+        # A CTE/derived source has no direct entity ID, but its population
+        # still carries the semantic entities represented by that relation.
+        # Relationship joins after a logical result must validate against that
+        # lineage instead of appearing disconnected merely because the source
+        # was lowered into a server-owned scope.
+        joined: set[str] = set(
+            self._source_base_entities(ir.from_source, ir, self._visible_ctes)
+            if ir.from_source is not None
+            else ((root_entity,) if root_entity is not None else ())
+        )
         for planned_join in ir.joins:
             relationship_ids = planned_join.relationship_path or (
                 (planned_join.relationship_id,) if planned_join.relationship_id is not None else ()
@@ -352,12 +361,14 @@ class SemanticPlanValidator:
 
     @staticmethod
     def _source_base_entities(
-        source: RelationSource | None, ir: SemanticQueryIR
+        source: RelationSource | None,
+        ir: SemanticQueryIR,
+        visible_ctes: tuple[CommonTableExpression, ...] = (),
     ) -> tuple[str, ...]:
         if isinstance(source, EntityRelationSource):
             return (source.entity_id,)
         if isinstance(source, CTERelationSource):
-            for cte in ir.ctes:
+            for cte in (*ir.ctes, *visible_ctes):
                 if cte.cte_id == source.cte_id:
                     return cte.query.population_contract.base_entity_ids
         if isinstance(source, DerivedRelationSource):
@@ -1066,6 +1077,20 @@ class SemanticQueryCompiler:
         bindings = {binding.source_id: binding}
         if binding.entity_id is not None:
             bindings[binding.entity_id] = binding
+        elif isinstance(ir.from_source, CTERelationSource):
+            # A logical-result CTE can retain attributes from one or more
+            # semantic entities.  Expose those entity IDs as aliases of the
+            # same physical CTE binding so server-owned relationship joins can
+            # continue across the scope boundary.
+            source_cte = self._find_cte(ir, ir.from_source.cte_id, available_ctes)
+            for exported in source_cte.exported_attributes:
+                if not exported.attribute_id.startswith("attribute:"):
+                    continue
+                try:
+                    entity_id = self.mapping.attribute(exported.attribute_id).entity_id
+                except SemanticMappingError:
+                    continue
+                bindings.setdefault(entity_id, binding)
         visible_bindings = dict(outer_bindings or {})
         visible_bindings.update(bindings)
 
@@ -1077,7 +1102,9 @@ class SemanticQueryCompiler:
             )
             return nested
 
-        joined_entities = set(self._source_base_entities_for_compile(ir.from_source, ir))
+        joined_entities = set(
+            self._source_base_entities_for_compile(ir.from_source, ir, available_ctes)
+        )
         if binding.entity_id is not None:
             joined_entities.add(binding.entity_id)
         joins: list[tuple[exp.Expression, exp.Expression, str, _RelationBinding]] = []
@@ -1292,12 +1319,14 @@ class SemanticQueryCompiler:
 
     @staticmethod
     def _source_base_entities_for_compile(
-        source: RelationSource | None, ir: SemanticQueryIR
+        source: RelationSource | None,
+        ir: SemanticQueryIR,
+        available_ctes: tuple[CommonTableExpression, ...] = (),
     ) -> tuple[str, ...]:
         if isinstance(source, EntityRelationSource):
             return (source.entity_id,)
         if isinstance(source, CTERelationSource):
-            for cte in ir.ctes:
+            for cte in (*ir.ctes, *available_ctes):
                 if cte.cte_id == source.cte_id:
                     return cte.query.population_contract.base_entity_ids
         if isinstance(source, DerivedRelationSource):

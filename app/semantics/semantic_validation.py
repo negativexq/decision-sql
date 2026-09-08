@@ -407,7 +407,54 @@ def _expected_tables(mapping: SemanticMappingSnapshot, ir: SemanticQueryIR) -> s
             expected.add(source.cte_id.lower())
         elif isinstance(source, DerivedRelationSource):
             expected.add(source.relation_id.lower())
+    # Scalar subqueries are compiled in the enclosing CTE namespace.  Their
+    # source relation therefore contributes to the enclosing compiled scope,
+    # even though their own query-local CTE definitions are not rendered as a
+    # second WITH clause by the compiler.
+    for expression in _all_expressions(
+        (
+            *ir.select,
+            ir.where,
+            *ir.group_by,
+            ir.having,
+            *ir.order_by,
+        )
+    ):
+        if isinstance(expression, ScalarSubqueryExpression):
+            expected.update(_expected_scalar_scope_tables(mapping, expression.query))
     return expected
+
+
+def _expected_scalar_scope_tables(
+    mapping: SemanticMappingSnapshot, ir: SemanticQueryIR
+) -> set[str]:
+    result: set[str] = set()
+    source = ir.from_source
+    if isinstance(source, EntityRelationSource):
+        result.add(mapping.entity(source.entity_id).physical_table.lower())
+    elif isinstance(source, CTERelationSource):
+        result.add(source.cte_id.lower())
+    elif isinstance(source, DerivedRelationSource):
+        result.add(source.relation_id.lower())
+    for join in ir.joins:
+        if join.relationship_id is not None:
+            relationship = mapping.relationship(join.relationship_id)
+            result.update(
+                mapping.entity(endpoint).physical_table.lower()
+                for endpoint in (relationship.from_entity_id, relationship.to_entity_id)
+            )
+        elif isinstance(join.target_source, EntityRelationSource):
+            result.add(mapping.entity(join.target_source.entity_id).physical_table.lower())
+        elif isinstance(join.target_source, CTERelationSource):
+            result.add(join.target_source.cte_id.lower())
+        elif isinstance(join.target_source, DerivedRelationSource):
+            result.add(join.target_source.relation_id.lower())
+    for expression in _all_expressions(
+        (*ir.select, ir.where, *ir.group_by, ir.having, *ir.order_by)
+    ):
+        if isinstance(expression, ScalarSubqueryExpression):
+            result.update(_expected_scalar_scope_tables(mapping, expression.query))
+    return result
 
 
 def _all_expressions(value: object) -> Iterator[BaseModel]:

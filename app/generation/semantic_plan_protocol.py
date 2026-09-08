@@ -13,6 +13,7 @@ from copy import deepcopy
 from typing import Any, cast
 
 from app.provenance.canonical import semantic_hash
+from app.semantics.logical_plan import LogicalQueryPlanV1
 from app.semantics.semantic_query import SemanticQueryPlan
 
 _PROVIDER_UNSUPPORTED_KEYS = frozenset(
@@ -44,6 +45,27 @@ def semantic_query_plan_response_format() -> dict[str, Any]:
             "name": "semantic_query_plan",
             "strict": True,
             "schema": provider_semantic_query_plan_schema(),
+        },
+    }
+
+
+def provider_logical_query_plan_schema() -> dict[str, Any]:
+    """Return the strict provider projection for the M31 logical contract."""
+
+    return cast(dict[str, Any], _project_schema(deepcopy(LogicalQueryPlanV1.model_json_schema())))
+
+
+def provider_logical_query_plan_schema_hash() -> str:
+    return semantic_hash(provider_logical_query_plan_schema())
+
+
+def logical_query_plan_response_format() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "logical_query_plan_v1",
+            "strict": True,
+            "schema": provider_logical_query_plan_schema(),
         },
     }
 

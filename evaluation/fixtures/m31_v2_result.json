@@ -1,0 +1,3896 @@
+{
+  "comparable_execution": {
+    "cases": 15,
+    "evaluator_limitation": 0,
+    "official_correct": 0
+  },
+  "funnel": {
+    "canonical_valid": 12,
+    "evaluator_limitation": 0,
+    "executed": 5,
+    "logical_plan_valid": 17,
+    "logical_reference_valid": 17,
+    "m1_accepted": 5,
+    "metadata_blocked": 3,
+    "official_correct": 0,
+    "provider_schema_valid": 17,
+    "requests": 18,
+    "resolver_success": 13,
+    "responses": 17,
+    "semantic_id_valid": 17,
+    "semantic_validator": 8
+  },
+  "latency_ms": {
+    "max": 9422.498834086582,
+    "median": 6535.695290891454,
+    "min": 3336.595374858007
+  },
+  "milestone": "M31.1-v2",
+  "protected_data_safety": {
+    "gold_sql_in_provider_context": false,
+    "raw_model_responses_persisted": false
+  },
+  "provider_calls": 18,
+  "rows": [
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "alien_1",
+      "error_message": "attribute:observatories.weathprofile",
+      "error_type": "SemanticCompilationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 24856,
+      "latency_ms": 8674.39041682519,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:observatories.weathprofile",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 5,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 4
+                },
+                "filter": null,
+                "function": "AVG",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 4
+                },
+                "filter": null,
+                "function": "PERCENTILE_CONT",
+                "percentile": {
+                  "kind": "literal",
+                  "value": 0.5,
+                  "value_type": "decimal"
+                }
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "attribute_id": "attribute:signals.signalregistry",
+                  "kind": "attribute"
+                },
+                "filter": null,
+                "function": "COUNT",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:signals",
+        "calculation": [
+          {
+            "input_step": 3,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "attribute_id": "attribute:signals.snrratio",
+                    "kind": "attribute"
+                  },
+                  "operator": "SUBTRACT",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "literal",
+                      "value": 0.1,
+                      "value_type": "decimal"
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "arguments": [
+                        {
+                          "attribute_id": "attribute:signals.noisefloordbm",
+                          "kind": "attribute"
+                        }
+                      ],
+                      "function": "ABS",
+                      "kind": "function"
+                    }
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "attribute_id": "attribute:observatories.weathprofile",
+                  "kind": "attribute"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "binary",
+            "left": {
+              "kind": "result",
+              "slot": 0,
+              "step": 4
+            },
+            "operator": "GT",
+            "right": {
+              "kind": "literal",
+              "value": 0,
+              "value_type": "decimal"
+            }
+          }
+        ],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 6,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 6
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:observatories.weathprofile')",
+            "expression=LogicalResult(kind='result', step=6, slot=0)",
+            "expression=LogicalResult(kind='result', step=6, slot=1)",
+            "expression=LogicalResult(kind='result', step=6, slot=2)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:observationalconditions",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:telescopes",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:observatories",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 9,
+        "window": []
+      },
+      "logical_steps": 9,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 561,
+      "primary_failure": "SemanticCompilationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 2114,
+      "response_hash": "e0f0cc22d0011102c8b37cb3116d35091c0dd8b76714e00d788225a0b34f0951",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": false,
+      "case_id": "archeology_1",
+      "error_message": "no authorized path to entity:scanspatial",
+      "error_type": "SemanticEngineError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 25599,
+      "latency_ms": 6535.695290891454,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:scanpointcloud",
+        "calculation": [
+          {
+            "input_step": 3,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "kind": "binary",
+                              "left": {
+                                "arguments": [
+                                  {
+                                    "kind": "binary",
+                                    "left": {
+                                      "arguments": [
+                                        {
+                                          "kind": "binary",
+                                          "left": {
+                                            "attribute_id": "attribute:scanpointcloud.scanresolmm",
+                                            "kind": "attribute"
+                                          },
+                                          "operator": "MULTIPLY",
+                                          "right": {
+                                            "kind": "literal",
+                                            "value": 1000,
+                                            "value_type": "integer"
+                                          }
+                                        }
+                                      ],
+                                      "function": "ROUND",
+                                      "kind": "function"
+                                    },
+                                    "operator": "MULTIPLY",
+                                    "right": {
+                                      "kind": "literal",
+                                      "value": 1,
+                                      "value_type": "integer"
+                                    }
+                                  }
+                                ],
+                                "function": "ROUND",
+                                "kind": "function"
+                              },
+                              "operator": "DIVIDE",
+                              "right": {
+                                "arguments": [
+                                  {
+                                    "attribute_id": "attribute:scanpointcloud.pointdense",
+                                    "kind": "attribute"
+                                  }
+                                ],
+                                "function": "ROUND",
+                                "kind": "function"
+                              }
+                            }
+                          ],
+                          "function": "ROUND",
+                          "kind": "function"
+                        },
+                        "operator": "MULTIPLY",
+                        "right": {
+                          "kind": "literal",
+                          "value": 5,
+                          "value_type": "integer"
+                        }
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "kind": "literal",
+                        "value": -1.5,
+                        "value_type": "decimal"
+                      }
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "literal",
+                      "value": 0.4,
+                      "value_type": "decimal"
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "integer"
+                      },
+                      "operator": "ADD",
+                      "right": {
+                        "kind": "binary",
+                        "left": {
+                          "kind": "binary",
+                          "left": {
+                            "attribute_id": "attribute:scanpointcloud.coverpct",
+                            "kind": "attribute"
+                          },
+                          "operator": "DIVIDE",
+                          "right": {
+                            "kind": "literal",
+                            "value": 100,
+                            "value_type": "integer"
+                          }
+                        },
+                        "operator": "MULTIPLY",
+                        "right": {
+                          "kind": "binary",
+                          "left": {
+                            "kind": "literal",
+                            "value": 1,
+                            "value_type": "integer"
+                          },
+                          "operator": "SUBTRACT",
+                          "right": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:scanpointcloud.coverpct",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 100,
+                              "value_type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "literal",
+                      "value": 0.2,
+                      "value_type": "decimal"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [],
+        "ordering": [],
+        "outputs": [],
+        "relations": [
+          [
+            "entity:scanspatial",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:scans",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:sites",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 5,
+        "window": []
+      },
+      "logical_steps": 5,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": true,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 588,
+      "primary_failure": "SemanticEngineError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": false,
+      "response_bytes": 2229,
+      "response_hash": "383618f57fba6584a89b3eb832e3b2cb5333c44374e37ce1b32bf8301a3ba8da",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "credit_1",
+      "executed": "SUCCESS",
+      "input_tokens": 20923,
+      "latency_ms": 4724.184375023469,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:core_record",
+        "calculation": [
+          {
+            "input_step": 2,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "attribute_id": "attribute:expenses_and_assets.totassets",
+                    "kind": "attribute"
+                  },
+                  "operator": "SUBTRACT",
+                  "right": {
+                    "attribute_id": "attribute:expenses_and_assets.totliabs",
+                    "kind": "attribute"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [
+          {
+            "input_step": 5,
+            "kind": "TOP",
+            "limit": 10,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 4,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "attribute_id": "attribute:expenses_and_assets.totassets",
+                    "kind": "attribute"
+                  },
+                  "operator": "SUBTRACT",
+                  "right": {
+                    "attribute_id": "attribute:expenses_and_assets.totliabs",
+                    "kind": "attribute"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:core_record.clientref')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:expenses_and_assets.totassets')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:expenses_and_assets.totliabs')",
+            "expression=LogicalBinary(kind='binary', operator=<LogicalBinaryOperator.SUBTRACT: 'SUBTRACT'>, left=LogicalAttribute(kind='attribute', attribute_id='attribute:expenses_and_assets.totassets'), right=LogicalAttribute(kind='attribute', attribute_id='attribute:expenses_and_assets.totliabs'))",
+            "expression=LogicalResult(kind='result', step=4, slot=0)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:employment_and_income",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:expenses_and_assets",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 8,
+        "window": [
+          {
+            "input_step": 3,
+            "kind": "WINDOW",
+            "outputs": [
+              {
+                "arguments": [],
+                "function": "RANK",
+                "order_by": [
+                  {
+                    "direction": "DESC",
+                    "expression": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:expenses_and_assets.totassets",
+                        "kind": "attribute"
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "attribute_id": "attribute:expenses_and_assets.totliabs",
+                        "kind": "attribute"
+                      }
+                    }
+                  }
+                ],
+                "partition_by": []
+              }
+            ]
+          }
+        ]
+      },
+      "logical_steps": 8,
+      "m1": "ACCEPTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "INCORRECT",
+      "output_tokens": 472,
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 1909,
+      "response_hash": "ff4e9101dd3b56b3c4e9f9e00fc1dff3ab01e8b1ce6645c641812db8b15e4d2c",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "cross_db_1",
+      "executed": "NOT_REACHED",
+      "input_tokens": 21957,
+      "latency_ms": 6442.200874909759,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:dataflow",
+        "calculation": [
+          {
+            "input_step": 2,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:riskmanagement.riskassess",
+                        "kind": "attribute"
+                      },
+                      "operator": "DIVIDE",
+                      "right": {
+                        "attribute_id": "attribute:riskmanagement.ctrleff",
+                        "kind": "attribute"
+                      }
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:dataprofile.volgb",
+                        "kind": "attribute"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "branches": [
+                          {
+                            "then": {
+                              "kind": "literal",
+                              "value": 3,
+                              "value_type": "integer"
+                            },
+                            "when": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:dataprofile.datasense",
+                                "kind": "attribute"
+                              },
+                              "operator": "EQ",
+                              "right": {
+                                "kind": "literal",
+                                "value": "High",
+                                "value_type": "string"
+                              }
+                            }
+                          },
+                          {
+                            "then": {
+                              "kind": "literal",
+                              "value": 2,
+                              "value_type": "integer"
+                            },
+                            "when": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:dataprofile.datasense",
+                                "kind": "attribute"
+                              },
+                              "operator": "EQ",
+                              "right": {
+                                "kind": "literal",
+                                "value": "Medium",
+                                "value_type": "string"
+                              }
+                            }
+                          },
+                          {
+                            "then": {
+                              "kind": "literal",
+                              "value": 1,
+                              "value_type": "integer"
+                            },
+                            "when": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:dataprofile.datasense",
+                                "kind": "attribute"
+                              },
+                              "operator": "EQ",
+                              "right": {
+                                "kind": "literal",
+                                "value": "Low",
+                                "value_type": "string"
+                              }
+                            }
+                          }
+                        ],
+                        "default": null,
+                        "kind": "case"
+                      }
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "attribute_id": "attribute:dataflow.recordregistry",
+                  "kind": "attribute"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "binary",
+            "left": {
+              "kind": "result",
+              "slot": 0,
+              "step": 3
+            },
+            "operator": "GT",
+            "right": {
+              "kind": "literal",
+              "value": 0.7,
+              "value_type": "decimal"
+            }
+          }
+        ],
+        "limit": [
+          {
+            "input_step": 5,
+            "kind": "TOP",
+            "limit": 5,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 4,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 3
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalResult(kind='result', step=3, slot=2)",
+            "expression=LogicalResult(kind='result', step=3, slot=0)",
+            "expression=LogicalResult(kind='result', step=3, slot=1)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:riskmanagement",
+            null,
+            "PRESERVE_LEFT"
+          ],
+          [
+            "entity:dataprofile",
+            null,
+            "PRESERVE_LEFT"
+          ]
+        ],
+        "steps": 8,
+        "window": []
+      },
+      "logical_steps": 8,
+      "m1": "REJECTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 588,
+      "primary_failure": "M1_REJECT",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 2238,
+      "response_hash": "b8c22937d3517729b84449f731f728796d9255fcf8751f123d87d855c01de8dc",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": false,
+      "case_id": "crypto_1",
+      "error_message": "1 validation error for CommonTableExpression\n  Value error, CTE outputs must have unique names [type=value_error, input_value={'cte_id': 'logical_step_...ion=9, description=''))}, input_type=dict]\n    For further information visit https://e",
+      "error_type": "ValidationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 20123,
+      "latency_ms": 6254.817915847525,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:marketdata",
+        "calculation": [
+          {
+            "input_step": 0,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "metadata",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "exchnote",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "metadata",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "timetrack",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "quotes",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "askquote",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "quotes",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "bidquote",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "quotes",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "midquote",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              }
+            ]
+          },
+          {
+            "input_step": 3,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 1
+                }
+              },
+              {
+                "expression": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 1
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "result",
+                        "slot": 2,
+                        "step": 1
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "kind": "result",
+                        "slot": 3,
+                        "step": 1
+                      }
+                    },
+                    "operator": "DIVIDE",
+                    "right": {
+                      "kind": "result",
+                      "slot": 4,
+                      "step": 1
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "kind": "literal",
+                    "value": 100,
+                    "value_type": "decimal"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [
+          {
+            "input_step": 2,
+            "kind": "TOP",
+            "limit": 1,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 1,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:marketdata.quote_depth_snapshot",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "metadata",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "timetrack",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalResult(kind='result', step=4, slot=0)",
+            "expression=LogicalResult(kind='result', step=4, slot=1)",
+            "expression=LogicalResult(kind='result', step=4, slot=2)"
+          ]
+        ],
+        "relations": [],
+        "steps": 6,
+        "window": []
+      },
+      "logical_steps": 6,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 666,
+      "primary_failure": "ValidationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": false,
+      "response_bytes": 2667,
+      "response_hash": "152b42186bc3553675d1d39616a9d4dc6dae25fefbb408e67e35d343c381abcd",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "cybermarket_1",
+      "executed": "SUCCESS",
+      "input_tokens": 23103,
+      "latency_ms": 8165.694917086512,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:riskanalysis",
+        "calculation": [
+          {
+            "input_step": 1,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:riskanalysis.txchainlen",
+                        "kind": "attribute"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "kind": "literal",
+                        "value": 10,
+                        "value_type": "integer"
+                      }
+                    },
+                    "operator": "ADD",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:riskanalysis.linkedtxcount",
+                        "kind": "attribute"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "kind": "literal",
+                        "value": 5,
+                        "value_type": "integer"
+                      }
+                    }
+                  },
+                  "operator": "ADD",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:riskanalysis.fraudprob",
+                      "kind": "attribute"
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "literal",
+                      "value": 100,
+                      "value_type": "integer"
+                    }
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "binary",
+                        "left": {
+                          "kind": "binary",
+                          "left": {
+                            "attribute_id": "attribute:riskanalysis.txchainlen",
+                            "kind": "attribute"
+                          },
+                          "operator": "MULTIPLY",
+                          "right": {
+                            "kind": "literal",
+                            "value": 10,
+                            "value_type": "integer"
+                          }
+                        },
+                        "operator": "ADD",
+                        "right": {
+                          "kind": "binary",
+                          "left": {
+                            "attribute_id": "attribute:riskanalysis.linkedtxcount",
+                            "kind": "attribute"
+                          },
+                          "operator": "MULTIPLY",
+                          "right": {
+                            "kind": "literal",
+                            "value": 5,
+                            "value_type": "integer"
+                          }
+                        }
+                      },
+                      "operator": "ADD",
+                      "right": {
+                        "kind": "binary",
+                        "left": {
+                          "attribute_id": "attribute:riskanalysis.fraudprob",
+                          "kind": "attribute"
+                        },
+                        "operator": "MULTIPLY",
+                        "right": {
+                          "kind": "literal",
+                          "value": 100,
+                          "value_type": "integer"
+                        }
+                      }
+                    },
+                    "operator": "SUBTRACT",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:riskanalysis.profilecomplete",
+                        "kind": "attribute"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "kind": "literal",
+                        "value": 0.5,
+                        "value_type": "decimal"
+                      }
+                    }
+                  },
+                  "operator": "SUBTRACT",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:riskanalysis.idverifyscore",
+                      "kind": "attribute"
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "literal",
+                      "value": 0.5,
+                      "value_type": "decimal"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "kind": "binary",
+                "left": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 2
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 150,
+                  "value_type": "integer"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:riskanalysis.wallage",
+                  "kind": "attribute"
+                },
+                "operator": "LT",
+                "right": {
+                  "kind": "literal",
+                  "value": 30,
+                  "value_type": "integer"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:riskanalysis.wallturnrt",
+                  "kind": "attribute"
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 5,
+                  "value_type": "integer"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:riskanalysis.linkedtxcount",
+                  "kind": "attribute"
+                },
+                "operator": "GTE",
+                "right": {
+                  "kind": "literal",
+                  "value": 3,
+                  "value_type": "integer"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 3,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 2
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:riskanalysis.riskregistry')",
+            "expression=LogicalResult(kind='result', step=2, slot=1)",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:transactions.txregistry')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:transactions.payamtusd')"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:transactions",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 6,
+        "window": []
+      },
+      "logical_steps": 6,
+      "m1": "ACCEPTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "INCORRECT",
+      "output_tokens": 825,
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 3293,
+      "response_hash": "0662fa520f8d430963fcd65b7e1b721a1634f911acd306dff5d1c701e0526341",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "disaster_1",
+      "executed": "SUCCESS",
+      "input_tokens": 22908,
+      "latency_ms": 8518.409290816635,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:distributionhubs",
+        "calculation": [
+          {
+            "input_step": 0,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:distributionhubs.hubutilpct",
+                      "kind": "attribute"
+                    },
+                    "operator": "DIVIDE",
+                    "right": {
+                      "kind": "literal",
+                      "value": 100,
+                      "value_type": "integer"
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:distributionhubs.storecapm3",
+                      "kind": "attribute"
+                    },
+                    "operator": "DIVIDE",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:distributionhubs.storeavailm3",
+                        "kind": "attribute"
+                      },
+                      "operator": "ADD",
+                      "right": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "branches": [
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "High Utilization",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "kind": "binary",
+                          "left": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.hubutilpct",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 100,
+                              "value_type": "integer"
+                            }
+                          },
+                          "operator": "MULTIPLY",
+                          "right": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.storecapm3",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:distributionhubs.storeavailm3",
+                                "kind": "attribute"
+                              },
+                              "operator": "ADD",
+                              "right": {
+                                "kind": "literal",
+                                "value": 1,
+                                "value_type": "integer"
+                              }
+                            }
+                          }
+                        },
+                        "operator": "GT",
+                        "right": {
+                          "kind": "literal",
+                          "value": 5,
+                          "value_type": "integer"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Moderate Utilization",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "expression": {
+                          "kind": "binary",
+                          "left": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.hubutilpct",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 100,
+                              "value_type": "integer"
+                            }
+                          },
+                          "operator": "MULTIPLY",
+                          "right": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.storecapm3",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:distributionhubs.storeavailm3",
+                                "kind": "attribute"
+                              },
+                              "operator": "ADD",
+                              "right": {
+                                "kind": "literal",
+                                "value": 1,
+                                "value_type": "integer"
+                              }
+                            }
+                          }
+                        },
+                        "high": {
+                          "kind": "literal",
+                          "value": 5,
+                          "value_type": "integer"
+                        },
+                        "kind": "between",
+                        "low": {
+                          "kind": "literal",
+                          "value": 2,
+                          "value_type": "integer"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Low Utilization",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "kind": "binary",
+                          "left": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.hubutilpct",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 100,
+                              "value_type": "integer"
+                            }
+                          },
+                          "operator": "MULTIPLY",
+                          "right": {
+                            "kind": "binary",
+                            "left": {
+                              "attribute_id": "attribute:distributionhubs.storecapm3",
+                              "kind": "attribute"
+                            },
+                            "operator": "DIVIDE",
+                            "right": {
+                              "kind": "binary",
+                              "left": {
+                                "attribute_id": "attribute:distributionhubs.storeavailm3",
+                                "kind": "attribute"
+                              },
+                              "operator": "ADD",
+                              "right": {
+                                "kind": "literal",
+                                "value": 1,
+                                "value_type": "integer"
+                              }
+                            }
+                          }
+                        },
+                        "operator": "LT",
+                        "right": {
+                          "kind": "literal",
+                          "value": 2,
+                          "value_type": "integer"
+                        }
+                      }
+                    }
+                  ],
+                  "default": null,
+                  "kind": "case"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 1,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 1
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:distributionhubs.hubregistry')",
+            "expression=LogicalResult(kind='result', step=1, slot=0)",
+            "expression=LogicalResult(kind='result', step=1, slot=1)"
+          ]
+        ],
+        "relations": [],
+        "steps": 4,
+        "window": []
+      },
+      "logical_steps": 4,
+      "m1": "ACCEPTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "INCORRECT",
+      "output_tokens": 859,
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 3382,
+      "response_hash": "135a24650d1a8ca17f4fc98678bc7632863521930674953664fd47703de279a6",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": false,
+      "case_id": "fake_1",
+      "error_message": "relationship does not introduce one connected entity: relationship:profile.profaccref->account.accindex",
+      "error_type": "SemanticValidationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 21955,
+      "latency_ms": 7015.750624937937,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:account.platident",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 9,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "attribute_id": "attribute:moderationaction.clustsize",
+                  "kind": "attribute"
+                },
+                "filter": null,
+                "function": "MAX",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 9
+                },
+                "filter": null,
+                "function": "AVG",
+                "percentile": null
+              },
+              {
+                "distinct": true,
+                "expression": {
+                  "attribute_id": "attribute:account.accindex",
+                  "kind": "attribute"
+                },
+                "filter": null,
+                "function": "COUNT_DISTINCT",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:account",
+        "calculation": [
+          {
+            "input_step": 8,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 0.4,
+                        "value_type": "decimal"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "arguments": [
+                          {
+                            "attribute_id": "attribute:securitydetection.detection_score_profile",
+                            "kind": "attribute"
+                          },
+                          {
+                            "kind": "literal",
+                            "value": "behavior_scores",
+                            "value_type": "string"
+                          },
+                          {
+                            "kind": "literal",
+                            "value": "botlikscore",
+                            "value_type": "string"
+                          }
+                        ],
+                        "function": "JSONB_EXTRACT_SCALAR",
+                        "kind": "function"
+                      }
+                    },
+                    "operator": "ADD",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 0.3,
+                        "value_type": "decimal"
+                      },
+                      "operator": "MULTIPLY",
+                      "right": {
+                        "arguments": [
+                          {
+                            "attribute_id": "attribute:securitydetection.detection_score_profile",
+                            "kind": "attribute"
+                          },
+                          {
+                            "kind": "literal",
+                            "value": "behavior_scores",
+                            "value_type": "string"
+                          },
+                          {
+                            "kind": "literal",
+                            "value": "autobehavscore",
+                            "value_type": "string"
+                          }
+                        ],
+                        "function": "JSONB_EXTRACT_SCALAR",
+                        "kind": "function"
+                      }
+                    }
+                  },
+                  "operator": "ADD",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "literal",
+                      "value": 0.3,
+                      "value_type": "decimal"
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "decimal"
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "attribute_id": "attribute:messaginganalysis.convnatval",
+                        "kind": "attribute"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "kind": "binary",
+                "left": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 10
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 0.7,
+                  "value_type": "decimal"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 10
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 10,
+                  "value_type": "integer"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [
+          {
+            "input_step": 12,
+            "kind": "TOP",
+            "limit": 100,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 11,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 10
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:account.platident')",
+            "expression=LogicalResult(kind='result', step=10, slot=0)",
+            "expression=LogicalResult(kind='result', step=10, slot=1)",
+            "expression=LogicalResult(kind='result', step=10, slot=2)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:profile",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:sessionbehavior",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:contentbehavior",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:messaginganalysis",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:networkmetrics",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:technicalinfo",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:securitydetection",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:moderationaction",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 15,
+        "window": []
+      },
+      "logical_steps": 15,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": true,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 941,
+      "primary_failure": "SemanticValidationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 3607,
+      "response_hash": "0f145ea9b781dca8176694e8c4f7b490604d8120650f239aa7db4e8f50951c9a",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "canonical_valid": false,
+      "case_id": "gaming_1",
+      "error_message": "Provider response did not contain a valid logical query plan",
+      "error_type": "MalformedProviderResponse",
+      "executed": "NOT_REACHED",
+      "latency_ms": 7371.6918339487165,
+      "logical_plan_valid": false,
+      "logical_reference_valid": false,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "official": "NOT_REACHED",
+      "primary_failure": "MalformedProviderResponse",
+      "provider_calls": 1,
+      "provider_schema_valid": false,
+      "resolver_success": false,
+      "semantic_id_valid": false,
+      "semantic_validator": false,
+      "transport_status": "PROTOCOL_OR_SEMANTIC_FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "insider_1",
+      "error_message": "attribute:trader.tradereg",
+      "error_type": "SemanticCompilationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 22166,
+      "latency_ms": 7685.276875039563,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:trader.tradereg",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 5,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "star"
+                },
+                "filter": null,
+                "function": "COUNT",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:trader",
+        "calculation": [],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "kind": "boolean",
+                "operator": "OR",
+                "terms": [
+                  {
+                    "kind": "boolean",
+                    "operator": "AND",
+                    "terms": [
+                      {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "attribute_id": "attribute:trader.trading_performance",
+                              "kind": "attribute"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "risklevel",
+                              "value_type": "string"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "levratio",
+                              "value_type": "string"
+                            }
+                          ],
+                          "function": "JSONB_EXTRACT_SCALAR",
+                          "kind": "function"
+                        },
+                        "operator": "GT",
+                        "right": {
+                          "kind": "literal",
+                          "value": 5,
+                          "value_type": "decimal"
+                        }
+                      },
+                      {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "attribute_id": "attribute:trader.trading_performance",
+                              "kind": "attribute"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "risklevel",
+                              "value_type": "string"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "risklevel",
+                              "value_type": "string"
+                            }
+                          ],
+                          "function": "JSONB_EXTRACT_SCALAR",
+                          "kind": "function"
+                        },
+                        "operator": "EQ",
+                        "right": {
+                          "kind": "literal",
+                          "value": "Aggressive",
+                          "value_type": "string"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:trader.voldaily",
+                        "kind": "attribute"
+                      },
+                      "operator": "DIVIDE",
+                      "right": {
+                        "attribute_id": "attribute:trader.acctbal",
+                        "kind": "attribute"
+                      }
+                    },
+                    "operator": "GT",
+                    "right": {
+                      "kind": "literal",
+                      "value": 0.5,
+                      "value_type": "decimal"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "boolean",
+                "operator": "OR",
+                "terms": [
+                  {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:enforcementactions.penimp",
+                      "kind": "attribute"
+                    },
+                    "operator": "EQ",
+                    "right": {
+                      "kind": "literal",
+                      "value": "Fine",
+                      "value_type": "string"
+                    }
+                  },
+                  {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:enforcementactions.penimp",
+                      "kind": "attribute"
+                    },
+                    "operator": "EQ",
+                    "right": {
+                      "kind": "literal",
+                      "value": "Ban",
+                      "value_type": "string"
+                    }
+                  },
+                  {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:enforcementactions.acttake",
+                      "kind": "attribute"
+                    },
+                    "operator": "EQ",
+                    "right": {
+                      "kind": "literal",
+                      "value": "Suspension",
+                      "value_type": "string"
+                    }
+                  },
+                  {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:enforcementactions.busrestr",
+                      "kind": "attribute"
+                    },
+                    "operator": "EQ",
+                    "right": {
+                      "kind": "literal",
+                      "value": "Full",
+                      "value_type": "string"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:compliancecase.lastrevdt",
+                  "kind": "attribute"
+                },
+                "operator": "GTE",
+                "right": {
+                  "arguments": [
+                    {
+                      "kind": "literal",
+                      "value": "month",
+                      "value_type": "string"
+                    },
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "arguments": [],
+                        "function": "CURRENT_DATE",
+                        "kind": "function"
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "amount": "12",
+                        "kind": "interval",
+                        "unit": "months"
+                      }
+                    }
+                  ],
+                  "function": "DATE_TRUNC",
+                  "kind": "function"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [],
+        "ordering": [],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:trader.tradereg')"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:transactionrecord",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:compliancecase",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:enforcementactions",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 8,
+        "window": []
+      },
+      "logical_steps": 8,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 828,
+      "primary_failure": "SemanticCompilationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 3298,
+      "response_hash": "737c7264a48ffcf9ce32efe487bb9db89468001d65d6b812670172176c412d7f",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "mental_1",
+      "error_message": "attribute:patients.patkey",
+      "error_type": "SemanticCompilationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 22079,
+      "latency_ms": 9422.498834086582,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:patients.patkey",
+                "kind": "attribute"
+              },
+              {
+                "attribute_id": "attribute:assessmentbasics.abkey",
+                "kind": "attribute"
+              },
+              {
+                "attribute_id": "attribute:facilities.envstress",
+                "kind": "attribute"
+              },
+              {
+                "attribute_id": "attribute:facilities.lifeimpact",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 7,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "branches": [
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": 3,
+                        "value_type": "integer"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "attribute_id": "attribute:treatmentbasics.therapy_details",
+                              "kind": "attribute"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "engagement",
+                              "value_type": "string"
+                            }
+                          ],
+                          "function": "JSONB_EXTRACT_SCALAR",
+                          "kind": "function"
+                        },
+                        "operator": "EQ",
+                        "right": {
+                          "kind": "literal",
+                          "value": "High",
+                          "value_type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": 2,
+                        "value_type": "integer"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "attribute_id": "attribute:treatmentbasics.therapy_details",
+                              "kind": "attribute"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "engagement",
+                              "value_type": "string"
+                            }
+                          ],
+                          "function": "JSONB_EXTRACT_SCALAR",
+                          "kind": "function"
+                        },
+                        "operator": "EQ",
+                        "right": {
+                          "kind": "literal",
+                          "value": "Medium",
+                          "value_type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "integer"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "arguments": [
+                            {
+                              "attribute_id": "attribute:treatmentbasics.therapy_details",
+                              "kind": "attribute"
+                            },
+                            {
+                              "kind": "literal",
+                              "value": "engagement",
+                              "value_type": "string"
+                            }
+                          ],
+                          "function": "JSONB_EXTRACT_SCALAR",
+                          "kind": "function"
+                        },
+                        "operator": "EQ",
+                        "right": {
+                          "kind": "literal",
+                          "value": "Low",
+                          "value_type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": 0,
+                        "value_type": "integer"
+                      },
+                      "when": {
+                        "kind": "literal",
+                        "value": true,
+                        "value_type": "boolean"
+                      }
+                    }
+                  ],
+                  "default": null,
+                  "kind": "case"
+                },
+                "filter": null,
+                "function": "AVG",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:patients",
+        "calculation": [],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "expression": {
+                  "attribute_id": "attribute:facilities.envstress",
+                  "kind": "attribute"
+                },
+                "kind": "in",
+                "negated": false,
+                "values": [
+                  {
+                    "kind": "literal",
+                    "value": "Severe",
+                    "value_type": "string"
+                  }
+                ]
+              },
+              {
+                "expression": {
+                  "attribute_id": "attribute:facilities.lifeimpact",
+                  "kind": "attribute"
+                },
+                "kind": "in",
+                "negated": false,
+                "values": [
+                  {
+                    "kind": "literal",
+                    "value": "Severe",
+                    "value_type": "string"
+                  }
+                ]
+              },
+              {
+                "expression": {
+                  "attribute_id": "attribute:assessmentsymptomsandrisk.suicrisk",
+                  "kind": "attribute"
+                },
+                "kind": "in",
+                "negated": false,
+                "values": [
+                  {
+                    "kind": "literal",
+                    "value": "High",
+                    "value_type": "string"
+                  },
+                  {
+                    "kind": "literal",
+                    "value": "Severe",
+                    "value_type": "string"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "binary",
+            "left": {
+              "kind": "result",
+              "slot": 4,
+              "step": 8
+            },
+            "operator": "LT",
+            "right": {
+              "kind": "literal",
+              "value": 2,
+              "value_type": "integer"
+            }
+          },
+          {
+            "kind": "binary",
+            "left": {
+              "attribute_id": "attribute:encounters.timemark",
+              "kind": "attribute"
+            },
+            "operator": "EQ",
+            "right": {
+              "kind": "result",
+              "slot": 0,
+              "step": 10
+            }
+          }
+        ],
+        "limit": [
+          {
+            "input_step": 12,
+            "kind": "TOP",
+            "limit": 50,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 11,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "attribute_id": "attribute:encounters.timemark",
+                  "kind": "attribute"
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:patients.patkey')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:assessmentbasics.abkey')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:encounters.timemark')",
+            "expression=LogicalFunctionCall(kind='function', function=<LogicalFunction.ROUND: 'ROUND'>, arguments=(LogicalResult(kind='result', step=8, slot=4),))",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:facilities.envstress')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:facilities.lifeimpact')"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:encounters",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:assessmentbasics",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:assessmentsymptomsandrisk",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:facilities",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:treatmentbasics",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:treatmentoutcomes",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 15,
+        "window": [
+          {
+            "input_step": 9,
+            "kind": "WINDOW",
+            "outputs": [
+              {
+                "arguments": [
+                  {
+                    "attribute_id": "attribute:encounters.timemark",
+                    "kind": "attribute"
+                  }
+                ],
+                "function": "MAX",
+                "order_by": [],
+                "partition_by": [
+                  {
+                    "attribute_id": "attribute:patients.patkey",
+                    "kind": "attribute"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "logical_steps": 15,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": true,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 1146,
+      "primary_failure": "SemanticCompilationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 4585,
+      "response_hash": "a742d5939213c966959aef0ac5bef1f3809a752cb5fe4c013333b66de91474f7",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "museum_1",
+      "executed": "SUCCESS",
+      "input_tokens": 27757,
+      "latency_ms": 3986.9418749585748,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:artifactscore",
+        "calculation": [],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:artifactscore.conservestatus",
+                  "kind": "attribute"
+                },
+                "operator": "EQ",
+                "right": {
+                  "kind": "literal",
+                  "value": "Critical",
+                  "value_type": "string"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "attribute_id": "attribute:artifactsecurityaccess.insvalueusd",
+                  "kind": "attribute"
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 1000000,
+                  "value_type": "decimal"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [],
+        "ordering": [],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:artifactscore.artregistry')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:artifactscore.artname')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:artifactsecurityaccess.insvalueusd')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:artifactscore.conservestatus')",
+            "expression=LogicalCase(kind='case', branches=(LogicalCaseBranch(when=LogicalBinary(kind='binary', operator=<LogicalBinaryOperator.GT: 'GT'>, left=LogicalAttribute(kind='attribute', attribute_id='attribute:artifactsecurityaccess.insvalueusd'), right=LogicalLiteral(kind='literal', value=1000000, value_type='decimal')), then=LogicalLiteral(kind='literal', value='Monetary High-Value', value_type='string')),), default=None)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:artifactsecurityaccess",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 4,
+        "window": []
+      },
+      "logical_steps": 4,
+      "m1": "ACCEPTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "INCORRECT",
+      "output_tokens": 346,
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 1438,
+      "response_hash": "99135d1ebb326c49913a8db5e5fa19df92d00f572656716ad5b0799679968568",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "news_1",
+      "executed": "NOT_REACHED",
+      "input_tokens": 19329,
+      "latency_ms": 4238.569583976641,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:sessions",
+        "calculation": [
+          {
+            "input_step": 0,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "literal",
+                      "value": "day",
+                      "value_type": "string"
+                    },
+                    {
+                      "attribute_id": "attribute:sessions.seshstart",
+                      "kind": "attribute"
+                    }
+                  ],
+                  "function": "DATE_TRUNC",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "attribute_id": "attribute:sessions.seshviews",
+                      "kind": "attribute"
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "attribute_id": "attribute:sessions.engscore",
+                      "kind": "attribute"
+                    }
+                  },
+                  "operator": "DIVIDE",
+                  "right": {
+                    "attribute_id": "attribute:sessions.seshdur",
+                    "kind": "attribute"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "binary",
+            "left": {
+              "kind": "result",
+              "slot": 1,
+              "step": 1
+            },
+            "operator": "GT",
+            "right": {
+              "kind": "result",
+              "slot": 0,
+              "step": 2
+            }
+          }
+        ],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 3,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "ASC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 1
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalResult(kind='result', step=1, slot=0)",
+            "expression=LogicalResult(kind='result', step=1, slot=1)",
+            "expression=LogicalResult(kind='result', step=2, slot=0)"
+          ]
+        ],
+        "relations": [],
+        "steps": 6,
+        "window": [
+          {
+            "input_step": 1,
+            "kind": "WINDOW",
+            "outputs": [
+              {
+                "arguments": [
+                  {
+                    "kind": "result",
+                    "slot": 1,
+                    "step": 1
+                  }
+                ],
+                "function": "AVG",
+                "order_by": [],
+                "partition_by": [
+                  {
+                    "kind": "result",
+                    "slot": 0,
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "logical_steps": 6,
+      "m1": "REJECTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 368,
+      "primary_failure": "M1_REJECT",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 1342,
+      "response_hash": "4e9e8e9dc9d4f836b38829690da2001dcab5fd5668b2857931347c9d0f8a37d7",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": false,
+      "case_id": "polar_1",
+      "error_message": "scalar result must have one output",
+      "error_type": "SemanticEngineError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 27645,
+      "latency_ms": 6516.115125035867,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:equipment",
+        "calculation": [
+          {
+            "input_step": 0,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:equipment.performanceindex",
+                        "kind": "attribute"
+                      },
+                      "operator": "ADD",
+                      "right": {
+                        "attribute_id": "attribute:equipment.reliabilityindex",
+                        "kind": "attribute"
+                      }
+                    },
+                    "operator": "DIVIDE",
+                    "right": {
+                      "kind": "literal",
+                      "value": 2,
+                      "value_type": "integer"
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "literal",
+                      "value": 1,
+                      "value_type": "integer"
+                    },
+                    "operator": "SUBTRACT",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "attribute_id": "attribute:equipment.environmentalimpactindex",
+                        "kind": "attribute"
+                      },
+                      "operator": "DIVIDE",
+                      "right": {
+                        "kind": "literal",
+                        "value": 10,
+                        "value_type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "attribute_id": "attribute:equipment.safetyindex",
+                  "kind": "attribute"
+                }
+              }
+            ]
+          },
+          {
+            "input_step": 2,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "result",
+                        "slot": 0,
+                        "step": 2
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "kind": "result",
+                        "slot": 1,
+                        "step": 2
+                      }
+                    }
+                  ],
+                  "function": "ABS",
+                  "kind": "function"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 3,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "ASC",
+                "expression": {
+                  "attribute_id": "attribute:equipment.equipmenttype",
+                  "kind": "attribute"
+                }
+              },
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "scalar_result",
+                  "step": 1
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:equipment.equipmenttype')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:equipment.equipmentcode')",
+            "expression=LogicalScalarResult(kind='scalar_result', step=1)",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:equipment.safetyindex')",
+            "expression=LogicalResult(kind='result', step=2, slot=0)",
+            "expression=LogicalResult(kind='result', step=2, slot=1)",
+            "expression=LogicalResult(kind='result', step=3, slot=0)"
+          ]
+        ],
+        "relations": [],
+        "steps": 6,
+        "window": [
+          {
+            "input_step": 1,
+            "kind": "WINDOW",
+            "outputs": [
+              {
+                "arguments": [
+                  {
+                    "kind": "scalar_result",
+                    "step": 1
+                  }
+                ],
+                "function": "RANK",
+                "order_by": [
+                  {
+                    "direction": "DESC",
+                    "expression": {
+                      "kind": "scalar_result",
+                      "step": 1
+                    }
+                  }
+                ],
+                "partition_by": [
+                  {
+                    "attribute_id": "attribute:equipment.equipmenttype",
+                    "kind": "attribute"
+                  }
+                ]
+              },
+              {
+                "arguments": [
+                  {
+                    "attribute_id": "attribute:equipment.safetyindex",
+                    "kind": "attribute"
+                  }
+                ],
+                "function": "RANK",
+                "order_by": [
+                  {
+                    "direction": "DESC",
+                    "expression": {
+                      "attribute_id": "attribute:equipment.safetyindex",
+                      "kind": "attribute"
+                    }
+                  }
+                ],
+                "partition_by": [
+                  {
+                    "attribute_id": "attribute:equipment.equipmenttype",
+                    "kind": "attribute"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "logical_steps": 6,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 611,
+      "primary_failure": "SemanticEngineError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": false,
+      "response_bytes": 2480,
+      "response_hash": "dd494f089f915b077347a1d772a8cb193fdd2c8869a427feb1706c7586869464",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "robot_1",
+      "executed": "NOT_REACHED",
+      "input_tokens": 23733,
+      "latency_ms": 6141.827208921313,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:robot_details.botdetreg",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 2,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:performance_and_safety.safety_metrics",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "overloads",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                },
+                "filter": null,
+                "function": "SUM",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:performance_and_safety.safety_metrics",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "collisions",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                },
+                "filter": null,
+                "function": "SUM",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:performance_and_safety.safety_metrics",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "emergency_stops",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                },
+                "filter": null,
+                "function": "SUM",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:performance_and_safety.safety_metrics",
+                      "kind": "attribute"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "speed_violations",
+                      "value_type": "string"
+                    }
+                  ],
+                  "function": "JSONB_EXTRACT_SCALAR",
+                  "kind": "function"
+                },
+                "filter": null,
+                "function": "SUM",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "attribute_id": "attribute:maintenance_and_fault.upkeepduedays",
+                  "kind": "attribute"
+                },
+                "filter": null,
+                "function": "MAX",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:robot_details",
+        "calculation": [
+          {
+            "input_step": 3,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "result",
+                    "slot": 0,
+                    "step": 3
+                  },
+                  "operator": "ADD",
+                  "right": {
+                    "kind": "result",
+                    "slot": 1,
+                    "step": 3
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "result",
+                    "slot": 2,
+                    "step": 3
+                  },
+                  "operator": "ADD",
+                  "right": {
+                    "kind": "result",
+                    "slot": 3,
+                    "step": 3
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "result",
+                    "slot": 4,
+                    "step": 3
+                  },
+                  "operator": "ADD",
+                  "right": {
+                    "kind": "result",
+                    "slot": 5,
+                    "step": 3
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "kind": "binary",
+                "left": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 4
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 20,
+                  "value_type": "integer"
+                }
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 4
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 0.5,
+                  "value_type": "decimal"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [
+          {
+            "input_step": 6,
+            "kind": "TOP",
+            "limit": 100,
+            "offset": null
+          }
+        ],
+        "ordering": [
+          {
+            "input_step": 5,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 4
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalResult(kind='result', step=7, slot=0)",
+            "expression=LogicalResult(kind='result', step=4, slot=0)",
+            "expression=LogicalResult(kind='result', step=4, slot=1)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:performance_and_safety",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:maintenance_and_fault",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 9,
+        "window": []
+      },
+      "logical_steps": 9,
+      "m1": "REJECTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 795,
+      "primary_failure": "M1_REJECT",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 3045,
+      "response_hash": "a33696063a33c7f5d971d6b7df733500aaa1837c1e22952e35fdf2a906642c45",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "solar_1",
+      "executed": "SUCCESS",
+      "input_tokens": 18142,
+      "latency_ms": 3336.595374858007,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:panel",
+        "calculation": [
+          {
+            "input_step": 2,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "attribute_id": "attribute:plant.initdate",
+                      "kind": "attribute"
+                    },
+                    {
+                      "arguments": [],
+                      "function": "CURRENT_DATE",
+                      "kind": "function"
+                    }
+                  ],
+                  "function": "AGE",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "attribute_id": "attribute:performance.measpoww",
+                    "kind": "attribute"
+                  },
+                  "operator": "DIVIDE",
+                  "right": {
+                    "attribute_id": "attribute:panel.powratew",
+                    "kind": "attribute"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [],
+        "limit": [],
+        "ordering": [],
+        "outputs": [],
+        "relations": [
+          [
+            "entity:plant",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:performance",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 4,
+        "window": []
+      },
+      "logical_steps": 4,
+      "m1": "ACCEPTED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "INCORRECT",
+      "output_tokens": 199,
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 754,
+      "response_hash": "87d3eefa605c6f7b2a277ccc432ed420658ac0d75b57e9f6b4dfe704f6e00e4f",
+      "semantic_id_valid": true,
+      "semantic_validator": true,
+      "transport_status": "SUCCESS"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": false,
+      "case_id": "vaccine_1",
+      "error_message": "scalar result must have one output",
+      "error_type": "SemanticEngineError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 20764,
+      "latency_ms": 8858.105916995555,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [
+          {
+            "group_by": [
+              {
+                "attribute_id": "attribute:container.containregistry",
+                "kind": "attribute"
+              }
+            ],
+            "input_step": 3,
+            "kind": "AGGREGATE",
+            "measures": [
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "result",
+                  "slot": 0,
+                  "step": 3
+                },
+                "filter": null,
+                "function": "AVG",
+                "percentile": null
+              },
+              {
+                "distinct": false,
+                "expression": {
+                  "kind": "result",
+                  "slot": 1,
+                  "step": 3
+                },
+                "filter": null,
+                "function": "MAX",
+                "percentile": null
+              }
+            ]
+          }
+        ],
+        "anchor": "entity:container",
+        "calculation": [
+          {
+            "input_step": 2,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "integer"
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "kind": "binary",
+                        "left": {
+                          "attribute_id": "attribute:sensordata.tempdevcount",
+                          "kind": "attribute"
+                        },
+                        "operator": "DIVIDE",
+                        "right": {
+                          "kind": "literal",
+                          "value": 100,
+                          "value_type": "integer"
+                        }
+                      }
+                    },
+                    "operator": "MULTIPLY",
+                    "right": {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "literal",
+                        "value": 1,
+                        "value_type": "integer"
+                      },
+                      "operator": "SUBTRACT",
+                      "right": {
+                        "kind": "binary",
+                        "left": {
+                          "attribute_id": "attribute:sensordata.critevents",
+                          "kind": "attribute"
+                        },
+                        "operator": "DIVIDE",
+                        "right": {
+                          "kind": "literal",
+                          "value": 10,
+                          "value_type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "attribute_id": "attribute:sensordata.tempstabidx",
+                    "kind": "attribute"
+                  }
+                }
+              },
+              {
+                "expression": {
+                  "kind": "binary",
+                  "left": {
+                    "kind": "binary",
+                    "left": {
+                      "arguments": [
+                        {
+                          "kind": "binary",
+                          "left": {
+                            "attribute_id": "attribute:sensordata.tempnowc",
+                            "kind": "attribute"
+                          },
+                          "operator": "SUBTRACT",
+                          "right": {
+                            "attribute_id": "attribute:sensordata.storetempc",
+                            "kind": "attribute"
+                          }
+                        }
+                      ],
+                      "function": "ABS",
+                      "kind": "function"
+                    },
+                    "operator": "DIVIDE",
+                    "right": {
+                      "attribute_id": "attribute:sensordata.temptolc",
+                      "kind": "attribute"
+                    }
+                  },
+                  "operator": "MULTIPLY",
+                  "right": {
+                    "attribute_id": "attribute:sensordata.tempdevcount",
+                    "kind": "attribute"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "input_step": 4,
+            "kind": "COMPUTE",
+            "outputs": [
+              {
+                "expression": {
+                  "branches": [
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Critical",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "boolean",
+                        "operator": "OR",
+                        "terms": [
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "binary",
+                              "left": {
+                                "kind": "binary",
+                                "left": {
+                                  "kind": "literal",
+                                  "value": 1,
+                                  "value_type": "integer"
+                                },
+                                "operator": "SUBTRACT",
+                                "right": {
+                                  "kind": "scalar_result",
+                                  "step": 4
+                                }
+                              },
+                              "operator": "MULTIPLY",
+                              "right": {
+                                "kind": "binary",
+                                "left": {
+                                  "kind": "literal",
+                                  "value": 1,
+                                  "value_type": "integer"
+                                },
+                                "operator": "SUBTRACT",
+                                "right": {
+                                  "kind": "binary",
+                                  "left": {
+                                    "attribute_id": "attribute:container.coolremainpct",
+                                    "kind": "attribute"
+                                  },
+                                  "operator": "DIVIDE",
+                                  "right": {
+                                    "kind": "literal",
+                                    "value": 100,
+                                    "value_type": "integer"
+                                  }
+                                }
+                              }
+                            },
+                            "operator": "GT",
+                            "right": {
+                              "kind": "literal",
+                              "value": 0.6,
+                              "value_type": "decimal"
+                            }
+                          },
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "scalar_result",
+                              "step": 4
+                            },
+                            "operator": "LT",
+                            "right": {
+                              "kind": "literal",
+                              "value": 0.4,
+                              "value_type": "decimal"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Unstable",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "binary",
+                        "left": {
+                          "kind": "scalar_result",
+                          "step": 4
+                        },
+                        "operator": "LT",
+                        "right": {
+                          "kind": "literal",
+                          "value": 0.4,
+                          "value_type": "decimal"
+                        }
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Moderate",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "boolean",
+                        "operator": "AND",
+                        "terms": [
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "scalar_result",
+                              "step": 4
+                            },
+                            "operator": "GTE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 0.4,
+                              "value_type": "decimal"
+                            }
+                          },
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "scalar_result",
+                              "step": 4
+                            },
+                            "operator": "LTE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 1.5,
+                              "value_type": "decimal"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "then": {
+                        "kind": "literal",
+                        "value": "Stable",
+                        "value_type": "string"
+                      },
+                      "when": {
+                        "kind": "boolean",
+                        "operator": "AND",
+                        "terms": [
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "scalar_result",
+                              "step": 4
+                            },
+                            "operator": "GTE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 0.7,
+                              "value_type": "decimal"
+                            }
+                          },
+                          {
+                            "kind": "binary",
+                            "left": {
+                              "kind": "scalar_result",
+                              "step": 4
+                            },
+                            "operator": "LTE",
+                            "right": {
+                              "kind": "literal",
+                              "value": 1,
+                              "value_type": "decimal"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "default": null,
+                  "kind": "case"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "scalar_result",
+                      "step": 4
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 2,
+                      "value_type": "integer"
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                }
+              },
+              {
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "scalar_result",
+                      "step": 4
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 2,
+                      "value_type": "integer"
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                }
+              }
+            ]
+          }
+        ],
+        "filters": [
+          {
+            "kind": "binary",
+            "left": {
+              "attribute_id": "attribute:sensordata.alerttime",
+              "kind": "attribute"
+            },
+            "operator": "GTE",
+            "right": {
+              "kind": "binary",
+              "left": {
+                "arguments": [],
+                "function": "CURRENT_DATE",
+                "kind": "function"
+              },
+              "operator": "SUBTRACT",
+              "right": {
+                "amount": "1",
+                "kind": "interval",
+                "unit": "year"
+              }
+            }
+          }
+        ],
+        "limit": [
+          {
+            "input_step": 6,
+            "kind": "TOP",
+            "limit": 100,
+            "offset": null
+          }
+        ],
+        "ordering": [],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:container.containregistry')",
+            "expression=LogicalResult(kind='result', step=5, slot=1)",
+            "expression=LogicalResult(kind='result', step=5, slot=2)",
+            "expression=LogicalResult(kind='result', step=5, slot=0)"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:sensordata",
+            null,
+            "PRESERVE_LEFT"
+          ]
+        ],
+        "steps": 8,
+        "window": []
+      },
+      "logical_steps": 8,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 1255,
+      "primary_failure": "SemanticEngineError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": false,
+      "response_bytes": 4835,
+      "response_hash": "0733367ff978ab02a899f8e2faa7b2ee37169706b79761bfe85dbaac052b9a75",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    },
+    {
+      "cached_tokens": 0,
+      "canonical_valid": true,
+      "case_id": "virtual_1",
+      "error_message": "attribute:interactions.giftvalusd",
+      "error_type": "SemanticCompilationError",
+      "executed": "NOT_REACHED",
+      "input_tokens": 24663,
+      "latency_ms": 5958.9958330616355,
+      "logical_plan_valid": true,
+      "logical_reference_valid": true,
+      "logical_shape": {
+        "aggregation": [],
+        "anchor": "entity:fans",
+        "calculation": [],
+        "filters": [
+          {
+            "kind": "boolean",
+            "operator": "AND",
+            "terms": [
+              {
+                "expression": {
+                  "attribute_id": "attribute:membershipandspending.membkind",
+                  "kind": "attribute"
+                },
+                "kind": "in",
+                "negated": false,
+                "values": [
+                  {
+                    "kind": "literal",
+                    "value": "Free",
+                    "value_type": "string"
+                  },
+                  {
+                    "kind": "literal",
+                    "value": "Basic",
+                    "value_type": "string"
+                  }
+                ]
+              },
+              {
+                "kind": "binary",
+                "left": {
+                  "arguments": [
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "binary",
+                        "left": {
+                          "attribute_id": "attribute:interactions.giftvalusd",
+                          "kind": "attribute"
+                        },
+                        "operator": "MULTIPLY",
+                        "right": {
+                          "attribute_id": "attribute:interactions.gifttot",
+                          "kind": "attribute"
+                        }
+                      },
+                      "operator": "DIVIDE",
+                      "right": {
+                        "kind": "literal",
+                        "value": 100,
+                        "value_type": "integer"
+                      }
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                },
+                "operator": "GT",
+                "right": {
+                  "kind": "literal",
+                  "value": 50,
+                  "value_type": "decimal"
+                }
+              }
+            ]
+          }
+        ],
+        "limit": [],
+        "ordering": [
+          {
+            "input_step": 4,
+            "kind": "SORT",
+            "order_by": [
+              {
+                "direction": "DESC",
+                "expression": {
+                  "arguments": [
+                    {
+                      "kind": "binary",
+                      "left": {
+                        "kind": "binary",
+                        "left": {
+                          "attribute_id": "attribute:interactions.giftvalusd",
+                          "kind": "attribute"
+                        },
+                        "operator": "MULTIPLY",
+                        "right": {
+                          "attribute_id": "attribute:interactions.gifttot",
+                          "kind": "attribute"
+                        }
+                      },
+                      "operator": "DIVIDE",
+                      "right": {
+                        "kind": "literal",
+                        "value": 100,
+                        "value_type": "integer"
+                      }
+                    }
+                  ],
+                  "function": "ROUND",
+                  "kind": "function"
+                }
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          [
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:fans.userregistry')",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:fans.nicklabel')",
+            "expression=LogicalFunctionCall(kind='function', function=<LogicalFunction.ROUND: 'ROUND'>, arguments=(LogicalBinary(kind='binary', operator=<LogicalBinaryOperator.DIVIDE: 'DIVIDE'>, left=LogicalBinary(kind='binary', operator=<LogicalBinaryOperator.MULTIPLY: 'MULTIPLY'>, left=LogicalAttribute(kind='attribute', attribute_id='attribute:interactions.giftvalusd'), right=LogicalAttribute(kind='attribute', attribute_id='attribute:interactions.gifttot')), right=LogicalLiteral(kind='literal', value=100, value_type='integer')),))",
+            "expression=LogicalAttribute(kind='attribute', attribute_id='attribute:membershipandspending.membkind')"
+          ]
+        ],
+        "relations": [
+          [
+            "entity:membershipandspending",
+            null,
+            "MATCHING"
+          ],
+          [
+            "entity:interactions",
+            null,
+            "MATCHING"
+          ]
+        ],
+        "steps": 6,
+        "window": []
+      },
+      "logical_steps": 6,
+      "m1": "NOT_REACHED",
+      "metadata_blocked": false,
+      "model": "gpt-5.6-luna",
+      "official": "NOT_REACHED",
+      "output_tokens": 555,
+      "primary_failure": "SemanticCompilationError",
+      "provider_calls": 1,
+      "provider_schema_valid": true,
+      "reasoning_tokens": 0,
+      "resolver_success": true,
+      "response_bytes": 2233,
+      "response_hash": "b5e40e141e97ed77ed726a6832f661d3e26304191a7c3abeb93510c9a40841d2",
+      "semantic_id_valid": true,
+      "semantic_validator": false,
+      "transport_status": "FAILURE"
+    }
+  ],
+  "status": "COMPLETE"
+}

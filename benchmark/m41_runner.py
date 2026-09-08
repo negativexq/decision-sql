@@ -781,4 +781,4 @@ def _markdown(summary: dict[str, Any], rows: list[dict[str, Any]], config: dict[
 
 
 if __name__ == "__main__":
-    print(json.dumps(freeze_m41_contract(), indent=2, sort_keys=True))
+    print(json.dumps(run_m41(), indent=2, sort_keys=True))

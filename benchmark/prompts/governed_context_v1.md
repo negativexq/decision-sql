@@ -10,15 +10,12 @@ You are answering one independent Decision-SQL benchmark question. Use only the 
 - If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.
 - If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.
 
-## Authorized relationship semantics
+## Typed JSON scalar semantics
 
-- An authorized relationship declares that the two referenced entities and join attributes may participate in that relationship.
-- The relationship's `direction` describes its declared referential or cardinality orientation. It does not prohibit using the same declared relationship with the opposite SQL join orientation when constructing a query.
-- Multiple declared authorized relationships may be composed into a multi-hop path when every edge in that path is individually authorized.
-- Multi-hop composition does not create or authorize a new undeclared direct relationship between non-adjacent entities. Use the declared intermediate relationships.
-- Attributes belonging to the same entity may be used together without requiring a relationship declaration.
-- Attribute visibility is not relationship authorization. A visible attribute must not be used to infer an undeclared cross-entity relationship.
-- Never infer a relationship from matching names, matching types, matching values, IDs, codes, or other physical similarity.
+- When the governed context documents a JSON-derived attribute with a semantic SQL type such as `NUMERIC`, use that documented semantic type when constructing SQL.
+- PostgreSQL text-returning JSON extraction operators or expressions, including `->>` and `#>>`, produce text. If the documented attribute is numeric, explicitly coerce the extracted scalar to an appropriate numeric SQL type before numeric comparison, arithmetic, aggregation, numeric ordering, or returning it where the requested result is semantically numeric.
+- Do not infer a JSON path or type that is not explicitly documented in the governed context.
+- Use the exact documented JSON path and documented semantic type.
 
 ## Decisions and output
 

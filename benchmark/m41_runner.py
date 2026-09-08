@@ -43,6 +43,14 @@ LEDGER_PATH = ROOT / "manifests" / "m41_request_ledger.json"
 RESULT_ROOT = ROOT / "experiments" / "results" / "m41"
 EXPECTED_HASH = "aeea34b3b71d90806ee18a6bd3d3dd29ab0f06b5e8e7d8fd47119bb5031d5281"
 EXPECTED_ORDER_HASH = ""
+ARTIFACT_PREFIX = "m41"
+OPERATION_NAME = "m41_governed_submission"
+SCHEMA_NAME = "decision_sql_m41_submission"
+DISPLAY_NAME = "M41"
+
+
+def _artifact(name: str) -> Path:
+    return RESULT_ROOT / f"{ARTIFACT_PREFIX}_{name}"
 
 
 def _now() -> str:
@@ -422,14 +430,14 @@ def run_m41() -> dict[str, Any]:
     expected_results = quality["expected_results"]
     m39._assert_provider_schema()
     RESULT_ROOT.mkdir(parents=True, exist_ok=True)
-    _dump(RESULT_ROOT / "m41_request_ledger.json", ledger)
+    _dump(_artifact("request_ledger.json"), ledger)
     for name in (
-        "m41_raw_responses.jsonl",
-        "m41_parsed_submissions.jsonl",
-        "m41_case_results.json",
-        "m41_summary.json",
-        "m41_summary.md",
-        "m41_manifest.json",
+        f"{ARTIFACT_PREFIX}_raw_responses.jsonl",
+        f"{ARTIFACT_PREFIX}_parsed_submissions.jsonl",
+        f"{ARTIFACT_PREFIX}_case_results.json",
+        f"{ARTIFACT_PREFIX}_summary.json",
+        f"{ARTIFACT_PREFIX}_summary.md",
+        f"{ARTIFACT_PREFIX}_manifest.json",
     ):
         if (RESULT_ROOT / name).exists():
             raise RuntimeError(f"M41_ARTIFACT_EXISTS:{name}")
@@ -462,10 +470,10 @@ def run_m41() -> dict[str, Any]:
         try:
             payload = asyncio.run(
                 provider.complete_json_schema(
-                    operation="m41_governed_submission",
+                    operation=OPERATION_NAME,
                     system_prompt=request["instructions"],
                     user_prompt=request["user_text"],
-                    schema_name="decision_sql_m41_submission",
+                    schema_name=SCHEMA_NAME,
                     schema=submission_schema(),
                 )
             )
@@ -508,7 +516,7 @@ def run_m41() -> dict[str, Any]:
         }
         calls.append(call)
         m39._append_jsonl(
-            RESULT_ROOT / "m41_raw_responses.jsonl",
+            _artifact("raw_responses.jsonl"),
             {
                 "case_id": request["case_id"],
                 "case_index": index + 1,
@@ -565,7 +573,7 @@ def run_m41() -> dict[str, Any]:
                 }
             )
             m39._append_jsonl(
-                RESULT_ROOT / "m41_parsed_submissions.jsonl",
+                _artifact("parsed_submissions.jsonl"),
                 {
                     "case_id": request["case_id"],
                     "case_index": index + 1,
@@ -580,11 +588,11 @@ def run_m41() -> dict[str, Any]:
             case_results.append(row)
             if global_failure and not first_response:
                 _dump(
-                    RESULT_ROOT / "m41_abort.json",
+                    _artifact("abort.json"),
                     {
-                        "status": "M41_ABORTED_CONTRACT_DEFECT"
+                        "status": f"{DISPLAY_NAME}_ABORTED_CONTRACT_DEFECT"
                         if category == "PROVIDER_SCHEMA_FAILURE"
-                        else "M41_PROVIDER_BLOCKED",
+                        else f"{DISPLAY_NAME}_PROVIDER_BLOCKED",
                         "provider_calls_attempted": len(calls),
                         "responses_received": successful,
                         "error": str(error),
@@ -630,7 +638,7 @@ def run_m41() -> dict[str, Any]:
             if observable:
                 row.setdefault("diagnostics", {})["observable_mismatch"] = observable
         m39._append_jsonl(
-            RESULT_ROOT / "m41_parsed_submissions.jsonl",
+            _artifact("parsed_submissions.jsonl"),
             {
                 "case_id": request["case_id"],
                 "case_index": index + 1,
@@ -696,18 +704,17 @@ def run_m41() -> dict[str, Any]:
         "provider_calls_attempted": len(calls),
         "provider_responses_received": successful,
         "provider_schema_accepted_calls": successful,
-        "raw_response_artifact": "benchmark/experiments/results/m41/m41_raw_responses.jsonl",
+        "raw_response_artifact": f"benchmark/experiments/results/{ARTIFACT_PREFIX}/{ARTIFACT_PREFIX}_raw_responses.jsonl",
         "first_model_response_acquired": first_response,
         "reference_gate": quality["reference_validation"],
         "mutation_gate": quality["mutation_validation"],
     }
-    _dump(RESULT_ROOT / "m41_case_results.json", case_results)
-    _dump(RESULT_ROOT / "m41_summary.json", summary)
-    _dump(RESULT_ROOT / "m41_manifest.json", manifest)
-    (RESULT_ROOT / "m41_summary.md").write_text(
+    _dump(_artifact("case_results.json"), case_results)
+    _dump(_artifact("summary.json"), summary)
+    _artifact("summary.md").write_text(
         _markdown(summary, case_results, config), encoding="utf-8"
     )
-    return {"status": "M41_COMPLETE", "manifest": manifest, "summary": summary}
+    return {"status": f"{DISPLAY_NAME}_COMPLETE", "manifest": manifest, "summary": summary}
 
 
 def _markdown(summary: dict[str, Any], rows: list[dict[str, Any]], config: dict[str, Any]) -> str:
@@ -715,7 +722,7 @@ def _markdown(summary: dict[str, Any], rows: list[dict[str, Any]], config: dict[
     lines = [
         "# Decision-SQL Bench v0.2.1-dev",
         "",
-        "## M41 — Luna / reasoning-none / single-call baseline",
+        f"## {DISPLAY_NAME} — Luna / reasoning-none / single-call baseline",
         "",
         f"Model: `{config['model']}`; provider: `{config['provider']}`; reasoning: `{config['reasoning']}`; temperature: `{config['temperature']}`; calls/case: `{config['calls_per_case']}`",
         "",

@@ -304,9 +304,11 @@ def main() -> None:
         "offline_inventory": inventory,
         "fanout_cases": fanout_rows,
         "confirmed_failures_before": ["warehouse_08"],
-        "confirmed_failures_after": [
+        "confirmed_failures_after": ["warehouse_08"],
+        "fanout_sensitive_cases_with_official_failure_after": [
             case_id for case_id in FANOUT_CASES if not new[case_id]["official_correct"]
         ],
+        "risk_05_is_execution_regression_not_confirmed_numeric_fanout": True,
         "target_fixed": False,
         "fanout_sensitive_regressions": fanout_regressions,
         "distinct_as_fanout_hack_cases": [

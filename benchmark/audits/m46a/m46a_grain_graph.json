@@ -1,0 +1,1726 @@
+{
+  "commerce_ops": {
+    "entities": [
+      {
+        "entity_id": "entity:commerce_ops:customers",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:customers:customer_id"
+        ],
+        "physical_table": "customers",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:stores",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:stores:store_id"
+        ],
+        "physical_table": "stores",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:products",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:products:product_id"
+        ],
+        "physical_table": "products",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:orders",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:orders:order_id"
+        ],
+        "physical_table": "orders",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:order_items",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:order_items:item_id"
+        ],
+        "physical_table": "order_items",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:shipments",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:shipments:shipment_id"
+        ],
+        "physical_table": "shipments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:returns",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:returns:return_id"
+        ],
+        "physical_table": "returns",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:warehouses",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:warehouses:warehouse_id"
+        ],
+        "physical_table": "warehouses",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:inventory_snapshots",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:inventory_snapshots:snapshot_id"
+        ],
+        "physical_table": "inventory_snapshots",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:commerce_ops:payment_events",
+        "key_attribute_ids": [
+          "attribute:commerce_ops:payment_events:payment_id"
+        ],
+        "physical_table": "payment_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "8ad6d6ae8b38c9aab6dc4c70b05fb51535b257c69083446d1bd16b7d6f61a71a",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:orders:customer_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:orders",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:order_customer",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:customers:customer_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:customers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:orders:store_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:orders",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:order_store",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:stores:store_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:stores"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:order_items:order_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:order_items",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:item_order",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:orders:order_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:orders"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:order_items:product_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:order_items",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:item_product",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:products:product_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:products"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:shipments:order_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:shipments",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:shipment_order",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:orders:order_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:orders"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:returns:order_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:returns",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:return_order",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:orders:order_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:orders"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:inventory_snapshots:product_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:inventory_snapshots",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:inventory_product",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:products:product_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:products"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:inventory_snapshots:warehouse_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:inventory_snapshots",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:inventory_warehouse",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:warehouses:warehouse_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:warehouses"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:commerce_ops:payment_events:order_id"
+        ],
+        "from_entity_id": "entity:commerce_ops:payment_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:commerce_ops:payment_order",
+        "to_attribute_ids": [
+          "attribute:commerce_ops:orders:order_id"
+        ],
+        "to_entity_id": "entity:commerce_ops:orders"
+      }
+    ]
+  },
+  "fleet_ops": {
+    "entities": [
+      {
+        "entity_id": "entity:fleet_ops:vehicles",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "physical_table": "vehicles",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:drivers",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:drivers:driver_id"
+        ],
+        "physical_table": "drivers",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:depots",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:depots:depot_id"
+        ],
+        "physical_table": "depots",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:routes",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:routes:route_id"
+        ],
+        "physical_table": "routes",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:trips",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:trips:trip_id"
+        ],
+        "physical_table": "trips",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:telemetry_events",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:telemetry_events:event_id"
+        ],
+        "physical_table": "telemetry_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:maintenance_events",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:maintenance_events:maintenance_id"
+        ],
+        "physical_table": "maintenance_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:inspections",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:inspections:inspection_id"
+        ],
+        "physical_table": "inspections",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:fuel_events",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:fuel_events:fuel_event_id"
+        ],
+        "physical_table": "fuel_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:fleet_ops:weather_snapshots",
+        "key_attribute_ids": [
+          "attribute:fleet_ops:weather_snapshots:weather_id"
+        ],
+        "physical_table": "weather_snapshots",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "32ba9dced5cc69c09618dc419a29e8eda1c86943c0aa2d92b1e7ac2198f22670",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:vehicles:depot_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:vehicles",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:vehicle_depot",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:depots:depot_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:depots"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:trips:vehicle_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:trips",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:trip_vehicle",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:vehicles"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:trips:driver_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:trips",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:trip_driver",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:drivers:driver_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:drivers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:trips:route_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:trips",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:trip_route",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:routes:route_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:routes"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:trips:depot_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:trips",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:trip_depot",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:depots:depot_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:depots"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:telemetry_events:vehicle_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:telemetry_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:telemetry_vehicle",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:vehicles"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:maintenance_events:vehicle_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:maintenance_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:maintenance_vehicle",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:vehicles"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:inspections:vehicle_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:inspections",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:inspection_vehicle",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:vehicles"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:fleet_ops:fuel_events:vehicle_id"
+        ],
+        "from_entity_id": "entity:fleet_ops:fuel_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:fleet_ops:fuel_vehicle",
+        "to_attribute_ids": [
+          "attribute:fleet_ops:vehicles:vehicle_id"
+        ],
+        "to_entity_id": "entity:fleet_ops:vehicles"
+      }
+    ]
+  },
+  "risk_operations": {
+    "entities": [
+      {
+        "entity_id": "entity:risk_operations:customers",
+        "key_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "physical_table": "customers",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:accounts",
+        "key_attribute_ids": [
+          "attribute:risk_operations:accounts:account_id"
+        ],
+        "physical_table": "accounts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:transactions",
+        "key_attribute_ids": [
+          "attribute:risk_operations:transactions:transaction_id"
+        ],
+        "physical_table": "transactions",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:risk_assessments",
+        "key_attribute_ids": [
+          "attribute:risk_operations:risk_assessments:assessment_id"
+        ],
+        "physical_table": "risk_assessments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:alerts",
+        "key_attribute_ids": [
+          "attribute:risk_operations:alerts:alert_id"
+        ],
+        "physical_table": "alerts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:alert_events",
+        "key_attribute_ids": [
+          "attribute:risk_operations:alert_events:alert_event_id"
+        ],
+        "physical_table": "alert_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:investigations",
+        "key_attribute_ids": [
+          "attribute:risk_operations:investigations:investigation_id"
+        ],
+        "physical_table": "investigations",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:cases",
+        "key_attribute_ids": [
+          "attribute:risk_operations:cases:case_id"
+        ],
+        "physical_table": "cases",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:analyst_actions",
+        "key_attribute_ids": [
+          "attribute:risk_operations:analyst_actions:action_id"
+        ],
+        "physical_table": "analyst_actions",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:devices",
+        "key_attribute_ids": [
+          "attribute:risk_operations:devices:device_id"
+        ],
+        "physical_table": "devices",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:login_events",
+        "key_attribute_ids": [
+          "attribute:risk_operations:login_events:login_id"
+        ],
+        "physical_table": "login_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:risk_operations:watchlist_matches",
+        "key_attribute_ids": [
+          "attribute:risk_operations:watchlist_matches:match_id"
+        ],
+        "physical_table": "watchlist_matches",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "2307bf7669b43859a04c734e4e70fe938c675ed713b3fa08a3035763e683ae4e",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:accounts:customer_id"
+        ],
+        "from_entity_id": "entity:risk_operations:accounts",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:account_customer",
+        "to_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "to_entity_id": "entity:risk_operations:customers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:transactions:account_id"
+        ],
+        "from_entity_id": "entity:risk_operations:transactions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:transaction_account",
+        "to_attribute_ids": [
+          "attribute:risk_operations:accounts:account_id"
+        ],
+        "to_entity_id": "entity:risk_operations:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:risk_assessments:customer_id"
+        ],
+        "from_entity_id": "entity:risk_operations:risk_assessments",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:assessment_customer",
+        "to_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "to_entity_id": "entity:risk_operations:customers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:alerts:customer_id"
+        ],
+        "from_entity_id": "entity:risk_operations:alerts",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:alert_customer",
+        "to_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "to_entity_id": "entity:risk_operations:customers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:alert_events:alert_id"
+        ],
+        "from_entity_id": "entity:risk_operations:alert_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:event_alert",
+        "to_attribute_ids": [
+          "attribute:risk_operations:alerts:alert_id"
+        ],
+        "to_entity_id": "entity:risk_operations:alerts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:investigations:alert_id"
+        ],
+        "from_entity_id": "entity:risk_operations:investigations",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:investigation_alert",
+        "to_attribute_ids": [
+          "attribute:risk_operations:alerts:alert_id"
+        ],
+        "to_entity_id": "entity:risk_operations:alerts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:cases:customer_id"
+        ],
+        "from_entity_id": "entity:risk_operations:cases",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:case_customer",
+        "to_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "to_entity_id": "entity:risk_operations:customers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:analyst_actions:investigation_id"
+        ],
+        "from_entity_id": "entity:risk_operations:analyst_actions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:action_investigation",
+        "to_attribute_ids": [
+          "attribute:risk_operations:investigations:investigation_id"
+        ],
+        "to_entity_id": "entity:risk_operations:investigations"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:login_events:account_id"
+        ],
+        "from_entity_id": "entity:risk_operations:login_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:login_account",
+        "to_attribute_ids": [
+          "attribute:risk_operations:accounts:account_id"
+        ],
+        "to_entity_id": "entity:risk_operations:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:login_events:device_id"
+        ],
+        "from_entity_id": "entity:risk_operations:login_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:login_device",
+        "to_attribute_ids": [
+          "attribute:risk_operations:devices:device_id"
+        ],
+        "to_entity_id": "entity:risk_operations:devices"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:risk_operations:watchlist_matches:customer_id"
+        ],
+        "from_entity_id": "entity:risk_operations:watchlist_matches",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:risk_operations:watchlist_customer",
+        "to_attribute_ids": [
+          "attribute:risk_operations:customers:customer_id"
+        ],
+        "to_entity_id": "entity:risk_operations:customers"
+      }
+    ]
+  },
+  "subscription_billing": {
+    "entities": [
+      {
+        "entity_id": "entity:subscription_billing:accounts",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:accounts:account_id"
+        ],
+        "physical_table": "accounts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:plans",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:plans:plan_id"
+        ],
+        "physical_table": "plans",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:subscriptions",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:subscription_id"
+        ],
+        "physical_table": "subscriptions",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:invoices",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:invoices:invoice_id"
+        ],
+        "physical_table": "invoices",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:invoice_lines",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:invoice_lines:line_id"
+        ],
+        "physical_table": "invoice_lines",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:payments",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:payments:payment_id"
+        ],
+        "physical_table": "payments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:refunds",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:refunds:refund_id"
+        ],
+        "physical_table": "refunds",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:credits",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:credits:credit_id"
+        ],
+        "physical_table": "credits",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:usage_events",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:usage_events:usage_id"
+        ],
+        "physical_table": "usage_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:entitlements",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:entitlements:entitlement_id"
+        ],
+        "physical_table": "entitlements",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:plan_changes",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:plan_changes:change_id"
+        ],
+        "physical_table": "plan_changes",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:subscription_billing:dunning_attempts",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:dunning_attempts:attempt_id"
+        ],
+        "physical_table": "dunning_attempts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "b842704398b1cdafff1fda135df119a3cb82de30774aec0c946bc37b4c7f28cb",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:account_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:subscriptions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:subscription_account",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:accounts:account_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:plan_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:subscriptions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:subscription_plan",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:plans:plan_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:plans"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:invoices:account_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:invoices",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:invoice_account",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:accounts:account_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:invoices:subscription_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:invoices",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:invoice_subscription",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:subscription_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:subscriptions"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:invoice_lines:invoice_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:invoice_lines",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:invoice_line_invoice",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:invoices:invoice_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:invoices"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:payments:invoice_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:payments",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:payment_invoice",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:invoices:invoice_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:invoices"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:refunds:payment_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:refunds",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:refund_payment",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:payments:payment_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:payments"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:credits:account_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:credits",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:credit_account",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:accounts:account_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:usage_events:account_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:usage_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:usage_account",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:accounts:account_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:entitlements:subscription_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:entitlements",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:entitlement_subscription",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:subscription_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:subscriptions"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:plan_changes:subscription_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:plan_changes",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:change_subscription",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:subscriptions:subscription_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:subscriptions"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:subscription_billing:dunning_attempts:invoice_id"
+        ],
+        "from_entity_id": "entity:subscription_billing:dunning_attempts",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:subscription_billing:dunning_invoice",
+        "to_attribute_ids": [
+          "attribute:subscription_billing:invoices:invoice_id"
+        ],
+        "to_entity_id": "entity:subscription_billing:invoices"
+      }
+    ]
+  },
+  "support_ops": {
+    "entities": [
+      {
+        "entity_id": "entity:support_ops:accounts",
+        "key_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "physical_table": "accounts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:contacts",
+        "key_attribute_ids": [
+          "attribute:support_ops:contacts:contact_id"
+        ],
+        "physical_table": "contacts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:service_plans",
+        "key_attribute_ids": [
+          "attribute:support_ops:service_plans:plan_id"
+        ],
+        "physical_table": "service_plans",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:subscriptions",
+        "key_attribute_ids": [
+          "attribute:support_ops:subscriptions:subscription_id"
+        ],
+        "physical_table": "subscriptions",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:support_tickets",
+        "key_attribute_ids": [
+          "attribute:support_ops:support_tickets:ticket_id"
+        ],
+        "physical_table": "support_tickets",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:ticket_events",
+        "key_attribute_ids": [
+          "attribute:support_ops:ticket_events:event_id"
+        ],
+        "physical_table": "ticket_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:agents",
+        "key_attribute_ids": [
+          "attribute:support_ops:agents:agent_id"
+        ],
+        "physical_table": "agents",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:incidents",
+        "key_attribute_ids": [
+          "attribute:support_ops:incidents:incident_id"
+        ],
+        "physical_table": "incidents",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:usage_daily",
+        "key_attribute_ids": [
+          "attribute:support_ops:usage_daily:usage_id"
+        ],
+        "physical_table": "usage_daily",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:support_ops:satisfaction_surveys",
+        "key_attribute_ids": [
+          "attribute:support_ops:satisfaction_surveys:survey_id"
+        ],
+        "physical_table": "satisfaction_surveys",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "f85096debb261c42b3d7077059d6596a4ab258b8fc66500e82e15e84edb8001c",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:contacts:account_id"
+        ],
+        "from_entity_id": "entity:support_ops:contacts",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:contact_account",
+        "to_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "to_entity_id": "entity:support_ops:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:subscriptions:account_id"
+        ],
+        "from_entity_id": "entity:support_ops:subscriptions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:subscription_account",
+        "to_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "to_entity_id": "entity:support_ops:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:subscriptions:plan_id"
+        ],
+        "from_entity_id": "entity:support_ops:subscriptions",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:subscription_plan",
+        "to_attribute_ids": [
+          "attribute:support_ops:service_plans:plan_id"
+        ],
+        "to_entity_id": "entity:support_ops:service_plans"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:support_tickets:account_id"
+        ],
+        "from_entity_id": "entity:support_ops:support_tickets",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:ticket_account",
+        "to_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "to_entity_id": "entity:support_ops:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:support_tickets:agent_id"
+        ],
+        "from_entity_id": "entity:support_ops:support_tickets",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:ticket_agent",
+        "to_attribute_ids": [
+          "attribute:support_ops:agents:agent_id"
+        ],
+        "to_entity_id": "entity:support_ops:agents"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:ticket_events:ticket_id"
+        ],
+        "from_entity_id": "entity:support_ops:ticket_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:event_ticket",
+        "to_attribute_ids": [
+          "attribute:support_ops:support_tickets:ticket_id"
+        ],
+        "to_entity_id": "entity:support_ops:support_tickets"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:usage_daily:account_id"
+        ],
+        "from_entity_id": "entity:support_ops:usage_daily",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:usage_account",
+        "to_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "to_entity_id": "entity:support_ops:accounts"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:satisfaction_surveys:ticket_id"
+        ],
+        "from_entity_id": "entity:support_ops:satisfaction_surveys",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:survey_ticket",
+        "to_attribute_ids": [
+          "attribute:support_ops:support_tickets:ticket_id"
+        ],
+        "to_entity_id": "entity:support_ops:support_tickets"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:support_ops:incidents:account_id"
+        ],
+        "from_entity_id": "entity:support_ops:incidents",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:support_ops:incident_account",
+        "to_attribute_ids": [
+          "attribute:support_ops:accounts:account_id"
+        ],
+        "to_entity_id": "entity:support_ops:accounts"
+      }
+    ]
+  },
+  "warehouse_logistics": {
+    "entities": [
+      {
+        "entity_id": "entity:warehouse_logistics:warehouses",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:warehouses:warehouse_id"
+        ],
+        "physical_table": "warehouses",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:bins",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:bins:bin_id"
+        ],
+        "physical_table": "bins",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:products",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:products:product_id"
+        ],
+        "physical_table": "products",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:inventory_snapshots:snapshot_id"
+        ],
+        "physical_table": "inventory_snapshots",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:purchase_orders",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_orders:po_id"
+        ],
+        "physical_table": "purchase_orders",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+        ],
+        "physical_table": "purchase_order_lines",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:receipts",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:receipts:receipt_id"
+        ],
+        "physical_table": "receipts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:carriers",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:carriers:carrier_id"
+        ],
+        "physical_table": "carriers",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:shipments",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:shipments:shipment_id"
+        ],
+        "physical_table": "shipments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:shipment_items",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:shipment_items:shipment_item_id"
+        ],
+        "physical_table": "shipment_items",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:pick_events",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:pick_events:pick_id"
+        ],
+        "physical_table": "pick_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:stock_movements",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:stock_movements:movement_id"
+        ],
+        "physical_table": "stock_movements",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      },
+      {
+        "entity_id": "entity:warehouse_logistics:delivery_events",
+        "key_attribute_ids": [
+          "attribute:warehouse_logistics:delivery_events:delivery_id"
+        ],
+        "physical_table": "delivery_events",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ]
+      }
+    ],
+    "graph_hash": "20117748d0930bc2290c9b3d16c25addabb312fea86fecac5064bc20c3e2a8ce",
+    "relationships": [
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:bins:warehouse_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:bins",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:bin_warehouse",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:warehouses:warehouse_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:warehouses"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:inventory_snapshots:warehouse_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:inventory_snapshots",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:snapshot_warehouse",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:warehouses:warehouse_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:warehouses"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:inventory_snapshots:product_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:inventory_snapshots",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:snapshot_product",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:products:product_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:products"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_orders:warehouse_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:purchase_orders",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:po_warehouse",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:warehouses:warehouse_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:warehouses"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_order_lines:po_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:purchase_order_lines",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:line_po",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_orders:po_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:purchase_orders"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_order_lines:product_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:purchase_order_lines",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:line_product",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:products:product_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:products"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:receipts:po_line_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:receipts",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:receipt_line",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:purchase_order_lines"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:shipments:warehouse_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:shipments",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:shipment_warehouse",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:warehouses:warehouse_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:warehouses"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:shipments:carrier_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:shipments",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:shipment_carrier",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:carriers:carrier_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:carriers"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:shipment_items:shipment_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:shipment_items",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:item_shipment",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:shipments:shipment_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:shipments"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:shipment_items:product_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:shipment_items",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:item_product",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:products:product_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:products"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:pick_events:shipment_item_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:pick_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:pick_item",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:shipment_items:shipment_item_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:shipment_items"
+      },
+      {
+        "cardinality": "many_to_one",
+        "from_attribute_ids": [
+          "attribute:warehouse_logistics:delivery_events:shipment_id"
+        ],
+        "from_entity_id": "entity:warehouse_logistics:delivery_events",
+        "provenance": [
+          "PUBLIC_RELATIONSHIP_CARDINALITY"
+        ],
+        "relationship_id": "relationship:warehouse_logistics:delivery_shipment",
+        "to_attribute_ids": [
+          "attribute:warehouse_logistics:shipments:shipment_id"
+        ],
+        "to_entity_id": "entity:warehouse_logistics:shipments"
+      }
+    ]
+  }
+}

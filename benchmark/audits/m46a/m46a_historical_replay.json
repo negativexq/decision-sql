@@ -1,0 +1,3355 @@
+{
+  "rows": [
+    {
+      "case_id": "commerce_01",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d"
+    },
+    {
+      "case_id": "commerce_02",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b7f4eae603c063a4885f418879011185514c6d788df3e9125bd3bf6e30076f09"
+    },
+    {
+      "case_id": "commerce_03",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "cd5d363c0b7b493563db3318a58379db99a5884f6433633cd228df74231f0835"
+    },
+    {
+      "case_id": "commerce_04",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "p.category"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b1da524e406ccf6bc027c6104894ca49a174c0c15f5c34a9063865083b6ce60a"
+    },
+    {
+      "case_id": "commerce_05",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9"
+    },
+    {
+      "case_id": "commerce_06",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e7247eed8afb19df0d1650d22ba4c928703a9b386583dc7272a909f3c8f4dfb1"
+    },
+    {
+      "case_id": "commerce_07",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "o.customer_id"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d5ab516317efe4268e528021c68c68faadaa84f6f2ac5f7d572bf6c92764336b"
+    },
+    {
+      "case_id": "fleet_01",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9fb1d219bbbb1afa4b2a0f4297477f26097ced02b8a0819efe63cbd04ffcfce0"
+    },
+    {
+      "case_id": "fleet_02",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "v.depot_id"
+        ],
+        "measure_ids": [
+          "measure:fleet_ops:fuel_events:liters",
+          "measure:fleet_ops:fuel_events:price_per_liter"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          },
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6"
+    },
+    {
+      "case_id": "fleet_03",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893"
+    },
+    {
+      "case_id": "fleet_04",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "790cae0f415828a0f43966a1a3a85c0a02844e2a28225560412278473f681b55"
+    },
+    {
+      "case_id": "fleet_05",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f6cf88a1aa659b98b4d242884a3141c3085a10d3895f14958f30e5d2952fd1fa"
+    },
+    {
+      "case_id": "fleet_06",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9ef664f4cce776973afbd5929bc94ba3d7a88a6e0b172e946b33559fdaf00f85"
+    },
+    {
+      "case_id": "fleet_07",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "r.route_id"
+        ],
+        "measure_ids": [
+          "measure:fleet_ops:trips:distance_km",
+          "measure:fleet_ops:trips:fuel_liters"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:fleet_ops:trips",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:trips:trip_id"
+            ]
+          },
+          {
+            "entity_id": "entity:fleet_ops:trips",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:trips:trip_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "35a7e2f133cff12528df5c8a6093e6391df4715824dba1eec475ccd9e62caffc"
+    },
+    {
+      "case_id": "support_01",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "7ffd2ab353ffc63c3a84e719654925b462e54c8659c1da34ed4e786bfaa96114"
+    },
+    {
+      "case_id": "support_02",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "956974646df0e911d18427a56033b9e64bd0249897096594d2838197e229db4f"
+    },
+    {
+      "case_id": "support_03",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "bf923dacb2d84a2b01eb9bdc609b5d4fe98cd974257105aca028b8da169cec75"
+    },
+    {
+      "case_id": "support_04",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7"
+    },
+    {
+      "case_id": "support_05",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "60f29c924995fee4e34d97726214cc415df00827b0cb81afa98200ef2847f49c"
+    },
+    {
+      "case_id": "support_06",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "fe5f64b181e2fc1c8a681638d80cd315135754759745dfceabc554dc2a61ef42"
+    },
+    {
+      "case_id": "subscription_01",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c43b9d44ed0f394130d943a2213538fabb6dd4e89ccd9db4e51d955918b9630a"
+    },
+    {
+      "case_id": "subscription_02",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2d4cf07e04bbc04c84acb07ac4be164e1c4172a6cb51a4ff235d9e6d0be8cf06"
+    },
+    {
+      "case_id": "subscription_03",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "fcd30727c8ccc9285c22183698693c3b0fd63161541a682d331176777d7c3481"
+    },
+    {
+      "case_id": "subscription_05",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f"
+    },
+    {
+      "case_id": "subscription_07",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "s.account_id"
+        ],
+        "measure_ids": [
+          "measure:subscription_billing:plans:monthly_price"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a4a8bfca0c4da272be99bd706a85ba28ccee6bd6e64a05346f943ca936982218"
+    },
+    {
+      "case_id": "subscription_08",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "50b7928b74cf978e41745c1ad7b22c049f7dea59f2eec8da1f17649f38ca36fa"
+    },
+    {
+      "case_id": "subscription_09",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c8e500c9bee5724a6eba5eca2600567b96105d035d1c20fde1d182ddb4d74473"
+    },
+    {
+      "case_id": "subscription_11",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "636304d8bcdfc208c2e0738c5bfe75af88a0aa965beedb262b9b3a1d11e685a0"
+    },
+    {
+      "case_id": "subscription_12",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "21df03ee0f0fb8ce8dc1990cb3af3834665bbe5ca0d87d09c158bffa22e94893"
+    },
+    {
+      "case_id": "subscription_13",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "5f1ccc02c1fdce594d90ac0b3d42f80d1562a58009e0b055dbc1169c28f32074"
+    },
+    {
+      "case_id": "warehouse_01",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f69a87f7e6e692ce0bebca455637015c701bc9bf9888089d5ccbb4789a0300ba"
+    },
+    {
+      "case_id": "warehouse_02",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "w.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:shipment_items:quantity"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:shipment_items",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:shipment_items:shipment_item_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "67080b9706d0121a83dbbfd5e54457d868f35a7dbb3af69f89a83b31d232ae73"
+    },
+    {
+      "case_id": "warehouse_04",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "po.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde"
+    },
+    {
+      "case_id": "warehouse_05",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "05bc206ddaecf9bfa536f8a5b36ca05326cd0180ee110d72e5794fcf8ff99425"
+    },
+    {
+      "case_id": "warehouse_06",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b"
+    },
+    {
+      "case_id": "warehouse_07",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9763ac502c6533809868dc22d0dbb3f29e2c5293209a79dae9c9d298255472a9"
+    },
+    {
+      "case_id": "warehouse_08",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(pol.ordered_qty)"
+        ],
+        "code": "PARENT_MEASURE_FANOUT",
+        "evidence": {
+          "child_table": "receipts",
+          "column": "pol.ordered_qty"
+        },
+        "fanout_edges": [
+          {
+            "cardinality": "many_to_one",
+            "from_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:po_line_id"
+            ],
+            "from_entity_id": "entity:warehouse_logistics:receipts",
+            "provenance": [
+              "PUBLIC_RELATIONSHIP_CARDINALITY"
+            ],
+            "relationship_id": "relationship:warehouse_logistics:receipt_line",
+            "to_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ],
+            "to_entity_id": "entity:warehouse_logistics:purchase_order_lines"
+          }
+        ],
+        "grouping_columns": [
+          "pol.product_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+        ],
+        "message": "Parent additive measure is aggregated after a one-to-many fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "ba65e067acf1010b5069b976198678cfe21c67eb965aa457a203e589597a8477"
+    },
+    {
+      "case_id": "warehouse_09",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2b12629472015cde5eceac4527d9c0896c2e4f591d6ea7eca354a95cf83e770b"
+    },
+    {
+      "case_id": "warehouse_10",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a4f0dca67392e003a1392c8d7c27d9f9b0e4ef16f0b2adfee1031384954e6914"
+    },
+    {
+      "case_id": "warehouse_11",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b84d084b075e9399727f515e1cb2708affba8607a9d1991204d06393ceabbd60"
+    },
+    {
+      "case_id": "warehouse_13",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "purchase_orders.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:receipts:received_qty"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:receipts",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:receipt_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c4a79323278ee55d847ad93eb5a2a83a3b5d4926a75cc2b303ef11f982ee84e0"
+    },
+    {
+      "case_id": "risk_01",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "1ab53badd1e103f31dec2e732f66af0d5497bc9c73c6efbdc7cb73826724c502"
+    },
+    {
+      "case_id": "risk_02",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "158b414d2823e8d91556daf22da73500c6704e9e147b03951ce0dacfae6f046c"
+    },
+    {
+      "case_id": "risk_03",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "0c8302b205d72962204a49feb8a16681f061e5199a11447b549f07e21553f5f1"
+    },
+    {
+      "case_id": "risk_04",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "t.account_id"
+        ],
+        "measure_ids": [
+          "measure:risk_operations:transactions:amount"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:risk_operations:transactions",
+            "key_attribute_ids": [
+              "attribute:risk_operations:transactions:transaction_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "7b488c554af6338629f4fef04dbb46bbeec21cbce64834fa97e12aba565073f7"
+    },
+    {
+      "case_id": "risk_05",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "5f2c2732345031bb5c97fd973e9ecb526cf30d7fc452af0108cfc010a2a6d74c"
+    },
+    {
+      "case_id": "risk_07",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "737ba4376d9cb6af3c698eb8215af0ecce77f29af6e2d18089c9471e0702dcff"
+    },
+    {
+      "case_id": "risk_08",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b"
+    },
+    {
+      "case_id": "risk_09",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2"
+    },
+    {
+      "case_id": "risk_10",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4c8d345a5d4d0ac17455fc24f20e3b022f927be833edc6dc988b3939f225ebce"
+    },
+    {
+      "case_id": "risk_11",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9d3a264d601fb4cefd287255d316011f8f12e8430dfe37f3d65ac573c14ee065"
+    },
+    {
+      "case_id": "risk_12",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9edd83b847f8ae0ae5d5354e26a090b88c08d968547ede6267db0a89ebaa7910"
+    },
+    {
+      "case_id": "risk_13",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "c.segment"
+        ],
+        "measure_ids": [
+          "measure:risk_operations:transactions:amount"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:risk_operations:transactions",
+            "key_attribute_ids": [
+              "attribute:risk_operations:transactions:transaction_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M43",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861"
+    },
+    {
+      "case_id": "warehouse_19",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "4538acf78d6180cfbd4fd7578be38cd9712d5dfd4375830df6ba563325b54188"
+    },
+    {
+      "case_id": "warehouse_20",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M43",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "af7485a33f7bb081e5f20146d951a0ad7f2099cbfdea395a867f8f226979ae55"
+    },
+    {
+      "case_id": "commerce_01",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d"
+    },
+    {
+      "case_id": "commerce_02",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b7f4eae603c063a4885f418879011185514c6d788df3e9125bd3bf6e30076f09"
+    },
+    {
+      "case_id": "commerce_03",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f327fed58a7375cb0e3261f2e7e3957cae1fdac445b7928a8f1428d9fe36bf28"
+    },
+    {
+      "case_id": "commerce_04",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "p.category"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c"
+    },
+    {
+      "case_id": "commerce_05",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9"
+    },
+    {
+      "case_id": "commerce_06",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e7247eed8afb19df0d1650d22ba4c928703a9b386583dc7272a909f3c8f4dfb1"
+    },
+    {
+      "case_id": "commerce_07",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "o.customer_id"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d5ab516317efe4268e528021c68c68faadaa84f6f2ac5f7d572bf6c92764336b"
+    },
+    {
+      "case_id": "fleet_01",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9fb1d219bbbb1afa4b2a0f4297477f26097ced02b8a0819efe63cbd04ffcfce0"
+    },
+    {
+      "case_id": "fleet_02",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "v.depot_id"
+        ],
+        "measure_ids": [
+          "measure:fleet_ops:fuel_events:liters",
+          "measure:fleet_ops:fuel_events:price_per_liter"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          },
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6"
+    },
+    {
+      "case_id": "fleet_03",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893"
+    },
+    {
+      "case_id": "fleet_04",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea"
+    },
+    {
+      "case_id": "fleet_05",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "471f4cb66f6939e5e7a2e7f3ac81a14a2a8901618c7f4d8f1de852f333013acf"
+    },
+    {
+      "case_id": "fleet_06",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "837deafa68720fa86b87271732200cebbc7a83f42e2aaff32bf4770a79de55ed"
+    },
+    {
+      "case_id": "fleet_07",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9355c7abb7e5bf9a4c0d276f995c4b228b43f916f0d5644dfea55812a2e07426"
+    },
+    {
+      "case_id": "support_01",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "7ffd2ab353ffc63c3a84e719654925b462e54c8659c1da34ed4e786bfaa96114"
+    },
+    {
+      "case_id": "support_02",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5"
+    },
+    {
+      "case_id": "support_03",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "608ce294d1d485a84b44eb592c32c4f0af7ef3428cb8569186295f901a4d23d2"
+    },
+    {
+      "case_id": "support_04",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7"
+    },
+    {
+      "case_id": "support_05",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "1c449511575cd7be84a1bbc77f6ed5599c0ff343bdce4426aea1bd1be384d2fd"
+    },
+    {
+      "case_id": "support_06",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4"
+    },
+    {
+      "case_id": "subscription_01",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c"
+    },
+    {
+      "case_id": "subscription_02",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2d0ac340d624affbc91c9b78daeff05230469d21f683edc4506f8ddfd74b8109"
+    },
+    {
+      "case_id": "subscription_03",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "fcd30727c8ccc9285c22183698693c3b0fd63161541a682d331176777d7c3481"
+    },
+    {
+      "case_id": "subscription_04",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "81a8470e61b2cbc8370882bdcbfa736271bf0dec6520ca767681aa83939895e0"
+    },
+    {
+      "case_id": "subscription_05",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f"
+    },
+    {
+      "case_id": "subscription_07",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "s.account_id"
+        ],
+        "measure_ids": [
+          "measure:subscription_billing:plans:monthly_price"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a4a8bfca0c4da272be99bd706a85ba28ccee6bd6e64a05346f943ca936982218"
+    },
+    {
+      "case_id": "subscription_09",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c8e500c9bee5724a6eba5eca2600567b96105d035d1c20fde1d182ddb4d74473"
+    },
+    {
+      "case_id": "subscription_11",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "636304d8bcdfc208c2e0738c5bfe75af88a0aa965beedb262b9b3a1d11e685a0"
+    },
+    {
+      "case_id": "subscription_12",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "21df03ee0f0fb8ce8dc1990cb3af3834665bbe5ca0d87d09c158bffa22e94893"
+    },
+    {
+      "case_id": "subscription_13",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "5f1ccc02c1fdce594d90ac0b3d42f80d1562a58009e0b055dbc1169c28f32074"
+    },
+    {
+      "case_id": "warehouse_01",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "547d046c68d94d95b7b7f0949ce0b9b9bec11bb9062af3386c5840d1bc6a50ed"
+    },
+    {
+      "case_id": "warehouse_02",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "w.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:shipment_items:quantity"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:shipment_items",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:shipment_items:shipment_item_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a355b5383930d7ba1b30c0bfc04ffaac99caccc2350a472f79c3f5cfc9896671"
+    },
+    {
+      "case_id": "warehouse_03",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "28866c2e82649b70791791983dfc43f3fbb66b977c7ea4f8bd6655e8934494ef"
+    },
+    {
+      "case_id": "warehouse_04",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "po.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:receipts:received_qty"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:receipts",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:receipt_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8"
+    },
+    {
+      "case_id": "warehouse_05",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d173b7ba578d9b3a188f6ff0b26e8470202ade2ce1a1fc5828d3624b5b6ddcb5"
+    },
+    {
+      "case_id": "warehouse_06",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a87c1b2e525424801611082fc27c30542a431f494ff876f6a54548525fed957a"
+    },
+    {
+      "case_id": "warehouse_09",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2b12629472015cde5eceac4527d9c0896c2e4f591d6ea7eca354a95cf83e770b"
+    },
+    {
+      "case_id": "warehouse_10",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "76a9456aa3f1e079b280642494e98bd9fc5428368ab5e80afb2dc4a9e6b0f577"
+    },
+    {
+      "case_id": "warehouse_11",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b84d084b075e9399727f515e1cb2708affba8607a9d1991204d06393ceabbd60"
+    },
+    {
+      "case_id": "risk_01",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "1ab53badd1e103f31dec2e732f66af0d5497bc9c73c6efbdc7cb73826724c502"
+    },
+    {
+      "case_id": "risk_02",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "158b414d2823e8d91556daf22da73500c6704e9e147b03951ce0dacfae6f046c"
+    },
+    {
+      "case_id": "risk_03",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "de5bd913f1d2802ae591ef7fc41df4ddfc0715512136448054cd344cfac491e8"
+    },
+    {
+      "case_id": "risk_04",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f"
+    },
+    {
+      "case_id": "risk_05",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "EXECUTION_FAILURE",
+      "official_correct": false,
+      "sql_sha256": "9c940ca6ae61ed886766555bbda4537fba8b89207dcdb7024ac5f9d31c5b13d0"
+    },
+    {
+      "case_id": "risk_06",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2e6f337682e7bb172070fa20b30c839a34192210c07338effa90db21976680ea"
+    },
+    {
+      "case_id": "risk_07",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a0a27029c31e112e08e207f22e1cc375f7057c2f3399da7c663e8e8a4d0a80cc"
+    },
+    {
+      "case_id": "risk_08",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b"
+    },
+    {
+      "case_id": "risk_09",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "563e6d3114ae8e78def17d538a4d8bce7a3547bd323ef4092a45bd4b727b4bd7"
+    },
+    {
+      "case_id": "risk_10",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "80a500f2e2508111315c7dcc21da09bf7cfd3f78b0977f2b3df89f4579f14703"
+    },
+    {
+      "case_id": "risk_12",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9edd83b847f8ae0ae5d5354e26a090b88c08d968547ede6267db0a89ebaa7910"
+    },
+    {
+      "case_id": "risk_13",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "c.segment"
+        ],
+        "measure_ids": [
+          "measure:risk_operations:transactions:amount"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:risk_operations:transactions",
+            "key_attribute_ids": [
+              "attribute:risk_operations:transactions:transaction_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M44",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861"
+    },
+    {
+      "case_id": "subscription_18",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "49e9f2a2e732b70abb870f0233ce9c2a76d1e5872e042e2936219abfd97e1b32"
+    },
+    {
+      "case_id": "warehouse_19",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M44",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "c86c5f7f158dcd0bf0135a0760b211f702f721d7c0ae197fd9e23ef06808ca49"
+    },
+    {
+      "case_id": "commerce_01",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d"
+    },
+    {
+      "case_id": "commerce_02",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b7f4eae603c063a4885f418879011185514c6d788df3e9125bd3bf6e30076f09"
+    },
+    {
+      "case_id": "commerce_03",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f327fed58a7375cb0e3261f2e7e3957cae1fdac445b7928a8f1428d9fe36bf28"
+    },
+    {
+      "case_id": "commerce_04",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "p.category"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c"
+    },
+    {
+      "case_id": "commerce_05",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9"
+    },
+    {
+      "case_id": "commerce_06",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "58663da74d604081b79c40de69d120105ab5270a3b0f91518986473ca7af9849"
+    },
+    {
+      "case_id": "commerce_07",
+      "database_id": "commerce_ops",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+        ],
+        "code": "UNSAFE_ROLLUP",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "o.customer_id"
+        ],
+        "measure_ids": [
+          "measure:commerce_ops:orders:discount_pct"
+        ],
+        "message": "A non-additive or derived measure is being rolled up.",
+        "native_grains": [
+          {
+            "entity_id": "entity:commerce_ops:orders",
+            "key_attribute_ids": [
+              "attribute:commerce_ops:orders:order_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "d5ab516317efe4268e528021c68c68faadaa84f6f2ac5f7d572bf6c92764336b"
+    },
+    {
+      "case_id": "fleet_01",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9fb1d219bbbb1afa4b2a0f4297477f26097ced02b8a0819efe63cbd04ffcfce0"
+    },
+    {
+      "case_id": "fleet_02",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "v.depot_id"
+        ],
+        "measure_ids": [
+          "measure:fleet_ops:fuel_events:liters",
+          "measure:fleet_ops:fuel_events:price_per_liter"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          },
+          {
+            "entity_id": "entity:fleet_ops:fuel_events",
+            "key_attribute_ids": [
+              "attribute:fleet_ops:fuel_events:fuel_event_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6"
+    },
+    {
+      "case_id": "fleet_03",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd"
+    },
+    {
+      "case_id": "fleet_04",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea"
+    },
+    {
+      "case_id": "fleet_05",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f6cf88a1aa659b98b4d242884a3141c3085a10d3895f14958f30e5d2952fd1fa"
+    },
+    {
+      "case_id": "fleet_06",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "76b9bf06b52e0f91dc28575d088386f8132a51c8a27c545b179ab4ae6a117ac4"
+    },
+    {
+      "case_id": "fleet_07",
+      "database_id": "fleet_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9355c7abb7e5bf9a4c0d276f995c4b228b43f916f0d5644dfea55812a2e07426"
+    },
+    {
+      "case_id": "support_01",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "274165e4c669435422f71634daa220502557b5cf2281bb0853063c0da5a41d11"
+    },
+    {
+      "case_id": "support_02",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525"
+    },
+    {
+      "case_id": "support_03",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "608ce294d1d485a84b44eb592c32c4f0af7ef3428cb8569186295f901a4d23d2"
+    },
+    {
+      "case_id": "support_04",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7"
+    },
+    {
+      "case_id": "support_05",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "246b1aa2a0727cd13562576857c4eb95e8d6a8888633c0250c839b8319c5d8f3"
+    },
+    {
+      "case_id": "support_06",
+      "database_id": "support_ops",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "7ce54d3ae4e9b6f6fb77c2aa1cb19d1e57578b92c20145079e4b39465cc99805"
+    },
+    {
+      "case_id": "subscription_01",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c43b9d44ed0f394130d943a2213538fabb6dd4e89ccd9db4e51d955918b9630a"
+    },
+    {
+      "case_id": "subscription_02",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2d0ac340d624affbc91c9b78daeff05230469d21f683edc4506f8ddfd74b8109"
+    },
+    {
+      "case_id": "subscription_03",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "fcd30727c8ccc9285c22183698693c3b0fd63161541a682d331176777d7c3481"
+    },
+    {
+      "case_id": "subscription_05",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "bdeb79c85f8471c905730cee47575df4d307c48bdebee0f210b3340f40f723e5"
+    },
+    {
+      "case_id": "subscription_06",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3400a6d7641033339d0a0eec9a1a0dda2d9424b8c1e130f37fb3590f62344586"
+    },
+    {
+      "case_id": "subscription_07",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "s.account_id"
+        ],
+        "measure_ids": [
+          "measure:subscription_billing:plans:monthly_price"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a4a8bfca0c4da272be99bd706a85ba28ccee6bd6e64a05346f943ca936982218"
+    },
+    {
+      "case_id": "subscription_08",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "449834268d94bdfd0c5f0a3c886f415fe04f039a5b2e08ae0cda5b706608b806"
+    },
+    {
+      "case_id": "subscription_09",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c8e500c9bee5724a6eba5eca2600567b96105d035d1c20fde1d182ddb4d74473"
+    },
+    {
+      "case_id": "subscription_11",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "636304d8bcdfc208c2e0738c5bfe75af88a0aa965beedb262b9b3a1d11e685a0"
+    },
+    {
+      "case_id": "subscription_12",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "0d15bc4114d06a5c7c3957fe61552858325a7cc71061a072375d2c73d7e6b502"
+    },
+    {
+      "case_id": "subscription_13",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "640059b4fa0e79ce47b566147042c38e59cf82ec3c248854b95f2ac8b9e9b469"
+    },
+    {
+      "case_id": "subscription_14",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "24a85e7d528de8cb7fa6cfd08fa3e25af59ee0fc1d84cdf04dc3a32c25d231c7"
+    },
+    {
+      "case_id": "warehouse_01",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "f69a87f7e6e692ce0bebca455637015c701bc9bf9888089d5ccbb4789a0300ba"
+    },
+    {
+      "case_id": "warehouse_02",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "s.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:shipment_items:quantity"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:shipment_items",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:shipment_items:shipment_item_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "c778285bdc0a588b4e0114b36bce3611b467adaf3ec0a90c67971f1f77efc874"
+    },
+    {
+      "case_id": "warehouse_03",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "301985ea00fa11c59da2fcec0908f13ddf603aa4d9d69a8ea847b2a9f5ed453d"
+    },
+    {
+      "case_id": "warehouse_04",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "po.warehouse_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:receipts:received_qty"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:receipts",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:receipt_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8"
+    },
+    {
+      "case_id": "warehouse_05",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "05bc206ddaecf9bfa536f8a5b36ca05326cd0180ee110d72e5794fcf8ff99425"
+    },
+    {
+      "case_id": "warehouse_06",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b"
+    },
+    {
+      "case_id": "warehouse_08",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [
+          "SUM(pol.ordered_qty)"
+        ],
+        "code": "PARENT_MEASURE_FANOUT",
+        "evidence": {
+          "child_table": "receipts",
+          "column": "pol.ordered_qty"
+        },
+        "fanout_edges": [
+          {
+            "cardinality": "many_to_one",
+            "from_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:po_line_id"
+            ],
+            "from_entity_id": "entity:warehouse_logistics:receipts",
+            "provenance": [
+              "PUBLIC_RELATIONSHIP_CARDINALITY"
+            ],
+            "relationship_id": "relationship:warehouse_logistics:receipt_line",
+            "to_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ],
+            "to_entity_id": "entity:warehouse_logistics:purchase_order_lines"
+          }
+        ],
+        "grouping_columns": [
+          "pol.product_id"
+        ],
+        "measure_ids": [
+          "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+        ],
+        "message": "Parent additive measure is aggregated after a one-to-many fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834"
+    },
+    {
+      "case_id": "warehouse_09",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "2b12629472015cde5eceac4527d9c0896c2e4f591d6ea7eca354a95cf83e770b"
+    },
+    {
+      "case_id": "warehouse_10",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a4f0dca67392e003a1392c8d7c27d9f9b0e4ef16f0b2adfee1031384954e6914"
+    },
+    {
+      "case_id": "warehouse_11",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b84d084b075e9399727f515e1cb2708affba8607a9d1991204d06393ceabbd60"
+    },
+    {
+      "case_id": "warehouse_12",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "16b763eb6dd696f1d4eda3f98fd3cf2f1363b945179957d32430b80505a8e77e"
+    },
+    {
+      "case_id": "risk_01",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3a122a09ecde10e05a53443a4c0b3eb026ece6a3caf6f06c7b6d74362d8b2fe9"
+    },
+    {
+      "case_id": "risk_02",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "158b414d2823e8d91556daf22da73500c6704e9e147b03951ce0dacfae6f046c"
+    },
+    {
+      "case_id": "risk_03",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "sql_sha256": "0c8302b205d72962204a49feb8a16681f061e5199a11447b549f07e21553f5f1"
+    },
+    {
+      "case_id": "risk_04",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f"
+    },
+    {
+      "case_id": "risk_05",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "b9389896e6e557fe67552e43041bca5e7470f6eb2a2d8f92abc080d0e974fc20"
+    },
+    {
+      "case_id": "risk_07",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a8348b0a1e6e1268468dbd43571bb06d511e399c00d36fa3c5f2e716e21ef26d"
+    },
+    {
+      "case_id": "risk_08",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "a0bd6cf980629db516e4999fe9d9ef958316b153ac0486cc2d96dbc79e4189ea"
+    },
+    {
+      "case_id": "risk_09",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2"
+    },
+    {
+      "case_id": "risk_10",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "0f705e7c43afbe180d61accd805fce6936ef05b81428cbba6d65b9ef72fa6b3f"
+    },
+    {
+      "case_id": "risk_11",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "027ca958e69760c37b46580101320b653754c21fb1d2ab5f93e9958c07b31f10"
+    },
+    {
+      "case_id": "risk_12",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "9edd83b847f8ae0ae5d5354e26a090b88c08d968547ede6267db0a89ebaa7910"
+    },
+    {
+      "case_id": "risk_13",
+      "database_id": "risk_operations",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "PASS",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [
+          "c.segment"
+        ],
+        "measure_ids": [
+          "measure:risk_operations:transactions:amount"
+        ],
+        "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+        "native_grains": [
+          {
+            "entity_id": "entity:risk_operations:transactions",
+            "key_attribute_ids": [
+              "attribute:risk_operations:transactions:transaction_id"
+            ]
+          }
+        ]
+      },
+      "experiment": "M45",
+      "official_category": "CORRECT",
+      "official_correct": true,
+      "sql_sha256": "6a218d510ec10ba56f5108bab186774ee336bd15c6b3d7e8ed1ca6d3a6d511b6"
+    },
+    {
+      "case_id": "subscription_18",
+      "database_id": "subscription_billing",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "cd05689d26cb20f6ecec0f5cb745b0ee5bc8445ecf9a71797558927cf54fa080"
+    },
+    {
+      "case_id": "warehouse_19",
+      "database_id": "warehouse_logistics",
+      "diagnostic": {
+        "aggregate_expressions": [],
+        "code": "NOT_APPLICABLE",
+        "evidence": {},
+        "fanout_edges": [],
+        "grouping_columns": [],
+        "measure_ids": [],
+        "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+        "native_grains": []
+      },
+      "experiment": "M45",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "sql_sha256": "fdffda0947fbf5d9ded5c1f7ea0f1944c346d583f9b866231c518f85ea3c67ae"
+    }
+  ],
+  "summary": {
+    "M43:NOT_APPLICABLE": 44,
+    "M43:PARENT_MEASURE_FANOUT": 1,
+    "M43:PASS": 8,
+    "M43:UNSAFE_ROLLUP": 2,
+    "M44:NOT_APPLICABLE": 46,
+    "M44:PASS": 5,
+    "M44:UNSAFE_ROLLUP": 2,
+    "M45:NOT_APPLICABLE": 49,
+    "M45:PARENT_MEASURE_FANOUT": 1,
+    "M45:PASS": 5,
+    "M45:UNSAFE_ROLLUP": 2
+  }
+}

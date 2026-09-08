@@ -1,0 +1,477 @@
+{
+  "answerable_cases": 60,
+  "fully_covered": 14,
+  "m45_applicable_cases": [
+    {
+      "alignment": {
+        "alignment_grain": {
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "key_attribute_ids": [
+            "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+          ]
+        },
+        "alignment_status": "REQUIRES_ROLLUP",
+        "fanout_edges": [
+          {
+            "cardinality": "many_to_one",
+            "from_attribute_ids": [
+              "attribute:warehouse_logistics:receipts:po_line_id"
+            ],
+            "from_entity_id": "entity:warehouse_logistics:receipts",
+            "provenance": [
+              "PUBLIC_RELATIONSHIP_CARDINALITY"
+            ],
+            "relationship_id": "relationship:warehouse_logistics:receipt_line",
+            "to_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ],
+            "to_entity_id": "entity:warehouse_logistics:purchase_order_lines"
+          }
+        ],
+        "left_measure_id": "measure:warehouse_logistics:purchase_order_lines:ordered_qty",
+        "left_native_grain": {
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "key_attribute_ids": [
+            "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+          ]
+        },
+        "reason_code": "RIGHT_MEASURE_ROLLS_UP_TO_LEFT_GRAIN",
+        "required_rollups": [
+          {
+            "cardinality": "many_to_one",
+            "direction": "FORWARD",
+            "relationship_id": "relationship:warehouse_logistics:receipt_line",
+            "source_entity_id": "entity:warehouse_logistics:receipts",
+            "target_entity_id": "entity:warehouse_logistics:purchase_order_lines"
+          }
+        ],
+        "right_measure_id": "measure:warehouse_logistics:receipts:received_qty",
+        "right_native_grain": {
+          "entity_id": "entity:warehouse_logistics:receipts",
+          "key_attribute_ids": [
+            "attribute:warehouse_logistics:receipts:receipt_id"
+          ]
+        }
+      },
+      "case_id": "warehouse_08",
+      "left_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:warehouses",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:warehouses:warehouse_id"
+            ]
+          },
+          {
+            "entity_id": "entity:warehouse_logistics:products",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:products:product_id"
+            ]
+          },
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_orders",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_orders:po_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+        "measure_id": "measure:warehouse_logistics:purchase_order_lines:ordered_qty",
+        "native_grain": {
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "key_attribute_ids": [
+            "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+          ]
+        },
+        "physical_column_or_path": "ordered_qty",
+        "physical_table": "purchase_order_lines",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:warehouse_logistics:purchase_order_lines:ordered_qty",
+        "used_by_cases": [
+          "warehouse_08"
+        ]
+      },
+      "right_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:warehouse_logistics:warehouses",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:warehouses:warehouse_id"
+            ]
+          },
+          {
+            "entity_id": "entity:warehouse_logistics:products",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:products:product_id"
+            ]
+          },
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_orders",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_orders:po_id"
+            ]
+          },
+          {
+            "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+            "key_attribute_ids": [
+              "attribute:warehouse_logistics:purchase_order_lines:po_line_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:warehouse_logistics:receipts",
+        "measure_id": "measure:warehouse_logistics:receipts:received_qty",
+        "native_grain": {
+          "entity_id": "entity:warehouse_logistics:receipts",
+          "key_attribute_ids": [
+            "attribute:warehouse_logistics:receipts:receipt_id"
+          ]
+        },
+        "physical_column_or_path": "received_qty",
+        "physical_table": "receipts",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:warehouse_logistics:receipts:received_qty",
+        "used_by_cases": [
+          "warehouse_04",
+          "warehouse_08",
+          "warehouse_13"
+        ]
+      }
+    },
+    {
+      "alignment": {
+        "alignment_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "alignment_status": "REQUIRES_ROLLUP",
+        "fanout_edges": [
+          {
+            "cardinality": "many_to_one",
+            "from_attribute_ids": [
+              "attribute:subscription_billing:refunds:payment_id"
+            ],
+            "from_entity_id": "entity:subscription_billing:refunds",
+            "provenance": [
+              "PUBLIC_RELATIONSHIP_CARDINALITY"
+            ],
+            "relationship_id": "relationship:subscription_billing:refund_payment",
+            "to_attribute_ids": [
+              "attribute:subscription_billing:payments:payment_id"
+            ],
+            "to_entity_id": "entity:subscription_billing:payments"
+          }
+        ],
+        "left_measure_id": "measure:subscription_billing:payments:amount",
+        "left_native_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "reason_code": "RIGHT_MEASURE_ROLLS_UP_TO_LEFT_GRAIN",
+        "required_rollups": [
+          {
+            "cardinality": "many_to_one",
+            "direction": "FORWARD",
+            "relationship_id": "relationship:subscription_billing:refund_payment",
+            "source_entity_id": "entity:subscription_billing:refunds",
+            "target_entity_id": "entity:subscription_billing:payments"
+          }
+        ],
+        "right_measure_id": "measure:subscription_billing:refunds:amount",
+        "right_native_grain": {
+          "entity_id": "entity:subscription_billing:refunds",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:refunds:refund_id"
+          ]
+        }
+      },
+      "case_id": "subscription_04",
+      "left_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:subscription_billing:accounts",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:accounts:account_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:subscriptions",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:subscriptions:subscription_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:invoices",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:invoices:invoice_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:subscription_billing:payments",
+        "measure_id": "measure:subscription_billing:payments:amount",
+        "native_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "physical_column_or_path": "amount",
+        "physical_table": "payments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:subscription_billing:payments:amount",
+        "used_by_cases": [
+          "subscription_04",
+          "subscription_10"
+        ]
+      },
+      "right_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:subscription_billing:accounts",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:accounts:account_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:subscriptions",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:subscriptions:subscription_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:invoices",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:invoices:invoice_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:payments",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:payments:payment_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:subscription_billing:refunds",
+        "measure_id": "measure:subscription_billing:refunds:amount",
+        "native_grain": {
+          "entity_id": "entity:subscription_billing:refunds",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:refunds:refund_id"
+          ]
+        },
+        "physical_column_or_path": "amount",
+        "physical_table": "refunds",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:subscription_billing:refunds:amount",
+        "used_by_cases": [
+          "subscription_04",
+          "subscription_10"
+        ]
+      }
+    },
+    {
+      "alignment": {
+        "alignment_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "alignment_status": "REQUIRES_ROLLUP",
+        "fanout_edges": [
+          {
+            "cardinality": "many_to_one",
+            "from_attribute_ids": [
+              "attribute:subscription_billing:refunds:payment_id"
+            ],
+            "from_entity_id": "entity:subscription_billing:refunds",
+            "provenance": [
+              "PUBLIC_RELATIONSHIP_CARDINALITY"
+            ],
+            "relationship_id": "relationship:subscription_billing:refund_payment",
+            "to_attribute_ids": [
+              "attribute:subscription_billing:payments:payment_id"
+            ],
+            "to_entity_id": "entity:subscription_billing:payments"
+          }
+        ],
+        "left_measure_id": "measure:subscription_billing:payments:amount",
+        "left_native_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "reason_code": "RIGHT_MEASURE_ROLLS_UP_TO_LEFT_GRAIN",
+        "required_rollups": [
+          {
+            "cardinality": "many_to_one",
+            "direction": "FORWARD",
+            "relationship_id": "relationship:subscription_billing:refund_payment",
+            "source_entity_id": "entity:subscription_billing:refunds",
+            "target_entity_id": "entity:subscription_billing:payments"
+          }
+        ],
+        "right_measure_id": "measure:subscription_billing:refunds:amount",
+        "right_native_grain": {
+          "entity_id": "entity:subscription_billing:refunds",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:refunds:refund_id"
+          ]
+        }
+      },
+      "case_id": "subscription_10",
+      "left_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:subscription_billing:accounts",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:accounts:account_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:subscriptions",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:subscriptions:subscription_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:invoices",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:invoices:invoice_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:subscription_billing:payments",
+        "measure_id": "measure:subscription_billing:payments:amount",
+        "native_grain": {
+          "entity_id": "entity:subscription_billing:payments",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:payments:payment_id"
+          ]
+        },
+        "physical_column_or_path": "amount",
+        "physical_table": "payments",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:subscription_billing:payments:amount",
+        "used_by_cases": [
+          "subscription_04",
+          "subscription_10"
+        ]
+      },
+      "right_measure": {
+        "aggregation_behavior": "ADDITIVE",
+        "allowed_rollup_grains": [
+          {
+            "entity_id": "entity:subscription_billing:accounts",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:accounts:account_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:plans",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:plans:plan_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:subscriptions",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:subscriptions:subscription_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:invoices",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:invoices:invoice_id"
+            ]
+          },
+          {
+            "entity_id": "entity:subscription_billing:payments",
+            "key_attribute_ids": [
+              "attribute:subscription_billing:payments:payment_id"
+            ]
+          }
+        ],
+        "derivation": null,
+        "entity_id": "entity:subscription_billing:refunds",
+        "measure_id": "measure:subscription_billing:refunds:amount",
+        "native_grain": {
+          "entity_id": "entity:subscription_billing:refunds",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:refunds:refund_id"
+          ]
+        },
+        "physical_column_or_path": "amount",
+        "physical_table": "refunds",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "restricted_rollup_grains": [],
+        "source_attribute_id": "attribute:subscription_billing:refunds:amount",
+        "used_by_cases": [
+          "subscription_04",
+          "subscription_10"
+        ]
+      }
+    }
+  ],
+  "quantitative_cases": 14,
+  "required_native_grains_resolved": 3,
+  "required_native_grains_total": 3,
+  "required_rollup_paths_resolved": 3,
+  "required_rollup_paths_total": 3,
+  "unresolved_cases": []
+}

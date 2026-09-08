@@ -1,0 +1,4859 @@
+{
+  "databases": {
+    "commerce_ops": {
+      "catalog_hash": "8b1707b2eb8546a3c867809b6cc6265b0021e454f77f534a1189648f2cb3a9a6",
+      "entity_count": 10,
+      "measure_count": 3,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:customers:customer_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:customers",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_03",
+            "commerce_05",
+            "commerce_06",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:orders:order_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:orders",
+          "physical_column_or_path": "order_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_03",
+            "commerce_04",
+            "commerce_05",
+            "commerce_06",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:orders:customer_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:orders",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_03",
+            "commerce_05",
+            "commerce_06",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:orders:store_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:orders",
+          "physical_column_or_path": "store_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "NON_ADDITIVE",
+          "attribute_id": "attribute:commerce_ops:orders:discount_pct",
+          "data_type": "NUMERIC",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:orders",
+          "physical_column_or_path": "discount_pct",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:order_items:item_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:order_items",
+          "physical_column_or_path": "item_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:order_items:order_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:order_items",
+          "physical_column_or_path": "order_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_05",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:order_items:product_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:order_items",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_05"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:commerce_ops:order_items:quantity",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:order_items",
+          "physical_column_or_path": "quantity",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:commerce_ops:order_items:unit_price",
+          "data_type": "NUMERIC",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:order_items",
+          "physical_column_or_path": "unit_price",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:products:product_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:products",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "commerce_04",
+            "commerce_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:products:unit_price",
+          "data_type": "NUMERIC",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:products",
+          "physical_column_or_path": "unit_price",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:shipments:shipment_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:shipments",
+          "physical_column_or_path": "shipment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:commerce_ops:shipments:order_id",
+          "data_type": "INTEGER",
+          "database": "commerce_ops",
+          "entity_id": "entity:commerce_ops:shipments",
+          "physical_column_or_path": "order_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        }
+      ],
+      "relationship_count": 9
+    },
+    "fleet_ops": {
+      "catalog_hash": "02b76dad59352dbb362a3c90326ddd193bf98143786f5789cfca8447e5afe975",
+      "entity_count": 10,
+      "measure_count": 4,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:vehicles:vehicle_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:vehicles",
+          "physical_column_or_path": "vehicle_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_02",
+            "fleet_04",
+            "fleet_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:vehicles:depot_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:vehicles",
+          "physical_column_or_path": "depot_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:drivers:driver_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:drivers",
+          "physical_column_or_path": "driver_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:depots:depot_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:depots",
+          "physical_column_or_path": "depot_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:routes:route_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:routes",
+          "physical_column_or_path": "route_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_03"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:trips:trip_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "trip_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:trips:vehicle_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "vehicle_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:trips:driver_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "driver_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:trips:route_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "route_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_03"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:trips:depot_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "depot_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:fleet_ops:trips:distance_km",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "distance_km",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "fleet_03"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:fleet_ops:trips:fuel_liters",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:trips",
+          "physical_column_or_path": "fuel_liters",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "fleet_03"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:telemetry_events:event_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:telemetry_events",
+          "physical_column_or_path": "event_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_06"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:telemetry_events:vehicle_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:telemetry_events",
+          "physical_column_or_path": "vehicle_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_06"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:telemetry_events",
+          "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:maintenance_events:maintenance_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:maintenance_events",
+          "physical_column_or_path": "maintenance_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_04"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:maintenance_events:vehicle_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:maintenance_events",
+          "physical_column_or_path": "vehicle_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_04"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:maintenance_events:cost",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:maintenance_events",
+          "physical_column_or_path": "cost",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:fuel_events:fuel_event_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:fuel_events",
+          "physical_column_or_path": "fuel_event_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:fuel_events:vehicle_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:fuel_events",
+          "physical_column_or_path": "vehicle_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "fleet_02"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:fleet_ops:fuel_events:liters",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:fuel_events",
+          "physical_column_or_path": "liters",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "fleet_02"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:fleet_ops:fuel_events:price_per_liter",
+          "data_type": "NUMERIC",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:fuel_events",
+          "physical_column_or_path": "price_per_liter",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "fleet_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:fleet_ops:weather_snapshots:weather_id",
+          "data_type": "INTEGER",
+          "database": "fleet_ops",
+          "entity_id": "entity:fleet_ops:weather_snapshots",
+          "physical_column_or_path": "weather_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        }
+      ],
+      "relationship_count": 9
+    },
+    "risk_operations": {
+      "catalog_hash": "e22b5d6c88b4b488f6c75c36cf786d02a9a285b74cf13c5f4bdde00f03a15ff8",
+      "entity_count": 12,
+      "measure_count": 1,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:accounts:account_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:accounts",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:accounts:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:accounts",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:alert_events:alert_event_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:alert_events",
+          "physical_column_or_path": "alert_event_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:alert_events:alert_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:alert_events",
+          "physical_column_or_path": "alert_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:alerts:alert_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:alerts",
+          "physical_column_or_path": "alert_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_05",
+            "risk_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:alerts:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:alerts",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_10",
+            "risk_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:analyst_actions:action_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:analyst_actions",
+          "physical_column_or_path": "action_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:analyst_actions:analyst_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:analyst_actions",
+          "physical_column_or_path": "analyst_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:analyst_actions:investigation_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:analyst_actions",
+          "physical_column_or_path": "investigation_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:cases:case_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:cases",
+          "physical_column_or_path": "case_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:cases:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:cases",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:customers:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:customers",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_11",
+            "risk_12",
+            "risk_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:devices:device_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:devices",
+          "physical_column_or_path": "device_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:investigations:alert_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:investigations",
+          "physical_column_or_path": "alert_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_05",
+            "risk_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:investigations:investigation_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:investigations",
+          "physical_column_or_path": "investigation_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_05"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:login_events:account_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:login_events",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:login_events:device_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:login_events",
+          "physical_column_or_path": "device_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:login_events:login_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:login_events",
+          "physical_column_or_path": "login_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:risk_assessments:assessment_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:risk_assessments",
+          "physical_column_or_path": "assessment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:risk_assessments:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:risk_assessments",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:risk_assessments:risk_score",
+          "data_type": "NUMERIC",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:risk_assessments",
+          "physical_column_or_path": "risk_score",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:transactions:account_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:transactions",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_13"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:risk_operations:transactions:amount",
+          "data_type": "NUMERIC",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:transactions",
+          "physical_column_or_path": "amount",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "risk_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+          "data_type": "NUMERIC",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:transactions",
+          "physical_column_or_path": "payload #>> '{risk_score}'",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:transactions:transaction_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:transactions",
+          "physical_column_or_path": "transaction_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:watchlist_matches:customer_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:watchlist_matches",
+          "physical_column_or_path": "customer_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_10",
+            "risk_12"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:risk_operations:watchlist_matches:match_id",
+          "data_type": "INTEGER",
+          "database": "risk_operations",
+          "entity_id": "entity:risk_operations:watchlist_matches",
+          "physical_column_or_path": "match_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "risk_10",
+            "risk_12"
+          ]
+        }
+      ],
+      "relationship_count": 11
+    },
+    "subscription_billing": {
+      "catalog_hash": "4b3a6345c8e7a383cc6c0c8d474210e45468cfb6eb207ca804dfdda00531c47c",
+      "entity_count": 12,
+      "measure_count": 3,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:accounts:account_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:accounts",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_02",
+            "subscription_03"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:credits:account_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:credits",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_14"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:credits:amount",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:credits",
+          "physical_column_or_path": "amount",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:credits:credit_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:credits",
+          "physical_column_or_path": "credit_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_14"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:dunning_attempts:attempt_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:dunning_attempts",
+          "physical_column_or_path": "attempt_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:dunning_attempts:invoice_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:dunning_attempts",
+          "physical_column_or_path": "invoice_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:entitlements:entitlement_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:entitlements",
+          "physical_column_or_path": "entitlement_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:entitlements:subscription_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:entitlements",
+          "physical_column_or_path": "subscription_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoice_lines:invoice_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoice_lines",
+          "physical_column_or_path": "invoice_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoice_lines:line_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoice_lines",
+          "physical_column_or_path": "line_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoice_lines:quantity",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoice_lines",
+          "physical_column_or_path": "quantity",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoice_lines:unit_price",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoice_lines",
+          "physical_column_or_path": "unit_price",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoices:account_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoices",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_06",
+            "subscription_14"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoices:invoice_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoices",
+          "physical_column_or_path": "invoice_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_06",
+            "subscription_09",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoices:subscription_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoices",
+          "physical_column_or_path": "subscription_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:invoices:total_due",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:invoices",
+          "physical_column_or_path": "total_due",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:subscription_billing:payments:amount",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:payments",
+          "physical_column_or_path": "amount",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:payments:invoice_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:payments",
+          "physical_column_or_path": "invoice_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_06",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:payments:payment_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:payments",
+          "physical_column_or_path": "payment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_06",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plan_changes:change_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plan_changes",
+          "physical_column_or_path": "change_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plan_changes:new_plan_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plan_changes",
+          "physical_column_or_path": "new_plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plan_changes:old_plan_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plan_changes",
+          "physical_column_or_path": "old_plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plan_changes:subscription_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plan_changes",
+          "physical_column_or_path": "subscription_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plans:included_units",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plans",
+          "physical_column_or_path": "included_units",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:subscription_billing:plans:monthly_price",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plans",
+          "physical_column_or_path": "monthly_price",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "subscription_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:plans:plan_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:plans",
+          "physical_column_or_path": "plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_07",
+            "subscription_11"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:subscription_billing:refunds:amount",
+          "data_type": "NUMERIC",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:refunds",
+          "physical_column_or_path": "amount",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:refunds:payment_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:refunds",
+          "physical_column_or_path": "payment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_04",
+            "subscription_10"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:refunds:refund_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:refunds",
+          "physical_column_or_path": "refund_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:subscriptions:account_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:subscriptions",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_02",
+            "subscription_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:subscriptions:plan_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:subscriptions",
+          "physical_column_or_path": "plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_07",
+            "subscription_10",
+            "subscription_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:subscriptions:subscription_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:subscriptions",
+          "physical_column_or_path": "subscription_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "subscription_01",
+            "subscription_10",
+            "subscription_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:usage_events:account_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:usage_events",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:usage_events:payload_#>>_'{units}'",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:usage_events",
+          "physical_column_or_path": "payload #>> '{units}'",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:usage_events:units",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:usage_events",
+          "physical_column_or_path": "units",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:subscription_billing:usage_events:usage_id",
+          "data_type": "INTEGER",
+          "database": "subscription_billing",
+          "entity_id": "entity:subscription_billing:usage_events",
+          "physical_column_or_path": "usage_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        }
+      ],
+      "relationship_count": 12
+    },
+    "support_ops": {
+      "catalog_hash": "89125a89d2b0497107d91283e5e026628b26221476f6209216cb5121967e513e",
+      "entity_count": 10,
+      "measure_count": 1,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:accounts:account_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:accounts",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_01"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:contacts:contact_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:contacts",
+          "physical_column_or_path": "contact_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:contacts:account_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:contacts",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:service_plans:plan_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:service_plans",
+          "physical_column_or_path": "plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:support_ops:service_plans:first_response_sla_hours",
+          "data_type": "NUMERIC",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:service_plans",
+          "physical_column_or_path": "first_response_sla_hours",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:subscriptions:subscription_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:subscriptions",
+          "physical_column_or_path": "subscription_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:subscriptions:account_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:subscriptions",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:subscriptions:plan_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:subscriptions",
+          "physical_column_or_path": "plan_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:support_tickets:ticket_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:support_tickets",
+          "physical_column_or_path": "ticket_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_01",
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:support_tickets:account_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:support_tickets",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_01",
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:support_tickets:agent_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:support_tickets",
+          "physical_column_or_path": "agent_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:ticket_events:event_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:ticket_events",
+          "physical_column_or_path": "event_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:ticket_events:ticket_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:ticket_events",
+          "physical_column_or_path": "ticket_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "support_02"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:incidents:incident_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:incidents",
+          "physical_column_or_path": "incident_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:support_ops:incidents:account_id",
+          "data_type": "INTEGER",
+          "database": "support_ops",
+          "entity_id": "entity:support_ops:incidents",
+          "physical_column_or_path": "account_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        }
+      ],
+      "relationship_count": 9
+    },
+    "warehouse_logistics": {
+      "catalog_hash": "c272543989595810e75637e594e3f5e4773c1b595f85ac1703e8e8bbeb2cb93e",
+      "entity_count": 13,
+      "measure_count": 4,
+      "numeric_attributes": [
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:bins:bin_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:bins",
+          "physical_column_or_path": "bin_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:bins:capacity_units",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:bins",
+          "physical_column_or_path": "capacity_units",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:bins:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:bins",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:carriers:carrier_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:carriers",
+          "physical_column_or_path": "carrier_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_03",
+            "warehouse_12"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:delivery_events:delivery_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:delivery_events",
+          "physical_column_or_path": "delivery_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+          "data_type": "NUMERIC",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:delivery_events",
+          "physical_column_or_path": "payload #>> '{temperature_c}'",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:delivery_events:shipment_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:delivery_events",
+          "physical_column_or_path": "shipment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_03",
+            "warehouse_06"
+          ]
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:on_hand_qty",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+          "physical_column_or_path": "on_hand_qty",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "warehouse_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:product_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:snapshot_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+          "physical_column_or_path": "snapshot_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_11"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:pick_events:pick_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:pick_events",
+          "physical_column_or_path": "pick_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:pick_events:picker_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:pick_events",
+          "physical_column_or_path": "picker_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:pick_events:shipment_item_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:pick_events",
+          "physical_column_or_path": "shipment_item_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:products:product_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:products",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:products:unit_cost",
+          "data_type": "NUMERIC",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:products",
+          "physical_column_or_path": "unit_cost",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:ordered_qty",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "physical_column_or_path": "ordered_qty",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "warehouse_08"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "physical_column_or_path": "po_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_line_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "physical_column_or_path": "po_line_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_08",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:product_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_08"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:purchase_orders:po_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_orders",
+          "physical_column_or_path": "po_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:purchase_orders:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:purchase_orders",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:receipts:po_line_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:receipts",
+          "physical_column_or_path": "po_line_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_08",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:receipts:receipt_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:receipts",
+          "physical_column_or_path": "receipt_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:warehouse_logistics:receipts:received_qty",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:receipts",
+          "physical_column_or_path": "received_qty",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "warehouse_04",
+            "warehouse_08",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipment_items:product_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipment_items",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": "ADDITIVE",
+          "attribute_id": "attribute:warehouse_logistics:shipment_items:quantity",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipment_items",
+          "physical_column_or_path": "quantity",
+          "provenance": [
+            "PUBLIC_SCHEMA",
+            "PUBLIC_ATTRIBUTE_SEMANTICS"
+          ],
+          "resolution_status": "RESOLVED",
+          "semantic_role": "MEASURE",
+          "used_by_cases": [
+            "warehouse_02",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipment_items",
+          "physical_column_or_path": "shipment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_02",
+            "warehouse_07",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_item_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipment_items",
+          "physical_column_or_path": "shipment_item_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_07"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipments:carrier_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipments",
+          "physical_column_or_path": "carrier_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_03",
+            "warehouse_12"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipments:shipment_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipments",
+          "physical_column_or_path": "shipment_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_02",
+            "warehouse_03",
+            "warehouse_06",
+            "warehouse_07",
+            "warehouse_12",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:shipments:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:shipments",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_02",
+            "warehouse_07",
+            "warehouse_13"
+          ]
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:stock_movements:movement_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:stock_movements",
+          "physical_column_or_path": "movement_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:stock_movements:product_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:stock_movements",
+          "physical_column_or_path": "product_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:stock_movements:quantity",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:stock_movements",
+          "physical_column_or_path": "quantity",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:stock_movements:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:stock_movements",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:warehouses:capacity_units",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:warehouses",
+          "physical_column_or_path": "capacity_units",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "DIMENSION",
+          "used_by_cases": []
+        },
+        {
+          "aggregation_behavior": null,
+          "attribute_id": "attribute:warehouse_logistics:warehouses:warehouse_id",
+          "data_type": "INTEGER",
+          "database": "warehouse_logistics",
+          "entity_id": "entity:warehouse_logistics:warehouses",
+          "physical_column_or_path": "warehouse_id",
+          "provenance": [
+            "PUBLIC_SCHEMA"
+          ],
+          "resolution_status": "NOT_A_MEASURE",
+          "semantic_role": "IDENTIFIER",
+          "used_by_cases": [
+            "warehouse_11",
+            "warehouse_13"
+          ]
+        }
+      ],
+      "relationship_count": 13
+    }
+  },
+  "numeric_attributes": [
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:customers:customer_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:customers",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_03",
+        "commerce_05",
+        "commerce_06",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:orders:order_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:orders",
+      "physical_column_or_path": "order_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_03",
+        "commerce_04",
+        "commerce_05",
+        "commerce_06",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:orders:customer_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:orders",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_03",
+        "commerce_05",
+        "commerce_06",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:orders:store_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:orders",
+      "physical_column_or_path": "store_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "NON_ADDITIVE",
+      "attribute_id": "attribute:commerce_ops:orders:discount_pct",
+      "data_type": "NUMERIC",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:orders",
+      "physical_column_or_path": "discount_pct",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:order_items:item_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:order_items",
+      "physical_column_or_path": "item_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:order_items:order_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:order_items",
+      "physical_column_or_path": "order_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_05",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:order_items:product_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:order_items",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_05"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:commerce_ops:order_items:quantity",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:order_items",
+      "physical_column_or_path": "quantity",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:commerce_ops:order_items:unit_price",
+      "data_type": "NUMERIC",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:order_items",
+      "physical_column_or_path": "unit_price",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:products:product_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:products",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "commerce_04",
+        "commerce_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:products:unit_price",
+      "data_type": "NUMERIC",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:products",
+      "physical_column_or_path": "unit_price",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:shipments:shipment_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:shipments",
+      "physical_column_or_path": "shipment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:commerce_ops:shipments:order_id",
+      "data_type": "INTEGER",
+      "database": "commerce_ops",
+      "entity_id": "entity:commerce_ops:shipments",
+      "physical_column_or_path": "order_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:vehicles:vehicle_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:vehicles",
+      "physical_column_or_path": "vehicle_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_02",
+        "fleet_04",
+        "fleet_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:vehicles:depot_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:vehicles",
+      "physical_column_or_path": "depot_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:drivers:driver_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:drivers",
+      "physical_column_or_path": "driver_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:depots:depot_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:depots",
+      "physical_column_or_path": "depot_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:routes:route_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:routes",
+      "physical_column_or_path": "route_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_03"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:trips:trip_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "trip_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:trips:vehicle_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "vehicle_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:trips:driver_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "driver_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:trips:route_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "route_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_03"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:trips:depot_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "depot_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:fleet_ops:trips:distance_km",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "distance_km",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "fleet_03"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:fleet_ops:trips:fuel_liters",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:trips",
+      "physical_column_or_path": "fuel_liters",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "fleet_03"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:telemetry_events:event_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:telemetry_events",
+      "physical_column_or_path": "event_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_06"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:telemetry_events:vehicle_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:telemetry_events",
+      "physical_column_or_path": "vehicle_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_06"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:telemetry_events:payload.engine.temperature_c",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:telemetry_events",
+      "physical_column_or_path": "payload #>> '{engine,temperature_c}'",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:maintenance_events:maintenance_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:maintenance_events",
+      "physical_column_or_path": "maintenance_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_04"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:maintenance_events:vehicle_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:maintenance_events",
+      "physical_column_or_path": "vehicle_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_04"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:maintenance_events:cost",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:maintenance_events",
+      "physical_column_or_path": "cost",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:fuel_events:fuel_event_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:fuel_events",
+      "physical_column_or_path": "fuel_event_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:fuel_events:vehicle_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:fuel_events",
+      "physical_column_or_path": "vehicle_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "fleet_02"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:fleet_ops:fuel_events:liters",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:fuel_events",
+      "physical_column_or_path": "liters",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "fleet_02"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:fleet_ops:fuel_events:price_per_liter",
+      "data_type": "NUMERIC",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:fuel_events",
+      "physical_column_or_path": "price_per_liter",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "fleet_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:fleet_ops:weather_snapshots:weather_id",
+      "data_type": "INTEGER",
+      "database": "fleet_ops",
+      "entity_id": "entity:fleet_ops:weather_snapshots",
+      "physical_column_or_path": "weather_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:accounts:account_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:accounts",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_01"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:contacts:contact_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:contacts",
+      "physical_column_or_path": "contact_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:contacts:account_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:contacts",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:service_plans:plan_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:service_plans",
+      "physical_column_or_path": "plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:support_ops:service_plans:first_response_sla_hours",
+      "data_type": "NUMERIC",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:service_plans",
+      "physical_column_or_path": "first_response_sla_hours",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:subscriptions:subscription_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:subscriptions",
+      "physical_column_or_path": "subscription_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:subscriptions:account_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:subscriptions",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:subscriptions:plan_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:subscriptions",
+      "physical_column_or_path": "plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:support_tickets:ticket_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:support_tickets",
+      "physical_column_or_path": "ticket_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_01",
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:support_tickets:account_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:support_tickets",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_01",
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:support_tickets:agent_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:support_tickets",
+      "physical_column_or_path": "agent_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:ticket_events:event_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:ticket_events",
+      "physical_column_or_path": "event_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:ticket_events:ticket_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:ticket_events",
+      "physical_column_or_path": "ticket_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "support_02"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:incidents:incident_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:incidents",
+      "physical_column_or_path": "incident_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:support_ops:incidents:account_id",
+      "data_type": "INTEGER",
+      "database": "support_ops",
+      "entity_id": "entity:support_ops:incidents",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:accounts:account_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:accounts",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_02",
+        "subscription_03"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:credits:account_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:credits",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_14"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:credits:amount",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:credits",
+      "physical_column_or_path": "amount",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:credits:credit_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:credits",
+      "physical_column_or_path": "credit_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_14"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:dunning_attempts:attempt_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:dunning_attempts",
+      "physical_column_or_path": "attempt_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:dunning_attempts:invoice_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:dunning_attempts",
+      "physical_column_or_path": "invoice_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:entitlements:entitlement_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:entitlements",
+      "physical_column_or_path": "entitlement_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:entitlements:subscription_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:entitlements",
+      "physical_column_or_path": "subscription_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoice_lines:invoice_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoice_lines",
+      "physical_column_or_path": "invoice_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoice_lines:line_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoice_lines",
+      "physical_column_or_path": "line_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoice_lines:quantity",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoice_lines",
+      "physical_column_or_path": "quantity",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoice_lines:unit_price",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoice_lines",
+      "physical_column_or_path": "unit_price",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoices:account_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoices",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_06",
+        "subscription_14"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoices:invoice_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoices",
+      "physical_column_or_path": "invoice_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_06",
+        "subscription_09",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoices:subscription_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoices",
+      "physical_column_or_path": "subscription_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:invoices:total_due",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:invoices",
+      "physical_column_or_path": "total_due",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:subscription_billing:payments:amount",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:payments",
+      "physical_column_or_path": "amount",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:payments:invoice_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:payments",
+      "physical_column_or_path": "invoice_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_06",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:payments:payment_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:payments",
+      "physical_column_or_path": "payment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_06",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plan_changes:change_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plan_changes",
+      "physical_column_or_path": "change_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plan_changes:new_plan_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plan_changes",
+      "physical_column_or_path": "new_plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plan_changes:old_plan_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plan_changes",
+      "physical_column_or_path": "old_plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plan_changes:subscription_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plan_changes",
+      "physical_column_or_path": "subscription_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plans:included_units",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plans",
+      "physical_column_or_path": "included_units",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:subscription_billing:plans:monthly_price",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plans",
+      "physical_column_or_path": "monthly_price",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "subscription_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:plans:plan_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:plans",
+      "physical_column_or_path": "plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_07",
+        "subscription_11"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:subscription_billing:refunds:amount",
+      "data_type": "NUMERIC",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:refunds",
+      "physical_column_or_path": "amount",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:refunds:payment_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:refunds",
+      "physical_column_or_path": "payment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_04",
+        "subscription_10"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:refunds:refund_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:refunds",
+      "physical_column_or_path": "refund_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:subscriptions:account_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:subscriptions",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_02",
+        "subscription_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:subscriptions:plan_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:subscriptions",
+      "physical_column_or_path": "plan_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_07",
+        "subscription_10",
+        "subscription_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:subscriptions:subscription_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:subscriptions",
+      "physical_column_or_path": "subscription_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "subscription_01",
+        "subscription_10",
+        "subscription_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:usage_events:account_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:usage_events",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:usage_events:payload_#>>_'{units}'",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:usage_events",
+      "physical_column_or_path": "payload #>> '{units}'",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:usage_events:units",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:usage_events",
+      "physical_column_or_path": "units",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:subscription_billing:usage_events:usage_id",
+      "data_type": "INTEGER",
+      "database": "subscription_billing",
+      "entity_id": "entity:subscription_billing:usage_events",
+      "physical_column_or_path": "usage_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:bins:bin_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:bins",
+      "physical_column_or_path": "bin_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:bins:capacity_units",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:bins",
+      "physical_column_or_path": "capacity_units",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:bins:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:bins",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:carriers:carrier_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:carriers",
+      "physical_column_or_path": "carrier_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_03",
+        "warehouse_12"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:delivery_events:delivery_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:delivery_events",
+      "physical_column_or_path": "delivery_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:delivery_events:payload_#>>_'{temperature_c}'",
+      "data_type": "NUMERIC",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:delivery_events",
+      "physical_column_or_path": "payload #>> '{temperature_c}'",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:delivery_events:shipment_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:delivery_events",
+      "physical_column_or_path": "shipment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_03",
+        "warehouse_06"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:on_hand_qty",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+      "physical_column_or_path": "on_hand_qty",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "warehouse_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:product_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:snapshot_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+      "physical_column_or_path": "snapshot_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:inventory_snapshots:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:inventory_snapshots",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:pick_events:pick_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:pick_events",
+      "physical_column_or_path": "pick_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:pick_events:picker_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:pick_events",
+      "physical_column_or_path": "picker_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:pick_events:shipment_item_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:pick_events",
+      "physical_column_or_path": "shipment_item_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:products:product_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:products",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:products:unit_cost",
+      "data_type": "NUMERIC",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:products",
+      "physical_column_or_path": "unit_cost",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:ordered_qty",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+      "physical_column_or_path": "ordered_qty",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "warehouse_08"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+      "physical_column_or_path": "po_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:po_line_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+      "physical_column_or_path": "po_line_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_08",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:purchase_order_lines:product_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_order_lines",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_08"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:purchase_orders:po_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_orders",
+      "physical_column_or_path": "po_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:purchase_orders:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:purchase_orders",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:receipts:po_line_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:receipts",
+      "physical_column_or_path": "po_line_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_08",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:receipts:receipt_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:receipts",
+      "physical_column_or_path": "receipt_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:warehouse_logistics:receipts:received_qty",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:receipts",
+      "physical_column_or_path": "received_qty",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "warehouse_04",
+        "warehouse_08",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipment_items:product_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipment_items",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:warehouse_logistics:shipment_items:quantity",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipment_items",
+      "physical_column_or_path": "quantity",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "warehouse_02",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipment_items",
+      "physical_column_or_path": "shipment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_02",
+        "warehouse_07",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipment_items:shipment_item_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipment_items",
+      "physical_column_or_path": "shipment_item_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_07"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipments:carrier_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipments",
+      "physical_column_or_path": "carrier_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_03",
+        "warehouse_12"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipments:shipment_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipments",
+      "physical_column_or_path": "shipment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_02",
+        "warehouse_03",
+        "warehouse_06",
+        "warehouse_07",
+        "warehouse_12",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:shipments:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:shipments",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_02",
+        "warehouse_07",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:stock_movements:movement_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:stock_movements",
+      "physical_column_or_path": "movement_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:stock_movements:product_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:stock_movements",
+      "physical_column_or_path": "product_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:stock_movements:quantity",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:stock_movements",
+      "physical_column_or_path": "quantity",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:stock_movements:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:stock_movements",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:warehouses:capacity_units",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:warehouses",
+      "physical_column_or_path": "capacity_units",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:warehouse_logistics:warehouses:warehouse_id",
+      "data_type": "INTEGER",
+      "database": "warehouse_logistics",
+      "entity_id": "entity:warehouse_logistics:warehouses",
+      "physical_column_or_path": "warehouse_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "warehouse_11",
+        "warehouse_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:accounts:account_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:accounts",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:accounts:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:accounts",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:alert_events:alert_event_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:alert_events",
+      "physical_column_or_path": "alert_event_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:alert_events:alert_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:alert_events",
+      "physical_column_or_path": "alert_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:alerts:alert_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:alerts",
+      "physical_column_or_path": "alert_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_05",
+        "risk_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:alerts:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:alerts",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_10",
+        "risk_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:analyst_actions:action_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:analyst_actions",
+      "physical_column_or_path": "action_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:analyst_actions:analyst_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:analyst_actions",
+      "physical_column_or_path": "analyst_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:analyst_actions:investigation_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:analyst_actions",
+      "physical_column_or_path": "investigation_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:cases:case_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:cases",
+      "physical_column_or_path": "case_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:cases:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:cases",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:customers:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:customers",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_11",
+        "risk_12",
+        "risk_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:devices:device_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:devices",
+      "physical_column_or_path": "device_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:investigations:alert_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:investigations",
+      "physical_column_or_path": "alert_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_05",
+        "risk_11"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:investigations:investigation_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:investigations",
+      "physical_column_or_path": "investigation_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_05"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:login_events:account_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:login_events",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:login_events:device_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:login_events",
+      "physical_column_or_path": "device_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:login_events:login_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:login_events",
+      "physical_column_or_path": "login_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:risk_assessments:assessment_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:risk_assessments",
+      "physical_column_or_path": "assessment_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:risk_assessments:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:risk_assessments",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:risk_assessments:risk_score",
+      "data_type": "NUMERIC",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:risk_assessments",
+      "physical_column_or_path": "risk_score",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:transactions:account_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:transactions",
+      "physical_column_or_path": "account_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_13"
+      ]
+    },
+    {
+      "aggregation_behavior": "ADDITIVE",
+      "attribute_id": "attribute:risk_operations:transactions:amount",
+      "data_type": "NUMERIC",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:transactions",
+      "physical_column_or_path": "amount",
+      "provenance": [
+        "PUBLIC_SCHEMA",
+        "PUBLIC_ATTRIBUTE_SEMANTICS"
+      ],
+      "resolution_status": "RESOLVED",
+      "semantic_role": "MEASURE",
+      "used_by_cases": [
+        "risk_13"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:transactions:payload_#>>_'{risk_score}'",
+      "data_type": "NUMERIC",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:transactions",
+      "physical_column_or_path": "payload #>> '{risk_score}'",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "DIMENSION",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:transactions:transaction_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:transactions",
+      "physical_column_or_path": "transaction_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": []
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:watchlist_matches:customer_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:watchlist_matches",
+      "physical_column_or_path": "customer_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_10",
+        "risk_12"
+      ]
+    },
+    {
+      "aggregation_behavior": null,
+      "attribute_id": "attribute:risk_operations:watchlist_matches:match_id",
+      "data_type": "INTEGER",
+      "database": "risk_operations",
+      "entity_id": "entity:risk_operations:watchlist_matches",
+      "physical_column_or_path": "match_id",
+      "provenance": [
+        "PUBLIC_SCHEMA"
+      ],
+      "resolution_status": "NOT_A_MEASURE",
+      "semantic_role": "IDENTIFIER",
+      "used_by_cases": [
+        "risk_10",
+        "risk_12"
+      ]
+    }
+  ],
+  "summary": {
+    "additive": 15,
+    "derived": 0,
+    "derived_measures": 0,
+    "dimensions": 11,
+    "identifiers": 126,
+    "measures": 16,
+    "non_additive": 1,
+    "numeric_attributes_audited": 153,
+    "required_unknown": 0,
+    "semi_additive": 0,
+    "unknown": 0
+  }
+}

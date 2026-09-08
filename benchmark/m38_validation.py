@@ -47,6 +47,7 @@ ROOT = Path(__file__).resolve().parent
 M38_CASES = ROOT / "cases" / "m38_dev"
 M38_TRUTH = ROOT / "ground_truth" / "m38_dev"
 M38_MANIFEST = ROOT / "manifests" / "m38_benchmark_manifest.json"
+POSTGRESQL_VERSION = "16.15"
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -529,6 +530,7 @@ def _write_manifests(
             "provider_calls": 0,
             "model_baseline": "NOT_RUN",
             "generator_version": M38_GENERATOR_VERSION,
+            "postgresql_version": POSTGRESQL_VERSION,
         },
     )
     _write_json(

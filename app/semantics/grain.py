@@ -296,6 +296,7 @@ class GrainAlignmentAnalyzer:
                 right_native_grain=right.native_grain,
                 alignment_grain=left.native_grain,
                 required_rollups=right_to_left,
+                fanout_edges=self.graph.fanout_edges_from(left.entity_id),
                 reason_code="RIGHT_MEASURE_ROLLS_UP_TO_LEFT_GRAIN",
             )
         left_to_right = self.graph.rollup_path(left.entity_id, right.entity_id)
@@ -308,6 +309,7 @@ class GrainAlignmentAnalyzer:
                 right_native_grain=right.native_grain,
                 alignment_grain=right.native_grain,
                 required_rollups=left_to_right,
+                fanout_edges=self.graph.fanout_edges_from(right.entity_id),
                 reason_code="LEFT_MEASURE_ROLLS_UP_TO_RIGHT_GRAIN",
             )
         return GrainAlignmentResult(

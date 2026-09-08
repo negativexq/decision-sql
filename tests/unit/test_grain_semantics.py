@@ -3,6 +3,7 @@ from __future__ import annotations
 from app.semantics.grain import (
     AggregationBehavior,
     GrainAlignmentAnalyzer,
+    GrainContractError,
     GrainDiagnosticCode,
     GrainEntity,
     GrainKey,
@@ -80,6 +81,7 @@ def test_child_rolls_up_to_parent_grain() -> None:
     assert result.alignment_status.value == "REQUIRES_ROLLUP"
     assert result.alignment_grain is not None
     assert result.alignment_grain.entity_id == "entity:parent"
+    assert [edge.relationship_id for edge in result.fanout_edges] == ["relationship:child_parent"]
 
 
 def test_direct_parent_fanout_is_detected() -> None:
@@ -128,3 +130,65 @@ def test_child_measure_aggregation_is_safe() -> None:
     """
     result = GrainSafetyValidator(_catalog()).validate(sql)
     assert result.code is GrainDiagnosticCode.PASS
+
+
+def test_existence_query_is_not_misclassified_as_measure_fanout() -> None:
+    sql = """
+        SELECT COUNT(*) FILTER (
+            WHERE EXISTS (SELECT 1 FROM children c WHERE c.parent_id = p.parent_id)
+        )
+        FROM parents p
+    """
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code is GrainDiagnosticCode.NOT_APPLICABLE
+
+
+def test_correlated_child_aggregate_is_safe() -> None:
+    sql = """
+        SELECT p.group_id,
+               SUM(p.amount - COALESCE(
+                   (SELECT SUM(c.amount) FROM children c WHERE c.parent_id = p.parent_id), 0
+               ))
+        FROM parents p
+        GROUP BY p.group_id
+    """
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code in {GrainDiagnosticCode.PASS, GrainDiagnosticCode.NOT_APPLICABLE}
+
+
+def test_sum_of_non_additive_measure_is_rejected() -> None:
+    catalog = _catalog()
+    ratio = MeasureSemantics(
+        measure_id="measure:parent_ratio",
+        source_attribute_id="attribute:parent:ratio",
+        entity_id="entity:parent",
+        physical_table="parents",
+        physical_column_or_path="ratio",
+        native_grain=GrainKey(
+            entity_id="entity:parent",
+            key_attribute_ids=("attribute:parent:parent_id",),
+        ),
+        aggregation_behavior=AggregationBehavior.NON_ADDITIVE,
+        provenance=("PUBLIC_ATTRIBUTE_SEMANTICS",),
+    )
+    catalog = catalog.model_copy(update={"measures": (*catalog.measures, ratio)})
+    result = GrainSafetyValidator(catalog).validate("SELECT SUM(p.ratio) FROM parents p")
+    assert result.code is GrainDiagnosticCode.UNSAFE_ROLLUP
+
+
+def test_rollup_entities_are_validated() -> None:
+    catalog = _catalog()
+    parent_measure = catalog.measures[0].model_copy(
+        update={
+            "allowed_rollup_grains": (
+                GrainKey(entity_id="entity:missing", key_attribute_ids=("x",)),
+            )
+        }
+    )
+    invalid = catalog.model_copy(update={"measures": (parent_measure, catalog.measures[1])})
+    try:
+        invalid.validate_contract()
+    except GrainContractError:
+        pass
+    else:
+        raise AssertionError("unknown rollup entity must fail closed")

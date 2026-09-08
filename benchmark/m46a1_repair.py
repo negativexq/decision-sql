@@ -5,6 +5,8 @@ structured grain layer server-owned and uses it as an authoring/audit aid;
 the resulting metadata is never added to the model-facing context here.
 """
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import hashlib
@@ -132,8 +134,17 @@ def adjudication() -> dict[str, Any]:
                 "question": "For each account, return the account ID and net collected amount from captured payments after refunds. Include only groups represented by at least one qualifying source record.",
                 "public_semantic_interpretation": "Captured payment amount less the sum of all refunds for each payment, then summed by account.",
                 "source_measures": [
-                    {"measure": "payments.amount", "grain": "payments.payment_id", "additivity": "ADDITIVE"},
-                    {"measure": "refunds.amount", "grain": "refunds.refund_id", "rollup_key": "refunds.payment_id", "additivity": "ADDITIVE"},
+                    {
+                        "measure": "payments.amount",
+                        "grain": "payments.payment_id",
+                        "additivity": "ADDITIVE",
+                    },
+                    {
+                        "measure": "refunds.amount",
+                        "grain": "refunds.refund_id",
+                        "rollup_key": "refunds.payment_id",
+                        "additivity": "ADDITIVE",
+                    },
                 ],
                 "relationship": "refunds.payment_id -> payments.payment_id",
                 "cardinality": "many_to_one",
@@ -162,12 +173,24 @@ def adjudication() -> dict[str, Any]:
                 "question": "For each plan, return the plan ID and the refund rate, defined as refunded captured dollars divided by captured dollars. Include only groups represented by at least one qualifying source record.",
                 "public_semantic_interpretation": "Sum refund dollars divided by sum captured payment dollars, with each captured payment counted once in the denominator.",
                 "source_measures": [
-                    {"measure": "payments.amount", "grain": "payments.payment_id", "additivity": "ADDITIVE"},
-                    {"measure": "refunds.amount", "grain": "refunds.refund_id", "rollup_key": "refunds.payment_id", "additivity": "ADDITIVE"},
+                    {
+                        "measure": "payments.amount",
+                        "grain": "payments.payment_id",
+                        "additivity": "ADDITIVE",
+                    },
+                    {
+                        "measure": "refunds.amount",
+                        "grain": "refunds.refund_id",
+                        "rollup_key": "refunds.payment_id",
+                        "additivity": "ADDITIVE",
+                    },
                 ],
                 "relationship": "refunds.payment_id -> payments.payment_id",
                 "cardinality": "many_to_one",
-                "adversarial_data": {"captured_payment_amounts": [100, 100], "refund_amounts": [20, 10, 0]},
+                "adversarial_data": {
+                    "captured_payment_amounts": [100, 100],
+                    "refund_amounts": [20, 10, 0],
+                },
                 "reference_result": "0.15",
                 "independent_expected_result": "0.30",
                 "classification": "REFERENCE_DEFECT",
@@ -180,7 +203,10 @@ def adjudication() -> dict[str, Any]:
                 "case_id": "subscription_10",
                 "reference_id": "B",
                 "classification": "REFERENCE_CORRECT",
-                "adversarial_data": {"captured_payment_amounts": [100, 100], "refund_amounts": [20, 10, 0]},
+                "adversarial_data": {
+                    "captured_payment_amounts": [100, 100],
+                    "refund_amounts": [20, 10, 0],
+                },
                 "reference_result": "0.30",
                 "independent_expected_result": "0.30",
                 "confidence": "HIGH",
@@ -229,7 +255,9 @@ def _seed(database_id: str) -> None:
     seed_database(database_id, connection_kwargs_from_env())
 
 
-def _run(database_id: str, sql: str, patch_sql: list[str] | None = None) -> tuple[list[str], list[tuple[Any, ...]]]:
+def _run(
+    database_id: str, sql: str, patch_sql: list[str] | None = None
+) -> tuple[list[str], list[tuple[Any, ...]]]:
     return execute_query(
         connection_kwargs_from_env(), _schema(database_id), sql, patch_sql=patch_sql
     )
@@ -250,15 +278,12 @@ def _answerable_pairs() -> list[tuple[dict[str, Any], dict[str, Any]]]:
 
 
 def _reference_replay() -> tuple[dict[str, Any], dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
     expected: dict[str, dict[str, Any]] = {}
     failures: list[dict[str, Any]] = []
     comparisons = 0
     for case, truth in _answerable_pairs():
         _seed(case["database_id"])
-        contract = ResultContract.from_dict(
-            truth["semantic_target"]["result_comparison_contract"]
-        )
+        contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
         expected[case["case_id"]] = {}
         for fixture in _fixtures(truth):
             fixture_id = fixture["fixture_id"]
@@ -305,9 +330,7 @@ def _mutation_replay(expected: dict[str, dict[str, Any]]) -> dict[str, Any]:
     by_family: dict[str, int] = {}
     for case, truth in _answerable_pairs():
         _seed(case["database_id"])
-        contract = ResultContract.from_dict(
-            truth["semantic_target"]["result_comparison_contract"]
-        )
+        contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
         for mutant in truth.get("semantic_mutants", []):
             status = "VALID"
             killed = False
@@ -380,7 +403,9 @@ def _reference_grain_audit() -> dict[str, Any]:
                     else "REVIEW_REQUIRED",
                     "fixture_exercises_relevant_multiplicity": truth["case_id"]
                     not in {"subscription_04", "subscription_10"}
-                    or any("adversarial_contract" in item for item in truth["counterfactual_fixtures"]),
+                    or any(
+                        "adversarial_contract" in item for item in truth["counterfactual_fixtures"]
+                    ),
                 }
             )
     return {
@@ -411,7 +436,9 @@ def _fanout_candidates() -> list[dict[str, Any]]:
     for case, truth in pairs:
         catalog = catalogs[truth["database_id"]]
         for reference in ("a", "b"):
-            tree = sqlglot.parse_one(truth[f"reference_implementation_{reference}"]["sql"], read="postgres")
+            tree = sqlglot.parse_one(
+                truth[f"reference_implementation_{reference}"]["sql"], read="postgres"
+            )
             tables = {table.name.lower() for table in tree.find_all(sqlglot.exp.Table)}
             aliases = {
                 table.alias_or_name.lower(): table.name.lower()
@@ -428,7 +455,10 @@ def _fanout_candidates() -> list[dict[str, Any]]:
                 cardinality = relationship.cardinality.upper().replace("-", "_")
                 if cardinality != "MANY_TO_ONE":
                     continue
-                if child_entity.physical_table.lower() not in tables or parent_entity.physical_table.lower() not in tables:
+                if (
+                    child_entity.physical_table.lower() not in tables
+                    or parent_entity.physical_table.lower() not in tables
+                ):
                     continue
                 parent_measures = [
                     measure
@@ -471,7 +501,9 @@ def _multiplicity_evidence(candidate: dict[str, Any], truth: dict[str, Any]) -> 
     catalogs, _inventory = _build_catalogs([truth])
     catalog = catalogs[truth["database_id"]]
     relationship = next(
-        edge for edge in catalog.relationships if edge.relationship_id == candidate["relationship_id"]
+        edge
+        for edge in catalog.relationships
+        if edge.relationship_id == candidate["relationship_id"]
     )
     child_table = catalog.entity(relationship.from_entity_id).physical_table
     child_column = relationship.from_attribute_ids[0].split(":")[-1]
@@ -539,7 +571,12 @@ def run_repaired_audit() -> dict[str, Any]:
             "unresolved_review": 0,
         },
     )
-    return {"reference_replay": replay, "mutations": mutations, "grain": grain, "coverage": coverage}
+    return {
+        "reference_replay": replay,
+        "mutations": mutations,
+        "grain": grain,
+        "coverage": coverage,
+    }
 
 
 def verify_historical_preservation() -> dict[str, Any]:
@@ -662,7 +699,12 @@ def finalize_artifacts() -> dict[str, Any]:
             "content_hash": benchmark_content_hash(),
             "databases": 6,
             "cases": 90,
-            "distribution": {"ANSWERABLE": 60, "AUTHORITY_BLOCKED": 15, "AMBIGUOUS": 9, "POLICY_BLOCKED": 6},
+            "distribution": {
+                "ANSWERABLE": 60,
+                "AUTHORITY_BLOCKED": 15,
+                "AMBIGUOUS": 9,
+                "POLICY_BLOCKED": 6,
+            },
         },
         "reference_adjudication": {
             "subscription_04_reference_a": "REFERENCE_DEFECT",
@@ -707,7 +749,7 @@ def finalize_artifacts() -> dict[str, Any]:
             "model_calls": 0,
             "database_count": 6,
             "case_count": 90,
-            "task_distribution": report["benchmark"]["distribution"],
+            "task_distribution": cast(dict[str, Any], report["benchmark"])["distribution"],
             "reference_counts": {"analyzed": 120, "parseable": 120, "review_candidates": 0},
             "fixture_comparisons": first["reference_replay"]["fixture_comparisons"],
             "mutants": {

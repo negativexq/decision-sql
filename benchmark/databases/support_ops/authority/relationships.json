@@ -1,0 +1,123 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Contacts belong to accounts.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:contacts:account_id",
+    "left_entity": "entity:support_ops:contacts",
+    "relationship_id": "relationship:support_ops:contact_account",
+    "right_attribute": "attribute:support_ops:accounts:account_id",
+    "right_entity": "entity:support_ops:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Subscriptions belong to accounts.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:subscriptions:account_id",
+    "left_entity": "entity:support_ops:subscriptions",
+    "relationship_id": "relationship:support_ops:subscription_account",
+    "right_attribute": "attribute:support_ops:accounts:account_id",
+    "right_entity": "entity:support_ops:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Subscriptions identify plans.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:subscriptions:plan_id",
+    "left_entity": "entity:support_ops:subscriptions",
+    "relationship_id": "relationship:support_ops:subscription_plan",
+    "right_attribute": "attribute:support_ops:service_plans:plan_id",
+    "right_entity": "entity:support_ops:service_plans"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Tickets belong to accounts.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:support_tickets:account_id",
+    "left_entity": "entity:support_ops:support_tickets",
+    "relationship_id": "relationship:support_ops:ticket_account",
+    "right_attribute": "attribute:support_ops:accounts:account_id",
+    "right_entity": "entity:support_ops:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Tickets may be assigned to agents.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:support_tickets:agent_id",
+    "left_entity": "entity:support_ops:support_tickets",
+    "relationship_id": "relationship:support_ops:ticket_agent",
+    "right_attribute": "attribute:support_ops:agents:agent_id",
+    "right_entity": "entity:support_ops:agents"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Events belong to tickets.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:ticket_events:ticket_id",
+    "left_entity": "entity:support_ops:ticket_events",
+    "relationship_id": "relationship:support_ops:event_ticket",
+    "right_attribute": "attribute:support_ops:support_tickets:ticket_id",
+    "right_entity": "entity:support_ops:support_tickets"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Usage belongs to accounts.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:usage_daily:account_id",
+    "left_entity": "entity:support_ops:usage_daily",
+    "relationship_id": "relationship:support_ops:usage_account",
+    "right_attribute": "attribute:support_ops:accounts:account_id",
+    "right_entity": "entity:support_ops:accounts"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Surveys describe tickets.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:satisfaction_surveys:ticket_id",
+    "left_entity": "entity:support_ops:satisfaction_surveys",
+    "relationship_id": "relationship:support_ops:survey_ticket",
+    "right_attribute": "attribute:support_ops:support_tickets:ticket_id",
+    "right_entity": "entity:support_ops:support_tickets"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Email resemblance is not an authorized relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:support_tickets:requester_email",
+    "left_entity": "entity:support_ops:support_tickets",
+    "relationship_id": "relationship:support_ops:tempting_requester_email",
+    "right_attribute": "attribute:support_ops:contacts:email",
+    "right_entity": "entity:support_ops:contacts"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Free-text code resemblance is not an authorized relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:support_tickets:requester_email",
+    "left_entity": "entity:support_ops:support_tickets",
+    "relationship_id": "relationship:support_ops:tempting_incident_code",
+    "right_attribute": "attribute:support_ops:incidents:incident_code",
+    "right_entity": "entity:support_ops:incidents"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Incidents belong to accounts.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:support_ops:incidents:account_id",
+    "left_entity": "entity:support_ops:incidents",
+    "relationship_id": "relationship:support_ops:incident_account",
+    "right_attribute": "attribute:support_ops:accounts:account_id",
+    "right_entity": "entity:support_ops:accounts"
+  }
+]

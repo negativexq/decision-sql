@@ -1,0 +1,27 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900801, 'Fixture Empty', 'North', DATE '2026-06-20')",
+        "INSERT INTO support_tickets VALUES (900801, 900801, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO accounts VALUES (900804, 'Fixture Truly Empty', 'South', DATE '2026-06-20')"
+      ],
+      "purpose": "Adds an account with no tickets and one normal ticket."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900802, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'urgent', 'open', NULL, '{\"channel\": \"chat\"}')",
+        "INSERT INTO support_tickets VALUES (900803, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"chat\"}')",
+        "INSERT INTO accounts VALUES (900805, 'Fixture Truly Empty 2', 'South', DATE '2026-06-20')"
+      ],
+      "purpose": "Adds an urgent and normal ticket for one account, distinguishing FILTER from WHERE."
+    }
+  ]
+}

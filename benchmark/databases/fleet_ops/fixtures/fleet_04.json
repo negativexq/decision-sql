@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_04",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO vehicles VALUES (900401, 'Fixture Unmaintained', 'service', 1, 'DEV-900401')"
+      ],
+      "purpose": "Adds a vehicle with no maintenance in the window."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO maintenance_events VALUES (900402, 1, TIMESTAMPTZ '2026-05-31 12:00:00+00', 'service', 100)",
+        "INSERT INTO maintenance_events VALUES (900403, 1, TIMESTAMPTZ '2026-06-30 12:00:00+00', 'service', 100)"
+      ],
+      "purpose": "Adds boundary maintenance rows at the lower and upper bounds."
+    }
+  ]
+}

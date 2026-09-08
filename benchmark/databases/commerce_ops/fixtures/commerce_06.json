@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900050, 'Fixture Remote', 'Remote', DATE '2026-06-20', TRUE, 'LGC-900050')"
+      ],
+      "purpose": "Adds a Remote customer with no orders, distinguishing all-anchor population from matching-only."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900051, 'Fixture Pending', 'Newland', DATE '2026-06-20', TRUE, 'LGC-900051')",
+        "INSERT INTO orders VALUES (900051, 900051, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900051')"
+      ],
+      "purpose": "Adds a pending-only customer in a new region; pending rows must not count."
+    }
+  ]
+}

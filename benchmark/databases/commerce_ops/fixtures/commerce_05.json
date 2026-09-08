@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900040, 2, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900040')",
+        "INSERT INTO order_items VALUES (900040, 900040, 4, 1, 10.00)",
+        "INSERT INTO order_items VALUES (900041, 900040, 4, 1, 20.00)"
+      ],
+      "purpose": "Adds two home lines to one order, distinguishing distinct orders from line count."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900042, 2, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900042')",
+        "INSERT INTO order_items VALUES (900042, 900042, 4, 1, 10.00)"
+      ],
+      "purpose": "Adds a pending home order that must not enter the population."
+    }
+  ]
+}

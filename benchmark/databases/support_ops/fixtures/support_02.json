@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900802, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900802, 900802, TIMESTAMPTZ '2026-06-21 00:00:00+00', 'agent_response', '{}')",
+        "INSERT INTO support_tickets VALUES (900803, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900803, 900803, TIMESTAMPTZ '2026-06-21 00:00:01+00', 'agent_response', '{}')"
+      ],
+      "purpose": "Adds a ticket with a response exactly at the SLA and one just after it."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900804, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"phone\"}')"
+      ],
+      "purpose": "Adds an unanswered ticket; NULL first response must not be a breach."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO vehicles VALUES (900710, 'Fixture Old', 'service', 1, 'DEV-900710')",
+        "INSERT INTO maintenance_events VALUES (900710, 900710, TIMESTAMPTZ '2025-01-01 00:00:00+00', 'service', 100)",
+        "INSERT INTO vehicles VALUES (900711, 'Fixture Recent', 'service', 1, 'DEV-900711')",
+        "INSERT INTO maintenance_events VALUES (900711, 900711, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'service', 100)"
+      ],
+      "purpose": "Adds a vehicle with an old maintenance row and another with a maintenance row in the last 30 days."
+    }
+  ]
+}

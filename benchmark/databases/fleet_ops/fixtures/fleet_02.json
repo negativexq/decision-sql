@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO fuel_events VALUES (900201, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1.00, 100.00)"
+      ],
+      "purpose": "Adds a high-price purchase to distinguish average row costs from average component values."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO fuel_events VALUES (900202, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 0.00, 100.00)"
+      ],
+      "purpose": "Adds a zero-liter purchase; multiplication remains zero and is part of the population."
+    }
+  ]
+}

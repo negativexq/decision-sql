@@ -1,0 +1,135 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "support_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900801, 'Fixture Empty', 'North', DATE '2026-06-20')",
+        "INSERT INTO support_tickets VALUES (900801, 900801, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO accounts VALUES (900804, 'Fixture Truly Empty', 'South', DATE '2026-06-20')"
+      ],
+      "purpose": "Adds an account with no tickets and one normal ticket."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900802, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'urgent', 'open', NULL, '{\"channel\": \"chat\"}')",
+        "INSERT INTO support_tickets VALUES (900803, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"chat\"}')",
+        "INSERT INTO accounts VALUES (900805, 'Fixture Truly Empty 2', 'South', DATE '2026-06-20')"
+      ],
+      "purpose": "Adds an urgent and normal ticket for one account, distinguishing FILTER from WHERE."
+    }
+  ],
+  "database_id": "support_ops",
+  "difficulty": "MEDIUM",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "population",
+    "aggregation",
+    "grouping",
+    "filter_scope"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT a.account_id, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id ORDER BY a.account_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_tickets WHERE priority = 'urgent' GROUP BY account_id) SELECT a.account_id, COALESCE(urgent.urgent_tickets, 0)::BIGINT FROM accounts a LEFT JOIN urgent ON urgent.account_id = a.account_id ORDER BY a.account_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "result_sha256": "c3d422ef2f9ad1744b8661ac5ae427d315e3d6493f24611373b1acbc2eac351a",
+      "row_count": 260
+    },
+    "cf01": {
+      "columns": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "result_sha256": "85f3eee125ce9cbc714597dfc5bd14dfed20bd1186f7b6811b5608810ad0d976",
+      "row_count": 262
+    },
+    "cf02": {
+      "columns": [
+        "account_id",
+        "urgent_tickets"
+      ],
+      "result_sha256": "c68abdfe28a11a7d596f3b4bb9a64baf39df22d6536b598ff95ff9afef4cb246",
+      "row_count": 261
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "relationships.relationship:support_ops:ticket_account",
+    "business_rules.rule:support_open"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Filters out accounts with no urgent ticket.",
+      "failure_category": "where_filter_scope",
+      "mutant_id": "m21_where",
+      "sql": "SELECT a.account_id, COUNT(t.ticket_id) AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id WHERE t.priority = 'urgent' GROUP BY a.account_id ORDER BY a.account_id"
+    },
+    {
+      "description": "Counts every ticket.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m21_all_priority",
+      "sql": "SELECT a.account_id, COUNT(t.ticket_id) AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id ORDER BY a.account_id"
+    },
+    {
+      "description": "Uses an inner join.",
+      "failure_category": "inner_left_join",
+      "mutant_id": "m21_inner",
+      "sql": "SELECT a.account_id, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id ORDER BY a.account_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "COUNT(ticket_id) FILTER (WHERE priority = urgent)"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "accounts.account_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "account_id",
+      "urgent_tickets"
+    ],
+    "population": "preserve-anchor",
+    "query_shape_tags": [
+      "relationship",
+      "population",
+      "aggregation",
+      "grouping",
+      "filter_scope"
+    ],
+    "relationships": [
+      "relationship:support_ops:ticket_account"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

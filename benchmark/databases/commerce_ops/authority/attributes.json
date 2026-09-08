@@ -1,0 +1,202 @@
+[
+  {
+    "attribute_id": "attribute:commerce_ops:customers:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Stable customer identifier."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:customers:customer_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": false,
+    "physical_column_or_path": "customer_name",
+    "semantic_description": "Display name."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:customers:region",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": false,
+    "physical_column_or_path": "region",
+    "semantic_description": "Assigned service region."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:customers:signup_date",
+    "data_type": "DATE",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": false,
+    "physical_column_or_path": "signup_date",
+    "semantic_description": "Date the customer joined."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:customers:is_active",
+    "data_type": "BOOLEAN",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": false,
+    "physical_column_or_path": "is_active",
+    "semantic_description": "Whether the account is currently active."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:customers:legacy_external_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:customers",
+    "nullable": true,
+    "physical_column_or_path": "legacy_external_code",
+    "semantic_description": "Legacy code with no authorized cross-entity relationship."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:order_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "order_id",
+    "semantic_description": "Stable order identifier."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:customer_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "customer_id",
+    "semantic_description": "Authorized customer reference."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:store_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "store_id",
+    "semantic_description": "Authorized store reference."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:ordered_at",
+    "data_type": "TIMESTAMP",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "ordered_at",
+    "semantic_description": "UTC order creation time."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Order lifecycle status."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:discount_pct",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": false,
+    "physical_column_or_path": "discount_pct",
+    "semantic_description": "Percentage discount applied to line value."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:orders:external_customer_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:orders",
+    "nullable": true,
+    "physical_column_or_path": "external_customer_code",
+    "semantic_description": "External code; not an authorized customer join key."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:order_items:item_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:order_items",
+    "nullable": false,
+    "physical_column_or_path": "item_id",
+    "semantic_description": "Stable line identifier."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:order_items:order_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:order_items",
+    "nullable": false,
+    "physical_column_or_path": "order_id",
+    "semantic_description": "Authorized order reference."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:order_items:product_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:order_items",
+    "nullable": false,
+    "physical_column_or_path": "product_id",
+    "semantic_description": "Authorized product reference."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:order_items:quantity",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:order_items",
+    "nullable": false,
+    "physical_column_or_path": "quantity",
+    "semantic_description": "Units in the line."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:order_items:unit_price",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:commerce_ops:order_items",
+    "nullable": false,
+    "physical_column_or_path": "unit_price",
+    "semantic_description": "Captured unit price."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:products:product_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:products",
+    "nullable": false,
+    "physical_column_or_path": "product_id",
+    "semantic_description": "Stable product identifier."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:products:category",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:products",
+    "nullable": false,
+    "physical_column_or_path": "category",
+    "semantic_description": "Catalog category."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:products:unit_price",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:commerce_ops:products",
+    "nullable": false,
+    "physical_column_or_path": "unit_price",
+    "semantic_description": "Current catalog unit price."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:shipments:shipment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:shipments",
+    "nullable": false,
+    "physical_column_or_path": "shipment_id",
+    "semantic_description": "Stable shipment identifier."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:shipments:order_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:commerce_ops:shipments",
+    "nullable": false,
+    "physical_column_or_path": "order_id",
+    "semantic_description": "Authorized order reference."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:shipments:shipped_at",
+    "data_type": "TIMESTAMP",
+    "entity_id": "entity:commerce_ops:shipments",
+    "nullable": true,
+    "physical_column_or_path": "shipped_at",
+    "semantic_description": "UTC shipment time."
+  },
+  {
+    "attribute_id": "attribute:commerce_ops:shipments:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:commerce_ops:shipments",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Shipment lifecycle status."
+  }
+]

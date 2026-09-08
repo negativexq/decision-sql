@@ -1,0 +1,143 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "fleet_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900301, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 100.00, 0.00)"
+      ],
+      "purpose": "Adds zero fuel, proving the NULLIF exclusion rule."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900302, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 10.00, 1.00)",
+        "INSERT INTO trips VALUES (900303, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-22 00:00:00+00', 100.00, 100.00)"
+      ],
+      "purpose": "Adds two differing ratios to distinguish average ratio from ratio of averages."
+    }
+  ],
+  "database_id": "fleet_ops",
+  "difficulty": "MEDIUM",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "aggregation",
+    "grouping",
+    "calculation",
+    "null_semantics"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "WITH ratios AS (SELECT route_id, distance_km / NULLIF(fuel_liters, 0) AS ratio FROM trips) SELECT r.route_id, ROUND(AVG(ratios.ratio)::numeric, 2) AS km_per_liter FROM routes r JOIN ratios ON ratios.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "result_sha256": "42a8d80b1e866b6b77e50c5b0524e619aa49ee6dfe09d0afd387ba9c588c0694",
+      "row_count": 40
+    },
+    "cf01": {
+      "columns": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "result_sha256": "42a8d80b1e866b6b77e50c5b0524e619aa49ee6dfe09d0afd387ba9c588c0694",
+      "row_count": 40
+    },
+    "cf02": {
+      "columns": [
+        "route_id",
+        "km_per_liter"
+      ],
+      "result_sha256": "bc3d80d222e82a5c76e3b6f5e47ffa25de65167d487c7ef94b8820a89337911d",
+      "row_count": 40
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "metrics.metric:fleet_route_efficiency",
+    "business_rules.rule:fleet_trip"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Sums ratios.",
+      "failure_category": "avg_vs_sum",
+      "mutant_id": "m13_sum",
+      "sql": "SELECT r.route_id, ROUND(SUM(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+    },
+    {
+      "description": "Divides total distance by total fuel.",
+      "failure_category": "wrong_aggregation_grain",
+      "mutant_id": "m13_ratio_of_avgs",
+      "sql": "SELECT r.route_id, ROUND((SUM(t.distance_km) / NULLIF(SUM(t.fuel_liters), 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+    },
+    {
+      "description": "Uses zero as a default for zero-fuel ratio.",
+      "failure_category": "null_default_policy",
+      "mutant_id": "m13_include_zero",
+      "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / COALESCE(NULLIF(t.fuel_liters, 0), 1))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "AVG(distance/fuel)"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [
+      {
+        "aggregation_stage": "row_ratio_then_average",
+        "calculation_id": "metric:fleet_route_efficiency",
+        "grain": "trip",
+        "operands": [
+          "distance_km",
+          "fuel_liters"
+        ],
+        "rounding_stage": "display_only"
+      }
+    ],
+    "filters": [],
+    "grouping": [
+      "routes.route_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "route_id",
+      "km_per_liter"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "relationship",
+      "aggregation",
+      "grouping",
+      "calculation",
+      "null_semantics"
+    ],
+    "relationships": [
+      "relationship:fleet_ops:trip_route"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

@@ -75,6 +75,10 @@ Governed applicability
 - Shared direct/blueprint generation guidance and a tolerant, warning-producing
   blueprint parser keep descriptive response formatting from discarding valid
   SQL; see [`docs/query-quality-hardening.md`](docs/query-quality-hardening.md).
+- Original governed benchmark construction is documented in
+  [`benchmark/README.md`](benchmark/README.md); the v0.1 pilot has three
+  synthetic database packs, 30 audited cases, transactional counterfactuals,
+  and semantic mutation gates. M34 performs no provider calls.
 - Reproducible internal generation experiments and a bounded typed Window IR
   with a deterministic PostgreSQL compiler.
 - Evaluation-only versioned result evaluation: V1 preserves historical and

@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900001, 'Fixture Inactive North', 'North', DATE '2026-06-20', FALSE, 'LGC-900001')",
+        "INSERT INTO customers VALUES (900002, 'Fixture Active South', 'South', DATE '2026-06-20', TRUE, 'LGC-900002')"
+      ],
+      "purpose": "Adds an inactive North customer and an active non-North customer."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900003, 'Fixture Active North', 'North', DATE '2026-06-21', TRUE, 'LGC-900003')"
+      ],
+      "purpose": "Adds a low identifier active North customer to make ordering observable."
+    }
+  ]
+}

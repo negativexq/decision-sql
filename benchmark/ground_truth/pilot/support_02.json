@@ -1,0 +1,138 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "support_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900802, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900802, 900802, TIMESTAMPTZ '2026-06-21 00:00:00+00', 'agent_response', '{}')",
+        "INSERT INTO support_tickets VALUES (900803, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\"}')",
+        "INSERT INTO ticket_events VALUES (900803, 900803, TIMESTAMPTZ '2026-06-21 00:00:01+00', 'agent_response', '{}')"
+      ],
+      "purpose": "Adds a ticket with a response exactly at the SLA and one just after it."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900804, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"phone\"}')"
+      ],
+      "purpose": "Adds an unanswered ticket; NULL first response must not be a breach."
+    }
+  ],
+  "database_id": "support_ops",
+  "difficulty": "HARD",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "multi_hop",
+    "temporal",
+    "aggregation",
+    "nested",
+    "correlated"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "ticket_id"
+      ],
+      "result_sha256": "18f58d17cf5efe3a039a338277f753ec40fd3a148f9acd89d6624d73e47f2047",
+      "row_count": 1
+    },
+    "cf01": {
+      "columns": [
+        "ticket_id"
+      ],
+      "result_sha256": "001af9ce65e0ffd33f93dde0eff74206f5607b23e886fb67a0d78c201ab0a31e",
+      "row_count": 2
+    },
+    "cf02": {
+      "columns": [
+        "ticket_id"
+      ],
+      "result_sha256": "18f58d17cf5efe3a039a338277f753ec40fd3a148f9acd89d6624d73e47f2047",
+      "row_count": 1
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "relationships.relationship:support_ops:ticket_account",
+    "relationships.relationship:support_ops:subscription_account",
+    "relationships.relationship:support_ops:subscription_plan",
+    "relationships.relationship:support_ops:event_ticket",
+    "metrics.metric:support_escalation_rate",
+    "business_rules.rule:support_sla"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Treats the exact SLA boundary as a breach.",
+      "failure_category": "wrong_comparison_operator",
+      "mutant_id": "m22_at_or_before",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at >= t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+    },
+    {
+      "description": "Uses the latest response instead of the first response.",
+      "failure_category": "wrong_aggregation_grain",
+      "mutant_id": "m22_any_response",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN subscriptions s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MAX(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id"
+    },
+    {
+      "description": "Returns every ticket with a response.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m22_no_sla",
+      "sql": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id ORDER BY t.ticket_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "ticket_id"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "relationship",
+      "multi_hop",
+      "temporal",
+      "aggregation",
+      "nested",
+      "correlated"
+    ],
+    "relationships": [
+      "relationship:support_ops:ticket_account",
+      "relationship:support_ops:subscription_account",
+      "relationship:support_ops:subscription_plan",
+      "relationship:support_ops:event_ticket"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 1,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {
+      "basis": "opened_at plus plan SLA",
+      "lower_inclusive": false
+    }
+  },
+  "status": "MACHINE_VALIDATED"
+}

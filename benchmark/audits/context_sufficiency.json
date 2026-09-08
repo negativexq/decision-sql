@@ -1,0 +1,337 @@
+{
+  "answerable_pass": 20,
+  "answerable_total": 20,
+  "cases": [
+    {
+      "case_id": "commerce_01",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "entities.customers",
+        "attributes.customers.region",
+        "attributes.customers.is_active"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_02",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "temporal_rules.time:commerce_now",
+        "attributes.orders.ordered_at",
+        "business_rules.rule:completed_orders"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_03",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "business_rules.rule:completed_orders"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_04",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:item_order",
+        "relationships.relationship:commerce_ops:item_product",
+        "metrics.metric:commerce_net_order_value",
+        "business_rules.rule:net_value"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_05",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "relationships.relationship:commerce_ops:item_order",
+        "relationships.relationship:commerce_ops:item_product"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_06",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "business_rules.rule:completed_orders",
+        "metrics.metric:commerce_net_order_value"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_07",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:order_customer",
+        "relationships.relationship:commerce_ops:item_order",
+        "metrics.metric:commerce_net_order_value",
+        "business_rules.rule:net_value"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_08",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:commerce_ops:tempting_external_code"
+      ],
+      "task_type": "AUTHORITY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_09",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "temporal_rules.time:commerce_now"
+      ],
+      "task_type": "AMBIGUOUS",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "commerce_10",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "policy.policy:commerce_ops:readonly"
+      ],
+      "task_type": "POLICY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_01",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "attributes.telemetry_events.payload.engine.temperature_c"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_02",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:fuel_vehicle",
+        "relationships.relationship:fleet_ops:vehicle_depot"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_03",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "metrics.metric:fleet_route_efficiency",
+        "business_rules.rule:fleet_trip"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_04",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:maintenance_vehicle",
+        "temporal_rules.time:fleet_now"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_05",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:trip_vehicle",
+        "relationships.relationship:fleet_ops:trip_driver"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_06",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:telemetry_vehicle",
+        "attributes.telemetry_events.payload.engine.temperature_c",
+        "temporal_rules.time:fleet_now"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_07",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "metrics.metric:fleet_route_efficiency"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_08",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:weather_route"
+      ],
+      "task_type": "AUTHORITY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_09",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:fleet_ops:legacy_device"
+      ],
+      "task_type": "AUTHORITY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "fleet_10",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "temporal_rules.time:fleet_now"
+      ],
+      "task_type": "AMBIGUOUS",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_01",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:ticket_account",
+        "business_rules.rule:support_open"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_02",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:ticket_account",
+        "relationships.relationship:support_ops:subscription_account",
+        "relationships.relationship:support_ops:subscription_plan",
+        "relationships.relationship:support_ops:event_ticket",
+        "metrics.metric:support_escalation_rate",
+        "business_rules.rule:support_sla"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_03",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "metrics.metric:support_escalation_rate"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_04",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "attributes.support_tickets.payload.channel"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_05",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:ticket_account"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_06",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:subscription_account",
+        "business_rules.rule:support_open",
+        "temporal_rules.time:support_now",
+        "relationships.relationship:support_ops:incident_account"
+      ],
+      "task_type": "ANSWERABLE",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_07",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:tempting_requester_email"
+      ],
+      "task_type": "AUTHORITY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_08",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:tempting_incident_code"
+      ],
+      "task_type": "AUTHORITY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_09",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "relationships.relationship:support_ops:subscription_account",
+        "temporal_rules.time:support_now"
+      ],
+      "task_type": "AMBIGUOUS",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    },
+    {
+      "case_id": "support_10",
+      "missing": [],
+      "passes": true,
+      "required_facts": [
+        "policy.policy:support_ops:readonly"
+      ],
+      "task_type": "POLICY_BLOCKED",
+      "visible_context_profile": "GOVERNED_CONTEXT_V1"
+    }
+  ]
+}

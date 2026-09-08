@@ -1,0 +1,12 @@
+CREATE SCHEMA IF NOT EXISTS m34_fleet_ops;
+SET search_path TO m34_fleet_ops;
+CREATE TABLE vehicles (vehicle_id INTEGER PRIMARY KEY, vehicle_name TEXT NOT NULL, vehicle_class TEXT NOT NULL, depot_id INTEGER NOT NULL, legacy_device_code TEXT);
+CREATE TABLE drivers (driver_id INTEGER PRIMARY KEY, driver_name TEXT NOT NULL, license_level TEXT NOT NULL);
+CREATE TABLE depots (depot_id INTEGER PRIMARY KEY, depot_name TEXT NOT NULL, region TEXT NOT NULL);
+CREATE TABLE routes (route_id INTEGER PRIMARY KEY, route_name TEXT NOT NULL, route_code TEXT NOT NULL);
+CREATE TABLE trips (trip_id INTEGER PRIMARY KEY, vehicle_id INTEGER NOT NULL REFERENCES vehicles(vehicle_id), driver_id INTEGER NOT NULL REFERENCES drivers(driver_id), route_id INTEGER NOT NULL REFERENCES routes(route_id), depot_id INTEGER NOT NULL REFERENCES depots(depot_id), started_at TIMESTAMPTZ NOT NULL, distance_km NUMERIC(10,2) NOT NULL, fuel_liters NUMERIC(10,2) NOT NULL);
+CREATE TABLE telemetry_events (event_id INTEGER PRIMARY KEY, vehicle_id INTEGER NOT NULL REFERENCES vehicles(vehicle_id), event_at TIMESTAMPTZ NOT NULL, device_code TEXT, payload JSONB NOT NULL);
+CREATE TABLE maintenance_events (maintenance_id INTEGER PRIMARY KEY, vehicle_id INTEGER NOT NULL REFERENCES vehicles(vehicle_id), performed_at TIMESTAMPTZ NOT NULL, maintenance_type TEXT NOT NULL, cost NUMERIC(10,2) NOT NULL);
+CREATE TABLE inspections (inspection_id INTEGER PRIMARY KEY, vehicle_id INTEGER NOT NULL REFERENCES vehicles(vehicle_id), inspected_at TIMESTAMPTZ NOT NULL, passed BOOLEAN NOT NULL, notes TEXT);
+CREATE TABLE fuel_events (fuel_event_id INTEGER PRIMARY KEY, vehicle_id INTEGER NOT NULL REFERENCES vehicles(vehicle_id), depot_id INTEGER NOT NULL REFERENCES depots(depot_id), event_at TIMESTAMPTZ NOT NULL, liters NUMERIC(10,2) NOT NULL, price_per_liter NUMERIC(10,2) NOT NULL);
+CREATE TABLE weather_snapshots (weather_id INTEGER PRIMARY KEY, route_code TEXT NOT NULL, observed_at TIMESTAMPTZ NOT NULL, temperature_c NUMERIC(5,2) NOT NULL, conditions TEXT NOT NULL);

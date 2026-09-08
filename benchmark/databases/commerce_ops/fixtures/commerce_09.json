@@ -1,0 +1,18 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_09",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900070, 'Fixture New Signup', 'North', DATE '2026-06-25', TRUE, 'LGC-900070')",
+        "INSERT INTO customers VALUES (900071, 'Fixture Old Signup', 'North', DATE '2024-01-01', TRUE, 'LGC-900071')",
+        "INSERT INTO orders VALUES (900070, 900071, 1, TIMESTAMPTZ '2026-06-25 00:00:00+00', 'completed', 0, 'FIX-900070')"
+      ],
+      "purpose": "Adds a newly signed-up customer with no recent order and an older customer with a recent order."
+    }
+  ]
+}

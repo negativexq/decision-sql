@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evaluator-only semantic target",
+  "type": "object",
+  "required": ["behavior", "population", "outputs", "relationships", "filters", "aggregations", "grouping", "calculations", "temporal_semantics", "ordering", "limit", "query_shape_tags", "null_default_semantics", "result_comparison_contract"],
+  "properties": {
+    "behavior": {"enum": ["ANSWERABLE", "AUTHORITY_BLOCKED", "AMBIGUOUS", "POLICY_BLOCKED"]},
+    "population": {"enum": ["all-anchor", "matching-only", "preserve-anchor", "filtered-population", "conditional-measure-population"]},
+    "outputs": {"type": "array"},
+    "relationships": {"type": "array"},
+    "filters": {"type": "array", "items": {"type": "object", "required": ["field", "operator", "value", "scope"], "properties": {"field": {"type": "string"}, "operator": {"type": "string"}, "value": {}, "scope": {"enum": ["row", "aggregate_filter", "having"]}}}},
+    "aggregations": {"type": "array"},
+    "grouping": {"type": "array"},
+    "calculations": {"type": "array"},
+    "temporal_semantics": {"type": "object"},
+    "ordering": {"type": "object"},
+    "limit": {},
+    "query_shape_tags": {"type": "array"},
+    "null_default_semantics": {"type": "string"},
+    "result_comparison_contract": {"$ref": "result_contract.schema.json"}
+  },
+  "additionalProperties": false
+}

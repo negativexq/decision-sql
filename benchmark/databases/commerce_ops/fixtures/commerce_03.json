@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900020, 'Fixture Empty Region', 'Remote', DATE '2026-06-20', TRUE, 'LGC-900020')"
+      ],
+      "purpose": "Adds a new region with no orders, distinguishing preserve-anchor population from inner join."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900021, 'Fixture Pending Only', 'Island', DATE '2026-06-20', TRUE, 'LGC-900021')",
+        "INSERT INTO orders VALUES (900021, 900021, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900021')",
+        "INSERT INTO customers VALUES (900022, 'Fixture Completed', 'Island', DATE '2026-06-20', TRUE, 'LGC-900022')",
+        "INSERT INTO orders VALUES (900022, 900022, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900022')"
+      ],
+      "purpose": "Adds a pending-only customer and a completed order for the new region."
+    }
+  ]
+}

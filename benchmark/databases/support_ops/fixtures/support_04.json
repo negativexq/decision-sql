@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_04",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900821, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"chat\", \"product_area\": \"api\"}')",
+        "INSERT INTO support_tickets VALUES (900822, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"channel\": \"email\", \"product_area\": \"api\"}')"
+      ],
+      "purpose": "Adds chat and email tickets with the same product area."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900823, 1, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{\"product_area\": \"api\"}')"
+      ],
+      "purpose": "Adds a missing channel key, which must not be treated as chat."
+    }
+  ]
+}

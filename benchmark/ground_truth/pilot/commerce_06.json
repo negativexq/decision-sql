@@ -1,0 +1,135 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "commerce_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900050, 'Fixture Remote', 'Remote', DATE '2026-06-20', TRUE, 'LGC-900050')"
+      ],
+      "purpose": "Adds a Remote customer with no orders, distinguishing all-anchor population from matching-only."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900051, 'Fixture Pending', 'Newland', DATE '2026-06-20', TRUE, 'LGC-900051')",
+        "INSERT INTO orders VALUES (900051, 900051, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900051')"
+      ],
+      "purpose": "Adds a pending-only customer in a new region; pending rows must not count."
+    }
+  ],
+  "database_id": "commerce_ops",
+  "difficulty": "HARD",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "population",
+    "aggregation",
+    "grouping",
+    "null_semantics",
+    "nested"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "SELECT c.region, ROUND(AVG((SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.customer_id AND o.status = 'completed'))::numeric, 2) AS avg_completed_orders FROM customers c GROUP BY c.region ORDER BY c.region"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "result_sha256": "7765afee0f93989ed103a3f6e107eee82d73e4c5a236b28e426f8f59adc3ee9c",
+      "row_count": 5
+    },
+    "cf01": {
+      "columns": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "result_sha256": "1d5024b40e625051e2a6e512e156c89d2df8cbc82e57aa32fdedfca5b2474151",
+      "row_count": 6
+    },
+    "cf02": {
+      "columns": [
+        "region",
+        "avg_completed_orders"
+      ],
+      "result_sha256": "91289baf398c6075424791c4b25f41fe6278d67dd007ea82d1c8166164693153",
+      "row_count": 6
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "relationships.relationship:commerce_ops:order_customer",
+    "business_rules.rule:completed_orders",
+    "metrics.metric:commerce_net_order_value"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Drops zero-order customers.",
+      "failure_category": "inner_left_join",
+      "mutant_id": "m06_inner",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id AND o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+    },
+    {
+      "description": "Moves status filtering to WHERE.",
+      "failure_category": "where_filter_scope",
+      "mutant_id": "m06_where_scope",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'completed' GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+    },
+    {
+      "description": "Counts every order status.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m06_all_orders",
+      "sql": "WITH per_customer AS (SELECT c.region, c.customer_id, COUNT(o.order_id) AS completed_orders FROM customers c LEFT JOIN orders o ON o.customer_id = c.customer_id GROUP BY c.region, c.customer_id) SELECT region, ROUND(AVG(completed_orders)::numeric, 2) AS avg_completed_orders FROM per_customer GROUP BY region ORDER BY region"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "AVG(completed order count)"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "customers.region"
+    ],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "region",
+      "avg_completed_orders"
+    ],
+    "population": "preserve-anchor",
+    "query_shape_tags": [
+      "relationship",
+      "population",
+      "aggregation",
+      "grouping",
+      "null_semantics",
+      "nested"
+    ],
+    "relationships": [
+      "relationship:commerce_ops:order_customer"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

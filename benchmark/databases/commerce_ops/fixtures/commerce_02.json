@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900010, 1, 1, TIMESTAMPTZ '2026-06-01 00:00:00+00', 'completed', 0, 'FIX-900010')",
+        "INSERT INTO orders VALUES (900011, 1, 1, TIMESTAMPTZ '2026-07-01 00:00:00+00', 'completed', 0, 'FIX-900011')",
+        "INSERT INTO orders VALUES (900012, 1, 1, TIMESTAMPTZ '2026-06-15 00:00:00+00', 'pending', 0, 'FIX-900012')"
+      ],
+      "purpose": "Adds completed orders at both temporal boundaries and one pending order."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900013, 1, 1, TIMESTAMPTZ '2026-05-31 23:59:59+00', 'completed', 0, 'FIX-900013')",
+        "INSERT INTO orders VALUES (900014, 1, 1, TIMESTAMPTZ '2026-06-30 23:59:59+00', 'completed', 0, 'FIX-900014')"
+      ],
+      "purpose": "Adds a completed order just before June and a June order."
+    }
+  ]
+}

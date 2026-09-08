@@ -1,0 +1,112 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Orders belong to their customer.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:orders:customer_id",
+    "left_entity": "entity:commerce_ops:orders",
+    "relationship_id": "relationship:commerce_ops:order_customer",
+    "right_attribute": "attribute:commerce_ops:customers:customer_id",
+    "right_entity": "entity:commerce_ops:customers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Orders are fulfilled by a store.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:orders:store_id",
+    "left_entity": "entity:commerce_ops:orders",
+    "relationship_id": "relationship:commerce_ops:order_store",
+    "right_attribute": "attribute:commerce_ops:stores:store_id",
+    "right_entity": "entity:commerce_ops:stores"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Lines belong to orders.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:order_items:order_id",
+    "left_entity": "entity:commerce_ops:order_items",
+    "relationship_id": "relationship:commerce_ops:item_order",
+    "right_attribute": "attribute:commerce_ops:orders:order_id",
+    "right_entity": "entity:commerce_ops:orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Lines identify products.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:order_items:product_id",
+    "left_entity": "entity:commerce_ops:order_items",
+    "relationship_id": "relationship:commerce_ops:item_product",
+    "right_attribute": "attribute:commerce_ops:products:product_id",
+    "right_entity": "entity:commerce_ops:products"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Shipments belong to orders.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:shipments:order_id",
+    "left_entity": "entity:commerce_ops:shipments",
+    "relationship_id": "relationship:commerce_ops:shipment_order",
+    "right_attribute": "attribute:commerce_ops:orders:order_id",
+    "right_entity": "entity:commerce_ops:orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Returns belong to orders.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:returns:order_id",
+    "left_entity": "entity:commerce_ops:returns",
+    "relationship_id": "relationship:commerce_ops:return_order",
+    "right_attribute": "attribute:commerce_ops:orders:order_id",
+    "right_entity": "entity:commerce_ops:orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Inventory observes products.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:inventory_snapshots:product_id",
+    "left_entity": "entity:commerce_ops:inventory_snapshots",
+    "relationship_id": "relationship:commerce_ops:inventory_product",
+    "right_attribute": "attribute:commerce_ops:products:product_id",
+    "right_entity": "entity:commerce_ops:products"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Inventory is observed at warehouses.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:inventory_snapshots:warehouse_id",
+    "left_entity": "entity:commerce_ops:inventory_snapshots",
+    "relationship_id": "relationship:commerce_ops:inventory_warehouse",
+    "right_attribute": "attribute:commerce_ops:warehouses:warehouse_id",
+    "right_entity": "entity:commerce_ops:warehouses"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Payments describe orders.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:payment_events:order_id",
+    "left_entity": "entity:commerce_ops:payment_events",
+    "relationship_id": "relationship:commerce_ops:payment_order",
+    "right_attribute": "attribute:commerce_ops:orders:order_id",
+    "right_entity": "entity:commerce_ops:orders"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Physical values may align, but this legacy linkage is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:commerce_ops:orders:external_customer_code",
+    "left_entity": "entity:commerce_ops:orders",
+    "relationship_id": "relationship:commerce_ops:tempting_external_code",
+    "right_attribute": "attribute:commerce_ops:customers:legacy_external_code",
+    "right_entity": "entity:commerce_ops:customers"
+  }
+]

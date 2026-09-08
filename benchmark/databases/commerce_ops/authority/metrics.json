@@ -1,0 +1,19 @@
+[
+  {
+    "default_policy": "no default",
+    "description": "Completed-order captured line value after the order discount.",
+    "formula": "SUM(order_items.quantity * order_items.unit_price * (1 - orders.discount_pct / 100))",
+    "grain": "order_item",
+    "metric_id": "metric:commerce_net_order_value",
+    "name": "Net order value",
+    "null_policy": "null operands are excluded by ordinary arithmetic",
+    "operands": [
+      "quantity",
+      "unit_price",
+      "discount_pct"
+    ],
+    "precision": 2,
+    "rounding_stage": "before_ordering_and_display",
+    "temporal_basis": "ordered_at"
+  }
+]

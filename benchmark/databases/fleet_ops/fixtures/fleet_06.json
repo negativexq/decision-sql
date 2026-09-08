@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO telemetry_events VALUES (900601, 1, TIMESTAMPTZ '2026-06-30 11:59:00+00', 'DEV-0001', '{\"engine\": {\"temperature_c\": 111}}')",
+        "INSERT INTO telemetry_events VALUES (900602, 2, TIMESTAMPTZ '2025-01-01 00:00:00+00', 'DEV-0002', '{\"engine\": {\"temperature_c\": 10}}')"
+      ],
+      "purpose": "Adds a later reading for vehicle 1 and an older reading for vehicle 2."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO telemetry_events VALUES (900603, 3, TIMESTAMPTZ '2026-06-30 11:00:00+00', 'DEV-0003', '{\"engine\": {\"temperature_c\": 101}}')",
+        "INSERT INTO telemetry_events VALUES (900604, 3, TIMESTAMPTZ '2026-06-30 11:00:00+00', 'DEV-0003', '{\"engine\": {\"temperature_c\": 102}}')"
+      ],
+      "purpose": "Adds equal-timestamp events, proving the event ID tie-break is part of the result."
+    }
+  ]
+}

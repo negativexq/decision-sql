@@ -1,0 +1,18 @@
+[
+  {
+    "default_policy": "no default",
+    "description": "Urgent-ticket share of an account's tickets.",
+    "formula": "COUNT(*) FILTER (WHERE priority = 'urgent') / NULLIF(COUNT(*), 0)",
+    "grain": "support_ticket",
+    "metric_id": "metric:support_escalation_rate",
+    "name": "Escalation rate",
+    "null_policy": "zero-ticket groups have NULL rate",
+    "operands": [
+      "priority",
+      "ticket_id"
+    ],
+    "precision": 4,
+    "rounding_stage": "display_only",
+    "temporal_basis": "opened_at"
+  }
+]

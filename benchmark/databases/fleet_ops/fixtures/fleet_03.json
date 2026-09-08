@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900301, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 100.00, 0.00)"
+      ],
+      "purpose": "Adds zero fuel, proving the NULLIF exclusion rule."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900302, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 10.00, 1.00)",
+        "INSERT INTO trips VALUES (900303, 1, 1, 1, 1, TIMESTAMPTZ '2026-06-22 00:00:00+00', 100.00, 100.00)"
+      ],
+      "purpose": "Adds two differing ratios to distinguish average ratio from ratio of averages."
+    }
+  ]
+}

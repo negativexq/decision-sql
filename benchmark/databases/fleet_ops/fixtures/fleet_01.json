@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO telemetry_events VALUES (900101, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'DEV-0001', '{\"engine\": {\"temperature_c\": 100}, \"battery\": {\"temperature_c\": 140}}')"
+      ],
+      "purpose": "Adds a JSON reading at exactly 100 and a different JSON path above 100."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO telemetry_events VALUES (900102, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 'DEV-0001', '{\"engine\": {\"temperature_c\": 99}}')"
+      ],
+      "purpose": "Adds a below-threshold engine reading."
+    }
+  ]
+}

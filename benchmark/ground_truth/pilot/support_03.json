@@ -1,0 +1,144 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "support_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900811, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'urgent', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900812, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900813, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
+      ],
+      "purpose": "Adds three tickets with one urgent to distinguish row-level ratio from aggregate ratio mistakes."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900814, 'Fixture Normal Only', 'North', DATE '2026-06-20')",
+        "INSERT INTO support_tickets VALUES (900814, 900814, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
+      ],
+      "purpose": "Adds a normal-only account to test group population and NULL behavior is explicit."
+    }
+  ],
+  "database_id": "support_ops",
+  "difficulty": "MEDIUM",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "aggregation",
+    "grouping",
+    "calculation",
+    "precision",
+    "null_semantics"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "WITH counts AS (SELECT account_id, COUNT(*) AS total, COUNT(*) FILTER (WHERE priority = 'urgent') AS urgent FROM support_tickets GROUP BY account_id) SELECT account_id, ROUND((urgent::numeric / NULLIF(total, 0)), 4) AS urgent_share FROM counts ORDER BY account_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "account_id",
+        "urgent_share"
+      ],
+      "result_sha256": "7e5a5ec05596dfdf4d07051d0d842bdf4298b2d1b5d8c531bca2d4eb64c235ca",
+      "row_count": 260
+    },
+    "cf01": {
+      "columns": [
+        "account_id",
+        "urgent_share"
+      ],
+      "result_sha256": "4360766e8238c62516756c434b15ffc9b484e260a15a110dd48db700ec858489",
+      "row_count": 260
+    },
+    "cf02": {
+      "columns": [
+        "account_id",
+        "urgent_share"
+      ],
+      "result_sha256": "448d98f929d332cc9fb10bf3185333c048b1b31bc15fa85d12502b6bda61a2cc",
+      "row_count": 261
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "metrics.metric:support_escalation_rate"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Uses urgent count as the denominator.",
+      "failure_category": "ratio_numerator_denominator",
+      "mutant_id": "m23_sum",
+      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*) FILTER (WHERE priority <> 'urgent'), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+    },
+    {
+      "description": "Returns urgent counts rather than a share.",
+      "failure_category": "wrong_metric_operand",
+      "mutant_id": "m23_all_one",
+      "sql": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric, 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+    },
+    {
+      "description": "Does not apply the declared display precision.",
+      "failure_category": "rounding_stage",
+      "mutant_id": "m23_no_round",
+      "sql": "SELECT account_id, (COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "COUNT FILTER / COUNT"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [
+      {
+        "aggregation_stage": "post_count_ratio",
+        "calculation_id": "metric:support_escalation_rate",
+        "grain": "support_ticket",
+        "operands": [
+          "urgent_count",
+          "ticket_count"
+        ],
+        "rounding_stage": "display_only"
+      }
+    ],
+    "filters": [],
+    "grouping": [
+      "support_tickets.account_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "account_id",
+      "urgent_share"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "relationship",
+      "aggregation",
+      "grouping",
+      "calculation",
+      "precision",
+      "null_semantics"
+    ],
+    "relationships": [],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

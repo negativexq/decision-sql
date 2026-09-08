@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decision-SQL Bench model-visible case",
+  "type": "object",
+  "required": ["case_id", "database_id", "question", "task_type", "context_profile", "provenance"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^[a-z]+_[0-9]{2}$"},
+    "database_id": {"enum": ["commerce_ops", "fleet_ops", "support_ops"]},
+    "question": {"type": "string", "minLength": 1},
+    "task_type": {"enum": ["ANSWERABLE", "AUTHORITY_BLOCKED", "AMBIGUOUS", "POLICY_BLOCKED"]},
+    "context_profile": {"const": "GOVERNED_CONTEXT_V1"},
+    "provenance": {"$ref": "#/definitions/provenance"}
+  },
+  "definitions": {
+    "provenance": {"type": "object", "required": ["authoring_source", "external_benchmark_derived", "machine_authored", "human_reviewed"], "properties": {"authoring_source": {"const": "original"}, "external_benchmark_derived": {"const": false}, "machine_authored": {"const": true}, "human_reviewed": {"const": false}}}
+  },
+  "additionalProperties": false
+}

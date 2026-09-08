@@ -1,0 +1,136 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "commerce_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900001, 'Fixture Inactive North', 'North', DATE '2026-06-20', FALSE, 'LGC-900001')",
+        "INSERT INTO customers VALUES (900002, 'Fixture Active South', 'South', DATE '2026-06-20', TRUE, 'LGC-900002')"
+      ],
+      "purpose": "Adds an inactive North customer and an active non-North customer."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900003, 'Fixture Active North', 'North', DATE '2026-06-21', TRUE, 'LGC-900003')"
+      ],
+      "purpose": "Adds a low identifier active North customer to make ordering observable."
+    }
+  ],
+  "database_id": "commerce_ops",
+  "difficulty": "EASY",
+  "evidence": {},
+  "mechanism_tags": [
+    "schema_linking",
+    "simple_projection",
+    "filter"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT customer_id, customer_name FROM customers WHERE region = 'North' AND is_active = TRUE ORDER BY customer_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "SELECT c.customer_id, c.customer_name FROM (SELECT * FROM customers WHERE region = 'North') AS c WHERE c.is_active ORDER BY c.customer_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "result_sha256": "d56b81adff05c48bcfc79a68cac25f1c84ef5bcb26e244e19f2c05736c74874b",
+      "row_count": 48
+    },
+    "cf01": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "result_sha256": "d56b81adff05c48bcfc79a68cac25f1c84ef5bcb26e244e19f2c05736c74874b",
+      "row_count": 48
+    },
+    "cf02": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "result_sha256": "5320aef01f3174946f1ab6179041704f034ebcb843ac05f0477f2017c5674ffd",
+      "row_count": 49
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "entities.customers",
+    "attributes.customers.region",
+    "attributes.customers.is_active"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Uses South instead of North.",
+      "failure_category": "wrong_literal",
+      "mutant_id": "m01_wrong_region",
+      "sql": "SELECT customer_id, customer_name FROM customers WHERE region = 'South' AND is_active = TRUE ORDER BY customer_id"
+    },
+    {
+      "description": "Drops the active-account predicate.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m01_remove_active",
+      "sql": "SELECT customer_id, customer_name FROM customers WHERE region = 'North' ORDER BY customer_id"
+    },
+    {
+      "description": "Selects inactive accounts.",
+      "failure_category": "wrong_comparison_operator",
+      "mutant_id": "m01_wrong_boolean",
+      "sql": "SELECT customer_id, customer_name FROM customers WHERE region = 'North' AND is_active = FALSE ORDER BY customer_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [
+      {
+        "field": "customers.region",
+        "operator": "=",
+        "scope": "row",
+        "value": "North"
+      },
+      {
+        "field": "customers.is_active",
+        "operator": "=",
+        "scope": "row",
+        "value": true
+      }
+    ],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "customer_id",
+      "customer_name"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "schema_linking",
+      "simple_projection",
+      "filter"
+    ],
+    "relationships": [],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

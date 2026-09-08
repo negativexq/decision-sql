@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900501, 1, 119, 1, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 10, 2)"
+      ],
+      "purpose": "Adds a cargo trip for a driver who otherwise has only non-cargo trips."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900502, 2, 119, 1, 1, TIMESTAMPTZ '2026-06-21 00:00:00+00', 10, 2)"
+      ],
+      "purpose": "Adds a van trip that must not enter cargo counts."
+    }
+  ]
+}

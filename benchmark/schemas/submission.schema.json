@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Benchmark-generic candidate submission",
+  "type": "object",
+  "required": ["case_id", "decision", "sql", "reason_code"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "decision": {"enum": ["ANSWER", "BLOCKED_AUTHORITY", "NEEDS_CLARIFICATION", "BLOCKED_POLICY"]},
+    "sql": {"type": ["string", "null"]},
+    "reason_code": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

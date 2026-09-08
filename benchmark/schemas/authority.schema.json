@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Governed authority package",
+  "type": "object",
+  "required": ["database_id", "schema_name", "entities", "attributes", "relationships", "metrics", "business_rules", "temporal_rules", "policy"],
+  "properties": {
+    "database_id": {"type": "string"},
+    "schema_name": {"type": "string"},
+    "entities": {"type": "array", "minItems": 8},
+    "attributes": {"type": "array", "minItems": 1},
+    "relationships": {"type": "array", "minItems": 1},
+    "metrics": {"type": "array"},
+    "business_rules": {"type": "array"},
+    "temporal_rules": {"type": "array", "minItems": 1},
+    "policy": {"type": "object"}
+  },
+  "additionalProperties": false
+}

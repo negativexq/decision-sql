@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900811, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'urgent', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900812, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900813, 2, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
+      ],
+      "purpose": "Adds three tickets with one urgent to distinguish row-level ratio from aggregate ratio mistakes."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900814, 'Fixture Normal Only', 'North', DATE '2026-06-20')",
+        "INSERT INTO support_tickets VALUES (900814, 900814, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
+      ],
+      "purpose": "Adds a normal-only account to test group population and NULL behavior is explicit."
+    }
+  ]
+}

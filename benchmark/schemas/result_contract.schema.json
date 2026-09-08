@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Typed result comparison contract",
+  "type": "object",
+  "required": ["column_count", "row_order", "aliases_significant", "duplicates_significant", "timestamp_timezone"],
+  "properties": {
+    "column_count": {"type": "integer", "minimum": 1},
+    "row_order": {"type": "boolean"},
+    "aliases_significant": {"const": false},
+    "duplicates_significant": {"const": true},
+    "numeric_tolerance": {"type": ["string", "null"]},
+    "timestamp_timezone": {"const": "UTC"}
+  },
+  "additionalProperties": false
+}

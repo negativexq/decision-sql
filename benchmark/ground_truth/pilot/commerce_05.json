@@ -1,0 +1,144 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "commerce_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900040, 2, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900040')",
+        "INSERT INTO order_items VALUES (900040, 900040, 4, 1, 10.00)",
+        "INSERT INTO order_items VALUES (900041, 900040, 4, 1, 20.00)"
+      ],
+      "purpose": "Adds two home lines to one order, distinguishing distinct orders from line count."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (900042, 2, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'pending', 0, 'FIX-900042')",
+        "INSERT INTO order_items VALUES (900042, 900042, 4, 1, 10.00)"
+      ],
+      "purpose": "Adds a pending home order that must not enter the population."
+    }
+  ],
+  "database_id": "commerce_ops",
+  "difficulty": "HARD",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "multi_hop",
+    "aggregation",
+    "population",
+    "set_operation"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home') SELECT customer_id, COUNT(*) AS home_orders FROM home_orders GROUP BY customer_id ORDER BY customer_id"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "customer_id",
+        "home_orders"
+      ],
+      "result_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "row_count": 0
+    },
+    "cf01": {
+      "columns": [
+        "customer_id",
+        "home_orders"
+      ],
+      "result_sha256": "7fb2d3bfd3e120ae769d22fcf1abc7708f6405a8139e2440fc4a38ff4800016c",
+      "row_count": 1
+    },
+    "cf02": {
+      "columns": [
+        "customer_id",
+        "home_orders"
+      ],
+      "result_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "row_count": 0
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "relationships.relationship:commerce_ops:order_customer",
+    "relationships.relationship:commerce_ops:item_order",
+    "relationships.relationship:commerce_ops:item_product"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Counts qualifying lines rather than distinct orders.",
+      "failure_category": "count_vs_count_distinct",
+      "mutant_id": "m05_count_lines",
+      "sql": "SELECT c.customer_id, COUNT(o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id"
+    },
+    {
+      "description": "Includes pending orders.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m05_all_status",
+      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id"
+    },
+    {
+      "description": "Counts completed orders containing any category.",
+      "failure_category": "remove_predicate",
+      "mutant_id": "m05_no_category",
+      "sql": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY c.customer_id ORDER BY c.customer_id"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "COUNT(DISTINCT order_id)"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [
+      {
+        "field": "products.category",
+        "operator": "=",
+        "scope": "row",
+        "value": "home"
+      }
+    ],
+    "grouping": [
+      "customers.customer_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {},
+    "outputs": [
+      "customer_id",
+      "home_orders"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "relationship",
+      "multi_hop",
+      "aggregation",
+      "population",
+      "set_operation"
+    ],
+    "relationships": [
+      "relationship:commerce_ops:order_customer",
+      "relationship:commerce_ops:item_order",
+      "relationship:commerce_ops:item_product"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "fleet_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900701, 1, 1, 40, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1000, 1)"
+      ],
+      "purpose": "Adds a high-efficiency trip to a low-ranked route."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO trips VALUES (900702, 1, 1, 39, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1000, 1)",
+        "INSERT INTO trips VALUES (900703, 1, 1, 38, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 1000, 1)"
+      ],
+      "purpose": "Adds a tie at the top boundary and makes route-ID tie-break observable."
+    }
+  ]
+}

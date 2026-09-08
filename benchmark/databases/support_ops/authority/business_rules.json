@@ -1,0 +1,12 @@
+[
+  {
+    "definition": "support_tickets.status IN ('open', 'pending').",
+    "name": "Open ticket",
+    "rule_id": "rule:support_open"
+  },
+  {
+    "definition": "The first agent_response event later than opened_at plus the plan SLA is a breach; tickets without a response are not counted in the pilot metric.",
+    "name": "SLA breach",
+    "rule_id": "rule:support_sla"
+  }
+]

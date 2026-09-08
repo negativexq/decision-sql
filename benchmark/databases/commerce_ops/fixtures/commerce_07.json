@@ -1,0 +1,30 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "commerce_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900060, 'Fixture Top Customer', 'North', DATE '2026-06-20', TRUE, 'LGC-900060')",
+        "INSERT INTO orders VALUES (900060, 900060, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900060')",
+        "INSERT INTO order_items VALUES (900060, 900060, 1, 1000, 1000.00)"
+      ],
+      "purpose": "Adds a high-value completed customer so top-N is observable."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900061, 'Fixture Tie A', 'North', DATE '2026-06-20', TRUE, 'LGC-900061')",
+        "INSERT INTO customers VALUES (900062, 'Fixture Tie B', 'North', DATE '2026-06-20', TRUE, 'LGC-900062')",
+        "INSERT INTO orders VALUES (900061, 900061, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900061')",
+        "INSERT INTO orders VALUES (900062, 900062, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900062')",
+        "INSERT INTO order_items VALUES (900061, 900061, 1, 2, 500.00)",
+        "INSERT INTO order_items VALUES (900062, 900062, 1, 2, 500.00)"
+      ],
+      "purpose": "Adds two identical-value orders to make deterministic customer tie ordering observable."
+    }
+  ]
+}

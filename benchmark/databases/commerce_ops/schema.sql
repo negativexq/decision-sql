@@ -1,0 +1,12 @@
+CREATE SCHEMA IF NOT EXISTS m34_commerce_ops;
+SET search_path TO m34_commerce_ops;
+CREATE TABLE customers (customer_id INTEGER PRIMARY KEY, customer_name TEXT NOT NULL, region TEXT NOT NULL, signup_date DATE NOT NULL, is_active BOOLEAN NOT NULL, legacy_external_code TEXT);
+CREATE TABLE stores (store_id INTEGER PRIMARY KEY, store_name TEXT NOT NULL, region TEXT NOT NULL, opened_date DATE NOT NULL);
+CREATE TABLE products (product_id INTEGER PRIMARY KEY, product_name TEXT NOT NULL, category TEXT NOT NULL, unit_price NUMERIC(10,2) NOT NULL, active BOOLEAN NOT NULL);
+CREATE TABLE orders (order_id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(customer_id), store_id INTEGER NOT NULL REFERENCES stores(store_id), ordered_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL, discount_pct NUMERIC(5,2) NOT NULL, external_customer_code TEXT);
+CREATE TABLE order_items (item_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), product_id INTEGER NOT NULL REFERENCES products(product_id), quantity INTEGER NOT NULL, unit_price NUMERIC(10,2) NOT NULL);
+CREATE TABLE shipments (shipment_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), shipped_at TIMESTAMPTZ, status TEXT NOT NULL);
+CREATE TABLE returns (return_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), return_date DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, reason TEXT NOT NULL);
+CREATE TABLE warehouses (warehouse_id INTEGER PRIMARY KEY, warehouse_name TEXT NOT NULL, region TEXT NOT NULL, capacity INTEGER NOT NULL);
+CREATE TABLE inventory_snapshots (snapshot_id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL REFERENCES products(product_id), warehouse_id INTEGER NOT NULL REFERENCES warehouses(warehouse_id), snapshot_date DATE NOT NULL, on_hand_qty INTEGER NOT NULL);
+CREATE TABLE payment_events (payment_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), event_at TIMESTAMPTZ NOT NULL, event_type TEXT NOT NULL, amount NUMERIC(10,2) NOT NULL, payload JSONB NOT NULL);

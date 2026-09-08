@@ -1,0 +1,12 @@
+CREATE SCHEMA IF NOT EXISTS m34_support_ops;
+SET search_path TO m34_support_ops;
+CREATE TABLE accounts (account_id INTEGER PRIMARY KEY, account_name TEXT NOT NULL, region TEXT NOT NULL, created_on DATE NOT NULL);
+CREATE TABLE contacts (contact_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), email TEXT NOT NULL, contact_name TEXT NOT NULL);
+CREATE TABLE service_plans (plan_id INTEGER PRIMARY KEY, plan_name TEXT NOT NULL, first_response_sla_hours NUMERIC(5,2) NOT NULL);
+CREATE TABLE subscriptions (subscription_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), plan_id INTEGER NOT NULL REFERENCES service_plans(plan_id), status TEXT NOT NULL, starts_on DATE NOT NULL, ends_on DATE);
+CREATE TABLE support_tickets (ticket_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), agent_id INTEGER, opened_at TIMESTAMPTZ NOT NULL, priority TEXT NOT NULL, status TEXT NOT NULL, requester_email TEXT, payload JSONB NOT NULL);
+CREATE TABLE ticket_events (event_id INTEGER PRIMARY KEY, ticket_id INTEGER NOT NULL REFERENCES support_tickets(ticket_id), event_at TIMESTAMPTZ NOT NULL, event_type TEXT NOT NULL, payload JSONB NOT NULL);
+CREATE TABLE agents (agent_id INTEGER PRIMARY KEY, agent_name TEXT NOT NULL, team TEXT NOT NULL);
+CREATE TABLE incidents (incident_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), incident_code TEXT NOT NULL, started_at TIMESTAMPTZ NOT NULL, severity TEXT NOT NULL);
+CREATE TABLE usage_daily (usage_id INTEGER PRIMARY KEY, account_id INTEGER NOT NULL REFERENCES accounts(account_id), usage_date DATE NOT NULL, api_calls INTEGER NOT NULL, storage_gb NUMERIC(10,2) NOT NULL);
+CREATE TABLE satisfaction_surveys (survey_id INTEGER PRIMARY KEY, ticket_id INTEGER NOT NULL REFERENCES support_tickets(ticket_id), submitted_at TIMESTAMPTZ NOT NULL, score INTEGER, payload JSONB NOT NULL);

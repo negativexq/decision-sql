@@ -1,0 +1,18 @@
+[
+  {
+    "default_policy": "no default",
+    "description": "Average kilometres per litre for trips.",
+    "formula": "AVG(distance_km / NULLIF(fuel_liters, 0))",
+    "grain": "trip",
+    "metric_id": "metric:fleet_route_efficiency",
+    "name": "Route efficiency",
+    "null_policy": "zero fuel is excluded from the ratio",
+    "operands": [
+      "distance_km",
+      "fuel_liters"
+    ],
+    "precision": 2,
+    "rounding_stage": "display_only",
+    "temporal_basis": "started_at"
+  }
+]

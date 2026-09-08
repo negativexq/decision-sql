@@ -1,0 +1,19 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_09",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900891, 'Fixture Paused Future', 'North', DATE '2026-06-20')",
+        "INSERT INTO subscriptions VALUES (900891, 900891, 1, 'paused', DATE '2026-06-20', DATE '2027-01-01')",
+        "INSERT INTO accounts VALUES (900892, 'Fixture Active Expired', 'North', DATE '2026-06-20')",
+        "INSERT INTO subscriptions VALUES (900892, 900892, 1, 'active', DATE '2025-01-01', DATE '2026-01-01')"
+      ],
+      "purpose": "Adds a paused subscription with a future end date and an active subscription already ended."
+    }
+  ]
+}

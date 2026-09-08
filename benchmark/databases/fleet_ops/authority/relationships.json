@@ -1,0 +1,123 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Vehicles are assigned to depots.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:vehicles:depot_id",
+    "left_entity": "entity:fleet_ops:vehicles",
+    "relationship_id": "relationship:fleet_ops:vehicle_depot",
+    "right_attribute": "attribute:fleet_ops:depots:depot_id",
+    "right_entity": "entity:fleet_ops:depots"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Trips use vehicles.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:trips:vehicle_id",
+    "left_entity": "entity:fleet_ops:trips",
+    "relationship_id": "relationship:fleet_ops:trip_vehicle",
+    "right_attribute": "attribute:fleet_ops:vehicles:vehicle_id",
+    "right_entity": "entity:fleet_ops:vehicles"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Trips are assigned to drivers.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:trips:driver_id",
+    "left_entity": "entity:fleet_ops:trips",
+    "relationship_id": "relationship:fleet_ops:trip_driver",
+    "right_attribute": "attribute:fleet_ops:drivers:driver_id",
+    "right_entity": "entity:fleet_ops:drivers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Trips follow routes.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:trips:route_id",
+    "left_entity": "entity:fleet_ops:trips",
+    "relationship_id": "relationship:fleet_ops:trip_route",
+    "right_attribute": "attribute:fleet_ops:routes:route_id",
+    "right_entity": "entity:fleet_ops:routes"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Trips depart from depots.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:trips:depot_id",
+    "left_entity": "entity:fleet_ops:trips",
+    "relationship_id": "relationship:fleet_ops:trip_depot",
+    "right_attribute": "attribute:fleet_ops:depots:depot_id",
+    "right_entity": "entity:fleet_ops:depots"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Telemetry belongs to vehicles.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:telemetry_events:vehicle_id",
+    "left_entity": "entity:fleet_ops:telemetry_events",
+    "relationship_id": "relationship:fleet_ops:telemetry_vehicle",
+    "right_attribute": "attribute:fleet_ops:vehicles:vehicle_id",
+    "right_entity": "entity:fleet_ops:vehicles"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Maintenance belongs to vehicles.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:maintenance_events:vehicle_id",
+    "left_entity": "entity:fleet_ops:maintenance_events",
+    "relationship_id": "relationship:fleet_ops:maintenance_vehicle",
+    "right_attribute": "attribute:fleet_ops:vehicles:vehicle_id",
+    "right_entity": "entity:fleet_ops:vehicles"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Inspections belong to vehicles.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:inspections:vehicle_id",
+    "left_entity": "entity:fleet_ops:inspections",
+    "relationship_id": "relationship:fleet_ops:inspection_vehicle",
+    "right_attribute": "attribute:fleet_ops:vehicles:vehicle_id",
+    "right_entity": "entity:fleet_ops:vehicles"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Fuel events belong to vehicles.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:fuel_events:vehicle_id",
+    "left_entity": "entity:fleet_ops:fuel_events",
+    "relationship_id": "relationship:fleet_ops:fuel_vehicle",
+    "right_attribute": "attribute:fleet_ops:vehicles:vehicle_id",
+    "right_entity": "entity:fleet_ops:vehicles"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Free-text route code resemblance is intentionally not an authorized relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:weather_snapshots:route_code",
+    "left_entity": "entity:fleet_ops:weather_snapshots",
+    "relationship_id": "relationship:fleet_ops:weather_route",
+    "right_attribute": "attribute:fleet_ops:routes:route_name",
+    "right_entity": "entity:fleet_ops:routes"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "Matching legacy/device codes are not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:fleet_ops:vehicles:legacy_device_code",
+    "left_entity": "entity:fleet_ops:vehicles",
+    "relationship_id": "relationship:fleet_ops:legacy_device",
+    "right_attribute": "attribute:fleet_ops:telemetry_events:device_code",
+    "right_entity": "entity:fleet_ops:telemetry_events"
+  }
+]

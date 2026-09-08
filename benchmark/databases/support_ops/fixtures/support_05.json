@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "support_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO support_tickets VALUES (900831, 3, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900832, 3, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')",
+        "INSERT INTO support_tickets VALUES (900833, 3, NULL, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'normal', 'open', NULL, '{}')"
+      ],
+      "purpose": "Adds a burst of tickets to one account, making above-average membership observable."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO accounts VALUES (900834, 'Fixture No Tickets', 'East', DATE '2026-06-20')"
+      ],
+      "purpose": "Adds a no-ticket account; it must not be part of the per-account average because the question says per account with tickets."
+    }
+  ]
+}

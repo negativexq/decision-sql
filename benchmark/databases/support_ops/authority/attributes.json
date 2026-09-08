@@ -1,0 +1,234 @@
+[
+  {
+    "attribute_id": "attribute:support_ops:accounts:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:accounts",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Stable account identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:accounts:account_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:accounts",
+    "nullable": false,
+    "physical_column_or_path": "account_name",
+    "semantic_description": "Account display name."
+  },
+  {
+    "attribute_id": "attribute:support_ops:accounts:region",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:accounts",
+    "nullable": false,
+    "physical_column_or_path": "region",
+    "semantic_description": "Account service region."
+  },
+  {
+    "attribute_id": "attribute:support_ops:contacts:contact_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:contacts",
+    "nullable": false,
+    "physical_column_or_path": "contact_id",
+    "semantic_description": "Stable contact identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:contacts:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:contacts",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:contacts:email",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:contacts",
+    "nullable": false,
+    "physical_column_or_path": "email",
+    "semantic_description": "Contact email."
+  },
+  {
+    "attribute_id": "attribute:support_ops:service_plans:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:service_plans",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Stable plan identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:service_plans:plan_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:service_plans",
+    "nullable": false,
+    "physical_column_or_path": "plan_name",
+    "semantic_description": "Plan display name."
+  },
+  {
+    "attribute_id": "attribute:support_ops:service_plans:first_response_sla_hours",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:support_ops:service_plans",
+    "nullable": false,
+    "physical_column_or_path": "first_response_sla_hours",
+    "semantic_description": "First-response SLA in hours."
+  },
+  {
+    "attribute_id": "attribute:support_ops:subscriptions:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Stable subscription identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:subscriptions:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:subscriptions:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Authorized plan reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:subscriptions:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Subscription lifecycle status."
+  },
+  {
+    "attribute_id": "attribute:support_ops:subscriptions:ends_on",
+    "data_type": "DATE",
+    "entity_id": "entity:support_ops:subscriptions",
+    "nullable": true,
+    "physical_column_or_path": "ends_on",
+    "semantic_description": "Contract end date."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:ticket_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": false,
+    "physical_column_or_path": "ticket_id",
+    "semantic_description": "Stable ticket identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:agent_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": true,
+    "physical_column_or_path": "agent_id",
+    "semantic_description": "Authorized agent reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:opened_at",
+    "data_type": "TIMESTAMP",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": false,
+    "physical_column_or_path": "opened_at",
+    "semantic_description": "UTC ticket opening time."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:priority",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": false,
+    "physical_column_or_path": "priority",
+    "semantic_description": "Ticket priority."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Ticket status."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:requester_email",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": true,
+    "physical_column_or_path": "requester_email",
+    "semantic_description": "Requester email; not an authorized contact join key."
+  },
+  {
+    "attribute_id": "attribute:support_ops:support_tickets:payload.channel",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:support_tickets",
+    "nullable": true,
+    "physical_column_or_path": "payload ->> 'channel'",
+    "semantic_description": "Channel from the documented JSON payload."
+  },
+  {
+    "attribute_id": "attribute:support_ops:ticket_events:event_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:ticket_events",
+    "nullable": false,
+    "physical_column_or_path": "event_id",
+    "semantic_description": "Stable event identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:ticket_events:ticket_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:ticket_events",
+    "nullable": false,
+    "physical_column_or_path": "ticket_id",
+    "semantic_description": "Authorized ticket reference."
+  },
+  {
+    "attribute_id": "attribute:support_ops:ticket_events:event_at",
+    "data_type": "TIMESTAMP",
+    "entity_id": "entity:support_ops:ticket_events",
+    "nullable": false,
+    "physical_column_or_path": "event_at",
+    "semantic_description": "UTC ticket event time."
+  },
+  {
+    "attribute_id": "attribute:support_ops:ticket_events:event_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:ticket_events",
+    "nullable": false,
+    "physical_column_or_path": "event_type",
+    "semantic_description": "Ticket event type."
+  },
+  {
+    "attribute_id": "attribute:support_ops:incidents:incident_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:incidents",
+    "nullable": false,
+    "physical_column_or_path": "incident_id",
+    "semantic_description": "Stable incident identifier."
+  },
+  {
+    "attribute_id": "attribute:support_ops:incidents:incident_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:support_ops:incidents",
+    "nullable": false,
+    "physical_column_or_path": "incident_code",
+    "semantic_description": "Incident code; not an authorized ticket join key."
+  },
+  {
+    "attribute_id": "attribute:support_ops:incidents:account_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:support_ops:incidents",
+    "nullable": false,
+    "physical_column_or_path": "account_id",
+    "semantic_description": "Authorized account reference."
+  }
+]

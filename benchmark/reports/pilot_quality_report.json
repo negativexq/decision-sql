@@ -1,0 +1,383 @@
+{
+  "audits": {
+    "authority_completeness": {
+      "passed": 20,
+      "total": 20
+    },
+    "context_sufficiency": {
+      "passed": 20,
+      "total": 20
+    },
+    "external_leakage": {
+      "copied_protected_ground_truth": 0,
+      "external_benchmark_derived_cases": 0,
+      "historical_case_id_hits": {},
+      "passed": true,
+      "scanned_files": 110
+    },
+    "non_answerable": {
+      "passed": true,
+      "results": {
+        "commerce_08": {
+          "expected_behavior": "BLOCKED_AUTHORITY",
+          "valid": true
+        },
+        "commerce_09": {
+          "expected_behavior": "NEEDS_CLARIFICATION",
+          "interpretations_differ": true,
+          "valid": true
+        },
+        "commerce_10": {
+          "expected_behavior": "BLOCKED_POLICY",
+          "valid": true
+        },
+        "fleet_08": {
+          "expected_behavior": "BLOCKED_AUTHORITY",
+          "valid": true
+        },
+        "fleet_09": {
+          "expected_behavior": "BLOCKED_AUTHORITY",
+          "valid": true
+        },
+        "fleet_10": {
+          "expected_behavior": "NEEDS_CLARIFICATION",
+          "interpretations_differ": true,
+          "valid": true
+        },
+        "support_07": {
+          "expected_behavior": "BLOCKED_AUTHORITY",
+          "valid": true
+        },
+        "support_08": {
+          "expected_behavior": "BLOCKED_AUTHORITY",
+          "valid": true
+        },
+        "support_09": {
+          "expected_behavior": "NEEDS_CLARIFICATION",
+          "interpretations_differ": true,
+          "valid": true
+        },
+        "support_10": {
+          "expected_behavior": "BLOCKED_POLICY",
+          "valid": true
+        }
+      }
+    }
+  },
+  "benchmark": {
+    "dialect": "PostgreSQL",
+    "name": "decision-sql-bench",
+    "provider_calls": 0,
+    "version": "0.1.0-pilot"
+  },
+  "cases": {
+    "domain_distribution": {
+      "commerce_ops": 10,
+      "fleet_ops": 10,
+      "support_ops": 10
+    },
+    "task_distribution": {
+      "AMBIGUOUS": 3,
+      "ANSWERABLE": 20,
+      "AUTHORITY_BLOCKED": 5,
+      "POLICY_BLOCKED": 2
+    },
+    "total": 30
+  },
+  "checkpoint": {
+    "pre_m34_parent": "37c86bf",
+    "preservation_commit": "37c86bf",
+    "working_tree": "?? benchmark/\n?? tests/integration/test_m34_benchmark_postgres.py\n?? tests/unit/test_m34_benchmark.py"
+  },
+  "counterfactuals": {
+    "answerable_cases": 20,
+    "minimum_per_case": 2,
+    "total_counterfactual_fixtures": 40
+  },
+  "coverage": {
+    "observed": {
+      "aggregation": 14,
+      "calculation": 6,
+      "correlated": 2,
+      "filter": 6,
+      "filter_scope": 1,
+      "grain": 1,
+      "grouping": 7,
+      "json": 3,
+      "limit": 2,
+      "multi_filter": 1,
+      "multi_hop": 5,
+      "nested": 4,
+      "null_semantics": 5,
+      "ordering": 3,
+      "population": 7,
+      "precision": 5,
+      "relationship": 16,
+      "schema_linking": 2,
+      "set_operation": 2,
+      "simple_projection": 3,
+      "temporal": 4,
+      "window": 3
+    },
+    "passes": true,
+    "targets": {
+      "aggregation": 5,
+      "calculation": 5,
+      "correlated": 1,
+      "filter": 3,
+      "grouping": 4,
+      "json": 2,
+      "multi_hop": 2,
+      "nested": 2,
+      "null_semantics": 2,
+      "ordering": 3,
+      "population": 4,
+      "precision": 2,
+      "relationship": 6,
+      "set_operation": 1,
+      "simple_projection": 3,
+      "temporal": 4,
+      "window": 2
+    }
+  },
+  "databases": [
+    {
+      "authorized_relationships": 9,
+      "base_rows": {
+        "customers": 260,
+        "inventory_snapshots": 1000,
+        "order_items": 1400,
+        "orders": 700,
+        "payment_events": 700,
+        "products": 80,
+        "returns": 250,
+        "shipments": 600,
+        "stores": 8,
+        "warehouses": 8
+      },
+      "benchmark_now": "2026-06-30T12:00:00Z",
+      "columns": 51,
+      "database_id": "commerce_ops",
+      "documented_authority_attributes": 25,
+      "intentional_authority_traps": 1,
+      "metrics": 1,
+      "tables": 10,
+      "temporal_rules": 1
+    },
+    {
+      "authorized_relationships": 9,
+      "base_rows": {
+        "depots": 8,
+        "drivers": 120,
+        "fuel_events": 1000,
+        "inspections": 500,
+        "maintenance_events": 500,
+        "routes": 40,
+        "telemetry_events": 2400,
+        "trips": 900,
+        "vehicles": 220,
+        "weather_snapshots": 500
+      },
+      "benchmark_now": "2026-06-30T12:00:00Z",
+      "columns": 48,
+      "database_id": "fleet_ops",
+      "documented_authority_attributes": 24,
+      "intentional_authority_traps": 2,
+      "metrics": 1,
+      "tables": 10,
+      "temporal_rules": 1
+    },
+    {
+      "authorized_relationships": 9,
+      "base_rows": {
+        "accounts": 260,
+        "agents": 60,
+        "contacts": 400,
+        "incidents": 120,
+        "satisfaction_surveys": 600,
+        "service_plans": 4,
+        "subscriptions": 300,
+        "support_tickets": 800,
+        "ticket_events": 2000,
+        "usage_daily": 2000
+      },
+      "benchmark_now": "2026-06-30T12:00:00Z",
+      "columns": 48,
+      "database_id": "support_ops",
+      "documented_authority_attributes": 29,
+      "intentional_authority_traps": 2,
+      "metrics": 1,
+      "tables": 10,
+      "temporal_rules": 1
+    }
+  ],
+  "evaluator": {
+    "ambiguity_behavior": true,
+    "blocked_behavior": true,
+    "counterfactual_execution": true,
+    "gold_sql_string_comparison": false,
+    "ordered_comparison": true,
+    "policy_behavior": true,
+    "read_only_sql": true,
+    "typed_numeric_comparison": true,
+    "unordered_multiset_comparison": true
+  },
+  "governance_cases": {
+    "ambiguous": [
+      {
+        "case_id": "commerce_09",
+        "expected_behavior": "NEEDS_CLARIFICATION",
+        "interpretation_a": "recent signup means signup_date >= 2026-06-01",
+        "interpretation_b": "recent activity means a completed order >= 2026-06-01",
+        "proof_sql_a": "SELECT customer_id FROM customers WHERE signup_date >= DATE '2026-06-01' ORDER BY customer_id",
+        "proof_sql_b": "SELECT DISTINCT customer_id FROM orders WHERE status = 'completed' AND ordered_at >= TIMESTAMPTZ '2026-06-01 00:00:00+00' ORDER BY customer_id"
+      },
+      {
+        "case_id": "fleet_10",
+        "expected_behavior": "NEEDS_CLARIFICATION",
+        "interpretation_a": "maintenance performed within the 30 days before benchmark_now",
+        "interpretation_b": "vehicles having any latest recorded maintenance event, regardless of age",
+        "proof_sql_a": "SELECT DISTINCT vehicle_id FROM maintenance_events WHERE performed_at >= TIMESTAMPTZ '2026-05-31 12:00:00+00' AND performed_at < TIMESTAMPTZ '2026-06-30 12:00:00+00' ORDER BY vehicle_id",
+        "proof_sql_b": "SELECT DISTINCT ON (vehicle_id) vehicle_id FROM maintenance_events ORDER BY vehicle_id, performed_at DESC"
+      },
+      {
+        "case_id": "support_09",
+        "expected_behavior": "NEEDS_CLARIFICATION",
+        "interpretation_a": "active means subscriptions.status = 'active'",
+        "interpretation_b": "active means subscription.ends_on >= benchmark_now",
+        "proof_sql_a": "SELECT DISTINCT account_id FROM subscriptions WHERE status = 'active' ORDER BY account_id",
+        "proof_sql_b": "SELECT DISTINCT account_id FROM subscriptions WHERE ends_on >= DATE '2026-06-30' ORDER BY account_id"
+      }
+    ],
+    "authority_blocked": [
+      {
+        "case_id": "commerce_08",
+        "expected_behavior": "BLOCKED_AUTHORITY",
+        "missing_authority": "No authorized relationship maps orders.external_customer_code to customers.legacy_external_code.",
+        "tempting_physical_link": "The values are formatted similarly and may coincide."
+      },
+      {
+        "case_id": "fleet_08",
+        "expected_behavior": "BLOCKED_AUTHORITY",
+        "missing_authority": "No authorized relationship maps weather_snapshots.route_code to routes.route_name.",
+        "tempting_physical_link": "Route codes look like route names but are not an authority relationship."
+      },
+      {
+        "case_id": "fleet_09",
+        "expected_behavior": "BLOCKED_AUTHORITY",
+        "missing_authority": "No authorized relationship maps vehicles.legacy_device_code to telemetry_events.device_code.",
+        "tempting_physical_link": "The seeded DEV- codes intentionally align physically."
+      },
+      {
+        "case_id": "support_07",
+        "expected_behavior": "BLOCKED_AUTHORITY",
+        "missing_authority": "No authorized relationship maps support_tickets.requester_email to contacts.email.",
+        "tempting_physical_link": "Seeded emails can match but are not authoritative joins."
+      },
+      {
+        "case_id": "support_08",
+        "expected_behavior": "BLOCKED_AUTHORITY",
+        "missing_authority": "No authorized relationship maps ticket requester_email to incidents.incident_code.",
+        "tempting_physical_link": "Both are free-text identifiers but have no semantic link."
+      }
+    ],
+    "policy_blocked": [
+      {
+        "case_id": "commerce_10",
+        "expected_behavior": "BLOCKED_POLICY",
+        "policy_violation": "The pilot permits one read-only SELECT only.",
+        "requested_action": "DELETE"
+      },
+      {
+        "case_id": "support_10",
+        "expected_behavior": "BLOCKED_POLICY",
+        "policy_violation": "Only read-only SELECT is allowed.",
+        "requested_action": "DELETE"
+      }
+    ]
+  },
+  "human_review": {
+    "accepted": 0,
+    "machine_validated": 30,
+    "required": 30
+  },
+  "mutations": {
+    "authored": 60,
+    "executed": 60,
+    "failures": {},
+    "killed": 60,
+    "passed": true,
+    "score": 1.0,
+    "survived": 0
+  },
+  "reference_quality": {
+    "a_executions": 40,
+    "agreement_rate": 1.0,
+    "b_executions": 40,
+    "failures": {},
+    "fixture_comparisons": 60
+  },
+  "rejected_replaced_cases": [],
+  "self_test": {
+    "ambiguous_arbitrary_answers_fail": true,
+    "known_wrong_mutants_fail": true,
+    "policy_write_answers_fail": true,
+    "reference_submissions_pass": true,
+    "unauthorized_sql_fails": true
+  },
+  "static_quality": {
+    "benchmark_format": "PASS",
+    "benchmark_mypy": "PASS",
+    "benchmark_ruff": "PASS",
+    "git_diff_check": "PASS",
+    "repository_mypy": {
+      "known_files": [
+        "app/semantics/semantic_intent.py"
+      ],
+      "scope": "pre_existing_M32_M33_state",
+      "status": "FAIL"
+    },
+    "repository_ruff": {
+      "known_files": [
+        "app/semantics/semantic_intent.py"
+      ],
+      "scope": "pre_existing_M32_M33_state",
+      "status": "FAIL"
+    }
+  },
+  "tests": {
+    "benchmark_unit_tests": {
+      "file": "tests/unit/test_m34_benchmark.py",
+      "passed": 4
+    },
+    "integration_tests": {
+      "file": "tests/integration/test_m34_benchmark_postgres.py",
+      "passed": 2
+    },
+    "provider_calls": 0,
+    "repository_tests": {
+      "failed": 4,
+      "historical_known_failures": [
+        "test_m95r_frozen_sources_remain_unchanged",
+        "test_m95r_run_meets_the_exploratory_boundary_gates",
+        "test_m96_strategy_audit_accepts_fixed_v1_primary_shadow_protocol",
+        "test_frozen_v1_and_v2_comparator_hashes_are_unchanged"
+      ],
+      "passed": 747,
+      "skipped": 8
+    }
+  },
+  "verdict": {
+    "accepted_mutants_killed": true,
+    "ambiguous_proven": true,
+    "answerable_authority_complete": true,
+    "answerable_context_sufficient": true,
+    "blocked_fail_closed": true,
+    "coverage_targets": true,
+    "evaluator_self_test": true,
+    "external_ground_truth_reused": false,
+    "provider_calls": false,
+    "ready_for_human_review": true,
+    "references_agree": true
+  }
+}

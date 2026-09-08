@@ -1,0 +1,163 @@
+{
+  "authoring_integrity": {
+    "human_independent_review": false,
+    "human_reviewed": false
+  },
+  "case_id": "commerce_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "cf01",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900060, 'Fixture Top Customer', 'North', DATE '2026-06-20', TRUE, 'LGC-900060')",
+        "INSERT INTO orders VALUES (900060, 900060, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900060')",
+        "INSERT INTO order_items VALUES (900060, 900060, 1, 1000, 1000.00)"
+      ],
+      "purpose": "Adds a high-value completed customer so top-N is observable."
+    },
+    {
+      "fixture_id": "cf02",
+      "patch_sql": [
+        "INSERT INTO customers VALUES (900061, 'Fixture Tie A', 'North', DATE '2026-06-20', TRUE, 'LGC-900061')",
+        "INSERT INTO customers VALUES (900062, 'Fixture Tie B', 'North', DATE '2026-06-20', TRUE, 'LGC-900062')",
+        "INSERT INTO orders VALUES (900061, 900061, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900061')",
+        "INSERT INTO orders VALUES (900062, 900062, 1, TIMESTAMPTZ '2026-06-20 00:00:00+00', 'completed', 0, 'FIX-900062')",
+        "INSERT INTO order_items VALUES (900061, 900061, 1, 2, 500.00)",
+        "INSERT INTO order_items VALUES (900062, 900062, 1, 2, 500.00)"
+      ],
+      "purpose": "Adds two identical-value orders to make deterministic customer tie ordering observable."
+    }
+  ],
+  "database_id": "commerce_ops",
+  "difficulty": "HARD",
+  "evidence": {},
+  "mechanism_tags": [
+    "relationship",
+    "multi_hop",
+    "aggregation",
+    "calculation",
+    "ordering",
+    "limit",
+    "precision"
+  ],
+  "reference_implementation_a": {
+    "kind": "REFERENCE_IMPLEMENTATION_A",
+    "sql": "WITH customer_value AS (SELECT c.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))::numeric, 2) AS net_value FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id WHERE o.status = 'completed' GROUP BY c.customer_id) SELECT customer_id, net_value FROM customer_value ORDER BY net_value DESC, customer_id ASC LIMIT 3"
+  },
+  "reference_implementation_b": {
+    "kind": "REFERENCE_IMPLEMENTATION_B",
+    "sql": "SELECT customer_id, net_value FROM (SELECT c.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))::numeric, 2) AS net_value FROM orders o JOIN customers c ON c.customer_id = o.customer_id JOIN order_items oi ON oi.order_id = o.order_id WHERE o.status = 'completed' GROUP BY c.customer_id) AS ranked ORDER BY net_value DESC, customer_id ASC FETCH FIRST 3 ROWS ONLY"
+  },
+  "reference_result_summaries": {
+    "base": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "result_sha256": "227fb02dc50b0d167daa1bb398528725fd566bb0e38be6d6721272ab79f3ad3d",
+      "row_count": 3
+    },
+    "cf01": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "result_sha256": "2e0f5bf1aaa5327f75f31cc6b82267b1a46ef87bc4bfa5dd11b7f3453893917f",
+      "row_count": 3
+    },
+    "cf02": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "result_sha256": "227fb02dc50b0d167daa1bb398528725fd566bb0e38be6d6721272ab79f3ad3d",
+      "row_count": 3
+    }
+  },
+  "required_authority": [],
+  "required_context_facts": [
+    "relationships.relationship:commerce_ops:order_customer",
+    "relationships.relationship:commerce_ops:item_order",
+    "metrics.metric:commerce_net_order_value",
+    "business_rules.rule:net_value"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Ranks the lowest values first.",
+      "failure_category": "asc_desc",
+      "mutant_id": "m07_ascending",
+      "sql": "WITH customer_value AS (SELECT c.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))::numeric, 2) AS net_value FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id WHERE o.status = 'completed' GROUP BY c.customer_id) SELECT customer_id, net_value FROM customer_value ORDER BY net_value ASC, customer_id ASC LIMIT 3"
+    },
+    {
+      "description": "Returns every customer instead of top three.",
+      "failure_category": "remove_limit",
+      "mutant_id": "m07_no_limit",
+      "sql": "WITH customer_value AS (SELECT c.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100.0))::numeric, 2) AS net_value FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id WHERE o.status = 'completed' GROUP BY c.customer_id) SELECT customer_id, net_value FROM customer_value ORDER BY net_value DESC, customer_id ASC"
+    },
+    {
+      "description": "Ranks by gross instead of net value.",
+      "failure_category": "wrong_metric_operand",
+      "mutant_id": "m07_no_discount",
+      "sql": "WITH customer_value AS (SELECT c.customer_id, ROUND(SUM(oi.quantity * oi.unit_price)::numeric, 2) AS net_value FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id WHERE o.status = 'completed' GROUP BY c.customer_id) SELECT customer_id, net_value FROM customer_value ORDER BY net_value DESC, customer_id ASC LIMIT 3"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [
+      "SUM(net order line value)"
+    ],
+    "behavior": "ANSWERABLE",
+    "calculations": [
+      {
+        "aggregation_stage": "post_discount_line",
+        "calculation_id": "metric:commerce_net_order_value",
+        "grain": "order_item",
+        "operands": [
+          "quantity",
+          "unit_price",
+          "discount_pct"
+        ],
+        "rounding_stage": "before_ordering_and_display"
+      }
+    ],
+    "filters": [],
+    "grouping": [
+      "customers.customer_id"
+    ],
+    "limit": 3,
+    "null_default_semantics": "NULL remains NULL",
+    "ordering": {
+      "keys": [
+        "net_value DESC",
+        "customer_id ASC"
+      ],
+      "tie_break": "customer_id ASC"
+    },
+    "outputs": [
+      "customer_id",
+      "net_value"
+    ],
+    "population": "matching-only",
+    "query_shape_tags": [
+      "relationship",
+      "multi_hop",
+      "aggregation",
+      "calculation",
+      "ordering",
+      "limit",
+      "precision"
+    ],
+    "relationships": [
+      "relationship:commerce_ops:order_customer",
+      "relationship:commerce_ops:item_order"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "temporal_semantics": {}
+  },
+  "status": "MACHINE_VALIDATED"
+}

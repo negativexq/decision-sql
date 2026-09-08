@@ -1,0 +1,130 @@
+{
+  "cases": [
+    {
+      "adversarial_data": {
+        "captured_payment_amount": 100,
+        "refund_amounts": [
+          20,
+          10
+        ]
+      },
+      "cardinality": "many_to_one",
+      "case_id": "subscription_04",
+      "classification": "REFERENCE_DEFECT",
+      "confidence": "HIGH",
+      "evidence": "The payment amount is repeated once per refund row by Reference A; Reference B computes payment-grain net before account rollup.",
+      "failure_family": "PARENT_MEASURE_FANOUT",
+      "independent_expected_result": 70,
+      "public_semantic_interpretation": "Captured payment amount less the sum of all refunds for each payment, then summed by account.",
+      "question": "For each account, return the account ID and net collected amount from captured payments after refunds. Include only groups represented by at least one qualifying source record.",
+      "reference_id": "A",
+      "reference_result": 170,
+      "relationship": "refunds.payment_id -> payments.payment_id",
+      "repair_required": true,
+      "source_measures": [
+        {
+          "additivity": "ADDITIVE",
+          "grain": "payments.payment_id",
+          "measure": "payments.amount"
+        },
+        {
+          "additivity": "ADDITIVE",
+          "grain": "refunds.refund_id",
+          "measure": "refunds.amount",
+          "rollup_key": "refunds.payment_id"
+        }
+      ]
+    },
+    {
+      "adversarial_data": {
+        "captured_payment_amount": 100,
+        "refund_amounts": [
+          20,
+          10
+        ]
+      },
+      "case_id": "subscription_04",
+      "classification": "REFERENCE_CORRECT",
+      "confidence": "HIGH",
+      "independent_expected_result": 70,
+      "reference_id": "B",
+      "reference_result": 70,
+      "repair_required": false
+    },
+    {
+      "adversarial_data": {
+        "captured_payment_amounts": [
+          100,
+          100
+        ],
+        "refund_amounts": [
+          20,
+          10,
+          0
+        ]
+      },
+      "cardinality": "many_to_one",
+      "case_id": "subscription_10",
+      "classification": "REFERENCE_DEFECT",
+      "confidence": "HIGH",
+      "evidence": "The captured payment denominator is repeated once per refund row by Reference A; the question explicitly defines captured dollars and Reference B preserves payment grain.",
+      "failure_family": "PARENT_MEASURE_FANOUT",
+      "independent_expected_result": "0.30",
+      "public_semantic_interpretation": "Sum refund dollars divided by sum captured payment dollars, with each captured payment counted once in the denominator.",
+      "question": "For each plan, return the plan ID and the refund rate, defined as refunded captured dollars divided by captured dollars. Include only groups represented by at least one qualifying source record.",
+      "reference_id": "A",
+      "reference_result": "0.15",
+      "relationship": "refunds.payment_id -> payments.payment_id",
+      "repair_required": true,
+      "source_measures": [
+        {
+          "additivity": "ADDITIVE",
+          "grain": "payments.payment_id",
+          "measure": "payments.amount"
+        },
+        {
+          "additivity": "ADDITIVE",
+          "grain": "refunds.refund_id",
+          "measure": "refunds.amount",
+          "rollup_key": "refunds.payment_id"
+        }
+      ]
+    },
+    {
+      "adversarial_data": {
+        "captured_payment_amounts": [
+          100,
+          100
+        ],
+        "refund_amounts": [
+          20,
+          10,
+          0
+        ]
+      },
+      "case_id": "subscription_10",
+      "classification": "REFERENCE_CORRECT",
+      "confidence": "HIGH",
+      "independent_expected_result": "0.30",
+      "reference_id": "B",
+      "reference_result": "0.30",
+      "repair_required": false
+    }
+  ],
+  "historical_preservation_file_count": 104,
+  "method": [
+    "public question and metric contract",
+    "public schema and authorized cardinality",
+    "independent multi-child scratch data",
+    "execution of both references against the scratch data",
+    "mathematical expected result"
+  ],
+  "provider_calls": 0,
+  "question_contract_result": {
+    "metric_metadata_note": "refund_rate is case-defined by the explicit question; no hidden metric rule is needed.",
+    "model_visible_context_changed": false,
+    "subscription_04": "QUESTION_SUFFICIENT",
+    "subscription_10": "QUESTION_SUFFICIENT"
+  },
+  "review_required": 0
+}

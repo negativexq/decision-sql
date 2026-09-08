@@ -17,3 +17,12 @@ These lessons are the quality template for future benchmark development.
 
 The current pilot is a development set, not a final holdout. Future confirmation and
 final partitions must be isolated at the database level.
+## M38 expansion lessons
+
+- Keep new domains in a separate versioned authoring path so the repaired pilot remains reproducible.
+- Make development/confirmation boundaries database-level, never random case-level splits.
+- Require at least two independent ambiguity interpretations and a fixture that makes their results differ.
+- Require every new answerable case to carry explicit final projection, population, grain, temporal, NULL, and precision evidence.
+- Treat counterfactuals as minimal discriminating fixtures and record their semantic purpose.
+- Keep mutation families executable and require a full base-plus-fixture kill gate before freezing.
+- Do not use model outputs to author schemas, questions, references, fixtures, or mutants.

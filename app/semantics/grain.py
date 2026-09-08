@@ -158,6 +158,11 @@ class MeasureCatalog(_Frozen):
                 raise GrainContractError(f"measure has unknown entity: {measure.measure_id}")
             if measure.native_grain.entity_id != measure.entity_id:
                 raise GrainContractError(f"native grain entity mismatch: {measure.measure_id}")
+            for rollup in (*measure.allowed_rollup_grains, *measure.restricted_rollup_grains):
+                if rollup.entity_id not in entity_ids:
+                    raise GrainContractError(
+                        f"measure has unknown rollup entity: {measure.measure_id}"
+                    )
             if not measure.provenance:
                 raise GrainContractError(f"measure has no provenance: {measure.measure_id}")
 
@@ -383,11 +388,10 @@ class GrainSafetyValidator:
                 for measure in measures:
                     if measure.aggregation_behavior is AggregationBehavior.ADDITIVE:
                         parent_measures.append((measure, aggregate, column.sql(dialect="postgres")))
-                    elif (
-                        isinstance(aggregate, exp.Sum)
-                        and measure.aggregation_behavior
-                        in {AggregationBehavior.NON_ADDITIVE, AggregationBehavior.DERIVED}
-                    ):
+                    elif isinstance(aggregate, exp.Sum) and measure.aggregation_behavior in {
+                        AggregationBehavior.NON_ADDITIVE,
+                        AggregationBehavior.DERIVED,
+                    }:
                         return GrainDiagnostic(
                             code=GrainDiagnosticCode.UNSAFE_ROLLUP,
                             message="A non-additive or derived measure is being rolled up.",
@@ -413,6 +417,13 @@ class GrainSafetyValidator:
                     self._physical_column(attribute_id).lower()
                     for attribute_id in measure.native_grain.key_attribute_ids
                 }
+                child_entity = self.graph.entity(edge.from_entity_id)
+                child_grain = GrainKey(
+                    entity_id=child_entity.entity_id,
+                    key_attribute_ids=child_entity.key_attribute_ids,
+                )
+                if child_grain in measure.allowed_rollup_grains:
+                    continue
                 grouped_native = {
                     column.name.lower()
                     for column in self._group_columns(select)

@@ -1,0 +1,572 @@
+{
+  "applicable_cases": [
+    {
+      "case_id": "subscription_04",
+      "classification": "APPLICABLE",
+      "m43_category": "WRONG_GOVERNED_DECISION",
+      "m43_correct": false,
+      "m43_features": {
+        "aggregate_count": 0,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 0,
+        "join_count": 0,
+        "parsed": false,
+        "subquery_count": 0
+      },
+      "m43_sql": "",
+      "m43_status": "WRONG_REFUSAL",
+      "m45_category": "WRONG_GOVERNED_DECISION",
+      "m45_correct": false,
+      "m45_distinct_status": "NONE",
+      "m45_features": {
+        "aggregate_count": 0,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 0,
+        "join_count": 0,
+        "parsed": false,
+        "subquery_count": 0
+      },
+      "m45_sql": "",
+      "m45_status": "WRONG_REFUSAL"
+    },
+    {
+      "case_id": "subscription_10",
+      "classification": "APPLICABLE",
+      "m43_category": "WRONG_GOVERNED_DECISION",
+      "m43_correct": false,
+      "m43_features": {
+        "aggregate_count": 0,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 0,
+        "join_count": 0,
+        "parsed": false,
+        "subquery_count": 0
+      },
+      "m43_sql": "",
+      "m43_status": "WRONG_REFUSAL",
+      "m45_category": "WRONG_GOVERNED_DECISION",
+      "m45_correct": false,
+      "m45_distinct_status": "NONE",
+      "m45_features": {
+        "aggregate_count": 0,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 0,
+        "join_count": 0,
+        "parsed": false,
+        "subquery_count": 0
+      },
+      "m45_sql": "",
+      "m45_status": "WRONG_REFUSAL"
+    },
+    {
+      "case_id": "warehouse_08",
+      "child_measure": "receipts.received_qty",
+      "child_relation": "receipts via receipts.po_line_id",
+      "classification": "APPLICABLE",
+      "combines_parent_measure_once_per_parent": false,
+      "fixed": false,
+      "m43_category": "RESULT_MISMATCH",
+      "m43_correct": false,
+      "m43_features": {
+        "aggregate_count": 3,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 1,
+        "join_count": 1,
+        "parsed": true,
+        "subquery_count": 0
+      },
+      "m43_sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(pol.po_line_id) > 0",
+      "m43_status": "DIRECT_FANOUT_AGGREGATION",
+      "m45_applicability_satisfied": true,
+      "m45_category": "RESULT_MISMATCH",
+      "m45_correct": false,
+      "m45_distinct_status": "NONE",
+      "m45_features": {
+        "aggregate_count": 4,
+        "cte_count": 0,
+        "distinct_count": 0,
+        "grouping_key_count": 1,
+        "join_count": 1,
+        "parsed": true,
+        "subquery_count": 0
+      },
+      "m45_sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) > 0",
+      "m45_status": "DIRECT_FANOUT_AGGREGATION",
+      "output_grain": "product_id",
+      "parent_key": "purchase_order_lines.po_line_id",
+      "parent_measure": "purchase_order_lines.ordered_qty",
+      "uses_child_aggregation_by_parent_key": false
+    }
+  ],
+  "confirmed_failures_after": [
+    "subscription_04",
+    "subscription_10",
+    "warehouse_08"
+  ],
+  "confirmed_failures_before": [
+    "subscription_04",
+    "subscription_10",
+    "warehouse_08"
+  ],
+  "distinct_value_hack_cases": [],
+  "experiment_id": "m45_parent_child_additive_alignment",
+  "negative_control_regressions": [],
+  "negative_controls": [
+    {
+      "applicability": "NOT_APPLICABLE_EXISTENCE_OR_FRACTION",
+      "case_id": "risk_05",
+      "m43_correct": true,
+      "m43_sql": "SELECT a.severity, COUNT(*) FILTER (WHERE i.investigation_id IS NOT NULL)::numeric / COUNT(*) AS investigation_fraction\nFROM alerts AS a\nLEFT JOIN investigations AS i ON i.alert_id = a.alert_id\nGROUP BY a.severity\nHAVING COUNT(*) > 0",
+      "m45_correct": true,
+      "m45_distinct_status": "DISTINCT_EXISTENCE_VALID",
+      "m45_sql": "SELECT a.severity, COUNT(*) FILTER (WHERE i.alert_id IS NOT NULL)::numeric / COUNT(*) AS investigation_fraction\nFROM alerts AS a\nLEFT JOIN (SELECT DISTINCT alert_id FROM investigations) AS i ON i.alert_id = a.alert_id\nGROUP BY a.severity\nHAVING COUNT(*) > 0",
+      "regressed": false
+    }
+  ],
+  "offline_inventory": {
+    "answerable_cases": 60,
+    "applicable_cases": [
+      "subscription_04",
+      "subscription_10",
+      "warehouse_08"
+    ],
+    "cases": [
+      {
+        "case_id": "commerce_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_04",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "commerce_07",
+        "classification": "NOT_APPLICABLE",
+        "database": "commerce_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_04",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "fleet_07",
+        "classification": "NOT_APPLICABLE",
+        "database": "fleet_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_04",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "support_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "support_ops",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_04",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "negative_boundary": "EXISTENCE_OR_FRACTION",
+        "reason": "Parent-row existence fraction; no parent additive measure is combined with child additive values."
+      },
+      {
+        "case_id": "risk_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_07",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_08",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_09",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_10",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_11",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_12",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "risk_13",
+        "classification": "NOT_APPLICABLE",
+        "database": "risk_operations",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "arithmetic_combination": "payment amount - SUM(refund amount)",
+        "case_id": "subscription_04",
+        "child_additive_measure": "amount",
+        "child_entity": "refunds",
+        "child_foreign_key": "refunds.payment_id",
+        "classification": "APPLICABLE",
+        "database": "subscription_billing",
+        "direct_join_duplicates_parent": true,
+        "evidence": "Reference B computes refund total per payment before account rollup.",
+        "output_grain": "account_id",
+        "parent_additive_measure": "amount",
+        "parent_entity": "payments",
+        "parent_key": "payment_id",
+        "parent_measure_grain": "payments.payment_id",
+        "relationship_cardinality": "one-to-many from payments to refunds"
+      },
+      {
+        "case_id": "subscription_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_07",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_08",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_09",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "arithmetic_combination": "SUM(refund amount) / SUM(payment amount)",
+        "case_id": "subscription_10",
+        "child_additive_measure": "amount",
+        "child_entity": "refunds",
+        "child_foreign_key": "refunds.payment_id",
+        "classification": "APPLICABLE",
+        "database": "subscription_billing",
+        "direct_join_duplicates_parent": true,
+        "evidence": "Reference B computes refunded and captured values per payment before plan rollup.",
+        "output_grain": "plan_id",
+        "parent_additive_measure": "amount",
+        "parent_entity": "payments",
+        "parent_key": "payment_id",
+        "parent_measure_grain": "payments.payment_id",
+        "relationship_cardinality": "one-to-many from payments to refunds"
+      },
+      {
+        "case_id": "subscription_11",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_12",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_13",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "subscription_14",
+        "classification": "NOT_APPLICABLE",
+        "database": "subscription_billing",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_01",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_02",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_03",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_04",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_05",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_06",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_07",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "arithmetic_combination": "ordered_qty - SUM(received_qty)",
+        "case_id": "warehouse_08",
+        "child_additive_measure": "received_qty",
+        "child_entity": "receipts",
+        "child_foreign_key": "receipts.po_line_id",
+        "classification": "APPLICABLE",
+        "database": "warehouse_logistics",
+        "direct_join_duplicates_parent": true,
+        "evidence": "Both references reduce receipts per purchase-order line before product rollup.",
+        "output_grain": "product_id",
+        "parent_additive_measure": "ordered_qty",
+        "parent_entity": "purchase_order_lines",
+        "parent_key": "po_line_id",
+        "parent_measure_grain": "purchase_order_lines.po_line_id",
+        "relationship_cardinality": "one-to-many from purchase_order_lines to receipts"
+      },
+      {
+        "case_id": "warehouse_09",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_10",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_11",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_12",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "reason": "No visible semantic target requiring parent additive measure plus child additive arithmetic alignment."
+      },
+      {
+        "case_id": "warehouse_13",
+        "classification": "NOT_APPLICABLE",
+        "database": "warehouse_logistics",
+        "negative_boundary": "INDEPENDENT_BRANCH_ROLLUP",
+        "reason": "Combines independently pre-aggregated warehouse measures; not a parent-row additive value plus child additive values."
+      }
+    ],
+    "counts": {
+      "APPLICABLE": 3,
+      "NOT_APPLICABLE": 57
+    },
+    "negative_control_not_applicable": [
+      "risk_05"
+    ],
+    "positive_control_applicable": [
+      "subscription_04"
+    ],
+    "provider_calls": 0,
+    "secondary_control": {
+      "case_id": "subscription_10",
+      "classification": "APPLICABLE"
+    },
+    "uncertain_cases": [],
+    "warehouse_08_proof": {
+      "arithmetic_combination": "ordered_qty - SUM(received_qty)",
+      "case_id": "warehouse_08",
+      "child_additive_measure": "received_qty",
+      "child_entity": "receipts",
+      "child_foreign_key": "receipts.po_line_id",
+      "classification": "APPLICABLE",
+      "database": "warehouse_logistics",
+      "direct_join_duplicates_parent": true,
+      "evidence": "Both references reduce receipts per purchase-order line before product rollup.",
+      "output_grain": "product_id",
+      "parent_additive_measure": "ordered_qty",
+      "parent_entity": "purchase_order_lines",
+      "parent_key": "po_line_id",
+      "parent_measure_grain": "purchase_order_lines.po_line_id",
+      "relationship_cardinality": "one-to-many from purchase_order_lines to receipts"
+    }
+  },
+  "prompt_only_grain_repair_exhausted": true,
+  "static_analysis_diagnostic_only": true,
+  "target_fixed": false
+}

@@ -26,6 +26,7 @@ from app.generation.hard_query_plans import (
 from app.generation.intent import IntentProposal, QueryIntent
 from app.generation.quality_pack import render_query_quality_pack
 from app.generation.result_shape import ResultShapeProposal
+from app.generation.semantic_plan_protocol import semantic_query_plan_response_format
 from app.generation.window_ir import WindowQueryIR, WindowQueryIRProposal
 from app.models.domain import QueryRequest, UserContext
 from app.provenance.canonical import bounded_text, semantic_hash, text_hash
@@ -170,6 +171,7 @@ class ModelIOCapture(BaseModel):
     messages: list[dict[str, str]]
     response_model: str | None = None
     raw_assistant_content: str | None = None
+    raw_assistant_content_full: str | None = None
     raw_assistant_content_sha256: str | None = None
     raw_assistant_content_truncated: bool = False
     parsed_sql: str | None = None
@@ -340,14 +342,17 @@ class OpenAICompatibleProvider:
         if not self.settings.llm_api_key:
             raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
         messages = _semantic_query_plan_messages(question, schema_context)
+        response_format = semantic_query_plan_response_format()
         body = {
             "model": self.settings.llm_model,
             "messages": messages,
-            "response_format": {"type": "json_object"},
+            "response_format": response_format,
         }
         _add_temperature(body, self.settings.llm_temperature)
         _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
-        self._begin_model_io("semantic_query_plan", question, schema_context, messages)
+        self._begin_model_io(
+            "semantic_query_plan", question, schema_context, messages, response_format
+        )
         started = perf_counter()
         payload = await self._post(body)
         content = _assistant_content(payload)
@@ -690,7 +695,7 @@ class OpenAICompatibleProvider:
         question: str,
         schema_text: str,
         instruction: str,
-        response_format: dict[str, str] | None = None,
+        response_format: dict[str, Any] | None = None,
         operation: str = "window_transport",
     ) -> ProviderTransportProposal:
         """Make one diagnostic request without interpreting its representation."""
@@ -1030,7 +1035,7 @@ class OpenAICompatibleProvider:
         question: str,
         schema_context: str,
         messages: list[dict[str, str]],
-        response_format: dict[str, str] | None = None,
+        response_format: dict[str, Any] | None = None,
     ) -> None:
         if not self.settings.eval_capture_model_io:
             return
@@ -1096,6 +1101,7 @@ class OpenAICompatibleProvider:
             update={
                 "response_model": payload.get("model") if isinstance(payload, dict) else None,
                 "raw_assistant_content": bounded_content,
+                "raw_assistant_content_full": raw_content,
                 "raw_assistant_content_sha256": (
                     text_hash(raw_content) if raw_content is not None else None
                 ),
@@ -1465,16 +1471,28 @@ def _query_plan_v1_messages(question: str, schema_context: str) -> list[dict[str
 def _semantic_query_plan_messages(question: str, schema_context: str) -> list[dict[str, str]]:
     system = (
         "Propose one bounded semantic query plan for the user's PostgreSQL question. "
-        "Return JSON only and never emit SQL, SQL fragments, ON predicates, physical "
-        "table names, physical column names, or arbitrary function names. Use only the "
-        "server-owned semantic IDs in the context. The plan contains database_id, "
-        "from_entity_id, population_contract, outputs, joins, where, group_by, having, "
-        "order_by, distinct, limit, offset, and optional calculation_contract. Expressions "
-        "must be typed nodes with kinds attribute, literal, aggregate, binary, logical, "
-        "not, between, in, is_null, cast, case, function, window, or exists. Functions "
-        "and operators must use the bounded enum values in the supplied contract. Join "
-        "objects contain only relationship_id and join_type; the server owns join paths "
-        "and predicates. Do not provide reasoning or extra fields."
+        "Return exactly the structured object described by the response schema. Use the "
+        "exact schema field names and enum values; do not use aliases such as id, "
+        "column_id, entity_id, args, operands, or data_type. Return JSON only and never "
+        "emit SQL, SQL fragments, ON predicates, physical table names, physical column "
+        "names, or arbitrary function names. Use only the server-owned semantic IDs in "
+        "the context. The top-level contract uses database_id, from_entity_id, "
+        "from_source, population_contract, outputs, joins, where, group_by, having, "
+        "order_by, distinct, limit, offset, calculation_contract, description, ctes, "
+        "and derived_relations. Nested objects must use their canonical names, including "
+        "population_contract.base_entity_ids, output.position and semantic_role, with "
+        "output positions contiguous from zero, "
+        "attribute.attribute_id, function.arguments, logical.terms, and literal.value_type. "
+        "Each output has exactly one of attribute_id or expression; a plan has exactly one "
+        "of from_entity_id or from_source. A relationship join uses relationship_id or "
+        "relationship_path, never ad-hoc join keys. Logical nodes contain at least two "
+        "terms. "
+        "Expressions must be typed nodes with kinds attribute, literal, aggregate, "
+        "binary, logical, not, between, in, is_null, cast, case, function, window, or "
+        "exists. Functions and operators must use the bounded enum values in the supplied "
+        "contract. Join objects contain only relationship_id and join_type; the server "
+        "owns join paths and predicates. Populate optional fields with their schema-defined "
+        "null or empty value when applicable. Do not provide reasoning or extra fields."
         f"\n\nSERVER-OWNED SEMANTIC CONTEXT:\n{schema_context}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]

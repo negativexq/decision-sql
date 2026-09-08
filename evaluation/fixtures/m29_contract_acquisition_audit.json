@@ -1,0 +1,1015 @@
+{
+  "call_path": {
+    "harness": "evaluation.run_m29_semantic_plan.run_experiment",
+    "json_parser": "json.loads(content)",
+    "prompt_builder": "app.generation.provider._semantic_query_plan_messages",
+    "provider_adapter": "OpenAICompatibleProvider._post",
+    "provider_method": "OpenAICompatibleProvider.propose_semantic_query_plan",
+    "pydantic_validator": "SemanticQueryPlan.model_validate",
+    "response_extraction": "_assistant_content",
+    "response_format_builder": "propose_semantic_query_plan local body"
+  },
+  "canonical_contract": {
+    "definitions": 42,
+    "extra_policy": "forbid via strict nested models",
+    "maximum_nesting_depth": 9,
+    "native_json_schema_sent": false,
+    "prompt_embedded_schema": false,
+    "prompt_embedded_schema_hash": null,
+    "provider_facing_response_format": {
+      "type": "json_object"
+    },
+    "provider_facing_schema_hash": "376bde7986cc2f8fd182f04e745c607933760bea7c306ea6e8e992b7f70be25a",
+    "required_top_level_fields": [
+      "database_id",
+      "population_contract",
+      "outputs"
+    ],
+    "schema_bytes": 66730,
+    "schema_hash": "0b7a74cf4df1e6cecaed019ebd677c2229dea527d16e1408f8a933852a3dc30e",
+    "strict_sent": false,
+    "top_level_field_map": {
+      "calculation_contract": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default"
+        ],
+        "type": null
+      },
+      "ctes": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "items",
+          "maxItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "database_id": {
+        "ref": null,
+        "required": true,
+        "schema_keys": [
+          "maxLength",
+          "minLength",
+          "title",
+          "type"
+        ],
+        "type": "string"
+      },
+      "derived_relations": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "items",
+          "maxItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "description": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "distinct": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "title",
+          "type"
+        ],
+        "type": "boolean"
+      },
+      "from_entity_id": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "from_source": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "group_by": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "items",
+          "maxItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "having": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "joins": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "items",
+          "maxItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "limit": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "offset": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      },
+      "order_by": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "default",
+          "items",
+          "maxItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "outputs": {
+        "ref": null,
+        "required": true,
+        "schema_keys": [
+          "items",
+          "maxItems",
+          "minItems",
+          "title",
+          "type"
+        ],
+        "type": "array"
+      },
+      "population_contract": {
+        "ref": "#/$defs/PopulationContract",
+        "required": true,
+        "schema_keys": [
+          "$ref"
+        ],
+        "type": null
+      },
+      "where": {
+        "ref": null,
+        "required": false,
+        "schema_keys": [
+          "anyOf",
+          "default",
+          "title"
+        ],
+        "type": null
+      }
+    },
+    "top_level_properties": [
+      "calculation_contract",
+      "ctes",
+      "database_id",
+      "derived_relations",
+      "description",
+      "distinct",
+      "from_entity_id",
+      "from_source",
+      "group_by",
+      "having",
+      "joins",
+      "limit",
+      "offset",
+      "order_by",
+      "outputs",
+      "population_contract",
+      "where"
+    ],
+    "top_level_property_count": 17
+  },
+  "cases": [
+    {
+      "capture_truncated": false,
+      "case_id": "alien_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "a7dd64e0b9645fa246eaea31093647a35fbd3310fce7f6776cbea38f1d4bdeb1",
+      "response_hash": "1bd6b387cc655e326664d8e3c646f3ec3af150596c13b814e0639febfd339824",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": true,
+      "case_id": "archeology_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "RESPONSE_TRUNCATION_ARTIFACT"
+      ],
+      "first_validation_failure": "CAPTURE_TRUNCATED",
+      "json_complete": false,
+      "normalized_response_shape_hash": null,
+      "response_hash": "0a1b4a79abd21be4072b954cd6a50a46f8f87dd5635f00b0441cfe97be008f62",
+      "top_level_keys": [
+        "calculation_contract",
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "credit_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "daba483b146ba83bcfa2b45e6eeb98b25f4150b351127ac846f23ad5b62f1209",
+      "response_hash": "1f8c46287e87171e1d4b900f56020bf1cd0c493a19afe14a63e97695ecf3e452",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "cross_db_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "5bbe6a0a64bca8444c4c8a55ceb16fb113d0e51888fe938340f823bad513b2c3",
+      "response_hash": "3af3fea3eda4155caa5a66dd3081002e25bc0749d5d91b0384d96a6006149aa8",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "crypto_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME",
+        "WRONG_TYPE"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "b2021087c9b86c1e0d9f2204aa715a26858edf71a191eb79a5f6e05d635f59de",
+      "response_hash": "d2f48d63534d860354b2de7c845d02610372df33751e4ca1a76456fc05c91ccc",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "cybermarket_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "06295b3e28639c846f28681c3e7d70ede23ff6de459f48e7ad934e062c579f1c",
+      "response_hash": "a7060f48fd65b783344d51deca5bc309c626adac0df5dfb0de9b78b8363cd355",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "disaster_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "dad1b23cbac94fe77dc3a425b04f8c2e0691dbb6cf8c9b4b7ea670ab1baed11e",
+      "response_hash": "b5d7134e25568d7b5520083da316fd63b5470f6bcdb28c9367e73af022d532ca",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": true,
+      "case_id": "fake_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "RESPONSE_TRUNCATION_ARTIFACT"
+      ],
+      "first_validation_failure": "CAPTURE_TRUNCATED",
+      "json_complete": false,
+      "normalized_response_shape_hash": null,
+      "response_hash": "31f3acaf1c55fc2a38ee03186882b8668810c76e8f3d6e9614ee815c278edb78",
+      "top_level_keys": [
+        "database_id",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": true,
+      "case_id": "gaming_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "RESPONSE_TRUNCATION_ARTIFACT"
+      ],
+      "first_validation_failure": "CAPTURE_TRUNCATED",
+      "json_complete": false,
+      "normalized_response_shape_hash": null,
+      "response_hash": "e199267aea91197b6e27d9fb1f5fb49d029c5d9561e1c7c97d2437cd11736d88",
+      "top_level_keys": [
+        "database_id",
+        "from_entity_id",
+        "outputs",
+        "population_contract"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "insider_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "e2d7831e8493d3031f65747121651edc2899d68e462db1ad720b50141061faac",
+      "response_hash": "e445990a1c846ed7a444c34b624878828612194617e9dadf6ba6ff5c7daa2b22",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": true,
+      "case_id": "mental_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "RESPONSE_TRUNCATION_ARTIFACT"
+      ],
+      "first_validation_failure": "CAPTURE_TRUNCATED",
+      "json_complete": false,
+      "normalized_response_shape_hash": null,
+      "response_hash": "b921610693952bad3830b8169a736f6f987570990cde96a374e8e73df0da34fa",
+      "top_level_keys": [
+        "database_id",
+        "from_entity_id",
+        "joins",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "museum_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "828cd4c5a6acfe953978fcc5e0c36929224f683eddbf1fd62b4fe5a75497b7c9",
+      "response_hash": "69bf011c1838300baa85d87804b86691d94dd08febb292efc9ab915fd8544146",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "news_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "377febadcd4d02cf84d1e1c59582c600b4038f0229171a23951178ce974eda38",
+      "response_hash": "b6ffdb75282ba9a124678eb65f5ac6e5f5958ba60905eb82d87d9250c388dcdf",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "polar_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_DISCRIMINATOR",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "de6d364e91c1cd79c40f0b07e18db2c2fd3288703d9b68d0aa3f121c959d0295",
+      "response_hash": "9d077237f6c70aee74fb476f99261551f93d0a0d71cfe63f48c568e4f17d2296",
+      "top_level_keys": [
+        "calculation_contract",
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "robot_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_DISCRIMINATOR",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "76597b265dacd225a80b8c06cca71b093f839938096b3b4e194952f022540a25",
+      "response_hash": "1ad424721a3dd21d60bf228ccf2d0d52e983ecefa3283aa86c35ab2de429bde0",
+      "top_level_keys": [
+        "calculation_contract",
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "solar_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "b8b8603e84e54c47fba6720f57c471a28c39a71ae07ade8c68230905074ce012",
+      "response_hash": "8dcef5ee5f58a881fc7c71e951c116a03d155c3f0781c3af9cf0476546454976",
+      "top_level_keys": [
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "vaccine_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME",
+        "WRONG_TYPE"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "b3e9b7da04cea6b4c574e599c0e40d580582a84d19e0e39a0aa2f56d017bfbd3",
+      "response_hash": "ef9aaba8d94e8bdb1cc033bdeed0ad4a394eb73ebf07252892dcab10da379ebd",
+      "top_level_keys": [
+        "container_health_status",
+        "database_id",
+        "from_entity_id",
+        "max_temperature_breach_severity",
+        "outputs",
+        "population_contract"
+      ]
+    },
+    {
+      "capture_truncated": false,
+      "case_id": "virtual_1",
+      "closest_known_contract": "NONE_CONFIRMED",
+      "failure_categories": [
+        "EXTRA_FIELD",
+        "INVALID_ENUM",
+        "MISSING_REQUIRED_FIELD",
+        "STRUCTURAL_CONSTRAINT_FAILURE",
+        "WRONG_FIELD_NAME"
+      ],
+      "first_validation_failure": "missing:population_contract.base_entity_ids",
+      "json_complete": true,
+      "normalized_response_shape_hash": "3666fc0db0ac55b99a8544d11c0776e8861669353d80cd1bbef538ea21d7dfcd",
+      "response_hash": "e743846864f2a4dadda8787cf77a38b2f748d56ac2a11e41ad9eb844cbf1bc3c",
+      "top_level_keys": [
+        "calculation_contract",
+        "database_id",
+        "distinct",
+        "from_entity_id",
+        "group_by",
+        "having",
+        "joins",
+        "limit",
+        "offset",
+        "order_by",
+        "outputs",
+        "population_contract",
+        "where"
+      ]
+    }
+  ],
+  "classification": "M29_CONTRACT_ACQUISITION_AUDIT_COMPLETED",
+  "field_level_mismatch_evidence": [
+    {
+      "canonical": "population_contract.base_entity_ids",
+      "classification": "WRONG_FIELD_NAME_AND_MISSING_REQUIRED_FIELD",
+      "observed_alternates": [
+        "population_contract.entity_id",
+        "population_contract.type"
+      ]
+    },
+    {
+      "canonical": "outputs[].position, outputs[].semantic_role",
+      "classification": "WRONG_NESTING_AND_MISSING_REQUIRED_FIELD",
+      "observed_alternates": [
+        "outputs[].alias"
+      ]
+    },
+    {
+      "canonical": "attribute.attribute_id",
+      "classification": "WRONG_FIELD_NAME",
+      "observed_alternates": [
+        "attribute.id"
+      ]
+    },
+    {
+      "canonical": "function.arguments",
+      "classification": "WRONG_FIELD_NAME",
+      "observed_alternates": [
+        "function.args"
+      ]
+    },
+    {
+      "canonical": "literal.value_type",
+      "classification": "WRONG_FIELD_NAME",
+      "observed_alternates": [
+        "literal.data_type"
+      ]
+    },
+    {
+      "canonical": "logical.terms",
+      "classification": "WRONG_FIELD_NAME_AND_WRONG_NESTING",
+      "observed_alternates": [
+        "logical.operands",
+        "logical.expressions"
+      ]
+    },
+    {
+      "canonical": "bounded uppercase operator/function enums",
+      "classification": "INVALID_ENUM",
+      "observed_alternates": [
+        "lowercase/alternate operator and function values"
+      ]
+    },
+    {
+      "canonical": "supported expression discriminator tags",
+      "classification": "INVALID_DISCRIMINATOR",
+      "observed_alternates": [
+        "kind=calculation"
+      ]
+    }
+  ],
+  "primary_preserved": {
+    "new_provider_calls_during_audit": 0,
+    "plan_schema_failures": 18,
+    "primary_artifact_sha256": "dc6e8f255525a15727286e74a2de121fd10b5a774c5024b57e1d273dcdbcf5f4",
+    "primary_artifact_unchanged": true,
+    "requests": 18,
+    "responses_received": 18
+  },
+  "prompt_audit": {
+    "builder_source_hash": "903cd910fa33efa7cd032bda500612e215c9c4b95921525df026a8020bbe335d",
+    "canonical_class_name_in_prompt": false,
+    "canonical_top_level_fields_described": [
+      "database_id",
+      "from_entity_id",
+      "population_contract",
+      "outputs",
+      "joins",
+      "where",
+      "group_by",
+      "having",
+      "order_by",
+      "distinct",
+      "limit",
+      "offset",
+      "calculation_contract"
+    ],
+    "canonical_top_level_fields_not_described": [
+      "description",
+      "from_source",
+      "ctes",
+      "derived_relations"
+    ],
+    "embedded_json_schema": false,
+    "explicit_json_output_examples": 0,
+    "hardened_rendered_hash": "49768a00ed539508cb7353b324715e67fcfc89af6cabf190b00334068966767c",
+    "legacy_and_hardened_identical": true,
+    "legacy_rendered_hash": "49768a00ed539508cb7353b324715e67fcfc89af6cabf190b00334068966767c",
+    "mentions_legacy_contract_names": {
+      "Blueprint": false,
+      "QueryPlanV1": false,
+      "QueryPlanWireV2": false,
+      "ResultShape": false
+    },
+    "sample_runtime_messages": {
+      "alien_1": {
+        "contains_legacy_contract_names": false,
+        "lengths": [
+          80314,
+          304
+        ],
+        "roles": [
+          "system",
+          "user"
+        ],
+        "system_hash": "088bcdd05ed061427678f41a193392b1e4d030f23425511157e8211cb5e04c6b",
+        "user_hash": "0e2033d53303cb293d7784d55216c64cce07b234c8251d3f04aff8e382186f6e"
+      },
+      "credit_1": {
+        "contains_legacy_contract_names": false,
+        "lengths": [
+          62372,
+          172
+        ],
+        "roles": [
+          "system",
+          "user"
+        ],
+        "system_hash": "2ebb343ec9b2011468d7fa2df5baff56de5ece1429e2cb98afd7af629a148a41",
+        "user_hash": "c32f99e1113dfe010e0044dd5e82866595d650053a3327ad27af59fb7ef6335e"
+      },
+      "cybermarket_1": {
+        "contains_legacy_contract_names": false,
+        "lengths": [
+          74911,
+          239
+        ],
+        "roles": [
+          "system",
+          "user"
+        ],
+        "system_hash": "f3a5426061f97388b463f1960b624b79c0e33ba40a48a3527ea8e4f1e17aa904",
+        "user_hash": "89935ce250c99d9393c211d467aaaf6461b14cb1117d60f2e4c2bcad105a21c8"
+      }
+    }
+  },
+  "response_clusters": {
+    "common_envelope_observed": [
+      "database_id",
+      "from_entity_id",
+      "population_contract",
+      "outputs"
+    ],
+    "complete_captures": 14,
+    "complete_top_level_key_set_clusters": [
+      {
+        "cases": 1,
+        "key_set_hash": "1dd39374975c91d0acbd55f0f9eb3b3f78503bc6cb518aeabc54361e7db70721",
+        "top_level_keys": [
+          "container_health_status",
+          "database_id",
+          "from_entity_id",
+          "max_temperature_breach_severity",
+          "outputs",
+          "population_contract"
+        ]
+      },
+      {
+        "cases": 10,
+        "key_set_hash": "7391642df9d52d9f5ef1d483eb034918c1cc552d25cf9d1d22020138ae340cd8",
+        "top_level_keys": [
+          "database_id",
+          "distinct",
+          "from_entity_id",
+          "group_by",
+          "having",
+          "joins",
+          "limit",
+          "offset",
+          "order_by",
+          "outputs",
+          "population_contract",
+          "where"
+        ]
+      },
+      {
+        "cases": 3,
+        "key_set_hash": "7fd41cae0a3756b45f3134910010551c94bc850093dc14855874ac6919f12c8d",
+        "top_level_keys": [
+          "calculation_contract",
+          "database_id",
+          "distinct",
+          "from_entity_id",
+          "group_by",
+          "having",
+          "joins",
+          "limit",
+          "offset",
+          "order_by",
+          "outputs",
+          "population_contract",
+          "where"
+        ]
+      }
+    ],
+    "known_legacy_contract_matches": {},
+    "truncated_captures": 4
+  },
+  "response_format_conclusion": {
+    "actual_enforcement": "valid JSON object syntax only; local Pydantic validation after extraction",
+    "adapter_schema_downgrade_observed": false,
+    "json_object_mode_only": true,
+    "native_canonical_schema_enforcement": false,
+    "provider_capability_independently_verified": false
+  },
+  "truncation_analysis": {
+    "capture_limit": 4096,
+    "forensic_capture_truncation_only": true,
+    "full_payload_recovery": "not available; only full-content hash persisted",
+    "runtime_response_extracted_before_capture": true,
+    "runtime_response_truncated": false,
+    "truncated_cases": [
+      "archeology_1",
+      "fake_1",
+      "gaming_1",
+      "mental_1"
+    ]
+  },
+  "validation_failure_distribution": [
+    {
+      "cases_affected": 14,
+      "category": "EXTRA_FIELD",
+      "total_occurrences": 117
+    },
+    {
+      "cases_affected": 2,
+      "category": "INVALID_DISCRIMINATOR",
+      "total_occurrences": 7
+    },
+    {
+      "cases_affected": 14,
+      "category": "INVALID_ENUM",
+      "total_occurrences": 116
+    },
+    {
+      "cases_affected": 14,
+      "category": "MISSING_REQUIRED_FIELD",
+      "total_occurrences": 188
+    },
+    {
+      "cases_affected": 4,
+      "category": "RESPONSE_TRUNCATION_ARTIFACT",
+      "total_occurrences": 4
+    },
+    {
+      "cases_affected": 14,
+      "category": "STRUCTURAL_CONSTRAINT_FAILURE",
+      "total_occurrences": 14
+    },
+    {
+      "cases_affected": 14,
+      "category": "WRONG_FIELD_NAME",
+      "total_occurrences": 14
+    },
+    {
+      "cases_affected": 2,
+      "category": "WRONG_TYPE",
+      "total_occurrences": 4
+    }
+  ]
+}

@@ -17,13 +17,14 @@ You are answering one independent Decision-SQL benchmark question. Use only the 
 - Do not infer a JSON path or type that is not explicitly documented in the governed context.
 - Use the exact documented JSON path and documented semantic type.
 
-## Native measure grain and fanout
+## Parent/child additive measure alignment
 
-- When a measure originates on one side of a one-to-many relationship, do not aggregate that measure after joining to multiple child rows if the join would duplicate the original measure.
-- Preserve each measure at its native semantic grain.
-- When a calculation combines measures from different grains across a one-to-many relationship, first reduce or aggregate the many-side data to the grain required by the one-side measure, or compute the intended result at the native grain before rolling it up to a higher output grain.
-- A parent-grain value must not be counted once per matching child row merely because of join fanout.
-- Do not use `DISTINCT` as a generic substitute for correct grain handling. `DISTINCT` is appropriate only when the requested semantics themselves require distinctness.
+- When a calculation combines an additive value stored once on a parent row with additive values from multiple rows of a declared child relation, do not combine the measures after the parent row has been duplicated by the child join.
+- First aggregate the child additive values by the declared parent key so that the child side contributes at most one aggregate row per parent.
+- Then combine the parent value with that child aggregate exactly once for each parent row.
+- If the requested output grain is higher than the parent grain, aggregate the resulting parent-level values only after that parent-level calculation has been formed.
+- This rule applies only when a parent additive measure, a many-side additive measure, an arithmetic combination, and possible parent duplication by direct child joining are all present. Do not force this pattern for existence tests, simple child counts, parent-row fractions, semi-joins, anti-joins, latest-row queries, non-additive child attributes, or simple projections.
+- Do not use `SUM(DISTINCT parent_measure)` or another value-level `DISTINCT` operation as a generic substitute for parent-key alignment. Separate parent rows may legitimately contain equal values. `DISTINCT` remains valid when the requested semantics genuinely require distinctness.
 
 ## Decisions and output
 

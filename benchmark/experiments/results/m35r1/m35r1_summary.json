@@ -1,0 +1,161 @@
+{
+  "all_cases_deterministically_classified": true,
+  "base_only_false_positive_cases": [
+    "commerce_05"
+  ],
+  "decision_confusion_matrix": {
+    "AMBIGUOUS": {
+      "ANSWER": 0,
+      "BLOCKED_AUTHORITY": 0,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 3
+    },
+    "ANSWERABLE": {
+      "ANSWER": 20,
+      "BLOCKED_AUTHORITY": 0,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 0
+    },
+    "AUTHORITY_BLOCKED": {
+      "ANSWER": 0,
+      "BLOCKED_AUTHORITY": 5,
+      "BLOCKED_POLICY": 0,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 0
+    },
+    "POLICY_BLOCKED": {
+      "ANSWER": 0,
+      "BLOCKED_AUTHORITY": 0,
+      "BLOCKED_POLICY": 2,
+      "INVALID/NO_DECISION": 0,
+      "NEEDS_CLARIFICATION": 0
+    }
+  },
+  "decision_distribution": {
+    "ANSWER": 20,
+    "BLOCKED_AUTHORITY": 5,
+    "BLOCKED_POLICY": 2,
+    "NEEDS_CLARIFICATION": 3
+  },
+  "domain_breakdown": {
+    "commerce_ops": {
+      "answerable_correct": 6,
+      "answerable_total": 7,
+      "governance_correct": 10,
+      "overall_correct": 9,
+      "overall_total": 10
+    },
+    "fleet_ops": {
+      "answerable_correct": 4,
+      "answerable_total": 7,
+      "governance_correct": 10,
+      "overall_correct": 7,
+      "overall_total": 10
+    },
+    "support_ops": {
+      "answerable_correct": 2,
+      "answerable_total": 6,
+      "governance_correct": 10,
+      "overall_correct": 6,
+      "overall_total": 10
+    }
+  },
+  "execution_validity": {
+    "denominator": 20,
+    "rate": "60.0%",
+    "valid": 12
+  },
+  "experiment_id": "m35r1_luna_none",
+  "first_model_response_acquired": true,
+  "failure_counts": {
+    "CORRECT": 22,
+    "RESULT_MISMATCH": 8
+  },
+  "latency": {
+    "max_ms": 15564.977833069861,
+    "median_ms": 2434.1809999896213,
+    "min_ms": 1429.0065420791507,
+    "p90_ms": 8663.584375125356,
+    "successful_responses": 30
+  },
+  "mechanism_tag_breakdown": {
+    "schema_linking": {"correct": 2, "total": 2, "rate": "100.0%"},
+    "relationship": {"correct": 8, "total": 15, "rate": "53.3%"},
+    "multi_hop": {"correct": 2, "total": 5, "rate": "40.0%"},
+    "population": {"correct": 4, "total": 7, "rate": "57.1%"},
+    "filter": {"correct": 5, "total": 6, "rate": "83.3%"},
+    "aggregation": {"correct": 7, "total": 14, "rate": "50.0%"},
+    "grouping": {"correct": 3, "total": 7, "rate": "42.9%"},
+    "calculation": {"correct": 4, "total": 6, "rate": "66.7%"},
+    "temporal": {"correct": 2, "total": 4, "rate": "50.0%"},
+    "json": {"correct": 2, "total": 3, "rate": "66.7%"},
+    "window": {"correct": 2, "total": 3, "rate": "66.7%"},
+    "nested": {"correct": 2, "total": 4, "rate": "50.0%"},
+    "correlated": {"correct": 0, "total": 1, "rate": "0.0%"},
+    "set_operation": {"correct": 1, "total": 2, "rate": "50.0%"},
+    "ordering": {"correct": 2, "total": 3, "rate": "66.7%"},
+    "null_semantics": {"correct": 3, "total": 5, "rate": "60.0%"},
+    "precision": {"correct": 4, "total": 5, "rate": "80.0%"}
+  },
+  "provider_calls_attempted": 30,
+  "provider_schema_accepted_calls": 30,
+  "model_responses_generated": 30,
+  "provider_responses_received": 30,
+  "raw_outputs_preserved": true,
+  "schema_failures": 0,
+  "transport_failures": 0,
+  "scores": {
+    "ambiguity_accuracy": {
+      "correct": 3,
+      "rate": "100.0%",
+      "total": 3
+    },
+    "answerable_accuracy": {
+      "correct": 12,
+      "rate": "60.0%",
+      "total": 20
+    },
+    "authority_accuracy": {
+      "correct": 5,
+      "rate": "100.0%",
+      "total": 5
+    },
+    "governed_task_success": {
+      "correct": 22,
+      "rate": "73.3%",
+      "total": 30
+    },
+    "policy_accuracy": {
+      "correct": 2,
+      "rate": "100.0%",
+      "total": 2
+    }
+  },
+  "token_usage": {
+    "input": {
+      "available_cases": 30,
+      "median_per_case": 5176.0,
+      "total": 151173
+    },
+    "output": {
+      "available_cases": 30,
+      "median_per_case": 86.5,
+      "total": 2592
+    },
+    "reasoning": {
+      "available_cases": 30,
+      "median_per_case": 0.0,
+      "total": 0
+    },
+    "total": {
+      "available_cases": 30,
+      "median_per_case": 5249.5,
+      "total": 153765
+    }
+  },
+  "transport_failures": 0,
+  "unauthorized_answer_rate": "0/5 (0.0%)",
+  "wrong_refusal_rate": "0/20 (0.0%)"
+}

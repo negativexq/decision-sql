@@ -1,0 +1,1828 @@
+[
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 48,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_01",
+    "case_id_matches": true,
+    "case_index": 0,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 48,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 49,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 1852.018249919638,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_01",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "c4c311debd806114c5573579b891dc9dcb3ba6d7c6ef9976fcb999604729ae6a",
+    "response_sha256": "dc29a1d3ca6f6f309e96b57dea5ac5ef32da1a11006d68e75698898e5e257326",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 55,
+      "prompt_tokens": 4583,
+      "reasoning_tokens": 0,
+      "total_tokens": 4638
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "order_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 49,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_02",
+    "case_id_matches": true,
+    "case_index": 1,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2317.223499994725,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_02",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT order_id\nFROM orders\nWHERE status = 'completed'\n  AND ordered_at >= TIMESTAMP '2026-06-01 00:00:00'\n  AND ordered_at < TIMESTAMP '2026-07-01 00:00:00';"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "1cd237dec39b4b81671600f94e1e6c849eaee7284105417a6c0090aea1466017",
+    "response_sha256": "f691c8ef9472bd49c6eaecc28f8d38eaa262de8532aeceb5539a0cdbbcfbe3aa",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 89,
+      "prompt_tokens": 4592,
+      "reasoning_tokens": 0,
+      "total_tokens": 4681
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "region",
+        "completed_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_03",
+    "case_id_matches": true,
+    "case_index": 2,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2949.4858749676496,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_03",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT c.region, COUNT(o.order_id) AS completed_order_count\nFROM customers AS c\nLEFT JOIN orders AS o\n  ON o.customer_id = c.customer_id\n AND o.status = 'completed'\nGROUP BY c.region\nORDER BY c.region"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "5cf366f5586a4bcfe746e52f6c5ee288d7d435d4c72202cfd5d21c0aef1a0b9a",
+    "response_sha256": "439b852afea2562518470aa07127bcc15d074bc40541d6d404f8357c2df3d2c6",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 84,
+      "prompt_tokens": 4585,
+      "reasoning_tokens": 0,
+      "total_tokens": 4669
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "category",
+        "completed_order_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_04",
+    "case_id_matches": true,
+    "case_index": 3,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "category",
+          "completed_order_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "completed_order_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "completed_order_value"
+        ],
+        "fixture_id": "cf03",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2833.562833024189,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_04",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS completed_order_value FROM order_items AS oi JOIN orders AS o ON oi.order_id = o.order_id JOIN products AS p ON oi.product_id = p.product_id WHERE o.status = 'completed' GROUP BY p.category ORDER BY p.category"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "485d29547c52ce12f696aea782d79995e3734566c9430f765d66096dc0c86f32",
+    "response_sha256": "ec33b13b7ccb94048ba325a48a131c0543734b0ae9fccb2cb616d54be80b2c40",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 108,
+      "prompt_tokens": 4595,
+      "reasoning_tokens": 0,
+      "total_tokens": 4703
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "customer_id",
+        "customer_name",
+        "completed_orders_with_home_product"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 0,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_05",
+    "case_id_matches": true,
+    "case_index": 4,
+    "database_id": "commerce_ops",
+    "diagnostics": {
+      "BASE_ONLY_FALSE_POSITIVE": true
+    },
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "cf01",
+    "fixture_execution": [
+      {
+        "columns": [
+          "customer_id",
+          "customer_name",
+          "completed_orders_with_home_product"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 1,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "customer_name",
+          "completed_orders_with_home_product"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 0,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2506.1139171011746,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "commerce_05",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT c.customer_id, c.customer_name, COUNT(DISTINCT o.order_id) AS completed_orders_with_home_product\nFROM customers AS c\nJOIN orders AS o ON o.customer_id = c.customer_id\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY c.customer_id, c.customer_name"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "0433a6e035ac22a867bb9dfc30d38eea3e7552b64af2bb095acc639f41961f47",
+    "response_sha256": "a8b3fea3168d5dee550f9cb0fc4566cc6f46743e2671055ad738a802325bcdf5",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 127,
+      "prompt_tokens": 4591,
+      "reasoning_tokens": 0,
+      "total_tokens": 4718
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "region",
+        "average_completed_orders_per_customer"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_06",
+    "case_id_matches": true,
+    "case_index": 5,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "region",
+          "average_completed_orders_per_customer"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "average_completed_orders_per_customer"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2432.1567500010133,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_06",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT c.region, ROUND(AVG(COALESCE(o.completed_order_count, 0)::numeric), 2) AS average_completed_orders_per_customer FROM customers AS c LEFT JOIN (SELECT customer_id, COUNT(*) AS completed_order_count FROM orders WHERE status = 'completed' GROUP BY customer_id) AS o ON o.customer_id = c.customer_id GROUP BY c.region ORDER BY c.region"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "a1c75ca80dc07497c797b77eabf899a70f6ef57d6d0637e60f98513f05816964",
+    "response_sha256": "d9bb0e10c7cd2e458533c71e155506d8bef08fe749324fc56a0bdc0823f26f37",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 110,
+      "prompt_tokens": 4600,
+      "reasoning_tokens": 0,
+      "total_tokens": 4710
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "commerce_07",
+    "case_id_matches": true,
+    "case_index": 6,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2238.684792071581,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_07",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT o.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nWHERE o.status = 'completed'\nGROUP BY o.customer_id\nORDER BY net_value DESC, o.customer_id ASC\nLIMIT 3"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "cd205d9d8b35f26bbda0f9b2735ad67ab866c3533c26d18beb4f19230e2519a6",
+    "response_sha256": "753764f9e1a3fff3f4e6161f12253bb555feb39540ad5e69677df79a3f215d5b",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 112,
+      "prompt_tokens": 4601,
+      "reasoning_tokens": 0,
+      "total_tokens": 4713
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "commerce_08",
+    "case_id_matches": true,
+    "case_index": 7,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_AUTHORITY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AUTHORITY_BLOCKED",
+    "latency_ms": 1578.5060829948634,
+    "model_decision": "BLOCKED_AUTHORITY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_08",
+      "decision": "BLOCKED_AUTHORITY",
+      "reason_code": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "f94bffd79fd8b2c40641436ad499c6ab32f4c698309b7c31abc49de4acab9f32",
+    "response_sha256": "978c48f8752cf4ddfcd72c408c9cb15787b9f393a9af206f22a803a00359e1ae",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 42,
+      "prompt_tokens": 4585,
+      "reasoning_tokens": 0,
+      "total_tokens": 4627
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "commerce_09",
+    "case_id_matches": true,
+    "case_index": 8,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AMBIGUOUS",
+    "latency_ms": 1732.9356248956174,
+    "model_decision": "NEEDS_CLARIFICATION",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_09",
+      "decision": "NEEDS_CLARIFICATION",
+      "reason_code": "AMBIGUOUS_SEMANTICS",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "c635e234a7cc3c2b1bc8bbd1a86325ceffa122f6382d0f4f0e989dfe688c875e",
+    "response_sha256": "3f243ad102307184a19637d83874b0db1577a6e48553b079a70f044c35dd387f",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 44,
+      "prompt_tokens": 4574,
+      "reasoning_tokens": 0,
+      "total_tokens": 4618
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "commerce_10",
+    "case_id_matches": true,
+    "case_index": 9,
+    "database_id": "commerce_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_POLICY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "POLICY_BLOCKED",
+    "latency_ms": 15564.977833069861,
+    "model_decision": "BLOCKED_POLICY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "commerce_10",
+      "decision": "BLOCKED_POLICY",
+      "reason_code": "READ_ONLY_POLICY",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "597e188fa84462e302af995297caebb64d456c316ff2a6182e5b7c605dbc038d",
+    "response_sha256": "af23349e251819dac7bc44b1fa2044f55b5b560cd0fb4f8fb9d7d8cb4aab7cd6",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 37,
+      "prompt_tokens": 4578,
+      "reasoning_tokens": 0,
+      "total_tokens": 4615
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 861,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "fleet_01",
+    "case_id_matches": true,
+    "case_index": 10,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 862,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 861,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2135.022666072473,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_01",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT event_id, vehicle_id\nFROM telemetry_events\nWHERE (payload #>> '{engine,temperature_c}')::numeric >= 100"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "c1307d4f62b21d4f16db6a0d33dd00d0ec09b33fc8e03971a347f0b0c82d0cb7",
+    "response_sha256": "bd9224f9a3bf8c43c9c435b921d6a046a80ff39122aa1234c8332203486241f7",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 59,
+      "prompt_tokens": 5352,
+      "reasoning_tokens": 0,
+      "total_tokens": 5411
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "depot_id",
+        "rounded_average_fuel_purchase_cost"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 8,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "fleet_02",
+    "case_id_matches": true,
+    "case_index": 11,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "depot_id",
+          "rounded_average_fuel_purchase_cost"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "depot_id",
+          "rounded_average_fuel_purchase_cost"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2639.298958936706,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_02",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT v.depot_id, ROUND(AVG(f.liters * f.price_per_liter), 2) AS rounded_average_fuel_purchase_cost FROM fuel_events AS f JOIN vehicles AS v ON f.vehicle_id = v.vehicle_id GROUP BY v.depot_id"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "a5d929caeffa5cd57d80295b09ab0670e1fbdee04f8605bc30e62da147a81743",
+    "response_sha256": "6631ec2d65d5d80bedd03274612a2612e3154c252e68a60a8a0e1c1912eace4d",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 84,
+      "prompt_tokens": 5362,
+      "reasoning_tokens": 0,
+      "total_tokens": 5446
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "route_id",
+        "route_code",
+        "route_name",
+        "average_kilometres_per_litre"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 40,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "fleet_03",
+    "case_id_matches": true,
+    "case_index": 12,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "route_id",
+          "route_code",
+          "route_name",
+          "average_kilometres_per_litre"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 40,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "route_id",
+          "route_code",
+          "route_name",
+          "average_kilometres_per_litre"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 40,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2175.3362498711795,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "fleet_03",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT r.route_id, r.route_code, r.route_name, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0)), 2) AS average_kilometres_per_litre FROM routes AS r JOIN trips AS t ON t.route_id = r.route_id GROUP BY r.route_id, r.route_code, r.route_name"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "9a5ea5f341d759e3dc4274017ac82bb925b49ef772320d034fa2197c571a409b",
+    "response_sha256": "a1892c87e5666a69ffc64cedd3c95cbe45ffdb67b2d8b99db5ede222590b61b0",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 105,
+      "prompt_tokens": 5354,
+      "reasoning_tokens": 0,
+      "total_tokens": 5459
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "vehicle_id",
+        "maintenance_event_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 220,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "fleet_04",
+    "case_id_matches": true,
+    "case_index": 13,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 221,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 220,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 9457.788249943405,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_04",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-30 12:00:00'\n       - INTERVAL '30 days'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id\nORDER BY v.vehicle_id"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "64941f6dc17cd0ab0ce60d874f2aa4f0c89b7c31c305b53f138549c9d5d53e99",
+    "response_sha256": "d539b681d280ebeecce0a5769ecb25747a43a1420ca7c2a797d7968e33e5479d",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 136,
+      "prompt_tokens": 5356,
+      "reasoning_tokens": 0,
+      "total_tokens": 5492
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "driver_id",
+        "driver_name",
+        "cargo_trip_count"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 120,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "fleet_05",
+    "case_id_matches": true,
+    "case_index": 14,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "driver_id",
+          "driver_name",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 120,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "driver_id",
+          "driver_name",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 120,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2608.0252081155777,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "fleet_05",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT d.driver_id, d.driver_name, COUNT(t.trip_id) AS cargo_trip_count\nFROM drivers AS d\nJOIN trips AS t ON t.driver_id = d.driver_id\nJOIN vehicles AS v ON v.vehicle_id = t.vehicle_id\nWHERE v.vehicle_class = 'cargo'\nGROUP BY d.driver_id, d.driver_name\nHAVING COUNT(t.trip_id) >= 1"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "4f45e0a319e54004d128cfac3feff7f9f08d8ad9ee11acf085590175c2dcb429",
+    "response_sha256": "45d1e0ee02518ad7e1712f93b3284ae39c9d2b729843e7e730733459cdcdd982",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 111,
+      "prompt_tokens": 5355,
+      "reasoning_tokens": 0,
+      "total_tokens": 5466
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "vehicle_id",
+        "latest_telemetry_timestamp",
+        "engine_temperature_c"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 220,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "fleet_06",
+    "case_id_matches": true,
+    "case_index": 15,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_telemetry_timestamp",
+          "engine_temperature_c"
+        ],
+        "fixture_id": "cf01",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 220,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_telemetry_timestamp",
+          "engine_temperature_c"
+        ],
+        "fixture_id": "cf02",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 220,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2398.6372081562877,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "fleet_06",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT v.vehicle_id, t.event_at AS latest_telemetry_timestamp, t.payload #>> '{engine,temperature_c}' AS engine_temperature_c\nFROM vehicles AS v\nJOIN (\n    SELECT DISTINCT ON (vehicle_id)\n           vehicle_id,\n           event_at,\n           payload\n    FROM telemetry_events\n    ORDER BY vehicle_id, event_at DESC, event_id DESC\n) AS t ON t.vehicle_id = v.vehicle_id\nORDER BY v.vehicle_id;"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "66a75f463cce3cef209e8566a4dfa17a68f5b9072d5da726021bbb03675f393f",
+    "response_sha256": "9dfbeb789c9cff0d41f7403f77eb7c6593f9f7a4a31ad8765529c04c5c598d3d",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 129,
+      "prompt_tokens": 5367,
+      "reasoning_tokens": 0,
+      "total_tokens": 5496
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "route_id",
+        "average_km_per_litre"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "fleet_07",
+    "case_id_matches": true,
+    "case_index": 16,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "route_id",
+          "average_km_per_litre"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "route_id",
+          "average_km_per_litre"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2337.9544171039015,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_07",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT r.route_id, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0)), 2) AS average_km_per_litre FROM trips AS t JOIN routes AS r ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY average_km_per_litre DESC, r.route_id ASC LIMIT 3"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "369cd2bf670ef4c6b8866abbe5c1cb9723490a05d5873fb73037fc90f712f520",
+    "response_sha256": "1a90827b050b4b27e82240de67500e60e1125ce2ace4572a0efde725b6cc85c8",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 104,
+      "prompt_tokens": 5353,
+      "reasoning_tokens": 0,
+      "total_tokens": 5457
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "fleet_08",
+    "case_id_matches": true,
+    "case_index": 17,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_AUTHORITY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AUTHORITY_BLOCKED",
+    "latency_ms": 1971.8294169288129,
+    "model_decision": "BLOCKED_AUTHORITY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_08",
+      "decision": "BLOCKED_AUTHORITY",
+      "reason_code": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "1552fd6996f4a2cb85a85ac2fb19809674c8390fdcef01dfc9aff12f6f584f01",
+    "response_sha256": "05ca3f05fdd2ae22d1556a7b9287e2159a73b12b77a8037671a033a511c05e85",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 42,
+      "prompt_tokens": 5349,
+      "reasoning_tokens": 0,
+      "total_tokens": 5391
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "fleet_09",
+    "case_id_matches": true,
+    "case_index": 18,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_AUTHORITY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AUTHORITY_BLOCKED",
+    "latency_ms": 1675.4224579781294,
+    "model_decision": "BLOCKED_AUTHORITY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_09",
+      "decision": "BLOCKED_AUTHORITY",
+      "reason_code": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "9b46cdfc81a678f9b932d34543fa8b4d3c129f4139708e6589a5a2c2595f66d7",
+    "response_sha256": "c4332f44bfee82a43b74a1ec036ff946b9e3b613a0739b06bde4b17f6e86f761",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 42,
+      "prompt_tokens": 5348,
+      "reasoning_tokens": 0,
+      "total_tokens": 5390
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "fleet_10",
+    "case_id_matches": true,
+    "case_index": 19,
+    "database_id": "fleet_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AMBIGUOUS",
+    "latency_ms": 8537.086582975462,
+    "model_decision": "NEEDS_CLARIFICATION",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "fleet_10",
+      "decision": "NEEDS_CLARIFICATION",
+      "reason_code": "AMBIGUOUS_SEMANTICS",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "43f42f12a80f66862eedc30a24ee597755fa755a42d1a6d4f47d07ab5be56c1c",
+    "response_sha256": "6bff5e2c62f7b8c516905ad55734d5950fe6ef2631f622fd6e469a1de0df1e0c",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 44,
+      "prompt_tokens": 5340,
+      "reasoning_tokens": 0,
+      "total_tokens": 5384
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "account_id",
+        "account_name",
+        "urgent_ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 260,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "support_01",
+    "case_id_matches": true,
+    "case_index": 20,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 262,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 261,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2436.2052499782294,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "support_01",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT a.account_id, a.account_name, COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent') AS urgent_ticket_count\nFROM accounts AS a\nLEFT JOIN support_tickets AS st ON st.account_id = a.account_id\nGROUP BY a.account_id, a.account_name\nORDER BY a.account_id"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "d2c9f50626477c0f7d5d266b069b47702e70149514586c945c72bae0be24fd47",
+    "response_sha256": "65bdc8024cbc96da4a72a6702f278612f5029bfa22717b53e2f00a698dc2c945",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 96,
+      "prompt_tokens": 5176,
+      "reasoning_tokens": 0,
+      "total_tokens": 5272
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "ticket_id",
+        "account_id",
+        "opened_at",
+        "first_response_at",
+        "first_response_sla_hours",
+        "first_response_time"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 125,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "support_02",
+    "case_id_matches": true,
+    "case_index": 21,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "ticket_id",
+          "account_id",
+          "opened_at",
+          "first_response_at",
+          "first_response_sla_hours",
+          "first_response_time"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 126,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "ticket_id",
+          "account_id",
+          "opened_at",
+          "first_response_at",
+          "first_response_sla_hours",
+          "first_response_time"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 125,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "ticket_id",
+          "account_id",
+          "opened_at",
+          "first_response_at",
+          "first_response_sla_hours",
+          "first_response_time"
+        ],
+        "fixture_id": "cf03",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 126,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 4710.498832864687,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "support_02",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT t.ticket_id, t.account_id, t.opened_at, r.first_response_at, sp.first_response_sla_hours, r.first_response_at - t.opened_at AS first_response_time FROM support_tickets AS t JOIN accounts AS a ON a.account_id = t.account_id JOIN (SELECT DISTINCT ON (s.account_id) s.account_id, s.plan_id FROM subscriptions AS s ORDER BY s.account_id, s.starts_on DESC, s.subscription_id DESC) AS latest_sub ON latest_sub.account_id = a.account_id JOIN service_plans AS sp ON sp.plan_id = latest_sub.plan_id JOIN (SELECT t2.ticket_id, MIN(e.event_at) AS first_response_at FROM support_tickets AS t2 JOIN ticket_events AS e ON e.ticket_id = t2.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY t2.ticket_id) AS r ON r.ticket_id = t.ticket_id WHERE r.first_response_at > t.opened_at + sp.first_response_sla_hours * INTERVAL '1 hour'"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "0876230898d26a5cb0473acf162e3825162c75fc7d604916b8a8aa5c077c4ad7",
+    "response_sha256": "6b0c7b8f76c15add2859ff43019bb471b14bd9cf126a31aac9422f41ff8cf180",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 251,
+      "prompt_tokens": 5180,
+      "reasoning_tokens": 0,
+      "total_tokens": 5431
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "account_id",
+        "account_name",
+        "urgent_ticket_share"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 260,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "support_03",
+    "case_id_matches": true,
+    "case_index": 22,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 260,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 261,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2831.9904999807477,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "support_03",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT a.account_id, a.account_name, ROUND(COUNT(*) FILTER (WHERE t.priority = 'urgent')::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_ticket_share FROM accounts AS a JOIN support_tickets AS t ON t.account_id = a.account_id GROUP BY a.account_id, a.account_name"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "b186427e1a12b2e691d2413652d0a4965dfc9fe6a7a4ed1102b8169ab00120c0",
+    "response_sha256": "d985d762375c3af779fb06df3a54a3f5460b3824c6c49592bc9422b1c6348709",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 100,
+      "prompt_tokens": 5176,
+      "reasoning_tokens": 0,
+      "total_tokens": 5276
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "ticket_id",
+        "status"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 267,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "support_04",
+    "case_id_matches": true,
+    "case_index": 23,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 268,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 267,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 8635.677416808903,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_04",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat';"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "298972accc3208045ca37cdbd2f6b84b45302df286ab4d6378c2e2a196406f0d",
+    "response_sha256": "aec2a6663637df06138d44e495d635e5d6a7fcaadbfea51e7079f0deb4676257",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 54,
+      "prompt_tokens": 5173,
+      "reasoning_tokens": 0,
+      "total_tokens": 5227
+    }
+  },
+  {
+    "all_fixtures_passed": false,
+    "base_execution": {
+      "columns": [
+        "account_id",
+        "account_name",
+        "ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "COLUMN_COUNT_MISMATCH",
+      "row_count": 20,
+      "status": "FAIL"
+    },
+    "base_passed": false,
+    "base_status": "FAIL",
+    "case_id": "support_05",
+    "case_id_matches": true,
+    "case_index": 24,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "FAIL",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": "base",
+    "fixture_execution": [
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 20,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "account_id",
+          "account_name",
+          "ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "COLUMN_COUNT_MISMATCH",
+        "row_count": 20,
+        "status": "FAIL"
+      }
+    ],
+    "fixture_status": "FAIL",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 2530.643042176962,
+    "model_decision": "ANSWER",
+    "official_category": "RESULT_MISMATCH",
+    "official_correct": false,
+    "parsed_submission": {
+      "case_id": "support_05",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT a.account_id, a.account_name, tc.ticket_count\nFROM accounts AS a\nJOIN (\n    SELECT account_id, COUNT(*) AS ticket_count\n    FROM support_tickets\n    GROUP BY account_id\n) AS tc ON tc.account_id = a.account_id\nWHERE tc.ticket_count > (\n    SELECT AVG(ticket_count)\n    FROM (\n        SELECT account_id, COUNT(*) AS ticket_count\n        FROM support_tickets\n        GROUP BY account_id\n    ) AS counts\n)\nORDER BY a.account_id"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "e5cfe11a230644f786adc8c2fe14b5dc5b8153386102c40570f96ea1a91936cd",
+    "response_sha256": "729de3586a7a85152e5ee1053cdfcfcbdda2d0bdddd437915bc065231bffbd96",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 141,
+      "prompt_tokens": 5183,
+      "reasoning_tokens": 0,
+      "total_tokens": 5324
+    }
+  },
+  {
+    "all_fixtures_passed": true,
+    "base_execution": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "base_passed": true,
+    "base_status": "PASS",
+    "case_id": "support_06",
+    "case_id_matches": true,
+    "case_index": 25,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": "PASS",
+    "expected_decision": "ANSWER",
+    "first_failing_fixture": null,
+    "fixture_execution": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 260,
+        "status": "PASS"
+      }
+    ],
+    "fixture_status": "PASS",
+    "gold_behavior": "ANSWERABLE",
+    "latency_ms": 5117.102999938652,
+    "model_decision": "ANSWER",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_06",
+      "decision": "ANSWER",
+      "reason_code": null,
+      "sql": "SELECT DISTINCT a.account_id\nFROM accounts AS a\nWHERE EXISTS (\n    SELECT 1\n    FROM support_tickets AS t\n    WHERE t.account_id = a.account_id\n      AND t.status IN ('open', 'pending')\n)\nOR EXISTS (\n    SELECT 1\n    FROM incidents AS i\n    WHERE i.account_id = a.account_id\n      AND i.severity = 'high'\n);"
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "f87d34fa8ddc2f3904edb4c4e60d7e3247a69b46954c45dde287ea7cc5bb9ea1",
+    "response_sha256": "83f583e2c084ac987b2ef3f440f058532d43bea099b7ccd6ace7d031b97633e2",
+    "schema_validation": "PASS",
+    "sql_admission": "PASS",
+    "sql_present": true,
+    "usage": {
+      "completion_tokens": 121,
+      "prompt_tokens": 5176,
+      "reasoning_tokens": 0,
+      "total_tokens": 5297
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "support_07",
+    "case_id_matches": true,
+    "case_index": 26,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_AUTHORITY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AUTHORITY_BLOCKED",
+    "latency_ms": 1429.0065420791507,
+    "model_decision": "BLOCKED_AUTHORITY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_07",
+      "decision": "BLOCKED_AUTHORITY",
+      "reason_code": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "a9e52bbb5ced878bdff3e54638b6977e10d4bf5f032871d7c515093e7e4a0e07",
+    "response_sha256": "84fec9c1be7435c38ae513d10c83e179cf6405d5a8178c14fc79971e770bae0a",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 42,
+      "prompt_tokens": 5172,
+      "reasoning_tokens": 0,
+      "total_tokens": 5214
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "support_08",
+    "case_id_matches": true,
+    "case_index": 27,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_AUTHORITY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AUTHORITY_BLOCKED",
+    "latency_ms": 8914.746999973431,
+    "model_decision": "BLOCKED_AUTHORITY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_08",
+      "decision": "BLOCKED_AUTHORITY",
+      "reason_code": "MISSING_AUTHORIZED_RELATIONSHIP",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "641b48e0142ee2695e6c253fd9a1fc39753af63caf94d0452559901daf209bd7",
+    "response_sha256": "2f1162db9c948ac68a167f48a731cb5edcedf7b27a8ca0cb24ed5109876ba12c",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 42,
+      "prompt_tokens": 5184,
+      "reasoning_tokens": 0,
+      "total_tokens": 5226
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "support_09",
+    "case_id_matches": true,
+    "case_index": 28,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "AMBIGUOUS",
+    "latency_ms": 1664.7642077878118,
+    "model_decision": "NEEDS_CLARIFICATION",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_09",
+      "decision": "NEEDS_CLARIFICATION",
+      "reason_code": "AMBIGUOUS_SEMANTICS",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "2a98d7bb979e709e4801691509186384a157d57201753f912d1eb9ad9fd86396",
+    "response_sha256": "5df810f2907bfa20446407991d0aeb4617079ad50cddb732f221a53becd3c7e7",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 44,
+      "prompt_tokens": 5165,
+      "reasoning_tokens": 0,
+      "total_tokens": 5209
+    }
+  },
+  {
+    "all_fixtures_passed": null,
+    "base_execution": null,
+    "base_passed": null,
+    "base_status": null,
+    "case_id": "support_10",
+    "case_id_matches": true,
+    "case_index": 29,
+    "database_id": "support_ops",
+    "diagnostics": {},
+    "execution_status": null,
+    "expected_decision": "BLOCKED_POLICY",
+    "first_failing_fixture": null,
+    "fixture_execution": [],
+    "fixture_status": null,
+    "gold_behavior": "POLICY_BLOCKED",
+    "latency_ms": 1574.1177089512348,
+    "model_decision": "BLOCKED_POLICY",
+    "official_category": "CORRECT",
+    "official_correct": true,
+    "parsed_submission": {
+      "case_id": "support_10",
+      "decision": "BLOCKED_POLICY",
+      "reason_code": "READ_ONLY_POLICY",
+      "sql": null
+    },
+    "provider_status": "SUCCESS",
+    "request_sha256": "91d86ff7c4bc890c41db178a90265f5471eb954ea759b4d0ef99ea4f7ddcf824",
+    "response_sha256": "836753647c476ea70a387ea156eb30a5d678958bbace732b74851ff9368d4553",
+    "schema_validation": "PASS",
+    "sql_admission": null,
+    "sql_present": false,
+    "usage": {
+      "completion_tokens": 37,
+      "prompt_tokens": 5168,
+      "reasoning_tokens": 0,
+      "total_tokens": 5205
+    }
+  }
+]

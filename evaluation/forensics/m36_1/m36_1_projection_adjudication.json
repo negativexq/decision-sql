@@ -1,0 +1,253 @@
+{
+  "experiment": "M36.1",
+  "source_experiment": "m35r1_luna_none",
+  "provider_calls": 0,
+  "scope": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"],
+  "benchmark_content_hash": "f30f5bc061920c59f7a7b58e85d8fcb911ab7dbd83fb1505a2412c7043dba9a8",
+  "m35r1_artifacts_changed": false,
+  "m36_artifacts_changed": false,
+  "method": {
+    "pass_a": "Internal blind natural-language pass based on exact question plus rebuilt model-visible context; gold projection was recorded separately afterward.",
+    "pass_b": "Gold semantic target, reference A/B output columns, fixtures, and M36 forensic output were then compared.",
+    "human_claim": "AGENT_ASSISTED_ADJUDICATION; no independent human review claimed."
+  },
+  "model_contract_audit": {
+    "model_contract_explicitly_requires_only_requested_sql_columns": false,
+    "governed_prompt_explicitly_requires_only_requested_sql_columns": false,
+    "evaluator_requires_exact_semantic_target_column_count": true,
+    "strict_projection_policy_hidden_or_unspecified": true
+  },
+  "cases": [
+    {
+      "case_id": "commerce_05",
+      "question": "For each customer who bought a home product in a completed order, count distinct completed orders containing a home product.",
+      "gold_outputs": ["customer_id", "home_orders"],
+      "luna_outputs": ["customer_id", "customer_name", "completed_orders_with_home_product"],
+      "luna_only_extras": ["customer_name"],
+      "extra_column_types": {"customer_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "customer_id": "REQUIRED",
+        "home_orders": "REQUIRED",
+        "customer_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["For each customer", "count distinct completed orders"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable customer identifier", "distinct completed home-order count"],
+        "optional_reasonable": ["customer_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "IMPLIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "A competent analyst needs an entity identifier and the requested count. A customer display name is a directly relevant, reasonable addition, and the public model contract does not say that only the minimal projection may be returned."
+    },
+    {
+      "case_id": "fleet_03",
+      "question": "For each route, calculate rounded average kilometres per litre across its trips, excluding zero-fuel ratios.",
+      "gold_outputs": ["route_id", "km_per_liter"],
+      "luna_outputs": ["route_id", "route_code", "route_name", "average_kilometres_per_litre"],
+      "luna_only_extras": ["route_code", "route_name"],
+      "extra_column_types": {"route_code": "IDENTITY_FIELD", "route_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "route_id": "REQUIRED",
+        "km_per_liter": "REQUIRED",
+        "route_code": "REASONABLE_BUT_OPTIONAL",
+        "route_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["For each route", "calculate rounded average kilometres per litre"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable route identifier", "rounded average kilometres per litre"],
+        "optional_reasonable": ["route_code", "route_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "IMPLIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "The grouped measure and route key are clear, but route code and route name are natural route-identifying information. The question does not state route_id-only output."
+    },
+    {
+      "case_id": "fleet_05",
+      "question": "For each driver, count trips made in cargo vehicles, returning only drivers with at least one such trip.",
+      "gold_outputs": ["driver_id", "cargo_trips"],
+      "luna_outputs": ["driver_id", "driver_name", "cargo_trip_count"],
+      "luna_only_extras": ["driver_name"],
+      "extra_column_types": {"driver_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "driver_id": "REQUIRED",
+        "cargo_trips": "REQUIRED",
+        "driver_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["For each driver", "count trips made in cargo vehicles", "only drivers with at least one"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable driver identifier", "cargo-trip count"],
+        "optional_reasonable": ["driver_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "IMPLIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "The driver ID and count are required, but a driver's display name is a normal, directly relevant way to identify the returned entity. The word only constrains population, not columns."
+    },
+    {
+      "case_id": "support_01",
+      "question": "For every account, count urgent support tickets, including accounts with zero urgent tickets.",
+      "gold_outputs": ["account_id", "urgent_tickets"],
+      "luna_outputs": ["account_id", "account_name", "urgent_ticket_count"],
+      "luna_only_extras": ["account_name"],
+      "extra_column_types": {"account_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "account_id": "REQUIRED",
+        "urgent_tickets": "REQUIRED",
+        "account_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["For every account", "count urgent support tickets", "including accounts with zero urgent tickets"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable account identifier", "urgent-ticket count"],
+        "optional_reasonable": ["account_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "IMPLIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "The LEFT JOIN and FILTER semantics are correct. Account name is a reasonable optional display field; the question does not say account_id only or return exactly two columns."
+    },
+    {
+      "case_id": "support_02",
+      "question": "List tickets whose first agent response exceeded the first-response SLA of the account's most recently started subscription.",
+      "gold_outputs": ["ticket_id"],
+      "luna_outputs": ["ticket_id", "account_id", "opened_at", "first_response_at", "first_response_sla_hours", "first_response_time"],
+      "luna_only_extras": ["account_id", "opened_at", "first_response_at", "first_response_sla_hours", "first_response_time"],
+      "extra_column_types": {
+        "account_id": "IDENTITY_FIELD",
+        "opened_at": "DIAGNOSTIC_MEASURE",
+        "first_response_at": "INTERMEDIATE_MEASURE",
+        "first_response_sla_hours": "INTERMEDIATE_MEASURE",
+        "first_response_time": "DIAGNOSTIC_MEASURE"
+      },
+      "required_vs_reasonable": {
+        "ticket_id": "REQUIRED",
+        "account_id": "REASONABLE_BUT_OPTIONAL",
+        "opened_at": "REASONABLE_BUT_OPTIONAL",
+        "first_response_at": "REASONABLE_BUT_OPTIONAL",
+        "first_response_sla_hours": "REASONABLE_BUT_OPTIONAL",
+        "first_response_time": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["List tickets", "first agent response", "first-response SLA", "most recently started subscription"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["ticket identifier"],
+        "optional_reasonable": ["account_id", "opened_at", "first_response_at", "first_response_sla_hours", "first_response_time"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": false,
+      "projection_normalized_fixtures": {"base": false, "cf01": false, "cf02": false, "cf03": false},
+      "core_semantics_correct": true,
+      "core_semantics_basis": "Question and visible rule require the first response later than opened_at; Luna applies that visible rule.",
+      "frozen_reference_discrepancy": "Both frozen reference implementations omit the event_at > opened_at predicate, while the visible rule support_sla explicitly requires the first agent_response later than opened_at. Projection-normalized Luna results therefore do not match the frozen reference result set.",
+      "adjudication": "UNDERSPECIFIED_PROJECTION",
+      "responsibility": "BENCHMARK_REVIEW_REQUIRED",
+      "confidence": "MEDIUM",
+      "rationale": "The question does not require ticket_id-only output, and all extras are directly relevant diagnostic fields. However, this case cannot be treated as projection-only: the visible business rule and frozen references disagree, so benchmark semantic review is required before assigning responsibility for the official mismatch."
+    },
+    {
+      "case_id": "support_03",
+      "question": "For each account with tickets, report the urgent-ticket share rounded to four decimals.",
+      "gold_outputs": ["account_id", "urgent_share"],
+      "luna_outputs": ["account_id", "account_name", "urgent_ticket_share"],
+      "luna_only_extras": ["account_name"],
+      "extra_column_types": {"account_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "account_id": "REQUIRED",
+        "urgent_share": "REQUIRED",
+        "account_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["For each account with tickets", "report the urgent-ticket share", "rounded to four decimals"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable account identifier", "urgent-ticket share rounded to four decimals"],
+        "optional_reasonable": ["account_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "IMPLIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "The account share and account identity are clear, but account_name is a reasonable display addition and the public contract does not prohibit it."
+    },
+    {
+      "case_id": "support_05",
+      "question": "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket.",
+      "gold_outputs": ["account_id", "ticket_count"],
+      "luna_outputs": ["account_id", "account_name", "ticket_count"],
+      "luna_only_extras": ["account_name"],
+      "extra_column_types": {"account_name": "DESCRIPTIVE_FIELD"},
+      "required_vs_reasonable": {
+        "account_id": "REQUIRED",
+        "ticket_count": "REASONABLE_BUT_OPTIONAL",
+        "account_name": "REASONABLE_BUT_OPTIONAL"
+      },
+      "question_projection_evidence": ["Find accounts", "ticket count is above the average count", "accounts with at least one ticket"],
+      "exact_projection_language": [],
+      "question_explicitly_prohibits_extras": false,
+      "blind_expected_outputs": {
+        "required": ["stable account identifier"],
+        "optional_reasonable": ["ticket_count", "account_name"]
+      },
+      "gold_minimality": "REASONABLE_MINIMAL",
+      "luna_extra_quality": "USEFUL",
+      "projection_normalized_match": true,
+      "projection_normalized_fixtures": {"base": true, "cf01": true, "cf02": true},
+      "core_semantics_correct": true,
+      "adjudication": "UNDERSPECIFIED_PROJECTION",
+      "responsibility": "CONTRACT_AMBIGUITY",
+      "confidence": "HIGH",
+      "rationale": "The question is entity-finding rather than an explicit report request. Returning the qualifying ticket_count and account_name is directly useful, but the exact projection is not uniquely specified."
+    }
+  ],
+  "counts": {
+    "EXPLICIT_PROJECTION": 0,
+    "IMPLIED_PROJECTION": 5,
+    "UNDERSPECIFIED_PROJECTION": 2,
+    "MODEL_ERROR": 0,
+    "CONTRACT_AMBIGUITY": 6,
+    "BENCHMARK_CONTRACT_DEFECT": 0,
+    "BENCHMARK_REVIEW_REQUIRED": 1,
+    "projection_normalized_match_yes": 6,
+    "projection_normalized_match_no": 1,
+    "core_semantic_correct": 7
+  },
+  "official_scores_unchanged": {
+    "governed_task_success": "22/30 = 73.3%",
+    "answerable_test_suite_accuracy": "12/20 = 60.0%"
+  }
+}

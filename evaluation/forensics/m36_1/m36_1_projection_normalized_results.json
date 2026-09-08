@@ -1,0 +1,52 @@
+{
+  "experiment": "M36.1",
+  "provider_calls": 0,
+  "source": "Frozen M35R1 Luna SQL executed diagnostically against frozen base and counterfactual fixtures; no provider call and no M35R1 artifact rewrite.",
+  "projection_only_cases": 6,
+  "projection_normalized_match": {
+    "commerce_05": {
+      "keep_output_positions": [0, 2],
+      "gold_columns": ["customer_id", "home_orders"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    },
+    "fleet_03": {
+      "keep_output_positions": [0, 3],
+      "gold_columns": ["route_id", "km_per_liter"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    },
+    "fleet_05": {
+      "keep_output_positions": [0, 2],
+      "gold_columns": ["driver_id", "cargo_trips"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    },
+    "support_01": {
+      "keep_output_positions": [0, 2],
+      "gold_columns": ["account_id", "urgent_tickets"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    },
+    "support_02": {
+      "keep_output_positions": [0],
+      "gold_columns": ["ticket_id"],
+      "fixtures": {"base": "RESULT_MISMATCH", "cf01": "RESULT_MISMATCH", "cf02": "RESULT_MISMATCH", "cf03": "RESULT_MISMATCH"},
+      "all_fixtures_match": false,
+      "additional_semantic_finding": "Luna applies visible support_sla rule event_at > opened_at. Frozen reference A/B omit that predicate and return a much smaller set."
+    },
+    "support_03": {
+      "keep_output_positions": [0, 2],
+      "gold_columns": ["account_id", "urgent_share"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    },
+    "support_05": {
+      "keep_output_positions": [0, 2],
+      "gold_columns": ["account_id", "ticket_count"],
+      "fixtures": {"base": "MATCH", "cf01": "MATCH", "cf02": "MATCH"},
+      "all_fixtures_match": true
+    }
+  },
+  "result": "6/7 are projection-only under deterministic result comparison; support_02 is not projection-only."
+}

@@ -1,0 +1,81 @@
+{
+  "experiment": "M36",
+  "source_experiment": "m35r1_luna_none",
+  "provider_calls": 0,
+  "baseline_recomputed": {
+    "total": 30,
+    "correct": 22,
+    "incorrect": 8,
+    "answerable_total": 20,
+    "answerable_correct": 12,
+    "answerable_incorrect": 8,
+    "non_answerable_total": 10,
+    "non_answerable_correct": 10,
+    "matches_frozen_summary": true
+  },
+  "root_cause_distribution": [
+    {"primary_failure_category": "OUTPUT_SHAPE_ERROR", "count": 7, "cases": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"]},
+    {"primary_failure_category": "JSON_TYPE_COERCION_ERROR", "count": 1, "cases": ["fleet_06"]}
+  ],
+  "stage_distribution": [
+    {"stage": "GROUNDING", "count": 1, "cases": ["fleet_06"]},
+    {"stage": "RELATIONSHIP_RESOLUTION", "count": 0, "cases": []},
+    {"stage": "SEMANTIC_COMPOSITION", "count": 0, "cases": []},
+    {"stage": "AGGREGATION/GRAIN", "count": 0, "cases": []},
+    {"stage": "TEMPORAL", "count": 0, "cases": []},
+    {"stage": "OUTPUT_CONTRACT", "count": 7, "cases": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"]},
+    {"stage": "BENCHMARK", "count": 0, "cases": []}
+  ],
+  "shared_failure_signatures": [
+    {"signature": "correct core SQL semantics but over-projects display/intermediate columns", "count": 7, "cases": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"]},
+    {"signature": "correct JSON path and latest-row logic but fails to propagate declared NUMERIC type", "count": 1, "cases": ["fleet_06"]},
+    {"signature": "governed decision selection correct", "count": 8, "cases": ["commerce_05", "fleet_03", "fleet_05", "fleet_06", "support_01", "support_02", "support_03", "support_05"]}
+  ],
+  "relationship_result": {
+    "wrong_or_missing_relationship_path": {"count": 0, "cases": []},
+    "correct_relationship_path_or_no_relationship_required_with_downstream_failure": {"count": 8, "cases": ["commerce_05", "fleet_03", "fleet_05", "fleet_06", "support_01", "support_02", "support_03", "support_05"]}
+  },
+  "population_result": {"contributed_count": 0, "cases": []},
+  "aggregation_grain_result": {"contributed_count": 0, "cases": []},
+  "temporal_result": {"contributed_count": 0, "cases": []},
+  "evidence_result": {
+    "required_semantic_evidence_visible": 8,
+    "total": 8,
+    "missing_context": 0,
+    "authority_sufficient": 8,
+    "question_semantic_core_sufficient": 8,
+    "exact_projection_boundary_review_candidates": 7
+  },
+  "counterfactual_contribution": {
+    "answerable_total": 20,
+    "base_pass_count": 13,
+    "base_accuracy": "13/20 = 65.0%",
+    "full_fixture_suite_pass_count": 12,
+    "full_fixture_accuracy": "12/20 = 60.0%",
+    "base_only_false_positive_count": 1,
+    "base_only_false_positive_cases": ["commerce_05"],
+    "delta": "1 case / 5.0 percentage points"
+  },
+  "benchmark_review": {
+    "confirmed_defective_cases": 0,
+    "projection_contract_review_candidates": 7,
+    "cases": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"],
+    "reason": "The frozen questions request an entity-level measure but do not always enumerate an exact output projection or prohibit visible display attributes. This is a contract-clarity risk, not proof that the semantic targets are wrong."
+  },
+  "dominant_failure_family": {
+    "category": "OUTPUT_CONTRACT / PROJECTION DISCIPLINE",
+    "cases": ["commerce_05", "fleet_03", "fleet_05", "support_01", "support_02", "support_03", "support_05"],
+    "evidence": "Seven outputs add display or diagnostic columns while preserving the requested relational and metric logic; all seven fail first at result-column validation."
+  },
+  "governance": {"decision_errors": 0, "total_cases": 30, "statement": "Observed failures are downstream of governed task classification."},
+  "detector_assessment": {
+    "OUTPUT_SHAPE_ERROR": "PARTIALLY_DETECTABLE without an explicit requested-column contract; detectable once the projection contract is explicit.",
+    "JSON_TYPE_COERCION_ERROR": "DETECTABLE from visible attribute type plus generated expression typing."
+  },
+  "architecture_implication": {
+    "choice": "F",
+    "label": "MIXED, dominated by output-contract/projection discipline",
+    "explanation": "The eight cases do not primarily indicate missing context, relationship grounding, aggregation/grain, or temporal failure. Seven are projection-contract failures and one is a visible JSON type-coercion failure."
+  },
+  "sample_caveat": "This is an 8-failure forensic sample from a 30-case development pilot. It identifies mechanisms to test next; it does not prove population-wide failure rates."
+}

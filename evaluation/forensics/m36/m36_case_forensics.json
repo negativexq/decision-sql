@@ -1,0 +1,407 @@
+{
+  "experiment": "M36",
+  "source_experiment": "m35r1_luna_none",
+  "provider_calls": 0,
+  "benchmark_content_hash": "f30f5bc061920c59f7a7b58e85d8fcb911ab7dbd83fb1505a2412c7043dba9a8",
+  "cases": [
+    {
+      "case_id": "commerce_05",
+      "database": "commerce_ops",
+      "question": "For each customer who bought a home product in a completed order, count distinct completed orders containing a home product.",
+      "request_sha256": "0433a6e035ac22a867bb9dfc30d38eea3e7552b64af2bb095acc639f41961f47",
+      "response_sha256": "a8b3fea3168d5dee550f9cb0fc4566cc6f46743e2671055ad738a802325bcdf5",
+      "generated_sql": "SELECT c.customer_id, c.customer_name, COUNT(DISTINCT o.order_id) AS completed_orders_with_home_product\nFROM customers AS c\nJOIN orders AS o ON o.customer_id = c.customer_id\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY c.customer_id, c.customer_name",
+      "sql_decomposition": {
+        "tables": ["customers", "orders", "order_items", "products"],
+        "authorized_relationships": ["relationship:commerce_ops:order_customer", "relationship:commerce_ops:item_order", "relationship:commerce_ops:item_product"],
+        "join_predicates": ["o.customer_id = c.customer_id", "oi.order_id = o.order_id", "p.product_id = oi.product_id"],
+        "where": ["o.status = 'completed'", "p.category = 'home'"],
+        "aggregates": ["COUNT(DISTINCT o.order_id)"],
+        "group_by": ["c.customer_id", "c.customer_name"],
+        "output": ["c.customer_id", "c.customer_name", "COUNT(DISTINCT o.order_id)"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "matching-only customers with completed orders containing a home product",
+        "relationship_path": "customers <- orders <- order_items -> products",
+        "filter_scope": "row-level completed-order and product-category predicates",
+        "grain": "customer",
+        "aggregate": "COUNT(DISTINCT order_id)",
+        "outputs": ["customer_id", "home_orders"]
+      },
+      "reference_sql": {
+        "a": "SELECT c.customer_id, COUNT(DISTINCT o.order_id) AS home_orders FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY c.customer_id ORDER BY c.customer_id",
+        "b": "WITH home_orders AS (SELECT DISTINCT o.customer_id, o.order_id FROM orders o JOIN order_items oi ON oi.order_id = o.order_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home') SELECT customer_id, COUNT(*) AS home_orders FROM home_orders GROUP BY customer_id ORDER BY customer_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "PASS", "reason": "MATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds two home lines to one order, distinguishing distinct orders from line count."},
+        {"fixture_id": "cf02", "status": "PASS", "reason": "MATCH", "purpose": "Adds a pending home order that must not enter the population."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The model adds c.customer_name to SELECT and GROUP BY although the requested result is the customer identifier plus the count. The path, filters, distinct count, and grouping key are otherwise correct.",
+      "semantic_diff": ["- SELECT c.customer_id, COUNT(DISTINCT o.order_id)", "+ SELECT c.customer_id, c.customer_name, COUNT(DISTINCT o.order_id)"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The visible stable customer identifier was used, but the model also projected the visible display name that the question did not request.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT matching-only population",
+      "aggregation_forensics": "CORRECT COUNT(DISTINCT order_id)",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question does not explicitly enumerate or prohibit display columns; the minimal identifier-plus-measure projection is an implicit benchmark convention.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "fleet_03",
+      "database": "fleet_ops",
+      "question": "For each route, calculate rounded average kilometres per litre across its trips, excluding zero-fuel ratios.",
+      "request_sha256": "9a5ea5f341d759e3dc4274017ac82bb925b49ef772320d034fa2197c571a409b",
+      "response_sha256": "a1892c87e5666a69ffc64cedd3c95cbe45ffdb67b2d8b99db5ede222590b61b0",
+      "generated_sql": "SELECT r.route_id, r.route_code, r.route_name, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0)), 2) AS average_kilometres_per_litre FROM routes AS r JOIN trips AS t ON t.route_id = r.route_id GROUP BY r.route_id, r.route_code, r.route_name",
+      "sql_decomposition": {
+        "tables": ["routes", "trips"],
+        "authorized_relationships": ["relationship:fleet_ops:trip_route"],
+        "join_predicates": ["t.route_id = r.route_id"],
+        "where": [],
+        "aggregates": ["AVG(t.distance_km / NULLIF(t.fuel_liters, 0))"],
+        "group_by": ["r.route_id", "r.route_code", "r.route_name"],
+        "output": ["r.route_id", "r.route_code", "r.route_name", "ROUND(AVG(...), 2)"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "matching routes with trips",
+        "relationship_path": "trips -> routes",
+        "filter_scope": "zero fuel excluded inside the row ratio via NULLIF",
+        "grain": "route",
+        "aggregate": "average of trip-level distance/fuel ratios, rounded for display",
+        "outputs": ["route_id", "km_per_liter"]
+      },
+      "reference_sql": {
+        "a": "SELECT r.route_id, ROUND(AVG(t.distance_km / NULLIF(t.fuel_liters, 0))::numeric, 2) AS km_per_liter FROM routes r JOIN trips t ON t.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id",
+        "b": "WITH ratios AS (SELECT route_id, distance_km / NULLIF(fuel_liters, 0) AS ratio FROM trips) SELECT r.route_id, ROUND(AVG(ratios.ratio)::numeric, 2) AS km_per_liter FROM routes r JOIN ratios ON ratios.route_id = r.route_id GROUP BY r.route_id ORDER BY r.route_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds zero fuel, proving the NULLIF exclusion rule."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds differing ratios to distinguish average ratio from ratio of averages."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The metric expression is correct, but the model returns route_code and route_name in addition to route_id and the requested metric.",
+      "semantic_diff": ["- SELECT r.route_id, ROUND(AVG(...), 2)", "+ SELECT r.route_id, r.route_code, r.route_name, ROUND(AVG(...), 2)"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The route identifier was supplemented with display attributes not requested by the question.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT matching-only population",
+      "aggregation_forensics": "CORRECT row-ratio then average; NULLIF excludes zero fuel",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The natural-language phrase 'for each route' does not explicitly say route_id only, while route_code and route_name are visible attributes.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "fleet_05",
+      "database": "fleet_ops",
+      "question": "For each driver, count trips made in cargo vehicles, returning only drivers with at least one such trip.",
+      "request_sha256": "4f45e0a319e54004d128cfac3feff7f9f08d8ad9ee11acf085590175c2dcb429",
+      "response_sha256": "45d1e0ee02518ad7e1712f93b3284ae39c9d2b729843e7e730733459cdcdd982",
+      "generated_sql": "SELECT d.driver_id, d.driver_name, COUNT(t.trip_id) AS cargo_trip_count\nFROM drivers AS d\nJOIN trips AS t ON t.driver_id = d.driver_id\nJOIN vehicles AS v ON v.vehicle_id = t.vehicle_id\nWHERE v.vehicle_class = 'cargo'\nGROUP BY d.driver_id, d.driver_name\nHAVING COUNT(t.trip_id) >= 1",
+      "sql_decomposition": {
+        "tables": ["drivers", "trips", "vehicles"],
+        "authorized_relationships": ["relationship:fleet_ops:trip_driver", "relationship:fleet_ops:trip_vehicle"],
+        "join_predicates": ["t.driver_id = d.driver_id", "v.vehicle_id = t.vehicle_id"],
+        "where": ["v.vehicle_class = 'cargo'"],
+        "having": ["COUNT(t.trip_id) >= 1"],
+        "aggregates": ["COUNT(t.trip_id)"],
+        "group_by": ["d.driver_id", "d.driver_name"],
+        "output": ["d.driver_id", "d.driver_name", "COUNT(t.trip_id)"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "drivers with at least one cargo-vehicle trip",
+        "relationship_path": "drivers <- trips -> vehicles",
+        "filter_scope": "row-level vehicle_class = cargo",
+        "grain": "driver",
+        "aggregate": "count trips",
+        "outputs": ["driver_id", "cargo_trips"]
+      },
+      "reference_sql": {
+        "a": "SELECT d.driver_id, COUNT(t.trip_id) AS cargo_trips FROM drivers d JOIN trips t ON t.driver_id = d.driver_id JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'cargo' GROUP BY d.driver_id ORDER BY d.driver_id",
+        "b": "WITH cargo AS (SELECT t.driver_id FROM trips t JOIN vehicles v ON v.vehicle_id = t.vehicle_id WHERE v.vehicle_class = 'cargo') SELECT d.driver_id, COUNT(*) AS cargo_trips FROM drivers d JOIN cargo ON cargo.driver_id = d.driver_id GROUP BY d.driver_id ORDER BY d.driver_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a cargo trip for a driver who otherwise has only non-cargo trips."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a van trip that must not enter cargo counts."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The model adds driver_name to the requested driver_id and cargo-trip count; the joins, cargo predicate, count, and matching-only population are correct.",
+      "semantic_diff": ["- SELECT d.driver_id, COUNT(t.trip_id)", "+ SELECT d.driver_id, d.driver_name, COUNT(t.trip_id)"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The stable driver identifier was supplemented with the visible display name.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT matching-only population",
+      "aggregation_forensics": "CORRECT count; HAVING is redundant but equivalent after the cargo WHERE",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question identifies the entity as a driver but does not explicitly enumerate the projection columns.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "fleet_06",
+      "database": "fleet_ops",
+      "question": "For every vehicle with telemetry, return its latest telemetry timestamp and documented engine temperature; if timestamps tie, use the highest event ID, and list vehicles by vehicle ID.",
+      "request_sha256": "66a75f463cce3cef209e8566a4dfa17a68f5b9072d5da726021bbb03675f393f",
+      "response_sha256": "9dfbeb789c9cff0d41f7403f77eb7c6593f9f7a4a31ad8765529c04c5c598d3d",
+      "generated_sql": "SELECT v.vehicle_id, t.event_at AS latest_telemetry_timestamp, t.payload #>> '{engine,temperature_c}' AS engine_temperature_c\nFROM vehicles AS v\nJOIN (\n    SELECT DISTINCT ON (vehicle_id)\n           vehicle_id,\n           event_at,\n           payload\n    FROM telemetry_events\n    ORDER BY vehicle_id, event_at DESC, event_id DESC\n) AS t ON t.vehicle_id = v.vehicle_id\nORDER BY v.vehicle_id;",
+      "sql_decomposition": {
+        "tables": ["vehicles", "telemetry_events"],
+        "authorized_relationships": ["relationship:fleet_ops:telemetry_vehicle"],
+        "join_predicates": ["t.vehicle_id = v.vehicle_id"],
+        "where": [],
+        "aggregates": [],
+        "subquery": "DISTINCT ON (vehicle_id) ordered by event_at DESC, event_id DESC",
+        "order_by": ["v.vehicle_id", "vehicle_id, event_at DESC, event_id DESC"],
+        "output": ["v.vehicle_id", "t.event_at", "t.payload #>> '{engine,temperature_c}'"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "vehicles with telemetry",
+        "relationship_path": "telemetry_events -> vehicles",
+        "filter_scope": "latest row per vehicle, no extra row filter",
+        "grain": "one row per vehicle",
+        "temporal": "event_at DESC with event_id DESC tie-break",
+        "json": "payload.engine.temperature_c, typed NUMERIC",
+        "outputs": ["vehicle_id", "event_at", "temperature_c"]
+      },
+      "reference_sql": {
+        "a": "SELECT vehicle_id, event_at, temperature_c FROM (SELECT vehicle_id, event_at, (payload #>> '{engine,temperature_c}')::numeric AS temperature_c, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+        "b": "SELECT t.vehicle_id, t.event_at, (t.payload #>> '{engine,temperature_c}')::numeric AS temperature_c FROM telemetry_events t WHERE NOT EXISTS (SELECT 1 FROM telemetry_events newer WHERE newer.vehicle_id = t.vehicle_id AND (newer.event_at, newer.event_id) > (t.event_at, t.event_id)) ORDER BY t.vehicle_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "RESULT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "RESULT_MISMATCH", "purpose": "Adds a later reading for vehicle 1 and an older reading for vehicle 2."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "RESULT_MISMATCH", "purpose": "Adds equal-timestamp events, proving the event ID tie-break is part of the result."}
+      ],
+      "primary_failure": "JSON_TYPE_COERCION_ERROR",
+      "secondary_failures": [],
+      "stage": "GROUNDING",
+      "first_divergence": "The documented JSON path and latest-row ordering are correct, but #>> returns text and the model omits the required ::numeric coercion for the NUMERIC attribute. The first base mismatch is therefore typed output, not latest-row selection.",
+      "semantic_diff": ["- payload #>> '{engine,temperature_c}'", "+ (payload #>> '{engine,temperature_c}')::numeric"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The physical JSON path was used, but the visible NUMERIC data type was not carried into the projection.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT one-latest-row-per-vehicle population",
+      "temporal_forensics": "CORRECT event_at DESC and event_id DESC tie-break",
+      "benchmark_review_candidate": false,
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "support_01",
+      "database": "support_ops",
+      "question": "For every account, count urgent support tickets, including accounts with zero urgent tickets.",
+      "request_sha256": "d2c9f50626477c0f7d5d266b069b47702e70149514586c945c72bae0be24fd47",
+      "response_sha256": "65bdc8024cbc96da4a72a6702f278612f5029bfa22717b53e2f00a698dc2c945",
+      "generated_sql": "SELECT a.account_id, a.account_name, COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent') AS urgent_ticket_count\nFROM accounts AS a\nLEFT JOIN support_tickets AS st ON st.account_id = a.account_id\nGROUP BY a.account_id, a.account_name\nORDER BY a.account_id",
+      "sql_decomposition": {
+        "tables": ["accounts", "support_tickets"],
+        "authorized_relationships": ["relationship:support_ops:ticket_account"],
+        "join_predicates": ["st.account_id = a.account_id"],
+        "where": [],
+        "aggregate_filter": "COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent')",
+        "group_by": ["a.account_id", "a.account_name"],
+        "output": ["a.account_id", "a.account_name", "COUNT(...) FILTER (...)"],
+        "order_by": ["a.account_id"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "all accounts, preserving accounts with zero urgent tickets",
+        "relationship_path": "support_tickets -> accounts",
+        "filter_scope": "conditional aggregate filter, not query WHERE",
+        "grain": "account",
+        "aggregate": "COUNT(ticket_id) FILTER (priority = urgent)",
+        "outputs": ["account_id", "urgent_tickets"]
+      },
+      "reference_sql": {
+        "a": "SELECT a.account_id, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_tickets FROM accounts a LEFT JOIN support_tickets t ON t.account_id = a.account_id GROUP BY a.account_id ORDER BY a.account_id",
+        "b": "WITH urgent AS (SELECT account_id, COUNT(*) AS urgent_tickets FROM support_tickets WHERE priority = 'urgent' GROUP BY account_id) SELECT a.account_id, COALESCE(urgent.urgent_tickets, 0)::BIGINT FROM accounts a LEFT JOIN urgent ON urgent.account_id = a.account_id ORDER BY a.account_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds an account with no tickets and one normal ticket."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds an urgent and normal ticket for one account, distinguishing FILTER from WHERE."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The model correctly preserves all accounts and scopes urgent to FILTER, but adds account_name to the two-column requested result.",
+      "semantic_diff": ["- SELECT a.account_id, COUNT(...) FILTER (...) ", "+ SELECT a.account_id, a.account_name, COUNT(...) FILTER (...)"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The account display name was added even though the question asks for the count per account and the canonical output is account_id plus count.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT PRESERVE_ANCHOR",
+      "aggregation_forensics": "CORRECT FILTER scope and COUNT(ticket_id) NULL behavior",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question does not explicitly enumerate account_id as the only account identifier or prohibit account_name.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "support_02",
+      "database": "support_ops",
+      "question": "List tickets whose first agent response exceeded the first-response SLA of the account's most recently started subscription.",
+      "request_sha256": "0876230898d26a5cb0473acf162e3825162c75fc7d604916b8a8aa5c077c4ad7",
+      "response_sha256": "6b0c7b8f76c15add2859ff43019bb471b14bd9cf126a31aac9422f41ff8cf180",
+      "generated_sql": "SELECT t.ticket_id, t.account_id, t.opened_at, r.first_response_at, sp.first_response_sla_hours, r.first_response_at - t.opened_at AS first_response_time FROM support_tickets AS t JOIN accounts AS a ON a.account_id = t.account_id JOIN (SELECT DISTINCT ON (s.account_id) s.account_id, s.plan_id FROM subscriptions AS s ORDER BY s.account_id, s.starts_on DESC, s.subscription_id DESC) AS latest_sub ON latest_sub.account_id = a.account_id JOIN service_plans AS sp ON sp.plan_id = latest_sub.plan_id JOIN (SELECT t2.ticket_id, MIN(e.event_at) AS first_response_at FROM support_tickets AS t2 JOIN ticket_events AS e ON e.ticket_id = t2.ticket_id WHERE e.event_type = 'agent_response' AND e.event_at > t2.opened_at GROUP BY t2.ticket_id) AS r ON r.ticket_id = t.ticket_id WHERE r.first_response_at > t.opened_at + sp.first_response_sla_hours * INTERVAL '1 hour'",
+      "sql_decomposition": {
+        "tables": ["support_tickets", "accounts", "subscriptions", "service_plans", "ticket_events"],
+        "authorized_relationships": ["relationship:support_ops:ticket_account", "relationship:support_ops:subscription_account", "relationship:support_ops:subscription_plan", "relationship:support_ops:event_ticket"],
+        "join_predicates": ["a.account_id = t.account_id", "latest_sub.account_id = a.account_id", "sp.plan_id = latest_sub.plan_id", "r.ticket_id = t.ticket_id", "e.ticket_id = t2.ticket_id"],
+        "where": ["e.event_type = 'agent_response'", "e.event_at > t2.opened_at", "r.first_response_at > t.opened_at + sp.first_response_sla_hours * INTERVAL '1 hour'"],
+        "aggregates": ["MIN(e.event_at)"],
+        "subqueries": ["latest subscription per account", "first agent response per ticket"],
+        "order_by": ["s.account_id, s.starts_on DESC, s.subscription_id DESC"],
+        "output": ["ticket_id", "account_id", "opened_at", "first_response_at", "first_response_sla_hours", "first_response_time"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "tickets with a first agent response strictly after the applicable SLA",
+        "relationship_path": "tickets -> accounts <- subscriptions -> service_plans; ticket_events -> tickets",
+        "filter_scope": "MIN agent_response after opened_at, then strict SLA comparison",
+        "grain": "ticket",
+        "temporal": "most recently started subscription; first response; lower boundary exclusive",
+        "outputs": ["ticket_id"]
+      },
+      "reference_sql": {
+        "a": "SELECT t.ticket_id FROM support_tickets t JOIN (SELECT DISTINCT ON (account_id) account_id, plan_id FROM subscriptions ORDER BY account_id, starts_on DESC, subscription_id DESC) s ON s.account_id = t.account_id JOIN service_plans p ON p.plan_id = s.plan_id JOIN (SELECT ticket_id, MIN(event_at) AS first_response_at FROM ticket_events WHERE event_type = 'agent_response' GROUP BY ticket_id) e ON e.ticket_id = t.ticket_id WHERE e.first_response_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour' ORDER BY t.ticket_id",
+        "b": "SELECT t.ticket_id FROM support_tickets t WHERE (SELECT MIN(e.event_at) FROM ticket_events e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response') > t.opened_at + (SELECT p.first_response_sla_hours * INTERVAL '1 hour' FROM subscriptions s JOIN service_plans p ON p.plan_id = s.plan_id WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC LIMIT 1) ORDER BY t.ticket_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a ticket at and just after the SLA boundary."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds an unanswered ticket; NULL first response must not be a breach."},
+        {"fixture_id": "cf03", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a later subscription with a stricter SLA."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The observable SLA query logic matches the references, but the model returns five diagnostic columns in addition to the requested ticket_id.",
+      "semantic_diff": ["- SELECT t.ticket_id", "+ SELECT t.ticket_id, t.account_id, t.opened_at, r.first_response_at, sp.first_response_sla_hours, ..."],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "No required SLA evidence was misapplied; the model exposed intermediate values that were not requested.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false, "unnecessary_relationship": "JOIN accounts is not needed once ticket.account_id is available, but it is authorized and not semantically wrong."},
+      "population_forensics": "CORRECT matching-only population",
+      "temporal_forensics": "CORRECT latest subscription, first response, strict boundary",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question explicitly names tickets but does not explicitly say that only ticket_id may be returned.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "support_03",
+      "database": "support_ops",
+      "question": "For each account with tickets, report the urgent-ticket share rounded to four decimals.",
+      "request_sha256": "b186427e1a12b2e691d2413652d0a4965dfc9fe6a7a4ed1102b8169ab00120c0",
+      "response_sha256": "d985d762375c3af779fb06df3a54a3f5460b3824c6c49592bc9422b1c6348709",
+      "generated_sql": "SELECT a.account_id, a.account_name, ROUND(COUNT(*) FILTER (WHERE t.priority = 'urgent')::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_ticket_share FROM accounts AS a JOIN support_tickets AS t ON t.account_id = a.account_id GROUP BY a.account_id, a.account_name",
+      "sql_decomposition": {
+        "tables": ["accounts", "support_tickets"],
+        "authorized_relationships": ["relationship:support_ops:ticket_account"],
+        "join_predicates": ["t.account_id = a.account_id"],
+        "where": [],
+        "aggregates": ["COUNT(*) FILTER (priority = urgent)", "COUNT(*)"],
+        "calculation": "ROUND(urgent_count / NULLIF(ticket_count, 0), 4)",
+        "group_by": ["a.account_id", "a.account_name"],
+        "output": ["a.account_id", "a.account_name", "urgent_share"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "accounts with at least one ticket",
+        "relationship_path": "support_tickets -> accounts",
+        "filter_scope": "urgent predicate only in numerator FILTER",
+        "grain": "account",
+        "aggregate": "urgent ticket count divided by all ticket count, rounded to four decimals",
+        "outputs": ["account_id", "urgent_share"]
+      },
+      "reference_sql": {
+        "a": "SELECT account_id, ROUND((COUNT(*) FILTER (WHERE priority = 'urgent'))::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_share FROM support_tickets GROUP BY account_id ORDER BY account_id",
+        "b": "WITH counts AS (SELECT account_id, COUNT(*) AS total, COUNT(*) FILTER (WHERE priority = 'urgent') AS urgent FROM support_tickets GROUP BY account_id) SELECT account_id, ROUND((urgent::numeric / NULLIF(total, 0)), 4) AS urgent_share FROM counts ORDER BY account_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds three tickets with one urgent to distinguish row-level ratio from aggregate ratio mistakes."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a normal-only account to test population and NULL behavior."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The ratio formula, denominator, inner population, and rounding are correct; the model adds account_name to the requested account_id and share.",
+      "semantic_diff": ["- SELECT a.account_id, ROUND(urgent_count / ticket_count, 4)", "+ SELECT a.account_id, a.account_name, ROUND(urgent_count / ticket_count, 4)"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The account display name was projected even though only the account-level share was requested.",
+      "relationship_forensics": {"status": "CORRECT_PATH", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT matching-only account-with-tickets population",
+      "aggregation_forensics": "CORRECT post-count ratio and display-only rounding",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question says for each account but does not explicitly enumerate the identifier column or exclude account_name.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    },
+    {
+      "case_id": "support_05",
+      "database": "support_ops",
+      "question": "Find accounts with at least one ticket whose ticket count is above the average count among accounts with at least one ticket.",
+      "request_sha256": "e5cfe11a230644f786adc8c2fe14b5dc5b8153386102c40570f96ea1a91936cd",
+      "response_sha256": "729de3586a7a85152e5ee1053cdfcfcbdda2d0bdddd437915bc065231bffbd96",
+      "generated_sql": "SELECT a.account_id, a.account_name, tc.ticket_count\nFROM accounts AS a\nJOIN (\n    SELECT account_id, COUNT(*) AS ticket_count\n    FROM support_tickets\n    GROUP BY account_id\n) AS tc ON tc.account_id = a.account_id\nWHERE tc.ticket_count > (\n    SELECT AVG(ticket_count)\n    FROM (\n        SELECT account_id, COUNT(*) AS ticket_count\n        FROM support_tickets\n        GROUP BY account_id\n    ) AS counts\n)\nORDER BY a.account_id",
+      "sql_decomposition": {
+        "tables": ["accounts", "support_tickets"],
+        "authorized_relationships": [],
+        "join_predicates": ["tc.account_id = a.account_id"],
+        "where": ["tc.ticket_count > AVG(per_account.ticket_count)"],
+        "aggregates": ["COUNT(*) per account", "AVG(per-account count)"],
+        "subqueries": ["per-account counts", "average over per-account counts"],
+        "group_by": ["account_id"],
+        "output": ["a.account_id", "a.account_name", "tc.ticket_count"]
+      },
+      "reconstructed_visible_intent": {
+        "population": "accounts with at least one ticket; zero-ticket accounts excluded from the baseline average",
+        "relationship_path": "none required; account_id is the grouping key",
+        "filter_scope": "compare each per-account count to the average of those counts",
+        "grain": "account",
+        "aggregate": "COUNT per account then AVG of per-account counts",
+        "outputs": ["account_id", "ticket_count"]
+      },
+      "reference_sql": {
+        "a": "WITH counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id), baseline AS (SELECT AVG(ticket_count) AS average_count FROM counts) SELECT account_id, ticket_count FROM counts, baseline WHERE ticket_count > baseline.average_count ORDER BY account_id",
+        "b": "SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id HAVING COUNT(*) > (SELECT AVG(ticket_count) FROM (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) AS per_account) ORDER BY account_id"
+      },
+      "fixtures": [
+        {"fixture_id": "base", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH"},
+        {"fixture_id": "cf01", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a burst of tickets to one account, making above-average membership observable."},
+        {"fixture_id": "cf02", "status": "FAIL", "reason": "COLUMN_COUNT_MISMATCH", "purpose": "Adds a no-ticket cohort; those accounts must not be part of the per-account average."}
+      ],
+      "primary_failure": "OUTPUT_SHAPE_ERROR",
+      "secondary_failures": [],
+      "stage": "OUTPUT_CONTRACT",
+      "first_divergence": "The nested population and above-average comparison are correct, but the model adds account_name to the requested account_id and ticket_count.",
+      "semantic_diff": ["- SELECT account_id, ticket_count", "+ SELECT a.account_id, a.account_name, tc.ticket_count"],
+      "evidence_present": true,
+      "evidence_used_incorrectly": "The model added a display attribute despite correctly using only ticket-bearing accounts for the baseline.",
+      "relationship_forensics": {"status": "NO_RELATIONSHIP_REQUIRED", "wrong_or_missing_path": false},
+      "population_forensics": "CORRECT matching-only and filtered denominator population",
+      "aggregation_forensics": "CORRECT two-stage COUNT then AVG",
+      "benchmark_review_candidate": true,
+      "benchmark_review_reason": "The question does not explicitly enumerate the account projection columns; account_name is visible and plausibly useful but not part of the canonical target.",
+      "existing_mutant_relation": {"status": "NOVEL", "mutant_id": null},
+      "detectability": "PARTIALLY_DETECTABLE",
+      "confidence": "HIGH"
+    }
+  ]
+}

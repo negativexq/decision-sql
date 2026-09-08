@@ -1,0 +1,66 @@
+{
+  "experiment": "M36",
+  "provider_calls": 0,
+  "exact_or_near_existing_mutant_count": 0,
+  "exact_or_near_existing_mutant_rate": "0/8",
+  "novel_count": 8,
+  "novel_rate": "8/8",
+  "cases": [
+    {
+      "case_id": "commerce_05",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m05_count_lines", "m05_all_status", "m05_no_category"],
+      "reason": "The model keeps COUNT(DISTINCT), completed status, and home category; its failure is an extra projection column."
+    },
+    {
+      "case_id": "fleet_03",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m13_sum", "m13_ratio_of_avgs", "m13_include_zero"],
+      "reason": "The model uses the correct row-ratio AVG and NULLIF; only route display columns are extra."
+    },
+    {
+      "case_id": "fleet_05",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m15_all_classes", "m15_wrong_class", "m15_wrong_join"],
+      "reason": "The model uses the authorized driver/trip/vehicle path and cargo predicate; it adds driver_name."
+    },
+    {
+      "case_id": "fleet_06",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m16_oldest", "m16_returns_all_events", "m16_global"],
+      "reason": "The model has the correct latest-row order, partitioning equivalent, and JSON path; it omits numeric coercion, which is not an active mutant."
+    },
+    {
+      "case_id": "support_01",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m21_where", "m21_all_priority", "m21_inner"],
+      "reason": "The model uses LEFT JOIN and aggregate FILTER correctly; it adds account_name."
+    },
+    {
+      "case_id": "support_02",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m22_at_or_before", "m22_any_response", "m22_no_sla", "m22_oldest_subscription"],
+      "reason": "The model uses strict comparison, MIN response, SLA, and latest subscription correctly; it returns extra diagnostic columns."
+    },
+    {
+      "case_id": "support_03",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m23_sum", "m23_all_one", "m23_no_round"],
+      "reason": "The model uses the correct urgent/all-ticket ratio and rounding; it adds account_name."
+    },
+    {
+      "case_id": "support_05",
+      "status": "NOVEL",
+      "mutant_id": null,
+      "active_mutants": ["m25_below", "m25_all_accounts_baseline", "m25_no_having"],
+      "reason": "The model uses the correct ticket-bearing denominator and above-average comparison; it adds account_name."
+    }
+  ]
+}

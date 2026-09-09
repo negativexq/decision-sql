@@ -507,9 +507,7 @@ def run() -> dict[str, Any]:
         "effective_max_plan_cost": config["effective"]["max_plan_cost"],
         "reference_sql_hashes": inventory["reference_sql_hashes"],
         "cost_policy_hashes": {
-            key: value
-            for key, value in hashes.items()
-            if key.startswith("app/")
+            key: value for key, value in hashes.items() if key.startswith("app/")
         },
         "normalizer_hash": hashes["app/semantics/grain_normalizer.py"],
         "validator_hash": hashes["app/semantics/grain.py"],

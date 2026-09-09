@@ -1,0 +1,64 @@
+{
+  "analyzer_coverage_gate": true,
+  "analyzer_hash": "312b6e18d9cdc449ab7834eef47b1b4d5bd9bb2da2d7c2f3003340aa3f88af23",
+  "behavior_distribution": {
+    "CONDITIONALLY_PRESERVES_BASE_GROUPS": 3,
+    "NOT_APPLICABLE": 25,
+    "PRESERVES_BASE_GROUPS": 5,
+    "REQUIRES_QUALIFYING_ROWS": 21,
+    "UNRESOLVED": 2
+  },
+  "correct_answer_false_contradictions": [],
+  "experiment": "M50C.2P",
+  "m48b2_answer_sql_analyzed": 56,
+  "m51_ready": false,
+  "model_calls": 0,
+  "model_context_changed": false,
+  "model_output_schema_changed": false,
+  "mutation_tests": {
+    "passed": 4,
+    "total": 5
+  },
+  "population_analyzer_verdict": "POPULATION_BEHAVIOR_ANALYZER_PARTIAL",
+  "population_contract_hash": "d08b980eafe148d2670eb91fbdbd576147b34be58cd84c94f09d1495931b8a90",
+  "population_contract_version": "population-behavior-1",
+  "population_normalizer_candidacy": "POPULATION_NORMALIZER_NOT_JUSTIFIED",
+  "population_validator_candidacy": "POPULATION_INTENT_VALIDATOR_PARTIAL",
+  "prompt_changed": false,
+  "provider_calls": 0,
+  "result_base": [
+    {
+      "case_id": "risk_03",
+      "feasibility": "PARTIALLY_CHECKABLE_WITH_DECLARED_INTENT",
+      "fully_checkable_with_declared_intent": false,
+      "future_intent": "MATCHING_ONLY",
+      "limitation": "structural behavior is observable, but identifying the intended qualifying source and the exact semantic mismatch remains outside the SQL-only checker",
+      "m49_mechanism": "FILTER_SEMANTICS",
+      "model_behavior": "CONDITIONALLY_PRESERVES_BASE_GROUPS",
+      "model_vs_reference_behavior_diverges": true,
+      "reference_a_behavior": "REQUIRES_QUALIFYING_ROWS",
+      "reference_b_behavior": "UNRESOLVED",
+      "references_structurally_agree": false
+    },
+    {
+      "case_id": "warehouse_03",
+      "feasibility": "PARTIALLY_CHECKABLE_WITH_DECLARED_INTENT",
+      "fully_checkable_with_declared_intent": false,
+      "future_intent": "MATCHING_ONLY",
+      "limitation": "structural behavior is observable, but identifying the intended qualifying source and the exact semantic mismatch remains outside the SQL-only checker",
+      "m49_mechanism": "FILTER_SEMANTICS",
+      "model_behavior": "REQUIRES_QUALIFYING_ROWS",
+      "model_vs_reference_behavior_diverges": true,
+      "reference_a_behavior": "CONDITIONALLY_PRESERVES_BASE_GROUPS",
+      "reference_b_behavior": "UNRESOLVED",
+      "references_structurally_agree": false
+    }
+  ],
+  "runtime_behavior_changed": false,
+  "starting_head": "38d8d8cc0f4ccd6695f3fa9e9b97a40da4450c50",
+  "synthetic_property_tests": {
+    "passed": 14,
+    "total": 14
+  },
+  "useful_non_unresolved": 54
+}

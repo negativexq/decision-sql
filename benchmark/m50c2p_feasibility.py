@@ -551,6 +551,17 @@ def phase_b() -> None:
     mutations = json.loads((AUDIT / "m50c2p_mutation_results.json").read_text())
     alpha = json.loads((AUDIT / "m50c2p_alpha_rename_invariance.json").read_text())
     literal = json.loads((AUDIT / "m50c2p_predicate_literal_invariance.json").read_text())
+    synthetic_pass = sum(item["pass"] for item in synthetic) == len(synthetic)
+    mutation_pass = sum(item["changed"] for item in mutations) == len(mutations)
+    analyzer_verdict = (
+        "POPULATION_BEHAVIOR_ANALYZER_SUPPORTED"
+        if useful / 56 >= 0.9
+        and synthetic_pass
+        and mutation_pass
+        and alpha["pass"]
+        and literal["pass"]
+        else "POPULATION_BEHAVIOR_ANALYZER_PARTIAL"
+    )
     _write(
         AUDIT / "m50c2p_validator_feasibility.json",
         {
@@ -597,8 +608,8 @@ def phase_b() -> None:
             "app_runtime_integration": 0,
             "historical_artifacts_changed": False,
             "readme_changed": False,
-            "synthetic_property_pass": sum(item["pass"] for item in synthetic) == len(synthetic),
-            "mutation_pass": sum(item["changed"] for item in mutations) == len(mutations),
+            "synthetic_property_pass": synthetic_pass,
+            "mutation_pass": mutation_pass,
         },
     )
     manifest = json.loads(MANIFEST.read_text())
@@ -611,7 +622,7 @@ def phase_b() -> None:
             "oracle_dependency_count": 0,
             "case_branch_count": 0,
             "domain_branch_count": 0,
-            "final_verdict": "POPULATION_BEHAVIOR_ANALYZER_SUPPORTED",
+            "final_verdict": analyzer_verdict,
             "validator_verdict": "POPULATION_INTENT_VALIDATOR_PARTIAL",
             "normalizer_verdict": "POPULATION_NORMALIZER_NOT_JUSTIFIED",
         }
@@ -643,7 +654,7 @@ def phase_b() -> None:
         "population_contract_version": POPULATION_CONTRACT_VERSION,
         "population_contract_hash": _hash(canonical_population_contract()),
         "analyzer_hash": _file_hash(ROOT.parent / "app" / "semantics" / "population.py"),
-        "population_analyzer_verdict": "POPULATION_BEHAVIOR_ANALYZER_SUPPORTED",
+        "population_analyzer_verdict": analyzer_verdict,
         "population_validator_candidacy": "POPULATION_INTENT_VALIDATOR_PARTIAL",
         "population_normalizer_candidacy": "POPULATION_NORMALIZER_NOT_JUSTIFIED",
         "m51_ready": False,
@@ -781,7 +792,7 @@ Historical benchmark and README unchanged; no runtime integration, SQL repair, m
 
 ## Population analyzer verdict
 
-`POPULATION_BEHAVIOR_ANALYZER_SUPPORTED`.
+`{analyzer_verdict}`.
 
 ## Population validator candidacy
 

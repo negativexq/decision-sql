@@ -1,0 +1,57 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:procurement_ops:purchase_orders:supplier_id",
+    "left_entity": "entity:procurement_ops:purchase_orders",
+    "relationship_id": "relationship:procurement_ops:po_supplier",
+    "right_attribute": "attribute:procurement_ops:suppliers:supplier_id",
+    "right_entity": "entity:procurement_ops:suppliers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:procurement_ops:po_lines:po_id",
+    "left_entity": "entity:procurement_ops:po_lines",
+    "relationship_id": "relationship:procurement_ops:line_po",
+    "right_attribute": "attribute:procurement_ops:purchase_orders:po_id",
+    "right_entity": "entity:procurement_ops:purchase_orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:procurement_ops:receipts:line_id",
+    "left_entity": "entity:procurement_ops:receipts",
+    "relationship_id": "relationship:procurement_ops:receipt_line",
+    "right_attribute": "attribute:procurement_ops:po_lines:line_id",
+    "right_entity": "entity:procurement_ops:po_lines"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:procurement_ops:approvals:req_id",
+    "left_entity": "entity:procurement_ops:approvals",
+    "relationship_id": "relationship:procurement_ops:approval_request",
+    "right_attribute": "attribute:procurement_ops:requisitions:req_id",
+    "right_entity": "entity:procurement_ops:requisitions"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External ownership is not an authorized supplier relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:procurement_ops:external_directory:supplier_id",
+    "left_entity": "entity:procurement_ops:external_directory",
+    "relationship_id": "relationship:procurement_ops:external_supplier_trap",
+    "right_attribute": "attribute:procurement_ops:suppliers:supplier_id",
+    "right_entity": "entity:procurement_ops:suppliers"
+  }
+]

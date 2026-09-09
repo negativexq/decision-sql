@@ -1,0 +1,226 @@
+[
+  {
+    "attribute_id": "attribute:healthcare_billing:patients:patient_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:patients",
+    "nullable": false,
+    "physical_column_or_path": "patient_id",
+    "semantic_description": "Stable patient identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:patients:patient_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:patients",
+    "nullable": false,
+    "physical_column_or_path": "patient_name",
+    "semantic_description": "Patient name."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:patients:region",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:patients",
+    "nullable": false,
+    "physical_column_or_path": "region",
+    "semantic_description": "Patient region."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:patients:profile",
+    "data_type": "JSONB",
+    "entity_id": "entity:healthcare_billing:patients",
+    "nullable": false,
+    "physical_column_or_path": "profile",
+    "semantic_description": "Patient demographic metadata."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:providers:provider_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:providers",
+    "nullable": false,
+    "physical_column_or_path": "provider_id",
+    "semantic_description": "Stable provider identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:providers:provider_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:providers",
+    "nullable": false,
+    "physical_column_or_path": "provider_name",
+    "semantic_description": "Provider name."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:providers:specialty",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:providers",
+    "nullable": false,
+    "physical_column_or_path": "specialty",
+    "semantic_description": "Provider specialty."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:encounters:encounter_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:encounters",
+    "nullable": false,
+    "physical_column_or_path": "encounter_id",
+    "semantic_description": "Stable encounter identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:encounters:patient_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:encounters",
+    "nullable": false,
+    "physical_column_or_path": "patient_id",
+    "semantic_description": "Patient reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:encounters:provider_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:encounters",
+    "nullable": false,
+    "physical_column_or_path": "provider_id",
+    "semantic_description": "Provider reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:encounters:occurred_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:healthcare_billing:encounters",
+    "nullable": false,
+    "physical_column_or_path": "occurred_at",
+    "semantic_description": "Encounter timestamp."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:encounters:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:encounters",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Encounter state."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:procedures:procedure_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:procedures",
+    "nullable": false,
+    "physical_column_or_path": "procedure_id",
+    "semantic_description": "Stable procedure identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:procedures:encounter_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:procedures",
+    "nullable": false,
+    "physical_column_or_path": "encounter_id",
+    "semantic_description": "Encounter reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:procedures:procedure_code",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:procedures",
+    "nullable": false,
+    "physical_column_or_path": "procedure_code",
+    "semantic_description": "Clinical procedure code."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:procedures:performed_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:healthcare_billing:procedures",
+    "nullable": false,
+    "physical_column_or_path": "performed_at",
+    "semantic_description": "Procedure timestamp."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:charges:charge_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:charges",
+    "nullable": false,
+    "physical_column_or_path": "charge_id",
+    "semantic_description": "Stable charge identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:charges:procedure_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:charges",
+    "nullable": false,
+    "physical_column_or_path": "procedure_id",
+    "semantic_description": "Procedure reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:charges:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:healthcare_billing:charges",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Billed amount."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:charges:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:charges",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Charge state."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:payments:payment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "payment_id",
+    "semantic_description": "Stable payment identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:payments:patient_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "patient_id",
+    "semantic_description": "Patient reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:payments:paid_on",
+    "data_type": "DATE",
+    "entity_id": "entity:healthcare_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "paid_on",
+    "semantic_description": "Payment date."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:payments:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:healthcare_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Payment amount."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:diagnoses:diagnosis_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:diagnoses",
+    "nullable": false,
+    "physical_column_or_path": "diagnosis_id",
+    "semantic_description": "Stable diagnosis identifier."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:diagnoses:encounter_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:diagnoses",
+    "nullable": false,
+    "physical_column_or_path": "encounter_id",
+    "semantic_description": "Encounter reference."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:diagnoses:code",
+    "data_type": "TEXT",
+    "entity_id": "entity:healthcare_billing:diagnoses",
+    "nullable": false,
+    "physical_column_or_path": "code",
+    "semantic_description": "Diagnosis code."
+  },
+  {
+    "attribute_id": "attribute:healthcare_billing:external_directory:patient_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:healthcare_billing:external_directory",
+    "nullable": false,
+    "physical_column_or_path": "patient_id",
+    "semantic_description": "Untrusted patient identifier."
+  }
+]

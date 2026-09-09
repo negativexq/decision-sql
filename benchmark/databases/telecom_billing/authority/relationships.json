@@ -1,0 +1,68 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:subscriptions:subscriber_id",
+    "left_entity": "entity:telecom_billing:subscriptions",
+    "relationship_id": "relationship:telecom_billing:subscription_subscriber",
+    "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+    "right_entity": "entity:telecom_billing:subscribers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:subscriptions:plan_id",
+    "left_entity": "entity:telecom_billing:subscriptions",
+    "relationship_id": "relationship:telecom_billing:subscription_plan",
+    "right_attribute": "attribute:telecom_billing:plans:plan_id",
+    "right_entity": "entity:telecom_billing:plans"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:usage_records:subscriber_id",
+    "left_entity": "entity:telecom_billing:usage_records",
+    "relationship_id": "relationship:telecom_billing:usage_subscriber",
+    "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+    "right_entity": "entity:telecom_billing:subscribers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:invoices:subscriber_id",
+    "left_entity": "entity:telecom_billing:invoices",
+    "relationship_id": "relationship:telecom_billing:invoice_subscriber",
+    "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+    "right_entity": "entity:telecom_billing:subscribers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:payments:invoice_id",
+    "left_entity": "entity:telecom_billing:payments",
+    "relationship_id": "relationship:telecom_billing:payment_invoice",
+    "right_attribute": "attribute:telecom_billing:invoices:invoice_id",
+    "right_entity": "entity:telecom_billing:invoices"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External contact ownership is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:telecom_billing:external_directory:subscriber_id",
+    "left_entity": "entity:telecom_billing:external_directory",
+    "relationship_id": "relationship:telecom_billing:external_subscriber_trap",
+    "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+    "right_entity": "entity:telecom_billing:subscribers"
+  }
+]

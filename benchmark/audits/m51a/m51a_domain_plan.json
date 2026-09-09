@@ -1,0 +1,294 @@
+{
+  "distribution_plan": {
+    "cases_per_domain": 15,
+    "type_a_domains": [
+      "procurement_ops",
+      "insurance_claims",
+      "telecom_billing"
+    ],
+    "type_b_domains": [
+      "marketplace_ops",
+      "workforce_ops",
+      "healthcare_billing"
+    ]
+  },
+  "domains": [
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:procurement_ops:external_supplier_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:procurement_ops:po_supplier",
+        "relationship:procurement_ops:line_po",
+        "relationship:procurement_ops:receipt_line",
+        "relationship:procurement_ops:approval_request"
+      ],
+      "domain_id": "procurement_ops",
+      "kind": "A",
+      "policy_id": "policy:procurement_ops:readonly",
+      "principal_entities": [
+        "suppliers"
+      ],
+      "purpose": "Supplier sourcing and purchase-order fulfillment.",
+      "relationship_ids": [
+        "relationship:procurement_ops:po_supplier",
+        "relationship:procurement_ops:line_po",
+        "relationship:procurement_ops:receipt_line",
+        "relationship:procurement_ops:approval_request",
+        "relationship:procurement_ops:external_supplier_trap"
+      ],
+      "schema_name": "m51a_procurement_ops",
+      "semantic_rule_ids": [
+        "rule:procurement_ops:approved_requisition"
+      ],
+      "tables": [
+        "suppliers",
+        "requisitions",
+        "purchase_orders",
+        "po_lines",
+        "receipts",
+        "approvals",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:procurement_ops:clock"
+      ]
+    },
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:insurance_claims:external_holder_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:insurance_claims:policy_holder",
+        "relationship:insurance_claims:claim_policy",
+        "relationship:insurance_claims:payment_claim",
+        "relationship:insurance_claims:event_claim",
+        "relationship:insurance_claims:assignment_claim",
+        "relationship:insurance_claims:assignment_adjuster"
+      ],
+      "domain_id": "insurance_claims",
+      "kind": "A",
+      "policy_id": "policy:insurance_claims:readonly",
+      "principal_entities": [
+        "policyholders"
+      ],
+      "purpose": "Policy coverage, claims, payments, and adjuster workflow.",
+      "relationship_ids": [
+        "relationship:insurance_claims:policy_holder",
+        "relationship:insurance_claims:claim_policy",
+        "relationship:insurance_claims:payment_claim",
+        "relationship:insurance_claims:event_claim",
+        "relationship:insurance_claims:assignment_claim",
+        "relationship:insurance_claims:assignment_adjuster",
+        "relationship:insurance_claims:external_holder_trap"
+      ],
+      "schema_name": "m51a_insurance_claims",
+      "semantic_rule_ids": [
+        "rule:insurance_claims:open_claim"
+      ],
+      "tables": [
+        "policyholders",
+        "policies",
+        "claims",
+        "claim_payments",
+        "claim_events",
+        "adjusters",
+        "claim_assignments",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:insurance_claims:clock"
+      ]
+    },
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:telecom_billing:external_subscriber_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:telecom_billing:subscription_subscriber",
+        "relationship:telecom_billing:subscription_plan",
+        "relationship:telecom_billing:usage_subscriber",
+        "relationship:telecom_billing:invoice_subscriber",
+        "relationship:telecom_billing:payment_invoice"
+      ],
+      "domain_id": "telecom_billing",
+      "kind": "A",
+      "policy_id": "policy:telecom_billing:readonly",
+      "principal_entities": [
+        "subscribers"
+      ],
+      "purpose": "Subscriber plans, network usage, invoices, and service outages.",
+      "relationship_ids": [
+        "relationship:telecom_billing:subscription_subscriber",
+        "relationship:telecom_billing:subscription_plan",
+        "relationship:telecom_billing:usage_subscriber",
+        "relationship:telecom_billing:invoice_subscriber",
+        "relationship:telecom_billing:payment_invoice",
+        "relationship:telecom_billing:external_subscriber_trap"
+      ],
+      "schema_name": "m51a_telecom_billing",
+      "semantic_rule_ids": [
+        "rule:telecom_billing:active_subscription"
+      ],
+      "tables": [
+        "subscribers",
+        "plans",
+        "subscriptions",
+        "usage_records",
+        "invoices",
+        "payments",
+        "outages",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:telecom_billing:clock"
+      ]
+    },
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:marketplace_ops:external_seller_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:marketplace_ops:listing_seller",
+        "relationship:marketplace_ops:order_buyer",
+        "relationship:marketplace_ops:line_order",
+        "relationship:marketplace_ops:line_listing",
+        "relationship:marketplace_ops:payout_seller",
+        "relationship:marketplace_ops:review_listing",
+        "relationship:marketplace_ops:dispute_order"
+      ],
+      "domain_id": "marketplace_ops",
+      "kind": "B",
+      "policy_id": "policy:marketplace_ops:readonly",
+      "principal_entities": [
+        "sellers",
+        "buyers"
+      ],
+      "purpose": "Two-sided marketplace listings, orders, payouts, and disputes.",
+      "relationship_ids": [
+        "relationship:marketplace_ops:listing_seller",
+        "relationship:marketplace_ops:order_buyer",
+        "relationship:marketplace_ops:line_order",
+        "relationship:marketplace_ops:line_listing",
+        "relationship:marketplace_ops:payout_seller",
+        "relationship:marketplace_ops:review_listing",
+        "relationship:marketplace_ops:dispute_order",
+        "relationship:marketplace_ops:external_seller_trap"
+      ],
+      "schema_name": "m51a_marketplace_ops",
+      "semantic_rule_ids": [
+        "rule:marketplace_ops:completed_order"
+      ],
+      "tables": [
+        "sellers",
+        "buyers",
+        "listings",
+        "orders",
+        "order_lines",
+        "payouts",
+        "reviews",
+        "disputes",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:marketplace_ops:clock"
+      ]
+    },
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:workforce_ops:external_employee_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:workforce_ops:employee_team",
+        "relationship:workforce_ops:shift_employee",
+        "relationship:workforce_ops:timesheet_employee",
+        "relationship:workforce_ops:absence_employee",
+        "relationship:workforce_ops:training_employee",
+        "relationship:workforce_ops:adjustment_employee"
+      ],
+      "domain_id": "workforce_ops",
+      "kind": "B",
+      "policy_id": "policy:workforce_ops:readonly",
+      "principal_entities": [
+        "employees"
+      ],
+      "purpose": "Employee scheduling, timekeeping, leave, and training compliance.",
+      "relationship_ids": [
+        "relationship:workforce_ops:employee_team",
+        "relationship:workforce_ops:shift_employee",
+        "relationship:workforce_ops:timesheet_employee",
+        "relationship:workforce_ops:absence_employee",
+        "relationship:workforce_ops:training_employee",
+        "relationship:workforce_ops:adjustment_employee",
+        "relationship:workforce_ops:external_employee_trap"
+      ],
+      "schema_name": "m51a_workforce_ops",
+      "semantic_rule_ids": [
+        "rule:workforce_ops:approved_hours"
+      ],
+      "tables": [
+        "employees",
+        "teams",
+        "shifts",
+        "timesheets",
+        "absences",
+        "training_records",
+        "payroll_adjustments",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:workforce_ops:clock"
+      ]
+    },
+    {
+      "authority_sensitive_relationship_ids": [
+        "relationship:healthcare_billing:external_patient_trap"
+      ],
+      "authorized_relationship_ids": [
+        "relationship:healthcare_billing:encounter_patient",
+        "relationship:healthcare_billing:encounter_provider",
+        "relationship:healthcare_billing:procedure_encounter",
+        "relationship:healthcare_billing:charge_procedure",
+        "relationship:healthcare_billing:payment_patient",
+        "relationship:healthcare_billing:diagnosis_encounter"
+      ],
+      "domain_id": "healthcare_billing",
+      "kind": "B",
+      "policy_id": "policy:healthcare_billing:readonly",
+      "principal_entities": [
+        "patients"
+      ],
+      "purpose": "Patient encounters, procedures, charges, payments, and clinical coding.",
+      "relationship_ids": [
+        "relationship:healthcare_billing:encounter_patient",
+        "relationship:healthcare_billing:encounter_provider",
+        "relationship:healthcare_billing:procedure_encounter",
+        "relationship:healthcare_billing:charge_procedure",
+        "relationship:healthcare_billing:payment_patient",
+        "relationship:healthcare_billing:diagnosis_encounter",
+        "relationship:healthcare_billing:external_patient_trap"
+      ],
+      "schema_name": "m51a_healthcare_billing",
+      "semantic_rule_ids": [
+        "rule:healthcare_billing:completed_encounter"
+      ],
+      "tables": [
+        "patients",
+        "providers",
+        "encounters",
+        "procedures",
+        "charges",
+        "payments",
+        "diagnoses",
+        "external_directory"
+      ],
+      "temporal_rule_ids": [
+        "time:healthcare_billing:clock"
+      ]
+    }
+  ],
+  "experiment": "M51A",
+  "model_calls": 0,
+  "phase": "B",
+  "provider_calls": 0
+}

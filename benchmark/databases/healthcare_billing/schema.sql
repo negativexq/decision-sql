@@ -1,0 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS m51a_healthcare_billing;
+SET search_path TO m51a_healthcare_billing;
+CREATE TABLE patients (patient_id INTEGER PRIMARY KEY, patient_name TEXT NOT NULL, region TEXT NOT NULL, profile JSONB NOT NULL);
+CREATE TABLE providers (provider_id INTEGER PRIMARY KEY, provider_name TEXT NOT NULL, specialty TEXT NOT NULL);
+CREATE TABLE encounters (encounter_id INTEGER PRIMARY KEY, patient_id INTEGER NOT NULL REFERENCES patients(patient_id), provider_id INTEGER NOT NULL REFERENCES providers(provider_id), occurred_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL);
+CREATE TABLE procedures (procedure_id INTEGER PRIMARY KEY, encounter_id INTEGER NOT NULL REFERENCES encounters(encounter_id), procedure_code TEXT NOT NULL, performed_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE charges (charge_id INTEGER PRIMARY KEY, procedure_id INTEGER NOT NULL REFERENCES procedures(procedure_id), amount NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE payments (payment_id INTEGER PRIMARY KEY, patient_id INTEGER NOT NULL REFERENCES patients(patient_id), paid_on DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE diagnoses (diagnosis_id INTEGER PRIMARY KEY, encounter_id INTEGER NOT NULL REFERENCES encounters(encounter_id), code TEXT NOT NULL);
+CREATE TABLE external_directory (directory_id INTEGER PRIMARY KEY, patient_id INTEGER NOT NULL, owner_email TEXT NOT NULL);

@@ -1,0 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS m51a_telecom_billing;
+SET search_path TO m51a_telecom_billing;
+CREATE TABLE subscribers (subscriber_id INTEGER PRIMARY KEY, subscriber_name TEXT NOT NULL, market TEXT NOT NULL);
+CREATE TABLE plans (plan_id INTEGER PRIMARY KEY, plan_name TEXT NOT NULL, monthly_fee NUMERIC(10,2) NOT NULL);
+CREATE TABLE subscriptions (subscription_id INTEGER PRIMARY KEY, subscriber_id INTEGER NOT NULL REFERENCES subscribers(subscriber_id), plan_id INTEGER NOT NULL REFERENCES plans(plan_id), status TEXT NOT NULL);
+CREATE TABLE usage_records (usage_id INTEGER PRIMARY KEY, subscriber_id INTEGER NOT NULL REFERENCES subscribers(subscriber_id), used_on DATE NOT NULL, megabytes INTEGER NOT NULL, details JSONB NOT NULL);
+CREATE TABLE invoices (invoice_id INTEGER PRIMARY KEY, subscriber_id INTEGER NOT NULL REFERENCES subscribers(subscriber_id), issued_on DATE NOT NULL, amount_due NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE payments (payment_id INTEGER PRIMARY KEY, invoice_id INTEGER NOT NULL REFERENCES invoices(invoice_id), paid_on DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE outages (outage_id INTEGER PRIMARY KEY, market TEXT NOT NULL, started_at TIMESTAMPTZ NOT NULL, ended_at TIMESTAMPTZ);
+CREATE TABLE external_directory (directory_id INTEGER PRIMARY KEY, subscriber_id INTEGER NOT NULL, owner_email TEXT NOT NULL);

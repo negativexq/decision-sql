@@ -1,0 +1,11 @@
+CREATE SCHEMA IF NOT EXISTS m51a_marketplace_ops;
+SET search_path TO m51a_marketplace_ops;
+CREATE TABLE sellers (seller_id INTEGER PRIMARY KEY, seller_name TEXT NOT NULL, seller_tier TEXT NOT NULL);
+CREATE TABLE buyers (buyer_id INTEGER PRIMARY KEY, buyer_name TEXT NOT NULL);
+CREATE TABLE listings (listing_id INTEGER PRIMARY KEY, seller_id INTEGER NOT NULL REFERENCES sellers(seller_id), category TEXT NOT NULL, unit_price NUMERIC(10,2) NOT NULL, active BOOLEAN NOT NULL);
+CREATE TABLE orders (order_id INTEGER PRIMARY KEY, buyer_id INTEGER NOT NULL REFERENCES buyers(buyer_id), ordered_on DATE NOT NULL, status TEXT NOT NULL);
+CREATE TABLE order_lines (line_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), listing_id INTEGER NOT NULL REFERENCES listings(listing_id), quantity INTEGER NOT NULL);
+CREATE TABLE payouts (payout_id INTEGER PRIMARY KEY, seller_id INTEGER NOT NULL REFERENCES sellers(seller_id), paid_on DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, status TEXT NOT NULL);
+CREATE TABLE reviews (review_id INTEGER PRIMARY KEY, listing_id INTEGER NOT NULL REFERENCES listings(listing_id), score INTEGER NOT NULL, reviewed_on DATE NOT NULL);
+CREATE TABLE disputes (dispute_id INTEGER PRIMARY KEY, order_id INTEGER NOT NULL REFERENCES orders(order_id), opened_on DATE NOT NULL, status TEXT NOT NULL);
+CREATE TABLE external_directory (directory_id INTEGER PRIMARY KEY, seller_id INTEGER NOT NULL, owner_email TEXT NOT NULL);

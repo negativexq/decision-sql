@@ -1,0 +1,79 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:employees:team_id",
+    "left_entity": "entity:workforce_ops:employees",
+    "relationship_id": "relationship:workforce_ops:employee_team",
+    "right_attribute": "attribute:workforce_ops:teams:team_id",
+    "right_entity": "entity:workforce_ops:teams"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:shifts:employee_id",
+    "left_entity": "entity:workforce_ops:shifts",
+    "relationship_id": "relationship:workforce_ops:shift_employee",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:timesheets:employee_id",
+    "left_entity": "entity:workforce_ops:timesheets",
+    "relationship_id": "relationship:workforce_ops:timesheet_employee",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:absences:employee_id",
+    "left_entity": "entity:workforce_ops:absences",
+    "relationship_id": "relationship:workforce_ops:absence_employee",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:training_records:employee_id",
+    "left_entity": "entity:workforce_ops:training_records",
+    "relationship_id": "relationship:workforce_ops:training_employee",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:payroll_adjustments:employee_id",
+    "left_entity": "entity:workforce_ops:payroll_adjustments",
+    "relationship_id": "relationship:workforce_ops:adjustment_employee",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External employee identity is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:workforce_ops:external_directory:employee_id",
+    "left_entity": "entity:workforce_ops:external_directory",
+    "relationship_id": "relationship:workforce_ops:external_employee_trap",
+    "right_attribute": "attribute:workforce_ops:employees:employee_id",
+    "right_entity": "entity:workforce_ops:employees"
+  }
+]

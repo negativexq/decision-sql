@@ -1,0 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS m51a_insurance_claims;
+SET search_path TO m51a_insurance_claims;
+CREATE TABLE policyholders (holder_id INTEGER PRIMARY KEY, holder_name TEXT NOT NULL, region TEXT NOT NULL);
+CREATE TABLE policies (policy_id INTEGER PRIMARY KEY, holder_id INTEGER NOT NULL REFERENCES policyholders(holder_id), product TEXT NOT NULL, status TEXT NOT NULL, effective_on DATE NOT NULL, expires_on DATE NOT NULL);
+CREATE TABLE claims (claim_id INTEGER PRIMARY KEY, policy_id INTEGER NOT NULL REFERENCES policies(policy_id), opened_on DATE NOT NULL, loss_amount NUMERIC(10,2) NOT NULL, claim_status TEXT NOT NULL, loss_data JSONB NOT NULL);
+CREATE TABLE claim_payments (payment_id INTEGER PRIMARY KEY, claim_id INTEGER NOT NULL REFERENCES claims(claim_id), paid_on DATE NOT NULL, amount NUMERIC(10,2) NOT NULL, payment_status TEXT NOT NULL);
+CREATE TABLE claim_events (event_id INTEGER PRIMARY KEY, claim_id INTEGER NOT NULL REFERENCES claims(claim_id), event_at TIMESTAMPTZ NOT NULL, event_type TEXT NOT NULL);
+CREATE TABLE adjusters (adjuster_id INTEGER PRIMARY KEY, adjuster_name TEXT NOT NULL);
+CREATE TABLE claim_assignments (assignment_id INTEGER PRIMARY KEY, claim_id INTEGER NOT NULL REFERENCES claims(claim_id), adjuster_id INTEGER NOT NULL REFERENCES adjusters(adjuster_id), assigned_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE external_directory (directory_id INTEGER PRIMARY KEY, holder_id INTEGER NOT NULL, owner_email TEXT NOT NULL);

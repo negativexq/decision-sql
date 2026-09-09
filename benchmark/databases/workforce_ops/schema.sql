@@ -1,0 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS m51a_workforce_ops;
+SET search_path TO m51a_workforce_ops;
+CREATE TABLE teams (team_id INTEGER PRIMARY KEY, team_name TEXT NOT NULL);
+CREATE TABLE employees (employee_id INTEGER PRIMARY KEY, employee_name TEXT NOT NULL, team_id INTEGER NOT NULL REFERENCES teams(team_id), status TEXT NOT NULL, profile JSONB NOT NULL);
+CREATE TABLE shifts (shift_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(employee_id), starts_at TIMESTAMPTZ NOT NULL, ends_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE timesheets (timesheet_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(employee_id), worked_on DATE NOT NULL, hours NUMERIC(6,2) NOT NULL, approved BOOLEAN NOT NULL);
+CREATE TABLE absences (absence_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(employee_id), starts_on DATE NOT NULL, ends_on DATE NOT NULL, status TEXT NOT NULL);
+CREATE TABLE training_records (record_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(employee_id), course TEXT NOT NULL, completed_on DATE NOT NULL);
+CREATE TABLE payroll_adjustments (adjustment_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(employee_id), amount NUMERIC(10,2) NOT NULL, adjusted_on DATE NOT NULL, kind TEXT NOT NULL);
+CREATE TABLE external_directory (directory_id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL, owner_email TEXT NOT NULL);

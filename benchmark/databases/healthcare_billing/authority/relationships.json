@@ -1,0 +1,79 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:encounters:patient_id",
+    "left_entity": "entity:healthcare_billing:encounters",
+    "relationship_id": "relationship:healthcare_billing:encounter_patient",
+    "right_attribute": "attribute:healthcare_billing:patients:patient_id",
+    "right_entity": "entity:healthcare_billing:patients"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:encounters:provider_id",
+    "left_entity": "entity:healthcare_billing:encounters",
+    "relationship_id": "relationship:healthcare_billing:encounter_provider",
+    "right_attribute": "attribute:healthcare_billing:providers:provider_id",
+    "right_entity": "entity:healthcare_billing:providers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:procedures:encounter_id",
+    "left_entity": "entity:healthcare_billing:procedures",
+    "relationship_id": "relationship:healthcare_billing:procedure_encounter",
+    "right_attribute": "attribute:healthcare_billing:encounters:encounter_id",
+    "right_entity": "entity:healthcare_billing:encounters"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:charges:procedure_id",
+    "left_entity": "entity:healthcare_billing:charges",
+    "relationship_id": "relationship:healthcare_billing:charge_procedure",
+    "right_attribute": "attribute:healthcare_billing:procedures:procedure_id",
+    "right_entity": "entity:healthcare_billing:procedures"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:payments:patient_id",
+    "left_entity": "entity:healthcare_billing:payments",
+    "relationship_id": "relationship:healthcare_billing:payment_patient",
+    "right_attribute": "attribute:healthcare_billing:patients:patient_id",
+    "right_entity": "entity:healthcare_billing:patients"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:diagnoses:encounter_id",
+    "left_entity": "entity:healthcare_billing:diagnoses",
+    "relationship_id": "relationship:healthcare_billing:diagnosis_encounter",
+    "right_attribute": "attribute:healthcare_billing:encounters:encounter_id",
+    "right_entity": "entity:healthcare_billing:encounters"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External contact ownership is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:healthcare_billing:external_directory:patient_id",
+    "left_entity": "entity:healthcare_billing:external_directory",
+    "relationship_id": "relationship:healthcare_billing:external_patient_trap",
+    "right_attribute": "attribute:healthcare_billing:patients:patient_id",
+    "right_entity": "entity:healthcare_billing:patients"
+  }
+]

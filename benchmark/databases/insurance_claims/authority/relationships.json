@@ -1,0 +1,79 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:policies:holder_id",
+    "left_entity": "entity:insurance_claims:policies",
+    "relationship_id": "relationship:insurance_claims:policy_holder",
+    "right_attribute": "attribute:insurance_claims:policyholders:holder_id",
+    "right_entity": "entity:insurance_claims:policyholders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:claims:policy_id",
+    "left_entity": "entity:insurance_claims:claims",
+    "relationship_id": "relationship:insurance_claims:claim_policy",
+    "right_attribute": "attribute:insurance_claims:policies:policy_id",
+    "right_entity": "entity:insurance_claims:policies"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:claim_payments:claim_id",
+    "left_entity": "entity:insurance_claims:claim_payments",
+    "relationship_id": "relationship:insurance_claims:payment_claim",
+    "right_attribute": "attribute:insurance_claims:claims:claim_id",
+    "right_entity": "entity:insurance_claims:claims"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:claim_events:claim_id",
+    "left_entity": "entity:insurance_claims:claim_events",
+    "relationship_id": "relationship:insurance_claims:event_claim",
+    "right_attribute": "attribute:insurance_claims:claims:claim_id",
+    "right_entity": "entity:insurance_claims:claims"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:claim_assignments:claim_id",
+    "left_entity": "entity:insurance_claims:claim_assignments",
+    "relationship_id": "relationship:insurance_claims:assignment_claim",
+    "right_attribute": "attribute:insurance_claims:claims:claim_id",
+    "right_entity": "entity:insurance_claims:claims"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:claim_assignments:adjuster_id",
+    "left_entity": "entity:insurance_claims:claim_assignments",
+    "relationship_id": "relationship:insurance_claims:assignment_adjuster",
+    "right_attribute": "attribute:insurance_claims:adjusters:adjuster_id",
+    "right_entity": "entity:insurance_claims:adjusters"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External beneficiary ownership is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:insurance_claims:external_directory:holder_id",
+    "left_entity": "entity:insurance_claims:external_directory",
+    "relationship_id": "relationship:insurance_claims:external_holder_trap",
+    "right_attribute": "attribute:insurance_claims:policyholders:holder_id",
+    "right_entity": "entity:insurance_claims:policyholders"
+  }
+]

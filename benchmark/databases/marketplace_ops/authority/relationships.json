@@ -1,0 +1,90 @@
+[
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:listings:seller_id",
+    "left_entity": "entity:marketplace_ops:listings",
+    "relationship_id": "relationship:marketplace_ops:listing_seller",
+    "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+    "right_entity": "entity:marketplace_ops:sellers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:orders:buyer_id",
+    "left_entity": "entity:marketplace_ops:orders",
+    "relationship_id": "relationship:marketplace_ops:order_buyer",
+    "right_attribute": "attribute:marketplace_ops:buyers:buyer_id",
+    "right_entity": "entity:marketplace_ops:buyers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:order_lines:order_id",
+    "left_entity": "entity:marketplace_ops:order_lines",
+    "relationship_id": "relationship:marketplace_ops:line_order",
+    "right_attribute": "attribute:marketplace_ops:orders:order_id",
+    "right_entity": "entity:marketplace_ops:orders"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:order_lines:listing_id",
+    "left_entity": "entity:marketplace_ops:order_lines",
+    "relationship_id": "relationship:marketplace_ops:line_listing",
+    "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+    "right_entity": "entity:marketplace_ops:listings"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:payouts:seller_id",
+    "left_entity": "entity:marketplace_ops:payouts",
+    "relationship_id": "relationship:marketplace_ops:payout_seller",
+    "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+    "right_entity": "entity:marketplace_ops:sellers"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:reviews:listing_id",
+    "left_entity": "entity:marketplace_ops:reviews",
+    "relationship_id": "relationship:marketplace_ops:review_listing",
+    "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+    "right_entity": "entity:marketplace_ops:listings"
+  },
+  {
+    "authorized": true,
+    "cardinality": "many_to_one",
+    "description": "Authorized operational relationship.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:disputes:order_id",
+    "left_entity": "entity:marketplace_ops:disputes",
+    "relationship_id": "relationship:marketplace_ops:dispute_order",
+    "right_attribute": "attribute:marketplace_ops:orders:order_id",
+    "right_entity": "entity:marketplace_ops:orders"
+  },
+  {
+    "authorized": false,
+    "cardinality": "many_to_one",
+    "description": "External seller contact ownership is not authorized.",
+    "direction": "left_to_right",
+    "left_attribute": "attribute:marketplace_ops:external_directory:seller_id",
+    "left_entity": "entity:marketplace_ops:external_directory",
+    "relationship_id": "relationship:marketplace_ops:external_seller_trap",
+    "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+    "right_entity": "entity:marketplace_ops:sellers"
+  }
+]

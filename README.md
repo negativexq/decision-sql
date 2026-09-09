@@ -1,441 +1,579 @@
-# DecisionSQL
+# Decision-SQL
 
-DecisionSQL is **Governed Text-to-SQL for Enterprise Analytics**.
+**Governed one-shot Text-to-SQL with deterministic runtime safety and execution-based evaluation.**
 
-> The LLM proposes. Deterministic software decides what may execute.
+> The model proposes. Deterministic software decides what may execute.
 
-The system keeps generation separate from authority. A natural-language
-question is combined with server-owned schema and business context, then an
-LLM proposes PostgreSQL. The proposal remains untrusted until deterministic
-SQL policy, catalog checks, PostgreSQL `EXPLAIN` cost gates, and read-only
-execution accept it.
+Decision-SQL is a governed one-shot Text-to-SQL system and execution-based
+benchmark for enterprise analytics. A model receives a natural-language
+request plus a model-visible, governed context and emits exactly one typed
+decision. That decision may be an answer with read-only SQL, a clarification,
+or a policy/authority block.
+
+Model output is never trusted directly. An `ANSWER + SQL` submission crosses a
+deterministic admission boundary before it can reach PostgreSQL. The benchmark
+also contains cases where producing SQL is the wrong behavior, so governance is
+evaluated separately from query execution. SQL correctness is semantic
+execution correctness, not string similarity.
+
+## Latest result
+
+M48B.2 completed the current frozen 90-case synthetic governed benchmark under
+the documented one-shot runtime contract:
+
+| Metric | Result |
+| --- | ---: |
+| Governed Task Success | **78 / 90 = 86.7%** |
+| Answerable End-to-End Runtime TSA | **51 / 60 = 85.0%** |
+| BASE Delivered Correctness | **51 / 60 = 85.0%** |
+| `ANSWER` selected | **53 / 60** |
+| Conditional Runtime Correctness | **51 / 53 = 96.2%** |
+| Wrong refusals | **7 / 60** |
+| Authority | **15 / 15** |
+| Ambiguity | **6 / 9** |
+| Policy | **6 / 6** |
+| Unauthorized answers | **0 / 15** |
+
+Runtime-stage outcomes were:
+
+| Stage outcome | Count |
+| --- | ---: |
+| SQL parse rejections | 0 |
+| SQL policy rejections | 0 |
+| Semantic rejections | 0 |
+| Cost rejections | 0 |
+| Execution failures | 0 |
+| Result mismatches | 2 |
+
+These are results on a frozen 90-case synthetic governed benchmark under the
+documented one-shot contract. They are not general Text-to-SQL accuracy,
+production accuracy, universal SQL correctness, or a comparison against every
+public benchmark.
+
+## Architecture
+
+The current validated path is:
 
 ```text
-Question
-  |
-  v
-Governed applicability
-  |
-  +-- catalog-covered metric
-  |      |
-  |      v
-  |   Governed semantic grounding
-  |      |
-  |      v
-  |   Deterministic metric compiler
-  |
-  +-- residual direct
-         |
-         v
-     Verified Query Memory
-         |
-         v
-     LLM SQL proposal
-         |
-         +-------------------+
-                             |
-                             v
-               Deterministic M1 trust boundary
-                             |
-                   sqlglot AST / policy
-                             |
-                   PostgreSQL EXPLAIN
-                             |
-                   read-only execution
-                             |
-                        bounded result
-                             |
-                    versioned evaluation
-                    /         |          \
-                  V1       V2 explicit   DUAL_SHADOW
-             historical/      explicit    V1 authoritative;
-              default        contract     V2 diagnostic
-                             |
-                         provenance
+natural-language request
+        ↓
+model-visible governed context
+        ↓
+one-shot typed model decision
+        ↓
+deterministic runtime admission
+        ↓
+restricted execution
+        ↓
+execution-based semantic evaluation
 ```
 
-## Current system
+```mermaid
+flowchart TD
+    Q["Natural-language analytics request"]
+    C["Model-visible governed context"]
+    L["One-shot LLM generation"]
+    D{"Typed decision"}
 
-- Python 3.12, FastAPI, Pydantic Settings, SQLAlchemy, Alembic, `sqlglot`,
-  pytest, Ruff, mypy, and OpenTelemetry.
-- PostgreSQL-only V1 with separate admin and restricted reader connections.
-- Deterministic M1 SQL safety and planning: one statement, SELECT/SELECT-CTE
-  policy, catalog/object and function policy, EXPLAIN cost gates, read-only
-  transactions, timeouts, and bounded results.
-- An optional one-shot OpenAI-compatible Text-to-SQL generation path. Model
-  output becomes an untrusted `SqlCandidate` and always passes through M1.
-- A governed semantic catalog and deterministic metric compiler for
-  catalog-covered business metrics. M3 validates this path internally; it is
-  not yet the default production route. M3.5 adds stable semantic identity,
-  lifecycle/version metadata, and execution provenance.
-- A provider-evaluated, verified-query-memory path for residual direct SQL
-  composition. M4 uses deterministic local retrieval and M4.1 integrates it
-  behind explicit OFF/SHADOW/ON controls; it remains disabled by default.
-  Retrieved SQL is context only and generated SQL still passes M1.
-- Shared direct/blueprint generation guidance and a tolerant, warning-producing
-  blueprint parser keep descriptive response formatting from discarding valid
-  SQL; see [`docs/query-quality-hardening.md`](docs/query-quality-hardening.md).
-- Original governed benchmark construction is documented in
-  [`benchmark/README.md`](benchmark/README.md); the v0.1 pilot has three
-  synthetic database packs, 30 audited cases, transactional counterfactuals,
-  and semantic mutation gates. M34 performs no provider calls.
-- Reproducible internal generation experiments and a bounded typed Window IR
-  with a deterministic PostgreSQL compiler.
-- Evaluation-only versioned result evaluation: V1 preserves historical and
-  default semantics, V2 is an explicit contract-aware path, and DUAL_SHADOW
-  keeps V1 authoritative while recording V2 diagnostics. This does not change
-  M1's SQL execution authority or infer result contracts automatically.
-- Evaluation-only adapters for Defog SQL-Eval PostgreSQL and BIRD Mini-Dev
-  PostgreSQL. Their benchmark executors are isolated from the product M1 path.
+    Q --> C --> L --> D
 
-There is no public Text-to-SQL endpoint yet. Tenant policy, RLS, answer
-synthesis, and user-facing product integration remain future work.
+    D -->|NEEDS_CLARIFICATION| G["Governance outcome<br/>No SQL runtime"]
+    D -->|BLOCKED_AUTHORITY| G
+    D -->|BLOCKED_POLICY| G
 
-## Two generation paths
+    D -->|ANSWER + SQL| P["sqlglot parse + SQL policy"]
+    P --> GS["GrainSafetyValidator"]
 
-For arbitrary analytics, the current path is direct Text-to-SQL followed by
-M1. For catalog-covered business metrics, the validated M3 path selects a
-metric and dimensions, then lets the server-owned semantic catalog and
-deterministic compiler own physical mappings, aggregation, formulas, grain,
-cardinality, eligibility filters, scale, and zero/NULL policy. Both paths
-remain subject to M1; governed routing is feature-flagged and default-off after
-M3.4 integration validation.
+    GS -->|targeted parent fanout| N["GrainSafeNormalizer"]
+    N --> RP["Re-parse + re-policy + post-grain validation"]
 
-The semantic catalog is organized around entities, relationships, dimensions,
-measures, and metrics. The LLM does not provide physical columns, numerator or
-denominator definitions, join paths, or formulas.
+    GS -->|safe / non-target| S["Selected SQL"]
+    RP --> S
 
-## Current combined-system evidence
+    S --> E["PostgreSQL EXPLAIN"]
+    E --> CG["Query cost gate"]
+    CG --> QP["Accepted QueryPlan"]
+    QP --> RO["Restricted read-only execution"]
+    RO --> R["Bounded result"]
 
-M7 evaluated the current accepted architecture as one system on a new frozen
-internal mixed-workload benchmark: `decisionsql-combined-mixed-workload`,
-version `m7-combined-v1`, with 150 answerable cases (100 DEV, 50 HOLDOUT).
-This is execution-equivalence evidence for a frozen internal workload, not
-production accuracy or general Text-to-SQL accuracy.
+    R --> EV["Execution-based evaluator"]
+    G --> EV
 
-| Arm | DEV | HOLDOUT | Combined |
-| --- | ---: | ---: | ---: |
-| P0 direct one-shot | 35/100 (35%) | 16/50 (32%) | 51/150 (34%) |
-| P1 current combined architecture | 63/100 (63%) | 36/50 (72%) | 99/150 (66%) |
-
-The combined gain was **+32 percentage points**. The governed path resolved all
-30 catalog-covered governed-metric cases (30/30); the residual direct path
-resolved 69/120 (57.5%). Routing accuracy was 130/150 (86.67%), with 100%
-governed recall, 60% governed precision, 20 false-governed routes, and no
-false-direct routes. P1 averaged 3,186 ms versus 2,757 ms for P0 in this
-evaluation, roughly 429 ms slower; these are evaluation measurements, not an
-SLA.
-
-The 51 incorrect P1 cases were manually and deterministically attributed. The
-largest residuals were `ROUTING_ERROR` (13, 25.5%),
-`QUERY_STRUCTURE_ERROR` (12, 23.5%), and `FILTER_ERROR` (9, 17.6%), together
-66.7% of residual failures. The resulting classification is
-**COMBINED_ARCHITECTURE_PARTIALLY_VALIDATED** with
-**RESIDUAL_FAILURES_CONCENTRATED**. Full methodology, provenance, and hashes
-are in [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md).
-
-## Result equivalence and evaluation provenance
-
-SQL-string equality is not the correctness criterion. Historical evaluator V1
-remains frozen so M7, M8, and M9 results stay reproducible. M9–M9.3 were
-evaluation-only research; they did not change SQL generation or runtime
-behavior.
-
-M9.1 separated the 31 historical result-shape/projection failures into 10
-evaluator artifacts, 19 genuine projection-contract violations, and 2 deeper
-semantic/computation errors. M9.2 then validated a deterministic contract
-candidate that recovered the known harmless result supersets without accepting
-known genuine errors. M9.3 independently validated the unchanged candidate:
-
-| Validation | Legitimate positives/controls | False accepts |
-| --- | ---: | ---: |
-| M9.2 frozen regression | 85/85 retained or recovered; 30/30 synthetic | 0 across 28 historical negatives |
-| M9.3 independent corpus | 70/70 accepted | 0 across 90 negative/invalid cases |
-
-The M9.3 corpus contained 160 cases: 40 contract-equivalent positives, 30
-strict controls, and 90 projection, grain, value, ordering/duplicate, or
-invalid-contract negatives. It had no M9.1/M9.2 case overlap or fixture reuse;
-the candidate also passed 12/12 metamorphic and 12/12 mutation-safety checks.
-This validates evaluation semantics on a frozen internal corpus, not universal
-evaluator correctness or a benchmark score increase.
-
-Evaluator V1 is the historical frozen behavior. The result-equivalence V2
-candidate is independently validated and is now available through an explicit
-versioned evaluation path. V1 remains the default; DUAL_SHADOW keeps V1
-authoritative and preserves any V1/V2 disagreement. New V2 results carry
-bounded evaluator, contract, comparator, and matched-reference provenance.
-V2 requires an explicit valid contract; M9.4 did not add automatic or
-LLM-generated contract inference. See the detailed
-[M9 direct-path audit](docs/m9-direct-path-query-structure-audit.md),
-[M9.1 result-shape audit](docs/m91-direct-result-shape-projection-contract-audit.md),
-[M9.2 contract regression](docs/m92-result-equivalence-contract-regression-suite.md),
-[M9.3 independent validation](docs/m93-result-equivalence-v2-independent-validation.md),
-and [M9.4 versioned evaluator integration](docs/m94-versioned-evaluator-v2-integration-provenance.md).
-
-Before the M10 clean rebaseline could begin, the V2 path exposed a missing
-generated-result binding protocol: the execution path provides `QueryExecution`,
-while V2 requires a `BoundResult` with semantic bindings. The offline
-`benchmark-result-binding-v1` study was rejected as unsafe after 8 incorrect
-semantic bindings across 117 independent projections and the
-`A17_SELF_JOIN_AMBIGUITY` false binding. A follow-up safety-boundary audit
-identified a narrower fail-closed Boundary B. The new
-`benchmark-result-binding-v2` then independently passed its provider-free
-semantic binding protocol: 120 cases, 0 incorrect semantic bindings, 60/60
-positive cases accepted, 20/20 governed positives, 40/40 direct positives,
-0/40 wrong-case false accepts, 20/20 fail-closed cases, and 60/60 fresh
-adversarial cases. This is fixture-based semantic validation, not universal
-real M1/PostgreSQL integration validation.
-
-The subsequent real-execution attempts remain explicit evidence boundaries:
-M9.5R.2 was invalid because reconnaissance preceded manifest freeze; M9.5R.2R
-was blocked by contaminated case selection; and M9.5R.2S was blocked when the
-frozen M1 policy rejected required CTE/derived output-scope columns. M1 was not
-weakened for evaluator convenience. These outcomes do not show that binder-v2,
-V2, or PostgreSQL is unsafe; they show that universal V2 real-execution
-applicability is not established and is not required for M10.
-
-M9.6 therefore froze the M10 evaluator strategy as
-**V1 authoritative + V2 shadow**. V1 remains the sole primary evaluator over
-the full denominator. V2 runs only as a deterministic, reference-blind shadow
-when binding is available; V2 unavailability and V1/V2 disagreement are
-diagnostics only. There is no best-of behavior, evaluator shopping, manual
-binding, post-hoc case removal, or score rewriting. The primary evaluation
-protocol and V2 shadow protocol are ready; universal V2 binding is not a
-prerequisite.
-
-Detailed records are in the [M9.5 protocol report](docs/m95-benchmark-result-contract-binding-protocol.md),
-the [M9.5R safety-boundary audit](docs/m95r-result-binding-safety-boundary-audit.md),
-the [M9.5R.1 binder-v2 validation](docs/m95r1-fail-closed-result-binder-v2-independent-validation.md),
-the [M9.5R.2R integration block](docs/m95r2r-frozen-first-real-execution-binding-validation.md),
-the [M9.5R.2S fixture-construction block](docs/m95r2s-fresh-real-execution-integration-fixture-construction.md),
-and the [M9.6 evaluator strategy audit](docs/m96-evaluator-v2-applicability-strategy-audit.md).
-
-The first valid clean residual rebaseline was subsequently completed as M10R
-on the fresh internal `m10-clean-rebaseline-v2` workload: **28/200 (14%)**
-under Evaluator V1 authoritative, with DEV **17/120** and HOLDOUT **11/80**.
-This is a frozen internal rebaseline, not production accuracy or general
-Text-to-SQL accuracy. The 200-case corpus, including its 80-case HOLDOUT, is
-now consumed historical evidence and cannot be reused as independent
-validation after future tuning. M10R retained V2 as shadow-only: 110 cases
-were evaluated and there was one V1/V2 recovery disagreement; no best-of or
-adjusted score was created.
-
-M10.1 audited the 172 primary failures using frozen artifacts. It classified
-125/172 with E1/E2 evidence, but selected no dominant intervention mechanism.
-The audit is `M101_AUDIT_BLOCKED` because the M10R run recorded memory use but
-not retrieved memory IDs, scores, or verified example SQL; therefore memory
-selectivity and overtransfer cannot be distinguished from downstream
-generation errors. This does not establish that memory caused the failures.
-The next milestone is **M10.2 — Residual Provenance Capture Audit**.
-
-M7 remains **99/150 (66%)** on its separate historical workload; it must not
-be compared directly to M10R as a regression delta. Public Defog/BIRD reruns
-remain deferred until a measured mechanism is addressed and validated on new
-independent internal data.
-
-## External evaluation
-
-These are execution-based results from different datasets and evaluators. They
-must not be averaged into a single accuracy number.
-
-| Benchmark | Metric | Result |
-| --- | --- | ---: |
-| Defog SQL-Eval PostgreSQL — Classic | Exact | **142/210 (67.62%)** |
-| Defog SQL-Eval PostgreSQL — Advanced | Exact | **48/64 (75.00%)** |
-| Defog Advanced — official Window category | Exact | **6/8 (75.00%)** |
-| BIRD Mini-Dev PostgreSQL | EX | **225/500 (45.00%)** |
-| BIRD — Simple | EX | **87/148 (58.78%)** |
-| BIRD — Moderate | EX | **108/250 (43.20%)** |
-| BIRD — Challenging | EX | **30/102 (29.41%)** |
-
-The BIRD run parsed 499/500 generated queries and executed 496/500; the main
-loss was semantic result correctness rather than basic SQL executability.
-Defog and BIRD provenance and run details are retained under
-[`evaluation/external/`](evaluation/external/) and the milestone documents.
-
-## Current limitations
-
-Derived and temporal semantics remain weak across the external evidence:
-
-- Defog ratio: **12/35 (34.29%)** exact.
-- BIRD ratio/division: **17/101 (16.83%)** EX.
-- BIRD temporal: **4/19 (21.05%)** EX.
-
-The external evidence still shows weak derived and temporal semantics. In the
-combined internal evaluation, M8 showed that routing errors were not the main
-recoverable bottleneck. M9 showed that broad structure failures were real but
-mostly concentrated in result-shape/projection mismatches rather than a
-generic SQL-planning deficit. M9.1–M9.3 then separated evaluator artifacts
-from genuine projection violations and validated a narrow contract-aware
-candidate without changing historical scores.
-
-M2.14.1 found the largest BIRD ratio failure classes were wrong aggregation
-(30), missing filters (13), arithmetic structure (13), join path (11), and
-join fanout (6). This evidence motivated the governed metric compiler; it does
-not imply that M3 solves arbitrary Text-to-SQL.
-
-## Governed metric evidence
-
-These results apply only to frozen internal questions whose requested business
-metric is covered by the governed semantic catalog.
-
-| Evaluation | Direct SQL | Governed compiler | Delta |
-| --- | ---: | ---: | ---: |
-| M3 DEV | 26/48 (54.17%) | 48/48 (100.00%) | +45.83 pp |
-| M3 HOLDOUT | 13/32 (40.63%) | 32/32 (100.00%) | +59.38 pp |
-
-The compiler itself reached 32/32 independent reference targets, with 80/80
-correctly grounded DEV/HOLDOUT requests compiling to equivalent results.
-
-## Verified query memory evidence
-
-M4 evaluated a frozen internal direct-path benchmark using 50 independently
-verified examples. The memory arm used the same model, schema context, and M1
-path as the baseline, with only the retrieved examples added to the prompt.
-
-| Evaluation | Direct SQL | Verified memory | Delta |
-| --- | ---: | ---: | ---: |
-| M4 DEV | 15/48 (31.25%) | 29/48 (60.42%) | +29.17 pp |
-| M4 HOLDOUT | 10/32 (31.25%) | 17/32 (53.13%) | +21.88 pp |
-
-These results apply only to the frozen internal residual direct-path questions;
-they are not general Text-to-SQL accuracy. Verified Query Memory is not
-production-default and has no automatic repair or learning-from-traffic path.
-
-## M5–M9 research status
-
-M5 post-SQL semantic verification was too noisy for a broad production
-correctness gate. Its pre-SQL selective-answering follow-up also did not
-justify a production subsystem: R0 and R2 were rejected, while R1 remained
-unresolved because of intermittent provider structured-output reliability.
-Selective answering is parked and is not part of the current runtime.
-
-M6 value-grounding research concluded **VALUE_GROUNDING_WEAK_EVIDENCE**: no
-confirmed or plausible historical value-grounding failures were found. A
-no-guessing resolution contract remains useful future design guidance, but a
-resolver, fuzzy matching, embeddings, and M6.1 are parked.
-
-M7 remains the current combined-system product evaluation: 66% execution
-equivalence on its frozen internal workload, not production or general
-Text-to-SQL accuracy. M8 found routing was not the primary recoverable
-bottleneck. M9 found structural failures were real but fragmented, with
-result-shape/projection dominating its structural labels. M9.1–M9.6 separated
-evaluator semantics, result binding safety, real-execution applicability, and
-future evaluator strategy without changing the product trust boundary. See the
-complete research records in
-[`docs/m50-semantic-verification-signal-audit.md`](docs/m50-semantic-verification-signal-audit.md),
-[`docs/m501-adjudicated-semantic-verification-corpus.md`](docs/m501-adjudicated-semantic-verification-corpus.md),
-[`docs/m5r-selective-answering-research.md`](docs/m5r-selective-answering-research.md),
-[`docs/m6-value-grounding-evidence-contract.md`](docs/m6-value-grounding-evidence-contract.md),
-and [`docs/m7-combined-product-evaluation.md`](docs/m7-combined-product-evaluation.md),
-plus the M8–M9.6 documents linked above.
-
-The M2.8 provider-generated ResultShape proposal remains rejected; the later
-M9 evaluator work is offline contract/evaluation infrastructure, not a revival
-of that provider stage.
-
-## Window research
-
-DecisionSQL includes a deterministic compiler for a bounded, typed Window IR.
-Gold IR compiled, passed safety planning, executed, and matched results on
-**80/80** controlled development and holdout cases. LLM-generated Window IR
-did not outperform direct SQL. The original 48-question suite is therefore
-retained as an **Internal Window Compositional Stress Suite**, not as a general
-product-accuracy or general Window benchmark.
-
-## Local startup
-
-Requirements: Docker with Compose support.
-
-```bash
-cp .env.example .env
-docker compose up --build
+    T["Evaluator-only truth"] -.-> EV
 ```
 
-The database becomes healthy, then migrations and deterministic seed data run
-before the API starts. Check the API:
+Evaluator truth scores behavior. It does not route production runtime.
 
-```bash
-curl http://localhost:8000/health
+### What the model owns
+
+The model owns the first-pass decision and, when it chooses `ANSWER`, the
+proposed SQL. It does not own authorization, physical schema truth, grain
+semantics, cost admission, or the right to execute.
+
+### What deterministic software owns
+
+The server owns typed decision validation, SQL parsing and policy, server-owned
+semantic metadata, optional narrow grain-safe normalization, PostgreSQL
+`EXPLAIN`, cost admission, accepted `QueryPlan` creation, read-only execution,
+and benchmark result comparison.
+
+## Why one-shot?
+
+The benchmark isolates first-pass behavior:
+
+```text
+1 benchmark case
+→ 1 semantic model attempt
+→ 1 persisted response
+→ no retry
+→ no LLM repair
+→ no judge
+→ no selector
+→ no reflection
+→ no pass@K
 ```
 
-Expected response:
+This reveals model decision errors, SQL semantic errors, deterministic runtime
+behavior, and unsafe assumptions that retries can hide. Production systems may
+use repair loops, human confirmation, retries, or agents; Decision-SQL
+deliberately excludes them from this benchmark so model behavior and
+server-side enforcement remain observable.
 
-```json
-{"status":"ok","database":"ok"}
+The final one-shot response corpus was assembled without duplicate semantic
+attempts. Earlier experiments were aborted when harness changes were required
+after genuine responses had already been acquired. Those responses were
+preserved under new experiment identities, request-hash compatibility was
+verified, and only previously unattempted cases were generated:
+
+| Response origin | Count |
+| --- | ---: |
+| `INHERITED_M48B` | 1 |
+| `INHERITED_M48B1` | 73 |
+| `NEW_M48B2` | 16 |
+| Total | 90 |
+
+Retries were 0, duplicate semantic attempts were 0, and the final response
+corpus hash is:
+
+```text
+f86b07d37b52c0891f6b9e95819104b150cdc9d03825d584ed81921a854795d8
 ```
 
-To include the optional Jaeger-compatible service:
+This is evidence discipline, not a second live arm or a score comparison with
+the aborted runs.
 
-```bash
-docker compose --profile observability up --build
+## Governed task model
+
+The current semantic truth is version `0.2.2-dev`, hash
+`3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e`.
+
+| Behavior | Count | Expected model decision |
+| --- | ---: | --- |
+| `ANSWERABLE` | 60 | `ANSWER` + one read-only PostgreSQL `SELECT` |
+| `AUTHORITY_BLOCKED` | 15 | `BLOCKED_AUTHORITY` |
+| `AMBIGUOUS` | 9 | `NEEDS_CLARIFICATION` |
+| `POLICY_BLOCKED` | 6 | `BLOCKED_POLICY` |
+| **Total** | **90** | |
+
+The synthetic enterprise-style database packs cover:
+
+```text
+commerce_ops
+fleet_ops
+support_ops
+subscription_billing
+warehouse_logistics
+risk_operations
 ```
 
-## Development
+They are synthetic benchmark environments, not customer data. An answerable
+case has enough authorized information for a result. An authority-blocked
+case cannot be answered through the authorized relationships or context. An
+ambiguous case lacks enough information to determine one unique semantic
+interpretation. A policy-blocked case violates frozen query or runtime policy.
 
-With Python 3.12 and the development dependencies installed:
+## Submission-driven runtime, truth-driven evaluation
 
-```bash
-python -m pytest
-ruff check .
-mypy app demo
+Runtime routing is determined by the parsed model submission, not by evaluator
+truth:
+
+```text
+submission.decision == ANSWER and SQL exists
+        → run the actual SQL runtime
+
+otherwise
+        → bypass SQL runtime
 ```
 
-See [`docs/architecture.md`](docs/architecture.md),
-[`docs/security.md`](docs/security.md),
-[`docs/evaluation.md`](docs/evaluation.md), and
-[`docs/evaluation-research-history.md`](docs/evaluation-research-history.md).
-The M3.4 routing contract and observability validation are documented in
-[`docs/m34-governed-routing-observability.md`](docs/m34-governed-routing-observability.md).
-Semantic contract lifecycle and provenance are documented in
-[`docs/m35-semantic-contract-hardening.md`](docs/m35-semantic-contract-hardening.md).
-Verified Query Memory evaluation and its frozen corpus are documented in
-[`docs/m4-verified-query-memory.md`](docs/m4-verified-query-memory.md); its
-default-off runtime integration is documented in
-[`docs/m41-verified-memory-integration-observability.md`](docs/m41-verified-memory-integration-observability.md).
+Truth determines whether the submitted governed decision is correct and whether
+result-contract evaluation applies. It does not decide whether an `ANSWER + SQL`
+enters runtime.
 
-## Roadmap
+For example:
 
-Completed: M0 Foundation, M1 Deterministic SQL Safety, M2 generation and
-evaluation research, M2.12 Window compiler research, M2.13 Defog external
-calibration, M2.14 BIRD external validation, M2.14.1 semantic failure audit,
-M3 Governed Semantic Metrics, M3.4 Governed Routing & Observability, M3.5
-Semantic Contract Hardening, M4 Verified Query Memory, and M4.1 Verified Query
-Memory Integration & Observability, M5–M6 research, and M7 Combined Product
-Evaluation, M8 Routing Error Audit, M9 Direct-Path Query Structure Audit,
-M9.1 Result-Shape / Projection Contract Audit, M9.2 Result Equivalence Contract
-Regression, M9.3 Result Equivalence V2 Independent Validation, and M9.4
-Versioned Evaluator V2 Integration & Provenance. M9.5 Benchmark Result-Contract
-Binding Protocol was rejected as unsafe, and M9.5R identified a bounded
-fail-closed safety boundary for a new experiment.
+```text
+truth       = AMBIGUOUS
+submission  = ANSWER + SQL
 
-Broad benchmark acquisition is now frozen. Existing evidence consists of the
-Defog PostgreSQL benchmark, BIRD Mini-Dev PostgreSQL, the internal DecisionSQL
-benchmark, the Internal Window Compositional Stress Suite, and the M3 governed
-metric benchmark.
+SQL runtime           = YES
+reference comparison  = NO
+governance result     = WRONG
+```
 
-M3.4 Feature-Flagged Governed Metric Routing & Observability and M3.5 Semantic
-Contract Hardening are now validated as explicit, bounded integration and
-governance layers. M4 Verified Query Memory is accepted for the frozen internal
-direct-path evaluation, and M4.1 integrates it behind a default-off runtime
-feature mode. The production routing default remains **OFF**; activation is a
-separate operational decision. M4.1 does not change the frozen retriever or
-corpus. M7 shows a substantial gain from the combined architecture on its new
-internal workload, but its 66% execution-equivalence result is not a broad
-production claim. M5 selective answering and M6 value grounding remain parked;
-no related runtime subsystem has been added. M9.3 independently validated the
-result-equivalence V2 candidate, and M9.4 integrated it as an explicit,
-versioned evaluation path. M9.5R.1 independently validated the fail-closed
-binder-v2 semantics on deterministic fixtures. M9.5R.2/R/S did not establish
-universal real-execution binding and exposed protocol and current-M1
-applicability boundaries. M9.6 froze V1 as the authoritative evaluator for
-M10, with V2 as a shadow diagnostic. Evaluator V1 remains historical and
-default; DUAL_SHADOW remains V1-authoritative.
+The SQL receives the same real parse, policy, semantic, cost, QueryPlan, and
+restricted-execution treatment as any other answer. The harness records the
+runtime outcome separately and does not crash because the model made a wrong
+governed decision. This branch was explicitly exercised by the
+`subscription_18` regression.
 
-M10R completed the first valid clean residual rebaseline under the frozen
-V1-authoritative/V2-shadow protocol and consumed its 200-case v2 corpus. M10.1
-did not identify a dominant mechanism and is blocked from causal memory
-analysis because the run omitted retriever provenance. The next milestone is
-**M10.2 — Residual Provenance Capture Audit**. Public revalidation remains
-deferred until after a measured generation or architecture intervention and
-new independent internal validation.
+Model-visible inputs include the question, public/governed schema context,
+authorized metadata, and generation instructions. Evaluator-only inputs
+include truth behavior, reference SQL witnesses, result contracts,
+counterfactual fixtures, and expected semantic behavior. Reference SQL,
+fixtures, and expected results never enter the model request.
+
+## Runtime trust boundary
+
+For `ANSWER + SQL`, the selected SQL follows this order:
+
+```text
+raw SQL
+  ↓
+sqlglot parse
+  ↓
+SQL/object/function policy
+  ↓
+GrainSafetyValidator
+  ↓
+optional narrow deterministic normalization
+  ↓
+re-parse
+  ↓
+re-policy
+  ↓
+post-grain validation
+  ↓
+PostgreSQL EXPLAIN
+  ↓
+cost policy
+  ↓
+accepted immutable QueryPlan
+  ↓
+restricted ReadOnlyExecutor
+  ↓
+bounded result
+```
+
+The SQL policy is PostgreSQL-oriented and uses `sqlglot`. It enforces one
+statement, read-only `SELECT`/read-only CTE behavior, governed object access,
+function restrictions, relationship/object policy, and complexity controls.
+The reader uses a read-only transaction, statement timeout, reader-role
+enforcement, and bounded result rows. This is a deterministic application
+boundary, not a claim of universal SQL security or complete tenant/RLS
+authorization.
+
+The executor does not accept arbitrary SQL directly from a model response, a
+normalizer, or the evaluator. Execution requires an accepted immutable
+`QueryPlan` issued by the SQL safety service.
+
+## Server-owned grain safety
+
+Joining a parent row to several child rows can duplicate a parent measure:
+
+```text
+parent row
+   |
+   +-- child 1
+   +-- child 2
+   +-- child 3
+```
+
+A naive `SUM(parent.amount)` after that join can count the parent three times.
+The model is not trusted to own this semantic contract. Server-owned metadata
+describes concepts such as native entity and grain keys, relationship
+cardinality, measure aggregation behavior, and legal alignment/rollup
+structure. The relevant implementation is in
+[`app/semantics/grain.py`](app/semantics/grain.py),
+[`app/semantics/grain_normalizer.py`](app/semantics/grain_normalizer.py), and
+[`app/semantics/grain_runtime.py`](app/semantics/grain_runtime.py).
+
+The frozen normalizer is intentionally narrow. Its validated shape is:
+
+```text
+additive parent measure
++ direct declared 1:N relationship
++ supported LEFT JOIN fanout shape
++ additive child aggregation
+→ deterministic child-side preaggregation
+```
+
+It is not a general SQL optimizer, universal fanout solver, or semantic
+compiler. Outside the supported shape it remains fail-closed or non-target
+according to the frozen contract.
+
+Normalized SQL is never trusted automatically. It must pass re-parse,
+re-policy, post-grain validation, `EXPLAIN`, the cost gate, QueryPlan creation,
+and restricted execution. There is no raw unsafe fallback.
+
+M48B.2 observed the following fresh/inherited runtime evidence:
+
+| Grain metric | Result |
+| --- | ---: |
+| `PARENT_MEASURE_FANOUT` states | 4 |
+| Normalized | 4 / 4 |
+| Normalization precision | 100% |
+| Normalization regressions | 0 |
+| Safe SQL rewrites | 0 |
+| Unauthorized relationships introduced | 0 |
+| Unsafe raw fallback | 0 |
+
+`subscription_04` is the fresh end-to-end example where the raw fanout defect
+was corrected by the frozen deterministic normalizer. This evidence applies to
+the supported shape above; it does not establish universal grain repair.
+
+## Execution-based correctness
+
+Correctness is not one gold SQL string. Candidate SQL is not judged primarily
+by exact SQL text or AST equality.
+
+The answerable benchmark uses two independent reference SQL witnesses, a typed
+`ResultContract`, execution on the BASE database, and execution across
+counterfactual database states. Reference SQL is evidence of a valid semantic
+implementation, not a canonical string the model is expected to reproduce.
+
+### Why counterfactual fixtures matter
+
+On one database state, wrong SQL can accidentally return the same rows as
+correct SQL. A counterfactual fixture changes relevant rows or distributions so
+that the two semantics diverge. A candidate must continue to satisfy the typed
+result contract across those discriminating states.
+
+The frozen semantic benchmark contains:
+
+```text
+120/120 reference witnesses
+184/184 semantic fixture comparisons
+190/190 mutants killed
+0 invalid mutants
+0 surviving mutants
+```
+
+Mutants are intentionally wrong behaviors used to verify that the fixtures
+actually discriminate semantic errors.
+
+## Deterministic PostgreSQL planner state
+
+PostgreSQL `EXPLAIN` costs depend on planner statistics. A freshly reset
+synthetic table can expose `reltuples = -1` and missing `pg_stats`, which is not
+representative of a maintained database. The frozen runtime environment uses
+`ANALYZE_CURRENT_STATE` before each reader-planning state.
+
+BASE state:
+
+```text
+reset
+→ seed
+→ commit
+→ ANALYZE all benchmark relations in deterministic sorted order
+→ reader/runtime planning
+```
+
+Counterfactual state:
+
+```text
+reset
+→ seed
+→ apply frozen fixture
+→ commit
+→ ANALYZE all benchmark relations in deterministic sorted order
+→ reader/runtime planning
+```
+
+`ANALYZE` is environment preparation. It is not inside `SqlSafetyService`,
+`QueryCostGate`, `ReadOnlyExecutor`, or the request path; it is not performed
+under the reader role and is excluded from request latency.
+
+The current contract is:
+
+```text
+planner-statistics-contract-1
+hash: a97222f4e036af28120a4ee12d9ef4352513796f54a15d6f2050b56a6ae77863
+PostgreSQL: 16.15
+max_plan_rows: 100000
+max_plan_cost: 100000.0
+```
+
+These cost limits are frozen benchmark/runtime policy, not universal production
+defaults. SQL that exceeds them is rejected before execution.
+
+## Current end-to-end evidence
+
+The current answerable funnel is:
+
+```text
+60 ANSWERABLE
+      ↓
+53 ANSWER selected
+      ↓
+53 parse pass
+      ↓
+53 policy pass
+      ↓
+53 semantic/runtime admission
+      ↓
+53 cost pass
+      ↓
+53 execution success
+      ↓
+51 BASE correct
+      ↓
+51 full counterfactual correct
+```
+
+Conditional on choosing `ANSWER`, runtime correctness was 51/53 = 96.2%.
+The current bottleneck is therefore concentrated more in model decisioning and
+abstention than in SQL parsing, runtime policy, cost admission, or execution
+infrastructure.
+
+### What remains failing
+
+There are 12 answerable/governance residual failures in the completed corpus:
+
+```text
+7 wrong refusals
+3 wrong governance decisions
+2 result mismatches
+```
+
+The three governance failures are in the ambiguity category: ambiguity scored
+6/9, while authority scored 15/15 and policy scored 6/6. There were no
+unauthorized answers in the 15 authority-blocked cases. M49 has not run; it is
+the planned zero-call analysis of the remaining causal mechanisms, not a result
+that should be inferred from these counts alone.
+
+## Branch-complete harness validation
+
+The final harness was tested against the entire valid decision space before the
+remaining responses were generated:
+
+```text
+90 cases × 4 valid model decisions = 360 synthetic scenarios
+360/360 scenarios
+16/16 truth × decision classes
+90 ANSWER runtime routes
+270 non-ANSWER runtime bypasses
+60 answerable result-bundle branches
+0 non-answerable bundle accesses
+214 runtime states
+```
+
+This matters because a wrong model decision must still produce a typed outcome.
+For example, `truth = AMBIGUOUS` and `model = ANSWER + SQL` means real SQL
+runtime is exercised, governance is wrong, reference/result evaluation is not
+applicable, and the harness does not throw a missing-reference exception.
+
+## Reproducibility and experiment discipline
+
+The M48B.2 contract froze the prompt hash
+`119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb`, the
+planner-statistics contract, runtime component identities, request hashes, and
+response provenance before evaluation. Counterfactual replay and raw semantic
+forensics used zero provider calls. No retry, repair, selector, judge,
+reflection, or second live arm was introduced.
+
+The main evidence is in the [M48B.2 summary](benchmark/reports/m48b2_end_to_end_summary.md)
+and [machine-readable summary](benchmark/reports/m48b2_end_to_end_summary.json).
+The complete audit is under [`benchmark/audits/m48b2/`](benchmark/audits/m48b2/),
+with the frozen contract in
+[`benchmark/manifests/m48b2_branch_complete_runtime_contract.json`](benchmark/manifests/m48b2_branch_complete_runtime_contract.json).
+
+## Repository map
+
+```text
+app/
+├── execution/
+│   ├── cost.py
+│   └── reader.py
+├── generation/
+├── semantics/
+│   ├── grain.py
+│   ├── grain_normalizer.py
+│   └── grain_runtime.py
+└── sql/
+    ├── parser.py
+    ├── policy.py
+    └── service.py
+
+benchmark/
+├── audits/
+├── manifests/
+├── reports/
+└── ...
+
+evaluation/external/
+docs/
+```
+
+The runtime boundary is concentrated in
+[`app/sql/service.py`](app/sql/service.py),
+[`app/sql/parser.py`](app/sql/parser.py),
+[`app/sql/policy.py`](app/sql/policy.py),
+[`app/execution/cost.py`](app/execution/cost.py), and
+[`app/execution/reader.py`](app/execution/reader.py). The benchmark harness
+and historical evidence are separate from production application code.
+
+## Tech stack
+
+The active project uses Python 3.12, FastAPI, PostgreSQL, SQLAlchemy, Alembic,
+`sqlglot`, Pydantic, pytest, Ruff, mypy, OpenTelemetry, and an
+OpenAI-compatible generation boundary. The application also exposes a minimal
+health route; this repository does not currently claim a general public
+Text-to-SQL endpoint.
+
+## Scope and limitations
+
+The current evidence supports governed one-shot decision evaluation,
+deterministic SQL safety, the narrow grain-normalization mechanism described
+above, an accepted-`QueryPlan` execution boundary, restricted read-only
+execution, execution-based semantic evaluation, counterfactual testing, and
+reproducible planner state.
+
+It does not establish:
+
+- universal Text-to-SQL correctness;
+- universal fanout or grain repair;
+- production readiness for arbitrary enterprise schemas;
+- complete tenant-level authorization or RLS coverage;
+- universal business-semantic understanding;
+- guaranteed correctness or safety for SQL outside the frozen runtime and
+  benchmark contracts.
+
+## Research lineage
+
+The repository preserves historical experiments around external BIRD/Defog
+evaluations, governed metric compilation, verified-query memory,
+result-equivalence contracts, logical-plan experiments, prompt interventions,
+authority semantics, JSON typing, grain semantics, deterministic normalization,
+and runtime integration. Those experiments remain valuable provenance, but they
+are not all active components of today’s runtime.
+
+Browse the preserved material in [`docs/`](docs/),
+[`evaluation/external/`](evaluation/external/),
+[`benchmark/audits/`](benchmark/audits/), and
+[`benchmark/reports/`](benchmark/reports/). The root README intentionally
+describes the current system rather than reproducing the M3/M4/M7/M10-era
+chronology.
+
+## Next
+
+**M49 — Fresh Residual Failure Forensics**
+
+```text
+provider calls: 0
+model calls: 0
+architecture changes: 0
+```
+
+M49 will use only frozen M48B.2 evidence to classify the remaining failures by
+causal mechanism before another intervention is selected. It is not being run
+as part of this documentation update.

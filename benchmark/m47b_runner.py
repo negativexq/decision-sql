@@ -16,7 +16,7 @@ import time
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from app.config import get_settings
 from app.generation.provider import OpenAICompatibleProvider
@@ -45,6 +45,7 @@ M47A_NORMALIZER_HASH = "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6
 M47A_VALIDATOR_HASH = "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5"
 M47A_SQL_ADMISSION_HASH = "652206cf95e16bbe6277813d75b1328efe1c5002662dac1104b8d251cb78c652"
 EXPECTED_CASE_ORDER_HASH = "3299ecb9046619cd7b2e2aed66ed2e4146e8286b0497202b3b3ebc151947c2c2"
+__all__ = ["EXPECTED_PROMPT_HASH", "TRUTH_HASH", "TRUTH_VERSION", "preflight", "evaluate_offline"]
 
 
 def _sha(path: Path) -> str:
@@ -121,7 +122,7 @@ def verify_historical(preservation: dict[str, Any]) -> dict[str, Any]:
 
 
 def _config() -> dict[str, Any]:
-    value = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    value = cast(dict[str, Any], json.loads(CONFIG_PATH.read_text(encoding="utf-8")))
     expected = {
         "model": "gpt-5.6-luna",
         "provider": "openai-compatible",
@@ -205,28 +206,28 @@ def _reference_noop(catalogs: dict[str, Any]) -> dict[str, Any]:
     references = _reference_rows(_answerable_rows())
     records = []
     for row in references:
-        result = GrainSafeNormalizer(catalogs[row["database_id"]]).normalize(row["sql"])
+        normalization = GrainSafeNormalizer(catalogs[row["database_id"]]).normalize(row["sql"])
         records.append(
             {
                 **row,
-                "input_sql_hash": result.input_sql_hash,
-                "output_sql_hash": result.output_sql_hash,
-                "status": result.status.value,
-                "diagnostic": result.input_diagnostic.code.value,
-                "byte_identical": result.input_sql == result.output_sql,
+                "input_sql_hash": normalization.input_sql_hash,
+                "output_sql_hash": normalization.output_sql_hash,
+                "status": normalization.status.value,
+                "diagnostic": normalization.input_diagnostic.code.value,
+                "byte_identical": normalization.input_sql == normalization.output_sql,
             }
         )
     modified = [record for record in records if not record["byte_identical"]]
-    result = {
+    audit_result: dict[str, Any] = {
         "references": 120,
         "modified": len(modified),
         "records": records,
         "passed": len(records) == 120 and not modified,
     }
-    _dump(AUDIT_ROOT / "m47b_reference_noop.json", result)
-    if not result["passed"]:
+    _dump(AUDIT_ROOT / "m47b_reference_noop.json", audit_result)
+    if not audit_result["passed"]:
         raise RuntimeError("M47B_NORMALIZER_CONTRACT_MISMATCH")
-    return result
+    return audit_result
 
 
 def preflight() -> dict[str, Any]:
@@ -581,15 +582,16 @@ def evaluate_offline(contract_data: dict[str, Any]) -> dict[str, Any]:
     validator_rows: list[dict[str, Any]] = []
     for item in records:
         case, truth = rows_by_id[item["case_id"]]
-        parsed = item.get("parsed_submission")
-        raw_sql = (parsed or {}).get("sql")
-        raw = _score_submission(case, truth, parsed, expected)
+        parsed = cast(dict[str, Any] | None, item.get("parsed_submission"))
+        parsed_for_score = parsed or {}
+        raw_sql = parsed_for_score.get("sql")
+        raw = _score_submission(case, truth, parsed_for_score, expected)
         raw.update(
             {
                 "case_id": item["case_id"],
                 "case_index": item["case_index"],
                 "database_id": case["database_id"],
-                "decision": (parsed or {}).get("decision"),
+                "decision": parsed_for_score.get("decision"),
             }
         )
         raw_diag = GrainSafetyValidator(catalogs[case["database_id"]]).validate(raw_sql)
@@ -597,18 +599,18 @@ def evaluate_offline(contract_data: dict[str, Any]) -> dict[str, Any]:
         normal_reason = "NO_SQL"
         normalized_sql = raw_sql
         norm_result: Any = None
-        if raw_sql is not None and (parsed or {}).get("decision") == "ANSWER":
+        if raw_sql is not None and parsed_for_score.get("decision") == "ANSWER":
             norm_result = GrainSafeNormalizer(catalogs[case["database_id"]]).normalize(raw_sql)
             normal_status = norm_result.status.value
             normal_reason = norm_result.reason_code.value
             normalized_sql = norm_result.output_sql
-        normalized = _score_submission(case, truth, parsed, expected, normalized_sql)
+        normalized = _score_submission(case, truth, parsed_for_score, expected, normalized_sql)
         normalized.update(
             {
                 "case_id": item["case_id"],
                 "case_index": item["case_index"],
                 "database_id": case["database_id"],
-                "decision": (parsed or {}).get("decision"),
+                "decision": parsed_for_score.get("decision"),
             }
         )
         norm_diag = GrainSafetyValidator(catalogs[case["database_id"]]).validate(normalized_sql)
@@ -622,7 +624,7 @@ def evaluate_offline(contract_data: dict[str, Any]) -> dict[str, Any]:
         ledger.append(
             {
                 "case_id": item["case_id"],
-                "decision": (parsed or {}).get("decision"),
+                "decision": parsed_for_score.get("decision"),
                 "raw_sql_hash": sha256_text(raw_sql) if raw_sql is not None else None,
                 "raw_diagnostic": raw_diag.code.value,
                 "normalization_status": normal_status,

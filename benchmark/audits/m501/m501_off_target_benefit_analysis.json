@@ -1,0 +1,121 @@
+[
+  {
+    "case_id": "subscription_04",
+    "control_correct": false,
+    "control_decision": "NEEDS_CLARIFICATION",
+    "control_result_signature": [],
+    "control_sql_hash": null,
+    "database_id": "subscription_billing",
+    "decision_changed": true,
+    "evidence_level": "E3",
+    "model_visible_context": {
+      "attribute_count": 59,
+      "authorized_relationship_count": 12,
+      "business_rule_count": 2,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "database_id": "subscription_billing",
+      "metric_ids": [
+        "metric:subscription_billing:mrr",
+        "metric:subscription_billing:net_collected"
+      ],
+      "public_context_hash": "5512c64e32941cb2b90b546eea1a525a66e0325246cf78872dbcc81a5fbc1c85",
+      "schema_catalog_count": 12,
+      "temporal_rule_count": 1
+    },
+    "population": "NON_TARGET_ANSWERABLE",
+    "primary_spillover_mechanism": "DECISION_BOUNDARY_CHANGE",
+    "question": "For each account, return the account ID and net collected amount from captured payments after refunds. Include only groups represented by at least one qualifying source record.",
+    "sql_changed": true,
+    "treatment_correct": true,
+    "treatment_decision": "ANSWER",
+    "treatment_result_signature": [
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "state_id": "subscription_04_cf1_2db794"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "state_id": "subscription_04_cf2_cf6ed1"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "state_id": "subscription_04_cf3_multi_refund"
+      }
+    ],
+    "treatment_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+    "truth_behavior": "ANSWERABLE"
+  },
+  {
+    "case_id": "warehouse_04",
+    "control_correct": false,
+    "control_decision": "ANSWER",
+    "control_result_signature": [
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+        "state_id": "warehouse_04_cf1_c305ad"
+      },
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+        "state_id": "warehouse_04_cf2_b6ed47"
+      }
+    ],
+    "control_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+    "database_id": "warehouse_logistics",
+    "decision_changed": false,
+    "evidence_level": "E3",
+    "model_visible_context": {
+      "attribute_count": 59,
+      "authorized_relationship_count": 13,
+      "business_rule_count": 2,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "database_id": "warehouse_logistics",
+      "metric_ids": [
+        "metric:warehouse_logistics:fill_rate",
+        "metric:warehouse_logistics:late_shipments"
+      ],
+      "public_context_hash": "d4249ddd5c88554ad023001ba6554792f8650e1e434ba86c9b6cca02b517af1c",
+      "schema_catalog_count": 13,
+      "temporal_rule_count": 1
+    },
+    "population": "NON_TARGET_ANSWERABLE",
+    "primary_spillover_mechanism": "SQL_SEMANTIC_PERTURBATION",
+    "question": "For each warehouse, return the warehouse ID and received quantity for open purchase orders. Include only groups represented by at least one qualifying source record.",
+    "sql_changed": true,
+    "treatment_correct": true,
+    "treatment_decision": "ANSWER",
+    "treatment_result_signature": [
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+        "state_id": "warehouse_04_cf1_c305ad"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+        "state_id": "warehouse_04_cf2_b6ed47"
+      }
+    ],
+    "treatment_sql_hash": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+    "truth_behavior": "ANSWERABLE"
+  }
+]

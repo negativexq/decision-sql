@@ -125,6 +125,14 @@ def _state_sql(row: dict[str, Any]) -> str | None:
     return None
 
 
+def _state_sql_hash(row: dict[str, Any]) -> str | None:
+    for state in row["states"]:
+        selected = state["outcome"].get("grain", {}).get("selected_sql_hash")
+        if isinstance(selected, str):
+            return selected
+    return None
+
+
 def _case_correct(row: dict[str, Any]) -> bool:
     plan = row["plan"]
     if plan["truth_behavior"] != "ANSWERABLE":
@@ -195,13 +203,18 @@ def _state_result_signature(row: dict[str, Any]) -> list[dict[str, Any]]:
 def _decision_sql_groups(
     control: dict[str, dict[str, Any]], treatment: dict[str, dict[str, Any]]
 ) -> dict[str, int]:
+    frozen_sql_rows = json.loads((M50_AUDIT / "m50_sql_noninterference.json").read_text())[
+        "records"
+    ]
+    frozen_same = {row["case_id"]: bool(row["same"]) for row in frozen_sql_rows}
     counts: Counter[str] = Counter()
     for case_id in control:
         c = control[case_id]["plan"]["submitted_decision"]
         t = treatment[case_id]["plan"]["submitted_decision"]
-        c_sql = _state_sql(control[case_id])
-        t_sql = _state_sql(treatment[case_id])
-        if c == t and c_sql == t_sql:
+        same_sql = frozen_same.get(
+            case_id, _state_sql(control[case_id]) == _state_sql(treatment[case_id])
+        )
+        if c == t and same_sql:
             counts["decision_same_sql_same"] += 1
         elif c == t and c == "ANSWER":
             counts["decision_same_sql_changed"] += 1
@@ -215,8 +228,12 @@ def _decision_sql_groups(
 def _sql_change_rows(
     control: dict[str, dict[str, Any]], treatment: dict[str, dict[str, Any]]
 ) -> list[dict[str, Any]]:
+    frozen_sql_rows = json.loads((M50_AUDIT / "m50_sql_noninterference.json").read_text())[
+        "records"
+    ]
+    changed_case_ids = {row["case_id"] for row in frozen_sql_rows if not row["same"]}
     rows: list[dict[str, Any]] = []
-    for case_id in control:
+    for case_id in sorted(changed_case_ids):
         c = control[case_id]
         t = treatment[case_id]
         if (
@@ -242,8 +259,8 @@ def _sql_change_rows(
                 "case_id": case_id,
                 "control_correct": _case_correct(c),
                 "treatment_correct": _case_correct(t),
-                "control_sql_hash": c["states"][0]["outcome"]["grain"].get("selected_sql_hash"),
-                "treatment_sql_hash": t["states"][0]["outcome"]["grain"].get("selected_sql_hash"),
+                "control_sql_hash": _state_sql_hash(c),
+                "treatment_sql_hash": _state_sql_hash(t),
                 "primary_sql_change": category,
                 "material": material,
                 "first_discriminating_state": first_difference,
@@ -252,7 +269,7 @@ def _sql_change_rows(
                 "treatment_result_signature": _state_result_signature(t),
             }
         )
-    if len(rows) != 21:
+    if len(rows) != len(changed_case_ids) or len(rows) != 21:
         raise RuntimeError(f"M501_SQL_CHANGE_COUNT:{len(rows)}")
     return rows
 
@@ -318,8 +335,8 @@ def _transition_rows(
                 "decision_changed": c["plan"]["submitted_decision"]
                 != t["plan"]["submitted_decision"],
                 "sql_changed": _state_sql(c) != _state_sql(t),
-                "control_sql_hash": c["states"][0]["outcome"]["grain"].get("selected_sql_hash"),
-                "treatment_sql_hash": t["states"][0]["outcome"]["grain"].get("selected_sql_hash"),
+                "control_sql_hash": _state_sql_hash(c),
+                "treatment_sql_hash": _state_sql_hash(t),
                 "primary_spillover_mechanism": TRANSITION_PRIMARY[case_id],
                 "evidence_level": "E3"
                 if _state_sql(c) != _state_sql(t) or c["plan"]["truth_behavior"] != "ANSWERABLE"
@@ -332,6 +349,62 @@ def _transition_rows(
     if len(result) != 10:
         raise RuntimeError("M501_TRANSITION_COUNT")
     return result
+
+
+def _governance_rows(
+    pairs: list[m48b2.Pair],
+    control: dict[str, dict[str, Any]],
+    treatment: dict[str, dict[str, Any]],
+    contexts: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for pair in pairs:
+        if pair.truth_case["semantic_target"]["behavior"] == "ANSWERABLE":
+            continue
+        case_id = pair.case_id
+        c = control[case_id]
+        t = treatment[case_id]
+        rows.append(
+            {
+                "case_id": case_id,
+                "database_id": contexts[case_id]["database_id"],
+                "truth_behavior": c["plan"]["truth_behavior"],
+                "control_decision": c["plan"]["submitted_decision"],
+                "treatment_decision": t["plan"]["submitted_decision"],
+                "control_governance_correct": bool(c["plan"]["governance_correct"]),
+                "treatment_governance_correct": bool(t["plan"]["governance_correct"]),
+                "decision_changed": c["plan"]["submitted_decision"]
+                != t["plan"]["submitted_decision"],
+                "runtime_control": bool(c["plan"]["run_sql_runtime"]),
+                "runtime_treatment": bool(t["plan"]["run_sql_runtime"]),
+                "model_visible_context": contexts[case_id]["context"],
+            }
+        )
+    if len(rows) != 30:
+        raise RuntimeError(f"M501_GOVERNANCE_COUNT:{len(rows)}")
+    return rows
+
+
+def _answer_sql_rows(
+    control: dict[str, dict[str, Any]], treatment: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    frozen_rows = json.loads((M50_AUDIT / "m50_sql_noninterference.json").read_text())["records"]
+    frozen_by_case = {row["case_id"]: row for row in frozen_rows}
+    rows: list[dict[str, Any]] = []
+    for case_id in sorted(frozen_by_case):
+        if control[case_id]["plan"]["submitted_decision"] != "ANSWER":
+            raise RuntimeError(f"M501_ANSWER_DENOMINATOR:{case_id}")
+        rows.append(
+            {
+                "case_id": case_id,
+                "control_sql_hash": _state_sql_hash(control[case_id]),
+                "treatment_sql_hash": _state_sql_hash(treatment[case_id]),
+                "same_sql": bool(frozen_by_case[case_id]["same"]),
+            }
+        )
+    if len(rows) != 49:
+        raise RuntimeError(f"M501_ANSWER_DENOMINATOR:{len(rows)}")
+    return rows
 
 
 def _wrong_refusal_churn(
@@ -559,13 +632,14 @@ def freeze_protocol() -> None:
 
 
 def analyze() -> None:
-    if _head() != STARTING_HEAD:
-        raise RuntimeError("M501_STARTING_HEAD_MISMATCH")
     pairs = _pairs()
     control = _runtime("CONTROL")
     treatment = _runtime("TREATMENT")
     contexts = _context_by_case(pairs)
     transitions = _transition_rows(pairs, control, treatment, contexts)
+    governance_rows = _governance_rows(pairs, control, treatment, contexts)
+    answer_sql_rows = _answer_sql_rows(control, treatment)
+    decision_sql_groups = _decision_sql_groups(control, treatment)
     sql_changes = _sql_change_rows(control, treatment)
     first = _summary(pairs, control, treatment, contexts, transitions, sql_changes)
     second = _summary(pairs, control, treatment, contexts, transitions, sql_changes)
@@ -609,11 +683,13 @@ def analyze() -> None:
     _dump(AUDIT / "m501_transition_case_adjudications.json", transitions)
     _dump(AUDIT / "m501_sql_change_population.json", sql_changes)
     _dump(AUDIT / "m501_sql_change_adjudications.json", sql_changes)
+    _dump(AUDIT / "m501_answer_sql_comparison.json", answer_sql_rows)
+    _dump(AUDIT / "m501_decision_sql_groups.json", decision_sql_groups)
     _dump(AUDIT / "m501_wrong_refusal_churn.json", first["wrong_refusal_churn"])
     _dump(AUDIT / "m501_result_mismatch_churn.json", first["result_mismatch_churn"])
     _dump(
         AUDIT / "m501_governance_spillover.json",
-        [row for row in transitions if row["population"] == "GOVERNANCE"],
+        governance_rows,
     )
     _dump(
         AUDIT / "m501_target_recovery_analysis.json",

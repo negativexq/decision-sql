@@ -1,0 +1,116 @@
+[
+  {
+    "case_id": "warehouse_08",
+    "control_correct": false,
+    "control_decision": "ANSWER",
+    "control_result_signature": [
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+        "state_id": "warehouse_08_cf1_c305ad"
+      },
+      {
+        "result_contract_outcome": false,
+        "selected_sql_hash": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+        "state_id": "warehouse_08_cf2_b6ed47"
+      }
+    ],
+    "control_sql_hash": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+    "database_id": "warehouse_logistics",
+    "decision_changed": false,
+    "evidence_level": "E3",
+    "model_visible_context": {
+      "attribute_count": 59,
+      "authorized_relationship_count": 13,
+      "business_rule_count": 2,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "database_id": "warehouse_logistics",
+      "metric_ids": [
+        "metric:warehouse_logistics:fill_rate",
+        "metric:warehouse_logistics:late_shipments"
+      ],
+      "public_context_hash": "d4249ddd5c88554ad023001ba6554792f8650e1e434ba86c9b6cca02b517af1c",
+      "schema_catalog_count": 13,
+      "temporal_rule_count": 1
+    },
+    "population": "TARGET",
+    "primary_spillover_mechanism": "SQL_SEMANTIC_PERTURBATION",
+    "question": "For each product, return the product ID and the quantity ordered but not yet received. Include only groups represented by at least one qualifying source record.",
+    "sql_changed": true,
+    "treatment_correct": true,
+    "treatment_decision": "ANSWER",
+    "treatment_result_signature": [
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "06590b7da3eb68b089e9b2190e38a64e6bbe054a47932349ee2c64840250025b",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "06590b7da3eb68b089e9b2190e38a64e6bbe054a47932349ee2c64840250025b",
+        "state_id": "warehouse_08_cf1_c305ad"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "06590b7da3eb68b089e9b2190e38a64e6bbe054a47932349ee2c64840250025b",
+        "state_id": "warehouse_08_cf2_b6ed47"
+      }
+    ],
+    "treatment_sql_hash": "06590b7da3eb68b089e9b2190e38a64e6bbe054a47932349ee2c64840250025b",
+    "truth_behavior": "ANSWERABLE"
+  },
+  {
+    "case_id": "warehouse_13",
+    "control_correct": false,
+    "control_decision": "NEEDS_CLARIFICATION",
+    "control_result_signature": [],
+    "control_sql_hash": null,
+    "database_id": "warehouse_logistics",
+    "decision_changed": true,
+    "evidence_level": "E3",
+    "model_visible_context": {
+      "attribute_count": 59,
+      "authorized_relationship_count": 13,
+      "business_rule_count": 2,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "database_id": "warehouse_logistics",
+      "metric_ids": [
+        "metric:warehouse_logistics:fill_rate",
+        "metric:warehouse_logistics:late_shipments"
+      ],
+      "public_context_hash": "d4249ddd5c88554ad023001ba6554792f8650e1e434ba86c9b6cca02b517af1c",
+      "schema_catalog_count": 13,
+      "temporal_rule_count": 1
+    },
+    "population": "TARGET",
+    "primary_spillover_mechanism": "DECISION_BOUNDARY_CHANGE",
+    "question": "For each warehouse, return the warehouse ID and the ratio of shipped quantity to received quantity. Include entities with no matching records, using the stated NULL or zero behavior.",
+    "sql_changed": true,
+    "treatment_correct": true,
+    "treatment_decision": "ANSWER",
+    "treatment_result_signature": [
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "574ad8d539034230daf84cff961786120a7023280d60af8d4c49ce1c71662107",
+        "state_id": "base"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "574ad8d539034230daf84cff961786120a7023280d60af8d4c49ce1c71662107",
+        "state_id": "warehouse_13_cf1_c305ad"
+      },
+      {
+        "result_contract_outcome": true,
+        "selected_sql_hash": "574ad8d539034230daf84cff961786120a7023280d60af8d4c49ce1c71662107",
+        "state_id": "warehouse_13_cf2_b6ed47"
+      }
+    ],
+    "treatment_sql_hash": "574ad8d539034230daf84cff961786120a7023280d60af8d4c49ce1c71662107",
+    "truth_behavior": "ANSWERABLE"
+  }
+]

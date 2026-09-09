@@ -1,0 +1,185 @@
+{
+  "classification": "REFERENCE_RUNTIME_WITNESS_SPLIT_SUPPORTED",
+  "cost_policy_hashes": {
+    "app/config.py": "3bae45fdbf2be4837d20030395ceafb95d1315cf8eeabf8381b071eef3a9709b",
+    "app/execution/cost.py": "86bd5f28ae667f2c2b6f9ceec2ff0db98ef7f0e622573b77b67ba4bbccab3c55",
+    "app/semantics/grain.py": "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5",
+    "app/semantics/grain_normalizer.py": "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6c97b5800",
+    "app/sql/service.py": "0df21dbd91e44ccc1b87e5aff2c73b824a3de695a5cd2fb1626391947919d779"
+  },
+  "effective_cost_config": {
+    "defaults": {
+      "max_plan_cost": 100000.0,
+      "max_plan_rows": 100000
+    },
+    "effective": {
+      "max_plan_cost": 100000.0,
+      "max_plan_rows": 100000
+    },
+    "environment_overrides": {
+      "DECISION_SQL_MAX_PLAN_COST": null,
+      "DECISION_SQL_MAX_PLAN_ROWS": null
+    },
+    "thresholds_changed": false
+  },
+  "effective_max_plan_cost": 100000.0,
+  "effective_max_plan_rows": 100000,
+  "experiment": "M48A.1",
+  "hashes": {
+    "app/config.py": "3bae45fdbf2be4837d20030395ceafb95d1315cf8eeabf8381b071eef3a9709b",
+    "app/execution/cost.py": "86bd5f28ae667f2c2b6f9ceec2ff0db98ef7f0e622573b77b67ba4bbccab3c55",
+    "app/semantics/grain.py": "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5",
+    "app/semantics/grain_normalizer.py": "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6c97b5800",
+    "app/sql/service.py": "0df21dbd91e44ccc1b87e5aff2c73b824a3de695a5cd2fb1626391947919d779",
+    "cost_policy_semantics_changed": false,
+    "grain_components_changed": false
+  },
+  "historical_mismatches": [],
+  "m48a_historical_verdict_changed": false,
+  "model_calls": 0,
+  "normalizer_hash": "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6c97b5800",
+  "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+  "provider_calls": 0,
+  "reference_sql_hashes": {
+    "a": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+    "b": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3"
+  },
+  "rejection_inventory": {
+    "all_warehouse_13_reference_b": true,
+    "identified": true,
+    "reference_sql_hashes": {
+      "a": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+      "b": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3"
+    },
+    "rejected_executions": [
+      {
+        "case_id": "warehouse_13",
+        "classification": "REFERENCE_RUNTIME_WITNESS_INADMISSIBLE",
+        "cost_rejection_code": "QUERY_TOO_EXPENSIVE",
+        "fixture_id": "base",
+        "plan_rows": 810,
+        "reference_id": "B",
+        "runtime_result": "QUERY_COST_REJECTION",
+        "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+        "state": "BASE",
+        "total_cost": 114604.02
+      },
+      {
+        "case_id": "warehouse_13",
+        "classification": "REFERENCE_RUNTIME_WITNESS_INADMISSIBLE",
+        "cost_rejection_code": "QUERY_TOO_EXPENSIVE",
+        "fixture_id": "warehouse_13_cf1_c305ad",
+        "plan_rows": 810,
+        "reference_id": "B",
+        "runtime_result": "QUERY_COST_REJECTION",
+        "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+        "state": "COUNTERFACTUAL",
+        "total_cost": 114604.02
+      },
+      {
+        "case_id": "warehouse_13",
+        "classification": "REFERENCE_RUNTIME_WITNESS_INADMISSIBLE",
+        "cost_rejection_code": "QUERY_TOO_EXPENSIVE",
+        "fixture_id": "warehouse_13_cf2_b6ed47",
+        "plan_rows": 810,
+        "reference_id": "B",
+        "runtime_result": "QUERY_COST_REJECTION",
+        "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+        "state": "COUNTERFACTUAL",
+        "total_cost": 114604.02
+      }
+    ],
+    "source": "benchmark/audits/m48a/m48a_reference_runtime_replay.json"
+  },
+  "runtime_disposition": {
+    "all_allowed_correct": true,
+    "cost_rejected_execution_zero": true,
+    "counts": {
+      "ALLOWED": 365,
+      "QUERY_COST_REJECTION": 3
+    },
+    "other_unexpected_failures": 0,
+    "states": 368
+  },
+  "semantic_validity": {
+    "mutations": {
+      "by_failure_family": {
+        "FILTER_SCOPE_ERROR": 7,
+        "JSON_TYPE_COERCION_ERROR": 4,
+        "LATEST_ROW_ERROR": 6,
+        "LIMIT_SEMANTICS_ERROR": 40,
+        "PARENT_MEASURE_FANOUT": 2,
+        "RELATIONSHIP_PATH_ERROR": 13,
+        "TEMPORAL_BOUNDARY_ERROR": 3,
+        "WRONG_AGGREGATION_GRAIN": 7,
+        "asc_desc": 3,
+        "avg_vs_sum": 3,
+        "count_vs_count_distinct": 1,
+        "inner_left_join": 4,
+        "null_default_policy": 2,
+        "projection": 47,
+        "ratio_numerator_denominator": 1,
+        "remove_filter": 1,
+        "remove_limit": 2,
+        "remove_predicate": 12,
+        "rounding_stage": 2,
+        "set_operation": 1,
+        "where_filter_scope": 4,
+        "window_partition": 1,
+        "wrong_aggregation_grain": 3,
+        "wrong_comparison_operator": 4,
+        "wrong_join_path": 1,
+        "wrong_literal": 5,
+        "wrong_metric_operand": 4,
+        "wrong_nested_field": 2,
+        "wrong_population": 2,
+        "wrong_temporal_anchor": 2,
+        "wrong_type": 1
+      },
+      "invalid": 0,
+      "killed": 190,
+      "mutants": 190,
+      "surviving": 0,
+      "valid": 190
+    },
+    "references": {
+      "agreement_failures": [],
+      "fixture_comparisons": 184,
+      "passed": true,
+      "references_analyzed": 120
+    },
+    "semantic_contract_is_independent_of_cost_gate": true,
+    "warehouse_13_reference_a_and_b_semantically_valid": true
+  },
+  "starting_commit": "a94fc70c1b6771de0bdc2d5f7676334befde0b0e",
+  "truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+  "truth_version": "0.2.2-dev",
+  "validator_hash": "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5",
+  "warehouse13_cost_plans": {
+    "analyze_sensitivity": {
+      "after_analyze": {
+        "A": {
+          "plan_rows": 3,
+          "total_cost": 6.85
+        },
+        "B": {
+          "plan_rows": 3,
+          "total_cost": 17.3
+        }
+      },
+      "before_analyze": {
+        "A": {
+          "plan_rows": 810,
+          "total_cost": 280.92
+        },
+        "B": {
+          "plan_rows": 810,
+          "total_cost": 114604.02
+        }
+      },
+      "diagnostic_only": true
+    },
+    "rejection_mechanism": "TOTAL_COST_ONLY",
+    "reproducible": true
+  }
+}

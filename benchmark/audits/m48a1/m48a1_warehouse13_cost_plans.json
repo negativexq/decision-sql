@@ -1,0 +1,1043 @@
+{
+  "analyze_sensitivity": {
+    "after_analyze": {
+      "A": {
+        "plan_rows": 3,
+        "total_cost": 6.85
+      },
+      "B": {
+        "plan_rows": 3,
+        "total_cost": 17.3
+      }
+    },
+    "before_analyze": {
+      "A": {
+        "plan_rows": 810,
+        "total_cost": 280.92
+      },
+      "B": {
+        "plan_rows": 810,
+        "total_cost": 114604.02
+      }
+    },
+    "diagnostic_only": true
+  },
+  "case_id": "warehouse_13",
+  "reference_b_structural_cause": "two correlated aggregate SubPlans are rescanned for each outer warehouse row under un-analyzed seed statistics",
+  "reference_sql_hashes": {
+    "A": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+    "B": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3"
+  },
+  "rejection_mechanism": "TOTAL_COST_ONLY",
+  "repetitions": [
+    {
+      "fixture_id": "base",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 0,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    },
+    {
+      "fixture_id": "warehouse_13_cf1_c305ad",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 0,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    },
+    {
+      "fixture_id": "warehouse_13_cf2_b6ed47",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 0,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    },
+    {
+      "fixture_id": "base",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 1,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    },
+    {
+      "fixture_id": "warehouse_13_cf1_c305ad",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 1,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    },
+    {
+      "fixture_id": "warehouse_13_cf2_b6ed47",
+      "planner_settings": {
+        "cpu_operator_cost": "0.0025",
+        "cpu_tuple_cost": "0.01",
+        "effective_cache_size": "4GB",
+        "enable_hashjoin": "on",
+        "enable_indexscan": "on",
+        "enable_mergejoin": "on",
+        "enable_nestloop": "on",
+        "enable_seqscan": "on",
+        "random_page_cost": "4",
+        "seq_page_cost": "1",
+        "work_mem": "4MB"
+      },
+      "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+      "references": {
+        "A": {
+          "disposition": "ALLOWED",
+          "execution_attempted": false,
+          "plan_hash": "129753029dcf4113c64713f18c4703996308856cdbf3610e8e894e8fb5e7424a",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 280.92,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 5,
+              "Hash Join": 5,
+              "Seq Scan": 6,
+              "Sort": 1,
+              "Subquery Scan": 2
+            },
+            "subplan_count": 0
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "sql_hash": "a641dabea4872264d804e6c4f6ae934151d695dbb4568284762e3c0250ec37c2",
+          "top_level_node_type": "Sort",
+          "total_cost": 280.92
+        },
+        "B": {
+          "disposition": "QUERY_COST_REJECTION",
+          "execution_attempted": false,
+          "plan_hash": "a24d9b8966c5d1df90135ce3548ee3e5a0616bd243a6b642805ad0490331f992",
+          "plan_rows": 810,
+          "plan_summary": {
+            "max_subtree_cost": 114604.02,
+            "node_counts": {
+              "Aggregate": 2,
+              "Hash": 3,
+              "Hash Join": 3,
+              "Index Only Scan": 1,
+              "Seq Scan": 5
+            },
+            "subplan_count": 2
+          },
+          "service_estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "sql_hash": "6c876de4b5bf93d3179e9e9b63261615a0a083070d9810df4661ea682a9cbee3",
+          "top_level_node_type": "Index Only Scan",
+          "total_cost": 114604.02
+        }
+      },
+      "repetition": 1,
+      "statistics": [
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "bins",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "carriers",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "delivery_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 7,
+          "relation": "inventory_snapshots",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "pick_events",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "products",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "purchase_order_lines",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "purchase_orders",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "receipts",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipment_items",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 5,
+          "relation": "shipments",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 4,
+          "relation": "stock_movements",
+          "reltuples": -1.0
+        },
+        {
+          "last_analyze": null,
+          "last_autoanalyze": null,
+          "n_live_tup": 3,
+          "relation": "warehouses",
+          "reltuples": -1.0
+        }
+      ],
+      "thresholds": {
+        "max_plan_cost": 100000.0,
+        "max_plan_rows": 100000
+      }
+    }
+  ],
+  "reproducible": true
+}

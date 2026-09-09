@@ -218,7 +218,7 @@ Pre-live focused tests passed: 58. Preflight, reference validation, reader check
 
 ## Repository state
 
-Pre-live freeze commit: `76dfef7cd302ae5a06e6c45011a089480022e432`. Response-freeze commit: `807c7255c55a69095e7c3c8c08225e7e078df164`. Final audit changes are pending the closing commit; no benchmark, prompt, runtime, or README edits were made.
+Pre-live freeze commit: `76dfef7cd302ae5a06e6c45011a089480022e432`. Response-freeze commit: `807c7255c55a69095e7c3c8c08225e7e078df164`. Final audit commit: `708ed02`; pushed with a clean worktree. No benchmark, prompt, runtime, or README edits were made.
 
 ## Final M51B verdict
 

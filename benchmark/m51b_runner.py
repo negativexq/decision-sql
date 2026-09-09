@@ -30,6 +30,7 @@ from benchmark import m48a_audit as m48a
 from benchmark import m48b1_runner as m48b1
 from benchmark import m48b_runner as m48b
 from benchmark import m51a_authoring as m51a
+from benchmark.analysis_serialization import dumps_analysis
 from benchmark.m46b_contract import m43_prompt
 from benchmark.model_contract import (
     FORBIDDEN_REQUEST_TERMS,
@@ -76,9 +77,7 @@ def _hash(value: Any) -> str:
 
 def _dump(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(value, indent=2, sort_keys=True, default=str) + "\n", encoding="utf-8"
-    )
+    path.write_text(dumps_analysis(value, indent=2) + "\n", encoding="utf-8")
 
 
 def _append(path: Path, value: Any) -> None:

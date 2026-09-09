@@ -1,0 +1,45 @@
+{
+  "experiment": "M48B.1",
+  "status": "M48B1_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "starting_head": "574ee1726af62ab1bd425b9ede76d8a2721c7fe7",
+  "phase_a_contract_commit": "6aff5197051bcef2ac1ff51815a9bd3ac761b6ef",
+  "provider_calls": 73,
+  "model_calls": 73,
+  "new_provider_budget": 89,
+  "historical_m48b_attempts": 1,
+  "inherited_case_id": "commerce_01",
+  "inherited_response_reused": true,
+  "persisted_unique_response_slots": 74,
+  "inherited_response_slots": 1,
+  "new_response_slots": 73,
+  "duplicate_semantic_attempts": 0,
+  "retries": 0,
+  "last_persisted_case_id": "subscription_18",
+  "last_persisted_case_index": 74,
+  "last_response_was_persisted": true,
+  "last_response_base_runtime_completed": false,
+  "failure": {
+    "type": "KeyError",
+    "key": "reference_implementation_a",
+    "source": "benchmark/m48b1_runner.py:_bundle",
+    "phase": "BASE_RUNTIME_AFTER_RESPONSE_PERSIST",
+    "trigger_case_id": "subscription_18",
+    "trigger_case_index": 74,
+    "trigger_truth_behavior": "AMBIGUOUS",
+    "detail": "An ANSWER response on a non-answerable case entered the SQL runtime path, which attempted to construct an evaluator bundle from an empty truth reference envelope."
+  },
+  "required_action": "Do not patch or continue this experiment identity. Preserve all acquired responses and create a new explicit experiment identity for any harness repair and continuation.",
+  "response_artifacts": {
+    "raw_responses_jsonl_sha256": "247a9e6157eaa9a7b797140ccf93f98aca3675315fc794d569335b5ddd6b8b47",
+    "parsed_submissions_jsonl_sha256": "e7a428fbaeb4cb63b17d9e4e20129914d5bad8816da70c80b537013e0214a5cb",
+    "request_ledger_sha256": "2c3c0bc019986989dc4b0e32fd5db1452704a63245a3188574eac7f0ad55272b",
+    "base_runtime_ledger_sha256": "4e314a0611ec462f044a15c56eadd4618d5b29efe8a76ec64aebca5c38b0e769"
+  },
+  "frozen_source_hashes": {
+    "m48b1_runner_sha256": "89094760b2fd905d7754a04ee003d43839bedbfc4c5c0ff08c790c7cffb298dc"
+  },
+  "provider_calls_after_abort": 0,
+  "model_calls_after_abort": 0,
+  "official_score": null,
+  "official_verdict": null
+}

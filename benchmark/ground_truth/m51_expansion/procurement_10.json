@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_procurement_10_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT l.line_id, COALESCE(SUM(r.received_qty),0)::NUMERIC / NULLIF(l.ordered_qty,0) AS fulfillment_rate FROM po_lines l LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY l.line_id,l.ordered_qty ORDER BY l.line_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT l.line_id, COALESCE(SUM(r.received_qty),0)::NUMERIC / NULLIF(l.ordered_qty,0) AS fulfillment_rate FROM po_lines l LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY l.line_id,l.ordered_qty ORDER BY l.line_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

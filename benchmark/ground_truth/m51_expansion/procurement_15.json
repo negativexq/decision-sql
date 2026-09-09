@@ -44,11 +44,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_procurement_15_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT s.supplier_id, COALESCE(SUM(r.received_qty),0) AS received_units FROM suppliers s LEFT JOIN purchase_orders p ON p.supplier_id=s.supplier_id LEFT JOIN po_lines l ON l.po_id=p.po_id LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY s.supplier_id ORDER BY s.supplier_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT s.supplier_id, COALESCE(SUM(r.received_qty),0) AS received_units FROM suppliers s LEFT JOIN purchase_orders p ON p.supplier_id=s.supplier_id LEFT JOIN po_lines l ON l.po_id=p.po_id LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY s.supplier_id ORDER BY s.supplier_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

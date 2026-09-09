@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_workforce_06_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT e.employee_id FROM employees e WHERE NOT EXISTS (SELECT 1 FROM timesheets t WHERE t.employee_id=e.employee_id AND t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01') ORDER BY e.employee_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT e.employee_id FROM employees e WHERE NOT EXISTS (SELECT 1 FROM timesheets t WHERE t.employee_id=e.employee_id AND t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01') ORDER BY e.employee_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

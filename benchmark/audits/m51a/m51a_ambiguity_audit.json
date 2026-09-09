@@ -1,0 +1,83 @@
+{
+  "healthcare_08": {
+    "discriminating_patch_sql": "INSERT INTO encounters VALUES (9026,2,1,'2026-06-29 10:00+00','completed')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "completed encounter versus active care plan",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "healthcare_13": {
+    "discriminating_patch_sql": "INSERT INTO encounters VALUES (9025,1,1,'2026-06-29 10:00+00','completed')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "latest encounter versus currently open encounter",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "insurance_03": {
+    "discriminating_patch_sql": "INSERT INTO claims VALUES (9021,101,'2026-06-30',50,'open','{}')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "open claim versus claim with an active assignment",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "marketplace_02": {
+    "discriminating_patch_sql": "INSERT INTO orders VALUES (9028,1,'2026-06-29','completed')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "completed order versus order with a settled payout",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "marketplace_09": {
+    "discriminating_patch_sql": "INSERT INTO listings VALUES (9029,1,'books',10,true)",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "listing flag versus listing with recent completed sale",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "procurement_03": {
+    "discriminating_patch_sql": "INSERT INTO suppliers VALUES (9030,'Ambiguous Supplier','East',true,'{}')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "supplier active flag versus most recent approval",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "telecom_14": {
+    "discriminating_patch_sql": "INSERT INTO subscriptions VALUES (9021,1,1,'active')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "active subscription versus plan with the latest usage",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "workforce_03": {
+    "discriminating_patch_sql": "INSERT INTO employees VALUES (9021,'Current Worker',1,'active','{}')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "employee status versus employee with a current shift",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "workforce_09": {
+    "discriminating_patch_sql": "INSERT INTO training_records VALUES (9022,1,'Safety','2026-06-30')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "latest completion versus currently required course",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "passed": true,
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "healthcare_billing": {
+    "business_rules": [
+      {
+        "definition": "An encounter with status='completed' is a completed visit.",
+        "name": "Completed encounter",
+        "rule_id": "rule:healthcare_billing:completed_encounter"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Posted patient payments divided by billed charges.",
+        "description": "Posted patient payments divided by billed charges.",
+        "formula": "SUM(posted payment) / SUM(charge)",
+        "grain": "case-defined",
+        "metric_id": "metric:healthcare_billing:paid_charge_ratio",
+        "name": "paid_charge_ratio",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:healthcare_billing:readonly"
+    },
+    "purpose": "Patient encounters, procedures, charges, payments, and clinical coding.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:healthcare_billing:clock",
+        "timezone": "UTC"
+      }
+    ]
+  },
+  "insurance_claims": {
+    "business_rules": [
+      {
+        "definition": "A claim with claim_status='open' is unresolved.",
+        "name": "Open claim",
+        "rule_id": "rule:insurance_claims:open_claim"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Paid claim dollars divided by reported loss dollars.",
+        "description": "Paid claim dollars divided by reported loss dollars.",
+        "formula": "SUM(payment amount) / SUM(loss amount)",
+        "grain": "case-defined",
+        "metric_id": "metric:insurance_claims:paid_ratio",
+        "name": "paid_ratio",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:insurance_claims:readonly"
+    },
+    "purpose": "Policy coverage, claims, payments, and adjuster workflow.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:insurance_claims:clock",
+        "timezone": "UTC"
+      }
+    ]
+  },
+  "marketplace_ops": {
+    "business_rules": [
+      {
+        "definition": "An order with status='completed' is included in settled sales.",
+        "name": "Completed order",
+        "rule_id": "rule:marketplace_ops:completed_order"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Quantity times listing unit price.",
+        "description": "Quantity times listing unit price.",
+        "formula": "SUM(quantity * unit_price)",
+        "grain": "case-defined",
+        "metric_id": "metric:marketplace_ops:gross_merchandise_value",
+        "name": "gross_merchandise_value",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:marketplace_ops:readonly"
+    },
+    "purpose": "Two-sided marketplace listings, orders, payouts, and disputes.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:marketplace_ops:clock",
+        "timezone": "UTC"
+      }
+    ]
+  },
+  "procurement_ops": {
+    "business_rules": [
+      {
+        "definition": "An approval with decision='approved' is the authoritative approval.",
+        "name": "Approved requisition",
+        "rule_id": "rule:procurement_ops:approved_requisition"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Received units divided by ordered units.",
+        "description": "Received units divided by ordered units.",
+        "formula": "SUM(received_qty) / SUM(ordered_qty)",
+        "grain": "case-defined",
+        "metric_id": "metric:procurement_ops:fill_rate",
+        "name": "fill_rate",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:procurement_ops:readonly"
+    },
+    "purpose": "Supplier sourcing and purchase-order fulfillment.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:procurement_ops:clock",
+        "timezone": "UTC"
+      }
+    ]
+  },
+  "telecom_billing": {
+    "business_rules": [
+      {
+        "definition": "A subscription with status='active' is current.",
+        "name": "Active subscription",
+        "rule_id": "rule:telecom_billing:active_subscription"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Megabytes divided by 1024.",
+        "description": "Megabytes divided by 1024.",
+        "formula": "SUM(megabytes) / 1024",
+        "grain": "case-defined",
+        "metric_id": "metric:telecom_billing:usage_gb",
+        "name": "usage_gb",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:telecom_billing:readonly"
+    },
+    "purpose": "Subscriber plans, network usage, invoices, and service outages.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:telecom_billing:clock",
+        "timezone": "UTC"
+      }
+    ]
+  },
+  "workforce_ops": {
+    "business_rules": [
+      {
+        "definition": "Only timesheets with approved=true count toward reported hours.",
+        "name": "Approved hours",
+        "rule_id": "rule:workforce_ops:approved_hours"
+      }
+    ],
+    "metrics": [
+      {
+        "default_policy": "no implicit default",
+        "definition": "Approved timesheet hours.",
+        "description": "Approved timesheet hours.",
+        "formula": "SUM(hours) FILTER (WHERE approved)",
+        "grain": "case-defined",
+        "metric_id": "metric:workforce_ops:approved_hours",
+        "name": "approved_hours",
+        "null_policy": "preserve SQL NULL unless explicitly defaulted",
+        "operands": [],
+        "precision": 4,
+        "rounding_stage": "display_only unless question says otherwise",
+        "temporal_basis": "case-defined"
+      }
+    ],
+    "policy": {
+      "allowed_statement": "one read-only SELECT statement",
+      "blocked_decisions": [
+        "BLOCKED_POLICY"
+      ],
+      "forbidden_objects": [
+        "pg_authid",
+        "secret_tokens"
+      ],
+      "forbidden_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "MERGE",
+        "DDL",
+        "COPY",
+        "locking reads"
+      ],
+      "policy_id": "policy:workforce_ops:readonly"
+    },
+    "purpose": "Employee scheduling, timekeeping, leave, and training compliance.",
+    "temporal_rules": [
+      {
+        "benchmark_now": "2026-06-30T12:00:00Z",
+        "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+        "clock_mode": "fixed",
+        "temporal_rule_id": "time:workforce_ops:clock",
+        "timezone": "UTC"
+      }
+    ]
+  }
+}

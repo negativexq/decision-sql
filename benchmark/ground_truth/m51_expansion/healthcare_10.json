@@ -40,11 +40,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_healthcare_10_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT provider_id,DENSE_RANK() OVER (ORDER BY total_amount DESC,provider_id) AS amount_rank FROM (SELECT e.provider_id,SUM(c.amount) AS total_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE c.status='posted' GROUP BY e.provider_id) q ORDER BY amount_rank,provider_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT provider_id,DENSE_RANK() OVER (ORDER BY total_amount DESC,provider_id) AS amount_rank FROM (SELECT e.provider_id,SUM(c.amount) AS total_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE c.status='posted' GROUP BY e.provider_id) q ORDER BY amount_rank,provider_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

@@ -40,11 +40,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_insurance_07_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT h.region,SUM(c.loss_amount) AS open_loss FROM policyholders h JOIN policies p ON p.holder_id=h.holder_id JOIN claims c ON c.policy_id=p.policy_id WHERE c.claim_status='open' GROUP BY h.region ORDER BY h.region) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT h.region,SUM(c.loss_amount) AS open_loss FROM policyholders h JOIN policies p ON p.holder_id=h.holder_id JOIN claims c ON c.policy_id=p.policy_id WHERE c.claim_status='open' GROUP BY h.region ORDER BY h.region) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

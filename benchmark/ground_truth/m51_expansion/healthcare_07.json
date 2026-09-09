@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_healthcare_07_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT p.patient_id,COALESCE(SUM(x.amount),0) AS posted_amount FROM patients p LEFT JOIN payments x ON x.patient_id=p.patient_id AND x.status='posted' GROUP BY p.patient_id ORDER BY p.patient_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT p.patient_id,COALESCE(SUM(x.amount),0) AS posted_amount FROM patients p LEFT JOIN payments x ON x.patient_id=p.patient_id AND x.status='posted' GROUP BY p.patient_id ORDER BY p.patient_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_workforce_02_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT e.employee_id,COALESCE(SUM((a.ends_on-a.starts_on)+1) FILTER (WHERE a.status='approved'),0) AS absence_days FROM employees e LEFT JOIN absences a ON a.employee_id=e.employee_id GROUP BY e.employee_id ORDER BY e.employee_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT e.employee_id,COALESCE(SUM((a.ends_on-a.starts_on)+1) FILTER (WHERE a.status='approved'),0) AS absence_days FROM employees e LEFT JOIN absences a ON a.employee_id=e.employee_id GROUP BY e.employee_id ORDER BY e.employee_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

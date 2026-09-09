@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_insurance_14_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

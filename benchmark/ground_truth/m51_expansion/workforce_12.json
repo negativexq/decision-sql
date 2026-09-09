@@ -40,11 +40,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_workforce_12_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT t.team_id,COUNT(DISTINCT s.employee_id) AS june_workers FROM teams t LEFT JOIN employees e ON e.team_id=t.team_id LEFT JOIN shifts s ON s.employee_id=e.employee_id AND s.starts_at>=TIMESTAMPTZ '2026-06-01' AND s.starts_at<TIMESTAMPTZ '2026-07-01' GROUP BY t.team_id ORDER BY t.team_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT t.team_id,COUNT(DISTINCT s.employee_id) AS june_workers FROM teams t LEFT JOIN employees e ON e.team_id=t.team_id LEFT JOIN shifts s ON s.employee_id=e.employee_id AND s.starts_at>=TIMESTAMPTZ '2026-06-01' AND s.starts_at<TIMESTAMPTZ '2026-07-01' GROUP BY t.team_id ORDER BY t.team_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

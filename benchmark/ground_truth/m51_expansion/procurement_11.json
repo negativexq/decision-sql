@@ -41,11 +41,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_procurement_11_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT p.supplier_id, SUM(l.ordered_qty*l.unit_cost) AS ordered_spend FROM purchase_orders p JOIN po_lines l ON l.po_id=p.po_id WHERE p.status='open' GROUP BY p.supplier_id ORDER BY p.supplier_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT p.supplier_id, SUM(l.ordered_qty*l.unit_cost) AS ordered_spend FROM purchase_orders p JOIN po_lines l ON l.po_id=p.po_id WHERE p.status='open' GROUP BY p.supplier_id ORDER BY p.supplier_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

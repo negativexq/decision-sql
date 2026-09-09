@@ -38,11 +38,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_procurement_14_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT DISTINCT ON (line_id) line_id, received_on AS latest_received_on FROM receipts ORDER BY line_id, received_on DESC, receipt_id DESC) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT DISTINCT ON (line_id) line_id, received_on AS latest_received_on FROM receipts ORDER BY line_id, received_on DESC, receipt_id DESC) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

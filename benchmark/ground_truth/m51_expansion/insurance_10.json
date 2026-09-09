@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_insurance_10_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT holder_id,DENSE_RANK() OVER (ORDER BY total_loss DESC,holder_id) AS loss_rank FROM (SELECT p.holder_id,SUM(c.loss_amount) AS total_loss FROM policies p JOIN claims c ON c.policy_id=p.policy_id GROUP BY p.holder_id) q ORDER BY loss_rank,holder_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT holder_id,DENSE_RANK() OVER (ORDER BY total_loss DESC,holder_id) AS loss_rank FROM (SELECT p.holder_id,SUM(c.loss_amount) AS total_loss FROM policies p JOIN claims c ON c.policy_id=p.policy_id GROUP BY p.holder_id) q ORDER BY loss_rank,holder_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

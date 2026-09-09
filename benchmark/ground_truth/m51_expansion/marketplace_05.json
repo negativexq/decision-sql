@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_marketplace_05_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT b.buyer_id,COUNT(o.order_id) AS completed_orders FROM buyers b LEFT JOIN orders o ON o.buyer_id=b.buyer_id AND o.status='completed' GROUP BY b.buyer_id ORDER BY b.buyer_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT b.buyer_id,COUNT(o.order_id) AS completed_orders FROM buyers b LEFT JOIN orders o ON o.buyer_id=b.buyer_id AND o.status='completed' GROUP BY b.buyer_id ORDER BY b.buyer_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

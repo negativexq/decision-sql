@@ -38,11 +38,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_telecom_05_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT market,COUNT(outage_id) AS june_outages FROM outages WHERE started_at>=TIMESTAMPTZ '2026-06-01' AND started_at<TIMESTAMPTZ '2026-07-01' GROUP BY market ORDER BY market) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT market,COUNT(outage_id) AS june_outages FROM outages WHERE started_at>=TIMESTAMPTZ '2026-06-01' AND started_at<TIMESTAMPTZ '2026-07-01' GROUP BY market ORDER BY market) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

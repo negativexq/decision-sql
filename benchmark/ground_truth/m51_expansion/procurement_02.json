@@ -39,11 +39,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_procurement_02_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT s.supplier_id FROM suppliers s WHERE NOT EXISTS (SELECT 1 FROM purchase_orders p WHERE p.supplier_id=s.supplier_id AND p.status='open') ORDER BY s.supplier_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT s.supplier_id FROM suppliers s WHERE NOT EXISTS (SELECT 1 FROM purchase_orders p WHERE p.supplier_id=s.supplier_id AND p.status='open') ORDER BY s.supplier_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

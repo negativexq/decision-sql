@@ -40,11 +40,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_healthcare_15_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

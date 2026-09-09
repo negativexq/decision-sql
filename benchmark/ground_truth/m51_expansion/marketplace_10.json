@@ -42,11 +42,11 @@
       "target_component": "population"
     },
     {
-      "description": "Incorrectly retains only one result row.",
-      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "description": "Incorrectly discards the first result row.",
+      "failure_category": "OFFSET_SEMANTICS_ERROR",
       "mutant_id": "m51a_marketplace_10_limit",
       "semantic_rationale": "Tests that the complete requested result is preserved.",
-      "sql": "SELECT * FROM (SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id) AS candidate LIMIT 1",
+      "sql": "SELECT * FROM (SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id) AS candidate OFFSET 1",
       "status": "VALID",
       "target_component": "population"
     },

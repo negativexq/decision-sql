@@ -1,0 +1,97 @@
+{
+  "model": "gpt-5.6-luna",
+  "reasoning": "none",
+  "request_hash": "b1e88b45cfe433f4c431bebd7647c00c5cc0e710f8d59d6fdfbf7e89bfccffc3",
+  "response_format": {
+    "json_schema": {
+      "name": "decision_sql_m50c4s_canary",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "blocking_claim": {
+            "additionalProperties": false,
+            "properties": {
+              "assertion": {
+                "enum": [
+                  "MISSING",
+                  "UNAUTHORIZED",
+                  "UNDEFINED"
+                ],
+                "type": "string"
+              },
+              "family": {
+                "enum": [
+                  "SCHEMA_OBJECT",
+                  "RELATIONSHIP",
+                  "SEMANTIC_DEFINITION",
+                  "TEMPORAL_DEFINITION",
+                  "STATUS_DEFINITION",
+                  "POLICY"
+                ],
+                "type": "string"
+              },
+              "object_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "family",
+              "object_id",
+              "assertion"
+            ],
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "ANSWER",
+              "BLOCKED_AUTHORITY",
+              "NEEDS_CLARIFICATION",
+              "BLOCKED_POLICY"
+            ],
+            "type": "string"
+          },
+          "reason_code": {
+            "enum": [
+              "MISSING_AUTHORIZED_RELATIONSHIP",
+              "AMBIGUOUS_SEMANTICS",
+              "READ_ONLY_POLICY",
+              "NO_REASON",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sql": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "case_id",
+          "decision",
+          "sql",
+          "reason_code",
+          "blocking_claim"
+        ],
+        "title": "Decision-SQL M50C.4 minimal blocker submission",
+        "type": "object"
+      },
+      "strict": true
+    },
+    "type": "json_schema"
+  },
+  "system_prompt": "Return exactly one JSON object matching the supplied structured-output schema. This is a schema transport canary.",
+  "temperature": 0.0,
+  "user_prompt": "Synthetic canary only. Return a minimal governed SQL response for SELECT 1."
+}

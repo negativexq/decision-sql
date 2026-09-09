@@ -1,0 +1,140 @@
+{
+  "cases": [
+    {
+      "case_id": "commerce_09",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "commerce_ops",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "ambiguity",
+        "temporal",
+        "population"
+      ],
+      "question": "Which customers are recent?",
+      "split": "CONFIRMATION",
+      "temporal_relationships": []
+    },
+    {
+      "case_id": "fleet_10",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "fleet_ops",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "ambiguity",
+        "temporal",
+        "population"
+      ],
+      "question": "Which vehicles were recently maintained?",
+      "split": "CONFIRMATION",
+      "temporal_relationships": []
+    },
+    {
+      "case_id": "support_09",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "support_ops",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "ambiguity",
+        "temporal",
+        "population",
+        "business_rule"
+      ],
+      "question": "Which accounts are active?",
+      "split": "CONFIRMATION",
+      "temporal_relationships": []
+    },
+    {
+      "case_id": "subscription_18",
+      "decision": "ANSWER",
+      "domain": "subscription_billing",
+      "governance_correct": false,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "Return accounts whose active subscription is current.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:subscription_billing:clock"
+      ]
+    },
+    {
+      "case_id": "subscription_19",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "subscription_billing",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "Show the latest plan for each account.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:subscription_billing:clock"
+      ]
+    },
+    {
+      "case_id": "warehouse_19",
+      "decision": "ANSWER",
+      "domain": "warehouse_logistics",
+      "governance_correct": false,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "Find the latest inventory for each product.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:warehouse_logistics:clock"
+      ]
+    },
+    {
+      "case_id": "warehouse_20",
+      "decision": "ANSWER",
+      "domain": "warehouse_logistics",
+      "governance_correct": false,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "List late shipments.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:warehouse_logistics:clock"
+      ]
+    },
+    {
+      "case_id": "risk_18",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "risk_operations",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "Find repeat alerts for customers.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:risk_operations:clock"
+      ]
+    },
+    {
+      "case_id": "risk_19",
+      "decision": "NEEDS_CLARIFICATION",
+      "domain": "risk_operations",
+      "governance_correct": true,
+      "query_shape_tags": [
+        "governance",
+        "ambiguity"
+      ],
+      "question": "Show unresolved cases.",
+      "split": "CONFIRMATION",
+      "temporal_relationships": [
+        "temporal_rules:risk_operations:clock"
+      ]
+    }
+  ],
+  "correct": 6,
+  "population": 9,
+  "wrong_answer": 3
+}

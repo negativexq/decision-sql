@@ -175,15 +175,13 @@ def _fact_presence(truth: dict[str, Any], visible: dict[str, Any]) -> dict[str, 
     present: dict[str, bool] = {}
     for fact in facts:
         if fact.startswith("attributes:"):
-            present[fact] = any(
-                fact == item.removeprefix("attribute:") for item in visible["attribute_ids"]
-            )
+            attribute_id = "attribute:" + fact.removeprefix("attributes:")
+            present[fact] = attribute_id in visible["attribute_ids"]
         elif fact.startswith("relationship:"):
             present[fact] = fact in visible["relationship_ids"]
         elif fact.startswith("temporal_rules:"):
-            present[fact.removeprefix("temporal_rules:")] = (
-                fact.removeprefix("temporal_rules:") in visible["temporal_rule_ids"]
-            )
+            temporal_rule_id = "time:" + fact.removeprefix("temporal_rules:")
+            present[fact] = temporal_rule_id in visible["temporal_rule_ids"]
         else:
             present[fact] = False
     return {
@@ -200,6 +198,7 @@ def _response_fields(
     submission = row.get("parsed_submission") or {}
     state = base[case_id].get("states", [])
     outcome = state[0].get("outcome", {}) if state else {}
+    grain = outcome.get("grain", {})
     return {
         "response_origin": row.get("response_origin"),
         "request_hash": row.get("request_sha256"),
@@ -207,8 +206,8 @@ def _response_fields(
         "parsed_submission_hash": _hash(submission),
         "submitted_decision": submission.get("decision"),
         "reason_code": submission.get("reason_code"),
-        "raw_sql_hash": outcome.get("raw_sql_hash"),
-        "selected_sql_hash": outcome.get("selected_sql_hash"),
+        "raw_sql_hash": outcome.get("raw_sql_hash") or grain.get("input_sql_hash"),
+        "selected_sql_hash": outcome.get("selected_sql_hash") or grain.get("selected_sql_hash"),
     }
 
 
@@ -244,6 +243,7 @@ def reconstruct_population() -> dict[str, Any]:
             top_family, high_level = "SQL_SEMANTIC_RESULT", "RESULT_MISMATCH"
         else:
             continue
+        response = _response_fields(case_id, submissions, base)
         records.append(
             {
                 "case_id": case_id,
@@ -251,7 +251,14 @@ def reconstruct_population() -> dict[str, Any]:
                 "split": _case_split(case_id),
                 "truth_behavior": behavior,
                 "question": model["question"],
-                "response": _response_fields(case_id, submissions, base),
+                "model_decision": response["submitted_decision"],
+                "response_origin": response["response_origin"],
+                "request_hash": response["request_hash"],
+                "response_hash": response["response_hash"],
+                "parsed_submission_hash": response["parsed_submission_hash"],
+                "raw_sql_hash": response["raw_sql_hash"],
+                "selected_sql_hash": response["selected_sql_hash"],
+                "response": response,
                 "base_correct": base_correct,
                 "full_counterfactual_correct": full_correct,
                 "governance_correct": gov_correct,
@@ -878,6 +885,11 @@ def finalize() -> dict[str, Any]:
     }
     if not deterministic["deterministic"]:
         raise RuntimeError("M49_NONDETERMINISTIC_FORENSIC_REPLAY")
+    _dump(AUDIT / "m49_failure_population.json", data["population"])
+    _dump(
+        AUDIT / "m49_failure_population_hash.json",
+        {"count": 12, "sha256": _hash(data["population"]["records"])},
+    )
     _dump(AUDIT / "m49_determinism.json", deterministic)
     history = historical_preservation()
     final_integrity = {

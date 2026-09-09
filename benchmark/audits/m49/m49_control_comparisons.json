@@ -1,0 +1,1013 @@
+{
+  "ambiguity": {
+    "cases": [
+      {
+        "case_id": "commerce_09",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "commerce_ops",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "ambiguity",
+          "temporal",
+          "population"
+        ],
+        "question": "Which customers are recent?",
+        "split": "CONFIRMATION",
+        "temporal_relationships": []
+      },
+      {
+        "case_id": "fleet_10",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "fleet_ops",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "ambiguity",
+          "temporal",
+          "population"
+        ],
+        "question": "Which vehicles were recently maintained?",
+        "split": "CONFIRMATION",
+        "temporal_relationships": []
+      },
+      {
+        "case_id": "support_09",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "support_ops",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "ambiguity",
+          "temporal",
+          "population",
+          "business_rule"
+        ],
+        "question": "Which accounts are active?",
+        "split": "CONFIRMATION",
+        "temporal_relationships": []
+      },
+      {
+        "case_id": "subscription_18",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "governance_correct": false,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "Return accounts whose active subscription is current.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:subscription_billing:clock"
+        ]
+      },
+      {
+        "case_id": "subscription_19",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "subscription_billing",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "Show the latest plan for each account.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:subscription_billing:clock"
+        ]
+      },
+      {
+        "case_id": "warehouse_19",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "governance_correct": false,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "Find the latest inventory for each product.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:warehouse_logistics:clock"
+        ]
+      },
+      {
+        "case_id": "warehouse_20",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "governance_correct": false,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "List late shipments.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:warehouse_logistics:clock"
+        ]
+      },
+      {
+        "case_id": "risk_18",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "risk_operations",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "Find repeat alerts for customers.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:risk_operations:clock"
+        ]
+      },
+      {
+        "case_id": "risk_19",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "risk_operations",
+        "governance_correct": true,
+        "query_shape_tags": [
+          "governance",
+          "ambiguity"
+        ],
+        "question": "Show unresolved cases.",
+        "split": "CONFIRMATION",
+        "temporal_relationships": [
+          "temporal_rules:risk_operations:clock"
+        ]
+      }
+    ],
+    "correct": 6,
+    "population": 9,
+    "wrong_answer": 3
+  },
+  "answerable": {
+    "answer_selected": 53,
+    "cases": [
+      {
+        "answer_selected": true,
+        "case_id": "commerce_01",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "schema_linking",
+          "simple_projection",
+          "filter"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_02",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "schema_linking",
+          "multi_filter",
+          "temporal",
+          "filter"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_03",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "relationship",
+          "population",
+          "grouping",
+          "aggregation",
+          "null_semantics"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_04",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "relationship",
+          "multi_hop",
+          "aggregation",
+          "calculation",
+          "grain",
+          "precision"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_05",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "relationship",
+          "multi_hop",
+          "aggregation",
+          "population",
+          "set_operation"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 3,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_06",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "relationship",
+          "population",
+          "aggregation",
+          "grouping",
+          "null_semantics",
+          "nested"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "commerce_07",
+        "decision": "ANSWER",
+        "domain": "commerce_ops",
+        "query_shape_tags": [
+          "relationship",
+          "multi_hop",
+          "aggregation",
+          "calculation",
+          "ordering",
+          "limit",
+          "precision"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_01",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "json",
+          "filter",
+          "simple_projection"
+        ],
+        "required_context_fact_count": 1,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_02",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "grouping",
+          "calculation",
+          "precision"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_03",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "grouping",
+          "calculation",
+          "null_semantics"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_04",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "population",
+          "temporal",
+          "aggregation",
+          "null_semantics"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_05",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "multi_hop",
+          "aggregation",
+          "grouping",
+          "filter"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_06",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "temporal",
+          "window",
+          "json",
+          "ordering"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "fleet_07",
+        "decision": "ANSWER",
+        "domain": "fleet_ops",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "calculation",
+          "ordering",
+          "limit",
+          "precision",
+          "nested",
+          "window",
+          "window"
+        ],
+        "required_context_fact_count": 1,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_01",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "relationship",
+          "population",
+          "aggregation",
+          "grouping",
+          "filter_scope"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_02",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "relationship",
+          "multi_hop",
+          "temporal",
+          "aggregation",
+          "nested",
+          "correlated"
+        ],
+        "required_context_fact_count": 7,
+        "required_relationship_count": 4,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_03",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "grouping",
+          "calculation",
+          "precision",
+          "null_semantics"
+        ],
+        "required_context_fact_count": 1,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_04",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "json",
+          "filter",
+          "simple_projection"
+        ],
+        "required_context_fact_count": 1,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_05",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "aggregation",
+          "nested",
+          "population"
+        ],
+        "required_context_fact_count": 0,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "support_06",
+        "decision": "ANSWER",
+        "domain": "support_ops",
+        "query_shape_tags": [
+          "set_operation",
+          "filter",
+          "relationship",
+          "population"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_01",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "filter"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_02",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "relationship",
+          "population"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_03",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "aggregation",
+          "grouping"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_04",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "calculation"
+        ],
+        "required_context_fact_count": 12,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_05",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "latest-row",
+          "window"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "subscription_06",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation"
+        ],
+        "required_context_fact_count": 6,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_07",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation",
+          "population"
+        ],
+        "required_context_fact_count": 8,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_08",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "temporal",
+          "aggregation",
+          "filter"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_09",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "temporal",
+          "filter"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "subscription_10",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "ratio",
+          "multi-hop",
+          "aggregation"
+        ],
+        "required_context_fact_count": 13,
+        "required_relationship_count": 3,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_11",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "nested",
+          "population"
+        ],
+        "required_context_fact_count": 9,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_12",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "json",
+          "aggregation",
+          "calculation"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_13",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "latest-row",
+          "window",
+          "temporal"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "subscription_14",
+        "decision": "ANSWER",
+        "domain": "subscription_billing",
+        "query_shape_tags": [
+          "correlated",
+          "null",
+          "population"
+        ],
+        "required_context_fact_count": 8,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_01",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "latest-row",
+          "filter"
+        ],
+        "required_context_fact_count": 8,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_02",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "relationship",
+          "aggregation"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_03",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "relationship",
+          "temporal",
+          "conditional aggregate"
+        ],
+        "required_context_fact_count": 10,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_04",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "multi-hop",
+          "aggregation",
+          "filter"
+        ],
+        "required_context_fact_count": 9,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_05",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "latest-row",
+          "window",
+          "tie-break"
+        ],
+        "required_context_fact_count": 8,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_06",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "temporal",
+          "filter"
+        ],
+        "required_context_fact_count": 7,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "warehouse_07",
+        "decision": "BLOCKED_AUTHORITY",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "multi-hop",
+          "calculation",
+          "aggregation"
+        ],
+        "required_context_fact_count": 10,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "warehouse_08",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "population",
+          "null",
+          "calculation"
+        ],
+        "required_context_fact_count": 6,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_09",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "json",
+          "calculation"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_10",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "distinct",
+          "aggregation"
+        ],
+        "required_context_fact_count": 2,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "warehouse_11",
+        "decision": "ANSWER",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "correlated",
+          "null",
+          "population"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "warehouse_12",
+        "decision": "BLOCKED_AUTHORITY",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "ordering",
+          "limit",
+          "grouping"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "warehouse_13",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "warehouse_logistics",
+        "query_shape_tags": [
+          "multi-hop",
+          "ratio",
+          "null",
+          "aggregation"
+        ],
+        "required_context_fact_count": 18,
+        "required_relationship_count": 7,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_01",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "filter"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_02",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "latest-row",
+          "window",
+          "tie-break"
+        ],
+        "required_context_fact_count": 6,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_03",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "aggregation",
+          "grouping"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_04",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "json",
+          "aggregation",
+          "filter"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_05",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "conditional aggregate",
+          "ratio",
+          "null"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": false,
+        "case_id": "risk_06",
+        "decision": "NEEDS_CLARIFICATION",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "temporal",
+          "calculation",
+          "filter"
+        ],
+        "required_context_fact_count": 4,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_07",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "relationship",
+          "distinct",
+          "aggregation"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_08",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "json",
+          "calculation"
+        ],
+        "required_context_fact_count": 3,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_09",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "latest-row",
+          "ordering",
+          "limit"
+        ],
+        "required_context_fact_count": 6,
+        "required_relationship_count": 0,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_10",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "correlated",
+          "null",
+          "population"
+        ],
+        "required_context_fact_count": 8,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_11",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "nested",
+          "population",
+          "relationship"
+        ],
+        "required_context_fact_count": 9,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_12",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "null",
+          "population",
+          "aggregation"
+        ],
+        "required_context_fact_count": 5,
+        "required_relationship_count": 1,
+        "split": "CONFIRMATION"
+      },
+      {
+        "answer_selected": true,
+        "case_id": "risk_13",
+        "decision": "ANSWER",
+        "domain": "risk_operations",
+        "query_shape_tags": [
+          "multi-hop",
+          "aggregation",
+          "precision"
+        ],
+        "required_context_fact_count": 9,
+        "required_relationship_count": 2,
+        "split": "CONFIRMATION"
+      }
+    ],
+    "population": 60,
+    "wrong_refusal": 7
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "actual_argument_schema": "fixture_id -> expected result",
+  "affected_cases": "ANSWERABLE cases in both arms",
+  "after": "expected_results[case_id] = {'contract': contract, 'fixtures': fixture_map}",
+  "algorithm_changed": false,
+  "before": "expected_results[case_id] = fixture_map",
+  "callee": "benchmark.m39_runner._evaluate",
+  "caller": "benchmark.m46b_runner.run -> benchmark.m39_runner._evaluate",
+  "exception": "KeyError: 'fixtures'",
+  "expected_argument_schema": {
+    "contract": "result_comparison_contract",
+    "fixtures": "fixture_id -> expected result"
+  },
+  "recovery_boundary": "expected-result input-envelope construction only"
+}

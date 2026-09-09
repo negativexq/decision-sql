@@ -1,0 +1,134 @@
+{
+  "defect": {
+    "actual_argument_schema": "fixture_id -> expected result",
+    "affected_cases": "ANSWERABLE cases in both arms",
+    "after": "expected_results[case_id] = {'contract': contract, 'fixtures': fixture_map}",
+    "algorithm_changed": false,
+    "before": "expected_results[case_id] = fixture_map",
+    "callee": "benchmark.m39_runner._evaluate",
+    "caller": "benchmark.m46b_runner.run -> benchmark.m39_runner._evaluate",
+    "exception": "KeyError: 'fixtures'",
+    "expected_argument_schema": {
+      "contract": "result_comparison_contract",
+      "fixtures": "fixture_id -> expected result"
+    },
+    "recovery_boundary": "expected-result input-envelope construction only"
+  },
+  "eligibility": {
+    "case_count": 90,
+    "checks": {
+      "all_180_genuine_responses": true,
+      "all_180_requests_sent": true,
+      "arm_assignment_preserved": true,
+      "case_identity_binding_succeeded": true,
+      "evaluation_truth_frozen": true,
+      "evaluator_source_unchanged": true,
+      "execution_schedule_preserved": true,
+      "failure_is_post_generation_envelope_only": true,
+      "model_facing_context_correct": true,
+      "parsed_submissions_preserved": true,
+      "prompt_correct": true,
+      "provider_schema_parsing_succeeded": true,
+      "raw_responses_preserved": true
+    },
+    "eligible": true,
+    "parsed_counts": {
+      "control": {
+        "case_id_matches": 90,
+        "count": 90,
+        "schema_pass": 90,
+        "unique_cases": 90
+      },
+      "treatment": {
+        "case_id_matches": 90,
+        "count": 90,
+        "schema_pass": 90,
+        "unique_cases": 90
+      }
+    },
+    "source": {
+      "control_parsed": {
+        "expected": "1dd22cbbea36e863443e69269e31623bc191fbde5851f289eec2a03255ad53b9",
+        "match": true,
+        "path": "benchmark/experiments/results/m46b/control/parsed_submissions.jsonl",
+        "sha256": "1dd22cbbea36e863443e69269e31623bc191fbde5851f289eec2a03255ad53b9"
+      },
+      "control_raw": {
+        "expected": "81e0b416a049f8a1bbbef9846280c65846dde1f023f985b3c44741ebcf4fb024",
+        "match": true,
+        "path": "benchmark/experiments/results/m46b/control/raw_responses.jsonl",
+        "sha256": "81e0b416a049f8a1bbbef9846280c65846dde1f023f985b3c44741ebcf4fb024"
+      },
+      "manifest": {
+        "control_calls": 90,
+        "genuine_responses": 180,
+        "treatment_calls": 90,
+        "truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+        "truth_version": "0.2.2-dev"
+      },
+      "treatment_parsed": {
+        "expected": "15ff1a62b9433f4a891d2ab9f64a69f8bcc2353040e2bb9d89f5fdeb9776e899",
+        "match": true,
+        "path": "benchmark/experiments/results/m46b/treatment/parsed_submissions.jsonl",
+        "sha256": "15ff1a62b9433f4a891d2ab9f64a69f8bcc2353040e2bb9d89f5fdeb9776e899"
+      },
+      "treatment_raw": {
+        "expected": "23fa28e359736e8c30b41dae8bde9686dc603cbb8fc73c111de2efe32ddcd3da",
+        "match": true,
+        "path": "benchmark/experiments/results/m46b/treatment/raw_responses.jsonl",
+        "sha256": "23fa28e359736e8c30b41dae8bde9686dc603cbb8fc73c111de2efe32ddcd3da"
+      }
+    }
+  },
+  "m46b_historical_status": "M46B_ABORTED_CONTRACT_DEFECT",
+  "model_calls": 0,
+  "provider_calls": 0,
+  "reference_precheck": {
+    "agreement_failures": [],
+    "fixture_comparisons": 184,
+    "grain_warnings": [],
+    "mutants": {
+      "by_failure_family": {
+        "FILTER_SCOPE_ERROR": 7,
+        "JSON_TYPE_COERCION_ERROR": 4,
+        "LATEST_ROW_ERROR": 6,
+        "LIMIT_SEMANTICS_ERROR": 40,
+        "PARENT_MEASURE_FANOUT": 2,
+        "RELATIONSHIP_PATH_ERROR": 13,
+        "TEMPORAL_BOUNDARY_ERROR": 3,
+        "WRONG_AGGREGATION_GRAIN": 7,
+        "asc_desc": 3,
+        "avg_vs_sum": 3,
+        "count_vs_count_distinct": 1,
+        "inner_left_join": 4,
+        "null_default_policy": 2,
+        "projection": 47,
+        "ratio_numerator_denominator": 1,
+        "remove_filter": 1,
+        "remove_limit": 2,
+        "remove_predicate": 12,
+        "rounding_stage": 2,
+        "set_operation": 1,
+        "where_filter_scope": 4,
+        "window_partition": 1,
+        "wrong_aggregation_grain": 3,
+        "wrong_comparison_operator": 4,
+        "wrong_join_path": 1,
+        "wrong_literal": 5,
+        "wrong_metric_operand": 4,
+        "wrong_nested_field": 2,
+        "wrong_population": 2,
+        "wrong_temporal_anchor": 2,
+        "wrong_type": 1
+      },
+      "invalid": 0,
+      "killed": 190,
+      "mutants": 190,
+      "surviving": 0,
+      "valid": 190
+    },
+    "parseable": 120,
+    "passed": true,
+    "references_analyzed": 120
+  }
+}

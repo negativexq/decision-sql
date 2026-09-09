@@ -482,10 +482,14 @@ def recover() -> dict[str, Any]:
         RESULT_ROOT / "paired" / "transition_matrix.json",
         {
             "correctness": dict(
-                Counter((item["control_correct"], item["treatment_correct"]) for item in paired)
+                Counter(
+                    f"{item['control_correct']}->{item['treatment_correct']}" for item in paired
+                )
             ),
             "decisions": dict(
-                Counter((item["control_decision"], item["treatment_decision"]) for item in paired)
+                Counter(
+                    f"{item['control_decision']}->{item['treatment_decision']}" for item in paired
+                )
             ),
         },
     )

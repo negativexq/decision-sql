@@ -1,0 +1,158 @@
+[
+  {
+    "actual_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "diagnostic_hash": "6198bca499e0873be7d0c87b9179f14b8c73a501947307bebd7d248595b0a470",
+    "expected_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "name": "inner_where",
+    "pass": true,
+    "reason_codes": [
+      "GROUP_REQUIRES_QUALIFYING_ROWS",
+      "ROW_POPULATION_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "c476819ea925952493f31e12d495f9115644ff8410647ad40c1f1b351557a59d",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "left_filter",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE",
+      "AGGREGATE_LOCAL_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "diagnostic_hash": "99a6ce332815e0ea0050443c87d23820eede37ee133886482b6e9a544ff8ba28",
+    "expected_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "name": "left_where",
+    "pass": true,
+    "reason_codes": [
+      "GROUP_REQUIRES_QUALIFYING_ROWS",
+      "OUTER_JOIN_NULL_REJECTED",
+      "ROW_POPULATION_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "dd5eeb8ba3bb609458d1f0e0ce75f1a8fc2a0127403949760dfd8021d305614e",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "left_on",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "485f745509ef8631915e2dea731dc52392a854ff04fe1ac35b2e17e63210bd50",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "left_case",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE",
+      "AGGREGATE_LOCAL_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "diagnostic_hash": "dc3bd665b8546fe0545b54ce8d86368e8a1a3543fa9c0cbe5257d668b411edd5",
+    "expected_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "name": "child_group",
+    "pass": true,
+    "reason_codes": [
+      "GROUP_REQUIRES_QUALIFYING_ROWS",
+      "ROW_POPULATION_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "d3219a113f8d43bfc7cccfd4d7a85c8acae0e3b78b699beb4c5f17e7505c0e2a",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "parent_group",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "0a1e9c630b15fc77ba4df37d340d113092ba7d664c32e7eb5707e56631aaf257",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "preaggregated_child",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE",
+      "NESTED_SCOPE_REQUIRES_REVIEW"
+    ]
+  },
+  {
+    "actual_behavior": "NOT_APPLICABLE",
+    "diagnostic_hash": "3785cf202dbca89ca8a1f773903b349101dad9b5e5b92b45004f688e2f80f834",
+    "expected_behavior": "NOT_APPLICABLE",
+    "name": "exists",
+    "pass": true,
+    "reason_codes": [
+      "NO_GROUPED_POPULATION"
+    ]
+  },
+  {
+    "actual_behavior": "NOT_APPLICABLE",
+    "diagnostic_hash": "53faa02fb7ab38f896071386e51c3b5b8b6ccdc195df4966e11fd9cf8f6670a7",
+    "expected_behavior": "NOT_APPLICABLE",
+    "name": "not_exists",
+    "pass": true,
+    "reason_codes": [
+      "NO_GROUPED_POPULATION"
+    ]
+  },
+  {
+    "actual_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "diagnostic_hash": "bff7b4bf5b6872974aed88e5f794e473d0155438180223fb18d6db1b27657920",
+    "expected_behavior": "REQUIRES_QUALIFYING_ROWS",
+    "name": "having_count",
+    "pass": true,
+    "reason_codes": [
+      "GROUP_REQUIRES_QUALIFYING_ROWS"
+    ]
+  },
+  {
+    "actual_behavior": "CONDITIONALLY_PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "6ca8dcd163ea2d290568e364d3dffe8fcde548e419f8ff40692a4157279ffb32",
+    "expected_behavior": "CONDITIONALLY_PRESERVES_BASE_GROUPS",
+    "name": "having_filtered_count",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "GROUP_SURVIVAL_PREDICATE",
+      "AGGREGATE_LOCAL_PREDICATE"
+    ]
+  },
+  {
+    "actual_behavior": "PRESERVES_BASE_GROUPS",
+    "diagnostic_hash": "de95e16e17b4dd197d6181d44d5cd3b777c4afbaf2578d803824dc40b8200f5d",
+    "expected_behavior": "PRESERVES_BASE_GROUPS",
+    "name": "cte_filtered",
+    "pass": true,
+    "reason_codes": [
+      "BASE_DRIVEN_GROUPING",
+      "OUTER_JOIN_PRESERVES_BASE",
+      "NESTED_SCOPE_REQUIRES_REVIEW"
+    ]
+  },
+  {
+    "actual_behavior": "UNRESOLVED",
+    "diagnostic_hash": "de6fc26393fc03616a154faf26a863d9194bf2a3ffccbb02202abe7676ec6eb8",
+    "expected_behavior": "UNRESOLVED",
+    "name": "subquery_filtered",
+    "pass": true,
+    "reason_codes": [
+      "POPULATION_BEHAVIOR_UNRESOLVED"
+    ]
+  }
+]

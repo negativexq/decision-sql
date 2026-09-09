@@ -1,0 +1,72 @@
+[
+  {
+    "expected": "REQUIRES_QUALIFYING_ROWS",
+    "name": "inner_where",
+    "sql": "SELECT p.id, COUNT(c.id) FROM parent p JOIN child c ON c.parent_id=p.id WHERE c.state='open' GROUP BY p.id"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "left_filter",
+    "sql": "SELECT p.id, COUNT(c.id) FILTER (WHERE c.state='open') FROM parent p LEFT JOIN child c ON c.parent_id=p.id GROUP BY p.id"
+  },
+  {
+    "expected": "REQUIRES_QUALIFYING_ROWS",
+    "name": "left_where",
+    "sql": "SELECT p.id, COUNT(c.id) FROM parent p LEFT JOIN child c ON c.parent_id=p.id WHERE c.state='open' GROUP BY p.id"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "left_on",
+    "sql": "SELECT p.id, COUNT(c.id) FROM parent p LEFT JOIN child c ON c.parent_id=p.id AND c.state='open' GROUP BY p.id"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "left_case",
+    "sql": "SELECT p.id, SUM(CASE WHEN c.state='open' THEN 1 ELSE 0 END) FROM parent p LEFT JOIN child c ON c.parent_id=p.id GROUP BY p.id"
+  },
+  {
+    "expected": "REQUIRES_QUALIFYING_ROWS",
+    "name": "child_group",
+    "sql": "SELECT c.parent_id, COUNT(*) FROM child c WHERE c.state='open' GROUP BY c.parent_id"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "parent_group",
+    "sql": "SELECT p.region, COUNT(c.id) FROM parent p LEFT JOIN child c ON c.parent_id=p.id GROUP BY p.region"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "preaggregated_child",
+    "sql": "SELECT p.id, COALESCE(x.n, 0) FROM parent p LEFT JOIN (SELECT parent_id, COUNT(*) AS n FROM child GROUP BY parent_id) x ON x.parent_id=p.id GROUP BY p.id, x.n"
+  },
+  {
+    "expected": "NOT_APPLICABLE",
+    "name": "exists",
+    "sql": "SELECT p.id FROM parent p WHERE EXISTS (SELECT 1 FROM child c WHERE c.parent_id=p.id)"
+  },
+  {
+    "expected": "NOT_APPLICABLE",
+    "name": "not_exists",
+    "sql": "SELECT p.id FROM parent p WHERE NOT EXISTS (SELECT 1 FROM child c WHERE c.parent_id=p.id)"
+  },
+  {
+    "expected": "REQUIRES_QUALIFYING_ROWS",
+    "name": "having_count",
+    "sql": "SELECT c.parent_id, COUNT(*) FROM child c GROUP BY c.parent_id HAVING COUNT(*) > 0"
+  },
+  {
+    "expected": "CONDITIONALLY_PRESERVES_BASE_GROUPS",
+    "name": "having_filtered_count",
+    "sql": "SELECT p.id, COUNT(c.id) FILTER (WHERE c.state='open') FROM parent p LEFT JOIN child c ON c.parent_id=p.id GROUP BY p.id HAVING COUNT(c.id) FILTER (WHERE c.state='open') > 0"
+  },
+  {
+    "expected": "PRESERVES_BASE_GROUPS",
+    "name": "cte_filtered",
+    "sql": "WITH x AS (SELECT * FROM child WHERE state='open') SELECT p.id, COUNT(x.id) FROM parent p LEFT JOIN x ON x.parent_id=p.id GROUP BY p.id"
+  },
+  {
+    "expected": "UNRESOLVED",
+    "name": "subquery_filtered",
+    "sql": "SELECT x.parent_id, COUNT(*) FROM (SELECT * FROM child WHERE state='open') x GROUP BY x.parent_id"
+  }
+]

@@ -1,0 +1,175 @@
+{
+  "checker_hash": "cb396d42675235632bf8e713270c9024cf9ddf098fadd19cb4fcf2a04fa61b98",
+  "checker_version": "semantic-blocker-checker-1",
+  "control_count": 90,
+  "control_output_schema_hash": "eda8489a60a28fc9e945e6006cb3c0a922c19155ea9bf9c0f4f74f3c6c8d6cb0",
+  "control_prompt_hash": "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb",
+  "control_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "case_id": {
+        "type": "string"
+      },
+      "decision": {
+        "enum": [
+          "ANSWER",
+          "BLOCKED_AUTHORITY",
+          "NEEDS_CLARIFICATION",
+          "BLOCKED_POLICY"
+        ],
+        "type": "string"
+      },
+      "reason_code": {
+        "enum": [
+          "MISSING_AUTHORIZED_RELATIONSHIP",
+          "AMBIGUOUS_SEMANTICS",
+          "READ_ONLY_POLICY",
+          "NO_REASON",
+          null
+        ],
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sql": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "case_id",
+      "decision",
+      "sql",
+      "reason_code"
+    ],
+    "title": "Decision-SQL provider-safe submission",
+    "type": "object"
+  },
+  "development_experiment": true,
+  "experiment": "M50C.4",
+  "factual_context_growth": 0,
+  "gate_contract": {
+    "authority_unauthorized_answer_regressions": 0,
+    "control_correct_non_answer_to_answer": 0,
+    "false_abstention_recoveries_minimum": "4/7",
+    "frozen_before_future_model_call": true,
+    "input_context_change": 0,
+    "median_extra_output_tokens_max": 40,
+    "net_governed_correctness": "positive",
+    "non_answer_claim_presence_minimum": 0.98,
+    "non_target_answerable_regression": 0,
+    "p90_extra_output_tokens_max": 70,
+    "policy_regressions": 0,
+    "stable_id_validity_minimum": 0.95,
+    "wire_parse_success_minimum": 0.98
+  },
+  "judges": 0,
+  "model": "gpt-5.6-luna",
+  "parent": "M50C.3",
+  "phase": "A_FROZEN_BEFORE_LIVE_CALLS",
+  "provenance_payload_hash": "7d89bc0fbe4ae214983fbf08cee80c9006725032458e611cd7258b7dda285752",
+  "provider_attempt_budget": 180,
+  "reader_preflight": true,
+  "reasoning": "none",
+  "reference_canary": true,
+  "repairs": 0,
+  "retries": 0,
+  "schedule_hash": "49bc54c2423fcceca9a18aa3edc199ff3cef5aa60d302c45f490f8c824d769e2",
+  "selectors": 0,
+  "starting_head": "31f037481f1e2b219350d88f1a2aff124f821218",
+  "temperature": 0.0,
+  "timeout_seconds": 90,
+  "treatment_count": 90,
+  "treatment_instruction": "\n## Minimal NON-ANSWER blocker provenance\n\nIf you choose NEEDS_CLARIFICATION, BLOCKED_AUTHORITY, or BLOCKED_POLICY, also identify the single primary blocking server-owned object using its exact stable ID from the supplied context and state the applicable blocker assertion. Do not invent IDs. If you choose ANSWER, return the SQL as usual and do not include a blocking claim.\n",
+  "treatment_output_schema_hash": "0141baad9202e960ea01b5ab1f232e591457e06073749b9464aa847b141fcec8",
+  "treatment_prompt_hash": "92f010b5cf817bd9f8dbf39000845e9a27dc3248af3b6013623ba4dbf35954c3",
+  "treatment_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "additionalProperties": false,
+    "properties": {
+      "blocking_claim": {
+        "additionalProperties": false,
+        "properties": {
+          "assertion": {
+            "enum": [
+              "MISSING",
+              "UNAUTHORIZED",
+              "UNDEFINED"
+            ],
+            "type": "string"
+          },
+          "family": {
+            "enum": [
+              "SCHEMA_OBJECT",
+              "RELATIONSHIP",
+              "SEMANTIC_DEFINITION",
+              "TEMPORAL_DEFINITION",
+              "STATUS_DEFINITION",
+              "POLICY"
+            ],
+            "type": "string"
+          },
+          "object_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "object_id",
+          "assertion"
+        ],
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "case_id": {
+        "type": "string"
+      },
+      "decision": {
+        "enum": [
+          "ANSWER",
+          "BLOCKED_AUTHORITY",
+          "NEEDS_CLARIFICATION",
+          "BLOCKED_POLICY"
+        ],
+        "type": "string"
+      },
+      "reason_code": {
+        "enum": [
+          "MISSING_AUTHORIZED_RELATIONSHIP",
+          "AMBIGUOUS_SEMANTICS",
+          "READ_ONLY_POLICY",
+          "NO_REASON",
+          null
+        ],
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sql": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "case_id",
+      "decision",
+      "sql",
+      "reason_code"
+    ],
+    "title": "Decision-SQL M50C.4 minimal blocker submission",
+    "type": "object"
+  },
+  "truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+  "truth_version": "0.2.2-dev",
+  "wire_contract_hash": "e799113d0f6a20e96ae5ac3abaca3b20a2cf12deebea8ae01ee033c35d3384ca",
+  "wire_contract_version": "semantic-submission-shadow-1"
+}

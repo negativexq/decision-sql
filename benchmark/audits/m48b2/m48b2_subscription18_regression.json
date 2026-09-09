@@ -1,0 +1,125 @@
+{
+  "case_id": "subscription_18",
+  "plan": {
+    "case_id": "subscription_18",
+    "governance_correct": false,
+    "needs_expected_result_bundle": false,
+    "run_sql_runtime": true,
+    "score_mode": "GOVERNANCE_ONLY",
+    "submitted_decision": "ANSWER",
+    "truth_behavior": "AMBIGUOUS"
+  },
+  "response_origin": "INHERITED_M48B1",
+  "states": [
+    {
+      "outcome": {
+        "execute_ms": 2.581292064860463,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "account_id",
+            "account_name"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-09T12:03:55.736284Z",
+          "latency_ms": 2.2941669449210167,
+          "plan_id": "6499cb2a-9666-4280-87c9-d45d31199f9c",
+          "row_count": 5,
+          "rows": [
+            {
+              "account_id": 1,
+              "account_name": "Acme Studio"
+            },
+            {
+              "account_id": 2,
+              "account_name": "Beacon Labs"
+            },
+            {
+              "account_id": 3,
+              "account_name": "Cedar Health"
+            },
+            {
+              "account_id": 5,
+              "account_name": "Elm Media"
+            },
+            {
+              "account_id": 6,
+              "account_name": "Fjord Retail"
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "grain": {
+          "child_measure_ids": [],
+          "fanout_relationship_ids": [],
+          "input_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "input_sql_hash": "cd05689d26cb20f6ecec0f5cb745b0ee5bc8445ecf9a71797558927cf54fa080",
+          "normalization_reason": null,
+          "normalization_status": null,
+          "output_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "parent_measure_ids": [],
+          "runtime_reason": "ALREADY_SAFE",
+          "selected_sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');",
+          "selected_sql_hash": "cd05689d26cb20f6ecec0f5cb745b0ee5bc8445ecf9a71797558927cf54fa080",
+          "status": "UNCHANGED"
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 4,
+            "top_level_node_type": "Unique",
+            "total_cost": 2.35
+          },
+          "executable": true,
+          "normalized_sql": "SELECT DISTINCT a.account_id, a.account_name FROM accounts AS a JOIN subscriptions AS s ON s.account_id = a.account_id WHERE s.status = 'active' AND s.starts_on <= CAST('2026-06-30' AS DATE) AND (s.ends_on IS NULL OR s.ends_on >= CAST('2026-06-30' AS DATE))",
+          "plan_id": "6499cb2a-9666-4280-87c9-d45d31199f9c",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [
+            "a.account_id",
+            "a.account_name",
+            "s.account_id",
+            "s.ends_on",
+            "s.starts_on",
+            "s.status"
+          ],
+          "referenced_functions": [
+            "AND",
+            "CAST",
+            "OR"
+          ],
+          "referenced_tables": [
+            "accounts",
+            "subscriptions"
+          ],
+          "statement_type": "Select"
+        },
+        "plan_ms": 13.460875023156404,
+        "planned": true,
+        "result_contract_outcome": null
+      },
+      "preparation_hash": "2979d3b7ba0f713a666b7ca7885db908a2166b0e17fea2560894a6f389c528b5",
+      "state_id": "base"
+    }
+  ]
+}

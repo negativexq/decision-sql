@@ -97,6 +97,7 @@ def _copy_frozen_inputs() -> dict[str, Any]:
 def _invalid_forensics() -> tuple[list[dict[str, Any]], dict[str, Any]]:
     path = AUDIT / "m50c5_treatment_responses.jsonl"
     records = [json.loads(line) for line in path.read_text().splitlines()]
+    _, truth_rows = m50c5._pairs()
     invalid: list[dict[str, Any]] = []
     counts: Counter[str] = Counter()
     for record in records:
@@ -113,7 +114,7 @@ def _invalid_forensics() -> tuple[list[dict[str, Any]], dict[str, Any]]:
         invalid.append(
             {
                 "case_id": record["case_id"],
-                "truth_behavior": None,
+                "truth_behavior": truth_rows[record["case_id"]][1]["semantic_target"]["behavior"],
                 "raw_decision": declared.get("decision"),
                 "raw_sql": declared.get("sql"),
                 "raw_reason_code": declared.get("reason_code"),
@@ -279,6 +280,23 @@ def _write_recovery_outputs(
         AUDIT / "m50c5r_correct_non_answer_claim_quality.json", status_counts(correct_non_answers)
     )
     _dump(AUDIT / "m50c5r_false_abstention_claim_quality.json", status_counts(false_abstentions))
+    overlay_by_arm: dict[str, dict[str, Any]] = {}
+    for arm in ("CONTROL", "TREATMENT"):
+        overlay_path = AUDIT / f"m50c5_{arm.lower()}_evaluator_overlays.jsonl"
+        overlay_by_arm[arm] = next(
+            json.loads(line)
+            for line in overlay_path.read_text().splitlines()
+            if json.loads(line)["case_id"] == "subscription_18"
+        )
+    _dump(
+        AUDIT / "m50c5r_subscription18.json",
+        {
+            "case_id": "subscription_18",
+            "control": overlay_by_arm["CONTROL"],
+            "treatment": overlay_by_arm["TREATMENT"],
+            "evaluator_only": True,
+        },
+    )
     for name in (
         "authority_safety",
         "ambiguity_safety",

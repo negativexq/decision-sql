@@ -99,6 +99,40 @@ def _write_text(path: Path, value: str) -> None:
     path.write_text(value, encoding="utf-8")
 
 
+def _counter_records(values: list[Any]) -> list[dict[str, Any]]:
+    """Serialize optional categorical values without comparing unlike types."""
+    counts = Counter(values)
+    ordered = sorted(
+        counts.items(),
+        key=lambda item: (item[0] is not None, "" if item[0] is None else str(item[0])),
+    )
+    return [{"key": key, "count": count} for key, count in ordered]
+
+
+def _canonical_trace_value(value: Any, key: str | None = None) -> Any:
+    """Remove runtime-only volatility from a trace identity."""
+    if key in {
+        "plan_id",
+        "correlation_id",
+        "executed_at_utc",
+        "plan_ms",
+        "execute_ms",
+        "latency_ms",
+    }:
+        return None
+    if key == "estimate":
+        return None
+    if isinstance(value, dict):
+        return {
+            child_key: canonical
+            for child_key, child_value in value.items()
+            if (canonical := _canonical_trace_value(child_value, child_key)) is not None
+        }
+    if isinstance(value, list):
+        return [_canonical_trace_value(item) for item in value]
+    return value
+
+
 def _now() -> str:
     return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
@@ -654,6 +688,7 @@ def _analyze() -> dict[str, Any]:
                         }
                     )
             stages, first_runtime = _trace(record, states)
+            canonical_states = _canonical_trace_value(states)
             traces[arm].append(
                 {
                     "trace_version": "unified-failure-trace-1",
@@ -663,9 +698,9 @@ def _analyze() -> dict[str, Any]:
                     "response_hash": record.get("response_hash"),
                     "decision": parsed.get("decision"),
                     "stages": stages,
-                    "states": states,
+                    "states": canonical_states,
                     "first_runtime_failure_stage": first_runtime,
-                    "trace_hash": _hash(stages),
+                    "trace_hash": _hash({"stages": stages, "states": canonical_states}),
                 }
             )
             expected = EXPECTED_DECISION[behavior]
@@ -995,13 +1030,16 @@ def _write_outputs(
     _dump(AUDIT / "m50c5_claim_acquisition.json", metrics["claims"])
     _dump(
         AUDIT / "m50c5_claim_family_distribution.json",
-        dict(Counter(row["claim_family"] for row in claims)),
+        _counter_records([row["claim_family"] for row in claims]),
     )
     _dump(
         AUDIT / "m50c5_claim_assertion_distribution.json",
-        dict(Counter(row["claim_assertion"] for row in claims)),
+        _counter_records([row["claim_assertion"] for row in claims]),
     )
-    _dump(AUDIT / "m50c5_claim_status_distribution.json", metrics["claims"]["statuses"])
+    _dump(
+        AUDIT / "m50c5_claim_status_distribution.json",
+        _counter_records([row["claim_status"] for row in claims]),
+    )
     _dump(
         AUDIT / "m50c5_decision_claim_matrix.json",
         {"rows": claims, "dimensions": ["decision_correctness", "claim_status"]},
@@ -1024,7 +1062,7 @@ def _write_outputs(
     )
     _dump(
         AUDIT / "m50c5_correct_non_answer_claim_quality.json",
-        dict(Counter(row["claim_status"] for row in claims if row["decision_correct"])),
+        _counter_records([row["claim_status"] for row in claims if row["decision_correct"]]),
     )
     for name, value in (
         ("governance_safety", metrics["governance"]),

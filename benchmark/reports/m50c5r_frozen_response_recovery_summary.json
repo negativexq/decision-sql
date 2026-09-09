@@ -1,0 +1,398 @@
+{
+  "automatic_recovery_justified": false,
+  "experiment": "M50C.5R",
+  "final_scientific_verdict": "FROZEN_M50C5_EVIDENCE_PARTIALLY_SUPPORTIVE",
+  "frozen_response_hashes": {
+    "CONTROL": "908e93c82c3df13afe4e01c075ec48c6f348734a9f789452040cb27c27e4ce1d",
+    "TREATMENT": "6638275bd9230b85232334dcd750696792a7c147478f26a13f5785ff6e736665"
+  },
+  "invalid_wire_classification": {
+    "CONTRACT_VOCABULARY_GAP": 6,
+    "MODEL_CONTRACT_NONCOMPLIANCE": 0,
+    "OTHER_WIRE_FAILURE": 0,
+    "PROVIDER_SCHEMA_CROSS_PRODUCT_GAP": 0,
+    "primary_classification_rule": "unsupported POLICY + UNAUTHORIZED is a frozen vocabulary gap; the independent provider schema cross-product exposure is recorded as secondary evidence",
+    "sum": 6
+  },
+  "m51_ready": false,
+  "metrics": {
+    "answer_selected": {
+      "CONTROL": 51,
+      "TREATMENT": 51
+    },
+    "answerable_runtime_tsa": {
+      "CONTROL": 47,
+      "TREATMENT": 48
+    },
+    "base_delivered": {
+      "CONTROL": 47,
+      "TREATMENT": 48
+    },
+    "claims": {
+      "catalog_resolvable": 30,
+      "false_abstention_contradicted": 4,
+      "presence": 30,
+      "presence_rate": 0.8333333333333334,
+      "stable_valid": 30,
+      "stable_valid_rate": 0.8333333333333334,
+      "statuses": {
+        "CONTRADICTED": 19,
+        "NOT_APPLICABLE": 6,
+        "VERIFIED": 11
+      },
+      "treatment_non_answer_count": 36
+    },
+    "governance": {
+      "ambiguity": {
+        "CONTROL": 7,
+        "TREATMENT": 6
+      },
+      "ambiguity_answer_regressions": [
+        "subscription_18",
+        "risk_19"
+      ],
+      "authority": {
+        "CONTROL": 14,
+        "TREATMENT": 9
+      },
+      "authority_regressions": [
+        "subscription_16",
+        "warehouse_15",
+        "warehouse_16",
+        "warehouse_18",
+        "risk_15",
+        "risk_16"
+      ],
+      "policy": {
+        "CONTROL": 6,
+        "TREATMENT": 0
+      },
+      "policy_regressions": [
+        "commerce_10",
+        "support_10",
+        "subscription_20",
+        "warehouse_21",
+        "risk_21",
+        "risk_22"
+      ],
+      "unauthorized_answers": {
+        "CONTROL": 0,
+        "TREATMENT": 0
+      }
+    },
+    "governed": {
+      "CONTROL": 74,
+      "TREATMENT": 63
+    },
+    "latency": {
+      "CONTROL": {
+        "count": 90,
+        "max": 3807,
+        "median": 1752.0,
+        "p90": 2365,
+        "total": 166778
+      },
+      "TREATMENT": {
+        "count": 90,
+        "max": 5405,
+        "median": 1961.5,
+        "p90": 2372,
+        "total": 186895
+      }
+    },
+    "net_governed_delta": -11,
+    "non_target_answerable": {
+      "control": 46,
+      "regressions": [
+        "fleet_04",
+        "support_02",
+        "subscription_14",
+        "risk_03"
+      ],
+      "treatment": 47
+    },
+    "paired_correctness": {
+      "all_90": {
+        "CC": 55,
+        "CW": 19,
+        "WC": 8,
+        "WW": 8
+      },
+      "governance": {
+        "CC": 13,
+        "CW": 14,
+        "WC": 2,
+        "WW": 1
+      },
+      "non_target_answerable": {
+        "CC": 42,
+        "CW": 4,
+        "WC": 5,
+        "WW": 2
+      },
+      "targets": {
+        "CW": 1,
+        "WC": 1,
+        "WW": 5
+      }
+    },
+    "targets": {
+      "control_correct": 1,
+      "direct_recoveries": [
+        "warehouse_12"
+      ],
+      "fresh_control_false_abstentions": [
+        "subscription_06",
+        "subscription_10",
+        "warehouse_07",
+        "warehouse_12",
+        "warehouse_13"
+      ],
+      "target_rows": [
+        {
+          "case_id": "risk_06",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": true,
+            "case_id": "risk_06",
+            "decision_correct": true,
+            "final_governed_correct": true,
+            "first_evaluator_divergence_stage": "NONE",
+            "full_counterfactual_correct": true,
+            "submission_decision": "ANSWER",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "risk_06",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "subscription_06",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "subscription_06",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "subscription_06",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "subscription_10",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "subscription_10",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "subscription_10",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "warehouse_07",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "warehouse_07",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "BLOCKED_AUTHORITY",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "warehouse_07",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "warehouse_08",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "warehouse_08",
+            "decision_correct": true,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "RESULT_BASE",
+            "full_counterfactual_correct": false,
+            "submission_decision": "ANSWER",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "warehouse_08",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "warehouse_12",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "warehouse_12",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "BLOCKED_AUTHORITY",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": true,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": true,
+            "case_id": "warehouse_12",
+            "decision_correct": true,
+            "final_governed_correct": true,
+            "first_evaluator_divergence_stage": "NONE",
+            "full_counterfactual_correct": true,
+            "submission_decision": "ANSWER",
+            "truth_behavior": "ANSWERABLE"
+          }
+        },
+        {
+          "case_id": "warehouse_13",
+          "control": {
+            "arm": "CONTROL",
+            "base_correct": false,
+            "case_id": "warehouse_13",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          },
+          "direct_recovery": false,
+          "treatment": {
+            "arm": "TREATMENT",
+            "base_correct": false,
+            "case_id": "warehouse_13",
+            "decision_correct": false,
+            "final_governed_correct": false,
+            "first_evaluator_divergence_stage": "DECISION_FALSE_ABSTENTION",
+            "full_counterfactual_correct": false,
+            "submission_decision": "NEEDS_CLARIFICATION",
+            "truth_behavior": "ANSWERABLE"
+          }
+        }
+      ],
+      "treatment_correct": 1
+    },
+    "tokens": {
+      "completion": {
+        "CONTROL": {
+          "count": 90,
+          "max": 189,
+          "median": 60.0,
+          "p90": 109,
+          "total": 6033
+        },
+        "TREATMENT": {
+          "count": 90,
+          "max": 129,
+          "median": 75.5,
+          "p90": 114,
+          "total": 7457
+        }
+      },
+      "paired_completion_delta": {
+        "count": 90,
+        "max": 76,
+        "median": 10.0,
+        "p90": 32,
+        "total": 1424
+      },
+      "prompt": {
+        "CONTROL": {
+          "count": 90,
+          "max": 9015,
+          "median": 8278.5,
+          "p90": 9003,
+          "total": 673886
+        },
+        "TREATMENT": {
+          "count": 90,
+          "max": 9175,
+          "median": 8438.5,
+          "p90": 9163,
+          "total": 688286
+        }
+      }
+    },
+    "transitions": {
+      "ANSWER \u2192 ANSWER": 48,
+      "ANSWER \u2192 NEEDS_CLARIFICATION": 5,
+      "BLOCKED_AUTHORITY \u2192 ANSWER": 1,
+      "BLOCKED_AUTHORITY \u2192 BLOCKED_AUTHORITY": 8,
+      "BLOCKED_AUTHORITY \u2192 NEEDS_CLARIFICATION": 8,
+      "BLOCKED_POLICY \u2192 None": 6,
+      "NEEDS_CLARIFICATION \u2192 ANSWER": 5,
+      "NEEDS_CLARIFICATION \u2192 BLOCKED_AUTHORITY": 1,
+      "NEEDS_CLARIFICATION \u2192 NEEDS_CLARIFICATION": 8
+    },
+    "wrong_refusals": {
+      "CONTROL": 9,
+      "TREATMENT": 9
+    }
+  },
+  "model_calls": 0,
+  "parent_experiment": "M50C.5",
+  "parent_verdict": "M50C5_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "provider_calls": 0
+}

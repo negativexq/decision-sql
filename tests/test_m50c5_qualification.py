@@ -3,7 +3,12 @@ import json
 from app.generation.provider_schema import validate_provider_strict_schema
 from app.semantics.semantic_blocker_shadow import SemanticSubmissionShadow, ShadowDecision
 from benchmark.m50c4s_wire import corrected_provider_schema, provider_response_format_hash
-from benchmark.m50c5_runner import _parse_treatment, _schedule
+from benchmark.m50c5_runner import (
+    _canonical_trace_value,
+    _counter_records,
+    _parse_treatment,
+    _schedule,
+)
 
 
 def test_exact_frozen_provider_wire_is_reused() -> None:
@@ -58,3 +63,24 @@ def test_bad_treatment_json_is_not_coerced() -> None:
     assert parsed is None
     assert status == "WIRE_PARSE_FAILURE"
     assert detail
+
+
+def test_mixed_optional_category_serialization_is_null_safe() -> None:
+    expected = [
+        {"key": None, "count": 6},
+        {"key": "RELATIONSHIP", "count": 10},
+        {"key": "SCHEMA_OBJECT", "count": 5},
+    ]
+    assert _counter_records([None] * 6 + ["RELATIONSHIP"] * 10 + ["SCHEMA_OBJECT"] * 5) == expected
+    assert _counter_records([None] * 6 + ["SCHEMA_OBJECT"] * 5 + ["RELATIONSHIP"] * 10) == expected
+
+
+def test_trace_identity_excludes_ephemeral_runtime_fields() -> None:
+    value = {
+        "plan_id": "uuid-a",
+        "executed_at_utc": "2026-01-01T00:00:00Z",
+        "plan_ms": 1.0,
+        "estimate": {"plan_rows": 10, "total_cost": 20.0, "top_level_node_type": "Seq Scan"},
+        "status": "ALLOWED",
+    }
+    assert _canonical_trace_value(value) == {"status": "ALLOWED"}

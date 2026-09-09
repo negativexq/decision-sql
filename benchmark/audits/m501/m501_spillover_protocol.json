@@ -1,0 +1,34 @@
+{
+  "engineering_conclusions": [
+    "NARROW_PROMPT_DISCRIMINANT_SUPPORTED",
+    "PARTIAL_DISCRIMINANT_EVIDENCE",
+    "PROMPT_ONLY_CONTEXT_SUFFICIENCY_REPAIR_EXHAUSTED",
+    "INSUFFICIENT_EVIDENCE_TO_DISTINGUISH_INTERVENTION_BOUNDARY"
+  ],
+  "experiment": "M50.1",
+  "frozen_population": {
+    "both_arm_answer": 49,
+    "changed_sql_hash": 21,
+    "correct_to_correct": 71,
+    "correct_to_wrong": 6,
+    "paired_cases": 90,
+    "transition_cases": 10,
+    "wrong_to_correct": 4,
+    "wrong_to_wrong": 9
+  },
+  "material_sql_threshold": {
+    "definition": "material semantic feature difference and/or different frozen execution behavior",
+    "minimum_fraction_over_both_arm_answer": 0.2
+  },
+  "model_calls": 0,
+  "parent": "M50",
+  "provider_calls": 0,
+  "separability_criteria": [
+    "observable before generation",
+    "model-visible or public server-known context only",
+    "covers at least two positive target cases for strong support",
+    "excludes all six correctness regressions",
+    "no case-id or domain-specific exception",
+    "narrowly scoped without unrelated SQL-generation changes"
+  ]
+}

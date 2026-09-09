@@ -36,7 +36,11 @@ from benchmark.m48a_audit import (
     _seed,
 )
 from benchmark.models import ResultContract, compare_rows
-from benchmark.planner_statistics import analyze_schema, lifecycle_sequence
+from benchmark.planner_statistics import (
+    PlannerStatisticsLifecycle,
+    analyze_schema,
+    lifecycle_sequence,
+)
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -330,16 +334,20 @@ def _prepare(database_id: str, fixture: dict[str, Any], lifecycle: str) -> dict[
                 for name, statement in statements.items()
                 for plan in [_plan(cursor, statement)]
             }
-            version = str(cursor.execute("SELECT version()") or "")
             cursor.execute("SELECT version()")
-            version = str(cursor.fetchone()[0])
+            version_row = cursor.fetchone()
+            if version_row is None:
+                raise RuntimeError("M48A2_POSTGRES_VERSION_UNAVAILABLE")
+            version = str(version_row[0])
             planner = _server_settings(cursor)
     return {
         "database_id": database_id,
         "schema": schema,
         "fixture_id": fixture["fixture_id"],
         "lifecycle": lifecycle,
-        "sequence": lifecycle_sequence(lifecycle, has_fixture=fixture_applied),
+        "sequence": lifecycle_sequence(
+            PlannerStatisticsLifecycle(lifecycle), has_fixture=fixture_applied
+        ),
         "metadata": metadata,
         "stable_metadata_hash": _sha_json(_stable_metadata(metadata)),
         "canary_plans": canary_plans,
@@ -450,7 +458,7 @@ def _repeatability_audit() -> dict[str, Any]:
 
 
 def candidate_audit() -> dict[str, Any]:
-    candidates = {
+    candidates: dict[str, list[dict[str, Any]]] = {
         name: [] for name in ("NO_ANALYZE", "ANALYZE_AFTER_SEED", "ANALYZE_CURRENT_STATE")
     }
     for state in _representative_states():
@@ -857,18 +865,24 @@ def reference_runtime_replay() -> dict[str, Any]:
                 with connection.cursor() as cursor:
                     _analyze_schema(cursor, _schema_name(case["database_id"]))
                 connection.commit()
+            state_outcomes: dict[str, dict[str, Any]] = {}
             for label in ("A", "B"):
-                outcome = _runtime_record(
+                state_outcomes[label] = _runtime_record(
                     services[case["database_id"]],
                     case[f"reference_implementation_{label.lower()}"]["sql"],
                 )
+            runtime_reference_rows = (
+                _rows(state_outcomes["A"]) if state_outcomes["A"]["executed"] else None
+            )
+            for label in ("A", "B"):
+                outcome = state_outcomes[label]
                 disposition = "ALLOWED" if outcome["planned"] else outcome["failure"]["status"]
                 estimate = (outcome.get("plan") or outcome.get("failure", {})).get("estimate")
                 correct = None
-                if outcome["executed"]:
+                if outcome["executed"] and runtime_reference_rows is not None:
                     same, reason = compare_rows(
                         _rows(outcome),
-                        expected[case["case_id"]][fixture["fixture_id"]]["rows"],
+                        runtime_reference_rows,
                         contract,
                     )
                     correct = same
@@ -921,17 +935,23 @@ def reference_runtime_replay() -> dict[str, Any]:
 
 def warehouse13_postfreeze() -> dict[str, Any]:
     case = next(row for row in _answerable_rows() if row["case_id"] == WAREHOUSE_CASE)
+    states: list[dict[str, Any]] = []
     result = {
         "case_id": WAREHOUSE_CASE,
         "before_historical_analyze": {"B": {"plan_rows": 810, "total_cost": 114604.02}},
         "selected_lifecycle": SELECTED_LIFECYCLE,
-        "states": [],
+        "states": states,
     }
     for fixture in _fixture_list(case):
         _seed(case["database_id"])
         _apply_patch(case["database_id"], fixture.get("patch_sql", []))
         with psycopg.connect(**connection_kwargs_from_env()) as connection:
             with connection.cursor() as cursor:
+                cursor.execute(
+                    pgsql.SQL("SET search_path TO {}").format(
+                        pgsql.Identifier(_schema_name(case["database_id"]))
+                    )
+                )
                 _analyze_schema(cursor, _schema_name(case["database_id"]))
                 state = {"fixture_id": fixture["fixture_id"], "references": {}}
                 for label in ("A", "B"):
@@ -941,7 +961,7 @@ def warehouse13_postfreeze() -> dict[str, Any]:
                         "total_cost": float(plan["Total Cost"]),
                         "plan_hash": _sha_json(plan),
                     }
-                result["states"].append(state)
+                states.append(state)
     _write(AUDIT_ROOT / "m48a2_warehouse13_postfreeze.json", result)
     return result
 
@@ -981,14 +1001,14 @@ def m47b_zero_call_replay() -> dict[str, Any]:
         catalog = catalogs[case["database_id"]]
         raw_sql = str(submission["sql"])
         input_diagnostic = GrainSafetyValidator(catalog).validate(raw_sql).code.value
-        fixture_records = []
+        fixture_records: list[dict[str, Any]] = []
         for fixture in (
             _fixture_list(case)
             if case["semantic_target"]["behavior"] == "ANSWERABLE"
             else [{"fixture_id": "base", "patch_sql": []}]
         ):
             _seed(case["database_id"])
-            _apply_patch(case["database_id"], fixture.get("patch_sql", []))
+            _apply_patch(case["database_id"], cast(list[str], fixture.get("patch_sql", [])))
             with psycopg.connect(**connection_kwargs_from_env()) as connection:
                 with connection.cursor() as cursor:
                     _analyze_schema(cursor, _schema_name(case["database_id"]))
@@ -996,8 +1016,34 @@ def m47b_zero_call_replay() -> dict[str, Any]:
             if case["semantic_target"]["behavior"] != "ANSWERABLE":
                 continue
             outcome = _runtime_record(services[case["database_id"]], raw_sql)
-            fixture_records.append({"fixture_id": fixture["fixture_id"], "outcome": outcome})
-        first = fixture_records[0]["outcome"] if fixture_records else None
+            reference_outcome = _runtime_record(
+                services[case["database_id"]],
+                case["reference_implementation_a"]["sql"],
+            )
+            correct = None
+            comparison_reason = None
+            if outcome["executed"] and reference_outcome["executed"]:
+                contract = ResultContract.from_dict(
+                    case["semantic_target"]["result_comparison_contract"]
+                )
+                correct, comparison_reason = compare_rows(
+                    _rows(outcome), _rows(reference_outcome), contract
+                )
+            selected_sql = (outcome.get("plan") or {}).get("normalized_sql")
+            fixture_records.append(
+                {
+                    "fixture_id": fixture["fixture_id"],
+                    "outcome": outcome,
+                    "reference_outcome": reference_outcome,
+                    "correct_against_semantic_reference": correct,
+                    "comparison_reason": comparison_reason,
+                    "selected_sql_hash": _sha_bytes(selected_sql.encode())
+                    if selected_sql
+                    else None,
+                    "normalizer_changed_sql": bool(selected_sql and selected_sql != raw_sql),
+                }
+            )
+        first: dict[str, Any] | None = fixture_records[0]["outcome"] if fixture_records else None
         status = (
             "ALLOWED"
             if first and first["planned"]
@@ -1054,18 +1100,26 @@ def grain_regression() -> dict[str, Any]:
 
 
 def determinism() -> dict[str, Any]:
-    source = json.loads((AUDIT_ROOT / "m48a2_reference_runtime_disposition.json").read_text())
-    stable = [
+    first = reference_runtime_replay()
+    second = reference_runtime_replay()
+    first_stable = [
         {k: v for k, v in record.items() if k not in {"comparison_reason"}}
-        for record in source["records"]
+        for record in first["records"]
     ]
-    first_hash = _sha_json(stable)
-    second_hash = _sha_json(stable)
+    second_stable = [
+        {k: v for k, v in record.items() if k not in {"comparison_reason"}}
+        for record in second["records"]
+    ]
+    first_hash = _sha_json(first_stable)
+    second_hash = _sha_json(second_stable)
     result = {
         "replay_runs": 2,
+        "full_reference_matrix_replayed_twice": True,
         "deterministic": first_hash == second_hash,
         "first_hash": first_hash,
         "second_hash": second_hash,
+        "first_counts": first["counts"],
+        "second_counts": second["counts"],
     }
     _write(AUDIT_ROOT / "m48a2_determinism.json", result)
     return result

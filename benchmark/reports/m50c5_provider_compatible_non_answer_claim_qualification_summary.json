@@ -1,0 +1,49 @@
+{
+  "experiment": "M50C.5",
+  "verdict": "M50C5_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "development_experiment": true,
+  "starting_head": "3575344dc332fcd8926dd1d3be9f41b27de96bc5",
+  "actual_response_freeze_commit": "fb8ad5209ab80bde32b51dcda2a9b516049c8b48",
+  "provider_attempts": 180,
+  "control_attempts": 90,
+  "treatment_attempts": 90,
+  "retries": 0,
+  "post_freeze_provider_calls": 0,
+  "post_freeze_model_calls": 0,
+  "historical_m50c4_verdict_changed": false,
+  "official_m48b2_unchanged": {
+    "governed": "78/90",
+    "answerable_runtime_tsa": "51/60"
+  },
+  "exact_provider_schema_hash": "b87d45a67a5e6e67a74719a4a33f1d1da349ce514f89ef15f0625ebdbd9f1f92",
+  "exact_response_format_hash": "c9ea99c4ac05e1a4f1c756d313bdfc74ca6e30578e7c9cda129de33f1fe617e8",
+  "input_factual_parity": "90/90",
+  "factual_context_growth": 0,
+  "control_wire_parse": "90/90",
+  "treatment_wire_parse": "84/90",
+  "treatment_wire_parse_failures": 6,
+  "treatment_decisions_observed": {
+    "ANSWER": 54,
+    "NEEDS_CLARIFICATION": 21,
+    "BLOCKED_AUTHORITY": 9,
+    "provider_wire_parse_failure": 6
+  },
+  "partial_treatment_claim_audit": {
+    "non_answer_count": 36,
+    "claim_present": 30,
+    "claim_statuses": {
+      "CONTRADICTED": 19,
+      "VERIFIED": 11,
+      "NOT_APPLICABLE": 6
+    },
+    "false_abstention_contradicted": 4
+  },
+  "abort": {
+    "stage": "ANALYSIS_SERIALIZATION",
+    "error": "TypeError: '<' not supported between instances of 'NoneType' and 'str'",
+    "source": "benchmark/m50c5_runner.py:_write_outputs",
+    "detail": "claim-family distribution serialization sorted null and string keys"
+  },
+  "downstream_metrics": "NOT_COMPUTED_AFTER_MANDATED_ABORT",
+  "m51_ready": false
+}

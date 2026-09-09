@@ -1,0 +1,24 @@
+{
+  "experiment": "M50C.5",
+  "verdict": "M50C5_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "stage": "ANALYSIS_SERIALIZATION",
+  "provider_attempts": 180,
+  "control_attempts": 90,
+  "treatment_attempts": 90,
+  "retries": 0,
+  "post_freeze_provider_calls": 0,
+  "post_freeze_model_calls": 0,
+  "error_type": "TypeError",
+  "error": "'<' not supported between instances of 'NoneType' and 'str'",
+  "source": "benchmark/m50c5_runner.py:_write_outputs",
+  "operation": "serialize m50c5_claim_family_distribution.json",
+  "cause": "partial claim records include null claim_family values for wire-parse failures; sort_keys cannot compare null and string keys",
+  "preserved_evidence": {
+    "control_runtime_traces": 90,
+    "treatment_runtime_traces": 90,
+    "control_evaluator_overlays": 90,
+    "treatment_evaluator_overlays": 90,
+    "partial_claim_acquisition": true
+  },
+  "no_patch_and_continue": true
+}

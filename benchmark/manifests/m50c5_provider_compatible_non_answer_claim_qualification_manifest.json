@@ -7,7 +7,7 @@
   "experiment": "M50C.5",
   "factual_context_growth": 0,
   "gate_contract_hash": "752b56a3c4a50abcd6d35f301d9c0804da3a3bae13d7a438654eeaa669afbfbd",
-  "phase": "A_FROZEN_BEFORE_LIVE_CALLS",
+  "phase": "ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
   "post_freeze_calls": 0,
   "provider_attempt_budget": 180,
   "provider_schema_hash": "b87d45a67a5e6e67a74719a4a33f1d1da349ce514f89ef15f0625ebdbd9f1f92",
@@ -25,5 +25,18 @@
   "treatment_instruction_only_difference": true,
   "treatment_prompt_hash": "92f010b5cf817bd9f8dbf39000845e9a27dc3248af3b6013623ba4dbf35954c3",
   "truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
-  "truth_version": "0.2.2-dev"
+  "truth_version": "0.2.2-dev",
+  "response_freeze": "benchmark/audits/m50c5/m50c5_response_freeze.json",
+  "control_response_corpus_hash": "908e93c82c3df13afe4e01c075ec48c6f348734a9f789452040cb27c27e4ce1d",
+  "treatment_response_corpus_hash": "6638275bd9230b85232334dcd750696792a7c147478f26a13f5785ff6e736665",
+  "provider_attempts": 180,
+  "model_calls": 180,
+  "post_freeze_provider_calls": 0,
+  "post_freeze_model_calls": 0,
+  "abort_code": "M50C5_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "abort_stage": "ANALYSIS_SERIALIZATION",
+  "abort_error": "TypeError: '<' not supported between instances of 'NoneType' and 'str'",
+  "abort_detail": "m50c5_runner._write_outputs attempted sort_keys JSON serialization of a claim-family Counter containing null and string keys",
+  "final_verdict": "M50C5_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "m51_ready": false
 }

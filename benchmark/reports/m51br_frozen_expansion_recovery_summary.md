@@ -202,7 +202,7 @@ PASS. Two full zero-call replays were byte-identical and preserved the response 
 
 ## Repository state
 
-Final `HEAD == origin/main` at `342b9b0f702233f1075faa6e5dbf58aba9d6743f`; worktree clean after final commit.
+Final `HEAD == origin/main` at `6565326`; worktree clean after final commit.
 
 ## Final M51B-R scientific verdict
 

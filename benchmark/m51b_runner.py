@@ -29,6 +29,7 @@ from benchmark import m46a_audit as m46a
 from benchmark import m48a_audit as m48a
 from benchmark import m48b1_runner as m48b1
 from benchmark import m48b_runner as m48b
+from benchmark import m50c5_runner as m50c5
 from benchmark import m51a_authoring as m51a
 from benchmark.analysis_serialization import dumps_analysis
 from benchmark.m46b_contract import m43_prompt
@@ -848,7 +849,7 @@ def _analysis(data: dict[str, Any]) -> dict[str, Any]:
         if case_id in data["rows"]
     ]
     artifacts = {
-        "m51b_runtime_traces.jsonl": records,
+        "m51b_runtime_traces.jsonl": [m50c5._canonical_trace_value(record) for record in records],
         "m51b_evaluator_overlays.jsonl": overlays,
         "m51b_expansion_metrics.json": metrics,
         "m51b_answerable_metrics.json": {

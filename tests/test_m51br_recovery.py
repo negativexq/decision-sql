@@ -1,6 +1,7 @@
 import json
 
 from benchmark.analysis_serialization import canonicalize_analysis_value, dumps_analysis
+from benchmark.m50c5_runner import _canonical_trace_value
 
 
 def test_mixed_optional_keys_are_null_preserving_and_deterministic() -> None:
@@ -41,3 +42,19 @@ def test_actual_decision_matrix_shape_keeps_invalid_bucket_distinct() -> None:
 def test_serializer_does_not_drop_null_rows() -> None:
     encoded = json.loads(dumps_analysis({None: 2, "ANSWER": 1}))
     assert any(row["key"] is None and row["value"] == 2 for row in encoded["__typed_mapping__"])
+
+
+def test_runtime_trace_canonicalization_removes_ephemeral_fields_only() -> None:
+    value = {
+        "plan_id": "uuid",
+        "executed_at_utc": "now",
+        "plan_ms": 1.0,
+        "execute_ms": 2.0,
+        "latency_ms": 3.0,
+        "result_contract_outcome": True,
+        "status": "ALLOWED",
+    }
+    assert _canonical_trace_value(value) == {
+        "result_contract_outcome": True,
+        "status": "ALLOWED",
+    }

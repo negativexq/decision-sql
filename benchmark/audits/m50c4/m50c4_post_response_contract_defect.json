@@ -1,0 +1,31 @@
+{
+  "experiment": "M50C.4",
+  "verdict": "M50C4_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "discovered_after_first_provider_attempt": true,
+  "provider_attempts_consumed": 180,
+  "control_attempts": 90,
+  "treatment_attempts": 90,
+  "retries": 0,
+  "post_freeze_provider_calls": 0,
+  "post_freeze_model_calls": 0,
+  "control_successful_model_responses": 90,
+  "treatment_successful_model_responses": 0,
+  "treatment_provider_schema_failures": 90,
+  "defect": {
+    "kind": "INVALID_PROVIDER_RESPONSE_SCHEMA",
+    "response_format": "decision_sql_m50c4_treatment",
+    "message": "In context=(), 'required' is required to be supplied and to be an array including every key in properties. Missing 'blocking_claim'.",
+    "provider_type": "invalid_request_error",
+    "provider_param": "response_format"
+  },
+  "effect": "Treatment requests were rejected before a model response. Treatment claim acquisition, treatment correctness, safety, and retention gates are not adjudicable.",
+  "frozen_contract_changed_after_call": false,
+  "rerun_permitted": false,
+  "raw_evidence": {
+    "treatment_response_corpus_hash": "b22026f827cb25ab4d5080a615e303e18295ff615702c0e7b0a59fd158ca41b5",
+    "treatment_response_file_hash": "9bcf83ddda8fd0aacaa3d97e32c08af6baddcb1ac643d721e68bd53d3abd0ca5",
+    "first_treatment_request_hash": "849e1717eda64f1db45164b8cabcbf37b49683e633577de53f11008b6741cde5",
+    "treatment_prompt_hash": "92f010b5cf817bd9f8dbf39000845e9a27dc3248af3b6013623ba4dbf35954c3",
+    "treatment_schema_hash": "0141baad9202e960ea01b5ab1f232e591457e06073749b9464aa847b141fcec8"
+  }
+}

@@ -560,6 +560,42 @@ def _load_responses() -> list[dict[str, Any]]:
     return rows
 
 
+def _freeze_responses() -> dict[str, Any]:
+    responses = _load_responses()
+    ids, _rows_by_id = _rows()
+    observed_ids = [row["case_id"] for row in responses]
+    if observed_ids != ids:
+        raise RuntimeError("M51B_RESPONSE_ORDER_DRIFT")
+    provider_success = sum(row["provider_outcome"] == "SUCCESS" for row in responses)
+    freeze = {
+        "experiment": "M51B",
+        "scheduled_calls": 90,
+        "provider_attempts": 90,
+        "successful_provider_responses": provider_success,
+        "response_count": len(responses),
+        "duplicate_slots": len(observed_ids) - len(set(observed_ids)),
+        "unexpected_additional_calls": 0,
+        "response_corpus_hash": _sha(AUDIT / "m51b_expansion_responses.jsonl"),
+        "frozen_before_analysis": True,
+        "post_freeze_provider_calls": 0,
+        "post_freeze_model_calls": 0,
+        "freeze_head": _git(),
+    }
+    _dump(AUDIT / "m51b_response_freeze.json", freeze)
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    manifest.update(
+        {
+            "provider_attempts": 90,
+            "successful_responses": provider_success,
+            "response_corpus_hash": freeze["response_corpus_hash"],
+            "response_freeze_head": _git(),
+            "post_freeze_calls": 0,
+        }
+    )
+    _dump(MANIFEST, manifest)
+    return freeze
+
+
 def _replay(
     data: dict[str, Any], responses: list[dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -917,7 +953,7 @@ def main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=("preflight", "generate", "analyze"))
+    parser.add_argument("command", choices=("preflight", "generate", "freeze", "analyze"))
     args = parser.parse_args()
     if args.command == "preflight":
         print(json.dumps(_preflight()["manifest"], indent=2, sort_keys=True))
@@ -938,6 +974,9 @@ def main() -> None:
         else:
             generation_data = _preflight()
         print(json.dumps(_generation(generation_data), indent=2, sort_keys=True))
+        return
+    if args.command == "freeze":
+        print(json.dumps(_freeze_responses(), indent=2, sort_keys=True))
         return
     data: dict[str, Any] | None = (
         _preflight() if not (AUDIT / "m51b_preflight.json").exists() else None

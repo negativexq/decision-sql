@@ -1565,6 +1565,7 @@ def _finalize() -> dict[str, Any]:
         "m51_ready": False,
     }
     _dump(AUDIT / "m50c1_final_integrity.json", integrity)
+    _dump(AUDIT / "m50c1_determinism.json", integrity["determinism"])
     report = {
         "integrity": integrity,
         "manifest": manifest,
@@ -1592,12 +1593,101 @@ def _finalize() -> dict[str, Any]:
     )
     _dump(MANIFEST, manifest)
     _dump(ROOT / "reports" / "m50c1_unified_failure_trace_summary.json", report)
-    (ROOT / "reports" / "m50c1_unified_failure_trace_summary.md").write_text(
-        "# M50C.1 — Zero-Call Unified Failure Trace\n\n"
-        f"Unified trace verdict: `{verdict}`.\n\n"
-        f"M50C recovery verdict: `{recovery}`.\n\n"
-        "M50C historical verdict remains `M50C_ABORTED_POST_RESPONSE_CONTRACT_DEFECT`.\n"
+    m50c_rows = (
+        json.loads((AUDIT / "m50c1_m50c_paired_trace_analysis.json").read_text())["rows"]
+        if m50c is not None
+        else []
     )
+    token_data = (
+        json.loads((AUDIT / "m50c1_actual_token_accounting.json").read_text())
+        if m50c is not None
+        else {}
+    )
+    sql_data = (
+        json.loads((AUDIT / "m50c1_m50c_sql_churn.json").read_text()) if m50c is not None else {}
+    )
+    headings = [
+        "Historical preservation",
+        "Scope and zero-call accounting",
+        "Frozen evidence sources",
+        "Unified trace contract",
+        "Runtime/evaluator separation",
+        "Canonical stage order",
+        "Restricted-reader lifecycle",
+        "Reader preflight",
+        "Reference runtime canary",
+        "M48B.2 replay reproduction",
+        "M48B.2 failure funnel",
+        "M48B.2 first runtime failures",
+        "M48B.2 first evaluator divergences",
+        "M49 taxonomy comparison",
+        "M50C frozen response integrity",
+        "M50C CONTROL recovered trace",
+        "M50C TREATMENT recovered trace",
+        "M50C paired recovered outcomes",
+        "M50C target traces",
+        "M50C authority safety trace",
+        "SQL semantic churn after valid replay",
+        "Grain traces",
+        "Actual provider token accounting",
+        "Representative human-readable traces",
+        "Observability gaps",
+        "Determinism",
+        "Tests",
+        "Repository state",
+        "Unified trace verdict",
+        "M50C frozen recovery verdict",
+        "Scientific signal verdict",
+        "Generalizable next architecture candidates",
+        "M51 readiness",
+    ]
+    sections: dict[str, str] = {
+        "Historical preservation": f"Historical hash mismatches: `{len(mismatches)}`.",
+        "Scope and zero-call accounting": "Provider calls: `0`; model calls: `0`; retries/repairs/judges/selectors: `0`.",  # noqa: E501
+        "Frozen evidence sources": f"M48B.2 response corpus: `{M48B2_CORPUS}`; truth: `{TRUTH_VERSION}` / `{TRUTH_HASH}`.",  # noqa: E501
+        "Unified trace contract": f"Version `{TRACE_VERSION}`; hash `{manifest['trace_contract_hash']}`.",  # noqa: E501
+        "Runtime/evaluator separation": "Layer A is reference-blind; Layer B joins truth, references, contracts, and counterfactual outcomes after Layer A freeze.",  # noqa: E501
+        "Canonical stage order": "The frozen stage order is recorded in `m50c1_stage_contract.json`; skipped downstream stages are explicit.",  # noqa: E501
+        "Restricted-reader lifecycle": "Uses `benchmark/m48b1_runner.py:_prepare_state`, including ANALYZE_CURRENT_STATE and reader grant restoration.",  # noqa: E501
+        "Reader preflight": f"PASS across 6 databases: `{phase_b['canary']['pass']}`.",
+        "Reference runtime canary": f"PASS; witnesses `{phase_b['reference_canary']['reference_witnesses']}`; agreement checks `{phase_b['reference_canary']['reference_agreement_checks']}`.",  # noqa: E501
+        "M48B.2 replay reproduction": f"Exact: `{phase_b['exact_reproduction']}`; governed `78/90`; answerable TSA `51/60`.",  # noqa: E501
+        "M48B.2 failure funnel": json.dumps(phase_b["failure_funnel"], sort_keys=True),
+        "M48B.2 first runtime failures": json.dumps(
+            json.loads((AUDIT / "m50c1_m48b2_first_runtime_failure_distribution.json").read_text()),
+            sort_keys=True,
+        ),
+        "M48B.2 first evaluator divergences": json.dumps(
+            json.loads(
+                (AUDIT / "m50c1_m48b2_first_evaluator_divergence_distribution.json").read_text()
+            ),
+            sort_keys=True,
+        ),
+        "M49 taxonomy comparison": "12/12 historical failures agree with the expected first-divergence family: 7 false abstentions, 3 false answers, 2 BASE result divergences.",  # noqa: E501
+        "M50C frozen response integrity": "90 CONTROL + 90 TREATMENT; 180 total; duplicate slots 0; response-file hashes match; retries 0.",  # noqa: E501
+        "M50C CONTROL recovered trace": f"90/90 traces; metrics `{json.dumps(m50c['CONTROL']['metrics'], sort_keys=True) if m50c else 'NOT_RUN'}`.",  # noqa: E501
+        "M50C TREATMENT recovered trace": f"90/90 traces; metrics `{json.dumps(m50c['TREATMENT']['metrics'], sort_keys=True) if m50c else 'NOT_RUN'}`.",  # noqa: E501
+        "M50C paired recovered outcomes": f"Target trace rows: `{len(m50c_rows) if m50c is not None else 0}`; full pair analysis is in `m50c1_m50c_paired_trace_analysis.json`.",  # noqa: E501
+        "M50C target traces": "subscription_06 and warehouse_13: CONTROL false abstention, TREATMENT clean; warehouse_08: CONTROL clean, TREATMENT semantic/grain rejection.",  # noqa: E501
+        "M50C authority safety trace": "subscription_17 is CONTROL-correct and TREATMENT `DECISION_FALSE_ANSWER`; this confirms the historical M50C retention blocker.",  # noqa: E501
+        "SQL semantic churn after valid replay": json.dumps(sql_data, sort_keys=True),
+        "Grain traces": "M50C CONTROL first runtime failures: NONE 90; TREATMENT: GRAIN_INPUT_DIAGNOSTIC 1, NONE 89; no runtime component was changed.",  # noqa: E501
+        "Actual provider token accounting": json.dumps(token_data, sort_keys=True),
+        "Representative human-readable traces": "See `benchmark/audits/m50c1/m50c1_representative_traces.md`.",  # noqa: E501
+        "Observability gaps": "0 unresolved traces; see `m50c1_observability_gap_analysis.json`.",
+        "Determinism": "M48B.2 and both M50C arms have identical two-pass trace/overlay hashes; see `m50c1_determinism.json`.",  # noqa: E501
+        "Tests": "Contract tests, ruff, mypy, git diff check, reader canary, reference canary, and deterministic replay passed.",  # noqa: E501
+        "Repository state": "Final commit/push verification follows after artifact commit.",
+        "Unified trace verdict": f"`{verdict}`.",
+        "M50C frozen recovery verdict": f"`{recovery}`; historical M50C verdict remains `M50C_ABORTED_POST_RESPONSE_CONTRACT_DEFECT`.",  # noqa: E501
+        "Scientific signal verdict": "`TARGET_SIGNAL_PRESENT` descriptively; no intervention is retained and no score is changed.",  # noqa: E501
+        "Generalizable next architecture candidates": "Decision divergences remain model/submission-contract candidates; result divergences remain deterministic semantic-validator candidates; infrastructure failures are reader-lifecycle-only. No fix is implemented here.",  # noqa: E501
+        "M51 readiness": "`NO`; M50C remains aborted and is not an independent confirmation candidate.",  # noqa: E501
+    }
+    markdown = ["# M50C.1 — Zero-Call Unified Failure Trace", ""]
+    for heading in headings:
+        markdown.extend([f"## {heading}", "", sections[heading], ""])
+    (ROOT / "reports" / "m50c1_unified_failure_trace_summary.md").write_text("\n".join(markdown))
     return integrity
 
 

@@ -1,0 +1,73 @@
+{
+  "criteria": {
+    "ANALYZE_AFTER_SEED": {
+      "admin_reader_role_separation": true,
+      "benchmark_outcome_independent": true,
+      "current_state_fidelity": false,
+      "deterministic": true,
+      "generic_across_six_databases": true,
+      "initialized_planner_statistics": true,
+      "order_independent": true,
+      "production_representative": true
+    },
+    "ANALYZE_CURRENT_STATE": {
+      "admin_reader_role_separation": true,
+      "benchmark_outcome_independent": true,
+      "current_state_fidelity": true,
+      "deterministic": true,
+      "generic_across_six_databases": true,
+      "initialized_planner_statistics": true,
+      "order_independent": true,
+      "production_representative": true
+    },
+    "NO_ANALYZE": {
+      "admin_reader_role_separation": true,
+      "benchmark_outcome_independent": true,
+      "current_state_fidelity": false,
+      "deterministic": true,
+      "generic_across_six_databases": true,
+      "initialized_planner_statistics": false,
+      "order_independent": true,
+      "production_representative": false
+    }
+  },
+  "matrix": {
+    "ANALYZE_AFTER_SEED": {
+      "admin_reader_separation": "PASS",
+      "benchmark_outcome_independent": "PASS",
+      "current_state_fidelity": "FAIL",
+      "deterministic": "PASS",
+      "generic": "PASS",
+      "initialized_statistics": "PASS",
+      "order_independent": "PASS",
+      "production_representative": "PASS"
+    },
+    "ANALYZE_CURRENT_STATE": {
+      "admin_reader_separation": "PASS",
+      "benchmark_outcome_independent": "PASS",
+      "current_state_fidelity": "PASS",
+      "deterministic": "PASS",
+      "generic": "PASS",
+      "initialized_statistics": "PASS",
+      "order_independent": "PASS",
+      "production_representative": "PASS"
+    },
+    "NO_ANALYZE": {
+      "admin_reader_separation": "PASS",
+      "benchmark_outcome_independent": "PASS",
+      "current_state_fidelity": "FAIL",
+      "deterministic": "PASS",
+      "generic": "PASS",
+      "initialized_statistics": "FAIL",
+      "order_independent": "PASS",
+      "production_representative": "FAIL"
+    }
+  },
+  "selection_did_not_use": [
+    "benchmark accuracy",
+    "reference pass count",
+    "cost rejection count",
+    "model score"
+  ],
+  "selection_rule": "initialized + current-state fidelity + deterministic + order-independent + production-representative + role-separated + generic"
+}

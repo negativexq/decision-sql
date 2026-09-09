@@ -1,0 +1,5375 @@
+[
+  {
+    "case_id": "commerce_01",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 48,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 48,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 49,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';",
+    "normalized_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "customer_name"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 48,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 48,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "customer_name"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 49,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';",
+    "raw_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_02",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "order_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 49,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT order_id\nFROM orders\nWHERE status = 'completed'\n  AND ordered_at >= TIMESTAMP '2026-06-01 00:00:00'\n  AND ordered_at < TIMESTAMP '2026-07-01 00:00:00';",
+    "normalized_sql_hash": "b7f4eae603c063a4885f418879011185514c6d788df3e9125bd3bf6e30076f09",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "order_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 49,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "order_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 50,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT order_id\nFROM orders\nWHERE status = 'completed'\n  AND ordered_at >= TIMESTAMP '2026-06-01 00:00:00'\n  AND ordered_at < TIMESTAMP '2026-07-01 00:00:00';",
+    "raw_sql_hash": "b7f4eae603c063a4885f418879011185514c6d788df3e9125bd3bf6e30076f09",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_03",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "region",
+        "completed_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT c.region, COUNT(o.order_id) AS completed_order_count\nFROM customers AS c\nLEFT JOIN orders AS o\n  ON o.customer_id = c.customer_id\n AND o.status = 'completed'\nGROUP BY c.region",
+    "normalized_sql_hash": "f327fed58a7375cb0e3261f2e7e3957cae1fdac445b7928a8f1428d9fe36bf28",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "region",
+        "completed_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "completed_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT c.region, COUNT(o.order_id) AS completed_order_count\nFROM customers AS c\nLEFT JOIN orders AS o\n  ON o.customer_id = c.customer_id\n AND o.status = 'completed'\nGROUP BY c.region",
+    "raw_sql_hash": "f327fed58a7375cb0e3261f2e7e3957cae1fdac445b7928a8f1428d9fe36bf28",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_04",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "category",
+        "net_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf03",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM order_items AS oi\nJOIN orders AS o ON o.order_id = oi.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\nGROUP BY p.category",
+    "normalized_sql_hash": "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+    "parent_measure_ids": [
+      "measure:commerce_ops:order_items:quantity",
+      "measure:commerce_ops:order_items:unit_price"
+    ],
+    "raw_base": {
+      "columns": [
+        "category",
+        "net_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "category",
+          "net_value"
+        ],
+        "fixture_id": "cf03",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM order_items AS oi\nJOIN orders AS o ON o.order_id = oi.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\nGROUP BY p.category",
+    "raw_sql_hash": "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_05",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "completed_home_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 0,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "completed_home_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "completed_home_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 0,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_order_count\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY o.customer_id",
+    "normalized_sql_hash": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "completed_home_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 0,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "completed_home_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "completed_home_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 0,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_order_count\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY o.customer_id",
+    "raw_sql_hash": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_06",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "region",
+        "average_completed_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "region",
+          "average_completed_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "average_completed_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT c.region, ROUND(AVG(COALESCE(o.completed_order_count, 0)::numeric), 2) AS average_completed_order_count\nFROM customers AS c\nLEFT JOIN (\n    SELECT customer_id, COUNT(*) AS completed_order_count\n    FROM orders\n    WHERE status = 'completed'\n    GROUP BY customer_id\n) AS o ON o.customer_id = c.customer_id\nGROUP BY c.region",
+    "normalized_sql_hash": "e7247eed8afb19df0d1650d22ba4c928703a9b386583dc7272a909f3c8f4dfb1",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "region",
+        "average_completed_order_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "region",
+          "average_completed_order_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "region",
+          "average_completed_order_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT c.region, ROUND(AVG(COALESCE(o.completed_order_count, 0)::numeric), 2) AS average_completed_order_count\nFROM customers AS c\nLEFT JOIN (\n    SELECT customer_id, COUNT(*) AS completed_order_count\n    FROM orders\n    WHERE status = 'completed'\n    GROUP BY customer_id\n) AS o ON o.customer_id = c.customer_id\nGROUP BY c.region",
+    "raw_sql_hash": "e7247eed8afb19df0d1650d22ba4c928703a9b386583dc7272a909f3c8f4dfb1",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_07",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT o.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nWHERE o.status = 'completed'\nGROUP BY o.customer_id\nORDER BY net_value DESC, o.customer_id\nLIMIT 3",
+    "normalized_sql_hash": "d5ab516317efe4268e528021c68c68faadaa84f6f2ac5f7d572bf6c92764336b",
+    "parent_measure_ids": [
+      "measure:commerce_ops:order_items:quantity",
+      "measure:commerce_ops:order_items:unit_price"
+    ],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "net_value"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "net_value"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT o.customer_id, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nWHERE o.status = 'completed'\nGROUP BY o.customer_id\nORDER BY net_value DESC, o.customer_id\nLIMIT 3",
+    "raw_sql_hash": "d5ab516317efe4268e528021c68c68faadaa84f6f2ac5f7d572bf6c92764336b",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_08",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_09",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "commerce_10",
+    "child_measure_ids": [],
+    "database_id": "commerce_ops",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_01",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 861,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 862,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 861,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT event_id, vehicle_id\nFROM telemetry_events\nWHERE (payload #>> '{engine,temperature_c}')::NUMERIC >= 100",
+    "normalized_sql_hash": "9fb1d219bbbb1afa4b2a0f4297477f26097ced02b8a0819efe63cbd04ffcfce0",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "event_id",
+        "vehicle_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 861,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 862,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "event_id",
+          "vehicle_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 861,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT event_id, vehicle_id\nFROM telemetry_events\nWHERE (payload #>> '{engine,temperature_c}')::NUMERIC >= 100",
+    "raw_sql_hash": "9fb1d219bbbb1afa4b2a0f4297477f26097ced02b8a0819efe63cbd04ffcfce0",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_02",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "depot_id",
+        "average_cost"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 8,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "depot_id",
+          "average_cost"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "depot_id",
+          "average_cost"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT v.depot_id, ROUND(AVG(f.liters * f.price_per_liter), 2) AS average_cost\nFROM fuel_events AS f\nJOIN vehicles AS v ON v.vehicle_id = f.vehicle_id\nGROUP BY v.depot_id",
+    "normalized_sql_hash": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6",
+    "parent_measure_ids": [
+      "measure:fleet_ops:fuel_events:liters",
+      "measure:fleet_ops:fuel_events:price_per_liter"
+    ],
+    "raw_base": {
+      "columns": [
+        "depot_id",
+        "average_cost"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 8,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "depot_id",
+          "average_cost"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "depot_id",
+          "average_cost"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 8,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT v.depot_id, ROUND(AVG(f.liters * f.price_per_liter), 2) AS average_cost\nFROM fuel_events AS f\nJOIN vehicles AS v ON v.vehicle_id = f.vehicle_id\nGROUP BY v.depot_id",
+    "raw_sql_hash": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_03",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "route_id",
+        "kilometres_per_litre"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 40,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "route_id",
+          "kilometres_per_litre"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 40,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "route_id",
+          "kilometres_per_litre"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 40,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS kilometres_per_litre FROM trips GROUP BY route_id",
+    "normalized_sql_hash": "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "route_id",
+        "kilometres_per_litre"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 40,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "route_id",
+          "kilometres_per_litre"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 40,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "route_id",
+          "kilometres_per_litre"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 40,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS kilometres_per_litre FROM trips GROUP BY route_id",
+    "raw_sql_hash": "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_04",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "vehicle_id",
+        "maintenance_event_count"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 220,
+      "status": "FAIL"
+    },
+    "normalized_category": "RESULT_MISMATCH",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 221,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 220,
+        "status": "FAIL"
+      }
+    ],
+    "normalized_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-01 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id",
+    "normalized_sql_hash": "5be415706e3ec92fdbf027b8714f0d62ad807051169295664224f1961d953aa3",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "vehicle_id",
+        "maintenance_event_count"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 220,
+      "status": "FAIL"
+    },
+    "raw_category": "RESULT_MISMATCH",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 221,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "maintenance_event_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 220,
+        "status": "FAIL"
+      }
+    ],
+    "raw_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-01 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id",
+    "raw_sql_hash": "5be415706e3ec92fdbf027b8714f0d62ad807051169295664224f1961d953aa3",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_05",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "driver_id",
+        "cargo_trip_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 120,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "driver_id",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 120,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "driver_id",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 120,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT t.driver_id, COUNT(*) AS cargo_trip_count\nFROM trips AS t\nJOIN vehicles AS v ON v.vehicle_id = t.vehicle_id\nWHERE v.vehicle_class = 'cargo'\nGROUP BY t.driver_id\nHAVING COUNT(*) >= 1",
+    "normalized_sql_hash": "471f4cb66f6939e5e7a2e7f3ac81a14a2a8901618c7f4d8f1de852f333013acf",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "driver_id",
+        "cargo_trip_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 120,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "driver_id",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 120,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "driver_id",
+          "cargo_trip_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 120,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT t.driver_id, COUNT(*) AS cargo_trip_count\nFROM trips AS t\nJOIN vehicles AS v ON v.vehicle_id = t.vehicle_id\nWHERE v.vehicle_class = 'cargo'\nGROUP BY t.driver_id\nHAVING COUNT(*) >= 1",
+    "raw_sql_hash": "471f4cb66f6939e5e7a2e7f3ac81a14a2a8901618c7f4d8f1de852f333013acf",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_06",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "vehicle_id",
+        "latest_event_timestamp",
+        "engine_temperature"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 220,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_event_timestamp",
+          "engine_temperature"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 220,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_event_timestamp",
+          "engine_temperature"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 220,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT vehicle_id, event_at AS latest_event_timestamp, (payload #>> '{engine,temperature_c}')::NUMERIC AS engine_temperature FROM (SELECT vehicle_id, event_at, payload, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+    "normalized_sql_hash": "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "vehicle_id",
+        "latest_event_timestamp",
+        "engine_temperature"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 220,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_event_timestamp",
+          "engine_temperature"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 220,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "vehicle_id",
+          "latest_event_timestamp",
+          "engine_temperature"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 220,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT vehicle_id, event_at AS latest_event_timestamp, (payload #>> '{engine,temperature_c}')::NUMERIC AS engine_temperature FROM (SELECT vehicle_id, event_at, payload, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+    "raw_sql_hash": "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_07",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "route_id",
+        "rounded_efficiency"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "route_id",
+          "rounded_efficiency"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "route_id",
+          "rounded_efficiency"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS rounded_efficiency FROM trips GROUP BY route_id ORDER BY rounded_efficiency DESC, route_id ASC LIMIT 3",
+    "normalized_sql_hash": "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "route_id",
+        "rounded_efficiency"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "route_id",
+          "rounded_efficiency"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "route_id",
+          "rounded_efficiency"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS rounded_efficiency FROM trips GROUP BY route_id ORDER BY rounded_efficiency DESC, route_id ASC LIMIT 3",
+    "raw_sql_hash": "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_08",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_09",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "fleet_10",
+    "child_measure_ids": [],
+    "database_id": "fleet_ops",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_01",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "urgent_ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 262,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT a.account_id, COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent') AS urgent_ticket_count\nFROM accounts AS a\nLEFT JOIN support_tickets AS st ON st.account_id = a.account_id\nGROUP BY a.account_id",
+    "normalized_sql_hash": "7ffd2ab353ffc63c3a84e719654925b462e54c8659c1da34ed4e786bfaa96114",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "urgent_ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 262,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT a.account_id, COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent') AS urgent_ticket_count\nFROM accounts AS a\nLEFT JOIN support_tickets AS st ON st.account_id = a.account_id\nGROUP BY a.account_id",
+    "raw_sql_hash": "7ffd2ab353ffc63c3a84e719654925b462e54c8659c1da34ed4e786bfaa96114",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_02",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "ticket_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 125,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 126,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 125,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf03",
+        "reason": "MATCH",
+        "row_count": 126,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT t.ticket_id\nFROM support_tickets AS t\nJOIN LATERAL (\n  SELECT s.plan_id\n  FROM subscriptions AS s\n  WHERE s.account_id = t.account_id\n  ORDER BY s.starts_on DESC, s.subscription_id DESC\n  LIMIT 1\n) AS latest_subscription ON TRUE\nJOIN service_plans AS p ON p.plan_id = latest_subscription.plan_id\nWHERE EXISTS (\n  SELECT 1\n  FROM ticket_events AS e\n  WHERE e.ticket_id = t.ticket_id\n    AND e.event_type = 'agent_response'\n    AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour'\n);",
+    "normalized_sql_hash": "337dfe8e2d517cd3b5b51032ba9af0b48e848505615b69624666512009bc0176",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "ticket_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 125,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 126,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 125,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id"
+        ],
+        "fixture_id": "cf03",
+        "reason": "MATCH",
+        "row_count": 126,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT t.ticket_id\nFROM support_tickets AS t\nJOIN LATERAL (\n  SELECT s.plan_id\n  FROM subscriptions AS s\n  WHERE s.account_id = t.account_id\n  ORDER BY s.starts_on DESC, s.subscription_id DESC\n  LIMIT 1\n) AS latest_subscription ON TRUE\nJOIN service_plans AS p ON p.plan_id = latest_subscription.plan_id\nWHERE EXISTS (\n  SELECT 1\n  FROM ticket_events AS e\n  WHERE e.ticket_id = t.ticket_id\n    AND e.event_type = 'agent_response'\n    AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour'\n);",
+    "raw_sql_hash": "337dfe8e2d517cd3b5b51032ba9af0b48e848505615b69624666512009bc0176",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_03",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "urgent_ticket_share"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 260,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT account_id, ROUND(COUNT(*) FILTER (WHERE priority = 'urgent')::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_ticket_share FROM support_tickets GROUP BY account_id",
+    "normalized_sql_hash": "608ce294d1d485a84b44eb592c32c4f0af7ef3428cb8569186295f901a4d23d2",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "urgent_ticket_share"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 260,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "urgent_ticket_share"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT account_id, ROUND(COUNT(*) FILTER (WHERE priority = 'urgent')::numeric / NULLIF(COUNT(*), 0), 4) AS urgent_ticket_share FROM support_tickets GROUP BY account_id",
+    "raw_sql_hash": "608ce294d1d485a84b44eb592c32c4f0af7ef3428cb8569186295f901a4d23d2",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_04",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "ticket_id",
+        "status"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 267,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 268,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 267,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat'",
+    "normalized_sql_hash": "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "ticket_id",
+        "status"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 267,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 268,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "ticket_id",
+          "status"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 267,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat'",
+    "raw_sql_hash": "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_05",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 20,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 20,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 20,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "WITH account_ticket_counts AS (SELECT a.account_id, COUNT(st.ticket_id) AS ticket_count FROM accounts AS a JOIN support_tickets AS st ON st.account_id = a.account_id GROUP BY a.account_id) SELECT account_id, ticket_count FROM account_ticket_counts WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+    "normalized_sql_hash": "1c449511575cd7be84a1bbc77f6ed5599c0ff343bdce4426aea1bd1be384d2fd",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "ticket_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 20,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "ticket_count"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 20,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "ticket_count"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 20,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "WITH account_ticket_counts AS (SELECT a.account_id, COUNT(st.ticket_id) AS ticket_count FROM accounts AS a JOIN support_tickets AS st ON st.account_id = a.account_id GROUP BY a.account_id) SELECT account_id, ticket_count FROM account_ticket_counts WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+    "raw_sql_hash": "1c449511575cd7be84a1bbc77f6ed5599c0ff343bdce4426aea1bd1be384d2fd",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_06",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 260,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high'",
+    "normalized_sql_hash": "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 260,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf01",
+        "reason": "MATCH",
+        "row_count": 261,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "cf02",
+        "reason": "MATCH",
+        "row_count": 260,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high'",
+    "raw_sql_hash": "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_07",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_08",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_09",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "support_10",
+    "child_measure_ids": [],
+    "database_id": "support_ops",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_01",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "subscription_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "subscription_id"
+        ],
+        "fixture_id": "subscription_01_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "subscription_id"
+        ],
+        "fixture_id": "subscription_01_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active'",
+    "normalized_sql_hash": "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "subscription_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "subscription_id"
+        ],
+        "fixture_id": "subscription_01_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "subscription_id"
+        ],
+        "fixture_id": "subscription_01_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active'",
+    "raw_sql_hash": "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_02",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_02_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_02_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT DISTINCT a.account_id\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active';",
+    "normalized_sql_hash": "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_02_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_02_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT DISTINCT a.account_id\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active';",
+    "raw_sql_hash": "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_03",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "total_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "total_amount"
+        ],
+        "fixture_id": "subscription_03_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "total_amount"
+        ],
+        "fixture_id": "subscription_03_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT account_id, SUM(total_due) AS total_amount FROM invoices WHERE status = 'paid' GROUP BY account_id",
+    "normalized_sql_hash": "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "total_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "total_amount"
+        ],
+        "fixture_id": "subscription_03_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "total_amount"
+        ],
+        "fixture_id": "subscription_03_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT account_id, SUM(total_due) AS total_amount FROM invoices WHERE status = 'paid' GROUP BY account_id",
+    "raw_sql_hash": "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_04",
+    "child_measure_ids": [
+      "measure:subscription_billing:refunds:amount"
+    ],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [
+      "relationship:subscription_billing:refund_payment"
+    ],
+    "normalization_reason": "NORMALIZED_CHILD_PREAGGREGATION",
+    "normalization_status": "NORMALIZED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "net_collected_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf3_multi_refund",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r__grain.amount__grain_sum), 0) AS net_collected_amount FROM payments AS p JOIN invoices AS i ON i.invoice_id = p.invoice_id LEFT JOIN (SELECT r__source.payment_id, SUM(r__source.amount) AS amount__grain_sum FROM refunds AS r__source GROUP BY r__source.payment_id) AS r__grain ON r__grain.payment_id = p.payment_id WHERE p.status = 'captured' GROUP BY i.account_id",
+    "normalized_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+    "parent_measure_ids": [
+      "measure:subscription_billing:payments:amount"
+    ],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "net_collected_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "RESULT_MISMATCH",
+    "raw_correct": false,
+    "raw_diagnostic": "PARENT_MEASURE_FANOUT",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "subscription_04_cf3_multi_refund",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 5,
+        "status": "FAIL"
+      }
+    ],
+    "raw_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id;",
+    "raw_sql_hash": "06f8f6d2ec0a4d7aa9a2149ea3ad27d6a61b1c520437a5b101dd6afe37ce7b1f",
+    "rewrite_evidence": {
+      "cardinality": "many_to_one",
+      "child_entity_id": "entity:subscription_billing:refunds",
+      "child_grain": {
+        "entity_id": "entity:subscription_billing:refunds",
+        "key_attribute_ids": [
+          "attribute:subscription_billing:refunds:refund_id"
+        ]
+      },
+      "child_key_attributes": [
+        "attribute:subscription_billing:refunds:payment_id"
+      ],
+      "child_measure_ids": [
+        "measure:subscription_billing:refunds:amount"
+      ],
+      "derived_child_alias": "r__grain",
+      "original_child_alias": "r",
+      "parent_entity_id": "entity:subscription_billing:payments",
+      "parent_key_attributes": [
+        "attribute:subscription_billing:payments:payment_id"
+      ],
+      "parent_measure_ids": [
+        "measure:subscription_billing:payments:amount"
+      ],
+      "relationship_id": "relationship:subscription_billing:refund_payment",
+      "rewritten_aggregate_aliases": {
+        "amount": "amount__grain_sum"
+      }
+    }
+  },
+  {
+    "case_id": "subscription_05",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "plan_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "plan_id"
+        ],
+        "fixture_id": "subscription_05_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "plan_id"
+        ],
+        "fixture_id": "subscription_05_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT account_id, plan_id\nFROM (\n    SELECT s.account_id,\n           s.plan_id,\n           ROW_NUMBER() OVER (\n               PARTITION BY s.account_id\n               ORDER BY s.starts_on DESC, s.subscription_id DESC\n           ) AS rn\n    FROM subscriptions AS s\n) AS ranked\nWHERE rn = 1;",
+    "normalized_sql_hash": "bdeb79c85f8471c905730cee47575df4d307c48bdebee0f210b3340f40f723e5",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "plan_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "plan_id"
+        ],
+        "fixture_id": "subscription_05_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "plan_id"
+        ],
+        "fixture_id": "subscription_05_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT account_id, plan_id\nFROM (\n    SELECT s.account_id,\n           s.plan_id,\n           ROW_NUMBER() OVER (\n               PARTITION BY s.account_id\n               ORDER BY s.starts_on DESC, s.subscription_id DESC\n           ) AS rn\n    FROM subscriptions AS s\n) AS ranked\nWHERE rn = 1;",
+    "raw_sql_hash": "bdeb79c85f8471c905730cee47575df4d307c48bdebee0f210b3340f40f723e5",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_06",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_07",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "monthly_recurring_revenue"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "monthly_recurring_revenue"
+        ],
+        "fixture_id": "subscription_07_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "monthly_recurring_revenue"
+        ],
+        "fixture_id": "subscription_07_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue\nFROM subscriptions AS s\nJOIN plans AS p ON p.plan_id = s.plan_id\nWHERE s.status = 'active'\nGROUP BY s.account_id",
+    "normalized_sql_hash": "a4a8bfca0c4da272be99bd706a85ba28ccee6bd6e64a05346f943ca936982218",
+    "parent_measure_ids": [
+      "measure:subscription_billing:plans:monthly_price"
+    ],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "monthly_recurring_revenue"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "monthly_recurring_revenue"
+        ],
+        "fixture_id": "subscription_07_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "monthly_recurring_revenue"
+        ],
+        "fixture_id": "subscription_07_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue\nFROM subscriptions AS s\nJOIN plans AS p ON p.plan_id = s.plan_id\nWHERE s.status = 'active'\nGROUP BY s.account_id",
+    "raw_sql_hash": "a4a8bfca0c4da272be99bd706a85ba28ccee6bd6e64a05346f943ca936982218",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_08",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_09",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "invoice_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "invoice_id"
+        ],
+        "fixture_id": "subscription_09_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "invoice_id"
+        ],
+        "fixture_id": "subscription_09_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT invoice_id\nFROM invoices\nWHERE status = 'open'\n  AND due_on < DATE '2026-06-30';",
+    "normalized_sql_hash": "c8e500c9bee5724a6eba5eca2600567b96105d035d1c20fde1d182ddb4d74473",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "invoice_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "invoice_id"
+        ],
+        "fixture_id": "subscription_09_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "invoice_id"
+        ],
+        "fixture_id": "subscription_09_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT invoice_id\nFROM invoices\nWHERE status = 'open'\n  AND due_on < DATE '2026-06-30';",
+    "raw_sql_hash": "c8e500c9bee5724a6eba5eca2600567b96105d035d1c20fde1d182ddb4d74473",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_10",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_11",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "plan_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "plan_id"
+        ],
+        "fixture_id": "subscription_11_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "plan_id"
+        ],
+        "fixture_id": "subscription_11_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT DISTINCT s.plan_id\nFROM subscriptions AS s\nWHERE s.status = 'active'\n  AND EXISTS (\n    SELECT 1\n    FROM entitlements AS e\n    WHERE e.subscription_id = s.subscription_id\n      AND e.enabled = TRUE\n  );",
+    "normalized_sql_hash": "636304d8bcdfc208c2e0738c5bfe75af88a0aa965beedb262b9b3a1d11e685a0",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "plan_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "plan_id"
+        ],
+        "fixture_id": "subscription_11_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "plan_id"
+        ],
+        "fixture_id": "subscription_11_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT DISTINCT s.plan_id\nFROM subscriptions AS s\nWHERE s.status = 'active'\n  AND EXISTS (\n    SELECT 1\n    FROM entitlements AS e\n    WHERE e.subscription_id = s.subscription_id\n      AND e.enabled = TRUE\n  );",
+    "raw_sql_hash": "636304d8bcdfc208c2e0738c5bfe75af88a0aa965beedb262b9b3a1d11e685a0",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_12",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "usage_event_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "usage_event_count"
+        ],
+        "fixture_id": "subscription_12_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "usage_event_count"
+        ],
+        "fixture_id": "subscription_12_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT ue.account_id, COUNT(*) AS usage_event_count\nFROM usage_events AS ue\nWHERE (ue.payload #>> '{units}')::INTEGER >= 1000\nGROUP BY ue.account_id",
+    "normalized_sql_hash": "b6f0f42d2aad721b1f91cefca4951a8174b0e90be8cadf80f1cd03da423fb7ea",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "usage_event_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "usage_event_count"
+        ],
+        "fixture_id": "subscription_12_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "usage_event_count"
+        ],
+        "fixture_id": "subscription_12_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT ue.account_id, COUNT(*) AS usage_event_count\nFROM usage_events AS ue\nWHERE (ue.payload #>> '{units}')::INTEGER >= 1000\nGROUP BY ue.account_id",
+    "raw_sql_hash": "b6f0f42d2aad721b1f91cefca4951a8174b0e90be8cadf80f1cd03da423fb7ea",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_13",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "invoice_id",
+        "latest_dunning_attempt_at"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "invoice_id",
+          "latest_dunning_attempt_at"
+        ],
+        "fixture_id": "subscription_13_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "invoice_id",
+          "latest_dunning_attempt_at"
+        ],
+        "fixture_id": "subscription_13_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT invoice_id, MAX(attempted_at) AS latest_dunning_attempt_at\nFROM dunning_attempts\nGROUP BY invoice_id;",
+    "normalized_sql_hash": "5f1ccc02c1fdce594d90ac0b3d42f80d1562a58009e0b055dbc1169c28f32074",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "invoice_id",
+        "latest_dunning_attempt_at"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "invoice_id",
+          "latest_dunning_attempt_at"
+        ],
+        "fixture_id": "subscription_13_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "invoice_id",
+          "latest_dunning_attempt_at"
+        ],
+        "fixture_id": "subscription_13_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT invoice_id, MAX(attempted_at) AS latest_dunning_attempt_at\nFROM dunning_attempts\nGROUP BY invoice_id;",
+    "raw_sql_hash": "5f1ccc02c1fdce594d90ac0b3d42f80d1562a58009e0b055dbc1169c28f32074",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_14",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_14_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_14_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT DISTINCT i.account_id\nFROM invoices AS i\nWHERE i.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM credits AS c\n    WHERE c.account_id = i.account_id\n      AND c.issued_on <= DATE '2026-06-30'\n  );",
+    "normalized_sql_hash": "24a85e7d528de8cb7fa6cfd08fa3e25af59ee0fc1d84cdf04dc3a32c25d231c7",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_14_cf1_2db794",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id"
+        ],
+        "fixture_id": "subscription_14_cf2_cf6ed1",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT DISTINCT i.account_id\nFROM invoices AS i\nWHERE i.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM credits AS c\n    WHERE c.account_id = i.account_id\n      AND c.issued_on <= DATE '2026-06-30'\n  );",
+    "raw_sql_hash": "24a85e7d528de8cb7fa6cfd08fa3e25af59ee0fc1d84cdf04dc3a32c25d231c7",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_01",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "warehouse_id",
+        "product_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id"
+        ],
+        "fixture_id": "warehouse_01_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id"
+        ],
+        "fixture_id": "warehouse_01_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT warehouse_id, product_id\nFROM (\n    SELECT warehouse_id, product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1\n  AND on_hand_qty >= 20",
+    "normalized_sql_hash": "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "warehouse_id",
+        "product_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id"
+        ],
+        "fixture_id": "warehouse_01_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id"
+        ],
+        "fixture_id": "warehouse_01_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT warehouse_id, product_id\nFROM (\n    SELECT warehouse_id, product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1\n  AND on_hand_qty >= 20",
+    "raw_sql_hash": "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_02",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "warehouse_id",
+        "total_shipped_quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "total_shipped_quantity"
+        ],
+        "fixture_id": "warehouse_02_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "total_shipped_quantity"
+        ],
+        "fixture_id": "warehouse_02_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT w.warehouse_id, SUM(si.quantity) AS total_shipped_quantity\nFROM warehouses AS w\nJOIN shipments AS s ON s.warehouse_id = w.warehouse_id\nJOIN shipment_items AS si ON si.shipment_id = s.shipment_id\nGROUP BY w.warehouse_id",
+    "normalized_sql_hash": "67080b9706d0121a83dbbfd5e54457d868f35a7dbb3af69f89a83b31d232ae73",
+    "parent_measure_ids": [
+      "measure:warehouse_logistics:shipment_items:quantity"
+    ],
+    "raw_base": {
+      "columns": [
+        "warehouse_id",
+        "total_shipped_quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "total_shipped_quantity"
+        ],
+        "fixture_id": "warehouse_02_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "total_shipped_quantity"
+        ],
+        "fixture_id": "warehouse_02_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT w.warehouse_id, SUM(si.quantity) AS total_shipped_quantity\nFROM warehouses AS w\nJOIN shipments AS s ON s.warehouse_id = w.warehouse_id\nJOIN shipment_items AS si ON si.shipment_id = s.shipment_id\nGROUP BY w.warehouse_id",
+    "raw_sql_hash": "67080b9706d0121a83dbbfd5e54457d868f35a7dbb3af69f89a83b31d232ae73",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_03",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "carrier_id",
+        "late_shipments"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 1,
+      "status": "FAIL"
+    },
+    "normalized_category": "RESULT_MISMATCH",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "carrier_id",
+          "late_shipments"
+        ],
+        "fixture_id": "warehouse_03_cf1_c305ad",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "carrier_id",
+          "late_shipments"
+        ],
+        "fixture_id": "warehouse_03_cf2_b6ed47",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 1,
+        "status": "FAIL"
+      }
+    ],
+    "normalized_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments\nFROM shipments AS s\nJOIN carriers AS c ON c.carrier_id = s.carrier_id\nJOIN delivery_events AS de ON de.shipment_id = s.shipment_id\nWHERE de.event_type = 'delivered'\n  AND de.event_at > s.promised_at\nGROUP BY s.carrier_id",
+    "normalized_sql_hash": "4edc60df2d8b7b9c253e92c6f88be0b55921c4483eb5cff3629839f3d80d76ed",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "carrier_id",
+        "late_shipments"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 1,
+      "status": "FAIL"
+    },
+    "raw_category": "RESULT_MISMATCH",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "carrier_id",
+          "late_shipments"
+        ],
+        "fixture_id": "warehouse_03_cf1_c305ad",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "carrier_id",
+          "late_shipments"
+        ],
+        "fixture_id": "warehouse_03_cf2_b6ed47",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 1,
+        "status": "FAIL"
+      }
+    ],
+    "raw_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments\nFROM shipments AS s\nJOIN carriers AS c ON c.carrier_id = s.carrier_id\nJOIN delivery_events AS de ON de.shipment_id = s.shipment_id\nWHERE de.event_type = 'delivered'\n  AND de.event_at > s.promised_at\nGROUP BY s.carrier_id",
+    "raw_sql_hash": "4edc60df2d8b7b9c253e92c6f88be0b55921c4483eb5cff3629839f3d80d76ed",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_04",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "warehouse_id",
+        "received_quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 2,
+      "status": "FAIL"
+    },
+    "normalized_category": "RESULT_MISMATCH",
+    "normalized_correct": false,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "received_quantity"
+        ],
+        "fixture_id": "warehouse_04_cf1_c305ad",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "received_quantity"
+        ],
+        "fixture_id": "warehouse_04_cf2_b6ed47",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      }
+    ],
+    "normalized_sql": "SELECT po.warehouse_id, SUM(pol.ordered_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id",
+    "normalized_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+    "parent_measure_ids": [
+      "measure:warehouse_logistics:purchase_order_lines:ordered_qty"
+    ],
+    "raw_base": {
+      "columns": [
+        "warehouse_id",
+        "received_quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 2,
+      "status": "FAIL"
+    },
+    "raw_category": "RESULT_MISMATCH",
+    "raw_correct": false,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "received_quantity"
+        ],
+        "fixture_id": "warehouse_04_cf1_c305ad",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "received_quantity"
+        ],
+        "fixture_id": "warehouse_04_cf2_b6ed47",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 2,
+        "status": "FAIL"
+      }
+    ],
+    "raw_sql": "SELECT po.warehouse_id, SUM(pol.ordered_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id",
+    "raw_sql_hash": "be4f155dcb6a6dea2d8d197ca30fb6b06b0beb4576cd002ce40656437ff63cde",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_05",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "warehouse_id",
+        "product_id",
+        "quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id",
+          "quantity"
+        ],
+        "fixture_id": "warehouse_05_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id",
+          "quantity"
+        ],
+        "fixture_id": "warehouse_05_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT warehouse_id, product_id, on_hand_qty AS quantity\nFROM (\n    SELECT warehouse_id,\n           product_id,\n           on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1",
+    "normalized_sql_hash": "05bc206ddaecf9bfa536f8a5b36ca05326cd0180ee110d72e5794fcf8ff99425",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "warehouse_id",
+        "product_id",
+        "quantity"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id",
+          "quantity"
+        ],
+        "fixture_id": "warehouse_05_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id",
+          "product_id",
+          "quantity"
+        ],
+        "fixture_id": "warehouse_05_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 6,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT warehouse_id, product_id, on_hand_qty AS quantity\nFROM (\n    SELECT warehouse_id,\n           product_id,\n           on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1",
+    "raw_sql_hash": "05bc206ddaecf9bfa536f8a5b36ca05326cd0180ee110d72e5794fcf8ff99425",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_06",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "shipment_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 1,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "shipment_id"
+        ],
+        "fixture_id": "warehouse_06_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "shipment_id"
+        ],
+        "fixture_id": "warehouse_06_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT DISTINCT s.shipment_id\nFROM shipments AS s\nJOIN delivery_events AS de\n  ON de.shipment_id = s.shipment_id\nWHERE de.event_type = 'delivered'\n  AND de.event_at > s.promised_at;",
+    "normalized_sql_hash": "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "shipment_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 1,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "shipment_id"
+        ],
+        "fixture_id": "warehouse_06_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "shipment_id"
+        ],
+        "fixture_id": "warehouse_06_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT DISTINCT s.shipment_id\nFROM shipments AS s\nJOIN delivery_events AS de\n  ON de.shipment_id = s.shipment_id\nWHERE de.event_type = 'delivered'\n  AND de.event_at > s.promised_at;",
+    "raw_sql_hash": "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_07",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_08",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "fixture_id": "base",
+      "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+      "status": "ERROR"
+    },
+    "normalized_category": "EXECUTION_FAILURE",
+    "normalized_correct": false,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "fixture_id": "warehouse_08_cf1_c305ad",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      },
+      {
+        "fixture_id": "warehouse_08_cf2_b6ed47",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      }
+    ],
+    "normalized_sql": "SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) FILTER (WHERE pol.ordered_qty - COALESCE((SELECT SUM(r2.received_qty) FROM receipts AS r2 WHERE r2.po_line_id = pol.po_line_id), 0) > 0) > 0",
+    "normalized_sql_hash": "539403f91e2677b9d57b49cceb4176604406b09426289328c6a848a5b6fbcfd6",
+    "parent_measure_ids": [
+      "measure:warehouse_logistics:receipts:received_qty"
+    ],
+    "raw_base": {
+      "fixture_id": "base",
+      "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+      "status": "ERROR"
+    },
+    "raw_category": "EXECUTION_FAILURE",
+    "raw_correct": false,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "fixture_id": "warehouse_08_cf1_c305ad",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      },
+      {
+        "fixture_id": "warehouse_08_cf2_b6ed47",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      }
+    ],
+    "raw_sql": "SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) FILTER (WHERE pol.ordered_qty - COALESCE((SELECT SUM(r2.received_qty) FROM receipts AS r2 WHERE r2.po_line_id = pol.po_line_id), 0) > 0) > 0",
+    "raw_sql_hash": "539403f91e2677b9d57b49cceb4176604406b09426289328c6a848a5b6fbcfd6",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_09",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "delivery_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 1,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "delivery_id"
+        ],
+        "fixture_id": "warehouse_09_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "delivery_id"
+        ],
+        "fixture_id": "warehouse_09_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}')::NUMERIC >= 7",
+    "normalized_sql_hash": "2b12629472015cde5eceac4527d9c0896c2e4f591d6ea7eca354a95cf83e770b",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "delivery_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 1,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "delivery_id"
+        ],
+        "fixture_id": "warehouse_09_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "delivery_id"
+        ],
+        "fixture_id": "warehouse_09_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 1,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT delivery_id\nFROM delivery_events\nWHERE (payload #>> '{temperature_c}')::NUMERIC >= 7",
+    "raw_sql_hash": "2b12629472015cde5eceac4527d9c0896c2e4f591d6ea7eca354a95cf83e770b",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_10",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "product_id",
+        "shipment_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "product_id",
+          "shipment_count"
+        ],
+        "fixture_id": "warehouse_10_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "product_id",
+          "shipment_count"
+        ],
+        "fixture_id": "warehouse_10_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT si.product_id, COUNT(DISTINCT si.shipment_id) AS shipment_count\nFROM shipment_items AS si\nGROUP BY si.product_id",
+    "normalized_sql_hash": "a4f0dca67392e003a1392c8d7c27d9f9b0e4ef16f0b2adfee1031384954e6914",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "product_id",
+        "shipment_count"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "product_id",
+          "shipment_count"
+        ],
+        "fixture_id": "warehouse_10_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "product_id",
+          "shipment_count"
+        ],
+        "fixture_id": "warehouse_10_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT si.product_id, COUNT(DISTINCT si.shipment_id) AS shipment_count\nFROM shipment_items AS si\nGROUP BY si.product_id",
+    "raw_sql_hash": "a4f0dca67392e003a1392c8d7c27d9f9b0e4ef16f0b2adfee1031384954e6914",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_11",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "warehouse_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "warehouse_id"
+        ],
+        "fixture_id": "warehouse_11_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id"
+        ],
+        "fixture_id": "warehouse_11_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT w.warehouse_id\nFROM warehouses AS w\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM inventory_snapshots AS i\n    WHERE i.warehouse_id = w.warehouse_id\n      AND i.on_hand_qty = 0\n);",
+    "normalized_sql_hash": "b84d084b075e9399727f515e1cb2708affba8607a9d1991204d06393ceabbd60",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "warehouse_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "warehouse_id"
+        ],
+        "fixture_id": "warehouse_11_cf1_c305ad",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "warehouse_id"
+        ],
+        "fixture_id": "warehouse_11_cf2_b6ed47",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT w.warehouse_id\nFROM warehouses AS w\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM inventory_snapshots AS i\n    WHERE i.warehouse_id = w.warehouse_id\n      AND i.on_hand_qty = 0\n);",
+    "raw_sql_hash": "b84d084b075e9399727f515e1cb2708affba8607a9d1991204d06393ceabbd60",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_12",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_13",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_01",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "alert_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "alert_id"
+        ],
+        "fixture_id": "risk_01_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "alert_id"
+        ],
+        "fixture_id": "risk_01_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT alert_id FROM alerts WHERE status = 'open';",
+    "normalized_sql_hash": "1ab53badd1e103f31dec2e732f66af0d5497bc9c73c6efbdc7cb73826724c502",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "alert_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "alert_id"
+        ],
+        "fixture_id": "risk_01_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "alert_id"
+        ],
+        "fixture_id": "risk_01_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT alert_id FROM alerts WHERE status = 'open';",
+    "raw_sql_hash": "1ab53badd1e103f31dec2e732f66af0d5497bc9c73c6efbdc7cb73826724c502",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_02",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "risk_score"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_02_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_02_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id,\n           risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS ranked\nWHERE rn = 1",
+    "normalized_sql_hash": "63445da01be218e5031c5560005ba15704b96abb87cc5cf75cd4620c3b68e094",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "risk_score"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 5,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_02_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_02_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 5,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id,\n           risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS ranked\nWHERE rn = 1",
+    "raw_sql_hash": "63445da01be218e5031c5560005ba15704b96abb87cc5cf75cd4620c3b68e094",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_03",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "open_alerts"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 5,
+      "status": "FAIL"
+    },
+    "normalized_category": "RESULT_MISMATCH",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "open_alerts"
+        ],
+        "fixture_id": "risk_03_cf1_c7f14c",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 5,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "open_alerts"
+        ],
+        "fixture_id": "risk_03_cf2_23f78e",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 5,
+        "status": "FAIL"
+      }
+    ],
+    "normalized_sql": "SELECT c.customer_id, COUNT(a.alert_id) FILTER (WHERE a.status = 'open') AS open_alerts\nFROM customers AS c\nJOIN alerts AS a ON a.customer_id = c.customer_id\nGROUP BY c.customer_id",
+    "normalized_sql_hash": "2c3112b8ffa2fa7cec3b3897384fbd33c55c5ef9917075e1def107333f5b032e",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "open_alerts"
+      ],
+      "fixture_id": "base",
+      "reason": "RESULT_MISMATCH",
+      "row_count": 5,
+      "status": "FAIL"
+    },
+    "raw_category": "RESULT_MISMATCH",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "open_alerts"
+        ],
+        "fixture_id": "risk_03_cf1_c7f14c",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 5,
+        "status": "FAIL"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "open_alerts"
+        ],
+        "fixture_id": "risk_03_cf2_23f78e",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 5,
+        "status": "FAIL"
+      }
+    ],
+    "raw_sql": "SELECT c.customer_id, COUNT(a.alert_id) FILTER (WHERE a.status = 'open') AS open_alerts\nFROM customers AS c\nJOIN alerts AS a ON a.customer_id = c.customer_id\nGROUP BY c.customer_id",
+    "raw_sql_hash": "2c3112b8ffa2fa7cec3b3897384fbd33c55c5ef9917075e1def107333f5b032e",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_04",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "account_id",
+        "total_transaction_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "total_transaction_amount"
+        ],
+        "fixture_id": "risk_04_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "total_transaction_amount"
+        ],
+        "fixture_id": "risk_04_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT account_id, SUM(amount) AS total_transaction_amount\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 70\nGROUP BY account_id",
+    "normalized_sql_hash": "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "account_id",
+        "total_transaction_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "account_id",
+          "total_transaction_amount"
+        ],
+        "fixture_id": "risk_04_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "account_id",
+          "total_transaction_amount"
+        ],
+        "fixture_id": "risk_04_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT account_id, SUM(amount) AS total_transaction_amount\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 70\nGROUP BY account_id",
+    "raw_sql_hash": "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_05",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "severity",
+        "investigation_fraction"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "severity",
+          "investigation_fraction"
+        ],
+        "fixture_id": "risk_05_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "severity",
+          "investigation_fraction"
+        ],
+        "fixture_id": "risk_05_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT a.severity, COUNT(*) FILTER (WHERE i.investigation_id IS NOT NULL)::numeric / COUNT(*) AS investigation_fraction\nFROM alerts AS a\nLEFT JOIN investigations AS i ON i.alert_id = a.alert_id\nGROUP BY a.severity\nHAVING COUNT(*) > 0",
+    "normalized_sql_hash": "5f2c2732345031bb5c97fd973e9ecb526cf30d7fc452af0108cfc010a2a6d74c",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "severity",
+        "investigation_fraction"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 4,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "severity",
+          "investigation_fraction"
+        ],
+        "fixture_id": "risk_05_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "severity",
+          "investigation_fraction"
+        ],
+        "fixture_id": "risk_05_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT a.severity, COUNT(*) FILTER (WHERE i.investigation_id IS NOT NULL)::numeric / COUNT(*) AS investigation_fraction\nFROM alerts AS a\nLEFT JOIN investigations AS i ON i.alert_id = a.alert_id\nGROUP BY a.severity\nHAVING COUNT(*) > 0",
+    "raw_sql_hash": "5f2c2732345031bb5c97fd973e9ecb526cf30d7fc452af0108cfc010a2a6d74c",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_06",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_07",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "device_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "device_id"
+        ],
+        "fixture_id": "risk_07_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "device_id"
+        ],
+        "fixture_id": "risk_07_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT le.device_id\nFROM login_events AS le\nJOIN accounts AS a ON a.account_id = le.account_id\nWHERE le.result = 'success'\nGROUP BY le.device_id\nHAVING COUNT(DISTINCT a.account_id) > 1;",
+    "normalized_sql_hash": "7e2cbcbc90af4402b0d69274ccae602729ab7f769eeabb61e248a6125b16aa63",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "device_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "device_id"
+        ],
+        "fixture_id": "risk_07_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "device_id"
+        ],
+        "fixture_id": "risk_07_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT le.device_id\nFROM login_events AS le\nJOIN accounts AS a ON a.account_id = le.account_id\nWHERE le.result = 'success'\nGROUP BY le.device_id\nHAVING COUNT(DISTINCT a.account_id) > 1;",
+    "raw_sql_hash": "7e2cbcbc90af4402b0d69274ccae602729ab7f769eeabb61e248a6125b16aa63",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_08",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "transaction_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "transaction_id"
+        ],
+        "fixture_id": "risk_08_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "transaction_id"
+        ],
+        "fixture_id": "risk_08_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT transaction_id\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 80",
+    "normalized_sql_hash": "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "transaction_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "transaction_id"
+        ],
+        "fixture_id": "risk_08_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "transaction_id"
+        ],
+        "fixture_id": "risk_08_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT transaction_id\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 80",
+    "raw_sql_hash": "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_09",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "risk_score"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_09_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_09_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id, risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS latest\nWHERE rn = 1\nORDER BY risk_score DESC, customer_id\nLIMIT 3",
+    "normalized_sql_hash": "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "risk_score"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_09_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "risk_score"
+        ],
+        "fixture_id": "risk_09_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id, risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS latest\nWHERE rn = 1\nORDER BY risk_score DESC, customer_id\nLIMIT 3",
+    "raw_sql_hash": "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_10",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id"
+        ],
+        "fixture_id": "risk_10_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id"
+        ],
+        "fixture_id": "risk_10_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT DISTINCT a.customer_id\nFROM alerts AS a\nWHERE a.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS w\n    WHERE w.customer_id = a.customer_id\n      AND w.cleared_at IS NOT NULL\n  );",
+    "normalized_sql_hash": "0f705e7c43afbe180d61accd805fce6936ef05b81428cbba6d65b9ef72fa6b3f",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 2,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id"
+        ],
+        "fixture_id": "risk_10_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id"
+        ],
+        "fixture_id": "risk_10_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 2,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT DISTINCT a.customer_id\nFROM alerts AS a\nWHERE a.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS w\n    WHERE w.customer_id = a.customer_id\n      AND w.cleared_at IS NOT NULL\n  );",
+    "raw_sql_hash": "0f705e7c43afbe180d61accd805fce6936ef05b81428cbba6d65b9ef72fa6b3f",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_11",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_12",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "customer_id",
+        "unresolved_watchlist_matches"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "unresolved_watchlist_matches"
+        ],
+        "fixture_id": "risk_12_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 7,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "unresolved_watchlist_matches"
+        ],
+        "fixture_id": "risk_12_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 7,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT c.customer_id, COUNT(wm.match_id) FILTER (WHERE wm.cleared_at IS NULL) AS unresolved_watchlist_matches\nFROM customers AS c\nLEFT JOIN watchlist_matches AS wm ON wm.customer_id = c.customer_id\nGROUP BY c.customer_id",
+    "normalized_sql_hash": "9edd83b847f8ae0ae5d5354e26a090b88c08d968547ede6267db0a89ebaa7910",
+    "parent_measure_ids": [],
+    "raw_base": {
+      "columns": [
+        "customer_id",
+        "unresolved_watchlist_matches"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 6,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "customer_id",
+          "unresolved_watchlist_matches"
+        ],
+        "fixture_id": "risk_12_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 7,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "customer_id",
+          "unresolved_watchlist_matches"
+        ],
+        "fixture_id": "risk_12_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 7,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT c.customer_id, COUNT(wm.match_id) FILTER (WHERE wm.cleared_at IS NULL) AS unresolved_watchlist_matches\nFROM customers AS c\nLEFT JOIN watchlist_matches AS wm ON wm.customer_id = c.customer_id\nGROUP BY c.customer_id",
+    "raw_sql_hash": "9edd83b847f8ae0ae5d5354e26a090b88c08d968547ede6267db0a89ebaa7910",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_13",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": {
+      "columns": [
+        "segment",
+        "average_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "PASS",
+    "normalized_fixtures": [
+      {
+        "columns": [
+          "segment",
+          "average_amount"
+        ],
+        "fixture_id": "risk_13_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "segment",
+          "average_amount"
+        ],
+        "fixture_id": "risk_13_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "normalized_sql": "SELECT c.segment, ROUND(AVG(t.amount), 2) AS average_amount\nFROM transactions AS t\nJOIN accounts AS a ON a.account_id = t.account_id\nJOIN customers AS c ON c.customer_id = a.customer_id\nGROUP BY c.segment",
+    "normalized_sql_hash": "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861",
+    "parent_measure_ids": [
+      "measure:risk_operations:transactions:amount"
+    ],
+    "raw_base": {
+      "columns": [
+        "segment",
+        "average_amount"
+      ],
+      "fixture_id": "base",
+      "reason": "MATCH",
+      "row_count": 3,
+      "status": "PASS"
+    },
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "PASS",
+    "raw_fixtures": [
+      {
+        "columns": [
+          "segment",
+          "average_amount"
+        ],
+        "fixture_id": "risk_13_cf1_c7f14c",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      },
+      {
+        "columns": [
+          "segment",
+          "average_amount"
+        ],
+        "fixture_id": "risk_13_cf2_23f78e",
+        "reason": "MATCH",
+        "row_count": 3,
+        "status": "PASS"
+      }
+    ],
+    "raw_sql": "SELECT c.segment, ROUND(AVG(t.amount), 2) AS average_amount\nFROM transactions AS t\nJOIN accounts AS a ON a.account_id = t.account_id\nJOIN customers AS c ON c.customer_id = a.customer_id\nGROUP BY c.segment",
+    "raw_sql_hash": "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_15",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_16",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_17",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_18",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [],
+    "normalized_sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');",
+    "normalized_sql_hash": "cd05689d26cb20f6ecec0f5cb745b0ee5bc8445ecf9a71797558927cf54fa080",
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [],
+    "raw_sql": "SELECT DISTINCT a.account_id, a.account_name\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active'\n  AND s.starts_on <= DATE '2026-06-30'\n  AND (s.ends_on IS NULL OR s.ends_on >= DATE '2026-06-30');",
+    "raw_sql_hash": "cd05689d26cb20f6ecec0f5cb745b0ee5bc8445ecf9a71797558927cf54fa080",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_19",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "subscription_20",
+    "child_measure_ids": [],
+    "database_id": "subscription_billing",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_15",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_16",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_17",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_18",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_19",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [],
+    "normalized_sql": "SELECT DISTINCT ON (product_id) product_id, snapshot_at, on_hand_qty\nFROM inventory_snapshots\nORDER BY product_id, snapshot_at DESC, snapshot_id DESC;",
+    "normalized_sql_hash": "e5cfe5e7564662540a8b1d2b4a4fdc91777aae3fa3f2e886db4e11a3b8e2f26e",
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [],
+    "raw_sql": "SELECT DISTINCT ON (product_id) product_id, snapshot_at, on_hand_qty\nFROM inventory_snapshots\nORDER BY product_id, snapshot_at DESC, snapshot_id DESC;",
+    "raw_sql_hash": "e5cfe5e7564662540a8b1d2b4a4fdc91777aae3fa3f2e886db4e11a3b8e2f26e",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_20",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "warehouse_21",
+    "child_measure_ids": [],
+    "database_id": "warehouse_logistics",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_15",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_16",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_17",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "BLOCKED_AUTHORITY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_18",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "NEEDS_CLARIFICATION",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_19",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "ANSWER",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "WRONG_GOVERNED_DECISION",
+    "normalized_correct": false,
+    "normalized_diagnostic": "NOT_APPLICABLE",
+    "normalized_fixtures": [],
+    "normalized_sql": "SELECT case_id, customer_id, opened_at, outcome, resolved_at FROM cases WHERE resolved_at IS NULL",
+    "normalized_sql_hash": "f8f71712bae41aca658f9386bbbe473305051e06cc2dec7dcc20e8e4b7386065",
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "WRONG_GOVERNED_DECISION",
+    "raw_correct": false,
+    "raw_diagnostic": "NOT_APPLICABLE",
+    "raw_fixtures": [],
+    "raw_sql": "SELECT case_id, customer_id, opened_at, outcome, resolved_at FROM cases WHERE resolved_at IS NULL",
+    "raw_sql_hash": "f8f71712bae41aca658f9386bbbe473305051e06cc2dec7dcc20e8e4b7386065",
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_21",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  },
+  {
+    "case_id": "risk_22",
+    "child_measure_ids": [],
+    "database_id": "risk_operations",
+    "decision": "BLOCKED_POLICY",
+    "fanout_relationship_ids": [],
+    "normalization_reason": "NO_SQL",
+    "normalization_status": "UNCHANGED",
+    "normalized_base": null,
+    "normalized_category": "CORRECT",
+    "normalized_correct": true,
+    "normalized_diagnostic": "NO_SQL",
+    "normalized_fixtures": [],
+    "normalized_sql": null,
+    "normalized_sql_hash": null,
+    "parent_measure_ids": [],
+    "raw_base": null,
+    "raw_category": "CORRECT",
+    "raw_correct": true,
+    "raw_diagnostic": "NO_SQL",
+    "raw_fixtures": [],
+    "raw_sql": null,
+    "raw_sql_hash": null,
+    "rewrite_evidence": {}
+  }
+]

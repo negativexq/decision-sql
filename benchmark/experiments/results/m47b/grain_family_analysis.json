@@ -1,0 +1,229 @@
+{
+  "cases": [
+    {
+      "case_id": "subscription_04",
+      "child_measure_ids": [
+        "measure:subscription_billing:refunds:amount"
+      ],
+      "database_id": "subscription_billing",
+      "decision": "ANSWER",
+      "fanout_relationship_ids": [
+        "relationship:subscription_billing:refund_payment"
+      ],
+      "normalization_reason": "NORMALIZED_CHILD_PREAGGREGATION",
+      "normalization_status": "NORMALIZED",
+      "normalized_base": {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "base",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      "normalized_category": "CORRECT",
+      "normalized_correct": true,
+      "normalized_diagnostic": "PASS",
+      "normalized_fixtures": [
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf1_2db794",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf2_cf6ed1",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf3_multi_refund",
+          "reason": "MATCH",
+          "row_count": 5,
+          "status": "PASS"
+        }
+      ],
+      "normalized_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r__grain.amount__grain_sum), 0) AS net_collected_amount FROM payments AS p JOIN invoices AS i ON i.invoice_id = p.invoice_id LEFT JOIN (SELECT r__source.payment_id, SUM(r__source.amount) AS amount__grain_sum FROM refunds AS r__source GROUP BY r__source.payment_id) AS r__grain ON r__grain.payment_id = p.payment_id WHERE p.status = 'captured' GROUP BY i.account_id",
+      "normalized_sql_hash": "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+      "parent_measure_ids": [
+        "measure:subscription_billing:payments:amount"
+      ],
+      "raw_base": {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "base",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      "raw_category": "RESULT_MISMATCH",
+      "raw_correct": false,
+      "raw_diagnostic": "PARENT_MEASURE_FANOUT",
+      "raw_fixtures": [
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf1_2db794",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf2_cf6ed1",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf3_multi_refund",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 5,
+          "status": "FAIL"
+        }
+      ],
+      "raw_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id;",
+      "raw_sql_hash": "06f8f6d2ec0a4d7aa9a2149ea3ad27d6a61b1c520437a5b101dd6afe37ce7b1f",
+      "rewrite_evidence": {
+        "cardinality": "many_to_one",
+        "child_entity_id": "entity:subscription_billing:refunds",
+        "child_grain": {
+          "entity_id": "entity:subscription_billing:refunds",
+          "key_attribute_ids": [
+            "attribute:subscription_billing:refunds:refund_id"
+          ]
+        },
+        "child_key_attributes": [
+          "attribute:subscription_billing:refunds:payment_id"
+        ],
+        "child_measure_ids": [
+          "measure:subscription_billing:refunds:amount"
+        ],
+        "derived_child_alias": "r__grain",
+        "original_child_alias": "r",
+        "parent_entity_id": "entity:subscription_billing:payments",
+        "parent_key_attributes": [
+          "attribute:subscription_billing:payments:payment_id"
+        ],
+        "parent_measure_ids": [
+          "measure:subscription_billing:payments:amount"
+        ],
+        "relationship_id": "relationship:subscription_billing:refund_payment",
+        "rewritten_aggregate_aliases": {
+          "amount": "amount__grain_sum"
+        }
+      }
+    },
+    {
+      "case_id": "subscription_10",
+      "child_measure_ids": [],
+      "database_id": "subscription_billing",
+      "decision": "NEEDS_CLARIFICATION",
+      "fanout_relationship_ids": [],
+      "normalization_reason": "NO_SQL",
+      "normalization_status": "UNCHANGED",
+      "normalized_base": null,
+      "normalized_category": "WRONG_GOVERNED_DECISION",
+      "normalized_correct": false,
+      "normalized_diagnostic": "NO_SQL",
+      "normalized_fixtures": [],
+      "normalized_sql": null,
+      "normalized_sql_hash": null,
+      "parent_measure_ids": [],
+      "raw_base": null,
+      "raw_category": "WRONG_GOVERNED_DECISION",
+      "raw_correct": false,
+      "raw_diagnostic": "NO_SQL",
+      "raw_fixtures": [],
+      "raw_sql": null,
+      "raw_sql_hash": null,
+      "rewrite_evidence": {}
+    },
+    {
+      "case_id": "warehouse_08",
+      "child_measure_ids": [],
+      "database_id": "warehouse_logistics",
+      "decision": "ANSWER",
+      "fanout_relationship_ids": [],
+      "normalization_reason": "UNCHANGED_ALREADY_SAFE",
+      "normalization_status": "UNCHANGED",
+      "normalized_base": {
+        "fixture_id": "base",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      },
+      "normalized_category": "EXECUTION_FAILURE",
+      "normalized_correct": false,
+      "normalized_diagnostic": "PASS",
+      "normalized_fixtures": [
+        {
+          "fixture_id": "warehouse_08_cf1_c305ad",
+          "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+          "status": "ERROR"
+        },
+        {
+          "fixture_id": "warehouse_08_cf2_b6ed47",
+          "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+          "status": "ERROR"
+        }
+      ],
+      "normalized_sql": "SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) FILTER (WHERE pol.ordered_qty - COALESCE((SELECT SUM(r2.received_qty) FROM receipts AS r2 WHERE r2.po_line_id = pol.po_line_id), 0) > 0) > 0",
+      "normalized_sql_hash": "539403f91e2677b9d57b49cceb4176604406b09426289328c6a848a5b6fbcfd6",
+      "parent_measure_ids": [
+        "measure:warehouse_logistics:receipts:received_qty"
+      ],
+      "raw_base": {
+        "fixture_id": "base",
+        "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+        "status": "ERROR"
+      },
+      "raw_category": "EXECUTION_FAILURE",
+      "raw_correct": false,
+      "raw_diagnostic": "PASS",
+      "raw_fixtures": [
+        {
+          "fixture_id": "warehouse_08_cf1_c305ad",
+          "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+          "status": "ERROR"
+        },
+        {
+          "fixture_id": "warehouse_08_cf2_b6ed47",
+          "reason": "GroupingError:column \"pol.ordered_qty\" must appear in the GROUP BY clause or be used in an aggregate function\nLINE 1: SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.rece...\n                               ^",
+          "status": "ERROR"
+        }
+      ],
+      "raw_sql": "SELECT pol.product_id, pol.ordered_qty - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) FILTER (WHERE pol.ordered_qty - COALESCE((SELECT SUM(r2.received_qty) FROM receipts AS r2 WHERE r2.po_line_id = pol.po_line_id), 0) > 0) > 0",
+      "raw_sql_hash": "539403f91e2677b9d57b49cceb4176604406b09426289328c6a848a5b6fbcfd6",
+      "rewrite_evidence": {}
+    }
+  ],
+  "family_source": "benchmark/audits/m46a/m46a_answerable_coverage.json",
+  "fresh_family": 3,
+  "normalized_correct": 1,
+  "raw_correct": 0
+}

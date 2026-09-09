@@ -510,6 +510,11 @@ def _state_stage_summary(
             "FAIL" if parse_fail else "PASS",
             "SQL_PARSE_ERROR" if parse_fail else None,
             diagnostics=diagnostics,
+            outputs={
+                f"state_{index}": state.get("raw_sql_hash", "")
+                for index, state in enumerate(states)
+                if state.get("raw_sql_hash")
+            },
         )
     )
     if parse_fail:
@@ -531,13 +536,22 @@ def _state_stage_summary(
                     "REJECTED" if semantic_fail else "PASS",
                     "SEMANTIC_REJECTION" if semantic_fail else None,
                     diagnostics=diagnostics,
+                    outputs={"grain": _hash(_canonical(grains))},
                 )
             )
             if semantic_fail:
                 stages.extend(skipped(name) for name in STAGES[8:17])
             else:
                 stages.append(
-                    _stage("GRAIN_NORMALIZATION", "NORMALIZED" if normalized else "UNCHANGED")
+                    _stage(
+                        "GRAIN_NORMALIZATION",
+                        "NORMALIZED" if normalized else "UNCHANGED",
+                        outputs={
+                            f"state_{index}": state.get("selected_sql_hash", "")
+                            for index, state in enumerate(states)
+                            if state.get("selected_sql_hash")
+                        },
+                    )
                 )
                 stages.extend(
                     _stage(name, "PASS" if normalized else "NOT_APPLICABLE")
@@ -558,12 +572,27 @@ def _state_stage_summary(
                         stages.extend(skipped(name) for name in STAGES[15:17])
                     else:
                         stages.append(_stage("COST_GATE", "PASS"))
-                        stages.append(_stage("QUERY_PLAN", "PASS"))
+                        stages.append(
+                            _stage(
+                                "QUERY_PLAN",
+                                "PASS",
+                                outputs={
+                                    f"state_{index}": _hash(_canonical(state.get("plan", {})))
+                                    for index, state in enumerate(states)
+                                    if state.get("plan")
+                                },
+                            )
+                        )
                         stages.append(
                             _stage(
                                 "EXECUTION",
                                 "FAIL" if execution_fail else "PASS",
                                 "EXECUTION_ERROR" if execution_fail else None,
+                                outputs={
+                                    f"state_{index}": _hash(_canonical(state.get("execution", {})))
+                                    for index, state in enumerate(states)
+                                    if state.get("execution")
+                                },
                             )
                         )
     failure_order = [
@@ -860,6 +889,11 @@ def _overlay(
         full_correct = bool(
             states and all(state["outcome"].get("result_contract_outcome") for state in states)
         )
+        execution_hashes = [
+            _hash(_canonical(_runtime_outcome(state["outcome"]).get("execution", {})))
+            for state in states
+            if _runtime_outcome(state["outcome"]).get("execution")
+        ]
         if not parse_ok:
             divergence = "SUBMISSION_CONTRACT"
         elif behavior == "ANSWERABLE" and decision != "ANSWER":
@@ -900,6 +934,7 @@ def _overlay(
                 and not parsed.get("sql"),
                 "base_correct": base_correct,
                 "full_counterfactual_correct": full_correct,
+                "execution_result_hashes": execution_hashes,
                 "first_runtime_failure_stage": trace_by_id[case_id]["first_runtime_failure_stage"],
                 "runtime_failure_statuses": [
                     _outcome_status(state["outcome"])
@@ -1030,6 +1065,128 @@ def _token_accounting(records_by_arm: dict[str, list[dict[str, Any]]]) -> dict[s
     result["source"] = "provider_metadata.usage.prompt_tokens"
     result["historical_null_path_confirmed"] = True
     return result
+
+
+def _trace_stage_output(trace: dict[str, Any], stage_name: str) -> dict[str, str]:
+    for stage in trace["stages"]:
+        if stage["stage"] == stage_name:
+            return cast(dict[str, str], stage.get("output_hashes", {}))
+    return {}
+
+
+def _m50c_posthoc(
+    case_ids: list[str],
+    parsed_by_arm: dict[str, list[dict[str, Any]]],
+    replay: dict[str, dict[str, Any]],
+) -> None:
+    parsed = {
+        arm: {row["case_id"]: row for row in records} for arm, records in parsed_by_arm.items()
+    }
+    overlays = {
+        arm: {row["case_id"]: row for row in replay[arm]["overlays"]}
+        for arm in ("CONTROL", "TREATMENT")
+    }
+    traces = {
+        arm: {trace["response_identity"]["case_id"]: trace for trace in replay[arm]["traces"]}
+        for arm in ("CONTROL", "TREATMENT")
+    }
+    decision_matrix: Counter[str] = Counter()
+    rows: list[dict[str, Any]] = []
+    for case_id in case_ids:
+        c_decision = parsed["CONTROL"][case_id].get("parsed_submission", {}).get("decision")
+        t_decision = parsed["TREATMENT"][case_id].get("parsed_submission", {}).get("decision")
+        decision_matrix[f"{c_decision or 'INVALID'}->{t_decision or 'INVALID'}"] += 1
+        c = overlays["CONTROL"][case_id]
+        t = overlays["TREATMENT"][case_id]
+        rows.append(
+            {
+                "case_id": case_id,
+                "control_decision": c_decision,
+                "treatment_decision": t_decision,
+                "control_correct": c["full_counterfactual_correct"]
+                if c["truth_behavior"] == "ANSWERABLE"
+                else c["governance_correct"],
+                "treatment_correct": t["full_counterfactual_correct"]
+                if t["truth_behavior"] == "ANSWERABLE"
+                else t["governance_correct"],
+                "control_divergence": c["first_evaluator_divergence_stage"],
+                "treatment_divergence": t["first_evaluator_divergence_stage"],
+            }
+        )
+    _dump(AUDIT / "m50c1_m50c_decision_transition_matrix.json", dict(decision_matrix))
+    targets = {"subscription_06", "warehouse_08", "warehouse_13"}
+    _dump(
+        AUDIT / "m50c1_m50c_target_analysis.json",
+        [row for row in rows if row["case_id"] in targets],
+    )
+    _dump(
+        AUDIT / "m50c1_m50c_governance_trace_analysis.json",
+        [
+            row
+            for row in rows
+            if row["case_id"] not in targets
+            and row["case_id"]
+            in {
+                item["case_id"]
+                for item in rows
+                if item["control_decision"] != "ANSWER" or item["treatment_decision"] != "ANSWER"
+            }
+        ],
+    )
+    sql_rows: list[dict[str, Any]] = []
+    for case_id in case_ids:
+        c_submission = parsed["CONTROL"][case_id].get("parsed_submission") or {}
+        t_submission = parsed["TREATMENT"][case_id].get("parsed_submission") or {}
+        if c_submission.get("decision") != "ANSWER" or t_submission.get("decision") != "ANSWER":
+            continue
+        c_candidate = _trace_stage_output(traces["CONTROL"][case_id], "SQL_CANDIDATE").get("sql")
+        t_candidate = _trace_stage_output(traces["TREATMENT"][case_id], "SQL_CANDIDATE").get("sql")
+        c_selected = _trace_stage_output(traces["CONTROL"][case_id], "GRAIN_NORMALIZATION").get(
+            "state_0"
+        )
+        t_selected = _trace_stage_output(traces["TREATMENT"][case_id], "GRAIN_NORMALIZATION").get(
+            "state_0"
+        )
+        c_results = overlays["CONTROL"][case_id]["execution_result_hashes"]
+        t_results = overlays["TREATMENT"][case_id]["execution_result_hashes"]
+        selected_changed = c_selected != t_selected
+        if not selected_changed:
+            classification = "SAME_SELECTED_SQL"
+        elif c_results and t_results and c_results == t_results:
+            classification = "SEMANTICALLY_EQUIVALENT_EXECUTION"
+        elif c_results and t_results:
+            classification = "MATERIAL_RUNTIME_RESULT_CHANGE"
+        else:
+            classification = "UNRESOLVED"
+        sql_rows.append(
+            {
+                "case_id": case_id,
+                "control_candidate_hash": c_candidate,
+                "treatment_candidate_hash": t_candidate,
+                "control_selected_hash": c_selected,
+                "treatment_selected_hash": t_selected,
+                "selected_sql_changed": selected_changed,
+                "control_correct": overlays["CONTROL"][case_id]["full_counterfactual_correct"],
+                "treatment_correct": overlays["TREATMENT"][case_id]["full_counterfactual_correct"],
+                "classification": classification,
+                "control_result_hashes": c_results,
+                "treatment_result_hashes": t_results,
+            }
+        )
+    sql_summary = {
+        "both_answer_count": len(sql_rows),
+        "same_selected_sql": sum(not row["selected_sql_changed"] for row in sql_rows),
+        "different_selected_sql": sum(row["selected_sql_changed"] for row in sql_rows),
+        "material_runtime_result_change": sum(
+            row["classification"] == "MATERIAL_RUNTIME_RESULT_CHANGE" for row in sql_rows
+        ),
+        "equivalent_execution": sum(
+            row["classification"] == "SEMANTICALLY_EQUIVALENT_EXECUTION" for row in sql_rows
+        ),
+        "unresolved": sum(row["classification"] == "UNRESOLVED" for row in sql_rows),
+        "rows": sql_rows,
+    }
+    _dump(AUDIT / "m50c1_m50c_sql_churn.json", sql_summary)
 
 
 def _replay_m48b2() -> dict[str, Any]:
@@ -1175,8 +1332,10 @@ def _replay_m50c(m48b2_result: dict[str, Any]) -> dict[str, Any]:
     services = m48b._runtime_services(catalogs)
     output: dict[str, Any] = {}
     all_overlays: dict[str, list[dict[str, Any]]] = {}
+    parsed_by_arm: dict[str, list[dict[str, Any]]] = {}
     for arm in ("CONTROL", "TREATMENT"):
         parsed, response_hashes = _m50c_records(arm)
+        parsed_by_arm[arm] = parsed
         traces, trace_hash = _trace_corpus(
             requests,
             parsed,
@@ -1211,6 +1370,7 @@ def _replay_m50c(m48b2_result: dict[str, Any]) -> dict[str, Any]:
             "evaluator_divergence_distribution": _divergence_distribution(overlays),
         }
         all_overlays[arm] = overlays
+    _m50c_posthoc(case_ids, parsed_by_arm, output)
     _dump(
         AUDIT / "m50c1_m50c_recovered_metrics.json",
         {

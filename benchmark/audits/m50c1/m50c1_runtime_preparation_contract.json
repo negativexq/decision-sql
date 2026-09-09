@@ -1,0 +1,16 @@
+{
+  "historical_m50c_defect": "m50c used m48b._prepare_state instead of the M48B.1 wrapper",
+  "max_plan_cost": 100000.0,
+  "max_plan_rows": 100000,
+  "planner_contract": "planner-statistics-contract-1",
+  "planner_hash": "a97222f4e036af28120a4ee12d9ef4352513796f54a15d6f2050b56a6ae77863",
+  "preparation": [
+    "reset_or_seed",
+    "apply_opaque_fixture_patch",
+    "commit",
+    "ANALYZE_CURRENT_STATE",
+    "restore restricted-reader schema USAGE",
+    "restore restricted-reader table SELECT"
+  ],
+  "preparation_source": "benchmark/m48b1_runner.py:_prepare_state"
+}

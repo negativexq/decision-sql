@@ -1,0 +1,63 @@
+{
+  "canonical_order": [
+    "INPUT_CONTEXT",
+    "FROZEN_PROVIDER_RESPONSE",
+    "SUBMISSION_PARSE",
+    "DECISION_BRANCH",
+    "SQL_CANDIDATE",
+    "SQL_PARSE",
+    "POLICY",
+    "GRAIN_INPUT_DIAGNOSTIC",
+    "GRAIN_NORMALIZATION",
+    "POST_NORMALIZATION_PARSE",
+    "POST_NORMALIZATION_POLICY",
+    "POST_NORMALIZATION_GRAIN",
+    "RESTRICTED_READER_SETUP",
+    "EXPLAIN",
+    "COST_GATE",
+    "QUERY_PLAN",
+    "EXECUTION",
+    "BASE_RESULT",
+    "COUNTERFACTUAL_RESULT"
+  ],
+  "ephemeral_fields_excluded_from_trace_hash": [
+    "plan_id",
+    "correlation_id",
+    "timestamps"
+  ],
+  "evaluator_first_divergence": "earliest evaluator-only contract divergence; never written into Layer A",
+  "runtime_first_failure": "earliest deterministic runtime stage with FAIL/REJECTED/INFRASTRUCTURE_ERROR",
+  "stages": [
+    "INPUT_CONTEXT",
+    "FROZEN_PROVIDER_RESPONSE",
+    "SUBMISSION_PARSE",
+    "DECISION_BRANCH",
+    "SQL_CANDIDATE",
+    "SQL_PARSE",
+    "POLICY",
+    "GRAIN_INPUT_DIAGNOSTIC",
+    "GRAIN_NORMALIZATION",
+    "POST_NORMALIZATION_PARSE",
+    "POST_NORMALIZATION_POLICY",
+    "POST_NORMALIZATION_GRAIN",
+    "RESTRICTED_READER_SETUP",
+    "EXPLAIN",
+    "COST_GATE",
+    "QUERY_PLAN",
+    "EXECUTION",
+    "BASE_RESULT",
+    "COUNTERFACTUAL_RESULT"
+  ],
+  "statuses": [
+    "PASS",
+    "FAIL",
+    "REJECTED",
+    "NORMALIZED",
+    "UNCHANGED",
+    "NOT_APPLICABLE",
+    "SKIPPED",
+    "INFRASTRUCTURE_ERROR",
+    "INVALID_EVIDENCE"
+  ],
+  "trace_version": "unified-failure-trace-1"
+}

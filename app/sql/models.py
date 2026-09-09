@@ -12,6 +12,7 @@ class SqlSafetyStatus(StrEnum):
     ALLOWED = "ALLOWED"
     SQL_PARSE_ERROR = "SQL_PARSE_ERROR"
     POLICY_REJECTION = "POLICY_REJECTION"
+    SEMANTIC_REJECTION = "SEMANTIC_REJECTION"
     QUERY_COST_REJECTION = "QUERY_COST_REJECTION"
     EXECUTION_ERROR = "EXECUTION_ERROR"
 
@@ -102,6 +103,7 @@ class SqlPlanFailure(BaseModel):
     error: str | None = None
     rejection: PolicyRejection | None = None
     estimate: ExplainEstimate | None = None
+    semantic_reason: str | None = None
 
 
 class SqlExecutionError(BaseModel):

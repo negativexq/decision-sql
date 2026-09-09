@@ -1,0 +1,17 @@
+{
+  "execution_boundary": "accepted QueryPlan via ReadOnlyExecutor",
+  "feature_gate": {
+    "disabled": "legacy path",
+    "enabled": "explicit MeasureCatalog required"
+  },
+  "normalization": "one frozen deterministic output or fail closed",
+  "post_rewrite_gates": [
+    "parse",
+    "policy",
+    "grain",
+    "EXPLAIN",
+    "cost"
+  ],
+  "raw_fallback_after_targeted_failure": false,
+  "validator_admission_for_other_codes": false
+}

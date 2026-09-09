@@ -1,0 +1,67 @@
+{
+  "captured_at_commit": "35d8655ea242ff836fbd4363ea58ffd44036faac",
+  "experiment": "M48A",
+  "phase": "PRE_IMPLEMENTATION",
+  "production_callers": [
+    {
+      "file": "app/text_to_sql/service.py",
+      "methods": [
+        "run",
+        "plan",
+        "execute"
+      ]
+    },
+    {
+      "file": "app/semantics/service.py",
+      "methods": [
+        "run",
+        "plan",
+        "execute"
+      ]
+    },
+    {
+      "file": "app/semantics/routing.py",
+      "methods": [
+        "plan",
+        "execute"
+      ]
+    }
+  ],
+  "required_m48a_order": [
+    "initial parse",
+    "initial policy",
+    "grain diagnostic",
+    "frozen normalization when targeted",
+    "post-normalization parse",
+    "post-normalization policy",
+    "post-normalization grain validation",
+    "EXPLAIN",
+    "cost policy",
+    "QueryPlan",
+    "ReadOnlyExecutor execution"
+  ],
+  "service": {
+    "execution_flow": [
+      "accepted QueryPlan identity check",
+      "ReadOnlyExecutor.configure_transaction",
+      "ReadOnlyExecutor._execute_on_connection"
+    ],
+    "file": "app/sql/service.py",
+    "legacy_semantic_normalization": false,
+    "planning_flow": [
+      "SqlCandidate",
+      "SQLParser.parse",
+      "SQLPolicy.validate",
+      "SQLParser.normalize",
+      "QueryCostGate.explain",
+      "cost policy",
+      "QueryPlan registration"
+    ]
+  },
+  "trust_boundaries": {
+    "cost": "app/execution/cost.py",
+    "execution": "app/execution/reader.py:ReadOnlyExecutor",
+    "initial_policy": "app/sql/policy.py",
+    "plan_registry": "app/sql/service.py:_accepted_plans"
+  }
+}

@@ -132,7 +132,7 @@ class SQLPolicy:
 
     def validate(self, parsed: ParsedSQL) -> PolicyRejection | None:
         expression = parsed.expression
-        if not isinstance(expression, exp.Select):
+        if not isinstance(expression, exp.Query):
             return self._reject(
                 PolicyCode.NON_READ_ONLY_STATEMENT,
                 "Only SELECT statements and SELECT-based CTEs are allowed.",
@@ -232,11 +232,16 @@ class SQLPolicy:
         self, scope: Scope, scopes: tuple[Scope, ...]
     ) -> PolicyRejection | None:
         relations = self._scope_relations(scope)
-        output_aliases = {
-            item.alias_or_name.lower()
-            for item in scope.expression.selects
-            if isinstance(item, exp.Alias) and item.alias_or_name
-        }
+        if isinstance(scope.expression, exp.Select):
+            output_aliases = {
+                item.alias_or_name.lower()
+                for item in scope.expression.selects
+                if isinstance(item, exp.Alias) and item.alias_or_name
+            }
+        elif isinstance(scope.expression, exp.SetOperation):
+            output_aliases = set(self._output_names_from_select(scope.expression.left, scope))
+        else:
+            output_aliases = set()
         for column in self._visible_columns(scope, scopes):
             name = self._identifier_name(column.name)
             qualifier = column.table.lower()

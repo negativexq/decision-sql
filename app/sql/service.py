@@ -21,6 +21,12 @@ from app.provenance.models import (
     recorder_for_identity,
 )
 from app.provenance.sink import NoOpProvenanceSink
+from app.semantics.grain import MeasureCatalog
+from app.semantics.grain_runtime import (
+    GrainRuntimeDecision,
+    GrainRuntimeStatus,
+    RuntimeGrainSafetyCoordinator,
+)
 from app.sql.models import (
     ExplainEstimate,
     PolicyCode,
@@ -56,6 +62,8 @@ class SqlSafetyService:
         catalog: SchemaCatalog | None = None,
         tracer: trace.Tracer | None = None,
         provenance_sink: ProvenanceSink | None = None,
+        measure_catalog: MeasureCatalog | None = None,
+        grain_normalization_enabled: bool = False,
     ) -> None:
         self.settings = settings or get_settings()
         self.reader_engine = reader_engine
@@ -71,6 +79,14 @@ class SqlSafetyService:
         )
         self.tracer = tracer or get_tracer()
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
+        if grain_normalization_enabled and measure_catalog is None:
+            raise ValueError("Grain normalization requires an explicit MeasureCatalog.")
+        self.grain_normalization_enabled = grain_normalization_enabled
+        self.grain_coordinator = (
+            RuntimeGrainSafetyCoordinator(measure_catalog)
+            if grain_normalization_enabled and measure_catalog is not None
+            else None
+        )
         self._accepted_plans: dict[UUID, QueryPlan] = {}
 
     def plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure:
@@ -105,11 +121,46 @@ class SqlSafetyService:
                 len(self._referenced_tables(parsed.expression)),
             )
 
+        parsed_for_plan = parsed
+        if self.grain_normalization_enabled:
+            assert self.grain_coordinator is not None
+            with self.tracer.start_as_current_span("decision_sql.semantic_grain") as span:
+                decision = self.grain_coordinator.inspect(candidate.sql)
+                self._record_grain_decision(span, decision)
+            if decision.status is GrainRuntimeStatus.REJECTED:
+                return self._semantic_failure(decision)
+            if decision.status is GrainRuntimeStatus.NORMALIZED:
+                try:
+                    parsed_for_plan = self.parser.parse(decision.selected_sql)
+                except SQLParseFailure:
+                    return SqlPlanFailure(
+                        status=SqlSafetyStatus.SEMANTIC_REJECTION,
+                        failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
+                        error="Normalized SQL failed post-normalization parsing.",
+                        semantic_reason="POST_NORMALIZATION_PARSE_REJECTED",
+                    )
+                post_rejection = self.policy.validate(parsed_for_plan)
+                if post_rejection:
+                    return SqlPlanFailure(
+                        status=SqlSafetyStatus.SEMANTIC_REJECTION,
+                        failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
+                        error="Normalized SQL failed post-normalization policy validation.",
+                        rejection=post_rejection,
+                        semantic_reason="POST_NORMALIZATION_POLICY_REJECTED",
+                    )
+                if decision.output_diagnostic.code.value not in {"PASS", "NOT_APPLICABLE"}:
+                    return SqlPlanFailure(
+                        status=SqlSafetyStatus.SEMANTIC_REJECTION,
+                        failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
+                        error="Normalized SQL failed post-normalization grain validation.",
+                        semantic_reason="POST_NORMALIZATION_GRAIN_REJECTED",
+                    )
+
         try:
             with self.reader_engine.connect() as connection:
                 with connection.begin():
                     self.executor.configure_transaction(connection)
-                    normalized_sql = self.parser.normalize(parsed)
+                    normalized_sql = self.parser.normalize(parsed_for_plan)
                     with self.tracer.start_as_current_span("decision_sql.explain") as span:
                         try:
                             estimate = self.cost_gate.explain(connection, normalized_sql)
@@ -147,10 +198,10 @@ class SqlSafetyService:
                         correlation_id=candidate.correlation_id,
                         candidate_source=candidate.source,
                         normalized_sql=normalized_sql,
-                        statement_type=type(parsed.expression).__name__,
-                        referenced_tables=self._referenced_tables(parsed.expression),
-                        referenced_columns=self._referenced_columns(parsed.expression),
-                        referenced_functions=self._referenced_functions(parsed.expression),
+                        statement_type=type(parsed_for_plan.expression).__name__,
+                        referenced_tables=self._referenced_tables(parsed_for_plan.expression),
+                        referenced_columns=self._referenced_columns(parsed_for_plan.expression),
+                        referenced_functions=self._referenced_functions(parsed_for_plan.expression),
                         estimate=estimate,
                     )
                     self._accepted_plans[plan.plan_id] = plan
@@ -221,6 +272,8 @@ class SqlSafetyService:
         rejection = (
             result.rejection.code.value
             if isinstance(result, SqlPlanFailure) and result.rejection
+            else result.semantic_reason
+            if isinstance(result, SqlPlanFailure) and result.semantic_reason
             else result.status.value
             if isinstance(result, SqlPlanFailure)
             else None
@@ -259,6 +312,30 @@ class SqlSafetyService:
             status=SqlSafetyStatus.POLICY_REJECTION,
             failure_stage=FailureStage.POLICY_REJECTION,
             rejection=rejection,
+        )
+
+    @staticmethod
+    def _semantic_failure(decision: GrainRuntimeDecision) -> SqlPlanFailure:
+        return SqlPlanFailure(
+            status=SqlSafetyStatus.SEMANTIC_REJECTION,
+            failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
+            error="Candidate SQL failed the semantic grain-safety boundary.",
+            semantic_reason=decision.runtime_reason.value,
+        )
+
+    @staticmethod
+    def _record_grain_decision(span: trace.Span, decision: GrainRuntimeDecision) -> None:
+        span.set_attribute("decision_sql.grain_diagnostic", decision.input_diagnostic.code.value)
+        span.set_attribute(
+            "decision_sql.grain_output_diagnostic", decision.output_diagnostic.code.value
+        )
+        span.set_attribute("decision_sql.grain_normalization_status", decision.status.value)
+        span.set_attribute("decision_sql.grain_normalization_reason", decision.runtime_reason.value)
+        span.set_attribute("decision_sql.grain_input_sql_hash", decision.input_sql_hash)
+        span.set_attribute("decision_sql.grain_selected_sql_hash", decision.selected_sql_hash)
+        span.set_attribute(
+            "decision_sql.semantic_rejected",
+            decision.status is GrainRuntimeStatus.REJECTED,
         )
 
     @staticmethod

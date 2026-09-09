@@ -1,0 +1,328 @@
+{
+  "execution_count": 365,
+  "experiment": "M48A",
+  "failures": [
+    {
+      "case_id": "warehouse_13",
+      "comparison_reason": "RESULT_MISMATCH",
+      "fixture_id": "base",
+      "left": {
+        "execute_ms": 1.96116603910923,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "warehouse_id",
+            "shipped_to_received"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-09T01:51:17.841304Z",
+          "latency_ms": 1.7055419739335775,
+          "plan_id": "a1d6597f-404d-4893-8083-2e8c0d86be4a",
+          "row_count": 3,
+          "rows": [
+            {
+              "shipped_to_received": "0.06000000000000000000",
+              "warehouse_id": 1
+            },
+            {
+              "shipped_to_received": "0.12500000000000000000",
+              "warehouse_id": 2
+            },
+            {
+              "shipped_to_received": "0.10000000000000000000",
+              "warehouse_id": 3
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "executable": true,
+          "normalized_sql": "SELECT w.warehouse_id, CAST(COALESCE(s.shipped_qty, 0) AS DECIMAL) / NULLIF(COALESCE(r.received_qty, 0), 0) AS shipped_to_received FROM warehouses AS w LEFT JOIN (SELECT warehouse_id, SUM(quantity) AS shipped_qty FROM shipments AS s JOIN shipment_items AS i ON i.shipment_id = s.shipment_id GROUP BY warehouse_id) AS s ON s.warehouse_id = w.warehouse_id LEFT JOIN (SELECT po.warehouse_id, SUM(r.received_qty) AS received_qty FROM purchase_orders AS po JOIN purchase_order_lines AS l ON l.po_id = po.po_id JOIN receipts AS r ON r.po_line_id = l.po_line_id GROUP BY po.warehouse_id) AS r ON r.warehouse_id = w.warehouse_id ORDER BY w.warehouse_id",
+          "plan_id": "a1d6597f-404d-4893-8083-2e8c0d86be4a",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [
+            "i.shipment_id",
+            "l.po_id",
+            "l.po_line_id",
+            "po.po_id",
+            "po.warehouse_id",
+            "quantity",
+            "r.po_line_id",
+            "r.received_qty",
+            "r.warehouse_id",
+            "s.shipment_id",
+            "s.shipped_qty",
+            "s.warehouse_id",
+            "w.warehouse_id",
+            "warehouse_id"
+          ],
+          "referenced_functions": [
+            "CAST",
+            "COALESCE",
+            "NULLIF",
+            "SUM"
+          ],
+          "referenced_tables": [
+            "purchase_order_lines",
+            "purchase_orders",
+            "receipts",
+            "shipment_items",
+            "shipments",
+            "warehouses"
+          ],
+          "statement_type": "Select"
+        },
+        "plan_ms": 11.721499962732196,
+        "planned": true
+      },
+      "right": {
+        "executed": false,
+        "plan_failure": {
+          "error": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "failure_stage": "QUERY_COST_REJECTION",
+          "rejection": {
+            "code": "QUERY_TOO_EXPENSIVE",
+            "message": "Query plan exceeds the configured cost policy.",
+            "object": null
+          },
+          "semantic_reason": null,
+          "status": "QUERY_COST_REJECTION"
+        },
+        "plan_ms": 16.959749860689044,
+        "planned": false
+      }
+    },
+    {
+      "case_id": "warehouse_13",
+      "comparison_reason": "RESULT_MISMATCH",
+      "fixture_id": "warehouse_13_cf1_c305ad",
+      "left": {
+        "execute_ms": 1.5695421025156975,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "warehouse_id",
+            "shipped_to_received"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-09T01:51:17.917992Z",
+          "latency_ms": 1.3742500450462103,
+          "plan_id": "43fc73e6-c26c-40e3-a636-b31a257f1900",
+          "row_count": 3,
+          "rows": [
+            {
+              "shipped_to_received": "0.06000000000000000000",
+              "warehouse_id": 1
+            },
+            {
+              "shipped_to_received": "0.12500000000000000000",
+              "warehouse_id": 2
+            },
+            {
+              "shipped_to_received": "0.10000000000000000000",
+              "warehouse_id": 3
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "executable": true,
+          "normalized_sql": "SELECT w.warehouse_id, CAST(COALESCE(s.shipped_qty, 0) AS DECIMAL) / NULLIF(COALESCE(r.received_qty, 0), 0) AS shipped_to_received FROM warehouses AS w LEFT JOIN (SELECT warehouse_id, SUM(quantity) AS shipped_qty FROM shipments AS s JOIN shipment_items AS i ON i.shipment_id = s.shipment_id GROUP BY warehouse_id) AS s ON s.warehouse_id = w.warehouse_id LEFT JOIN (SELECT po.warehouse_id, SUM(r.received_qty) AS received_qty FROM purchase_orders AS po JOIN purchase_order_lines AS l ON l.po_id = po.po_id JOIN receipts AS r ON r.po_line_id = l.po_line_id GROUP BY po.warehouse_id) AS r ON r.warehouse_id = w.warehouse_id ORDER BY w.warehouse_id",
+          "plan_id": "43fc73e6-c26c-40e3-a636-b31a257f1900",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [
+            "i.shipment_id",
+            "l.po_id",
+            "l.po_line_id",
+            "po.po_id",
+            "po.warehouse_id",
+            "quantity",
+            "r.po_line_id",
+            "r.received_qty",
+            "r.warehouse_id",
+            "s.shipment_id",
+            "s.shipped_qty",
+            "s.warehouse_id",
+            "w.warehouse_id",
+            "warehouse_id"
+          ],
+          "referenced_functions": [
+            "CAST",
+            "COALESCE",
+            "NULLIF",
+            "SUM"
+          ],
+          "referenced_tables": [
+            "purchase_order_lines",
+            "purchase_orders",
+            "receipts",
+            "shipment_items",
+            "shipments",
+            "warehouses"
+          ],
+          "statement_type": "Select"
+        },
+        "plan_ms": 6.587000098079443,
+        "planned": true
+      },
+      "right": {
+        "executed": false,
+        "plan_failure": {
+          "error": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "failure_stage": "QUERY_COST_REJECTION",
+          "rejection": {
+            "code": "QUERY_TOO_EXPENSIVE",
+            "message": "Query plan exceeds the configured cost policy.",
+            "object": null
+          },
+          "semantic_reason": null,
+          "status": "QUERY_COST_REJECTION"
+        },
+        "plan_ms": 8.447249885648489,
+        "planned": false
+      }
+    },
+    {
+      "case_id": "warehouse_13",
+      "comparison_reason": "RESULT_MISMATCH",
+      "fixture_id": "warehouse_13_cf2_b6ed47",
+      "left": {
+        "execute_ms": 1.6270829364657402,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "warehouse_id",
+            "shipped_to_received"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-09T01:51:17.989814Z",
+          "latency_ms": 1.4315831940621138,
+          "plan_id": "736d71db-88af-47c7-aee5-ac967fb938c4",
+          "row_count": 3,
+          "rows": [
+            {
+              "shipped_to_received": "0.06000000000000000000",
+              "warehouse_id": 1
+            },
+            {
+              "shipped_to_received": "0.12500000000000000000",
+              "warehouse_id": 2
+            },
+            {
+              "shipped_to_received": "0.10000000000000000000",
+              "warehouse_id": 3
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Sort",
+            "total_cost": 280.92
+          },
+          "executable": true,
+          "normalized_sql": "SELECT w.warehouse_id, CAST(COALESCE(s.shipped_qty, 0) AS DECIMAL) / NULLIF(COALESCE(r.received_qty, 0), 0) AS shipped_to_received FROM warehouses AS w LEFT JOIN (SELECT warehouse_id, SUM(quantity) AS shipped_qty FROM shipments AS s JOIN shipment_items AS i ON i.shipment_id = s.shipment_id GROUP BY warehouse_id) AS s ON s.warehouse_id = w.warehouse_id LEFT JOIN (SELECT po.warehouse_id, SUM(r.received_qty) AS received_qty FROM purchase_orders AS po JOIN purchase_order_lines AS l ON l.po_id = po.po_id JOIN receipts AS r ON r.po_line_id = l.po_line_id GROUP BY po.warehouse_id) AS r ON r.warehouse_id = w.warehouse_id ORDER BY w.warehouse_id",
+          "plan_id": "736d71db-88af-47c7-aee5-ac967fb938c4",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [
+            "i.shipment_id",
+            "l.po_id",
+            "l.po_line_id",
+            "po.po_id",
+            "po.warehouse_id",
+            "quantity",
+            "r.po_line_id",
+            "r.received_qty",
+            "r.warehouse_id",
+            "s.shipment_id",
+            "s.shipped_qty",
+            "s.warehouse_id",
+            "w.warehouse_id",
+            "warehouse_id"
+          ],
+          "referenced_functions": [
+            "CAST",
+            "COALESCE",
+            "NULLIF",
+            "SUM"
+          ],
+          "referenced_tables": [
+            "purchase_order_lines",
+            "purchase_orders",
+            "receipts",
+            "shipment_items",
+            "shipments",
+            "warehouses"
+          ],
+          "statement_type": "Select"
+        },
+        "plan_ms": 8.538207970559597,
+        "planned": true
+      },
+      "right": {
+        "executed": false,
+        "plan_failure": {
+          "error": null,
+          "estimate": {
+            "plan_rows": 810,
+            "top_level_node_type": "Index Only Scan",
+            "total_cost": 114604.02
+          },
+          "failure_stage": "QUERY_COST_REJECTION",
+          "rejection": {
+            "code": "QUERY_TOO_EXPENSIVE",
+            "message": "Query plan exceeds the configured cost policy.",
+            "object": null
+          },
+          "semantic_reason": null,
+          "status": "QUERY_COST_REJECTION"
+        },
+        "plan_ms": 10.170166846364737,
+        "planned": false
+      }
+    }
+  ],
+  "fixture_comparisons": 184,
+  "mode": "REFERENCE_RUNTIME_REPLAY",
+  "passed": false,
+  "plan_count": 365,
+  "reference_noop": {
+    "modified": 0,
+    "parent_measure_fanout": 0,
+    "references": 120
+  },
+  "references_analyzed": 120
+}

@@ -423,6 +423,11 @@ def m47b_runtime_replay() -> dict[str, Any]:
     by_id = {case["case_id"]: case for case in answerable}
     catalogs, _inventory = _build_catalogs(answerable)
     parsed_path = ROOT / "experiments" / "results" / "m47b" / "parsed_submissions.jsonl"
+    expected_parsed_hash = (
+        "efa7a016b39a913e070dfee0591994facb9ffbe43363527d4ba2504c5821ad66"
+    )
+    if sha256_file(parsed_path) != expected_parsed_hash:
+        raise RuntimeError("M48A_M47B_PARSED_SUBMISSION_HASH_MISMATCH")
     submissions = [json.loads(line) for line in parsed_path.read_text().splitlines()]
     submissions.sort(key=lambda item: int(item["case_index"]))
     if len(submissions) != 90 or len({item["case_id"] for item in submissions}) != 90:

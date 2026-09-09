@@ -1,0 +1,882 @@
+{
+  "case_id": "commerce_01",
+  "passed": true,
+  "request_hash": "b226e74fd552549bbfb47ad2cb55378647f1b3cd94a5d2691518ba2a3809d7db",
+  "response_hash": "63b16554a791611e360b1f227b304d76ea992c1f7dfc1176fdf41d1677ad80c0",
+  "states": [
+    {
+      "outcome": {
+        "execution_attempted": true,
+        "grain": {
+          "child_measure_ids": [],
+          "fanout_relationship_ids": [],
+          "input_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "input_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "normalization_reason": null,
+          "normalization_status": null,
+          "output_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "parent_measure_ids": [],
+          "runtime_reason": "ALREADY_SAFE",
+          "selected_sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';",
+          "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "status": "UNCHANGED"
+        },
+        "normalization_reason": "ALREADY_SAFE",
+        "normalization_status": "UNCHANGED",
+        "plan_rows": 47,
+        "query_plan_issued": true,
+        "raw_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "result_contract_outcome": true,
+        "runtime": {
+          "comparison_reason": "MATCH",
+          "execute_ms": 1.7816249746829271,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "customer_id",
+              "customer_name"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T10:55:54.625908Z",
+            "latency_ms": 1.5487910714000463,
+            "plan_id": "8395c484-f810-45f6-b835-2107e8e5f353",
+            "row_count": 48,
+            "rows": [
+              {
+                "customer_id": 5,
+                "customer_name": "Customer 5"
+              },
+              {
+                "customer_id": 10,
+                "customer_name": "Customer 10"
+              },
+              {
+                "customer_id": 15,
+                "customer_name": "Customer 15"
+              },
+              {
+                "customer_id": 20,
+                "customer_name": "Customer 20"
+              },
+              {
+                "customer_id": 25,
+                "customer_name": "Customer 25"
+              },
+              {
+                "customer_id": 30,
+                "customer_name": "Customer 30"
+              },
+              {
+                "customer_id": 35,
+                "customer_name": "Customer 35"
+              },
+              {
+                "customer_id": 40,
+                "customer_name": "Customer 40"
+              },
+              {
+                "customer_id": 45,
+                "customer_name": "Customer 45"
+              },
+              {
+                "customer_id": 50,
+                "customer_name": "Customer 50"
+              },
+              {
+                "customer_id": 60,
+                "customer_name": "Customer 60"
+              },
+              {
+                "customer_id": 65,
+                "customer_name": "Customer 65"
+              },
+              {
+                "customer_id": 70,
+                "customer_name": "Customer 70"
+              },
+              {
+                "customer_id": 75,
+                "customer_name": "Customer 75"
+              },
+              {
+                "customer_id": 80,
+                "customer_name": "Customer 80"
+              },
+              {
+                "customer_id": 85,
+                "customer_name": "Customer 85"
+              },
+              {
+                "customer_id": 90,
+                "customer_name": "Customer 90"
+              },
+              {
+                "customer_id": 95,
+                "customer_name": "Customer 95"
+              },
+              {
+                "customer_id": 100,
+                "customer_name": "Customer 100"
+              },
+              {
+                "customer_id": 105,
+                "customer_name": "Customer 105"
+              },
+              {
+                "customer_id": 115,
+                "customer_name": "Customer 115"
+              },
+              {
+                "customer_id": 120,
+                "customer_name": "Customer 120"
+              },
+              {
+                "customer_id": 125,
+                "customer_name": "Customer 125"
+              },
+              {
+                "customer_id": 130,
+                "customer_name": "Customer 130"
+              },
+              {
+                "customer_id": 135,
+                "customer_name": "Customer 135"
+              },
+              {
+                "customer_id": 140,
+                "customer_name": "Customer 140"
+              },
+              {
+                "customer_id": 145,
+                "customer_name": "Customer 145"
+              },
+              {
+                "customer_id": 150,
+                "customer_name": "Customer 150"
+              },
+              {
+                "customer_id": 155,
+                "customer_name": "Customer 155"
+              },
+              {
+                "customer_id": 160,
+                "customer_name": "Customer 160"
+              },
+              {
+                "customer_id": 170,
+                "customer_name": "Customer 170"
+              },
+              {
+                "customer_id": 175,
+                "customer_name": "Customer 175"
+              },
+              {
+                "customer_id": 180,
+                "customer_name": "Customer 180"
+              },
+              {
+                "customer_id": 185,
+                "customer_name": "Customer 185"
+              },
+              {
+                "customer_id": 190,
+                "customer_name": "Customer 190"
+              },
+              {
+                "customer_id": 195,
+                "customer_name": "Customer 195"
+              },
+              {
+                "customer_id": 200,
+                "customer_name": "Customer 200"
+              },
+              {
+                "customer_id": 205,
+                "customer_name": "Customer 205"
+              },
+              {
+                "customer_id": 210,
+                "customer_name": "Customer 210"
+              },
+              {
+                "customer_id": 215,
+                "customer_name": "Customer 215"
+              },
+              {
+                "customer_id": 225,
+                "customer_name": "Customer 225"
+              },
+              {
+                "customer_id": 230,
+                "customer_name": "Customer 230"
+              },
+              {
+                "customer_id": 235,
+                "customer_name": "Customer 235"
+              },
+              {
+                "customer_id": 240,
+                "customer_name": "Customer 240"
+              },
+              {
+                "customer_id": 245,
+                "customer_name": "Customer 245"
+              },
+              {
+                "customer_id": 250,
+                "customer_name": "Customer 250"
+              },
+              {
+                "customer_id": 255,
+                "customer_name": "Customer 255"
+              },
+              {
+                "customer_id": 260,
+                "customer_name": "Customer 260"
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 47,
+              "top_level_node_type": "Seq Scan",
+              "total_cost": 6.25
+            },
+            "executable": true,
+            "normalized_sql": "SELECT customer_id, customer_name FROM customers WHERE is_active = TRUE AND region = 'North'",
+            "plan_id": "8395c484-f810-45f6-b835-2107e8e5f353",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [
+              "customer_id",
+              "customer_name",
+              "is_active",
+              "region"
+            ],
+            "referenced_functions": [
+              "AND"
+            ],
+            "referenced_tables": [
+              "customers"
+            ],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.362458035349846,
+          "planned": true,
+          "result_correct": true
+        },
+        "runtime_disposition": "ALLOWED",
+        "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "total_cost": 6.25
+      },
+      "preparation_hash": "f60457d1fbb6064207a325bf80126b826c66d3d015aa2e005a54ac33862a84fb",
+      "state_id": "base"
+    },
+    {
+      "outcome": {
+        "execution_attempted": true,
+        "grain": {
+          "child_measure_ids": [],
+          "fanout_relationship_ids": [],
+          "input_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "input_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "normalization_reason": null,
+          "normalization_status": null,
+          "output_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "parent_measure_ids": [],
+          "runtime_reason": "ALREADY_SAFE",
+          "selected_sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';",
+          "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "status": "UNCHANGED"
+        },
+        "normalization_reason": "ALREADY_SAFE",
+        "normalization_status": "UNCHANGED",
+        "plan_rows": 48,
+        "query_plan_issued": true,
+        "raw_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "result_contract_outcome": true,
+        "runtime": {
+          "comparison_reason": "MATCH",
+          "execute_ms": 1.238041091710329,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "customer_id",
+              "customer_name"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T10:55:54.792308Z",
+            "latency_ms": 1.1012919712811708,
+            "plan_id": "b760cf4f-feac-4dda-be97-6f6fc219651e",
+            "row_count": 48,
+            "rows": [
+              {
+                "customer_id": 5,
+                "customer_name": "Customer 5"
+              },
+              {
+                "customer_id": 10,
+                "customer_name": "Customer 10"
+              },
+              {
+                "customer_id": 15,
+                "customer_name": "Customer 15"
+              },
+              {
+                "customer_id": 20,
+                "customer_name": "Customer 20"
+              },
+              {
+                "customer_id": 25,
+                "customer_name": "Customer 25"
+              },
+              {
+                "customer_id": 30,
+                "customer_name": "Customer 30"
+              },
+              {
+                "customer_id": 35,
+                "customer_name": "Customer 35"
+              },
+              {
+                "customer_id": 40,
+                "customer_name": "Customer 40"
+              },
+              {
+                "customer_id": 45,
+                "customer_name": "Customer 45"
+              },
+              {
+                "customer_id": 50,
+                "customer_name": "Customer 50"
+              },
+              {
+                "customer_id": 60,
+                "customer_name": "Customer 60"
+              },
+              {
+                "customer_id": 65,
+                "customer_name": "Customer 65"
+              },
+              {
+                "customer_id": 70,
+                "customer_name": "Customer 70"
+              },
+              {
+                "customer_id": 75,
+                "customer_name": "Customer 75"
+              },
+              {
+                "customer_id": 80,
+                "customer_name": "Customer 80"
+              },
+              {
+                "customer_id": 85,
+                "customer_name": "Customer 85"
+              },
+              {
+                "customer_id": 90,
+                "customer_name": "Customer 90"
+              },
+              {
+                "customer_id": 95,
+                "customer_name": "Customer 95"
+              },
+              {
+                "customer_id": 100,
+                "customer_name": "Customer 100"
+              },
+              {
+                "customer_id": 105,
+                "customer_name": "Customer 105"
+              },
+              {
+                "customer_id": 115,
+                "customer_name": "Customer 115"
+              },
+              {
+                "customer_id": 120,
+                "customer_name": "Customer 120"
+              },
+              {
+                "customer_id": 125,
+                "customer_name": "Customer 125"
+              },
+              {
+                "customer_id": 130,
+                "customer_name": "Customer 130"
+              },
+              {
+                "customer_id": 135,
+                "customer_name": "Customer 135"
+              },
+              {
+                "customer_id": 140,
+                "customer_name": "Customer 140"
+              },
+              {
+                "customer_id": 145,
+                "customer_name": "Customer 145"
+              },
+              {
+                "customer_id": 150,
+                "customer_name": "Customer 150"
+              },
+              {
+                "customer_id": 155,
+                "customer_name": "Customer 155"
+              },
+              {
+                "customer_id": 160,
+                "customer_name": "Customer 160"
+              },
+              {
+                "customer_id": 170,
+                "customer_name": "Customer 170"
+              },
+              {
+                "customer_id": 175,
+                "customer_name": "Customer 175"
+              },
+              {
+                "customer_id": 180,
+                "customer_name": "Customer 180"
+              },
+              {
+                "customer_id": 185,
+                "customer_name": "Customer 185"
+              },
+              {
+                "customer_id": 190,
+                "customer_name": "Customer 190"
+              },
+              {
+                "customer_id": 195,
+                "customer_name": "Customer 195"
+              },
+              {
+                "customer_id": 200,
+                "customer_name": "Customer 200"
+              },
+              {
+                "customer_id": 205,
+                "customer_name": "Customer 205"
+              },
+              {
+                "customer_id": 210,
+                "customer_name": "Customer 210"
+              },
+              {
+                "customer_id": 215,
+                "customer_name": "Customer 215"
+              },
+              {
+                "customer_id": 225,
+                "customer_name": "Customer 225"
+              },
+              {
+                "customer_id": 230,
+                "customer_name": "Customer 230"
+              },
+              {
+                "customer_id": 235,
+                "customer_name": "Customer 235"
+              },
+              {
+                "customer_id": 240,
+                "customer_name": "Customer 240"
+              },
+              {
+                "customer_id": 245,
+                "customer_name": "Customer 245"
+              },
+              {
+                "customer_id": 250,
+                "customer_name": "Customer 250"
+              },
+              {
+                "customer_id": 255,
+                "customer_name": "Customer 255"
+              },
+              {
+                "customer_id": 260,
+                "customer_name": "Customer 260"
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 48,
+              "top_level_node_type": "Seq Scan",
+              "total_cost": 6.28
+            },
+            "executable": true,
+            "normalized_sql": "SELECT customer_id, customer_name FROM customers WHERE is_active = TRUE AND region = 'North'",
+            "plan_id": "b760cf4f-feac-4dda-be97-6f6fc219651e",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [
+              "customer_id",
+              "customer_name",
+              "is_active",
+              "region"
+            ],
+            "referenced_functions": [
+              "AND"
+            ],
+            "referenced_tables": [
+              "customers"
+            ],
+            "statement_type": "Select"
+          },
+          "plan_ms": 1.8238751217722893,
+          "planned": true,
+          "result_correct": true
+        },
+        "runtime_disposition": "ALLOWED",
+        "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "total_cost": 6.28
+      },
+      "preparation_hash": "aeb51e49b178dc79513fe48fd8db3847fa950caa1e198008c174daa811c304bc",
+      "state_id": "cf01"
+    },
+    {
+      "outcome": {
+        "execution_attempted": true,
+        "grain": {
+          "child_measure_ids": [],
+          "fanout_relationship_ids": [],
+          "input_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "input_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "normalization_reason": null,
+          "normalization_status": null,
+          "output_diagnostic": {
+            "aggregate_expressions": [],
+            "code": "NOT_APPLICABLE",
+            "evidence": {},
+            "fanout_edges": [],
+            "grouping_columns": [],
+            "measure_ids": [],
+            "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+            "native_grains": []
+          },
+          "parent_measure_ids": [],
+          "runtime_reason": "ALREADY_SAFE",
+          "selected_sql": "SELECT customer_id, customer_name\nFROM customers\nWHERE is_active = TRUE\n  AND region = 'North';",
+          "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+          "status": "UNCHANGED"
+        },
+        "normalization_reason": "ALREADY_SAFE",
+        "normalization_status": "UNCHANGED",
+        "plan_rows": 48,
+        "query_plan_issued": true,
+        "raw_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "result_contract_outcome": true,
+        "runtime": {
+          "comparison_reason": "MATCH",
+          "execute_ms": 1.4242499601095915,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "customer_id",
+              "customer_name"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T10:55:54.955169Z",
+            "latency_ms": 1.2719579972326756,
+            "plan_id": "b95bdd0f-3c92-4488-8d57-a573d83e596d",
+            "row_count": 49,
+            "rows": [
+              {
+                "customer_id": 5,
+                "customer_name": "Customer 5"
+              },
+              {
+                "customer_id": 10,
+                "customer_name": "Customer 10"
+              },
+              {
+                "customer_id": 15,
+                "customer_name": "Customer 15"
+              },
+              {
+                "customer_id": 20,
+                "customer_name": "Customer 20"
+              },
+              {
+                "customer_id": 25,
+                "customer_name": "Customer 25"
+              },
+              {
+                "customer_id": 30,
+                "customer_name": "Customer 30"
+              },
+              {
+                "customer_id": 35,
+                "customer_name": "Customer 35"
+              },
+              {
+                "customer_id": 40,
+                "customer_name": "Customer 40"
+              },
+              {
+                "customer_id": 45,
+                "customer_name": "Customer 45"
+              },
+              {
+                "customer_id": 50,
+                "customer_name": "Customer 50"
+              },
+              {
+                "customer_id": 60,
+                "customer_name": "Customer 60"
+              },
+              {
+                "customer_id": 65,
+                "customer_name": "Customer 65"
+              },
+              {
+                "customer_id": 70,
+                "customer_name": "Customer 70"
+              },
+              {
+                "customer_id": 75,
+                "customer_name": "Customer 75"
+              },
+              {
+                "customer_id": 80,
+                "customer_name": "Customer 80"
+              },
+              {
+                "customer_id": 85,
+                "customer_name": "Customer 85"
+              },
+              {
+                "customer_id": 90,
+                "customer_name": "Customer 90"
+              },
+              {
+                "customer_id": 95,
+                "customer_name": "Customer 95"
+              },
+              {
+                "customer_id": 100,
+                "customer_name": "Customer 100"
+              },
+              {
+                "customer_id": 105,
+                "customer_name": "Customer 105"
+              },
+              {
+                "customer_id": 115,
+                "customer_name": "Customer 115"
+              },
+              {
+                "customer_id": 120,
+                "customer_name": "Customer 120"
+              },
+              {
+                "customer_id": 125,
+                "customer_name": "Customer 125"
+              },
+              {
+                "customer_id": 130,
+                "customer_name": "Customer 130"
+              },
+              {
+                "customer_id": 135,
+                "customer_name": "Customer 135"
+              },
+              {
+                "customer_id": 140,
+                "customer_name": "Customer 140"
+              },
+              {
+                "customer_id": 145,
+                "customer_name": "Customer 145"
+              },
+              {
+                "customer_id": 150,
+                "customer_name": "Customer 150"
+              },
+              {
+                "customer_id": 155,
+                "customer_name": "Customer 155"
+              },
+              {
+                "customer_id": 160,
+                "customer_name": "Customer 160"
+              },
+              {
+                "customer_id": 170,
+                "customer_name": "Customer 170"
+              },
+              {
+                "customer_id": 175,
+                "customer_name": "Customer 175"
+              },
+              {
+                "customer_id": 180,
+                "customer_name": "Customer 180"
+              },
+              {
+                "customer_id": 185,
+                "customer_name": "Customer 185"
+              },
+              {
+                "customer_id": 190,
+                "customer_name": "Customer 190"
+              },
+              {
+                "customer_id": 195,
+                "customer_name": "Customer 195"
+              },
+              {
+                "customer_id": 200,
+                "customer_name": "Customer 200"
+              },
+              {
+                "customer_id": 205,
+                "customer_name": "Customer 205"
+              },
+              {
+                "customer_id": 210,
+                "customer_name": "Customer 210"
+              },
+              {
+                "customer_id": 215,
+                "customer_name": "Customer 215"
+              },
+              {
+                "customer_id": 225,
+                "customer_name": "Customer 225"
+              },
+              {
+                "customer_id": 230,
+                "customer_name": "Customer 230"
+              },
+              {
+                "customer_id": 235,
+                "customer_name": "Customer 235"
+              },
+              {
+                "customer_id": 240,
+                "customer_name": "Customer 240"
+              },
+              {
+                "customer_id": 245,
+                "customer_name": "Customer 245"
+              },
+              {
+                "customer_id": 250,
+                "customer_name": "Customer 250"
+              },
+              {
+                "customer_id": 255,
+                "customer_name": "Customer 255"
+              },
+              {
+                "customer_id": 260,
+                "customer_name": "Customer 260"
+              },
+              {
+                "customer_id": 900003,
+                "customer_name": "Fixture Active North"
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 48,
+              "top_level_node_type": "Seq Scan",
+              "total_cost": 6.26
+            },
+            "executable": true,
+            "normalized_sql": "SELECT customer_id, customer_name FROM customers WHERE is_active = TRUE AND region = 'North'",
+            "plan_id": "b95bdd0f-3c92-4488-8d57-a573d83e596d",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [
+              "customer_id",
+              "customer_name",
+              "is_active",
+              "region"
+            ],
+            "referenced_functions": [
+              "AND"
+            ],
+            "referenced_tables": [
+              "customers"
+            ],
+            "statement_type": "Select"
+          },
+          "plan_ms": 1.7244159244000912,
+          "planned": true,
+          "result_correct": true
+        },
+        "runtime_disposition": "ALLOWED",
+        "selected_sql_hash": "d9592d1fca26f84490c712cafa496af1df27dcdf33a2c382125ba8bcab222d2d",
+        "total_cost": 6.26
+      },
+      "preparation_hash": "e09acfcc012540ae604a636265933dab47b498e95d636d5437731fc8ae7f575f",
+      "state_id": "cf02"
+    }
+  ]
+}

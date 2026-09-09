@@ -1,0 +1,4915 @@
+{
+  "case_count": 90,
+  "case_order": [
+    "procurement_01",
+    "procurement_02",
+    "procurement_03",
+    "procurement_04",
+    "procurement_05",
+    "procurement_06",
+    "procurement_07",
+    "procurement_08",
+    "procurement_09",
+    "procurement_10",
+    "procurement_11",
+    "procurement_12",
+    "procurement_13",
+    "procurement_14",
+    "procurement_15",
+    "insurance_01",
+    "insurance_02",
+    "insurance_03",
+    "insurance_04",
+    "insurance_05",
+    "insurance_06",
+    "insurance_07",
+    "insurance_08",
+    "insurance_09",
+    "insurance_10",
+    "insurance_11",
+    "insurance_12",
+    "insurance_13",
+    "insurance_14",
+    "insurance_15",
+    "telecom_01",
+    "telecom_02",
+    "telecom_03",
+    "telecom_04",
+    "telecom_05",
+    "telecom_06",
+    "telecom_07",
+    "telecom_08",
+    "telecom_09",
+    "telecom_10",
+    "telecom_11",
+    "telecom_12",
+    "telecom_13",
+    "telecom_14",
+    "telecom_15",
+    "marketplace_01",
+    "marketplace_02",
+    "marketplace_03",
+    "marketplace_04",
+    "marketplace_05",
+    "marketplace_06",
+    "marketplace_07",
+    "marketplace_08",
+    "marketplace_09",
+    "marketplace_10",
+    "marketplace_11",
+    "marketplace_12",
+    "marketplace_13",
+    "marketplace_14",
+    "marketplace_15",
+    "workforce_01",
+    "workforce_02",
+    "workforce_03",
+    "workforce_04",
+    "workforce_05",
+    "workforce_06",
+    "workforce_07",
+    "workforce_08",
+    "workforce_09",
+    "workforce_10",
+    "workforce_11",
+    "workforce_12",
+    "workforce_13",
+    "workforce_14",
+    "workforce_15",
+    "healthcare_01",
+    "healthcare_02",
+    "healthcare_03",
+    "healthcare_04",
+    "healthcare_05",
+    "healthcare_06",
+    "healthcare_07",
+    "healthcare_08",
+    "healthcare_09",
+    "healthcare_10",
+    "healthcare_11",
+    "healthcare_12",
+    "healthcare_13",
+    "healthcare_14",
+    "healthcare_15"
+  ],
+  "clean": false,
+  "domain_count": 6,
+  "expansion_manifest_hash": "d48be18622e34c11057a7ad31272cc96b1fbb7d8017b9c0f74953de5a92a2417",
+  "experiment": "M51B",
+  "factual_context_growth": 0,
+  "full_manifest_hash": "af1ede315acde6707f88e06486ced6bcb76b2dd4841a9f511cc381f5e4c3ac4a",
+  "full_truth_hash": "b70964d09c64c7296124d1a4b14b079fe931f3b928d830137ee1a6357c926173",
+  "input_factual_facts_added": 0,
+  "inventory": {
+    "databases": {
+      "healthcare_billing": {
+        "catalog_hash": "929b6880e16aa6908d0aaac809f112c8a04bdcfc468e383a3b34ae913ac4c5c3",
+        "entity_count": 8,
+        "measure_count": 2,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:patients:patient_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:patients",
+            "physical_column_or_path": "patient_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_06",
+              "healthcare_07",
+              "healthcare_09",
+              "healthcare_11",
+              "healthcare_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:providers:provider_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:providers",
+            "physical_column_or_path": "provider_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:encounters:encounter_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:encounters",
+            "physical_column_or_path": "encounter_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_09",
+              "healthcare_10",
+              "healthcare_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:encounters:patient_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:encounters",
+            "physical_column_or_path": "patient_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_05",
+              "healthcare_06",
+              "healthcare_09",
+              "healthcare_11",
+              "healthcare_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:encounters:provider_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:encounters",
+            "physical_column_or_path": "provider_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_05",
+              "healthcare_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:procedures:procedure_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:procedures",
+            "physical_column_or_path": "procedure_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:procedures:encounter_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:procedures",
+            "physical_column_or_path": "encounter_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:charges:charge_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:charges",
+            "physical_column_or_path": "charge_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:charges:procedure_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:charges",
+            "physical_column_or_path": "procedure_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_10"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:healthcare_billing:charges:amount",
+            "data_type": "NUMERIC",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:charges",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "healthcare_02",
+              "healthcare_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:payments:payment_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:payments",
+            "physical_column_or_path": "payment_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:payments:patient_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:payments",
+            "physical_column_or_path": "patient_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_07"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:healthcare_billing:payments:amount",
+            "data_type": "NUMERIC",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:payments",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "healthcare_07"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:diagnoses:diagnosis_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:diagnoses",
+            "physical_column_or_path": "diagnosis_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:diagnoses:encounter_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:diagnoses",
+            "physical_column_or_path": "encounter_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "healthcare_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:healthcare_billing:external_directory:patient_id",
+            "data_type": "INTEGER",
+            "database": "healthcare_billing",
+            "entity_id": "entity:healthcare_billing:external_directory",
+            "physical_column_or_path": "patient_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 6
+      },
+      "insurance_claims": {
+        "catalog_hash": "7302425e9eaa2c5d55ea323015d0f2b8fb78d0d1f4a4082833c3bdc25968897f",
+        "entity_count": 8,
+        "measure_count": 2,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:policyholders:holder_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:policyholders",
+            "physical_column_or_path": "holder_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_07"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:policies:policy_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:policies",
+            "physical_column_or_path": "policy_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_02",
+              "insurance_04",
+              "insurance_06",
+              "insurance_07",
+              "insurance_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:policies:holder_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:policies",
+            "physical_column_or_path": "holder_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_07",
+              "insurance_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claims:claim_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claims",
+            "physical_column_or_path": "claim_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_02",
+              "insurance_04",
+              "insurance_08",
+              "insurance_12",
+              "insurance_14"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claims:policy_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claims",
+            "physical_column_or_path": "policy_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_02",
+              "insurance_04",
+              "insurance_07",
+              "insurance_10"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:insurance_claims:claims:loss_amount",
+            "data_type": "NUMERIC",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claims",
+            "physical_column_or_path": "loss_amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "insurance_07",
+              "insurance_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_payments:payment_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_payments",
+            "physical_column_or_path": "payment_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_payments:claim_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_payments",
+            "physical_column_or_path": "claim_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_08",
+              "insurance_14"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:insurance_claims:claim_payments:amount",
+            "data_type": "NUMERIC",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_payments",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "insurance_14"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_events:event_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_events",
+            "physical_column_or_path": "event_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_events:claim_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_events",
+            "physical_column_or_path": "claim_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "insurance_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:adjusters:adjuster_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:adjusters",
+            "physical_column_or_path": "adjuster_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_assignments:assignment_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_assignments",
+            "physical_column_or_path": "assignment_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_assignments:claim_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_assignments",
+            "physical_column_or_path": "claim_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:claim_assignments:adjuster_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:claim_assignments",
+            "physical_column_or_path": "adjuster_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:insurance_claims:external_directory:holder_id",
+            "data_type": "INTEGER",
+            "database": "insurance_claims",
+            "entity_id": "entity:insurance_claims:external_directory",
+            "physical_column_or_path": "holder_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 6
+      },
+      "marketplace_ops": {
+        "catalog_hash": "0b76a3772461c06719fd56a39da1a9e5d4e6fd333bd25dda9b759e5871890b51",
+        "entity_count": 9,
+        "measure_count": 4,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:sellers:seller_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:sellers",
+            "physical_column_or_path": "seller_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_06",
+              "marketplace_07",
+              "marketplace_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:buyers:buyer_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:buyers",
+            "physical_column_or_path": "buyer_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_01",
+              "marketplace_05"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:listings:listing_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:listings",
+            "physical_column_or_path": "listing_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_04",
+              "marketplace_06",
+              "marketplace_08",
+              "marketplace_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:listings:seller_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:listings",
+            "physical_column_or_path": "seller_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_04",
+              "marketplace_06",
+              "marketplace_08"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:marketplace_ops:listings:unit_price",
+            "data_type": "NUMERIC",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:listings",
+            "physical_column_or_path": "unit_price",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "marketplace_04"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:orders:order_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:orders",
+            "physical_column_or_path": "order_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_01",
+              "marketplace_04",
+              "marketplace_05",
+              "marketplace_06",
+              "marketplace_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:orders:buyer_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:orders",
+            "physical_column_or_path": "buyer_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_01",
+              "marketplace_05"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:order_lines:line_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:order_lines",
+            "physical_column_or_path": "line_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:order_lines:order_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:order_lines",
+            "physical_column_or_path": "order_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_04",
+              "marketplace_06",
+              "marketplace_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:order_lines:listing_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:order_lines",
+            "physical_column_or_path": "listing_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_04",
+              "marketplace_06",
+              "marketplace_10"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:marketplace_ops:order_lines:quantity",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:order_lines",
+            "physical_column_or_path": "quantity",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "marketplace_04",
+              "marketplace_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:payouts:payout_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:payouts",
+            "physical_column_or_path": "payout_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:payouts:seller_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:payouts",
+            "physical_column_or_path": "seller_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_07"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:marketplace_ops:payouts:amount",
+            "data_type": "NUMERIC",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:payouts",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "marketplace_07"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:reviews:review_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:reviews",
+            "physical_column_or_path": "review_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:reviews:listing_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:reviews",
+            "physical_column_or_path": "listing_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_08"
+            ]
+          },
+          {
+            "aggregation_behavior": "NON_ADDITIVE",
+            "attribute_id": "attribute:marketplace_ops:reviews:score",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:reviews",
+            "physical_column_or_path": "score",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "marketplace_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:disputes:dispute_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:disputes",
+            "physical_column_or_path": "dispute_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_01"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:disputes:order_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:disputes",
+            "physical_column_or_path": "order_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "marketplace_01"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:marketplace_ops:external_directory:seller_id",
+            "data_type": "INTEGER",
+            "database": "marketplace_ops",
+            "entity_id": "entity:marketplace_ops:external_directory",
+            "physical_column_or_path": "seller_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 7
+      },
+      "procurement_ops": {
+        "catalog_hash": "bb397ccb6421677e6c8fc72a8482e51c4e38871790bd5c307895493ab81ccac1",
+        "entity_count": 7,
+        "measure_count": 4,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:suppliers:supplier_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:suppliers",
+            "physical_column_or_path": "supplier_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_02",
+              "procurement_06",
+              "procurement_07",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:requisitions:req_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:requisitions",
+            "physical_column_or_path": "req_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_05"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:procurement_ops:requisitions:estimated_amount",
+            "data_type": "NUMERIC",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:requisitions",
+            "physical_column_or_path": "estimated_amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "procurement_05"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:purchase_orders:po_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:purchase_orders",
+            "physical_column_or_path": "po_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_02",
+              "procurement_06",
+              "procurement_08",
+              "procurement_11",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:purchase_orders:supplier_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:purchase_orders",
+            "physical_column_or_path": "supplier_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_02",
+              "procurement_06",
+              "procurement_08",
+              "procurement_11",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:po_lines:line_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:po_lines",
+            "physical_column_or_path": "line_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_10",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:po_lines:po_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:po_lines",
+            "physical_column_or_path": "po_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_08",
+              "procurement_11",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:procurement_ops:po_lines:ordered_qty",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:po_lines",
+            "physical_column_or_path": "ordered_qty",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "procurement_08",
+              "procurement_10",
+              "procurement_11"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:procurement_ops:po_lines:unit_cost",
+            "data_type": "NUMERIC",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:po_lines",
+            "physical_column_or_path": "unit_cost",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "procurement_08",
+              "procurement_11"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:receipts:receipt_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:receipts",
+            "physical_column_or_path": "receipt_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:receipts:line_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:receipts",
+            "physical_column_or_path": "line_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_10",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:procurement_ops:receipts:received_qty",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:receipts",
+            "physical_column_or_path": "received_qty",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "procurement_10",
+              "procurement_15"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:approvals:approval_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:approvals",
+            "physical_column_or_path": "approval_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:approvals:req_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:approvals",
+            "physical_column_or_path": "req_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "procurement_05"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:procurement_ops:external_directory:supplier_id",
+            "data_type": "INTEGER",
+            "database": "procurement_ops",
+            "entity_id": "entity:procurement_ops:external_directory",
+            "physical_column_or_path": "supplier_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 4
+      },
+      "telecom_billing": {
+        "catalog_hash": "b414689ac2ac7ea11f94743ee651e86f21a0e6de4a500bb9474b2b99834701b2",
+        "entity_count": 8,
+        "measure_count": 3,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:subscribers:subscriber_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:subscribers",
+            "physical_column_or_path": "subscriber_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_02",
+              "telecom_09",
+              "telecom_10",
+              "telecom_11"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:plans:plan_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:plans",
+            "physical_column_or_path": "plan_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:plans:monthly_fee",
+            "data_type": "NUMERIC",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:plans",
+            "physical_column_or_path": "monthly_fee",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "DIMENSION",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:subscriptions:subscription_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:subscriptions",
+            "physical_column_or_path": "subscription_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:subscriptions:subscriber_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:subscriptions",
+            "physical_column_or_path": "subscriber_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_02"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:subscriptions:plan_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:subscriptions",
+            "physical_column_or_path": "plan_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:usage_records:usage_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:usage_records",
+            "physical_column_or_path": "usage_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:usage_records:subscriber_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:usage_records",
+            "physical_column_or_path": "subscriber_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_10"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:telecom_billing:usage_records:megabytes",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:usage_records",
+            "physical_column_or_path": "megabytes",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "telecom_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:invoices:invoice_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:invoices",
+            "physical_column_or_path": "invoice_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_09",
+              "telecom_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:invoices:subscriber_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:invoices",
+            "physical_column_or_path": "subscriber_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_09",
+              "telecom_11"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:telecom_billing:invoices:amount_due",
+            "data_type": "NUMERIC",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:invoices",
+            "physical_column_or_path": "amount_due",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "telecom_11",
+              "telecom_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:payments:payment_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:payments",
+            "physical_column_or_path": "payment_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_09"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:payments:invoice_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:payments",
+            "physical_column_or_path": "invoice_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "telecom_09",
+              "telecom_12"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:telecom_billing:payments:amount",
+            "data_type": "NUMERIC",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:payments",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "telecom_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:outages:outage_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:outages",
+            "physical_column_or_path": "outage_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:telecom_billing:external_directory:subscriber_id",
+            "data_type": "INTEGER",
+            "database": "telecom_billing",
+            "entity_id": "entity:telecom_billing:external_directory",
+            "physical_column_or_path": "subscriber_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 5
+      },
+      "workforce_ops": {
+        "catalog_hash": "8c6304f32b1b60c59582d689b0e575fc46b08c66a858d75e3fef3441b5dfd650",
+        "entity_count": 8,
+        "measure_count": 2,
+        "numeric_attributes": [
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:employees:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:employees",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_01",
+              "workforce_02",
+              "workforce_06",
+              "workforce_07",
+              "workforce_08",
+              "workforce_10",
+              "workforce_12",
+              "workforce_13",
+              "workforce_14"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:employees:team_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:employees",
+            "physical_column_or_path": "team_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_07",
+              "workforce_08",
+              "workforce_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:teams:team_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:teams",
+            "physical_column_or_path": "team_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:shifts:shift_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:shifts",
+            "physical_column_or_path": "shift_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:shifts:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:shifts",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_12"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:timesheets:timesheet_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:timesheets",
+            "physical_column_or_path": "timesheet_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_06"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:timesheets:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:timesheets",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_01",
+              "workforce_06",
+              "workforce_07",
+              "workforce_08"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:workforce_ops:timesheets:hours",
+            "data_type": "NUMERIC",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:timesheets",
+            "physical_column_or_path": "hours",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "workforce_01",
+              "workforce_07",
+              "workforce_08"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:absences:absence_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:absences",
+            "physical_column_or_path": "absence_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:absences:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:absences",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_02"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:training_records:record_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:training_records",
+            "physical_column_or_path": "record_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:training_records:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:training_records",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_14"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:payroll_adjustments:adjustment_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:payroll_adjustments",
+            "physical_column_or_path": "adjustment_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:payroll_adjustments:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:payroll_adjustments",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": [
+              "workforce_10"
+            ]
+          },
+          {
+            "aggregation_behavior": "ADDITIVE",
+            "attribute_id": "attribute:workforce_ops:payroll_adjustments:amount",
+            "data_type": "NUMERIC",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:payroll_adjustments",
+            "physical_column_or_path": "amount",
+            "provenance": [
+              "PUBLIC_SCHEMA",
+              "PUBLIC_ATTRIBUTE_SEMANTICS"
+            ],
+            "resolution_status": "RESOLVED",
+            "semantic_role": "MEASURE",
+            "used_by_cases": [
+              "workforce_10"
+            ]
+          },
+          {
+            "aggregation_behavior": null,
+            "attribute_id": "attribute:workforce_ops:external_directory:employee_id",
+            "data_type": "INTEGER",
+            "database": "workforce_ops",
+            "entity_id": "entity:workforce_ops:external_directory",
+            "physical_column_or_path": "employee_id",
+            "provenance": [
+              "PUBLIC_SCHEMA"
+            ],
+            "resolution_status": "NOT_A_MEASURE",
+            "semantic_role": "IDENTIFIER",
+            "used_by_cases": []
+          }
+        ],
+        "relationship_count": 6
+      }
+    },
+    "numeric_attributes": [
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:suppliers:supplier_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:suppliers",
+        "physical_column_or_path": "supplier_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_02",
+          "procurement_06",
+          "procurement_07",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:requisitions:req_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:requisitions",
+        "physical_column_or_path": "req_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_05"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:procurement_ops:requisitions:estimated_amount",
+        "data_type": "NUMERIC",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:requisitions",
+        "physical_column_or_path": "estimated_amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "procurement_05"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:purchase_orders:po_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:purchase_orders",
+        "physical_column_or_path": "po_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_02",
+          "procurement_06",
+          "procurement_08",
+          "procurement_11",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:purchase_orders:supplier_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:purchase_orders",
+        "physical_column_or_path": "supplier_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_02",
+          "procurement_06",
+          "procurement_08",
+          "procurement_11",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:po_lines:line_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:po_lines",
+        "physical_column_or_path": "line_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_10",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:po_lines:po_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:po_lines",
+        "physical_column_or_path": "po_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_08",
+          "procurement_11",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:procurement_ops:po_lines:ordered_qty",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:po_lines",
+        "physical_column_or_path": "ordered_qty",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "procurement_08",
+          "procurement_10",
+          "procurement_11"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:procurement_ops:po_lines:unit_cost",
+        "data_type": "NUMERIC",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:po_lines",
+        "physical_column_or_path": "unit_cost",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "procurement_08",
+          "procurement_11"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:receipts:receipt_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:receipts",
+        "physical_column_or_path": "receipt_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:receipts:line_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:receipts",
+        "physical_column_or_path": "line_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_10",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:procurement_ops:receipts:received_qty",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:receipts",
+        "physical_column_or_path": "received_qty",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "procurement_10",
+          "procurement_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:approvals:approval_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:approvals",
+        "physical_column_or_path": "approval_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:approvals:req_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:approvals",
+        "physical_column_or_path": "req_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "procurement_05"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:procurement_ops:external_directory:supplier_id",
+        "data_type": "INTEGER",
+        "database": "procurement_ops",
+        "entity_id": "entity:procurement_ops:external_directory",
+        "physical_column_or_path": "supplier_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:policyholders:holder_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:policyholders",
+        "physical_column_or_path": "holder_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_07"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:policies:policy_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:policies",
+        "physical_column_or_path": "policy_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_02",
+          "insurance_04",
+          "insurance_06",
+          "insurance_07",
+          "insurance_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:policies:holder_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:policies",
+        "physical_column_or_path": "holder_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_07",
+          "insurance_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claims:claim_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claims",
+        "physical_column_or_path": "claim_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_02",
+          "insurance_04",
+          "insurance_08",
+          "insurance_12",
+          "insurance_14"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claims:policy_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claims",
+        "physical_column_or_path": "policy_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_02",
+          "insurance_04",
+          "insurance_07",
+          "insurance_10"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:insurance_claims:claims:loss_amount",
+        "data_type": "NUMERIC",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claims",
+        "physical_column_or_path": "loss_amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "insurance_07",
+          "insurance_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_payments:payment_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_payments",
+        "physical_column_or_path": "payment_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_payments:claim_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_payments",
+        "physical_column_or_path": "claim_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_08",
+          "insurance_14"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:insurance_claims:claim_payments:amount",
+        "data_type": "NUMERIC",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_payments",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "insurance_14"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_events:event_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_events",
+        "physical_column_or_path": "event_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_events:claim_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_events",
+        "physical_column_or_path": "claim_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "insurance_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:adjusters:adjuster_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:adjusters",
+        "physical_column_or_path": "adjuster_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_assignments:assignment_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_assignments",
+        "physical_column_or_path": "assignment_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_assignments:claim_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_assignments",
+        "physical_column_or_path": "claim_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:claim_assignments:adjuster_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:claim_assignments",
+        "physical_column_or_path": "adjuster_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:insurance_claims:external_directory:holder_id",
+        "data_type": "INTEGER",
+        "database": "insurance_claims",
+        "entity_id": "entity:insurance_claims:external_directory",
+        "physical_column_or_path": "holder_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:subscribers:subscriber_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:subscribers",
+        "physical_column_or_path": "subscriber_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_02",
+          "telecom_09",
+          "telecom_10",
+          "telecom_11"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:plans:plan_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:plans",
+        "physical_column_or_path": "plan_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:plans:monthly_fee",
+        "data_type": "NUMERIC",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:plans",
+        "physical_column_or_path": "monthly_fee",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "DIMENSION",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:subscriptions:subscription_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:subscriptions",
+        "physical_column_or_path": "subscription_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:subscriptions:subscriber_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:subscriptions",
+        "physical_column_or_path": "subscriber_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_02"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:subscriptions:plan_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:subscriptions",
+        "physical_column_or_path": "plan_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:usage_records:usage_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:usage_records",
+        "physical_column_or_path": "usage_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:usage_records:subscriber_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:usage_records",
+        "physical_column_or_path": "subscriber_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_10"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:telecom_billing:usage_records:megabytes",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:usage_records",
+        "physical_column_or_path": "megabytes",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "telecom_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:invoices:invoice_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:invoices",
+        "physical_column_or_path": "invoice_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_09",
+          "telecom_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:invoices:subscriber_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:invoices",
+        "physical_column_or_path": "subscriber_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_09",
+          "telecom_11"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:telecom_billing:invoices:amount_due",
+        "data_type": "NUMERIC",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:invoices",
+        "physical_column_or_path": "amount_due",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "telecom_11",
+          "telecom_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:payments:payment_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:payments",
+        "physical_column_or_path": "payment_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_09"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:payments:invoice_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:payments",
+        "physical_column_or_path": "invoice_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "telecom_09",
+          "telecom_12"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:telecom_billing:payments:amount",
+        "data_type": "NUMERIC",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:payments",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "telecom_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:outages:outage_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:outages",
+        "physical_column_or_path": "outage_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:telecom_billing:external_directory:subscriber_id",
+        "data_type": "INTEGER",
+        "database": "telecom_billing",
+        "entity_id": "entity:telecom_billing:external_directory",
+        "physical_column_or_path": "subscriber_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:sellers:seller_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:sellers",
+        "physical_column_or_path": "seller_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_06",
+          "marketplace_07",
+          "marketplace_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:buyers:buyer_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:buyers",
+        "physical_column_or_path": "buyer_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_01",
+          "marketplace_05"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:listings:listing_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:listings",
+        "physical_column_or_path": "listing_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_04",
+          "marketplace_06",
+          "marketplace_08",
+          "marketplace_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:listings:seller_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:listings",
+        "physical_column_or_path": "seller_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_04",
+          "marketplace_06",
+          "marketplace_08"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:marketplace_ops:listings:unit_price",
+        "data_type": "NUMERIC",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:listings",
+        "physical_column_or_path": "unit_price",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "marketplace_04"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:orders:order_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:orders",
+        "physical_column_or_path": "order_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_01",
+          "marketplace_04",
+          "marketplace_05",
+          "marketplace_06",
+          "marketplace_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:orders:buyer_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:orders",
+        "physical_column_or_path": "buyer_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_01",
+          "marketplace_05"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:order_lines:line_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:order_lines",
+        "physical_column_or_path": "line_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:order_lines:order_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:order_lines",
+        "physical_column_or_path": "order_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_04",
+          "marketplace_06",
+          "marketplace_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:order_lines:listing_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:order_lines",
+        "physical_column_or_path": "listing_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_04",
+          "marketplace_06",
+          "marketplace_10"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:marketplace_ops:order_lines:quantity",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:order_lines",
+        "physical_column_or_path": "quantity",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "marketplace_04",
+          "marketplace_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:payouts:payout_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:payouts",
+        "physical_column_or_path": "payout_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:payouts:seller_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:payouts",
+        "physical_column_or_path": "seller_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_07"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:marketplace_ops:payouts:amount",
+        "data_type": "NUMERIC",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:payouts",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "marketplace_07"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:reviews:review_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:reviews",
+        "physical_column_or_path": "review_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:reviews:listing_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:reviews",
+        "physical_column_or_path": "listing_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_08"
+        ]
+      },
+      {
+        "aggregation_behavior": "NON_ADDITIVE",
+        "attribute_id": "attribute:marketplace_ops:reviews:score",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:reviews",
+        "physical_column_or_path": "score",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "marketplace_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:disputes:dispute_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:disputes",
+        "physical_column_or_path": "dispute_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_01"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:disputes:order_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:disputes",
+        "physical_column_or_path": "order_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "marketplace_01"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:marketplace_ops:external_directory:seller_id",
+        "data_type": "INTEGER",
+        "database": "marketplace_ops",
+        "entity_id": "entity:marketplace_ops:external_directory",
+        "physical_column_or_path": "seller_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:employees:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:employees",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_01",
+          "workforce_02",
+          "workforce_06",
+          "workforce_07",
+          "workforce_08",
+          "workforce_10",
+          "workforce_12",
+          "workforce_13",
+          "workforce_14"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:employees:team_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:employees",
+        "physical_column_or_path": "team_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_07",
+          "workforce_08",
+          "workforce_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:teams:team_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:teams",
+        "physical_column_or_path": "team_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:shifts:shift_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:shifts",
+        "physical_column_or_path": "shift_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:shifts:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:shifts",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_12"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:timesheets:timesheet_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:timesheets",
+        "physical_column_or_path": "timesheet_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_06"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:timesheets:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:timesheets",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_01",
+          "workforce_06",
+          "workforce_07",
+          "workforce_08"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:workforce_ops:timesheets:hours",
+        "data_type": "NUMERIC",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:timesheets",
+        "physical_column_or_path": "hours",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "workforce_01",
+          "workforce_07",
+          "workforce_08"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:absences:absence_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:absences",
+        "physical_column_or_path": "absence_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:absences:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:absences",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_02"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:training_records:record_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:training_records",
+        "physical_column_or_path": "record_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:training_records:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:training_records",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_14"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:payroll_adjustments:adjustment_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:payroll_adjustments",
+        "physical_column_or_path": "adjustment_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:payroll_adjustments:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:payroll_adjustments",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "workforce_10"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:workforce_ops:payroll_adjustments:amount",
+        "data_type": "NUMERIC",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:payroll_adjustments",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "workforce_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:workforce_ops:external_directory:employee_id",
+        "data_type": "INTEGER",
+        "database": "workforce_ops",
+        "entity_id": "entity:workforce_ops:external_directory",
+        "physical_column_or_path": "employee_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:patients:patient_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:patients",
+        "physical_column_or_path": "patient_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_06",
+          "healthcare_07",
+          "healthcare_09",
+          "healthcare_11",
+          "healthcare_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:providers:provider_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:providers",
+        "physical_column_or_path": "provider_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:encounters:encounter_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:encounters",
+        "physical_column_or_path": "encounter_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_09",
+          "healthcare_10",
+          "healthcare_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:encounters:patient_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:encounters",
+        "physical_column_or_path": "patient_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_05",
+          "healthcare_06",
+          "healthcare_09",
+          "healthcare_11",
+          "healthcare_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:encounters:provider_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:encounters",
+        "physical_column_or_path": "provider_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_05",
+          "healthcare_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:procedures:procedure_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:procedures",
+        "physical_column_or_path": "procedure_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:procedures:encounter_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:procedures",
+        "physical_column_or_path": "encounter_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:charges:charge_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:charges",
+        "physical_column_or_path": "charge_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:charges:procedure_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:charges",
+        "physical_column_or_path": "procedure_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_10"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:healthcare_billing:charges:amount",
+        "data_type": "NUMERIC",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:charges",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "healthcare_02",
+          "healthcare_10"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:payments:payment_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:payments",
+        "physical_column_or_path": "payment_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:payments:patient_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:payments",
+        "physical_column_or_path": "patient_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_07"
+        ]
+      },
+      {
+        "aggregation_behavior": "ADDITIVE",
+        "attribute_id": "attribute:healthcare_billing:payments:amount",
+        "data_type": "NUMERIC",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:payments",
+        "physical_column_or_path": "amount",
+        "provenance": [
+          "PUBLIC_SCHEMA",
+          "PUBLIC_ATTRIBUTE_SEMANTICS"
+        ],
+        "resolution_status": "RESOLVED",
+        "semantic_role": "MEASURE",
+        "used_by_cases": [
+          "healthcare_07"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:diagnoses:diagnosis_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:diagnoses",
+        "physical_column_or_path": "diagnosis_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:diagnoses:encounter_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:diagnoses",
+        "physical_column_or_path": "encounter_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": [
+          "healthcare_15"
+        ]
+      },
+      {
+        "aggregation_behavior": null,
+        "attribute_id": "attribute:healthcare_billing:external_directory:patient_id",
+        "data_type": "INTEGER",
+        "database": "healthcare_billing",
+        "entity_id": "entity:healthcare_billing:external_directory",
+        "physical_column_or_path": "patient_id",
+        "provenance": [
+          "PUBLIC_SCHEMA"
+        ],
+        "resolution_status": "NOT_A_MEASURE",
+        "semantic_role": "IDENTIFIER",
+        "used_by_cases": []
+      }
+    ],
+    "summary": {
+      "additive": 16,
+      "derived": 0,
+      "derived_measures": 0,
+      "dimensions": 1,
+      "identifiers": 82,
+      "measures": 17,
+      "non_additive": 1,
+      "numeric_attributes_audited": 100,
+      "required_unknown": 0,
+      "semi_additive": 0,
+      "unknown": 0
+    }
+  },
+  "leakage": [],
+  "model_calls": 0,
+  "model_config": {
+    "calls_per_case": 1,
+    "judge": false,
+    "model": "gpt-5.6-luna",
+    "reasoning": "none",
+    "repair": false,
+    "retries": 0,
+    "router": false,
+    "selector": false,
+    "temperature": 0.0,
+    "timeout_seconds": 90
+  },
+  "origin_main": "645e77d3b9158e6b2e2d07185da04f001c92176a",
+  "planner_contract_hash": "a97222f4e036af28120a4ee12d9ef4352513796f54a15d6f2050b56a6ae77863",
+  "prompt_hash": "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb",
+  "provider_calls": 0,
+  "reader_preflight": {
+    "databases": [
+      {
+        "database_id": "procurement_ops",
+        "preparation": {
+          "analyze_ms": 21.780542097985744,
+          "database_id": "procurement_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.201128+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "approvals",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.201561+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.202144+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "po_lines",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.202655+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "purchase_orders",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.203026+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "receipts",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.203563+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 6,
+              "relation": "requisitions",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.204039+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "suppliers",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "1a6c0790ccd545be1c34ce241d227c9e8a271d2e014930d87f4a4170c34d246e",
+          "preparation_ms": 51.945791114121675
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 2.091082977131009,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.226397Z",
+            "latency_ms": 1.9312920048832893,
+            "plan_id": "ad21e9c8-df3b-4654-8469-fb4b9c859dc6",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "ad21e9c8-df3b-4654-8469-fb4b9c859dc6",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.7410839684307575,
+          "planned": true,
+          "result_correct": false
+        }
+      },
+      {
+        "database_id": "insurance_claims",
+        "preparation": {
+          "analyze_ms": 21.88408304937184,
+          "database_id": "insurance_claims",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.270307+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 2,
+              "relation": "adjusters",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.270889+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 4,
+              "relation": "claim_assignments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:08.271306+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 4,
+              "relation": "claim_events",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.271930+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 5,
+              "relation": "claim_payments",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:08.272477+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 6,
+              "relation": "claims",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.272840+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.273215+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 6,
+              "relation": "policies",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.273596+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "policyholders",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "a35e82f4ae546be952f9593f1284168fabf1d37c86ed0ae856873f9405091065",
+          "preparation_ms": 54.731582989916205
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 2.274082973599434,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.296882Z",
+            "latency_ms": 2.0427920389920473,
+            "plan_id": "9cd62044-dfee-4276-bc72-4f6cbdef0b27",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "9cd62044-dfee-4276-bc72-4f6cbdef0b27",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.966374857351184,
+          "planned": true,
+          "result_correct": false
+        }
+      },
+      {
+        "database_id": "telecom_billing",
+        "preparation": {
+          "analyze_ms": 20.837999880313873,
+          "database_id": "telecom_billing",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.342995+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.343791+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 5,
+              "relation": "invoices",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.344344+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 4,
+              "relation": "outages",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.344743+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 5,
+              "relation": "payments",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.345119+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "plans",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.345529+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 3,
+              "relation": "subscribers",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:08.345914+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 4,
+              "relation": "subscriptions",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.346473+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "usage_records",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "9e2a2444fcca753fd55c9597ba1f3b20f80a08f414489d402e3132b455d5fc18",
+          "preparation_ms": 56.321416050195694
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 1.8561251927167177,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.366390Z",
+            "latency_ms": 1.6703330911695957,
+            "plan_id": "ae39d691-50a9-40e0-be60-9a7d0d4af15e",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "ae39d691-50a9-40e0-be60-9a7d0d4af15e",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.6520828250795603,
+          "planned": true,
+          "result_correct": false
+        }
+      },
+      {
+        "database_id": "marketplace_ops",
+        "preparation": {
+          "analyze_ms": 21.71412482857704,
+          "database_id": "marketplace_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.410766+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 2,
+              "relation": "buyers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.411258+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 4,
+              "relation": "disputes",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.411628+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.412192+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "listings",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.412614+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "order_lines",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.413032+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "orders",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.413451+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payouts",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.413850+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "reviews",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.414292+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "sellers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "52382951949a297e6a90bddeb414b888a0db92a5bd1db827053106a44fdaff6e",
+          "preparation_ms": 55.37887499667704
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 2.04137503169477,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.436586Z",
+            "latency_ms": 1.735249999910593,
+            "plan_id": "7c28f6ef-28ee-4241-a796-ea10ded5b403",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "7c28f6ef-28ee-4241-a796-ea10ded5b403",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.689958084374666,
+          "planned": true,
+          "result_correct": false
+        }
+      },
+      {
+        "database_id": "workforce_ops",
+        "preparation": {
+          "analyze_ms": 21.56675001606345,
+          "database_id": "workforce_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.479879+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "absences",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.480411+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "employees",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.480811+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.481338+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payroll_adjustments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.481880+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "shifts",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.482274+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 2,
+              "relation": "teams",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.482808+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "timesheets",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.483212+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "training_records",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "cc61591eed085034eaec2599ba9f09a28d3a7b19d8dcaf90e4b37329c7556a40",
+          "preparation_ms": 53.60150011256337
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 2.1142091136425734,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.505323Z",
+            "latency_ms": 1.9153328612446785,
+            "plan_id": "55135fbf-8850-4da1-a4cd-7b62830b77a9",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "55135fbf-8850-4da1-a4cd-7b62830b77a9",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.7116669807583094,
+          "planned": true,
+          "result_correct": false
+        }
+      },
+      {
+        "database_id": "healthcare_billing",
+        "preparation": {
+          "analyze_ms": 20.746707916259766,
+          "database_id": "healthcare_billing",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.555570+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "charges",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.555983+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 3,
+              "relation": "diagnoses",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.556558+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "encounters",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.556972+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.557512+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "patients",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.558024+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.558418+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "procedures",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.558813+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "providers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "f9efd2ad932d08ebd21120ef6a536cb065bd4e6ed7739e41244175afe58192dd",
+          "preparation_ms": 60.31362502835691
+        },
+        "probe": {
+          "comparison_reason": "RESULT_MISMATCH",
+          "execute_ms": 1.8344579730182886,
+          "executed": true,
+          "execution": {
+            "columns": [
+              "?column?"
+            ],
+            "correlation_id": null,
+            "executed_at_utc": "2026-09-09T23:13:08.580549Z",
+            "latency_ms": 1.6275830566883087,
+            "plan_id": "0a34c975-29ab-4371-b47d-1b31bc8f3ebf",
+            "row_count": 1,
+            "rows": [
+              {
+                "?column?": 1
+              }
+            ],
+            "session_timezone": "UTC",
+            "status": "ALLOWED",
+            "truncated": false
+          },
+          "plan": {
+            "candidate_source": "internal",
+            "correlation_id": null,
+            "estimate": {
+              "plan_rows": 1,
+              "top_level_node_type": "Result",
+              "total_cost": 0.01
+            },
+            "executable": true,
+            "normalized_sql": "SELECT 1",
+            "plan_id": "0a34c975-29ab-4371-b47d-1b31bc8f3ebf",
+            "policy_decision": "ALLOWED",
+            "referenced_columns": [],
+            "referenced_functions": [],
+            "referenced_tables": [],
+            "statement_type": "Select"
+          },
+          "plan_ms": 2.859292086213827,
+          "planned": true,
+          "result_correct": false
+        }
+      }
+    ],
+    "passed": true
+  },
+  "reference_canary": {
+    "model_calls": 0,
+    "passed": true,
+    "provider_calls": 0,
+    "records": [
+      {
+        "case_id": "procurement_02",
+        "database_id": "procurement_ops",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 22.35745801590383,
+          "database_id": "procurement_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.704863+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "approvals",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.705354+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.706073+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "po_lines",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.706712+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "purchase_orders",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.707141+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "receipts",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.707786+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 6,
+              "relation": "requisitions",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.708320+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "suppliers",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "1a6c0790ccd545be1c34ce241d227c9e8a271d2e014930d87f4a4170c34d246e",
+          "preparation_ms": 92.18595805577934
+        },
+        "reason": "MATCH"
+      },
+      {
+        "case_id": "insurance_02",
+        "database_id": "insurance_claims",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 18.173042219132185,
+          "database_id": "insurance_claims",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:07.790148+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 2,
+              "relation": "adjusters",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:07.790753+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 4,
+              "relation": "claim_assignments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:07.791140+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 4,
+              "relation": "claim_events",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.791764+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 5,
+              "relation": "claim_payments",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:07.792262+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 6,
+              "relation": "claims",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.792611+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.793029+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 6,
+              "relation": "policies",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.793415+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "policyholders",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "a35e82f4ae546be952f9593f1284168fabf1d37c86ed0ae856873f9405091065",
+          "preparation_ms": 53.21424989961088
+        },
+        "reason": "MATCH"
+      },
+      {
+        "case_id": "telecom_02",
+        "database_id": "telecom_billing",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 19.395916955545545,
+          "database_id": "telecom_billing",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.871625+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.872249+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 5,
+              "relation": "invoices",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:07.872856+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 4,
+              "relation": "outages",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.873260+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 5,
+              "relation": "payments",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.873660+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "plans",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.874117+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 3,
+              "relation": "subscribers",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 5,
+              "last_analyze": "2026-09-09 23:13:07.874598+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 5,
+              "pg_stats_rows": 4,
+              "relation": "subscriptions",
+              "reltuples": 5.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.875170+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "usage_records",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "9e2a2444fcca753fd55c9597ba1f3b20f80a08f414489d402e3132b455d5fc18",
+          "preparation_ms": 54.38066693022847
+        },
+        "reason": "MATCH"
+      },
+      {
+        "case_id": "marketplace_01",
+        "database_id": "marketplace_ops",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 19.936792086809874,
+          "database_id": "marketplace_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.952537+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 2,
+              "relation": "buyers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.953039+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 4,
+              "relation": "disputes",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:07.953433+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.954033+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "listings",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.954441+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "order_lines",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:07.954857+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "orders",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:07.955242+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payouts",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.955703+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "reviews",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:07.956101+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "sellers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "52382951949a297e6a90bddeb414b888a0db92a5bd1db827053106a44fdaff6e",
+          "preparation_ms": 58.044041972607374
+        },
+        "reason": "MATCH"
+      },
+      {
+        "case_id": "workforce_01",
+        "database_id": "workforce_ops",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 18.44958309084177,
+          "database_id": "workforce_ops",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.032922+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "absences",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.033469+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "employees",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.033852+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.034424+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payroll_adjustments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.034965+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "shifts",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.035391+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 2,
+              "relation": "teams",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.035879+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "timesheets",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.036315+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "training_records",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "cc61591eed085034eaec2599ba9f09a28d3a7b19d8dcaf90e4b37329c7556a40",
+          "preparation_ms": 53.46354213543236
+        },
+        "reason": "MATCH"
+      },
+      {
+        "case_id": "healthcare_01",
+        "database_id": "healthcare_billing",
+        "equivalent": true,
+        "prepared": {
+          "analyze_ms": 21.850416902452707,
+          "database_id": "healthcare_billing",
+          "fixture_id": "base",
+          "lifecycle": "ANALYZE_CURRENT_STATE",
+          "metadata": [
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.119914+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "charges",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.120357+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 3,
+              "relation": "diagnoses",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.120951+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 5,
+              "relation": "encounters",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 1,
+              "last_analyze": "2026-09-09 23:13:08.121418+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 1,
+              "pg_stats_rows": 3,
+              "relation": "external_directory",
+              "reltuples": 1.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 4,
+              "last_analyze": "2026-09-09 23:13:08.121938+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 4,
+              "pg_stats_rows": 4,
+              "relation": "patients",
+              "reltuples": 4.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 2,
+              "last_analyze": "2026-09-09 23:13:08.122433+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 2,
+              "pg_stats_rows": 5,
+              "relation": "payments",
+              "reltuples": 2.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.122831+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 4,
+              "relation": "procedures",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            },
+            {
+              "actual_rows": 3,
+              "last_analyze": "2026-09-09 23:13:08.123231+00:00",
+              "last_autoanalyze": null,
+              "n_live_tup": 3,
+              "pg_stats_rows": 3,
+              "relation": "providers",
+              "reltuples": 3.0,
+              "reltuples_delta": 0.0
+            }
+          ],
+          "metadata_hash": "f9efd2ad932d08ebd21120ef6a536cb065bd4e6ed7739e41244175afe58192dd",
+          "preparation_ms": 59.180166106671095
+        },
+        "reason": "MATCH"
+      }
+    ]
+  },
+  "reference_validation": {
+    "reference_runs": 360,
+    "valid_references": 120
+  },
+  "schedule_hash": "3acf4bbee74621115261d2f7ed03cfe2d9e8965386c5ad023daeb73effc6e6ce",
+  "starting_head": "645e77d3b9158e6b2e2d07185da04f001c92176a",
+  "task_distribution": {
+    "AMBIGUOUS": 9,
+    "ANSWERABLE": 60,
+    "AUTHORITY_BLOCKED": 15,
+    "POLICY_BLOCKED": 6
+  },
+  "truth_hash": "7240dedfe1abc9f539fb1a873b2d021a33fa2268c9cc1b18a442f2f15b8646a9"
+}

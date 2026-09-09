@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import statistics
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -73,6 +75,7 @@ def build() -> dict[str, Any]:
     catalogs, _inventory = _build_catalogs([truth for _case, truth in _answerable_pairs()])
 
     paired: list[dict[str, Any]] = []
+    normalization_latencies: list[float] = []
     for case_id in case_ids:
         submission = parsed[case_id].get("parsed_submission") or {}
         raw_sql = submission.get("sql")
@@ -105,7 +108,9 @@ def build() -> dict[str, Any]:
     # second independently generated submission.
     for item in paired:
         if item["raw_sql"] is not None and item["decision"] == "ANSWER":
+            started = time.perf_counter()
             result = GrainSafeNormalizer(catalogs[item["database_id"]]).normalize(item["raw_sql"])
+            normalization_latencies.append((time.perf_counter() - started) * 1000)
             item["normalized_sql"] = result.output_sql
             item["rewrite_evidence"] = result.rewrite_evidence
             item["parent_measure_ids"] = result.parent_measure_ids
@@ -220,6 +225,17 @@ def build() -> dict[str, Any]:
             "model_token_overhead": 0,
             "normalizer_invocations": sum(item["raw_sql"] is not None for item in paired),
             "actual_rewrites": normalization_performance["candidates_normalized"],
+            "latency_ms": {
+                "median": statistics.median(normalization_latencies)
+                if normalization_latencies
+                else None,
+                "p90": sorted(normalization_latencies)[
+                    max(0, int(len(normalization_latencies) * 0.9) - 1)
+                ]
+                if normalization_latencies
+                else None,
+                "max": max(normalization_latencies) if normalization_latencies else None,
+            },
         },
     }
     _dump(RESULT / "normalization_performance.json", {**normalization_performance, "cost": cost})

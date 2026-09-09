@@ -26,7 +26,7 @@ from app.sql.service import SqlSafetyService
 from benchmark.authoring import SCHEMA_NAMES, connection_kwargs_from_env, seed_database
 from benchmark.context import load_authority
 from benchmark.m38_authoring import M38_DATABASES, seed_m38_database
-from benchmark.m46a_audit import _answerable_rows, _build_catalogs
+from benchmark.m46a_audit import _answerable_rows, _build_catalogs, _case_rows
 from benchmark.models import ResultContract, compare_rows
 
 ROOT = Path(__file__).resolve().parent
@@ -420,7 +420,7 @@ def reference_runtime_replay() -> dict[str, Any]:
 
 def m47b_runtime_replay() -> dict[str, Any]:
     answerable = _answerable_rows()
-    by_id = {case["case_id"]: case for case in answerable}
+    by_id = {case["case_id"]: case for case in _case_rows()}
     catalogs, _inventory = _build_catalogs(answerable)
     parsed_path = ROOT / "experiments" / "results" / "m47b" / "parsed_submissions.jsonl"
     expected_parsed_hash = (
@@ -462,6 +462,31 @@ def m47b_runtime_replay() -> dict[str, Any]:
         raw_sql = submission["sql"]
         diagnostic = GrainSafetyValidator(catalog).validate(raw_sql)
         decision = integrated_service.grain_coordinator.inspect(raw_sql)  # type: ignore[union-attr]
+        if case["semantic_target"]["behavior"] != "ANSWERABLE":
+            _seed(database_id)
+            raw = _execute_runtime(raw_service, raw_sql)
+            normalized = _execute_runtime(integrated_service, raw_sql)
+            records.append(
+                {
+                    "case_id": case_id,
+                    "database_id": database_id,
+                    "decision": submission["decision"],
+                    "answerable": False,
+                    "raw_sql": raw_sql,
+                    "raw_diagnostic": diagnostic.code.value,
+                    "runtime_status": decision.status.value,
+                    "runtime_reason": decision.runtime_reason.value,
+                    "runtime_output_diagnostic": decision.output_diagnostic.code.value,
+                    "raw_sql_hash": decision.input_sql_hash,
+                    "selected_sql_hash": decision.selected_sql_hash,
+                    "raw_vs_selected_changed": decision.input_sql_hash
+                    != decision.selected_sql_hash,
+                    "raw": raw,
+                    "normalized": normalized,
+                    "fixtures": [],
+                }
+            )
+            continue
         fixture_records = []
         for fixture in _fixture_list(case):
             _seed(database_id)

@@ -1,0 +1,100 @@
+{
+  "all_expected": true,
+  "checks": [
+    {
+      "claim": {
+        "assertion": "AUTHORIZED",
+        "family": "RELATIONSHIP",
+        "object_id": "relationship:orders_customers"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "claim": {
+        "assertion": "UNAUTHORIZED",
+        "family": "RELATIONSHIP",
+        "object_id": "relationship:orders_customers"
+      },
+      "status": "CONTRADICTED"
+    },
+    {
+      "claim": {
+        "assertion": "UNAUTHORIZED",
+        "family": "RELATIONSHIP",
+        "object_id": "relationship:orders_private"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "claim": {
+        "assertion": "MISSING",
+        "family": "SCHEMA_OBJECT",
+        "object_id": "entity:orders"
+      },
+      "status": "CONTRADICTED"
+    },
+    {
+      "claim": {
+        "assertion": "MISSING",
+        "family": "SEMANTIC_DEFINITION",
+        "object_id": "rule:active"
+      },
+      "status": "CONTRADICTED"
+    },
+    {
+      "claim": {
+        "assertion": "UNDEFINED",
+        "family": "TEMPORAL_DEFINITION",
+        "object_id": "time:clock"
+      },
+      "status": "CONTRADICTED"
+    },
+    {
+      "claim": {
+        "assertion": "PRESENT",
+        "family": "POLICY",
+        "object_id": "policy:readonly"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "claim": {
+        "assertion": "MISSING",
+        "family": "SEMANTIC_DEFINITION",
+        "object_id": "rule:free_text"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "claim": {
+        "assertion": "DEFINED",
+        "family": "POPULATION_SEMANTICS",
+        "object_id": "population:orders"
+      },
+      "status": "UNRESOLVED"
+    },
+    {
+      "claim": {
+        "assertion": "USED",
+        "family": "RELATIONSHIP",
+        "object_id": "relationship:orders_customers"
+      },
+      "status": "VERIFIED"
+    }
+  ],
+  "contradiction_detections": 4,
+  "expected_statuses": [
+    "VERIFIED",
+    "CONTRADICTED",
+    "VERIFIED",
+    "CONTRADICTED",
+    "CONTRADICTED",
+    "CONTRADICTED",
+    "VERIFIED",
+    "VERIFIED",
+    "UNRESOLVED",
+    "VERIFIED"
+  ],
+  "unknown_preservation": true,
+  "verified_claims": 5
+}

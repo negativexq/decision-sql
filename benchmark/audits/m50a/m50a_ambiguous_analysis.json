@@ -1,0 +1,1824 @@
+{
+  "count": 9,
+  "rows": [
+    {
+      "case_id": "commerce_09",
+      "case_index": 9,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "d5e434d555619dc1e381d80a4f1e81162ca198a7ce81918650a48d11f64e00c4",
+      "database_id": "commerce_ops",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 9,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 28,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "156f0ea96948f407f03be0731cf891164c10f7e66a41a2878eb89f0b11d570e2",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "fleet_10",
+      "case_index": 20,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "b4604275331e1a7b6b77bcf41b0efa65864b91c66557a6a83c88b2b10b1f68e4",
+      "database_id": "fleet_ops",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 9,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 38,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "65aff8a63705bbcf175c9189070382d7e7d4c7dbfe05b6a812630703011dfcf9",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "support_09",
+      "case_index": 29,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "96ee0f920be05ea7417c1dc553805fc64469406b751674072dc1202a60bf4c78",
+      "database_id": "support_ops",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 9,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 36,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "171b8d3989c83e39f32bace93dabc2ae1d8a38ae3eaaaf32b1ff9301aa151e06",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "subscription_18",
+      "case_index": 74,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "1ad651f400ac8a8a1476fce0e1c1f1e3863036ac771e4bba6ef2d208466a3745",
+      "database_id": "subscription_billing",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 12,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 63,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": "UNRESOLVED_TIME_SCOPE_ASSUMED",
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_WRONG",
+      "m50_treatment_decision": "ANSWER",
+      "question_sha256": "f33f540d11d73fcfb91e1906f617bd841e524d2e63889fcf2dc81aa15b6066c3",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "subscription_19",
+      "case_index": 75,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "1ad651f400ac8a8a1476fce0e1c1f1e3863036ac771e4bba6ef2d208466a3745",
+      "database_id": "subscription_billing",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 12,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 63,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "33453829771c7b2ee20d698b109d2ff9c758d3ef4a744f1cd53ce41ef214e36f",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "warehouse_19",
+      "case_index": 81,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "cb09f74da082cc328402254527bdd46e2b331e654c5ebf7e2cc8e65055760999",
+      "database_id": "warehouse_logistics",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 13,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 63,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": "UNRESOLVED_TIME_SCOPE_ASSUMED",
+      "m50_control_decision": "ANSWER",
+      "m50_transition": "CONTROL_WRONG_TREATMENT_WRONG",
+      "m50_treatment_decision": "ANSWER",
+      "question_sha256": "7a660295cbc18ae1b2954daa6c236534ddb080feaa9b9896fcf06e054f9bba54",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "warehouse_20",
+      "case_index": 82,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "cb09f74da082cc328402254527bdd46e2b331e654c5ebf7e2cc8e65055760999",
+      "database_id": "warehouse_logistics",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 13,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 63,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": "UNRESOLVED_STATUS_DEFINITION_ASSUMED",
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "28854078d26ff147ae4b3c2840dd85f7f08f94bf8d0bb4be96e73358336ed67b",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "risk_18",
+      "case_index": 87,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "47dfb486457fa7f4398fe38a750f4d0981319a38b0f77e1abdb01bfbe12cb495",
+      "database_id": "risk_operations",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 11,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 61,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "9d99c2f342b9a300157098790f662ea894653a09e996a8b9c20c587f105dc0c9",
+      "truth_behavior": "AMBIGUOUS"
+    },
+    {
+      "case_id": "risk_19",
+      "case_index": 88,
+      "context_profile": "GOVERNED_CONTEXT_V1",
+      "context_sha256": "47dfb486457fa7f4398fe38a750f4d0981319a38b0f77e1abdb01bfbe12cb495",
+      "database_id": "risk_operations",
+      "features": {
+        "metadata_primitives": {
+          "attribute_catalog": {
+            "provenance": {
+              "derivation_rule": "public attribute catalog is present/non-empty",
+              "field": "attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_catalog": {
+            "provenance": {
+              "derivation_rule": "authorized relationship metadata is present/non-empty; this does not map a question to a required path",
+              "field": "authorized_relationships",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "authorized_relationship_count": 11,
+          "calculation_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit metric formula or definition is present; request-to-metric mapping is not inferred",
+              "field": "metrics.formula/definition",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "entity_scope_catalog": {
+            "provenance": {
+              "derivation_rule": "entity definitions are present; question-to-entity mapping is not inferred",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "policy_catalog": {
+            "provenance": {
+              "derivation_rule": "public policy metadata is present/non-empty",
+              "field": "policy",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "schema_catalog": {
+            "provenance": {
+              "derivation_rule": "public entity catalog is present/non-empty",
+              "field": "schema_catalog",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "at least one public semantic description is present",
+              "field": "metrics/business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "semantic_definition_count": 61,
+          "status_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "an explicit status-like definition is present; physical status columns alone do not qualify",
+              "field": "business_rules/attributes",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_definition_catalog": {
+            "provenance": {
+              "derivation_rule": "public temporal rule catalog is present/non-empty",
+              "field": "temporal_rules",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "AVAILABLE"
+          },
+          "temporal_rule_count": 1,
+          "tie_break_catalog": {
+            "provenance": {
+              "derivation_rule": "tie-break semantics are not represented as a public typed catalog field",
+              "field": "no first-class tie-break field in governed context",
+              "source": "benchmark/context.py",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          }
+        },
+        "request_scoped_features": {
+          "calculation_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "formula metadata presence cannot establish that the requested calculation is the documented one",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "composite_answerability": {
+            "provenance": {
+              "derivation_rule": "composite answerability is not computed because required facts and uniqueness are unresolved",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          },
+          "entity_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "entity catalog presence cannot establish the question's unique entity scope",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "fact_availability": {
+            "provenance": {
+              "derivation_rule": "required facts are not a typed field of the model request; do not infer them from evaluator truth",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "relationship_authorization": {
+            "provenance": {
+              "derivation_rule": "the public authorization graph exists, but required relationship extraction from free-form question is absent",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "semantic_definition_availability": {
+            "provenance": {
+              "derivation_rule": "definition catalogs exist, but request-to-definition matching is not a typed operation",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "status_definition_explicitness": {
+            "provenance": {
+              "derivation_rule": "status metadata presence cannot establish that the requested status concept is uniquely mapped",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "temporal_scope_explicitness": {
+            "provenance": {
+              "derivation_rule": "temporal metadata presence cannot establish the requested question's scope without typed request semantics",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "tie_break_explicitness": {
+            "provenance": {
+              "derivation_rule": "no typed requested ordering/tie-break inventory exists",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNKNOWN"
+          },
+          "uniqueness_of_interpretation": {
+            "provenance": {
+              "derivation_rule": "uniqueness requires an explicit typed interpretation inventory; none is present",
+              "field": "question plus public governed context",
+              "source": "no typed required-fact/request-semantic inventory exists",
+              "source_type": "MODEL_VISIBLE_SERVER_OWNED"
+            },
+            "value": "UNRESOLVED"
+          }
+        }
+      },
+      "m49_primary_mechanism": null,
+      "m50_control_decision": "NEEDS_CLARIFICATION",
+      "m50_transition": "CONTROL_CORRECT_TREATMENT_CORRECT",
+      "m50_treatment_decision": "NEEDS_CLARIFICATION",
+      "question_sha256": "154e5e18f01adf809cd15c83d009feeb874677a4c7b2dcbf206edc6a7b0b0210",
+      "truth_behavior": "AMBIGUOUS"
+    }
+  ],
+  "truth_behavior": "AMBIGUOUS"
+}

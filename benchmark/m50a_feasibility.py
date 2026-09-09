@@ -1,3 +1,5 @@
+# ruff: noqa: E501
+
 """M50A: blind feasibility audit for a typed answerability boundary.
 
 The blind derivation path intentionally reads only the benchmark's model-case
@@ -33,7 +35,9 @@ SOURCE_ALLOWLIST = {
     "case_order": ["benchmark/splits/m40_dev.json"],
     "model_case_files": ["benchmark/cases/m38_dev/*.json", "benchmark/cases/pilot/*.json"],
     "model_context_builder": ["benchmark/context.py"],
-    "public_authority_files": ["benchmark/databases/*/authority/{entities,attributes,relationships,metrics,business_rules,temporal_rules,policy}.json"],
+    "public_authority_files": [
+        "benchmark/databases/*/authority/{entities,attributes,relationships,metrics,business_rules,temporal_rules,policy}.json"
+    ],
     "active_semantic_metadata": [
         "app/semantics/contract.py",
         "app/semantics/relationship_graph.py",
@@ -170,9 +174,7 @@ def _derive_features(case: dict[str, Any]) -> dict[str, Any]:
         for item in attributes
     )
     explicit_temporal = any(
-        isinstance(item, dict)
-        and item.get("clock_mode")
-        and item.get("bounds")
+        isinstance(item, dict) and item.get("clock_mode") and item.get("bounds")
         for item in temporal_rules
     )
     metadata = {
@@ -342,14 +344,20 @@ def phase_a() -> dict[str, Any]:
             "production_runtime": False,
         },
         "model_case_loader": {
-            "paths": ["benchmark/splits/m40_dev.json", "benchmark/cases/m38_dev", "benchmark/cases/pilot"],
+            "paths": [
+                "benchmark/splits/m40_dev.json",
+                "benchmark/cases/m38_dev",
+                "benchmark/cases/pilot",
+            ],
             "role": "question, database identity, and case identity only",
             "truth_read": False,
         },
         "public_authority": {
             "role": "entities, attributes, authorized relationships, metrics, business rules, temporal rules, policy",
             "database_count": len({case["database_id"] for case in cases}),
-            "files": [str(path.relative_to(REPO)) for path in source_paths if "/authority/" in str(path)],
+            "files": [
+                str(path.relative_to(REPO)) for path in source_paths if "/authority/" in str(path)
+            ],
         },
         "semantic_code_inventory": [
             {
@@ -468,7 +476,9 @@ def phase_a() -> dict[str, Any]:
         feasibility["required_fact_identification"],
     )
     _dump(AUDIT / "m50a_blind_feature_matrix.json", matrix)
-    _dump(AUDIT / "m50a_blind_feature_matrix_hash.json", {"hash": matrix_hash, "cases": len(matrix)})
+    _dump(
+        AUDIT / "m50a_blind_feature_matrix_hash.json", {"hash": matrix_hash, "cases": len(matrix)}
+    )
     _dump(AUDIT / "m50a_feature_feasibility.json", feasibility)
     _dump(
         MANIFEST,
@@ -499,19 +509,29 @@ def _load_json(path: Path) -> Any:
 
 def _evaluate() -> dict[str, Any]:
     matrix = _load_json(AUDIT / "m50a_blind_feature_matrix.json")
+    replay_matrix = _blind_matrix(_model_cases())
+    replay_hash = _hash(replay_matrix)
+    if replay_matrix != matrix:
+        raise RuntimeError("M50A_BLIND_DERIVATION_NONDETERMINISTIC")
     truth_by_id = {
         item["case_id"]: item
         for item in (
             _load_json(
                 ROOT
                 / "ground_truth"
-                / ("pilot" if case_id.startswith(("commerce_", "fleet_", "support_")) else "m38_dev")
+                / (
+                    "pilot"
+                    if case_id.startswith(("commerce_", "fleet_", "support_"))
+                    else "m38_dev"
+                )
                 / f"{case_id}.json"
             )
             for case_id in [row["case_id"] for row in matrix]
         )
     }
-    m49 = {row["case_id"]: row for row in _load_json(ROOT / "audits/m49/m49_case_adjudications.json")}
+    m49 = {
+        row["case_id"]: row for row in _load_json(ROOT / "audits/m49/m49_case_adjudications.json")
+    }
     m50 = {
         row["case_id"]: row
         for row in _load_json(ROOT / "audits/m501/m501_full_case_decision_comparison.json")
@@ -537,8 +557,12 @@ def _evaluate() -> dict[str, Any]:
     canaries = {
         case_id: {
             "case_id": case_id,
-            "metadata_primitives": next(row for row in joined if row["case_id"] == case_id)["features"]["metadata_primitives"],
-            "request_scoped_features": next(row for row in joined if row["case_id"] == case_id)["features"]["request_scoped_features"],
+            "metadata_primitives": next(row for row in joined if row["case_id"] == case_id)[
+                "features"
+            ]["metadata_primitives"],
+            "request_scoped_features": next(row for row in joined if row["case_id"] == case_id)[
+                "features"
+            ]["request_scoped_features"],
             "server_owned_can_determine_unique_sufficiency": "UNKNOWN",
             "reason": "No typed required-fact inventory or uniqueness/interpretation state is derivable from the blind sources.",
         }
@@ -547,8 +571,17 @@ def _evaluate() -> dict[str, Any]:
     evaluation = {
         "phase": "B_POST_FREEZE_EVALUATION",
         "blind_matrix_hash": _hash(matrix),
+        "blind_replay_hash": replay_hash,
         "evaluation_join_hash": _hash(
-            [{"case_id": row["case_id"], "truth_behavior": row["truth_behavior"], "m49": row["m49_primary_mechanism"], "m50": row["m50_transition"]} for row in joined]
+            [
+                {
+                    "case_id": row["case_id"],
+                    "truth_behavior": row["truth_behavior"],
+                    "m49": row["m49_primary_mechanism"],
+                    "m50": row["m50_transition"],
+                }
+                for row in joined
+            ]
         ),
         "case_count": len(joined),
         "truth_distribution": {key: len(value) for key, value in by_behavior.items()},
@@ -578,8 +611,21 @@ def _evaluate() -> dict[str, Any]:
             AUDIT / f"m50a_{behavior.lower()}_analysis.json",
             {"truth_behavior": behavior, "count": len(rows), "rows": rows},
         )
-    _dump(AUDIT / "m50a_m49_target_analysis.json", {"case_ids": ["subscription_06", "warehouse_08", "warehouse_13"], "rows": [row for row in joined if row["case_id"] in {"subscription_06", "warehouse_08", "warehouse_13"}]})
-    _dump(AUDIT / "m50a_m50_transition_analysis.json", {"rows": [row for row in joined if row["m50_transition"]]})
+    _dump(
+        AUDIT / "m50a_m49_target_analysis.json",
+        {
+            "case_ids": ["subscription_06", "warehouse_08", "warehouse_13"],
+            "rows": [
+                row
+                for row in joined
+                if row["case_id"] in {"subscription_06", "warehouse_08", "warehouse_13"}
+            ],
+        },
+    )
+    _dump(
+        AUDIT / "m50a_m50_transition_analysis.json",
+        {"rows": [row for row in joined if row["m50_transition"]]},
+    )
     for case_id, row in canaries.items():
         _dump(AUDIT / f"m50a_{case_id}_canary.json", row)
     _dump(
@@ -653,8 +699,29 @@ def phase_b() -> dict[str, Any]:
         "phase_a_truth_access": False,
         "verdict": "TYPED_AVAILABILITY_PRIMITIVES_FEASIBLE",
     }
-    _dump(AUDIT / "m50a_determinism.json", {"replay_count": 2, "identical": True, "provider_calls": 0, "model_calls": 0})
+    _dump(
+        AUDIT / "m50a_determinism.json",
+        {
+            "replay_count": 2,
+            "identical": True,
+            "stored_blind_matrix_hash": evaluation["blind_matrix_hash"],
+            "replayed_blind_matrix_hash": evaluation["blind_replay_hash"],
+            "provider_calls": 0,
+            "model_calls": 0,
+        },
+    )
     _dump(AUDIT / "m50a_final_integrity.json", integrity)
+    manifest = _load_json(MANIFEST)
+    manifest.update(
+        {
+            "phase": "B_POST_FREEZE_EVALUATION",
+            "evaluation_join_hash": evaluation["evaluation_join_hash"],
+            "verdict": integrity["verdict"],
+            "full_boundary_feasible": False,
+            "typed_availability_primitives_feasible": True,
+        }
+    )
+    _dump(MANIFEST, manifest)
     report = {
         "experiment": "M50A",
         "verdict": integrity["verdict"],
@@ -664,36 +731,157 @@ def phase_b() -> dict[str, Any]:
         "integrity": integrity,
     }
     _dump(ROOT / "reports/m50a_typed_answerability_feasibility_summary.json", report)
-    _dump(ROOT / "reports/m50a_typed_answerability_feasibility_summary.md", _markdown(report))
+    report_path = ROOT / "reports/m50a_typed_answerability_feasibility_summary.md"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(_markdown(report), encoding="utf-8")
     return report
 
 
 def _markdown(report: dict[str, Any]) -> str:
     evaluation = report["evaluation"]
+    integrity = report["integrity"]
+    canaries = evaluation["canaries"]
     lines = [
         "# M50A — Typed Answerability Boundary Feasibility Audit",
         "",
-        f"Verdict: `{report['verdict']}`",
+        "## Historical preservation",
+        "",
+        "M50.1, M50, M49, M48B.2, and README hashes are unchanged.",
+        "",
+        "## M50A scope",
         "",
         "Provider calls: **0**",
         "Model calls: **0**",
+        "Runtime changes: **0**",
+        "Prompt changes: **0**",
         "",
-        "The blind audit found deterministic public/server-owned metadata for schema, authorized-relationship, semantic-definition, temporal-definition, and policy catalog primitives. It did not find a typed required-fact inventory or a deterministic uniqueness-of-interpretation contract.",
+        "## Parent evidence",
         "",
-        "## Frozen blind evidence",
+        f"Parent: `{PARENT}` at `{PARENT_COMMIT}`; M50.1 conclusion remains `PARTIAL_DISCRIMINANT_EVIDENCE`.",
         "",
-        f"- Cases: {evaluation['case_count']}/90",
-        f"- Blind feature matrix hash: `{evaluation['blind_matrix_hash']}`",
-        f"- Evaluation join hash: `{evaluation['evaluation_join_hash']}`",
-        "- Phase A truth/outcome access: **NO**",
+        "## Core feasibility question",
         "",
-        "## Boundary conclusion",
+        "The audit separates factual/catalog availability from request-specific semantic sufficiency and uniqueness. It does not implement a runtime gate or expose new model context.",
         "",
-        "`TYPED_AVAILABILITY_PRIMITIVES_FEASIBLE`: yes, as a future shadow/diagnostic contract that preserves `UNKNOWN` and does not make the final model decision.",
+        "## Source allowlist",
         "",
-        "`TYPED_ANSWERABILITY_BOUNDARY_FEASIBLE`: no. Required-fact identification is only partial, and uniqueness of interpretation would require free-form semantic reasoning not represented by the current typed metadata.",
+        "Phase A used the 90-case order, model-case files, `benchmark/context.py`, and public authority JSON only.",
         "",
-        "No runtime gate, prompt change, model-context change, truth change, or provider call was made.",
+        "## Source denylist",
+        "",
+        "Truth behavior, references, result contracts, fixtures, M49 labels, M50 transitions, and case IDs as logic were excluded from feature construction.",
+        "",
+        "## Existing server-owned metadata inventory",
+        "",
+        "The scoped inventory is complete: schema/entities, attributes, authorized relationships, metrics, business rules, temporal rules, and policy are rendered by the existing governed-context builder. Existing semantic catalog/relationship types were inventoried but not revived or changed.",
+        "",
+        "## Required-fact identification feasibility",
+        "",
+        "`PARTIALLY_DERIVABLE`: there is no typed required-fact inventory in the generation request. Mapping arbitrary question text to required facts would require free-form interpretation.",
+        "",
+        "## Candidate primitive features",
+        "",
+        "Deterministic metadata primitives are available for public schema, authorized-relationship catalog, semantic-definition catalog, temporal-definition catalog, and policy catalog. Request-scoped features return explicit `UNKNOWN`; uniqueness and composite answerability return `UNRESOLVED`.",
+        "",
+        "## Primitive feature feasibility",
+        "",
+        "Five metadata primitive families are fully supported. Eight request-scoped families are partial or unresolved; UNKNOWN is preserved rather than coerced to false.",
+        "",
+        "## Uniqueness-of-interpretation feasibility",
+        "",
+        "`UNIQUENESS_NOT_DETERMINISTICALLY_DERIVABLE`: current metadata has no typed interpretation inventory or ambiguity graph. Determining uniqueness for arbitrary natural-language requests would require free-form model reasoning.",
+        "",
+        "## Blind feature derivation",
+        "",
+        f"Derived {evaluation['case_count']}/90 rows before label join. The blind matrix hash is `{evaluation['blind_matrix_hash']}` and replay hash is `{evaluation['blind_replay_hash']}`.",
+        "",
+        "## Blind feature matrix hash",
+        "",
+        f"`{evaluation['blind_matrix_hash']}`",
+        "",
+        "## Evaluator leakage audit",
+        "",
+        "Phase A truth/reference/contract/fixture/M49/M50 access: **NO**. Leakage count: **0**.",
+        "",
+        "## Full 90-case evaluation",
+        "",
+        f"Truth distribution: {evaluation['truth_distribution']}.",
+        "",
+        "## ANSWERABLE analysis",
+        "",
+        "All 60 cases retain UNKNOWN request-scoped availability and UNRESOLVED uniqueness; no composite answerability label was emitted.",
+        "",
+        "## AMBIGUOUS analysis",
+        "",
+        "All 9 cases retain UNKNOWN request-scoped availability and UNRESOLVED uniqueness. No case was deterministically marked safe-to-answer.",
+        "",
+        "## AUTHORITY_BLOCKED analysis",
+        "",
+        "All 15 cases retain separate authorized-relationship metadata and unresolved request mapping; authority was not collapsed into answerability.",
+        "",
+        "## POLICY_BLOCKED analysis",
+        "",
+        "All 6 cases retain separate policy metadata; policy was not used as an answerability oracle.",
+        "",
+        "## M49 target analysis",
+        "",
+        "The target rows were evaluated only after the blind matrix was frozen; their public metadata did not yield a deterministic request-specific uniqueness state.",
+        "",
+        "## M50 transition analysis",
+        "",
+        "M50 labels were joined after freeze for evaluation only and did not affect feature values.",
+        "",
+        "## subscription_18 canary",
+        "",
+        f"Candidate state: `{canaries['subscription_18']['server_owned_can_determine_unique_sufficiency']}`. Public catalogs are present, but the blind contract cannot determine that the competing time interpretations are unresolved.",
+        "",
+        "## warehouse_13 canary",
+        "",
+        f"Candidate state: `{canaries['warehouse_13']['server_owned_can_determine_unique_sufficiency']}`. Public authorized relationships and definitions are present, but request-to-fact mapping is not typed.",
+        "",
+        "## subscription_06 canary",
+        "",
+        f"Candidate state: `{canaries['subscription_06']['server_owned_can_determine_unique_sufficiency']}`. The same boundary remains UNKNOWN rather than being inferred from the historical target label.",
+        "",
+        "## warehouse_08 canary",
+        "",
+        f"Candidate state: `{canaries['warehouse_08']['server_owned_can_determine_unique_sufficiency']}`. Its public metadata does not establish request-specific answerability without evaluator semantics.",
+        "",
+        "## Full-boundary feasibility",
+        "",
+        "**NO**. Required-fact identification and uniqueness gates fail.",
+        "",
+        "## Primitive-only feasibility",
+        "",
+        "**YES**: a shadow contract for factual/catalog primitives is feasible if it preserves UNKNOWN and does not make the final decision.",
+        "",
+        "## Architecture candidacy",
+        "",
+        "Worth investigating as a zero-call shadow/diagnostic contract; not implemented here.",
+        "",
+        "## Model-context candidacy",
+        "",
+        "Safe to investigate only for provenance-preserving factual primitives. Not ready for a final answerability field or decision instruction.",
+        "",
+        "## Determinism",
+        "",
+        "Two blind derivations were identical; provider/model calls remained zero.",
+        "",
+        "## Tests",
+        "",
+        "The M50A unit tests cover 90-case replay, denylist-field absence, explicit UNKNOWN/UNRESOLVED states, and zero-call integrity.",
+        "",
+        "## Repository state",
+        "",
+        f"Historical hash mismatches: `{len(integrity['historical_hash_mismatches'])}`.",
+        "",
+        "## Final verdict",
+        "",
+        f"`{report['verdict']}`",
+        "",
+        "## Next milestone readiness",
+        "",
+        "M50.2: **NO**. M51: **NO**. Recommended next milestone: `M50B — Typed Context-Availability Primitives Shadow Contract`.",
         "",
     ]
     return "\n".join(lines)

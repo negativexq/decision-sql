@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_04",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_04_cf1_3b5a4c",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9009,103,'2026-06-23',200,'open','{}')"
+      ],
+      "purpose": "adds open claim"
+    },
+    {
+      "fixture_id": "insurance_04_cf2_8f92c7",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9010,103,'2026-06-23',200,'closed','{}')"
+      ],
+      "purpose": "adds closed claim"
+    }
+  ]
+}

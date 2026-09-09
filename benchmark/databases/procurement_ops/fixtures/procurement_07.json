@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_07_cf1_7bd0b2",
+      "patch_sql": [
+        "INSERT INTO suppliers VALUES (9001,'Northstar','West',true,'{}')"
+      ],
+      "purpose": "adds an active supplier"
+    },
+    {
+      "fixture_id": "procurement_07_cf2_1a95d1",
+      "patch_sql": [
+        "INSERT INTO suppliers VALUES (9002,'Quiet Source','West',false,'{}')"
+      ],
+      "purpose": "adds an inactive supplier"
+    }
+  ]
+}

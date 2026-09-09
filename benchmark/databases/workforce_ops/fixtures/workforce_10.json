@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "workforce_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_10_cf1_27ffa3",
+      "patch_sql": [
+        "INSERT INTO payroll_adjustments VALUES (9005,1,25,'2026-06-21','bonus')"
+      ],
+      "purpose": "adds bonus"
+    },
+    {
+      "fixture_id": "workforce_10_cf2_d63fa4",
+      "patch_sql": [
+        "INSERT INTO payroll_adjustments VALUES (9006,1,-10,'2026-06-21','deduction')"
+      ],
+      "purpose": "adds deduction"
+    }
+  ]
+}

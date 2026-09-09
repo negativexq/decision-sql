@@ -1,0 +1,139 @@
+{
+  "case_id": "insurance_14",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_14_cf1_e1fe18",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9005,201,'2026-06-22',50,'posted')"
+      ],
+      "purpose": "adds payment"
+    },
+    {
+      "fixture_id": "insurance_14_cf2_8f24d2",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9006,202,'2026-06-22',50,'pending')"
+      ],
+      "purpose": "adds pending payment"
+    }
+  ],
+  "database_id": "insurance_claims",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT c.claim_id,COALESCE((SELECT SUM(p.amount) FROM claim_payments p WHERE p.claim_id=c.claim_id),0) AS paid_amount FROM claims c ORDER BY c.claim_id"
+  },
+  "required_context_facts": [
+    "entities:insurance_claims:claims",
+    "entities:insurance_claims:claim_payments"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_insurance_14_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_insurance_14_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_insurance_14_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "claim_id",
+        "paid_amount"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "claim_id",
+      "paid_amount"
+    ],
+    "population": "base-entity-preserving",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "claim_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "paid_amount"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "group_survival",
+      "null_semantics",
+      "correlated"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:insurance_claims:policy_holder",
+      "relationship:insurance_claims:claim_policy",
+      "relationship:insurance_claims:payment_claim",
+      "relationship:insurance_claims:event_claim",
+      "relationship:insurance_claims:assignment_claim",
+      "relationship:insurance_claims:assignment_adjuster"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

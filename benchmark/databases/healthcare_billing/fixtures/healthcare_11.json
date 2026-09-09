@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "healthcare_11",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_11_cf1_c84a7d",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9011,1,1,'2026-06-25 10:00+00','completed')"
+      ],
+      "purpose": "adds later encounter"
+    },
+    {
+      "fixture_id": "healthcare_11_cf2_a9c3ee",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9012,2,1,'2025-01-01 10:00+00','completed')"
+      ],
+      "purpose": "adds older encounter"
+    }
+  ]
+}

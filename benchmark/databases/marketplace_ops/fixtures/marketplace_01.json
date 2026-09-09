@@ -1,0 +1,24 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_01_cf1_691402",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9025,1,'2026-06-28','completed')",
+        "INSERT INTO disputes VALUES (9026,9025,'2026-06-28','open')"
+      ],
+      "purpose": "adds disputed order"
+    },
+    {
+      "fixture_id": "marketplace_01_cf2_946e27",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9027,2,'2026-06-28','completed')"
+      ],
+      "purpose": "adds undisputed order"
+    }
+  ]
+}

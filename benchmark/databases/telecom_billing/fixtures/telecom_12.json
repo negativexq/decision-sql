@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "telecom_12",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "telecom_12_cf1_665417",
+      "patch_sql": [
+        "INSERT INTO payments VALUES (9005,301,'2026-06-22',10,'posted')"
+      ],
+      "purpose": "adds posted payment"
+    },
+    {
+      "fixture_id": "telecom_12_cf2_01aaa5",
+      "patch_sql": [
+        "INSERT INTO payments VALUES (9006,302,'2026-06-22',10,'failed')"
+      ],
+      "purpose": "adds failed payment"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_10_cf1_775997",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9017,102,'2026-06-28',1000,'open','{}')"
+      ],
+      "purpose": "adds high loss"
+    },
+    {
+      "fixture_id": "insurance_10_cf2_75cbd6",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9018,102,'2026-06-28',1,'open','{}')"
+      ],
+      "purpose": "adds low loss"
+    }
+  ]
+}

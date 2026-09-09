@@ -1,0 +1,133 @@
+{
+  "case_id": "healthcare_15",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_15_cf1_22feb0",
+      "patch_sql": [
+        "INSERT INTO diagnoses VALUES (9013,101,'E11')"
+      ],
+      "purpose": "adds E diagnosis"
+    },
+    {
+      "fixture_id": "healthcare_15_cf2_00f8b2",
+      "patch_sql": [
+        "INSERT INTO diagnoses VALUES (9014,101,'J10')"
+      ],
+      "purpose": "adds non-E diagnosis"
+    }
+  ],
+  "database_id": "healthcare_billing",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT p.patient_id FROM patients p LEFT JOIN encounters e ON e.patient_id=p.patient_id LEFT JOIN diagnoses d ON d.encounter_id=e.encounter_id AND d.code LIKE 'E%' GROUP BY p.patient_id HAVING COUNT(d.diagnosis_id)=0 ORDER BY p.patient_id"
+  },
+  "required_context_facts": [
+    "entities:healthcare_billing:patients",
+    "entities:healthcare_billing:encounters",
+    "entities:healthcare_billing:diagnoses"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_healthcare_15_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_healthcare_15_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_healthcare_15_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT p.patient_id FROM patients p WHERE NOT EXISTS (SELECT 1 FROM encounters e JOIN diagnoses d ON d.encounter_id=e.encounter_id WHERE e.patient_id=p.patient_id AND d.code LIKE 'E%') ORDER BY p.patient_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "patient_id"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "patient_id"
+    ],
+    "population": "base-entity-preserving",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "patient_id"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "anti_join",
+      "null_semantics"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:healthcare_billing:encounter_patient",
+      "relationship:healthcare_billing:encounter_provider",
+      "relationship:healthcare_billing:procedure_encounter",
+      "relationship:healthcare_billing:charge_procedure",
+      "relationship:healthcare_billing:payment_patient",
+      "relationship:healthcare_billing:diagnosis_encounter"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 1,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

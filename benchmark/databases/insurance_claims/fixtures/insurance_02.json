@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_02_cf1_b5da38",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9013,101,'2026-06-26',100,'open','{}')"
+      ],
+      "purpose": "adds June claim"
+    },
+    {
+      "fixture_id": "insurance_02_cf2_f580f6",
+      "patch_sql": [
+        "INSERT INTO claims VALUES (9014,101,'2026-07-01',100,'open','{}')"
+      ],
+      "purpose": "adds July claim"
+    }
+  ]
+}

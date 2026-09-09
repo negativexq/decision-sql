@@ -1,0 +1,141 @@
+{
+  "case_id": "workforce_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_07_cf1_9ccc93",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9017,2,'2026-06-27',40,true)"
+      ],
+      "purpose": "adds high hours"
+    },
+    {
+      "fixture_id": "workforce_07_cf2_1b1d5d",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9018,2,'2026-06-27',1,true)"
+      ],
+      "purpose": "adds low hours"
+    }
+  ],
+  "database_id": "workforce_ops",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT team_id,DENSE_RANK() OVER (ORDER BY approved_hours DESC,team_id) AS hours_rank FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved GROUP BY e.team_id) q ORDER BY hours_rank,team_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT team_id,hours_rank FROM (SELECT team_id,approved_hours,DENSE_RANK() OVER (ORDER BY approved_hours DESC,team_id) hours_rank FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved GROUP BY e.team_id) x) y ORDER BY hours_rank,team_id"
+  },
+  "required_context_facts": [
+    "entities:workforce_ops:employees",
+    "entities:workforce_ops:timesheets"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_workforce_07_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT team_id,DENSE_RANK() OVER (ORDER BY approved_hours DESC,team_id) AS hours_rank FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved GROUP BY e.team_id) q ORDER BY hours_rank,team_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_workforce_07_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT team_id,DENSE_RANK() OVER (ORDER BY approved_hours DESC,team_id) AS hours_rank FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved GROUP BY e.team_id) q ORDER BY hours_rank,team_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_workforce_07_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT team_id,DENSE_RANK() OVER (ORDER BY approved_hours DESC,team_id) AS hours_rank FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved GROUP BY e.team_id) q ORDER BY hours_rank,team_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "team_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "team_id",
+        "hours_rank"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "team_id",
+      "hours_rank"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "team_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "hours_rank"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "window",
+      "ranking",
+      "aggregation"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:workforce_ops:employee_team",
+      "relationship:workforce_ops:shift_employee",
+      "relationship:workforce_ops:timesheet_employee",
+      "relationship:workforce_ops:absence_employee",
+      "relationship:workforce_ops:training_employee",
+      "relationship:workforce_ops:adjustment_employee"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

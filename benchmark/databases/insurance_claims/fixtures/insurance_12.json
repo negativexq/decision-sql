@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_12",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_12_cf1_37a9aa",
+      "patch_sql": [
+        "INSERT INTO claim_events VALUES (9019,201,'2026-06-29 10:00+00','closed')"
+      ],
+      "purpose": "adds later event"
+    },
+    {
+      "fixture_id": "insurance_12_cf2_67ef5c",
+      "patch_sql": [
+        "INSERT INTO claim_events VALUES (9020,202,'2026-06-02 10:00+00','reviewed')"
+      ],
+      "purpose": "adds same-day event"
+    }
+  ]
+}

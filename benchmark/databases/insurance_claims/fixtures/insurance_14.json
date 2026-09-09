@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_14",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_14_cf1_e1fe18",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9005,201,'2026-06-22',50,'posted')"
+      ],
+      "purpose": "adds payment"
+    },
+    {
+      "fixture_id": "insurance_14_cf2_8f24d2",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9006,202,'2026-06-22',50,'pending')"
+      ],
+      "purpose": "adds pending payment"
+    }
+  ]
+}

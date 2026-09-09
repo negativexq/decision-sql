@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_08_cf1_79ae2f",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9021,3,'2026-06-28','open')",
+        "INSERT INTO po_lines VALUES (9022,9021,'SKU-Z',20,100)"
+      ],
+      "purpose": "adds high spend"
+    },
+    {
+      "fixture_id": "procurement_08_cf2_3ff57c",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9023,3,'2026-06-28','open')",
+        "INSERT INTO po_lines VALUES (9024,9023,'SKU-Z',1,1)"
+      ],
+      "purpose": "adds low spend"
+    }
+  ]
+}

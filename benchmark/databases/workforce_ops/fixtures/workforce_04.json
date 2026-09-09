@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "workforce_04",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_04_cf1_251ee2",
+      "patch_sql": [
+        "INSERT INTO employees VALUES (9011,'Risky Worker',2,'active','{\"risk_score\":\"4\"}')"
+      ],
+      "purpose": "adds high-risk employee"
+    },
+    {
+      "fixture_id": "workforce_04_cf2_6fc62a",
+      "patch_sql": [
+        "INSERT INTO employees VALUES (9012,'Safe Worker',2,'active','{\"risk_score\":\"1\"}')"
+      ],
+      "purpose": "adds low-risk employee"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_08_cf1_665417",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9015,201,'2026-06-27',10,'posted')"
+      ],
+      "purpose": "adds posted payment"
+    },
+    {
+      "fixture_id": "insurance_08_cf2_6a70dc",
+      "patch_sql": [
+        "INSERT INTO claim_payments VALUES (9016,201,'2026-06-27',10,'denied')"
+      ],
+      "purpose": "adds denied payment"
+    }
+  ]
+}

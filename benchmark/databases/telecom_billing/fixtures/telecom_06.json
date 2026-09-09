@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "telecom_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "telecom_06_cf1_7ab865",
+      "patch_sql": [
+        "INSERT INTO usage_records VALUES (9011,1,'2026-06-24',10,'{\"overhead_kb\":\"700\"}')"
+      ],
+      "purpose": "adds high overhead"
+    },
+    {
+      "fixture_id": "telecom_06_cf2_8a6ca0",
+      "patch_sql": [
+        "INSERT INTO usage_records VALUES (9012,1,'2026-06-24',10,'{\"overhead_kb\":\"20\"}')"
+      ],
+      "purpose": "adds low overhead"
+    }
+  ]
+}

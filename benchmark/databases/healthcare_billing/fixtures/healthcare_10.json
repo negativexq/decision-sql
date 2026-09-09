@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "healthcare_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_10_cf1_5fd27d",
+      "patch_sql": [
+        "INSERT INTO charges VALUES (9021,201,100,'posted')"
+      ],
+      "purpose": "adds posted charge"
+    },
+    {
+      "fixture_id": "healthcare_10_cf2_fc6cd2",
+      "patch_sql": [
+        "INSERT INTO charges VALUES (9022,201,100,'open')"
+      ],
+      "purpose": "adds open charge"
+    }
+  ]
+}

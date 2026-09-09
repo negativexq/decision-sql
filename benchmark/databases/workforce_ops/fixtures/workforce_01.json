@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "workforce_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_01_cf1_6339ce",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9015,1,'2026-06-26',4,true)"
+      ],
+      "purpose": "adds approved hours"
+    },
+    {
+      "fixture_id": "workforce_01_cf2_f908a0",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9016,1,'2026-06-26',4,false)"
+      ],
+      "purpose": "adds unapproved hours"
+    }
+  ]
+}

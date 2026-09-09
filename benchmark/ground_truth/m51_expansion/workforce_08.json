@@ -1,0 +1,144 @@
+{
+  "case_id": "workforce_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_08_cf1_97a1b5",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9003,1,'2026-06-20',8,true)"
+      ],
+      "purpose": "adds approved June hours"
+    },
+    {
+      "fixture_id": "workforce_08_cf2_27df11",
+      "patch_sql": [
+        "INSERT INTO timesheets VALUES (9004,1,'2026-06-20',8,false)"
+      ],
+      "purpose": "adds unapproved June hours"
+    }
+  ],
+  "database_id": "workforce_ops",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01' GROUP BY e.team_id ORDER BY e.team_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT team_id,approved_hours FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM timesheets t JOIN employees e ON e.employee_id=t.employee_id WHERE t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01' GROUP BY e.team_id) q ORDER BY team_id"
+  },
+  "required_context_facts": [
+    "entities:workforce_ops:employees",
+    "entities:workforce_ops:timesheets"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_workforce_08_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01' GROUP BY e.team_id ORDER BY e.team_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_workforce_08_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01' GROUP BY e.team_id ORDER BY e.team_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_workforce_08_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT e.team_id,SUM(t.hours) AS approved_hours FROM employees e JOIN timesheets t ON t.employee_id=e.employee_id WHERE t.approved AND t.worked_on>=DATE '2026-06-01' AND t.worked_on<DATE '2026-07-01' GROUP BY e.team_id ORDER BY e.team_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "team_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "team_id",
+        "approved_hours"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "team_id",
+      "approved_hours"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "team_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "approved_hours"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "aggregation",
+      "temporal",
+      "status_definition"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:workforce_ops:employee_team",
+      "relationship:workforce_ops:shift_employee",
+      "relationship:workforce_ops:timesheet_employee",
+      "relationship:workforce_ops:absence_employee",
+      "relationship:workforce_ops:training_employee",
+      "relationship:workforce_ops:adjustment_employee"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "VISIBLE_BUSINESS_RULE"
+      }
+    },
+    "temporal_semantics": {
+      "interval": "[2026-06-01,2026-07-01)",
+      "rule_id": "time:workforce_ops:clock"
+    }
+  }
+}

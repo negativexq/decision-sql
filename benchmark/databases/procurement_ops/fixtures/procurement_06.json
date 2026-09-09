@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_06_cf1_91c6e5",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9019,3,'2026-06-27','open')"
+      ],
+      "purpose": "adds a June order"
+    },
+    {
+      "fixture_id": "procurement_06_cf2_0cf60d",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9020,3,'2026-08-01','open')"
+      ],
+      "purpose": "adds an August order"
+    }
+  ]
+}

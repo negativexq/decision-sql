@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_12",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_12_cf1_c5ff6d",
+      "patch_sql": [
+        "INSERT INTO requisitions VALUES (9017,'Finance','2026-06-26','pending',80,'{\"risk_score\":\"75\"}')"
+      ],
+      "purpose": "adds a high-risk request"
+    },
+    {
+      "fixture_id": "procurement_12_cf2_1a9e47",
+      "patch_sql": [
+        "INSERT INTO requisitions VALUES (9018,'Finance','2026-06-26','pending',80,'{\"risk_score\":\"10\"}')"
+      ],
+      "purpose": "adds a low-risk request"
+    }
+  ]
+}

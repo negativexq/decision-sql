@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_10_cf1_1aad9d",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9021,1,'2026-06-27','completed')",
+        "INSERT INTO order_lines VALUES (9022,9021,101,3)"
+      ],
+      "purpose": "adds completed sale"
+    },
+    {
+      "fixture_id": "marketplace_10_cf2_6b7eb2",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9023,1,'2026-06-27','returned')",
+        "INSERT INTO order_lines VALUES (9024,9023,101,3)"
+      ],
+      "purpose": "adds returned sale"
+    }
+  ]
+}

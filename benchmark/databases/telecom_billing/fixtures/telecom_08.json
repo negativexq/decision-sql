@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "telecom_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "telecom_08_cf1_6f0169",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9013,2,2,'active')"
+      ],
+      "purpose": "adds active subscription"
+    },
+    {
+      "fixture_id": "telecom_08_cf2_818444",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9014,2,2,'cancelled')"
+      ],
+      "purpose": "adds cancelled subscription"
+    }
+  ]
+}

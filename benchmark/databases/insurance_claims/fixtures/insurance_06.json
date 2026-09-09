@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_06_cf1_4111aa",
+      "patch_sql": [
+        "INSERT INTO policies VALUES (9001,1,'auto','active','2026-06-20','2027-06-20')"
+      ],
+      "purpose": "adds active policy"
+    },
+    {
+      "fixture_id": "insurance_06_cf2_99767c",
+      "patch_sql": [
+        "INSERT INTO policies VALUES (9002,2,'home','cancelled','2026-06-20','2027-06-20')"
+      ],
+      "purpose": "adds cancelled policy"
+    }
+  ]
+}

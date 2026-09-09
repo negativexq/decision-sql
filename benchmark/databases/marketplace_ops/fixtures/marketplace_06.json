@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_06",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_06_cf1_dec12c",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9007,2,'books',8,true)"
+      ],
+      "purpose": "adds unsold listing"
+    },
+    {
+      "fixture_id": "marketplace_06_cf2_e9f8d5",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9008,2,'games',8,true)",
+        "INSERT INTO orders VALUES (9009,2,'2026-06-22','completed')",
+        "INSERT INTO order_lines VALUES (9010,9009,9008,1)"
+      ],
+      "purpose": "adds sold listing"
+    }
+  ]
+}

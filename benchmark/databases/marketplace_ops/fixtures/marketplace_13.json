@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_13",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_13_cf1_8d8334",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9001,1,'books',12,true)"
+      ],
+      "purpose": "adds active listing"
+    },
+    {
+      "fixture_id": "marketplace_13_cf2_37cc5f",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9002,2,'games',12,false)"
+      ],
+      "purpose": "adds inactive listing"
+    }
+  ]
+}

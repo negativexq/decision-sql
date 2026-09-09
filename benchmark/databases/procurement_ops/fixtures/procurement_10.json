@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_10_cf1_24987f",
+      "patch_sql": [
+        "INSERT INTO receipts VALUES (9011,301,'2026-06-23 10:00+00',1)"
+      ],
+      "purpose": "adds a partial receipt"
+    },
+    {
+      "fixture_id": "procurement_10_cf2_8be9d3",
+      "patch_sql": [
+        "INSERT INTO receipts VALUES (9012,302,'2026-06-24 10:00+00',0)"
+      ],
+      "purpose": "adds a zero receipt row"
+    }
+  ]
+}

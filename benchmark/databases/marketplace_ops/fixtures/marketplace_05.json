@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_05_cf1_9aee0b",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9015,2,'2026-06-25','completed')"
+      ],
+      "purpose": "adds completed order"
+    },
+    {
+      "fixture_id": "marketplace_05_cf2_0def39",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9016,2,'2026-06-25','pending')"
+      ],
+      "purpose": "adds pending order"
+    }
+  ]
+}

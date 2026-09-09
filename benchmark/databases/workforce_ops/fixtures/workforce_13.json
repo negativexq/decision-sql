@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "workforce_13",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_13_cf1_0daf43",
+      "patch_sql": [
+        "INSERT INTO employees VALUES (9001,'New Worker',1,'active','{}')"
+      ],
+      "purpose": "adds active employee"
+    },
+    {
+      "fixture_id": "workforce_13_cf2_30b879",
+      "patch_sql": [
+        "INSERT INTO employees VALUES (9002,'Former Worker',1,'inactive','{}')"
+      ],
+      "purpose": "adds inactive employee"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_05",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_05_cf1_381f33",
+      "patch_sql": [
+        "INSERT INTO requisitions VALUES (9007,'IT','2026-06-22','approved',100,'{\"priority\":\"normal\"}')",
+        "INSERT INTO approvals VALUES (9008,9007,'2026-06-22 10:00+00','approved')"
+      ],
+      "purpose": "adds an approved June requisition"
+    },
+    {
+      "fixture_id": "procurement_05_cf2_bbbceb",
+      "patch_sql": [
+        "INSERT INTO requisitions VALUES (9009,'IT','2026-07-01','approved',200,'{}')",
+        "INSERT INTO approvals VALUES (9010,9009,'2026-07-01 10:00+00','approved')"
+      ],
+      "purpose": "adds a July approval outside the window"
+    }
+  ]
+}

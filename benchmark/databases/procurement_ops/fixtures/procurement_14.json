@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_14",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_14_cf1_fa7c19",
+      "patch_sql": [
+        "INSERT INTO receipts VALUES (9013,301,'2026-06-25 12:00+00',2)"
+      ],
+      "purpose": "adds a newer receipt"
+    },
+    {
+      "fixture_id": "procurement_14_cf2_fdb79c",
+      "patch_sql": [
+        "INSERT INTO receipts VALUES (9014,302,'2026-05-01 12:00+00',2)"
+      ],
+      "purpose": "adds an older receipt"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_08",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_08_cf1_09e1c5",
+      "patch_sql": [
+        "INSERT INTO reviews VALUES (9011,101,5,'2026-06-23')"
+      ],
+      "purpose": "adds review"
+    },
+    {
+      "fixture_id": "marketplace_08_cf2_d2988b",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9012,2,'home',20,true)"
+      ],
+      "purpose": "adds listing without review"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_15",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_15_cf1_85299a",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9025,4,'2026-06-28','open')",
+        "INSERT INTO po_lines VALUES (9026,9025,'SKU-R',3,5)",
+        "INSERT INTO receipts VALUES (9027,9026,'2026-06-29 09:00+00',3)"
+      ],
+      "purpose": "adds a receipt chain"
+    },
+    {
+      "fixture_id": "procurement_15_cf2_6e00f8",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9028,4,'2026-06-28','open')",
+        "INSERT INTO po_lines VALUES (9029,9028,'SKU-S',3,5)"
+      ],
+      "purpose": "adds an unreceived order"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "case_id": "healthcare_03",
+  "counterfactual_fixtures": [],
+  "database_id": "healthcare_billing",
+  "evidence": {
+    "expected_behavior": "BLOCKED_POLICY",
+    "policy_violation": "The requested mutation is prohibited by the visible read-only policy.",
+    "requested_operation": "UPDATE"
+  },
+  "reference_implementation_a": {},
+  "reference_implementation_b": {},
+  "required_context_facts": [
+    "policy:healthcare_billing:readonly"
+  ],
+  "semantic_mutants": [],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "POLICY_BLOCKED",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "ordering": {},
+    "outputs": [],
+    "population": "not_applicable",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [],
+      "mode": "NOT_APPLICABLE"
+    },
+    "query_shape_tags": [
+      "governance",
+      "policy_blocked"
+    ],
+    "relationships": [],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 0,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": false,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "population": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

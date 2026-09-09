@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_02_cf1_87b9ce",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9015,3,'2026-06-25','open')"
+      ],
+      "purpose": "adds an open order"
+    },
+    {
+      "fixture_id": "procurement_02_cf2_d6b233",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9016,3,'2026-06-25','closed')"
+      ],
+      "purpose": "adds a closed order"
+    }
+  ]
+}

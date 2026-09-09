@@ -1,0 +1,25 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "procurement_11",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "procurement_11_cf1_6f0ab5",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9003,1,'2026-06-20','open')",
+        "INSERT INTO po_lines VALUES (9004,9003,'SKU-X',2,12.50)"
+      ],
+      "purpose": "adds an open order line"
+    },
+    {
+      "fixture_id": "procurement_11_cf2_092531",
+      "patch_sql": [
+        "INSERT INTO purchase_orders VALUES (9005,2,'2026-06-21','closed')",
+        "INSERT INTO po_lines VALUES (9006,9005,'SKU-Y',4,9.00)"
+      ],
+      "purpose": "adds a closed order line"
+    }
+  ]
+}

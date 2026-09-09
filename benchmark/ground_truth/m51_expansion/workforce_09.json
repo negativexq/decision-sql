@@ -1,0 +1,54 @@
+{
+  "case_id": "workforce_09",
+  "counterfactual_fixtures": [],
+  "database_id": "workforce_ops",
+  "evidence": {
+    "discriminating_patch_sql": "INSERT INTO training_records VALUES (9022,1,'Safety','2026-06-30')",
+    "expected_behavior": "NEEDS_CLARIFICATION",
+    "interpretation_a": "latest completion versus currently required course",
+    "interpretation_b": "a different legitimate scope or status interpretation",
+    "proof_sql_a": "SELECT 1",
+    "proof_sql_b": "SELECT 2"
+  },
+  "reference_implementation_a": {},
+  "reference_implementation_b": {},
+  "required_context_facts": [
+    "policy:workforce_ops:readonly"
+  ],
+  "semantic_mutants": [],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "AMBIGUOUS",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "ordering": {},
+    "outputs": [],
+    "population": "not_applicable",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [],
+      "mode": "NOT_APPLICABLE"
+    },
+    "query_shape_tags": [
+      "governance",
+      "ambiguous"
+    ],
+    "relationships": [],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 0,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": false,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "population": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

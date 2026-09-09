@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_03",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_03_cf1_6a5f25",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9019,1,'luxury',999,true)"
+      ],
+      "purpose": "adds expensive listing"
+    },
+    {
+      "fixture_id": "marketplace_03_cf2_b4b47f",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9020,1,'clearance',1,true)"
+      ],
+      "purpose": "adds inexpensive listing"
+    }
+  ]
+}

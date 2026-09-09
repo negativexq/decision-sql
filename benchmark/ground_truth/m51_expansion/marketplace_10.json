@@ -1,0 +1,143 @@
+{
+  "case_id": "marketplace_10",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_10_cf1_1aad9d",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9021,1,'2026-06-27','completed')",
+        "INSERT INTO order_lines VALUES (9022,9021,101,3)"
+      ],
+      "purpose": "adds completed sale"
+    },
+    {
+      "fixture_id": "marketplace_10_cf2_6b7eb2",
+      "patch_sql": [
+        "INSERT INTO orders VALUES (9023,1,'2026-06-27','returned')",
+        "INSERT INTO order_lines VALUES (9024,9023,101,3)"
+      ],
+      "purpose": "adds returned sale"
+    }
+  ],
+  "database_id": "marketplace_ops",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT l.listing_id,COALESCE((SELECT SUM(ol.quantity) FROM order_lines ol JOIN orders o ON o.order_id=ol.order_id WHERE ol.listing_id=l.listing_id AND o.status='completed'),0) AS sold_quantity FROM listings l ORDER BY l.listing_id"
+  },
+  "required_context_facts": [
+    "entities:marketplace_ops:listings",
+    "entities:marketplace_ops:order_lines",
+    "entities:marketplace_ops:orders"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_marketplace_10_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_marketplace_10_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_marketplace_10_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "listing_id",
+        "sold_quantity"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "listing_id",
+      "sold_quantity"
+    ],
+    "population": "base-entity-preserving",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "listing_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "sold_quantity"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "aggregate",
+      "filter_scope",
+      "population"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:marketplace_ops:listing_seller",
+      "relationship:marketplace_ops:order_buyer",
+      "relationship:marketplace_ops:line_order",
+      "relationship:marketplace_ops:line_listing",
+      "relationship:marketplace_ops:payout_seller",
+      "relationship:marketplace_ops:review_listing",
+      "relationship:marketplace_ops:dispute_order"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

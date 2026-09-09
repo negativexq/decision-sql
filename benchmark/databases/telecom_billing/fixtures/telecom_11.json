@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "telecom_11",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "telecom_11_cf1_6494ce",
+      "patch_sql": [
+        "INSERT INTO invoices VALUES (9019,3,'2026-06-26',44,'open')"
+      ],
+      "purpose": "adds invoice"
+    },
+    {
+      "fixture_id": "telecom_11_cf2_3e039b",
+      "patch_sql": [
+        "INSERT INTO invoices VALUES (9020,3,'2026-06-27',44,'open')"
+      ],
+      "purpose": "adds duplicate invoice"
+    }
+  ]
+}

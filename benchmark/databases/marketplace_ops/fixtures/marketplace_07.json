@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "marketplace_07",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_07_cf1_c20fca",
+      "patch_sql": [
+        "INSERT INTO payouts VALUES (9017,1,'2026-06-26',12,'posted')"
+      ],
+      "purpose": "adds posted payout"
+    },
+    {
+      "fixture_id": "marketplace_07_cf2_d5437a",
+      "patch_sql": [
+        "INSERT INTO payouts VALUES (9018,1,'2026-06-26',12,'held')"
+      ],
+      "purpose": "adds held payout"
+    }
+  ]
+}

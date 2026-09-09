@@ -1,0 +1,146 @@
+{
+  "case_id": "healthcare_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_02_cf1_5e6a9b",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9003,2,2,'2026-06-22 10:00+00','completed')",
+        "INSERT INTO procedures VALUES (9004,9003,'XR','2026-06-22 10:00+00')",
+        "INSERT INTO charges VALUES (9005,9004,100,'open')"
+      ],
+      "purpose": "adds completed encounter chain"
+    },
+    {
+      "fixture_id": "healthcare_02_cf2_e153c1",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9006,2,2,'2026-06-22 10:00+00','cancelled')",
+        "INSERT INTO procedures VALUES (9007,9006,'XR','2026-06-22 10:00+00')",
+        "INSERT INTO charges VALUES (9008,9007,100,'open')"
+      ],
+      "purpose": "adds cancelled encounter chain"
+    }
+  ],
+  "database_id": "healthcare_billing",
+  "evidence": {},
+  "reference_implementation_a": {
+    "sql": "SELECT e.provider_id,SUM(c.amount) AS billed_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE e.status='completed' GROUP BY e.provider_id ORDER BY e.provider_id"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT provider_id,billed_amount FROM (SELECT e.provider_id,SUM(c.amount) AS billed_amount FROM charges c JOIN procedures p ON p.procedure_id=c.procedure_id JOIN encounters e ON e.encounter_id=p.encounter_id AND e.status='completed' GROUP BY e.provider_id) q ORDER BY provider_id"
+  },
+  "required_context_facts": [
+    "entities:healthcare_billing:encounters",
+    "entities:healthcare_billing:procedures",
+    "entities:healthcare_billing:charges"
+  ],
+  "semantic_mutants": [
+    {
+      "description": "Incorrectly removes the requested population.",
+      "failure_category": "FILTER_SCOPE_ERROR",
+      "mutant_id": "m51a_healthcare_02_population",
+      "semantic_rationale": "Tests population preservation against an over-restrictive predicate.",
+      "sql": "SELECT * FROM (SELECT e.provider_id,SUM(c.amount) AS billed_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE e.status='completed' GROUP BY e.provider_id ORDER BY e.provider_id) AS candidate WHERE FALSE",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Incorrectly retains only one result row.",
+      "failure_category": "LIMIT_SEMANTICS_ERROR",
+      "mutant_id": "m51a_healthcare_02_limit",
+      "semantic_rationale": "Tests that the complete requested result is preserved.",
+      "sql": "SELECT * FROM (SELECT e.provider_id,SUM(c.amount) AS billed_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE e.status='completed' GROUP BY e.provider_id ORDER BY e.provider_id) AS candidate LIMIT 1",
+      "status": "VALID",
+      "target_component": "population"
+    },
+    {
+      "description": "Adds an unrequested diagnostic column.",
+      "failure_category": "PROJECTION_ERROR",
+      "mutant_id": "m51a_healthcare_02_projection",
+      "semantic_rationale": "Tests the explicit final projection contract.",
+      "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT e.provider_id,SUM(c.amount) AS billed_amount FROM encounters e JOIN procedures p ON p.encounter_id=e.encounter_id JOIN charges c ON c.procedure_id=p.procedure_id WHERE e.status='completed' GROUP BY e.provider_id ORDER BY e.provider_id) AS candidate",
+      "status": "VALID",
+      "target_component": "projection"
+    }
+  ],
+  "semantic_target": {
+    "aggregations": [],
+    "behavior": "ANSWERABLE",
+    "calculations": [],
+    "filters": [],
+    "grouping": [
+      "provider_id"
+    ],
+    "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
+    "ordering": {
+      "columns": [
+        "provider_id",
+        "billed_amount"
+      ],
+      "direction": "ASC"
+    },
+    "outputs": [
+      "provider_id",
+      "billed_amount"
+    ],
+    "population": "matching-only",
+    "projection_contract": {
+      "extra_fields_allowed": false,
+      "fields": [
+        {
+          "role": "IDENTIFIER",
+          "semantic_name": "provider_id"
+        },
+        {
+          "role": "MEASURE",
+          "semantic_name": "billed_amount"
+        }
+      ],
+      "mode": "EXACT",
+      "source": "QUESTION_EXPLICIT"
+    },
+    "query_shape_tags": [
+      "multi_join",
+      "aggregation",
+      "status_definition"
+    ],
+    "reference_independence": "HIGH",
+    "relationships": [
+      "relationship:healthcare_billing:encounter_patient",
+      "relationship:healthcare_billing:encounter_provider",
+      "relationship:healthcare_billing:procedure_encounter",
+      "relationship:healthcare_billing:charge_procedure",
+      "relationship:healthcare_billing:payment_patient",
+      "relationship:healthcare_billing:diagnosis_encounter"
+    ],
+    "result_comparison_contract": {
+      "aliases_significant": false,
+      "column_count": 2,
+      "duplicates_significant": true,
+      "numeric_tolerance": null,
+      "row_order": true,
+      "timestamp_timezone": "UTC"
+    },
+    "semantic_provenance": {
+      "filters": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "limit": {
+        "source": "NOT_APPLICABLE"
+      },
+      "ordering": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "population": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "rounding": {
+        "source": "QUESTION_EXPLICIT"
+      },
+      "temporal": {
+        "source": "NOT_APPLICABLE"
+      }
+    },
+    "temporal_semantics": {}
+  }
+}

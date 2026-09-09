@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "healthcare_01",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_01_cf1_57a4be",
+      "patch_sql": [
+        "INSERT INTO patients VALUES (9015,'Senior', 'North','{\"age\":\"70\"}')"
+      ],
+      "purpose": "adds senior patient"
+    },
+    {
+      "fixture_id": "healthcare_01_cf2_5b5e40",
+      "patch_sql": [
+        "INSERT INTO patients VALUES (9016,'Young', 'North','{\"age\":\"20\"}')"
+      ],
+      "purpose": "adds younger patient"
+    }
+  ]
+}

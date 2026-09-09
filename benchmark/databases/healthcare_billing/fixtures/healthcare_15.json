@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "healthcare_15",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_15_cf1_22feb0",
+      "patch_sql": [
+        "INSERT INTO diagnoses VALUES (9013,101,'E11')"
+      ],
+      "purpose": "adds E diagnosis"
+    },
+    {
+      "fixture_id": "healthcare_15_cf2_00f8b2",
+      "patch_sql": [
+        "INSERT INTO diagnoses VALUES (9014,101,'J10')"
+      ],
+      "purpose": "adds non-E diagnosis"
+    }
+  ]
+}

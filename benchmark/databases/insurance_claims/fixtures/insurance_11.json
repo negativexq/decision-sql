@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "insurance_11",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "insurance_11_cf1_70c269",
+      "patch_sql": [
+        "INSERT INTO claim_events VALUES (9007,201,'2026-06-25 10:00+00','reviewed')"
+      ],
+      "purpose": "adds newer event"
+    },
+    {
+      "fixture_id": "insurance_11_cf2_83ae2d",
+      "patch_sql": [
+        "INSERT INTO claim_events VALUES (9008,202,'2026-05-01 10:00+00','received')"
+      ],
+      "purpose": "adds older event"
+    }
+  ]
+}

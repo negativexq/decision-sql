@@ -1,0 +1,23 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "workforce_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "workforce_02_cf1_3b0507",
+      "patch_sql": [
+        "INSERT INTO absences VALUES (9019,1,'2026-06-28','2026-06-29','approved')"
+      ],
+      "purpose": "adds approved absence"
+    },
+    {
+      "fixture_id": "workforce_02_cf2_d1bf46",
+      "patch_sql": [
+        "INSERT INTO absences VALUES (9020,1,'2026-06-28','2026-06-29','pending')"
+      ],
+      "purpose": "adds pending absence"
+    }
+  ]
+}

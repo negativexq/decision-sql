@@ -1,0 +1,27 @@
+{
+  "base_fixture": {
+    "fixture_id": "base",
+    "patch_sql": []
+  },
+  "case_id": "healthcare_02",
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "healthcare_02_cf1_5e6a9b",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9003,2,2,'2026-06-22 10:00+00','completed')",
+        "INSERT INTO procedures VALUES (9004,9003,'XR','2026-06-22 10:00+00')",
+        "INSERT INTO charges VALUES (9005,9004,100,'open')"
+      ],
+      "purpose": "adds completed encounter chain"
+    },
+    {
+      "fixture_id": "healthcare_02_cf2_e153c1",
+      "patch_sql": [
+        "INSERT INTO encounters VALUES (9006,2,2,'2026-06-22 10:00+00','cancelled')",
+        "INSERT INTO procedures VALUES (9007,9006,'XR','2026-06-22 10:00+00')",
+        "INSERT INTO charges VALUES (9008,9007,100,'open')"
+      ],
+      "purpose": "adds cancelled encounter chain"
+    }
+  ]
+}

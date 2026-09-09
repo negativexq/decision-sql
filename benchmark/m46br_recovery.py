@@ -545,8 +545,13 @@ def recover() -> dict[str, Any]:
         "treatment_scored": 90,
         "evaluation_contract_errors": 0,
         "recovery_valid": True,
+        "source_artifact_hashes": EXPECTED_M46B_HASHES,
+        "reference_precheck_hash": sha256_text(
+            json.dumps(replay, sort_keys=True, separators=(",", ":"), default=str)
+        ),
     }
     _dump(MANIFEST_PATH, manifest)
+    _dump(RESULT_ROOT / "m46br_manifest.json", manifest)
     return {
         "summary": summary,
         "manifest": manifest,

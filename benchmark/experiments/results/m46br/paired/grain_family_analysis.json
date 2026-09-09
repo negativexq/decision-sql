@@ -1,0 +1,399 @@
+{
+  "cases": [
+    "subscription_04",
+    "subscription_10",
+    "warehouse_08"
+  ],
+  "control": {
+    "subscription_04": {
+      "all_fixtures_passed": false,
+      "arm": "CONTROL",
+      "base_execution": {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "base",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      "base_passed": true,
+      "case_id": "subscription_04",
+      "case_index": 34,
+      "database_id": "subscription_billing",
+      "diagnostics": {
+        "BASE_ONLY_FALSE_POSITIVE": true
+      },
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": "subscription_04_cf3_multi_refund",
+      "fixture_execution": [
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf1_2db794",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf2_cf6ed1",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf3_multi_refund",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 5,
+          "status": "FAIL"
+        }
+      ],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "subscription_04",
+        "decision": "ANSWER",
+        "reason_code": null,
+        "sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id;"
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM060ojbOlYZMatZm4L4cMTzXEurg",
+        "request_id": "req_c9c41a86d62741b191ff87806687799a",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 105,
+          "prompt_tokens": 8507,
+          "reasoning_tokens": 0,
+          "total_tokens": 8612
+        }
+      },
+      "request_sha256": "2805929b38f959d470980433eb78ea6ce4793ca3438daa18c7253c61c24171d9",
+      "response_sha256": "a877f22cd4a1b6ab28e0059f5b47b9777d78521183c19019bf4d258e46de87f1",
+      "schema_validation": "PASS",
+      "split": "DEV",
+      "sql_admission": "PASS",
+      "sql_present": true
+    },
+    "subscription_10": {
+      "all_fixtures_passed": null,
+      "arm": "CONTROL",
+      "base_execution": null,
+      "base_passed": null,
+      "case_id": "subscription_10",
+      "case_index": 40,
+      "database_id": "subscription_billing",
+      "diagnostics": {},
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": null,
+      "fixture_execution": [],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "subscription_10",
+        "decision": "NEEDS_CLARIFICATION",
+        "reason_code": "AMBIGUOUS_SEMANTICS",
+        "sql": null
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM06MMJwjjB08NfgnGv0f3bhrBYkX",
+        "request_id": "req_fd5bfdde56034bf3996733034b5405dd",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 43,
+          "prompt_tokens": 8512,
+          "reasoning_tokens": 0,
+          "total_tokens": 8555
+        }
+      },
+      "request_sha256": "ca3a252c14bf3cc94ef89cc82b822b0e087a4a76e1c0438fcc3bf423ea71fad3",
+      "response_sha256": "a66f3f0030bba6f15e9a2bc4e402d9a8bf1a38c3a19559e6d5a7e911dd1094f6",
+      "schema_validation": "PASS",
+      "split": "DEV",
+      "sql_present": false
+    },
+    "warehouse_08": {
+      "all_fixtures_passed": false,
+      "arm": "CONTROL",
+      "base_execution": {
+        "columns": [
+          "product_id",
+          "quantity_ordered_not_yet_received"
+        ],
+        "fixture_id": "base",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 4,
+        "status": "FAIL"
+      },
+      "base_passed": false,
+      "case_id": "warehouse_08",
+      "case_index": 52,
+      "database_id": "warehouse_logistics",
+      "diagnostics": {},
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": "base",
+      "fixture_execution": [
+        {
+          "columns": [
+            "product_id",
+            "quantity_ordered_not_yet_received"
+          ],
+          "fixture_id": "warehouse_08_cf1_c305ad",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 4,
+          "status": "FAIL"
+        },
+        {
+          "columns": [
+            "product_id",
+            "quantity_ordered_not_yet_received"
+          ],
+          "fixture_id": "warehouse_08_cf2_b6ed47",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 4,
+          "status": "FAIL"
+        }
+      ],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "warehouse_08",
+        "decision": "ANSWER",
+        "reason_code": null,
+        "sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) > 0"
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM079aTEzOwEKpeXDawwjqfT8j65f",
+        "request_id": "req_9598f827c1774cb3acecc32b6c6c79c7",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 9006,
+          "reasoning_tokens": 0,
+          "total_tokens": 9107
+        }
+      },
+      "request_sha256": "3d15a33874b80b92dc8dbecccf596a07fa6b6270f90e200118d414b666b7c2fe",
+      "response_sha256": "026507b6257f907799b6d9a34f78758931a4a78441d261055fa19300a80cc6c4",
+      "schema_validation": "PASS",
+      "split": "CONFIRMATION",
+      "sql_admission": "PASS",
+      "sql_present": true
+    }
+  },
+  "treatment": {
+    "subscription_04": {
+      "all_fixtures_passed": false,
+      "arm": "TREATMENT",
+      "base_execution": {
+        "columns": [
+          "account_id",
+          "net_collected_amount"
+        ],
+        "fixture_id": "base",
+        "reason": "MATCH",
+        "row_count": 4,
+        "status": "PASS"
+      },
+      "base_passed": true,
+      "case_id": "subscription_04",
+      "case_index": 34,
+      "database_id": "subscription_billing",
+      "diagnostics": {
+        "BASE_ONLY_FALSE_POSITIVE": true
+      },
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": "subscription_04_cf3_multi_refund",
+      "fixture_execution": [
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf1_2db794",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf2_cf6ed1",
+          "reason": "MATCH",
+          "row_count": 4,
+          "status": "PASS"
+        },
+        {
+          "columns": [
+            "account_id",
+            "net_collected_amount"
+          ],
+          "fixture_id": "subscription_04_cf3_multi_refund",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 5,
+          "status": "FAIL"
+        }
+      ],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "subscription_04",
+        "decision": "ANSWER",
+        "reason_code": null,
+        "sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id"
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM05yloXnd9L9j6iN9jnO0elM5xHj",
+        "request_id": "req_aedced510853422a9ad903d1599bf638",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 104,
+          "prompt_tokens": 9416,
+          "reasoning_tokens": 0,
+          "total_tokens": 9520
+        }
+      },
+      "request_sha256": "dd0b3bfb62304c938a75fa193a5cf78494d74dcd8759d28adf42d37df88f87c0",
+      "response_sha256": "83d0f42efa69781a6e9a5c47a0dc5d6176dd19a0014881e313ee002a2e732b2b",
+      "schema_validation": "PASS",
+      "split": "DEV",
+      "sql_admission": "PASS",
+      "sql_present": true
+    },
+    "subscription_10": {
+      "all_fixtures_passed": null,
+      "arm": "TREATMENT",
+      "base_execution": null,
+      "base_passed": null,
+      "case_id": "subscription_10",
+      "case_index": 40,
+      "database_id": "subscription_billing",
+      "diagnostics": {},
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": null,
+      "fixture_execution": [],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "NEEDS_CLARIFICATION",
+      "official_category": "WRONG_GOVERNED_DECISION",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "subscription_10",
+        "decision": "NEEDS_CLARIFICATION",
+        "reason_code": "AMBIGUOUS_SEMANTICS",
+        "sql": null
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM06LWLcohweo5zcVOaYn6DgxVeqk",
+        "request_id": "req_b192e650b6f84764a52188905c056a90",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 43,
+          "prompt_tokens": 9421,
+          "reasoning_tokens": 0,
+          "total_tokens": 9464
+        }
+      },
+      "request_sha256": "de773dcc7ce218a2737b80ac47601a9b584b6be70f2beba78499be93afc7fde8",
+      "response_sha256": "a0390a3654edd59a5d2fff3979dfae2154a20370f1dc532cf52a25142f23a0a3",
+      "schema_validation": "PASS",
+      "split": "DEV",
+      "sql_present": false
+    },
+    "warehouse_08": {
+      "all_fixtures_passed": false,
+      "arm": "TREATMENT",
+      "base_execution": {
+        "columns": [
+          "product_id",
+          "quantity_ordered_not_yet_received"
+        ],
+        "fixture_id": "base",
+        "reason": "RESULT_MISMATCH",
+        "row_count": 4,
+        "status": "FAIL"
+      },
+      "base_passed": false,
+      "case_id": "warehouse_08",
+      "case_index": 52,
+      "database_id": "warehouse_logistics",
+      "diagnostics": {},
+      "expected_decision": "ANSWER",
+      "first_failing_fixture": "base",
+      "fixture_execution": [
+        {
+          "columns": [
+            "product_id",
+            "quantity_ordered_not_yet_received"
+          ],
+          "fixture_id": "warehouse_08_cf1_c305ad",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 4,
+          "status": "FAIL"
+        },
+        {
+          "columns": [
+            "product_id",
+            "quantity_ordered_not_yet_received"
+          ],
+          "fixture_id": "warehouse_08_cf2_b6ed47",
+          "reason": "RESULT_MISMATCH",
+          "row_count": 4,
+          "status": "FAIL"
+        }
+      ],
+      "gold_behavior": "ANSWERABLE",
+      "model_decision": "ANSWER",
+      "official_category": "RESULT_MISMATCH",
+      "official_correct": false,
+      "parsed_submission": {
+        "case_id": "warehouse_08",
+        "decision": "ANSWER",
+        "reason_code": null,
+        "sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) > 0"
+      },
+      "provider_metadata": {
+        "finish_reason": "stop",
+        "provider_response_id": "chatcmpl-EM077YXKo5jeEchDPMmzy8zt0GLwR",
+        "request_id": "req_e5eebf510b824e01af607c129db48e2e",
+        "resolved_model": "gpt-5.6-luna",
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 10172,
+          "reasoning_tokens": 0,
+          "total_tokens": 10273
+        }
+      },
+      "request_sha256": "f60f7284e0980f1af9fd831e62ccbd795f38880873f1b6736b59b77424fc459b",
+      "response_sha256": "be938d628c7f672ae922731051dbe357ab3ef0d46cbaa30c5c45daaadd90acfa",
+      "schema_validation": "PASS",
+      "split": "CONFIRMATION",
+      "sql_admission": "PASS",
+      "sql_present": true
+    }
+  }
+}

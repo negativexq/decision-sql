@@ -1,0 +1,43 @@
+{
+  "field_ablation": {
+    "assertion": "removing it prevents contradiction/verification direction",
+    "family": "removing it prevents selecting the authoritative catalog/check",
+    "free_text_reason": "removing it loses no deterministic check",
+    "object_id": "removing it prevents deterministic catalog lookup"
+  },
+  "no_decision_override": true,
+  "proposed_fields": [
+    {
+      "field": "decision",
+      "purpose": "existing governed decision; no new decision authority"
+    },
+    {
+      "field": "sql",
+      "purpose": "existing executable artifact; enables structural checks"
+    },
+    {
+      "field": "claims",
+      "purpose": "sparse stable-ID semantic sidecar"
+    },
+    {
+      "field": "claims.family",
+      "purpose": "selects catalog/check type"
+    },
+    {
+      "field": "claims.object_id",
+      "purpose": "stable catalog identity"
+    },
+    {
+      "field": "claims.assertion",
+      "purpose": "PRESENT/MISSING/AUTHORIZED/etc. declarative assertion"
+    }
+  ],
+  "removed_fields": [
+    "free_text_reason",
+    "required_facts",
+    "answerability",
+    "uniqueness",
+    "confidence",
+    "reasoning"
+  ]
+}

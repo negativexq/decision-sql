@@ -1,0 +1,350 @@
+{
+  "distinct_mask": {
+    "child_grain": null,
+    "child_measure_ids": [],
+    "fanout_relationship_ids": [
+      "relationship:test:child_parent"
+    ],
+    "input_diagnostic": {
+      "aggregate_expressions": [
+        "SUM(DISTINCT p.parent_amount)"
+      ],
+      "code": "DISTINCT_VALUE_FANOUT_MASK",
+      "evidence": {
+        "child_table": "child",
+        "column": "p.parent_amount"
+      },
+      "fanout_edges": [
+        {
+          "cardinality": "many_to_one",
+          "from_attribute_ids": [
+            "attribute:test:child:parent_id"
+          ],
+          "from_entity_id": "entity:test:child",
+          "provenance": [
+            "PUBLIC_RELATIONSHIP_CARDINALITY"
+          ],
+          "relationship_id": "relationship:test:child_parent",
+          "to_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ],
+          "to_entity_id": "entity:test:parent"
+        }
+      ],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Value-level DISTINCT masks a parent measure across a fanout edge.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "input_sql": "\n    SELECT p.group_id, SUM(DISTINCT p.parent_amount) - COALESCE(SUM(c.child_amount), 0) AS net\n    FROM parent p LEFT JOIN child c ON c.parent_id = p.parent_id\n    GROUP BY p.group_id\n    ",
+    "input_sql_hash": "6253ba4fefe7092a40b8a4e4548bea7cf8e7839c2bc6af3b5b495e42a95dc9eb",
+    "output_diagnostic": {
+      "aggregate_expressions": [
+        "SUM(DISTINCT p.parent_amount)"
+      ],
+      "code": "DISTINCT_VALUE_FANOUT_MASK",
+      "evidence": {
+        "child_table": "child",
+        "column": "p.parent_amount"
+      },
+      "fanout_edges": [
+        {
+          "cardinality": "many_to_one",
+          "from_attribute_ids": [
+            "attribute:test:child:parent_id"
+          ],
+          "from_entity_id": "entity:test:child",
+          "provenance": [
+            "PUBLIC_RELATIONSHIP_CARDINALITY"
+          ],
+          "relationship_id": "relationship:test:child_parent",
+          "to_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ],
+          "to_entity_id": "entity:test:parent"
+        }
+      ],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Value-level DISTINCT masks a parent measure across a fanout edge.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "output_sql": "\n    SELECT p.group_id, SUM(DISTINCT p.parent_amount) - COALESCE(SUM(c.child_amount), 0) AS net\n    FROM parent p LEFT JOIN child c ON c.parent_id = p.parent_id\n    GROUP BY p.group_id\n    ",
+    "output_sql_hash": "6253ba4fefe7092a40b8a4e4548bea7cf8e7839c2bc6af3b5b495e42a95dc9eb",
+    "parent_grain": {
+      "entity_id": "entity:test:parent",
+      "key_attribute_ids": [
+        "attribute:test:parent:parent_id"
+      ]
+    },
+    "parent_measure_ids": [
+      "measure:test:parent:parent_amount"
+    ],
+    "reason_code": "ABSTAIN_UNSUPPORTED_AGGREGATE",
+    "rewrite_evidence": {},
+    "status": "ABSTAIN"
+  },
+  "equal_parent_values_present": true,
+  "existence": {
+    "child_grain": null,
+    "child_measure_ids": [],
+    "fanout_relationship_ids": [],
+    "input_diagnostic": {
+      "aggregate_expressions": [],
+      "code": "NOT_APPLICABLE",
+      "evidence": {},
+      "fanout_edges": [],
+      "grouping_columns": [],
+      "measure_ids": [],
+      "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+      "native_grains": []
+    },
+    "input_sql": "\n    SELECT p.group_id, COUNT(*) FROM parent p\n    WHERE EXISTS (SELECT 1 FROM child c WHERE c.parent_id = p.parent_id)\n    GROUP BY p.group_id\n    ",
+    "input_sql_hash": "872529a9a929ccadf2356aec193fb3dac97226f672cc5b24fbe538dbdbf61b95",
+    "output_diagnostic": {
+      "aggregate_expressions": [],
+      "code": "NOT_APPLICABLE",
+      "evidence": {},
+      "fanout_edges": [],
+      "grouping_columns": [],
+      "measure_ids": [],
+      "message": "No additive parent measure was aggregated across a modeled fanout edge.",
+      "native_grains": []
+    },
+    "output_sql": "\n    SELECT p.group_id, COUNT(*) FROM parent p\n    WHERE EXISTS (SELECT 1 FROM child c WHERE c.parent_id = p.parent_id)\n    GROUP BY p.group_id\n    ",
+    "output_sql_hash": "872529a9a929ccadf2356aec193fb3dac97226f672cc5b24fbe538dbdbf61b95",
+    "parent_grain": null,
+    "parent_measure_ids": [],
+    "reason_code": "UNCHANGED_ALREADY_SAFE",
+    "rewrite_evidence": {},
+    "status": "UNCHANGED"
+  },
+  "expected_rows": [
+    [
+      10,
+      150
+    ],
+    [
+      20,
+      40
+    ]
+  ],
+  "input_diagnostic": "PARENT_MEASURE_FANOUT",
+  "multiple_fanout": {
+    "child_grain": null,
+    "child_measure_ids": [],
+    "fanout_relationship_ids": [
+      "relationship:test:child_parent"
+    ],
+    "input_diagnostic": {
+      "aggregate_expressions": [
+        "SUM(p.parent_amount)"
+      ],
+      "code": "PARENT_MEASURE_FANOUT",
+      "evidence": {
+        "child_table": "child",
+        "column": "p.parent_amount"
+      },
+      "fanout_edges": [
+        {
+          "cardinality": "many_to_one",
+          "from_attribute_ids": [
+            "attribute:test:child:parent_id"
+          ],
+          "from_entity_id": "entity:test:child",
+          "provenance": [
+            "PUBLIC_RELATIONSHIP_CARDINALITY"
+          ],
+          "relationship_id": "relationship:test:child_parent",
+          "to_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ],
+          "to_entity_id": "entity:test:parent"
+        }
+      ],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Parent additive measure is aggregated after a one-to-many fanout.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "input_sql": "\n    SELECT p.group_id, SUM(p.parent_amount) - COALESCE(SUM(c.child_amount), 0) AS net\n    FROM parent p LEFT JOIN child c ON c.parent_id = p.parent_id\n    LEFT JOIN child_two c2 ON c2.parent_id = p.parent_id GROUP BY p.group_id\n    ",
+    "input_sql_hash": "43efa7fd8f73b52258d4ceaf62c10fdebe2f2c9ac6d8b17a1461b776b43aecef",
+    "output_diagnostic": {
+      "aggregate_expressions": [
+        "SUM(p.parent_amount)"
+      ],
+      "code": "PARENT_MEASURE_FANOUT",
+      "evidence": {
+        "child_table": "child",
+        "column": "p.parent_amount"
+      },
+      "fanout_edges": [
+        {
+          "cardinality": "many_to_one",
+          "from_attribute_ids": [
+            "attribute:test:child:parent_id"
+          ],
+          "from_entity_id": "entity:test:child",
+          "provenance": [
+            "PUBLIC_RELATIONSHIP_CARDINALITY"
+          ],
+          "relationship_id": "relationship:test:child_parent",
+          "to_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ],
+          "to_entity_id": "entity:test:parent"
+        }
+      ],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Parent additive measure is aggregated after a one-to-many fanout.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "output_sql": "\n    SELECT p.group_id, SUM(p.parent_amount) - COALESCE(SUM(c.child_amount), 0) AS net\n    FROM parent p LEFT JOIN child c ON c.parent_id = p.parent_id\n    LEFT JOIN child_two c2 ON c2.parent_id = p.parent_id GROUP BY p.group_id\n    ",
+    "output_sql_hash": "43efa7fd8f73b52258d4ceaf62c10fdebe2f2c9ac6d8b17a1461b776b43aecef",
+    "parent_grain": {
+      "entity_id": "entity:test:parent",
+      "key_attribute_ids": [
+        "attribute:test:parent:parent_id"
+      ]
+    },
+    "parent_measure_ids": [
+      "measure:test:parent:parent_amount"
+    ],
+    "reason_code": "ABSTAIN_MULTIPLE_FANOUT_EDGES",
+    "rewrite_evidence": {},
+    "status": "ABSTAIN"
+  },
+  "normalization_status": "NORMALIZED",
+  "normalized_matches": true,
+  "normalized_rows": [
+    [
+      10,
+      150
+    ],
+    [
+      20,
+      40
+    ]
+  ],
+  "output_diagnostic": "PASS",
+  "raw_diverges": true,
+  "raw_rows": [
+    [
+      10,
+      250
+    ],
+    [
+      20,
+      40
+    ]
+  ],
+  "safe_preaggregation": {
+    "child_grain": null,
+    "child_measure_ids": [],
+    "fanout_relationship_ids": [],
+    "input_diagnostic": {
+      "aggregate_expressions": [],
+      "code": "PASS",
+      "evidence": {},
+      "fanout_edges": [],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "input_sql": "\n    SELECT p.group_id, SUM(p.parent_amount) - COALESCE(SUM(c.child_total), 0)\n    FROM parent p LEFT JOIN (\n        SELECT parent_id, SUM(child_amount) AS child_total\n        FROM child GROUP BY parent_id\n    ) c ON c.parent_id = p.parent_id\n    GROUP BY p.group_id\n    ",
+    "input_sql_hash": "0fb50d7dc52762325888dc9f68c4e36fa92b99be7f0ce06597c99ebc44468032",
+    "output_diagnostic": {
+      "aggregate_expressions": [],
+      "code": "PASS",
+      "evidence": {},
+      "fanout_edges": [],
+      "grouping_columns": [
+        "p.group_id"
+      ],
+      "measure_ids": [
+        "measure:test:parent:parent_amount"
+      ],
+      "message": "Modeled additive measures are not exposed to an unsafe fanout.",
+      "native_grains": [
+        {
+          "entity_id": "entity:test:parent",
+          "key_attribute_ids": [
+            "attribute:test:parent:parent_id"
+          ]
+        }
+      ]
+    },
+    "output_sql": "\n    SELECT p.group_id, SUM(p.parent_amount) - COALESCE(SUM(c.child_total), 0)\n    FROM parent p LEFT JOIN (\n        SELECT parent_id, SUM(child_amount) AS child_total\n        FROM child GROUP BY parent_id\n    ) c ON c.parent_id = p.parent_id\n    GROUP BY p.group_id\n    ",
+    "output_sql_hash": "0fb50d7dc52762325888dc9f68c4e36fa92b99be7f0ce06597c99ebc44468032",
+    "parent_grain": {
+      "entity_id": "entity:test:parent",
+      "key_attribute_ids": [
+        "attribute:test:parent:parent_id"
+      ]
+    },
+    "parent_measure_ids": [
+      "measure:test:parent:parent_amount"
+    ],
+    "reason_code": "UNCHANGED_ALREADY_SAFE",
+    "rewrite_evidence": {},
+    "status": "UNCHANGED"
+  },
+  "sum_distinct_introduced": false
+}

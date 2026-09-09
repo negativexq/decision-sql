@@ -259,6 +259,7 @@ def _reference_canary(
 
 
 def _preflight() -> dict[str, Any]:
+    prior_preflight = (AUDIT / "m51b_preflight.json").exists()
     dirty = subprocess.run(
         ["git", "status", "--porcelain"], cwd=REPO, check=True, capture_output=True, text=True
     ).stdout.splitlines()
@@ -271,7 +272,11 @@ def _preflight() -> dict[str, Any]:
         for line in dirty
         if line[3:] not in allowed_dirty and not line[3:].startswith("benchmark/audits/m51b/")
     ]
-    if _git() != STARTING_HEAD or _origin() != STARTING_HEAD or unrelated_dirty:
+    current_head = _git()
+    same_synced_head = current_head == _origin()
+    if (
+        current_head != STARTING_HEAD and not (prior_preflight and same_synced_head)
+    ) or unrelated_dirty:
         raise RuntimeError("M51B_STARTING_REPOSITORY_MISMATCH")
     manifest = json.loads(EXPANSION_MANIFEST.read_text(encoding="utf-8"))
     full = json.loads(FULL_MANIFEST.read_text(encoding="utf-8"))
@@ -918,7 +923,20 @@ def main() -> None:
         print(json.dumps(_preflight()["manifest"], indent=2, sort_keys=True))
         return
     if args.command == "generate":
-        generation_data = _preflight()
+        if (AUDIT / "m51b_preflight.json").exists():
+            ids, rows = _rows()
+            _patch_runtime_for_expansion()
+            catalogs, _inventory = _runtime_setup(
+                [truth for case, truth in rows.values() if case["task_type"] == "ANSWERABLE"]
+            )
+            generation_data = {
+                "requests": _requests(ids, rows),
+                "rows": rows,
+                "catalogs": catalogs,
+                "services": m48b._runtime_services(catalogs),
+            }
+        else:
+            generation_data = _preflight()
         print(json.dumps(_generation(generation_data), indent=2, sort_keys=True))
         return
     data: dict[str, Any] | None = (

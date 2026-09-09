@@ -1,0 +1,33 @@
+{
+  "experiment": "M51B",
+  "status": "ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "starting_head": "645e77d3b9158e6b2e2d07185da04f001c92176a",
+  "prelive_freeze_head": "76dfef7cd302ae5a06e6c45011a089480022e432",
+  "response_freeze_head": "807c7255c55a69095e7c3c8c08225e7e078df164",
+  "provider_attempts": 90,
+  "successful_provider_responses": 90,
+  "model_calls": 90,
+  "retries": 0,
+  "post_freeze_calls": 0,
+  "response_corpus_hash": "9783930bb0dac022a926c6638822e56747630f3605910cbf8487d409c5105d9a",
+  "official_historical_result_unchanged": true,
+  "analysis_defect": {
+    "type": "TypeError",
+    "message": "'<' not supported between instances of 'NoneType' and 'str'",
+    "stage": "ZERO_CALL_POST_RESPONSE_ANALYSIS",
+    "artifact": "m51b_truth_decision_matrix.json"
+  },
+  "partial_diagnostics_not_final_result": {
+    "governed": "47/90",
+    "answerable_runtime_tsa": "22/60",
+    "base_correct": "29/60",
+    "answer_selections": 53,
+    "wrong_refusals": 10,
+    "authority": "12/15",
+    "ambiguity": "7/9",
+    "policy": "6/6",
+    "unauthorized_answers": 1
+  },
+  "valid_completed_expansion_result": false,
+  "recommended_next_milestone": "New zero-call recovery analysis identity to fix the generic serializer, followed by a separately frozen reanalysis; do not rerun provider calls under M51B."
+}

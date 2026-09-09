@@ -1,0 +1,37 @@
+{
+  "experiment": "M48B",
+  "status": "M48B_ABORTED_RUNTIME_HARNESS_DEFECT",
+  "starting_head": "a7be41d4a66ef5a6f859cc3bd318eac424dddd6c",
+  "contract_commit": "3f97175b5a04dd31d914182bd5d23249d7e08a32",
+  "provider_attempts": 1,
+  "model_attempts": 1,
+  "genuine_responses": 1,
+  "retries": 0,
+  "first_response": {
+    "case_id": "commerce_01",
+    "case_index": 1,
+    "parsed_submission": true,
+    "response_sha256": "63b16554a791611e360b1f227b304d76ea992c1f7dfc1176fdf41d1677ad80c0",
+    "raw_responses_jsonl_sha256": "85b1f830053b8f28fcd4755938583ed2342f76d589220e462c39cd4182964062",
+    "parsed_submissions_jsonl_sha256": "77d510f0cba28f62488722596a68077a105594db58c490b83b1ead6908596d99"
+  },
+  "failure": {
+    "type": "KeyError",
+    "message": "reference_implementation_a",
+    "phase": "BASE_RUNTIME_AFTER_FIRST_RESPONSE",
+    "cause": "The harness read reference and result-contract fields from the model case record; this repository stores them in the paired truth record.",
+    "provider_call_completed_before_failure": true
+  },
+  "contract_validity": {
+    "valid": false,
+    "reason": "A harness correction was required after the first genuine response. The M48B immutability boundary was crossed, so remaining cases must not be generated under this identity.",
+    "offline_recovery": "NOT_APPLICABLE_WITHIN_M48B"
+  },
+  "source_hash_before_first_response": "87fdc162714ca6a00e982d74ff710fd91c93d373546fb9a2ccd73d0c",
+  "source_hash_after_abort_fix": "e7fa9a9e9273bf92a7519f8f076d19cc341eabe35868bb2c9a7f1c1566d059d9",
+  "truth_version": "0.2.2-dev",
+  "truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+  "historical_artifacts_modified": false,
+  "next_identity_required": "M48B.1",
+  "note": "The preserved first response is evidence only; it is not an M48B score or partial end-to-end result."
+}

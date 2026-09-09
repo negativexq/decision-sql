@@ -282,8 +282,8 @@ def _prepare_state(database_id: str, fixture: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _fixture_list(case: dict[str, Any]) -> list[dict[str, Any]]:
-    return [{"fixture_id": "base", "patch_sql": []}, *case.get("counterfactual_fixtures", [])]
+def _fixture_list(truth: dict[str, Any]) -> list[dict[str, Any]]:
+    return [{"fixture_id": "base", "patch_sql": []}, *truth.get("counterfactual_fixtures", [])]
 
 
 def _rows(result: dict[str, Any]) -> list[tuple[Any, ...]]:
@@ -373,9 +373,10 @@ def _state_runtime(
     service: SqlSafetyService,
     sql: str,
     case: dict[str, Any],
+    truth: dict[str, Any],
     expected_rows: list[tuple[Any, ...]],
 ) -> dict[str, Any]:
-    contract = ResultContract.from_dict(case["semantic_target"]["result_comparison_contract"])
+    contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
     grain = _grain_snapshot(service, sql)
     outcome = _runtime(service, sql, contract, expected_rows)
     failure = outcome.get("plan_failure", {})
@@ -739,7 +740,7 @@ def _generate_base(data: dict[str, Any]) -> dict[str, Any]:
             )
         else:
             parsed_count += 1
-            case, _truth = data["rows"][request["case_id"]]
+            case, truth = data["rows"][request["case_id"]]
             if submission.decision != "ANSWER" or submission.sql is None:
                 base_records.append(
                     {
@@ -754,13 +755,15 @@ def _generate_base(data: dict[str, Any]) -> dict[str, Any]:
             else:
                 oracle = _runtime(
                     services[request["database_id"]],
-                    case["reference_implementation_a"]["sql"],
-                    ResultContract.from_dict(case["semantic_target"]["result_comparison_contract"]),
+                    truth["reference_implementation_a"]["sql"],
+                    ResultContract.from_dict(
+                        truth["semantic_target"]["result_comparison_contract"]
+                    ),
                     [],
                 )
                 expected_rows = _rows(oracle)
                 runtime = _state_runtime(
-                    services[request["database_id"]], submission.sql, case, expected_rows
+                    services[request["database_id"]], submission.sql, case, truth, expected_rows
                 )
                 base_records.append(
                     {
@@ -826,7 +829,7 @@ def _replay(data: dict[str, Any]) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
     state_prep: list[dict[str, Any]] = []
     for item in submissions:
-        case, _truth = by_id[item["case_id"]]
+        case, truth = by_id[item["case_id"]]
         parsed = item.get("parsed_submission") or {}
         if parsed.get("decision") != "ANSWER" or not parsed.get("sql"):
             records.append(
@@ -834,21 +837,21 @@ def _replay(data: dict[str, Any]) -> dict[str, Any]:
             )
             continue
         states: list[dict[str, Any]] = []
-        for fixture in _fixture_list(case):
+        for fixture in _fixture_list(truth):
             prep = _prepare_state(case["database_id"], fixture)
             state_prep.append(prep)
             contract = ResultContract.from_dict(
-                case["semantic_target"]["result_comparison_contract"]
+                truth["semantic_target"]["result_comparison_contract"]
             )
             oracle = _runtime(
                 services[case["database_id"]],
-                case["reference_implementation_a"]["sql"],
+                truth["reference_implementation_a"]["sql"],
                 contract,
                 [],
             )
             expected_rows = _rows(oracle)
             outcome = _state_runtime(
-                services[case["database_id"]], parsed["sql"], case, expected_rows
+                services[case["database_id"]], parsed["sql"], case, truth, expected_rows
             )
             states.append(
                 {

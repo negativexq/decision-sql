@@ -7,8 +7,10 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
+import re
 import subprocess
 from pathlib import Path
 from typing import Any, cast
@@ -68,6 +70,20 @@ def _hash(value: Any) -> str:
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _component_hashes() -> dict[str, str]:
+    paths = {
+        "builder": REPO / "app/semantics/context_availability.py",
+        "context_builder": REPO / "benchmark/context.py",
+        "prompt_source": REPO / "benchmark/m46b_contract.py",
+        "generation_provider": REPO / "app/generation/provider.py",
+        "runtime_service": REPO / "app/sql/service.py",
+        "grain_runtime": REPO / "app/semantics/grain_runtime.py",
+        "cost_gate": REPO / "app/execution/cost.py",
+        "executor": REPO / "app/execution/reader.py",
+    }
+    return {name: _sha(path) for name, path in paths.items()}
 
 
 def _dump(path: Path, value: Any) -> None:
@@ -288,16 +304,7 @@ def phase_a() -> dict[str, Any]:
         "model_context_exposure": False,
         "score_effect": False,
     }
-    source_hashes = {
-        "builder": _sha(REPO / "app/semantics/context_availability.py"),
-        "context_builder": _sha(REPO / "benchmark/context.py"),
-        "prompt_source": _sha(REPO / "benchmark/m46b_contract.py"),
-        "generation_provider": _sha(REPO / "app/generation/provider.py"),
-        "runtime_service": _sha(REPO / "app/sql/service.py"),
-        "grain_runtime": _sha(REPO / "app/semantics/grain_runtime.py"),
-        "cost_gate": _sha(REPO / "app/execution/cost.py"),
-        "executor": _sha(REPO / "app/execution/reader.py"),
-    }
+    source_hashes = _component_hashes()
     contract_schema_hash = _hash(schema)
     _dump(AUDIT / "m50b_historical_preservation.json", preservation)
     _dump(AUDIT / "m50b_contract_scope.json", scope)
@@ -529,13 +536,43 @@ def phase_b() -> dict[str, Any]:
         "builder_m50_access": 0,
         "leakage": 0,
     }
+    builder_path = REPO / "app/semantics/context_availability.py"
+    builder_source = builder_path.read_text(encoding="utf-8")
+    builder_tree = ast.parse(builder_source)
+    imported_modules = [
+        node.module or "" for node in ast.walk(builder_tree) if isinstance(node, ast.ImportFrom)
+    ]
+    imported_modules.extend(
+        alias.name
+        for node in ast.walk(builder_tree)
+        if isinstance(node, ast.Import)
+        for alias in node.names
+    )
     production_dependency = {
-        "new_benchmark_imports_under_app": 0,
-        "case_id_branches": 0,
-        "domain_specific_benchmark_branches": 0,
-        "runtime_decision_consumers": 0,
+        "new_benchmark_imports_under_app": sum(
+            module.startswith("benchmark") for module in imported_modules
+        ),
+        "case_id_branches": len(
+            re.findall(r"\b(?:if|elif)\b[^\n]*(?:case_id|case-id)", builder_source)
+        ),
+        "domain_specific_benchmark_branches": len(
+            re.findall(r"\b(?:if|elif)\b[^\n]*(?:database_id|database)", builder_source)
+        ),
+        "runtime_decision_consumers": sum(
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "build_context_availability_snapshot"
+            for node in ast.walk(builder_tree)
+        ),
         "builder_path": "app/semantics/context_availability.py",
     }
+    pre_replay_hashes = json.loads(
+        (AUDIT / "m50b_component_hashes_pre_replay.json").read_text(encoding="utf-8")
+    )
+    current_hashes = _component_hashes()
+    component_hash_mismatches = [
+        key for key, digest in pre_replay_hashes.items() if current_hashes.get(key) != digest
+    ]
     preservation = json.loads((AUDIT / "m50b_historical_preservation.json").read_text())
     mismatches = [
         path
@@ -598,6 +635,7 @@ def phase_b() -> dict[str, Any]:
         "negative_capability_cases": len(negative_rows),
         "evaluator_leakage": evaluator_leakage["leakage"],
         "historical_hash_mismatches": mismatches,
+        "component_hash_mismatches": component_hash_mismatches,
         "contract_version": CONTRACT_VERSION,
         "snapshot_corpus_hash": corpus_hash,
         "verdict": "TYPED_CONTEXT_AVAILABILITY_SHADOW_SUPPORTED",
@@ -623,6 +661,8 @@ def phase_b() -> dict[str, Any]:
         "utility_verdict": utility["verdict"],
         "m50c_ready": True,
         "m51_ready": False,
+        "contract_schema_hash": manifest["contract_schema_hash"],
+        "builder_hash": manifest["builder_hash"],
         "snapshot_corpus_hash": corpus_hash,
         "final_integrity": final_integrity,
         "coverage": coverage,
@@ -646,7 +686,11 @@ def _markdown(report: dict[str, Any]) -> str:
         "Supported primitive families": "Schema, authorized relationships, semantic definitions, temporal definitions, and policy.",
         "Unsupported capabilities": "Required-fact identification, required-fact completeness, uniqueness, final answerability, and model decisions are `NOT_COMPUTED`.",
         "Shadow contract design": f"`{CONTRACT_VERSION}`; immutable typed models, five primitive inventories, explicit negative capabilities, and no runtime integration.",
-        "Contract version and hashes": f"Snapshot corpus: `{report['snapshot_corpus_hash']}`.",
+        "Contract version and hashes": (
+            f"Contract schema: `{report['contract_schema_hash']}`; "
+            f"builder: `{report['builder_hash']}`; "
+            f"snapshot corpus: `{report['snapshot_corpus_hash']}`."
+        ),
         "Canonicalization": "Mappings, records, primitive IDs, and family inventories are canonically ordered; case IDs are outside snapshot hashes.",
         "Provenance model": "Every emitted primitive carries source ID, source version, source hash, derivation rule, and `inference=NONE`.",
         "Synthetic contract validation": "Populated, empty, missing, duplicate, conflicting, permuted, UNKNOWN, and consumer-safety checks passed.",

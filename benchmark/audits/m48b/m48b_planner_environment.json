@@ -1,0 +1,72 @@
+{
+  "contract": {
+    "analyze_scope": "all relations in the selected benchmark schema, sorted by relation name",
+    "contract_hash": "a97222f4e036af28120a4ee12d9ef4352513796f54a15d6f2050b56a6ae77863",
+    "contract_version": "planner-statistics-contract-1",
+    "cost_policy_hashes": {
+      "app/config.py": "3bae45fdbf2be4837d20030395ceafb95d1315cf8eeabf8381b071eef3a9709b",
+      "app/execution/cost.py": "86bd5f28ae667f2c2b6f9ceec2ff0db98ef7f0e622573b77b67ba4bbccab3c55",
+      "app/sql/service.py": "0df21dbd91e44ccc1b87e5aff2c73b824a3de695a5cd2fb1626391947919d779"
+    },
+    "effective_cost_policy": {
+      "max_plan_cost": 100000.0,
+      "max_plan_rows": 100000
+    },
+    "evaluation_truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+    "evaluation_truth_version": "0.2.2-dev",
+    "experiment": "M48A.2",
+    "grain_hashes": {
+      "app/semantics/grain.py": "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5",
+      "app/semantics/grain_normalizer.py": "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6c97b5800",
+      "app/semantics/grain_runtime.py": "6605852770cdab6b2c5a31d2f5cbe49bee934fd23f6a9ffaded35939b5591b49"
+    },
+    "model_calls": 0,
+    "planner_settings": {
+      "cpu_operator_cost": "0.0025",
+      "cpu_tuple_cost": "0.01",
+      "effective_cache_size": "4GB",
+      "enable_hashjoin": "on",
+      "enable_indexscan": "on",
+      "enable_mergejoin": "on",
+      "enable_nestloop": "on",
+      "enable_seqscan": "on",
+      "random_page_cost": "4",
+      "seq_page_cost": "1",
+      "work_mem": "4MB"
+    },
+    "planner_settings_hash": "8b641e1d83fcb532553e16231eaa8c17fc3db3981bf4572bed9a96979c391716",
+    "postgresql_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "provider_calls": 0,
+    "reader_analyze_forbidden": true,
+    "role_boundary": {
+      "execution": "reader",
+      "planning": "reader",
+      "setup": "admin"
+    },
+    "selected_lifecycle": "ANALYZE_CURRENT_STATE",
+    "selection_criteria_only": true,
+    "state_preparation_sequence": [
+      "admin reset",
+      "deterministic seed",
+      "apply optional fixture",
+      "commit state preparation",
+      "admin ANALYZE every benchmark relation in sorted order",
+      "reader/runtime planning"
+    ],
+    "transaction_boundary": "seed/fixture commit precedes ANALYZE; ANALYZE completes before reader planning"
+  },
+  "planner_settings": {
+    "cpu_operator_cost": "0.0025",
+    "cpu_tuple_cost": "0.01",
+    "effective_cache_size": "4GB",
+    "enable_hashjoin": "on",
+    "enable_indexscan": "on",
+    "enable_mergejoin": "on",
+    "enable_nestloop": "on",
+    "enable_seqscan": "on",
+    "random_page_cost": "4",
+    "seq_page_cost": "1",
+    "work_mem": "4MB"
+  },
+  "postgres_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit"
+}

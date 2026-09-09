@@ -1,0 +1,1599 @@
+{
+  "case_order_hash": "3299ecb9046619cd7b2e2aed66ed2e4146e8286b0497202b3b3ebc151947c2c2",
+  "clean": false,
+  "fixture_comparisons": 184,
+  "head": "a7be41d4a66ef5a6f859cc3bd318eac424dddd6c",
+  "inventory": {
+    "additive": 15,
+    "derived": 0,
+    "derived_measures": 0,
+    "dimensions": 11,
+    "identifiers": 126,
+    "measures": 16,
+    "non_additive": 1,
+    "numeric_attributes_audited": 153,
+    "required_unknown": 0,
+    "semi_additive": 0,
+    "unknown": 0
+  },
+  "known_mypy_issue": {
+    "diagnostics": [
+      "app/semantics/semantic_intent.py:423: error: \"type[SemanticFailureCode]\" has no attribute \"UNKNOWN_ENTITY\"  [attr-defined]"
+    ],
+    "exit_code": 1,
+    "file_hash": "43801e9b9103254243261072ee53d825d2fb50f9a132039b216a4a9918fd8dc7"
+  },
+  "model_calls": 0,
+  "mutants": {
+    "by_failure_family": {
+      "FILTER_SCOPE_ERROR": 7,
+      "JSON_TYPE_COERCION_ERROR": 4,
+      "LATEST_ROW_ERROR": 6,
+      "LIMIT_SEMANTICS_ERROR": 40,
+      "PARENT_MEASURE_FANOUT": 2,
+      "RELATIONSHIP_PATH_ERROR": 13,
+      "TEMPORAL_BOUNDARY_ERROR": 3,
+      "WRONG_AGGREGATION_GRAIN": 7,
+      "asc_desc": 3,
+      "avg_vs_sum": 3,
+      "count_vs_count_distinct": 1,
+      "inner_left_join": 4,
+      "null_default_policy": 2,
+      "projection": 47,
+      "ratio_numerator_denominator": 1,
+      "remove_filter": 1,
+      "remove_limit": 2,
+      "remove_predicate": 12,
+      "rounding_stage": 2,
+      "set_operation": 1,
+      "where_filter_scope": 4,
+      "window_partition": 1,
+      "wrong_aggregation_grain": 3,
+      "wrong_comparison_operator": 4,
+      "wrong_join_path": 1,
+      "wrong_literal": 5,
+      "wrong_metric_operand": 4,
+      "wrong_nested_field": 2,
+      "wrong_population": 2,
+      "wrong_temporal_anchor": 2,
+      "wrong_type": 1
+    },
+    "invalid": 0,
+    "killed": 190,
+    "mutants": 190,
+    "records": [
+      {
+        "case_id": "commerce_01",
+        "failure_category": "wrong_literal",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m01_wrong_region",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_01",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m01_remove_active",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_01",
+        "failure_category": "wrong_comparison_operator",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m01_wrong_boolean",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_02",
+        "failure_category": "wrong_literal",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m02_status",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_02",
+        "failure_category": "wrong_temporal_anchor",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m02_upper_bound",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_02",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m02_remove_date",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_03",
+        "failure_category": "inner_left_join",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m03_inner",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_03",
+        "failure_category": "where_filter_scope",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m03_where_scope",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_03",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m03_all_orders",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_04",
+        "failure_category": "wrong_metric_operand",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m04_no_discount",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_04",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m04_all_status",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_04",
+        "failure_category": "wrong_aggregation_grain",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m04_wrong_grain",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_05",
+        "failure_category": "count_vs_count_distinct",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m05_count_lines",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_05",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m05_all_status",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_05",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m05_no_category",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_05",
+        "failure_category": "projection",
+        "first_failure": "cf01:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_commerce05_extra_name",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_06",
+        "failure_category": "inner_left_join",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m06_inner",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_06",
+        "failure_category": "where_filter_scope",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m06_where_scope",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_06",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m06_all_orders",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_07",
+        "failure_category": "asc_desc",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m07_ascending",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_07",
+        "failure_category": "remove_limit",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m07_no_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "commerce_07",
+        "failure_category": "wrong_metric_operand",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m07_no_discount",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_01",
+        "failure_category": "wrong_nested_field",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m11_wrong_json_path",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_01",
+        "failure_category": "wrong_comparison_operator",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m11_strict",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_01",
+        "failure_category": "wrong_type",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m11_no_cast",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_02",
+        "failure_category": "avg_vs_sum",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m12_sum",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_02",
+        "failure_category": "wrong_metric_operand",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m12_sum_components",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_02",
+        "failure_category": "rounding_stage",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m12_no_round",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_03",
+        "failure_category": "avg_vs_sum",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m13_sum",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_03",
+        "failure_category": "wrong_aggregation_grain",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m13_ratio_of_avgs",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_03",
+        "failure_category": "null_default_policy",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m13_include_zero",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_03",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_fleet03_extra_name",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_04",
+        "failure_category": "inner_left_join",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m14_inner",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_04",
+        "failure_category": "where_filter_scope",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m14_where_scope",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_04",
+        "failure_category": "wrong_temporal_anchor",
+        "first_failure": "cf02:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m14_upper_inclusive",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_05",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m15_all_classes",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_05",
+        "failure_category": "wrong_literal",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m15_wrong_class",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_05",
+        "failure_category": "wrong_join_path",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m15_wrong_join",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_05",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_fleet05_extra_name",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_06",
+        "failure_category": "asc_desc",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m16_oldest",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_06",
+        "failure_category": "remove_filter",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m16_returns_all_events",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_06",
+        "failure_category": "window_partition",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m16_global",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_07",
+        "failure_category": "asc_desc",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m17_ascending",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_07",
+        "failure_category": "remove_limit",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m17_no_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "fleet_07",
+        "failure_category": "avg_vs_sum",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m17_sum",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_01",
+        "failure_category": "where_filter_scope",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m21_where",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_01",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m21_all_priority",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_01",
+        "failure_category": "inner_left_join",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m21_inner",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_01",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_support01_extra_name",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_02",
+        "failure_category": "wrong_comparison_operator",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m22_at_or_before",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_02",
+        "failure_category": "wrong_aggregation_grain",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m22_any_response",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_02",
+        "failure_category": "remove_predicate",
+        "first_failure": "cf01:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m22_no_sla",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_02",
+        "failure_category": "wrong_population",
+        "first_failure": "cf03:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m22_oldest_subscription",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_02",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_support02_extra_account",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_03",
+        "failure_category": "ratio_numerator_denominator",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m23_sum",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_03",
+        "failure_category": "wrong_metric_operand",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m23_all_one",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_03",
+        "failure_category": "rounding_stage",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m23_no_round",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_03",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_support03_ticket_count",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_04",
+        "failure_category": "wrong_literal",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m24_email",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_04",
+        "failure_category": "wrong_nested_field",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m24_wrong_path",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_04",
+        "failure_category": "null_default_policy",
+        "first_failure": "cf02:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m24_coalesce",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_05",
+        "failure_category": "wrong_comparison_operator",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m25_below",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_05",
+        "failure_category": "wrong_population",
+        "first_failure": "cf02:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m25_all_accounts_baseline",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_05",
+        "failure_category": "remove_predicate",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m25_no_having",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_05",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m36p_support05_min_ticket",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_06",
+        "failure_category": "set_operation",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m26_intersect",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_06",
+        "failure_category": "remove_predicate",
+        "first_failure": "cf02:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m26_all_tickets",
+        "status": "VALID"
+      },
+      {
+        "case_id": "support_06",
+        "failure_category": "wrong_literal",
+        "first_failure": "cf02:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m26_medium_incident",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_01",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_01_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_01",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_01_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_01",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_01_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_02",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_02_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_02",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_02_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_02",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_02_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_03",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_03_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_03",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_03_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_03",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_03_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_04",
+        "failure_category": "JSON_TYPE_COERCION_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_04_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_04",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_04_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_04",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_04_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_05",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_05_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_05",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_05_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_05",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_05_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_06",
+        "failure_category": "TEMPORAL_BOUNDARY_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_06_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_06",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_06_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_06",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_06_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_07",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_07_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_07",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_07_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_07",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_07_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_08",
+        "failure_category": "JSON_TYPE_COERCION_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_08_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_08",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_08_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_08",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_08_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_09",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_09_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_09",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_09_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_09",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_09_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_10",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_10_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_10",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_10_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_10",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_10_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_11",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_11_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_11",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_11_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_11",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_11_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_12",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_12_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_12",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_12_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_12",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_12_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_13",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_13_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_13",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_13_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "risk_13",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_risk_13_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_01",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_01_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_01",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_01_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_01",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_01_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_02",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_02_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_02",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_02_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_02",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_02_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_03",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_03_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_03",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_03_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_03",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_03_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_04",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_04_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_04",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_04_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_04",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_04_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_04",
+        "failure_category": "PARENT_MEASURE_FANOUT",
+        "first_failure": "subscription_04_cf3_multi_refund:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m46a1_subscription_04_parent_fanout",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_05",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_05_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_05",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_05_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_05",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_05_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_06",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_06_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_06",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_06_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_06",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_06_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_07",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_07_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_07",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_07_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_07",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_07_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_08",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_08_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_08",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_08_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_08",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_08_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_09",
+        "failure_category": "TEMPORAL_BOUNDARY_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_09_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_09",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_09_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_09",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_09_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_10",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_10_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_10",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_10_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_10",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_10_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_10",
+        "failure_category": "PARENT_MEASURE_FANOUT",
+        "first_failure": "subscription_10_cf3_multi_refund:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m46a1_subscription_10_denominator_fanout",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_11",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_11_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_11",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_11_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_11",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_11_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_12",
+        "failure_category": "JSON_TYPE_COERCION_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_12_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_12",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_12_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_12",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_12_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_13",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_13_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_13",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_13_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_13",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_13_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_14",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_14_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_14",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_14_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "subscription_14",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_subscription_14_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_01",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_01_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_01",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_01_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_01",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_01_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_02",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_02_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_02",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_02_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_02",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_02_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_03",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_03_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_03",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_03_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_03",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_03_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_04",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_04_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_04",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_04_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_04",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_04_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_05",
+        "failure_category": "LATEST_ROW_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_05_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_05",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_05_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_05",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_05_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_06",
+        "failure_category": "TEMPORAL_BOUNDARY_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_06_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_06",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "warehouse_06_cf1_c305ad:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_06_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_06",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_06_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_07",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_07_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_07",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_07_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_07",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_07_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_08",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_08_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_08",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_08_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_08",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_08_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_09",
+        "failure_category": "JSON_TYPE_COERCION_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_09_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_09",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "warehouse_09_cf1_c305ad:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_09_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_09",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_09_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_10",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_10_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_10",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_10_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_10",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_10_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_11",
+        "failure_category": "FILTER_SCOPE_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_11_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_11",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_11_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_11",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_11_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_12",
+        "failure_category": "WRONG_AGGREGATION_GRAIN",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_12_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_12",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_12_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_12",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_12_projection",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_13",
+        "failure_category": "RELATIONSHIP_PATH_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_13_semantic",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_13",
+        "failure_category": "LIMIT_SEMANTICS_ERROR",
+        "first_failure": "base:RESULT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_13_limit",
+        "status": "VALID"
+      },
+      {
+        "case_id": "warehouse_13",
+        "failure_category": "projection",
+        "first_failure": "base:COLUMN_COUNT_MISMATCH",
+        "killed": true,
+        "mutant_id": "m38_warehouse_13_projection",
+        "status": "VALID"
+      }
+    ],
+    "surviving": 0,
+    "valid": 190
+  },
+  "origin_main": "a7be41d4a66ef5a6f859cc3bd318eac424dddd6c",
+  "prompt_hash": "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb",
+  "provider_calls": 0,
+  "references": 120,
+  "runtime_reference_states": 368,
+  "runtime_unexpected_failures": 0,
+  "truth": {
+    "hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+    "version": "0.2.2-dev"
+  }
+}

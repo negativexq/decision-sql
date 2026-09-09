@@ -1,0 +1,72 @@
+{
+  "authority_safety": {
+    "new_unauthorized_relationships": 0,
+    "normalized_output_reparsed_and_repolicied": true,
+    "normalized_records": 1,
+    "read_only_queryplan_boundary": true
+  },
+  "determininism_artifact": "benchmark/audits/m48a/m48a_determinism.json",
+  "evaluation_truth_hash": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+  "evaluation_truth_version": "0.2.2-dev",
+  "experiment": "M48A",
+  "historical_m47b_scores_unchanged": true,
+  "m47b_frozen_generation": {
+    "normalized_answerable_tsa": "47/60",
+    "normalized_governed": "72/90",
+    "raw_answerable_tsa": "46/60",
+    "raw_governed": "71/90"
+  },
+  "m47b_runtime": {
+    "answer_sql": 55,
+    "normalizations": 1,
+    "normalized_fixture_correct": 144,
+    "planning_bypassed": 35,
+    "raw_fixture_correct": 143,
+    "safe_sql_changed": 0,
+    "semantic_rejections": 0,
+    "submissions": 90
+  },
+  "mode": "ZERO_CALL_RUNTIME_INTEGRATION_REPLAY",
+  "model_calls": 0,
+  "partial_reason": "Three correct reference executions were rejected by the existing cost policy during runtime replay; no cost threshold was loosened.",
+  "provider_calls": 0,
+  "reference_runtime": {
+    "executed_comparisons": 365,
+    "failure_reason": "QUERY_COST_REJECTION on three warehouse_13 reference-B fixtures",
+    "failures": 3,
+    "fixture_comparisons": 184,
+    "reference_rewrites": 0,
+    "references": 120
+  },
+  "runtime_cost_ms": {
+    "integrated_plan_median": 3.080561989918351,
+    "integrated_plan_p90": 5.181583110243082,
+    "raw_plan_median": 2.8397710993885994,
+    "raw_plan_p90": 4.976500058546662
+  },
+  "source_hashes": {
+    "m47b_parsed_submissions": "efa7a016b39a913e070dfee0591994facb9ffbe43363527d4ba2504c5821ad66",
+    "m47b_raw_responses": "9bea788dce7e9199d154b6eecd2980af85e7ae94c41e90be8a7dbc1d0bdbe2e3",
+    "normalizer": "55ff3b32a698c8b8a151984dc8b9070531cfde926fb02148f6fc59f6c97b5800",
+    "truth": "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e",
+    "validator": "5e36ff6171050d01a244619cae8902d7e9da7918a461699e426912503a2ad7d5"
+  },
+  "targets": {
+    "subscription_04": {
+      "hardened_fixture_normalized_correct": true,
+      "hardened_fixture_raw_correct": false,
+      "raw_diagnostic": "PARENT_MEASURE_FANOUT",
+      "runtime_status": "NORMALIZED"
+    },
+    "subscription_10": {
+      "decision": "NEEDS_CLARIFICATION",
+      "planning_calls": 0
+    },
+    "warehouse_08": {
+      "raw_diagnostic": "PASS",
+      "runtime_status": "UNCHANGED",
+      "spuriously_normalized": false
+    }
+  },
+  "verdict": "RUNTIME_GRAIN_INTEGRATION_PARTIAL"
+}

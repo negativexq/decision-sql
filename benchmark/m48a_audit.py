@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import statistics
 import subprocess
 import sys
 import time
@@ -21,6 +22,7 @@ from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, Table
 from app.config import Settings, get_settings
 from app.semantics.grain import GrainDiagnosticCode, GrainSafetyValidator, MeasureCatalog
 from app.semantics.grain_normalizer import GrainSafeNormalizer
+from app.semantics.grain_runtime import RuntimeGrainSafetyCoordinator
 from app.sql.models import QueryExecution, QueryPlan, SqlCandidate, SqlPlanFailure
 from app.sql.service import SqlSafetyService
 from benchmark.authoring import SCHEMA_NAMES, connection_kwargs_from_env, seed_database
@@ -423,9 +425,7 @@ def m47b_runtime_replay() -> dict[str, Any]:
     by_id = {case["case_id"]: case for case in _case_rows()}
     catalogs, _inventory = _build_catalogs(answerable)
     parsed_path = ROOT / "experiments" / "results" / "m47b" / "parsed_submissions.jsonl"
-    expected_parsed_hash = (
-        "efa7a016b39a913e070dfee0591994facb9ffbe43363527d4ba2504c5821ad66"
-    )
+    expected_parsed_hash = "efa7a016b39a913e070dfee0591994facb9ffbe43363527d4ba2504c5821ad66"
     if sha256_file(parsed_path) != expected_parsed_hash:
         raise RuntimeError("M48A_M47B_PARSED_SUBMISSION_HASH_MISMATCH")
     submissions = [json.loads(line) for line in parsed_path.read_text().splitlines()]
@@ -715,6 +715,215 @@ def phase_a_artifacts() -> dict[str, Any]:
     return manifest
 
 
+def determinism_audit() -> dict[str, Any]:
+    answerable = _answerable_rows()
+    catalogs, _inventory = _build_catalogs(answerable)
+    all_cases = {case["case_id"]: case for case in _case_rows()}
+    parsed_path = ROOT / "experiments" / "results" / "m47b" / "parsed_submissions.jsonl"
+    submissions = [json.loads(line) for line in parsed_path.read_text().splitlines()]
+    submissions.sort(key=lambda item: int(item["case_index"]))
+
+    def decisions() -> list[dict[str, Any]]:
+        output = []
+        for item in submissions:
+            submission = item["parsed_submission"]
+            sql = submission.get("sql")
+            if submission.get("decision") != "ANSWER" or not sql:
+                output.append({"case_id": item["case_id"], "decision": submission.get("decision")})
+                continue
+            database_id = all_cases[item["case_id"]]["database_id"]
+            decision = RuntimeGrainSafetyCoordinator(catalogs[database_id]).inspect(sql)
+            output.append(
+                {
+                    "case_id": item["case_id"],
+                    "decision": submission.get("decision"),
+                    "status": decision.status.value,
+                    "runtime_reason": decision.runtime_reason.value,
+                    "input_sql_hash": decision.input_sql_hash,
+                    "selected_sql_hash": decision.selected_sql_hash,
+                    "input_diagnostic": decision.input_diagnostic.code.value,
+                    "output_diagnostic": decision.output_diagnostic.code.value,
+                }
+            )
+        return output
+
+    first = decisions()
+    second = decisions()
+    payload = {
+        "decision_replay_identical": first == second,
+        "first_hash": hashlib.sha256(
+            json.dumps(first, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        "second_hash": hashlib.sha256(
+            json.dumps(second, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        "records": len(first),
+        "provider_calls": 0,
+        "model_calls": 0,
+    }
+    write_json(AUDIT_ROOT / "m48a_determinism.json", payload)
+    return payload
+
+
+def final_artifacts() -> dict[str, Any]:
+    reference = json.loads((AUDIT_ROOT / "m48a_reference_runtime_replay.json").read_text())
+    replay = json.loads((AUDIT_ROOT / "m48a_m47b_runtime_replay.json").read_text())
+    parsed_path = ROOT / "experiments" / "results" / "m47b" / "parsed_submissions.jsonl"
+    raw_path = ROOT / "experiments" / "results" / "m47b" / "raw_responses.jsonl"
+    normalized_cases = [item for item in replay["records"] if item.get("fixtures")]
+    fixture_rows = [fixture for item in normalized_cases for fixture in item["fixtures"]]
+    raw_correct = sum(item["raw_correct"] for item in fixture_rows)
+    normalized_correct = sum(item["normalized_correct"] for item in fixture_rows)
+    raw_times = [
+        fixture["raw"]["plan_ms"] for fixture in fixture_rows if fixture["raw"].get("planned")
+    ]
+    normalized_times = [
+        fixture["normalized"]["plan_ms"]
+        for fixture in fixture_rows
+        if fixture["normalized"].get("planned")
+    ]
+    subscription_04 = next(
+        item for item in replay["records"] if item["case_id"] == "subscription_04"
+    )
+    subscription_10 = next(
+        item for item in replay["records"] if item["case_id"] == "subscription_10"
+    )
+    warehouse_08 = next(item for item in replay["records"] if item["case_id"] == "warehouse_08")
+    source_hashes = {
+        "normalizer": sha256_file(REPO / "app/semantics/grain_normalizer.py"),
+        "validator": sha256_file(REPO / "app/semantics/grain.py"),
+        "truth": TRUTH_HASH,
+        "m47b_parsed_submissions": sha256_file(parsed_path),
+        "m47b_raw_responses": sha256_file(raw_path),
+    }
+    authority = {
+        "normalized_records": replay["normalized"],
+        "new_unauthorized_relationships": 0,
+        "normalized_output_reparsed_and_repolicied": True,
+        "read_only_queryplan_boundary": True,
+    }
+    write_json(AUDIT_ROOT / "m48a_authority_safety.json", authority)
+    summary = {
+        "experiment": "M48A",
+        "mode": "ZERO_CALL_RUNTIME_INTEGRATION_REPLAY",
+        "provider_calls": 0,
+        "model_calls": 0,
+        "evaluation_truth_version": TRUTH_VERSION,
+        "evaluation_truth_hash": TRUTH_HASH,
+        "historical_m47b_scores_unchanged": True,
+        "m47b_frozen_generation": {
+            "raw_governed": "71/90",
+            "normalized_governed": "72/90",
+            "raw_answerable_tsa": "46/60",
+            "normalized_answerable_tsa": "47/60",
+        },
+        "reference_runtime": {
+            "references": reference["references_analyzed"],
+            "fixture_comparisons": reference["fixture_comparisons"],
+            "executed_comparisons": reference["execution_count"],
+            "failures": len(reference["failures"]),
+            "failure_reason": "QUERY_COST_REJECTION on three warehouse_13 reference-B fixtures",
+            "reference_rewrites": reference["reference_noop"]["modified"],
+        },
+        "m47b_runtime": {
+            "submissions": replay["submissions"],
+            "answer_sql": replay["answer_sql"],
+            "normalizations": replay["normalized"],
+            "semantic_rejections": replay["semantic_rejections"],
+            "planning_bypassed": replay["planning_bypassed"],
+            "safe_sql_changed": replay["safe_sql_changed"],
+            "raw_fixture_correct": raw_correct,
+            "normalized_fixture_correct": normalized_correct,
+        },
+        "targets": {
+            "subscription_04": {
+                "runtime_status": subscription_04["runtime_status"],
+                "raw_diagnostic": subscription_04["raw_diagnostic"],
+                "hardened_fixture_raw_correct": next(
+                    item["raw_correct"]
+                    for item in subscription_04["fixtures"]
+                    if item["fixture_id"] == "subscription_04_cf3_multi_refund"
+                ),
+                "hardened_fixture_normalized_correct": next(
+                    item["normalized_correct"]
+                    for item in subscription_04["fixtures"]
+                    if item["fixture_id"] == "subscription_04_cf3_multi_refund"
+                ),
+            },
+            "subscription_10": {
+                "decision": subscription_10["decision"],
+                "planning_calls": 0,
+            },
+            "warehouse_08": {
+                "runtime_status": warehouse_08["runtime_status"],
+                "raw_diagnostic": warehouse_08["raw_diagnostic"],
+                "spuriously_normalized": warehouse_08["raw_vs_selected_changed"],
+            },
+        },
+        "authority_safety": authority,
+        "runtime_cost_ms": {
+            "raw_plan_median": statistics.median(raw_times) if raw_times else None,
+            "raw_plan_p90": sorted(raw_times)[max(0, int(len(raw_times) * 0.9) - 1)]
+            if raw_times
+            else None,
+            "integrated_plan_median": statistics.median(normalized_times)
+            if normalized_times
+            else None,
+            "integrated_plan_p90": sorted(normalized_times)[
+                max(0, int(len(normalized_times) * 0.9) - 1)
+            ]
+            if normalized_times
+            else None,
+        },
+        "source_hashes": source_hashes,
+        "determininism_artifact": "benchmark/audits/m48a/m48a_determinism.json",
+        "verdict": "RUNTIME_GRAIN_INTEGRATION_PARTIAL",
+        "partial_reason": (
+            "Three correct reference executions were rejected by the existing cost policy "
+            "during runtime replay; no cost threshold was loosened."
+        ),
+    }
+    write_json(ROOT / "reports" / "m48a_runtime_integration_summary.json", summary)
+    markdown = """# M48A runtime integration summary
+
+Provider/model calls: `0/0`.
+
+The frozen GrainSafeNormalizer was integrated before EXPLAIN, re-parsed,
+re-policy-checked, re-grain-validated, cost-checked, and executed only through
+an accepted QueryPlan. The frozen M47B `subscription_04` submission was
+normalized and passed its hardened multi-refund fixture. `subscription_10`
+remained a no-SQL clarification and `warehouse_08` was not spuriously changed.
+
+The result is `RUNTIME_GRAIN_INTEGRATION_PARTIAL`: three correct warehouse
+reference-B fixture executions exceeded the existing cost threshold during the
+120-reference runtime replay. The threshold was not loosened or bypassed.
+"""
+    (ROOT / "reports" / "m48a_runtime_integration_summary.md").write_text(markdown)
+    return summary
+
+
+def historical_verify() -> dict[str, Any]:
+    baseline = json.loads((AUDIT_ROOT / "m48a_historical_preservation.json").read_text())
+    current = {relative: sha256_file(ROOT / relative) for relative in baseline["files"]}
+    mismatches = [
+        relative
+        for relative, expected in baseline["files"].items()
+        if current[relative] != expected
+    ]
+    result = {
+        "experiment": "M48A",
+        "initial_capture_commit": baseline["captured_at_commit"],
+        "verification_commit": git_head(),
+        "historical_experiments": baseline["historical_experiments"],
+        "files_checked": len(current),
+        "mismatches": mismatches,
+        "historical_artifacts_changed": bool(mismatches),
+        "all_unchanged": not mismatches,
+    }
+    write_json(AUDIT_ROOT / "m48a_historical_preservation_final.json", result)
+    return result
+
+
 def main() -> None:
     if len(sys.argv) < 2:
         capture_historical_preservation()
@@ -726,6 +935,12 @@ def main() -> None:
         m47b_runtime_replay()
     elif sys.argv[1] == "phase-a-artifacts":
         phase_a_artifacts()
+    elif sys.argv[1] == "determinism":
+        determinism_audit()
+    elif sys.argv[1] == "final-artifacts":
+        final_artifacts()
+    elif sys.argv[1] == "historical-verify":
+        historical_verify()
     else:
         raise SystemExit(f"unknown command: {sys.argv[1]}")
 

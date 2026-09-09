@@ -119,7 +119,18 @@ def _canonical(value: Any) -> Any:
         return {
             str(key): _canonical(item)
             for key, item in sorted(value.items())
-            if key not in {"plan_id", "correlation_id", "timestamp", "started_at", "finished_at"}
+            if key
+            not in {
+                "plan_id",
+                "correlation_id",
+                "timestamp",
+                "started_at",
+                "finished_at",
+                "executed_at_utc",
+                "latency_ms",
+                "plan_ms",
+                "execute_ms",
+            }
         }
     if isinstance(value, list):
         return [_canonical(item) for item in value]

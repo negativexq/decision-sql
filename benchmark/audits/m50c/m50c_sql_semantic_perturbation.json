@@ -1,0 +1,2567 @@
+{
+  "categories": {
+    "AGGREGATION_CHANGE": 2,
+    "FILTER_CHANGE": 3,
+    "GROUPING_CHANGE": 1,
+    "JOIN_CHANGE": 2,
+    "OTHER_MATERIAL_CHANGE": 1,
+    "PROJECTION_CHANGE": 1,
+    "SEMANTICALLY_EQUIVALENT_REWRITE": 14,
+    "TABLE_SCOPE_CHANGE": 11
+  },
+  "changed_pairs": 35,
+  "equivalent_count": 14,
+  "material_count": 21,
+  "rows": [
+    {
+      "case_id": "commerce_03",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "cd5d363c0b7b493563db3318a58379db99a5884f6433633cd228df74231f0835",
+        "cd5d363c0b7b493563db3318a58379db99a5884f6433633cd228df74231f0835",
+        "cd5d363c0b7b493563db3318a58379db99a5884f6433633cd228df74231f0835"
+      ],
+      "control_sql": "SELECT c.region, COUNT(o.order_id) FILTER (WHERE o.status = 'completed') AS completed_order_count\nFROM customers AS c\nLEFT JOIN orders AS o ON o.customer_id = c.customer_id\nGROUP BY c.region",
+      "control_sql_hash": "cd5d363c0b7b493563db3318a58379db99a5884f6433633cd228df74231f0835",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "JOIN_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(o.order_id)"
+          ],
+          "group_by": [
+            "c.region"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN orders AS o ON o.customer_id = c.customer_id"
+          ],
+          "normalized_sql": "SELECT c.region, COUNT(o.order_id) FILTER(WHERE o.status = 'completed') AS completed_order_count FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.customer_id GROUP BY c.region",
+          "order_by": [],
+          "projections": [
+            "c.region",
+            "COUNT(o.order_id) FILTER(WHERE o.status = 'completed') AS completed_order_count"
+          ],
+          "tables": [
+            "customers AS c",
+            "orders AS o"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(o.order_id)"
+          ],
+          "group_by": [
+            "c.region"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN orders AS o ON o.customer_id = c.customer_id AND o.status = 'completed'"
+          ],
+          "normalized_sql": "SELECT c.region, COUNT(o.order_id) AS completed_order_count FROM customers AS c LEFT JOIN orders AS o ON o.customer_id = c.customer_id AND o.status = 'completed' GROUP BY c.region",
+          "order_by": [],
+          "projections": [
+            "c.region",
+            "COUNT(o.order_id) AS completed_order_count"
+          ],
+          "tables": [
+            "customers AS c",
+            "orders AS o"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "bbbecba6916a086348ddb114aa2ca8035f1c08b8561adb9548658eea2dfa50a5",
+        "bbbecba6916a086348ddb114aa2ca8035f1c08b8561adb9548658eea2dfa50a5",
+        "bbbecba6916a086348ddb114aa2ca8035f1c08b8561adb9548658eea2dfa50a5"
+      ],
+      "treatment_sql": "SELECT c.region, COUNT(o.order_id) AS completed_order_count\nFROM customers AS c\nLEFT JOIN orders AS o\n  ON o.customer_id = c.customer_id\n AND o.status = 'completed'\nGROUP BY c.region;",
+      "treatment_sql_hash": "bbbecba6916a086348ddb114aa2ca8035f1c08b8561adb9548658eea2dfa50a5"
+    },
+    {
+      "case_id": "commerce_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+        "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+        "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+        "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c"
+      ],
+      "control_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM order_items AS oi\nJOIN orders AS o ON o.order_id = oi.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\nGROUP BY p.category",
+      "control_sql_hash": "673da6f08ca0c89c47d32bafec373bc2b9c5613ba14f228dc57fdbd66bd2ab7c",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+          ],
+          "group_by": [
+            "p.category"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN orders AS o ON o.order_id = oi.order_id",
+            "JOIN products AS p ON p.product_id = oi.product_id"
+          ],
+          "normalized_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value FROM order_items AS oi JOIN orders AS o ON o.order_id = oi.order_id JOIN products AS p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY p.category",
+          "order_by": [],
+          "projections": [
+            "p.category",
+            "ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value"
+          ],
+          "tables": [
+            "order_items AS oi",
+            "orders AS o",
+            "products AS p"
+          ],
+          "where": "WHERE o.status = 'completed'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100))"
+          ],
+          "group_by": [
+            "p.category"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN orders AS o ON o.order_id = oi.order_id",
+            "JOIN products AS p ON p.product_id = oi.product_id"
+          ],
+          "normalized_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value FROM order_items AS oi JOIN orders AS o ON o.order_id = oi.order_id JOIN products AS p ON p.product_id = oi.product_id WHERE o.status = 'completed' GROUP BY p.category",
+          "order_by": [],
+          "projections": [
+            "p.category",
+            "ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value"
+          ],
+          "tables": [
+            "order_items AS oi",
+            "orders AS o",
+            "products AS p"
+          ],
+          "where": "WHERE o.status = 'completed'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "ca5f1311c4eed7c87f19a24b6cc8049fbe7445cdaa5d6ada3067994da077c208",
+        "ca5f1311c4eed7c87f19a24b6cc8049fbe7445cdaa5d6ada3067994da077c208",
+        "ca5f1311c4eed7c87f19a24b6cc8049fbe7445cdaa5d6ada3067994da077c208",
+        "ca5f1311c4eed7c87f19a24b6cc8049fbe7445cdaa5d6ada3067994da077c208"
+      ],
+      "treatment_sql": "SELECT p.category, ROUND(SUM(oi.quantity * oi.unit_price * (1 - o.discount_pct / 100)), 2) AS net_value\nFROM order_items AS oi\nJOIN orders AS o ON o.order_id = oi.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\nGROUP BY p.category;",
+      "treatment_sql_hash": "ca5f1311c4eed7c87f19a24b6cc8049fbe7445cdaa5d6ada3067994da077c208"
+    },
+    {
+      "case_id": "commerce_05",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9",
+        "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9",
+        "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9"
+      ],
+      "control_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_order_count\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY o.customer_id",
+      "control_sql_hash": "c75a462bf0bd15adf5acf860589ededf99075ff5417052754be63b47052375c9",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "PROJECTION_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(DISTINCT o.order_id)"
+          ],
+          "group_by": [
+            "o.customer_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN order_items AS oi ON oi.order_id = o.order_id",
+            "JOIN products AS p ON p.product_id = oi.product_id"
+          ],
+          "normalized_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_order_count FROM orders AS o JOIN order_items AS oi ON oi.order_id = o.order_id JOIN products AS p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY o.customer_id",
+          "order_by": [],
+          "projections": [
+            "o.customer_id",
+            "COUNT(DISTINCT o.order_id) AS completed_home_order_count"
+          ],
+          "tables": [
+            "order_items AS oi",
+            "orders AS o",
+            "products AS p"
+          ],
+          "where": "WHERE o.status = 'completed' AND p.category = 'home'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(DISTINCT o.order_id)"
+          ],
+          "group_by": [
+            "o.customer_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN order_items AS oi ON oi.order_id = o.order_id",
+            "JOIN products AS p ON p.product_id = oi.product_id"
+          ],
+          "normalized_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_product_order_count FROM orders AS o JOIN order_items AS oi ON oi.order_id = o.order_id JOIN products AS p ON p.product_id = oi.product_id WHERE o.status = 'completed' AND p.category = 'home' GROUP BY o.customer_id",
+          "order_by": [],
+          "projections": [
+            "o.customer_id",
+            "COUNT(DISTINCT o.order_id) AS completed_home_product_order_count"
+          ],
+          "tables": [
+            "order_items AS oi",
+            "orders AS o",
+            "products AS p"
+          ],
+          "where": "WHERE o.status = 'completed' AND p.category = 'home'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "5e31f1285f60ce283b909a058664825d2ed7b811ab447cd01e7893b9a70d2826",
+        "5e31f1285f60ce283b909a058664825d2ed7b811ab447cd01e7893b9a70d2826",
+        "5e31f1285f60ce283b909a058664825d2ed7b811ab447cd01e7893b9a70d2826"
+      ],
+      "treatment_sql": "SELECT o.customer_id, COUNT(DISTINCT o.order_id) AS completed_home_product_order_count\nFROM orders AS o\nJOIN order_items AS oi ON oi.order_id = o.order_id\nJOIN products AS p ON p.product_id = oi.product_id\nWHERE o.status = 'completed'\n  AND p.category = 'home'\nGROUP BY o.customer_id;",
+      "treatment_sql_hash": "5e31f1285f60ce283b909a058664825d2ed7b811ab447cd01e7893b9a70d2826"
+    },
+    {
+      "case_id": "fleet_02",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6",
+        "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6",
+        "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6"
+      ],
+      "control_sql": "SELECT v.depot_id, ROUND(AVG(f.liters * f.price_per_liter), 2) AS average_cost\nFROM fuel_events AS f\nJOIN vehicles AS v ON v.vehicle_id = f.vehicle_id\nGROUP BY v.depot_id",
+      "control_sql_hash": "4dedad207a0af94b57fcbfbec37508a7b7d3f8858886da275d7e93e882a3b1c6",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "AVG(f.liters * f.price_per_liter)"
+          ],
+          "group_by": [
+            "v.depot_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN vehicles AS v ON v.vehicle_id = f.vehicle_id"
+          ],
+          "normalized_sql": "SELECT v.depot_id, ROUND(CAST(AVG(f.liters * f.price_per_liter) AS DECIMAL), 2) AS average_cost FROM fuel_events AS f JOIN vehicles AS v ON v.vehicle_id = f.vehicle_id GROUP BY v.depot_id",
+          "order_by": [],
+          "projections": [
+            "v.depot_id",
+            "ROUND(CAST(AVG(f.liters * f.price_per_liter) AS DECIMAL), 2) AS average_cost"
+          ],
+          "tables": [
+            "fuel_events AS f",
+            "vehicles AS v"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "AVG(f.liters * f.price_per_liter)"
+          ],
+          "group_by": [
+            "v.depot_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN vehicles AS v ON v.vehicle_id = f.vehicle_id"
+          ],
+          "normalized_sql": "SELECT v.depot_id, ROUND(CAST(AVG(f.liters * f.price_per_liter) AS DECIMAL), 2) AS average_cost FROM fuel_events AS f JOIN vehicles AS v ON v.vehicle_id = f.vehicle_id GROUP BY v.depot_id",
+          "order_by": [],
+          "projections": [
+            "v.depot_id",
+            "ROUND(CAST(AVG(f.liters * f.price_per_liter) AS DECIMAL), 2) AS average_cost"
+          ],
+          "tables": [
+            "fuel_events AS f",
+            "vehicles AS v"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "ebb6133f395919863cdb86f822061239b27b0091a9f9d96fe015214753b6aa3f",
+        "ebb6133f395919863cdb86f822061239b27b0091a9f9d96fe015214753b6aa3f",
+        "ebb6133f395919863cdb86f822061239b27b0091a9f9d96fe015214753b6aa3f"
+      ],
+      "treatment_sql": "SELECT v.depot_id, ROUND(AVG(f.liters * f.price_per_liter), 2) AS average_cost\nFROM fuel_events AS f\nJOIN vehicles AS v ON v.vehicle_id = f.vehicle_id\nGROUP BY v.depot_id;",
+      "treatment_sql_hash": "ebb6133f395919863cdb86f822061239b27b0091a9f9d96fe015214753b6aa3f"
+    },
+    {
+      "case_id": "fleet_03",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893",
+        "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893",
+        "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893"
+      ],
+      "control_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS kilometres_per_litre\nFROM trips\nGROUP BY route_id",
+      "control_sql_hash": "3ac2413141fd094290037a450a5de157212d503ebcc5d4858f34d3c9473b7893",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "AVG(distance_km / NULLIF(fuel_liters, 0))"
+          ],
+          "group_by": [
+            "route_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT route_id, ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS kilometres_per_litre FROM trips GROUP BY route_id",
+          "order_by": [],
+          "projections": [
+            "route_id",
+            "ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS kilometres_per_litre"
+          ],
+          "tables": [
+            "trips"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "AVG(distance_km / NULLIF(fuel_liters, 0))"
+          ],
+          "group_by": [
+            "route_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT route_id, ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS kilometres_per_litre FROM trips GROUP BY route_id",
+          "order_by": [],
+          "projections": [
+            "route_id",
+            "ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS kilometres_per_litre"
+          ],
+          "tables": [
+            "trips"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd",
+        "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd",
+        "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd"
+      ],
+      "treatment_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS kilometres_per_litre FROM trips GROUP BY route_id",
+      "treatment_sql_hash": "91330a6fc3c779a97b6618b5c71600baa46efe4d71c6b6e13261796a301e8ccd"
+    },
+    {
+      "case_id": "fleet_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea",
+        "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea",
+        "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea"
+      ],
+      "control_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-01 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id;",
+      "control_sql_hash": "41d865cc9581ca43c29a640e62be70988ab3befedc35f81c4bd84ecfc09711ea",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "JOIN_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(m.maintenance_id)"
+          ],
+          "group_by": [
+            "v.vehicle_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN maintenance_events AS m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= CAST('2026-06-01 12:00:00' AS TIMESTAMP) AND m.performed_at < CAST('2026-06-30 12:00:00' AS TIMESTAMP)"
+          ],
+          "normalized_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count FROM vehicles AS v LEFT JOIN maintenance_events AS m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= CAST('2026-06-01 12:00:00' AS TIMESTAMP) AND m.performed_at < CAST('2026-06-30 12:00:00' AS TIMESTAMP) GROUP BY v.vehicle_id",
+          "order_by": [],
+          "projections": [
+            "v.vehicle_id",
+            "COUNT(m.maintenance_id) AS maintenance_event_count"
+          ],
+          "tables": [
+            "maintenance_events AS m",
+            "vehicles AS v"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(m.maintenance_id)"
+          ],
+          "group_by": [
+            "v.vehicle_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN maintenance_events AS m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= CAST('2026-06-29 12:00:00' AS TIMESTAMP) AND m.performed_at < CAST('2026-06-30 12:00:00' AS TIMESTAMP)"
+          ],
+          "normalized_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count FROM vehicles AS v LEFT JOIN maintenance_events AS m ON m.vehicle_id = v.vehicle_id AND m.performed_at >= CAST('2026-06-29 12:00:00' AS TIMESTAMP) AND m.performed_at < CAST('2026-06-30 12:00:00' AS TIMESTAMP) GROUP BY v.vehicle_id",
+          "order_by": [],
+          "projections": [
+            "v.vehicle_id",
+            "COUNT(m.maintenance_id) AS maintenance_event_count"
+          ],
+          "tables": [
+            "maintenance_events AS m",
+            "vehicles AS v"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "653ce9e7a40b241115fe3d37484281632a714b45f6321d360fbb19824af106d6",
+        "653ce9e7a40b241115fe3d37484281632a714b45f6321d360fbb19824af106d6",
+        "653ce9e7a40b241115fe3d37484281632a714b45f6321d360fbb19824af106d6"
+      ],
+      "treatment_sql": "SELECT v.vehicle_id, COUNT(m.maintenance_id) AS maintenance_event_count\nFROM vehicles AS v\nLEFT JOIN maintenance_events AS m\n  ON m.vehicle_id = v.vehicle_id\n AND m.performed_at >= TIMESTAMP '2026-06-29 12:00:00'\n AND m.performed_at < TIMESTAMP '2026-06-30 12:00:00'\nGROUP BY v.vehicle_id;",
+      "treatment_sql_hash": "653ce9e7a40b241115fe3d37484281632a714b45f6321d360fbb19824af106d6"
+    },
+    {
+      "case_id": "fleet_06",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "837deafa68720fa86b87271732200cebbc7a83f42e2aaff32bf4770a79de55ed",
+        "837deafa68720fa86b87271732200cebbc7a83f42e2aaff32bf4770a79de55ed",
+        "837deafa68720fa86b87271732200cebbc7a83f42e2aaff32bf4770a79de55ed"
+      ],
+      "control_sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, (t.payload #>> '{engine,temperature_c}')::NUMERIC AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, event_id, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+      "control_sql_hash": "837deafa68720fa86b87271732200cebbc7a83f42e2aaff32bf4770a79de55ed",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [
+            "JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, event_id, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id"
+          ],
+          "normalized_sql": "SELECT v.vehicle_id, t.event_at AS latest_event_timestamp, CAST((t.payload #>> '{engine,temperature_c}') AS DECIMAL) AS engine_temperature FROM vehicles AS v JOIN (SELECT DISTINCT ON (vehicle_id) vehicle_id, event_at, event_id, payload FROM telemetry_events ORDER BY vehicle_id, event_at DESC, event_id DESC) AS t ON t.vehicle_id = v.vehicle_id ORDER BY v.vehicle_id",
+          "order_by": [
+            "v.vehicle_id"
+          ],
+          "projections": [
+            "v.vehicle_id",
+            "t.event_at AS latest_event_timestamp",
+            "CAST((t.payload #>> '{engine,temperature_c}') AS DECIMAL) AS engine_temperature"
+          ],
+          "tables": [
+            "telemetry_events",
+            "vehicles AS v"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT vehicle_id, event_at AS latest_event_timestamp, CAST((payload #>> '{engine,temperature_c}') AS DECIMAL) AS engine_temperature FROM (SELECT vehicle_id, event_at, payload, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+          "order_by": [
+            "vehicle_id"
+          ],
+          "projections": [
+            "vehicle_id",
+            "event_at AS latest_event_timestamp",
+            "CAST((payload #>> '{engine,temperature_c}') AS DECIMAL) AS engine_temperature"
+          ],
+          "tables": [
+            "telemetry_events"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab",
+        "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab",
+        "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab"
+      ],
+      "treatment_sql": "SELECT vehicle_id, event_at AS latest_event_timestamp, (payload #>> '{engine,temperature_c}')::NUMERIC AS engine_temperature FROM (SELECT vehicle_id, event_at, payload, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY event_at DESC, event_id DESC) AS rn FROM telemetry_events) AS latest WHERE rn = 1 ORDER BY vehicle_id",
+      "treatment_sql_hash": "ea80df1d9e31438f10525548ccabc67c6d3851575ae7fb8ab9e0debd6646c4ab"
+    },
+    {
+      "case_id": "fleet_07",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9",
+        "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9",
+        "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9"
+      ],
+      "control_sql": "SELECT route_id, ROUND(AVG(distance_km / NULLIF(fuel_liters, 0)), 2) AS rounded_efficiency FROM trips GROUP BY route_id ORDER BY rounded_efficiency DESC, route_id ASC LIMIT 3",
+      "control_sql_hash": "39f555c00da92457ca2a3ec881333550d3b0342f356f4e734183c132702a3ad9",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "GROUPING_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "AVG(distance_km / NULLIF(fuel_liters, 0))"
+          ],
+          "group_by": [
+            "route_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT route_id, ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS rounded_efficiency FROM trips GROUP BY route_id ORDER BY rounded_efficiency DESC, route_id ASC LIMIT 3",
+          "order_by": [
+            "rounded_efficiency DESC",
+            "route_id ASC"
+          ],
+          "projections": [
+            "route_id",
+            "ROUND(CAST(AVG(distance_km / NULLIF(fuel_liters, 0)) AS DECIMAL), 2) AS rounded_efficiency"
+          ],
+          "tables": [
+            "trips"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "AVG(distance_km / NULLIF(fuel_liters, 0))"
+          ],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT route_id, ROUND(avg_efficiency, 2) AS rounded_efficiency FROM (SELECT route_id, AVG(distance_km / NULLIF(fuel_liters, 0)) AS avg_efficiency FROM trips GROUP BY route_id) AS route_efficiency ORDER BY rounded_efficiency DESC, route_id LIMIT 3",
+          "order_by": [
+            "rounded_efficiency DESC",
+            "route_id"
+          ],
+          "projections": [
+            "route_id",
+            "ROUND(avg_efficiency, 2) AS rounded_efficiency"
+          ],
+          "tables": [
+            "trips"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "dcf4e071309c3c3ad09991bde86dedc6e3c0b78357a5c98ce69eea4526628bf7",
+        "dcf4e071309c3c3ad09991bde86dedc6e3c0b78357a5c98ce69eea4526628bf7",
+        "dcf4e071309c3c3ad09991bde86dedc6e3c0b78357a5c98ce69eea4526628bf7"
+      ],
+      "treatment_sql": "SELECT route_id, ROUND(avg_efficiency, 2) AS rounded_efficiency\nFROM (\n    SELECT route_id,\n           AVG(distance_km / NULLIF(fuel_liters, 0)) AS avg_efficiency\n    FROM trips\n    GROUP BY route_id\n) AS route_efficiency\nORDER BY rounded_efficiency DESC, route_id\nLIMIT 3",
+      "treatment_sql_hash": "dcf4e071309c3c3ad09991bde86dedc6e3c0b78357a5c98ce69eea4526628bf7"
+    },
+    {
+      "case_id": "support_01",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "0d46a769500b3fd38baeb1c935b769fa8649fb0ea41e1514652846e194abb4b2",
+        "0d46a769500b3fd38baeb1c935b769fa8649fb0ea41e1514652846e194abb4b2",
+        "0d46a769500b3fd38baeb1c935b769fa8649fb0ea41e1514652846e194abb4b2"
+      ],
+      "control_sql": "SELECT a.account_id, COUNT(st.ticket_id) FILTER (WHERE st.priority = 'urgent') AS urgent_ticket_count FROM accounts AS a LEFT JOIN support_tickets AS st ON st.account_id = a.account_id GROUP BY a.account_id",
+      "control_sql_hash": "0d46a769500b3fd38baeb1c935b769fa8649fb0ea41e1514652846e194abb4b2",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(st.ticket_id)"
+          ],
+          "group_by": [
+            "a.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN support_tickets AS st ON st.account_id = a.account_id"
+          ],
+          "normalized_sql": "SELECT a.account_id, COUNT(st.ticket_id) FILTER(WHERE st.priority = 'urgent') AS urgent_ticket_count FROM accounts AS a LEFT JOIN support_tickets AS st ON st.account_id = a.account_id GROUP BY a.account_id",
+          "order_by": [],
+          "projections": [
+            "a.account_id",
+            "COUNT(st.ticket_id) FILTER(WHERE st.priority = 'urgent') AS urgent_ticket_count"
+          ],
+          "tables": [
+            "accounts AS a",
+            "support_tickets AS st"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(t.ticket_id)"
+          ],
+          "group_by": [
+            "a.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN support_tickets AS t ON t.account_id = a.account_id"
+          ],
+          "normalized_sql": "SELECT a.account_id, COUNT(t.ticket_id) FILTER(WHERE t.priority = 'urgent') AS urgent_ticket_count FROM accounts AS a LEFT JOIN support_tickets AS t ON t.account_id = a.account_id GROUP BY a.account_id",
+          "order_by": [],
+          "projections": [
+            "a.account_id",
+            "COUNT(t.ticket_id) FILTER(WHERE t.priority = 'urgent') AS urgent_ticket_count"
+          ],
+          "tables": [
+            "accounts AS a",
+            "support_tickets AS t"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "52e168dedf6f4edbe0a656774c2195b97f1315e37cdbe374dc7ba0c8f984e407",
+        "52e168dedf6f4edbe0a656774c2195b97f1315e37cdbe374dc7ba0c8f984e407",
+        "52e168dedf6f4edbe0a656774c2195b97f1315e37cdbe374dc7ba0c8f984e407"
+      ],
+      "treatment_sql": "SELECT a.account_id, COUNT(t.ticket_id) FILTER (WHERE t.priority = 'urgent') AS urgent_ticket_count FROM accounts AS a LEFT JOIN support_tickets AS t ON t.account_id = a.account_id GROUP BY a.account_id",
+      "treatment_sql_hash": "52e168dedf6f4edbe0a656774c2195b97f1315e37cdbe374dc7ba0c8f984e407"
+    },
+    {
+      "case_id": "support_02",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525",
+        "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525",
+        "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525",
+        "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525"
+      ],
+      "control_sql": "SELECT t.ticket_id\nFROM support_tickets AS t\nJOIN LATERAL (\n    SELECT s.plan_id\n    FROM subscriptions AS s\n    WHERE s.account_id = t.account_id\n    ORDER BY s.starts_on DESC, s.subscription_id DESC\n    LIMIT 1\n) AS latest_sub ON TRUE\nJOIN service_plans AS p ON p.plan_id = latest_sub.plan_id\nWHERE EXISTS (\n    SELECT 1\n    FROM ticket_events AS e\n    WHERE e.ticket_id = t.ticket_id\n      AND e.event_type = 'agent_response'\n      AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour'\n      AND e.event_at > t.opened_at\n);",
+      "control_sql_hash": "58ab6369a46b91b4221899ec5b769a7b851fbf45145aa6b209b2ee0e70cea525",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [
+            "JOIN LATERAL (SELECT s.plan_id FROM subscriptions AS s WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC, s.subscription_id DESC LIMIT 1) AS latest_sub ON TRUE",
+            "JOIN service_plans AS p ON p.plan_id = latest_sub.plan_id"
+          ],
+          "normalized_sql": "SELECT t.ticket_id FROM support_tickets AS t JOIN LATERAL (SELECT s.plan_id FROM subscriptions AS s WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC, s.subscription_id DESC LIMIT 1) AS latest_sub ON TRUE JOIN service_plans AS p ON p.plan_id = latest_sub.plan_id WHERE EXISTS(SELECT 1 FROM ticket_events AS e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 HOUR' AND e.event_at > t.opened_at)",
+          "order_by": [],
+          "projections": [
+            "t.ticket_id"
+          ],
+          "tables": [
+            "service_plans AS p",
+            "subscriptions AS s",
+            "support_tickets AS t",
+            "ticket_events AS e"
+          ],
+          "where": "WHERE EXISTS(SELECT 1 FROM ticket_events AS e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 HOUR' AND e.event_at > t.opened_at)",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "MIN(e2.event_at)"
+          ],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [
+            "JOIN LATERAL (SELECT s.plan_id FROM subscriptions AS s WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC, s.subscription_id DESC LIMIT 1) AS latest_subscription ON TRUE",
+            "JOIN service_plans AS p ON p.plan_id = latest_subscription.plan_id"
+          ],
+          "normalized_sql": "SELECT t.ticket_id FROM support_tickets AS t JOIN LATERAL (SELECT s.plan_id FROM subscriptions AS s WHERE s.account_id = t.account_id ORDER BY s.starts_on DESC, s.subscription_id DESC LIMIT 1) AS latest_subscription ON TRUE JOIN service_plans AS p ON p.plan_id = latest_subscription.plan_id WHERE EXISTS(SELECT 1 FROM ticket_events AS e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 HOUR' AND e.event_at = (SELECT MIN(e2.event_at) FROM ticket_events AS e2 WHERE e2.ticket_id = t.ticket_id AND e2.event_type = 'agent_response' AND e2.event_at > t.opened_at))",
+          "order_by": [],
+          "projections": [
+            "t.ticket_id"
+          ],
+          "tables": [
+            "service_plans AS p",
+            "subscriptions AS s",
+            "support_tickets AS t",
+            "ticket_events AS e",
+            "ticket_events AS e2"
+          ],
+          "where": "WHERE EXISTS(SELECT 1 FROM ticket_events AS e WHERE e.ticket_id = t.ticket_id AND e.event_type = 'agent_response' AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 HOUR' AND e.event_at = (SELECT MIN(e2.event_at) FROM ticket_events AS e2 WHERE e2.ticket_id = t.ticket_id AND e2.event_type = 'agent_response' AND e2.event_at > t.opened_at))",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5",
+        "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5",
+        "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5",
+        "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5"
+      ],
+      "treatment_sql": "SELECT t.ticket_id\nFROM support_tickets AS t\nJOIN LATERAL (\n    SELECT s.plan_id\n    FROM subscriptions AS s\n    WHERE s.account_id = t.account_id\n    ORDER BY s.starts_on DESC, s.subscription_id DESC\n    LIMIT 1\n) AS latest_subscription ON TRUE\nJOIN service_plans AS p\n  ON p.plan_id = latest_subscription.plan_id\nWHERE EXISTS (\n    SELECT 1\n    FROM ticket_events AS e\n    WHERE e.ticket_id = t.ticket_id\n      AND e.event_type = 'agent_response'\n      AND e.event_at > t.opened_at + p.first_response_sla_hours * INTERVAL '1 hour'\n      AND e.event_at = (\n          SELECT MIN(e2.event_at)\n          FROM ticket_events AS e2\n          WHERE e2.ticket_id = t.ticket_id\n            AND e2.event_type = 'agent_response'\n            AND e2.event_at > t.opened_at\n      )\n);",
+      "treatment_sql_hash": "41fa2b45429c2b74af2b88e32bb2e983e5554f87689cc7f7c30d995f03e2cbf5"
+    },
+    {
+      "case_id": "support_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397",
+        "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397",
+        "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397"
+      ],
+      "control_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat'",
+      "control_sql_hash": "12dc0b4d728392a9befa51e1ed25d89f1a8f339354df1713719c7a4834ef8397",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'channel' = 'chat'",
+          "order_by": [],
+          "projections": [
+            "ticket_id",
+            "status"
+          ],
+          "tables": [
+            "support_tickets"
+          ],
+          "where": "WHERE payload ->> 'channel' = 'chat'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT ticket_id, status FROM support_tickets WHERE payload ->> 'channel' = 'chat'",
+          "order_by": [],
+          "projections": [
+            "ticket_id",
+            "status"
+          ],
+          "tables": [
+            "support_tickets"
+          ],
+          "where": "WHERE payload ->> 'channel' = 'chat'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7",
+        "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7",
+        "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7"
+      ],
+      "treatment_sql": "SELECT ticket_id, status\nFROM support_tickets\nWHERE payload ->> 'channel' = 'chat';",
+      "treatment_sql_hash": "376f70823c8db1dbd46462c9ad5d6f1de132afc8d58220875787b3bb924f95e7"
+    },
+    {
+      "case_id": "support_05",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "3d35d720852e10bd473a0453d9a459e99590fa4545fcb9e88ff6c802ba98d4bb",
+        "3d35d720852e10bd473a0453d9a459e99590fa4545fcb9e88ff6c802ba98d4bb",
+        "3d35d720852e10bd473a0453d9a459e99590fa4545fcb9e88ff6c802ba98d4bb"
+      ],
+      "control_sql": "WITH account_ticket_counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) SELECT account_id, ticket_count FROM account_ticket_counts WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+      "control_sql_hash": "3d35d720852e10bd473a0453d9a459e99590fa4545fcb9e88ff6c802ba98d4bb",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "AVG(ticket_count)",
+            "COUNT(*)"
+          ],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "WITH account_ticket_counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) SELECT account_id, ticket_count FROM account_ticket_counts WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "ticket_count"
+          ],
+          "tables": [
+            "account_ticket_counts",
+            "account_ticket_counts",
+            "support_tickets"
+          ],
+          "where": "WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "AVG(ticket_count)",
+            "COUNT(*)"
+          ],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "WITH account_ticket_counts AS (SELECT account_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY account_id) SELECT account_id, ticket_count FROM account_ticket_counts WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "ticket_count"
+          ],
+          "tables": [
+            "account_ticket_counts",
+            "account_ticket_counts",
+            "support_tickets"
+          ],
+          "where": "WHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts)",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "78182caf1765bc81e96a5dee4e1f884bea1370a202ea0d4cbe7a7a46f79d08f7",
+        "78182caf1765bc81e96a5dee4e1f884bea1370a202ea0d4cbe7a7a46f79d08f7",
+        "78182caf1765bc81e96a5dee4e1f884bea1370a202ea0d4cbe7a7a46f79d08f7"
+      ],
+      "treatment_sql": "WITH account_ticket_counts AS (\n    SELECT account_id, COUNT(*) AS ticket_count\n    FROM support_tickets\n    GROUP BY account_id\n)\nSELECT account_id, ticket_count\nFROM account_ticket_counts\nWHERE ticket_count > (SELECT AVG(ticket_count) FROM account_ticket_counts);",
+      "treatment_sql_hash": "78182caf1765bc81e96a5dee4e1f884bea1370a202ea0d4cbe7a7a46f79d08f7"
+    },
+    {
+      "case_id": "support_06",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "fe5f64b181e2fc1c8a681638d80cd315135754759745dfceabc554dc2a61ef42",
+        "fe5f64b181e2fc1c8a681638d80cd315135754759745dfceabc554dc2a61ef42",
+        "fe5f64b181e2fc1c8a681638d80cd315135754759745dfceabc554dc2a61ef42"
+      ],
+      "control_sql": "SELECT DISTINCT a.account_id\nFROM accounts AS a\nWHERE EXISTS (\n    SELECT 1\n    FROM support_tickets AS t\n    WHERE t.account_id = a.account_id\n      AND t.status IN ('open', 'pending')\n)\nOR EXISTS (\n    SELECT 1\n    FROM incidents AS i\n    WHERE i.account_id = a.account_id\n      AND i.severity = 'high'\n);",
+      "control_sql_hash": "fe5f64b181e2fc1c8a681638d80cd315135754759745dfceabc554dc2a61ef42",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT DISTINCT a.account_id FROM accounts AS a WHERE EXISTS(SELECT 1 FROM support_tickets AS t WHERE t.account_id = a.account_id AND t.status IN ('open', 'pending')) OR EXISTS(SELECT 1 FROM incidents AS i WHERE i.account_id = a.account_id AND i.severity = 'high')",
+          "order_by": [],
+          "projections": [
+            "a.account_id"
+          ],
+          "tables": [
+            "accounts AS a",
+            "incidents AS i",
+            "support_tickets AS t"
+          ],
+          "where": "WHERE EXISTS(SELECT 1 FROM support_tickets AS t WHERE t.account_id = a.account_id AND t.status IN ('open', 'pending')) OR EXISTS(SELECT 1 FROM incidents AS i WHERE i.account_id = a.account_id AND i.severity = 'high')",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high'",
+          "order_by": [],
+          "projections": [],
+          "tables": [
+            "incidents",
+            "support_tickets"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4",
+        "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4",
+        "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4"
+      ],
+      "treatment_sql": "SELECT account_id FROM support_tickets WHERE status IN ('open', 'pending') UNION SELECT account_id FROM incidents WHERE severity = 'high'",
+      "treatment_sql_hash": "fa89efae7fdc8fec1ece3139f09d7a87d43a6ce74588c65c362472c29b6bdbc4"
+    },
+    {
+      "case_id": "subscription_01",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "4dffce2c68baeb7a9801b7b208a3150e28bcceaffce10fa46f603f866b20a183",
+        "4dffce2c68baeb7a9801b7b208a3150e28bcceaffce10fa46f603f866b20a183",
+        "4dffce2c68baeb7a9801b7b208a3150e28bcceaffce10fa46f603f866b20a183"
+      ],
+      "control_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active';",
+      "control_sql_hash": "4dffce2c68baeb7a9801b7b208a3150e28bcceaffce10fa46f603f866b20a183",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active'",
+          "order_by": [],
+          "projections": [
+            "subscription_id"
+          ],
+          "tables": [
+            "subscriptions"
+          ],
+          "where": "WHERE status = 'active'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active'",
+          "order_by": [],
+          "projections": [
+            "subscription_id"
+          ],
+          "tables": [
+            "subscriptions"
+          ],
+          "where": "WHERE status = 'active'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c",
+        "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c",
+        "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c"
+      ],
+      "treatment_sql": "SELECT subscription_id FROM subscriptions WHERE status = 'active'",
+      "treatment_sql_hash": "35cb91251fd5bb79debf25abc4a834bbb55cd5fb52200d247cbc8a1a9d1d869c"
+    },
+    {
+      "case_id": "subscription_02",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b",
+        "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b",
+        "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b"
+      ],
+      "control_sql": "SELECT DISTINCT a.account_id\nFROM accounts AS a\nJOIN subscriptions AS s ON s.account_id = a.account_id\nWHERE s.status = 'active';",
+      "control_sql_hash": "c9b00675d05433a0108fce4499753cabcd7d56112c92ff16579b597d29cc1c7b",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN subscriptions AS s ON s.account_id = a.account_id"
+          ],
+          "normalized_sql": "SELECT DISTINCT a.account_id FROM accounts AS a JOIN subscriptions AS s ON s.account_id = a.account_id WHERE s.status = 'active'",
+          "order_by": [],
+          "projections": [
+            "a.account_id"
+          ],
+          "tables": [
+            "accounts AS a",
+            "subscriptions AS s"
+          ],
+          "where": "WHERE s.status = 'active'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT DISTINCT s.account_id FROM subscriptions AS s WHERE s.status = 'active'",
+          "order_by": [],
+          "projections": [
+            "s.account_id"
+          ],
+          "tables": [
+            "subscriptions AS s"
+          ],
+          "where": "WHERE s.status = 'active'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "5f00b78cbbfd59b5f3231757a4e701804a46ad51129fee6850155974d6cd56db",
+        "5f00b78cbbfd59b5f3231757a4e701804a46ad51129fee6850155974d6cd56db",
+        "5f00b78cbbfd59b5f3231757a4e701804a46ad51129fee6850155974d6cd56db"
+      ],
+      "treatment_sql": "SELECT DISTINCT s.account_id\nFROM subscriptions AS s\nWHERE s.status = 'active';",
+      "treatment_sql_hash": "5f00b78cbbfd59b5f3231757a4e701804a46ad51129fee6850155974d6cd56db"
+    },
+    {
+      "case_id": "subscription_03",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52",
+        "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52",
+        "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52"
+      ],
+      "control_sql": "SELECT account_id, SUM(total_due) AS total_amount FROM invoices WHERE status = 'paid' GROUP BY account_id",
+      "control_sql_hash": "42a2ea9ea80e5cb18a485b12aec9b74cbbb55e30cb2cdbbef397dcc9a3515b52",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "SUM(total_due)"
+          ],
+          "group_by": [
+            "account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT account_id, SUM(total_due) AS total_amount FROM invoices WHERE status = 'paid' GROUP BY account_id",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "SUM(total_due) AS total_amount"
+          ],
+          "tables": [
+            "invoices"
+          ],
+          "where": "WHERE status = 'paid'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(i.total_due)"
+          ],
+          "group_by": [
+            "i.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT i.account_id, SUM(i.total_due) AS total_amount FROM invoices AS i WHERE i.status = 'paid' GROUP BY i.account_id",
+          "order_by": [],
+          "projections": [
+            "i.account_id",
+            "SUM(i.total_due) AS total_amount"
+          ],
+          "tables": [
+            "invoices AS i"
+          ],
+          "where": "WHERE i.status = 'paid'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "4fb7fcb1ccc8de709842a851f747f5b5a92a2cde0dfa987fe18cacc11d0cf76c",
+        "4fb7fcb1ccc8de709842a851f747f5b5a92a2cde0dfa987fe18cacc11d0cf76c",
+        "4fb7fcb1ccc8de709842a851f747f5b5a92a2cde0dfa987fe18cacc11d0cf76c"
+      ],
+      "treatment_sql": "SELECT i.account_id, SUM(i.total_due) AS total_amount FROM invoices AS i WHERE i.status = 'paid' GROUP BY i.account_id",
+      "treatment_sql_hash": "4fb7fcb1ccc8de709842a851f747f5b5a92a2cde0dfa987fe18cacc11d0cf76c"
+    },
+    {
+      "case_id": "subscription_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105"
+      ],
+      "control_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id",
+      "control_sql_hash": "e171ea1cfb4fb5d3efd612a6e0cd78345ae492dad13a52e2f944db1ada4c4441",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "SUM(p.amount)",
+            "SUM(r.amount)"
+          ],
+          "group_by": [
+            "i.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN invoices AS i ON i.invoice_id = p.invoice_id",
+            "LEFT JOIN refunds AS r ON r.payment_id = p.payment_id"
+          ],
+          "normalized_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount FROM payments AS p JOIN invoices AS i ON i.invoice_id = p.invoice_id LEFT JOIN refunds AS r ON r.payment_id = p.payment_id WHERE p.status = 'captured' GROUP BY i.account_id",
+          "order_by": [],
+          "projections": [
+            "i.account_id",
+            "SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount"
+          ],
+          "tables": [
+            "invoices AS i",
+            "payments AS p",
+            "refunds AS r"
+          ],
+          "where": "WHERE p.status = 'captured'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(p.amount)",
+            "SUM(r.amount)"
+          ],
+          "group_by": [
+            "i.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN invoices AS i ON i.invoice_id = p.invoice_id",
+            "LEFT JOIN refunds AS r ON r.payment_id = p.payment_id"
+          ],
+          "normalized_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount FROM payments AS p JOIN invoices AS i ON i.invoice_id = p.invoice_id LEFT JOIN refunds AS r ON r.payment_id = p.payment_id WHERE p.status = 'captured' GROUP BY i.account_id",
+          "order_by": [],
+          "projections": [
+            "i.account_id",
+            "SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount"
+          ],
+          "tables": [
+            "invoices AS i",
+            "payments AS p",
+            "refunds AS r"
+          ],
+          "where": "WHERE p.status = 'captured'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105",
+        "51deb9e09d29f1c8f6ef935f3ddf71cdad024d16441a0a80cc76f72e2d110105"
+      ],
+      "treatment_sql": "SELECT i.account_id, SUM(p.amount) - COALESCE(SUM(r.amount), 0) AS net_collected_amount\nFROM payments AS p\nJOIN invoices AS i ON i.invoice_id = p.invoice_id\nLEFT JOIN refunds AS r ON r.payment_id = p.payment_id\nWHERE p.status = 'captured'\nGROUP BY i.account_id;",
+      "treatment_sql_hash": "06f8f6d2ec0a4d7aa9a2149ea3ad27d6a61b1c520437a5b101dd6afe37ce7b1f"
+    },
+    {
+      "case_id": "subscription_05",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "da699fd89d6596af14fc3bcbb783c65c0c729c2e74fc553d211a49fb2b137073",
+        "da699fd89d6596af14fc3bcbb783c65c0c729c2e74fc553d211a49fb2b137073",
+        "da699fd89d6596af14fc3bcbb783c65c0c729c2e74fc553d211a49fb2b137073"
+      ],
+      "control_sql": "SELECT account_id, plan_id\nFROM (\n    SELECT account_id, plan_id,\n           ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY starts_on DESC, subscription_id DESC) AS rn\n    FROM subscriptions\n) AS ranked\nWHERE rn = 1;",
+      "control_sql_hash": "da699fd89d6596af14fc3bcbb783c65c0c729c2e74fc553d211a49fb2b137073",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT account_id, plan_id FROM (SELECT account_id, plan_id, ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY starts_on DESC, subscription_id DESC) AS rn FROM subscriptions) AS ranked WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "plan_id"
+          ],
+          "tables": [
+            "subscriptions"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY starts_on DESC, subscription_id DESC)"
+          ]
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT account_id, plan_id FROM (SELECT account_id, plan_id, ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY starts_on DESC, subscription_id DESC) AS rn FROM subscriptions) AS ranked WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "plan_id"
+          ],
+          "tables": [
+            "subscriptions"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY starts_on DESC, subscription_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f",
+        "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f",
+        "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f"
+      ],
+      "treatment_sql": "SELECT account_id, plan_id\nFROM (\n    SELECT\n        account_id,\n        plan_id,\n        ROW_NUMBER() OVER (\n            PARTITION BY account_id\n            ORDER BY starts_on DESC, subscription_id DESC\n        ) AS rn\n    FROM subscriptions\n) AS ranked\nWHERE rn = 1;",
+      "treatment_sql_hash": "bef0db585a6a154dba1047bbb0baa18dd0032ee5d9788470661b95a39431041f"
+    },
+    {
+      "case_id": "subscription_07",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "f987bac04d3da8d19d8b04cef86c34d73e1388e214e8717a656b95e8d387bb0c",
+        "f987bac04d3da8d19d8b04cef86c34d73e1388e214e8717a656b95e8d387bb0c",
+        "f987bac04d3da8d19d8b04cef86c34d73e1388e214e8717a656b95e8d387bb0c"
+      ],
+      "control_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue\nFROM subscriptions AS s\nJOIN plans AS p ON p.plan_id = s.plan_id\nWHERE s.status = 'active'\nGROUP BY s.account_id\nHAVING COUNT(*) >= 1",
+      "control_sql_hash": "f987bac04d3da8d19d8b04cef86c34d73e1388e214e8717a656b95e8d387bb0c",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "AGGREGATION_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(*)",
+            "SUM(p.monthly_price)"
+          ],
+          "group_by": [
+            "s.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN plans AS p ON p.plan_id = s.plan_id"
+          ],
+          "normalized_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue FROM subscriptions AS s JOIN plans AS p ON p.plan_id = s.plan_id WHERE s.status = 'active' GROUP BY s.account_id HAVING COUNT(*) >= 1",
+          "order_by": [],
+          "projections": [
+            "s.account_id",
+            "SUM(p.monthly_price) AS monthly_recurring_revenue"
+          ],
+          "tables": [
+            "plans AS p",
+            "subscriptions AS s"
+          ],
+          "where": "WHERE s.status = 'active'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(p.monthly_price)"
+          ],
+          "group_by": [
+            "s.account_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN plans AS p ON p.plan_id = s.plan_id"
+          ],
+          "normalized_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue FROM subscriptions AS s JOIN plans AS p ON p.plan_id = s.plan_id WHERE s.status = 'active' GROUP BY s.account_id",
+          "order_by": [],
+          "projections": [
+            "s.account_id",
+            "SUM(p.monthly_price) AS monthly_recurring_revenue"
+          ],
+          "tables": [
+            "plans AS p",
+            "subscriptions AS s"
+          ],
+          "where": "WHERE s.status = 'active'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "2deba4f5dcf55f8ffec9d738396989c46ae0457174f49d55724a88a3639db151",
+        "2deba4f5dcf55f8ffec9d738396989c46ae0457174f49d55724a88a3639db151",
+        "2deba4f5dcf55f8ffec9d738396989c46ae0457174f49d55724a88a3639db151"
+      ],
+      "treatment_sql": "SELECT s.account_id, SUM(p.monthly_price) AS monthly_recurring_revenue\nFROM subscriptions AS s\nJOIN plans AS p ON p.plan_id = s.plan_id\nWHERE s.status = 'active'\nGROUP BY s.account_id;",
+      "treatment_sql_hash": "2deba4f5dcf55f8ffec9d738396989c46ae0457174f49d55724a88a3639db151"
+    },
+    {
+      "case_id": "subscription_13",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "99d488da0db97741214ddf3833a8fb01812cfd72f58baabebb3b8caa2e8d281b",
+        "99d488da0db97741214ddf3833a8fb01812cfd72f58baabebb3b8caa2e8d281b",
+        "99d488da0db97741214ddf3833a8fb01812cfd72f58baabebb3b8caa2e8d281b"
+      ],
+      "control_sql": "SELECT invoice_id, MAX(attempted_at) AS latest_dunning_attempt_at FROM dunning_attempts GROUP BY invoice_id",
+      "control_sql_hash": "99d488da0db97741214ddf3833a8fb01812cfd72f58baabebb3b8caa2e8d281b",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "MAX(attempted_at)"
+          ],
+          "group_by": [
+            "invoice_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT invoice_id, MAX(attempted_at) AS latest_dunning_attempt_at FROM dunning_attempts GROUP BY invoice_id",
+          "order_by": [],
+          "projections": [
+            "invoice_id",
+            "MAX(attempted_at) AS latest_dunning_attempt_at"
+          ],
+          "tables": [
+            "dunning_attempts"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "MAX(da.attempted_at)"
+          ],
+          "group_by": [
+            "da.invoice_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT da.invoice_id, MAX(da.attempted_at) AS latest_dunning_attempt_at FROM dunning_attempts AS da GROUP BY da.invoice_id",
+          "order_by": [],
+          "projections": [
+            "da.invoice_id",
+            "MAX(da.attempted_at) AS latest_dunning_attempt_at"
+          ],
+          "tables": [
+            "dunning_attempts AS da"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "640059b4fa0e79ce47b566147042c38e59cf82ec3c248854b95f2ac8b9e9b469",
+        "640059b4fa0e79ce47b566147042c38e59cf82ec3c248854b95f2ac8b9e9b469",
+        "640059b4fa0e79ce47b566147042c38e59cf82ec3c248854b95f2ac8b9e9b469"
+      ],
+      "treatment_sql": "SELECT da.invoice_id, MAX(da.attempted_at) AS latest_dunning_attempt_at\nFROM dunning_attempts AS da\nGROUP BY da.invoice_id;",
+      "treatment_sql_hash": "640059b4fa0e79ce47b566147042c38e59cf82ec3c248854b95f2ac8b9e9b469"
+    },
+    {
+      "case_id": "warehouse_01",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "547d046c68d94d95b7b7f0949ce0b9b9bec11bb9062af3386c5840d1bc6a50ed",
+        "547d046c68d94d95b7b7f0949ce0b9b9bec11bb9062af3386c5840d1bc6a50ed",
+        "547d046c68d94d95b7b7f0949ce0b9b9bec11bb9062af3386c5840d1bc6a50ed"
+      ],
+      "control_sql": "SELECT warehouse_id, product_id\nFROM (\n    SELECT warehouse_id,\n           product_id,\n           on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1\n  AND on_hand_qty >= 20",
+      "control_sql_hash": "547d046c68d94d95b7b7f0949ce0b9b9bec11bb9062af3386c5840d1bc6a50ed",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT warehouse_id, product_id FROM (SELECT warehouse_id, product_id, on_hand_qty, ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC) AS rn FROM inventory_snapshots) AS latest WHERE rn = 1 AND on_hand_qty >= 20",
+          "order_by": [],
+          "projections": [
+            "warehouse_id",
+            "product_id"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": "WHERE rn = 1 AND on_hand_qty >= 20",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC)"
+          ]
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT warehouse_id, product_id FROM (SELECT warehouse_id, product_id, on_hand_qty, ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC) AS rn FROM inventory_snapshots) AS latest WHERE rn = 1 AND on_hand_qty >= 20",
+          "order_by": [],
+          "projections": [
+            "warehouse_id",
+            "product_id"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": "WHERE rn = 1 AND on_hand_qty >= 20",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381",
+        "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381",
+        "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381"
+      ],
+      "treatment_sql": "SELECT warehouse_id, product_id\nFROM (\n    SELECT warehouse_id, product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1\n  AND on_hand_qty >= 20",
+      "treatment_sql_hash": "79c299f5b55b74799121a3d09031d8ea9e126a824d7d940f0335c707b73b7381"
+    },
+    {
+      "case_id": "warehouse_02",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "c778285bdc0a588b4e0114b36bce3611b467adaf3ec0a90c67971f1f77efc874",
+        "c778285bdc0a588b4e0114b36bce3611b467adaf3ec0a90c67971f1f77efc874",
+        "c778285bdc0a588b4e0114b36bce3611b467adaf3ec0a90c67971f1f77efc874"
+      ],
+      "control_sql": "SELECT s.warehouse_id, SUM(si.quantity) AS total_shipped_quantity\nFROM shipments AS s\nJOIN shipment_items AS si ON si.shipment_id = s.shipment_id\nGROUP BY s.warehouse_id",
+      "control_sql_hash": "c778285bdc0a588b4e0114b36bce3611b467adaf3ec0a90c67971f1f77efc874",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "SUM(si.quantity)"
+          ],
+          "group_by": [
+            "s.warehouse_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN shipment_items AS si ON si.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT s.warehouse_id, SUM(si.quantity) AS total_shipped_quantity FROM shipments AS s JOIN shipment_items AS si ON si.shipment_id = s.shipment_id GROUP BY s.warehouse_id",
+          "order_by": [],
+          "projections": [
+            "s.warehouse_id",
+            "SUM(si.quantity) AS total_shipped_quantity"
+          ],
+          "tables": [
+            "shipment_items AS si",
+            "shipments AS s"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(si.quantity)"
+          ],
+          "group_by": [
+            "s.warehouse_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN shipment_items AS si ON si.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT s.warehouse_id, SUM(si.quantity) AS total_shipped_quantity FROM shipments AS s JOIN shipment_items AS si ON si.shipment_id = s.shipment_id GROUP BY s.warehouse_id",
+          "order_by": [],
+          "projections": [
+            "s.warehouse_id",
+            "SUM(si.quantity) AS total_shipped_quantity"
+          ],
+          "tables": [
+            "shipment_items AS si",
+            "shipments AS s"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "e96ec973d03c5e44d0114d1c2ea4a2cf908b3516342a09843db3e15fc5ec2e5a",
+        "e96ec973d03c5e44d0114d1c2ea4a2cf908b3516342a09843db3e15fc5ec2e5a",
+        "e96ec973d03c5e44d0114d1c2ea4a2cf908b3516342a09843db3e15fc5ec2e5a"
+      ],
+      "treatment_sql": "SELECT s.warehouse_id, SUM(si.quantity) AS total_shipped_quantity\nFROM shipments AS s\nJOIN shipment_items AS si ON si.shipment_id = s.shipment_id\nGROUP BY s.warehouse_id;",
+      "treatment_sql_hash": "e96ec973d03c5e44d0114d1c2ea4a2cf908b3516342a09843db3e15fc5ec2e5a"
+    },
+    {
+      "case_id": "warehouse_03",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "056f5df06ee9a1f7776e894cab5ba6b758f837c9f0d2c0e347b9d20a909e72d7",
+        "056f5df06ee9a1f7776e894cab5ba6b758f837c9f0d2c0e347b9d20a909e72d7",
+        "056f5df06ee9a1f7776e894cab5ba6b758f837c9f0d2c0e347b9d20a909e72d7"
+      ],
+      "control_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments\nFROM shipments AS s\nJOIN carriers AS c ON c.carrier_id = s.carrier_id\nJOIN delivery_events AS d ON d.shipment_id = s.shipment_id\nWHERE d.event_type = 'delivered'\n  AND d.event_at > s.promised_at\nGROUP BY s.carrier_id",
+      "control_sql_hash": "056f5df06ee9a1f7776e894cab5ba6b758f837c9f0d2c0e347b9d20a909e72d7",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "OTHER_MATERIAL_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(DISTINCT s.shipment_id)"
+          ],
+          "group_by": [
+            "s.carrier_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN carriers AS c ON c.carrier_id = s.carrier_id",
+            "JOIN delivery_events AS d ON d.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments FROM shipments AS s JOIN carriers AS c ON c.carrier_id = s.carrier_id JOIN delivery_events AS d ON d.shipment_id = s.shipment_id WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at GROUP BY s.carrier_id",
+          "order_by": [],
+          "projections": [
+            "s.carrier_id",
+            "COUNT(DISTINCT s.shipment_id) AS late_shipments"
+          ],
+          "tables": [
+            "carriers AS c",
+            "delivery_events AS d",
+            "shipments AS s"
+          ],
+          "where": "WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(DISTINCT s.shipment_id)"
+          ],
+          "group_by": [
+            "s.carrier_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN carriers AS c ON c.carrier_id = s.carrier_id",
+            "JOIN delivery_events AS d ON d.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments FROM shipments AS s JOIN delivery_events AS d ON d.shipment_id = s.shipment_id JOIN carriers AS c ON c.carrier_id = s.carrier_id WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at GROUP BY s.carrier_id",
+          "order_by": [],
+          "projections": [
+            "s.carrier_id",
+            "COUNT(DISTINCT s.shipment_id) AS late_shipments"
+          ],
+          "tables": [
+            "carriers AS c",
+            "delivery_events AS d",
+            "shipments AS s"
+          ],
+          "where": "WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "b99e30b94bf043261d0d582214f3ba12e87b307fcb6606c16dff2472a437d8d2",
+        "b99e30b94bf043261d0d582214f3ba12e87b307fcb6606c16dff2472a437d8d2",
+        "b99e30b94bf043261d0d582214f3ba12e87b307fcb6606c16dff2472a437d8d2"
+      ],
+      "treatment_sql": "SELECT s.carrier_id, COUNT(DISTINCT s.shipment_id) AS late_shipments\nFROM shipments AS s\nJOIN delivery_events AS d ON d.shipment_id = s.shipment_id\nJOIN carriers AS c ON c.carrier_id = s.carrier_id\nWHERE d.event_type = 'delivered'\n  AND d.event_at > s.promised_at\nGROUP BY s.carrier_id",
+      "treatment_sql_hash": "b99e30b94bf043261d0d582214f3ba12e87b307fcb6606c16dff2472a437d8d2"
+    },
+    {
+      "case_id": "warehouse_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+        "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+        "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8"
+      ],
+      "control_sql": "SELECT po.warehouse_id, SUM(r.received_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nJOIN receipts AS r ON r.po_line_id = pol.po_line_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id",
+      "control_sql_hash": "8f91f0574b9047fa5f86852954b36fff56e5d068c2b38e0bf8dd2b7f5ae05ed8",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "SUM(r.received_qty)"
+          ],
+          "group_by": [
+            "po.warehouse_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN purchase_order_lines AS pol ON pol.po_id = po.po_id",
+            "JOIN receipts AS r ON r.po_line_id = pol.po_line_id"
+          ],
+          "normalized_sql": "SELECT po.warehouse_id, SUM(r.received_qty) AS received_quantity FROM purchase_orders AS po JOIN purchase_order_lines AS pol ON pol.po_id = po.po_id JOIN receipts AS r ON r.po_line_id = pol.po_line_id WHERE po.status = 'open' GROUP BY po.warehouse_id",
+          "order_by": [],
+          "projections": [
+            "po.warehouse_id",
+            "SUM(r.received_qty) AS received_quantity"
+          ],
+          "tables": [
+            "purchase_order_lines AS pol",
+            "purchase_orders AS po",
+            "receipts AS r"
+          ],
+          "where": "WHERE po.status = 'open'",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(r.received_qty)"
+          ],
+          "group_by": [
+            "po.warehouse_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN purchase_order_lines AS pol ON pol.po_id = po.po_id",
+            "JOIN receipts AS r ON r.po_line_id = pol.po_line_id"
+          ],
+          "normalized_sql": "SELECT po.warehouse_id, SUM(r.received_qty) AS received_quantity FROM purchase_orders AS po JOIN purchase_order_lines AS pol ON pol.po_id = po.po_id JOIN receipts AS r ON r.po_line_id = pol.po_line_id WHERE po.status = 'open' GROUP BY po.warehouse_id",
+          "order_by": [],
+          "projections": [
+            "po.warehouse_id",
+            "SUM(r.received_qty) AS received_quantity"
+          ],
+          "tables": [
+            "purchase_order_lines AS pol",
+            "purchase_orders AS po",
+            "receipts AS r"
+          ],
+          "where": "WHERE po.status = 'open'",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "3fae679181a9683a89379c55551e6a4b29086ba2bbf16e29509a8b50a4f5589b",
+        "3fae679181a9683a89379c55551e6a4b29086ba2bbf16e29509a8b50a4f5589b",
+        "3fae679181a9683a89379c55551e6a4b29086ba2bbf16e29509a8b50a4f5589b"
+      ],
+      "treatment_sql": "SELECT po.warehouse_id, SUM(r.received_qty) AS received_quantity\nFROM purchase_orders AS po\nJOIN purchase_order_lines AS pol ON pol.po_id = po.po_id\nJOIN receipts AS r ON r.po_line_id = pol.po_line_id\nWHERE po.status = 'open'\nGROUP BY po.warehouse_id;",
+      "treatment_sql_hash": "3fae679181a9683a89379c55551e6a4b29086ba2bbf16e29509a8b50a4f5589b"
+    },
+    {
+      "case_id": "warehouse_05",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "d173b7ba578d9b3a188f6ff0b26e8470202ade2ce1a1fc5828d3624b5b6ddcb5",
+        "d173b7ba578d9b3a188f6ff0b26e8470202ade2ce1a1fc5828d3624b5b6ddcb5",
+        "d173b7ba578d9b3a188f6ff0b26e8470202ade2ce1a1fc5828d3624b5b6ddcb5"
+      ],
+      "control_sql": "SELECT warehouse_id, product_id, on_hand_qty AS quantity\nFROM (\n    SELECT warehouse_id, product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY warehouse_id, product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS latest\nWHERE rn = 1",
+      "control_sql_hash": "d173b7ba578d9b3a188f6ff0b26e8470202ade2ce1a1fc5828d3624b5b6ddcb5",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "FILTER_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT warehouse_id, product_id, on_hand_qty AS quantity FROM (SELECT warehouse_id, product_id, on_hand_qty, ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC) AS rn FROM inventory_snapshots) AS latest WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "warehouse_id",
+            "product_id",
+            "on_hand_qty AS quantity"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY warehouse_id, product_id ORDER BY snapshot_at DESC, snapshot_id DESC)"
+          ]
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT DISTINCT ON (warehouse_id, product_id) warehouse_id, product_id, on_hand_qty AS quantity FROM inventory_snapshots ORDER BY warehouse_id, product_id, snapshot_at DESC, snapshot_id DESC",
+          "order_by": [
+            "warehouse_id",
+            "product_id",
+            "snapshot_at DESC",
+            "snapshot_id DESC"
+          ],
+          "projections": [
+            "warehouse_id",
+            "product_id",
+            "on_hand_qty AS quantity"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "94e5147d23ef489a95a6370ca41424cc30673f1da69022c34213800733e95600",
+        "94e5147d23ef489a95a6370ca41424cc30673f1da69022c34213800733e95600",
+        "94e5147d23ef489a95a6370ca41424cc30673f1da69022c34213800733e95600"
+      ],
+      "treatment_sql": "SELECT DISTINCT ON (warehouse_id, product_id) warehouse_id, product_id, on_hand_qty AS quantity FROM inventory_snapshots ORDER BY warehouse_id, product_id, snapshot_at DESC, snapshot_id DESC",
+      "treatment_sql_hash": "94e5147d23ef489a95a6370ca41424cc30673f1da69022c34213800733e95600"
+    },
+    {
+      "case_id": "warehouse_06",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b",
+        "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b",
+        "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b"
+      ],
+      "control_sql": "SELECT DISTINCT s.shipment_id\nFROM shipments AS s\nJOIN delivery_events AS de\n  ON de.shipment_id = s.shipment_id\nWHERE de.event_type = 'delivered'\n  AND de.event_at > s.promised_at;",
+      "control_sql_hash": "47cd9c67e5e408e20387d371ecb98d800a270f3011218d445116290d7402800b",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN delivery_events AS de ON de.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT DISTINCT s.shipment_id FROM shipments AS s JOIN delivery_events AS de ON de.shipment_id = s.shipment_id WHERE de.event_type = 'delivered' AND de.event_at > s.promised_at",
+          "order_by": [],
+          "projections": [
+            "s.shipment_id"
+          ],
+          "tables": [
+            "delivery_events AS de",
+            "shipments AS s"
+          ],
+          "where": "WHERE de.event_type = 'delivered' AND de.event_at > s.promised_at",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN delivery_events AS d ON d.shipment_id = s.shipment_id"
+          ],
+          "normalized_sql": "SELECT DISTINCT s.shipment_id FROM shipments AS s JOIN delivery_events AS d ON d.shipment_id = s.shipment_id WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at",
+          "order_by": [],
+          "projections": [
+            "s.shipment_id"
+          ],
+          "tables": [
+            "delivery_events AS d",
+            "shipments AS s"
+          ],
+          "where": "WHERE d.event_type = 'delivered' AND d.event_at > s.promised_at",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "1eaf8d5347cfa2bd03a0889f1aab680a439034de6f0054f20b1a7763dbb61c97",
+        "1eaf8d5347cfa2bd03a0889f1aab680a439034de6f0054f20b1a7763dbb61c97",
+        "1eaf8d5347cfa2bd03a0889f1aab680a439034de6f0054f20b1a7763dbb61c97"
+      ],
+      "treatment_sql": "SELECT DISTINCT s.shipment_id\nFROM shipments AS s\nJOIN delivery_events AS d\n  ON d.shipment_id = s.shipment_id\nWHERE d.event_type = 'delivered'\n  AND d.event_at > s.promised_at;",
+      "treatment_sql_hash": "1eaf8d5347cfa2bd03a0889f1aab680a439034de6f0054f20b1a7763dbb61c97"
+    },
+    {
+      "case_id": "warehouse_08",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "49c663c2900ce1ff9b2d345caeffcd99ed08685ccb581af26cb21eb31aba78c4",
+        "49c663c2900ce1ff9b2d345caeffcd99ed08685ccb581af26cb21eb31aba78c4",
+        "49c663c2900ce1ff9b2d345caeffcd99ed08685ccb581af26cb21eb31aba78c4"
+      ],
+      "control_sql": "SELECT pol.product_id, SUM(pol.ordered_qty - COALESCE(r.received_qty, 0)) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN (\n    SELECT po_line_id, SUM(received_qty) AS received_qty\n    FROM receipts\n    GROUP BY po_line_id\n) AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING COUNT(*) > 0",
+      "control_sql_hash": "49c663c2900ce1ff9b2d345caeffcd99ed08685ccb581af26cb21eb31aba78c4",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(*)",
+            "SUM(pol.ordered_qty - COALESCE(r.received_qty, 0))",
+            "SUM(received_qty)"
+          ],
+          "group_by": [
+            "pol.product_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [
+            "LEFT JOIN (SELECT po_line_id, SUM(received_qty) AS received_qty FROM receipts GROUP BY po_line_id) AS r ON r.po_line_id = pol.po_line_id"
+          ],
+          "normalized_sql": "SELECT pol.product_id, SUM(pol.ordered_qty - COALESCE(r.received_qty, 0)) AS quantity_ordered_not_yet_received FROM purchase_order_lines AS pol LEFT JOIN (SELECT po_line_id, SUM(received_qty) AS received_qty FROM receipts GROUP BY po_line_id) AS r ON r.po_line_id = pol.po_line_id GROUP BY pol.product_id HAVING COUNT(*) > 0",
+          "order_by": [],
+          "projections": [
+            "pol.product_id",
+            "SUM(pol.ordered_qty - COALESCE(r.received_qty, 0)) AS quantity_ordered_not_yet_received"
+          ],
+          "tables": [
+            "purchase_order_lines AS pol",
+            "receipts"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(pol.ordered_qty)",
+            "SUM(pol.ordered_qty)",
+            "SUM(r.received_qty)",
+            "SUM(r.received_qty)"
+          ],
+          "group_by": [
+            "pol.product_id"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id"
+          ],
+          "normalized_sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received FROM purchase_order_lines AS pol LEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id GROUP BY pol.product_id HAVING SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) > 0",
+          "order_by": [],
+          "projections": [
+            "pol.product_id",
+            "SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received"
+          ],
+          "tables": [
+            "purchase_order_lines AS pol",
+            "receipts AS r"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+        "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834",
+        "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834"
+      ],
+      "treatment_sql": "SELECT pol.product_id, SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) AS quantity_ordered_not_yet_received\nFROM purchase_order_lines AS pol\nLEFT JOIN receipts AS r ON r.po_line_id = pol.po_line_id\nGROUP BY pol.product_id\nHAVING SUM(pol.ordered_qty) - COALESCE(SUM(r.received_qty), 0) > 0",
+      "treatment_sql_hash": "e640fadb3269fae0af7b7868425847a16db80030d8937fc46e1b48c295e09834"
+    },
+    {
+      "case_id": "risk_02",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "017115287353ea9e6f42bf854afbd765b1554ca98a7d3e6d6bfe416d7593bc2f",
+        "017115287353ea9e6f42bf854afbd765b1554ca98a7d3e6d6bfe416d7593bc2f",
+        "017115287353ea9e6f42bf854afbd765b1554ca98a7d3e6d6bfe416d7593bc2f"
+      ],
+      "control_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id,\n           risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS ranked\nWHERE rn = 1;",
+      "control_sql_hash": "017115287353ea9e6f42bf854afbd765b1554ca98a7d3e6d6bfe416d7593bc2f",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT customer_id, risk_score FROM (SELECT customer_id, risk_score, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC) AS rn FROM risk_assessments) AS ranked WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "customer_id",
+            "risk_score"
+          ],
+          "tables": [
+            "risk_assessments"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC)"
+          ]
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT customer_id, risk_score FROM (SELECT customer_id, risk_score, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC) AS rn FROM risk_assessments) AS ranked WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "customer_id",
+            "risk_score"
+          ],
+          "tables": [
+            "risk_assessments"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "b514e2ba92022d824afdc5b5a09ccca68327abfdf600e787287d4c476ce3a9f7",
+        "b514e2ba92022d824afdc5b5a09ccca68327abfdf600e787287d4c476ce3a9f7",
+        "b514e2ba92022d824afdc5b5a09ccca68327abfdf600e787287d4c476ce3a9f7"
+      ],
+      "treatment_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT\n        customer_id,\n        risk_score,\n        ROW_NUMBER() OVER (\n            PARTITION BY customer_id\n            ORDER BY assessed_at DESC, assessment_id DESC\n        ) AS rn\n    FROM risk_assessments\n) AS ranked\nWHERE rn = 1;",
+      "treatment_sql_hash": "b514e2ba92022d824afdc5b5a09ccca68327abfdf600e787287d4c476ce3a9f7"
+    },
+    {
+      "case_id": "risk_04",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f",
+        "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f",
+        "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f"
+      ],
+      "control_sql": "SELECT account_id, SUM(amount) AS total_transaction_amount\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 70\nGROUP BY account_id",
+      "control_sql_hash": "e5e666485207fe06b25ddb472431e71762ff92787c5f83d7f213aad9d547d09f",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "SUM(amount)"
+          ],
+          "group_by": [
+            "account_id"
+          ],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT account_id, SUM(amount) AS total_transaction_amount FROM transactions WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 70 GROUP BY account_id",
+          "order_by": [],
+          "projections": [
+            "account_id",
+            "SUM(amount) AS total_transaction_amount"
+          ],
+          "tables": [
+            "transactions"
+          ],
+          "where": "WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 70",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "SUM(t.amount)"
+          ],
+          "group_by": [
+            "t.account_id"
+          ],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT t.account_id, SUM(t.amount) AS total_transaction_amount FROM transactions AS t WHERE CAST((t.payload #>> '{risk_score}') AS DECIMAL) >= 70 GROUP BY t.account_id",
+          "order_by": [],
+          "projections": [
+            "t.account_id",
+            "SUM(t.amount) AS total_transaction_amount"
+          ],
+          "tables": [
+            "transactions AS t"
+          ],
+          "where": "WHERE CAST((t.payload #>> '{risk_score}') AS DECIMAL) >= 70",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "7b488c554af6338629f4fef04dbb46bbeec21cbce64834fa97e12aba565073f7",
+        "7b488c554af6338629f4fef04dbb46bbeec21cbce64834fa97e12aba565073f7",
+        "7b488c554af6338629f4fef04dbb46bbeec21cbce64834fa97e12aba565073f7"
+      ],
+      "treatment_sql": "SELECT t.account_id, SUM(t.amount) AS total_transaction_amount\nFROM transactions AS t\nWHERE (t.payload #>> '{risk_score}')::NUMERIC >= 70\nGROUP BY t.account_id",
+      "treatment_sql_hash": "7b488c554af6338629f4fef04dbb46bbeec21cbce64834fa97e12aba565073f7"
+    },
+    {
+      "case_id": "risk_05",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "39145263d17fc3d9adebded24d916598bf43bdafec5f113a4869a37a3104e0c0",
+        "39145263d17fc3d9adebded24d916598bf43bdafec5f113a4869a37a3104e0c0",
+        "39145263d17fc3d9adebded24d916598bf43bdafec5f113a4869a37a3104e0c0"
+      ],
+      "control_sql": "SELECT a.severity, COUNT(DISTINCT i.alert_id)::numeric / COUNT(DISTINCT a.alert_id) AS fraction_with_investigation FROM alerts AS a LEFT JOIN investigations AS i ON i.alert_id = a.alert_id GROUP BY a.severity",
+      "control_sql_hash": "39145263d17fc3d9adebded24d916598bf43bdafec5f113a4869a37a3104e0c0",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "AGGREGATION_CHANGE",
+        "control_features": {
+          "aggregates": [
+            "COUNT(DISTINCT a.alert_id)",
+            "COUNT(DISTINCT i.alert_id)"
+          ],
+          "group_by": [
+            "a.severity"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN investigations AS i ON i.alert_id = a.alert_id"
+          ],
+          "normalized_sql": "SELECT a.severity, CAST(COUNT(DISTINCT i.alert_id) AS DECIMAL) / COUNT(DISTINCT a.alert_id) AS fraction_with_investigation FROM alerts AS a LEFT JOIN investigations AS i ON i.alert_id = a.alert_id GROUP BY a.severity",
+          "order_by": [],
+          "projections": [
+            "a.severity",
+            "CAST(COUNT(DISTINCT i.alert_id) AS DECIMAL) / COUNT(DISTINCT a.alert_id) AS fraction_with_investigation"
+          ],
+          "tables": [
+            "alerts AS a",
+            "investigations AS i"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [
+            "COUNT(DISTINCT a.alert_id)",
+            "COUNT(DISTINCT a.alert_id)",
+            "COUNT(DISTINCT i.alert_id)"
+          ],
+          "group_by": [
+            "a.severity"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "LEFT JOIN investigations AS i ON i.alert_id = a.alert_id"
+          ],
+          "normalized_sql": "SELECT a.severity, CAST(COUNT(DISTINCT i.alert_id) AS DECIMAL) / COUNT(DISTINCT a.alert_id) AS investigation_fraction FROM alerts AS a LEFT JOIN investigations AS i ON i.alert_id = a.alert_id GROUP BY a.severity HAVING COUNT(DISTINCT a.alert_id) > 0",
+          "order_by": [],
+          "projections": [
+            "a.severity",
+            "CAST(COUNT(DISTINCT i.alert_id) AS DECIMAL) / COUNT(DISTINCT a.alert_id) AS investigation_fraction"
+          ],
+          "tables": [
+            "alerts AS a",
+            "investigations AS i"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "6560e295e01a2d59b0250c69a74eaafbedaf7479c4ec1385fbeeb15baf40457e",
+        "6560e295e01a2d59b0250c69a74eaafbedaf7479c4ec1385fbeeb15baf40457e",
+        "6560e295e01a2d59b0250c69a74eaafbedaf7479c4ec1385fbeeb15baf40457e"
+      ],
+      "treatment_sql": "SELECT a.severity, COUNT(DISTINCT i.alert_id)::numeric / COUNT(DISTINCT a.alert_id) AS investigation_fraction\nFROM alerts AS a\nLEFT JOIN investigations AS i ON i.alert_id = a.alert_id\nGROUP BY a.severity\nHAVING COUNT(DISTINCT a.alert_id) > 0",
+      "treatment_sql_hash": "6560e295e01a2d59b0250c69a74eaafbedaf7479c4ec1385fbeeb15baf40457e"
+    },
+    {
+      "case_id": "risk_08",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "15ccd645220e537781e5d7da7722c567a856dd0e5ccca02c224901a1dc1f8e2d",
+        "15ccd645220e537781e5d7da7722c567a856dd0e5ccca02c224901a1dc1f8e2d",
+        "15ccd645220e537781e5d7da7722c567a856dd0e5ccca02c224901a1dc1f8e2d"
+      ],
+      "control_sql": "SELECT transaction_id FROM transactions WHERE (payload #>> '{risk_score}')::NUMERIC >= 80",
+      "control_sql_hash": "15ccd645220e537781e5d7da7722c567a856dd0e5ccca02c224901a1dc1f8e2d",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT transaction_id FROM transactions WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 80",
+          "order_by": [],
+          "projections": [
+            "transaction_id"
+          ],
+          "tables": [
+            "transactions"
+          ],
+          "where": "WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 80",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": true,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT transaction_id FROM transactions WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 80",
+          "order_by": [],
+          "projections": [
+            "transaction_id"
+          ],
+          "tables": [
+            "transactions"
+          ],
+          "where": "WHERE CAST((payload #>> '{risk_score}') AS DECIMAL) >= 80",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b",
+        "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b",
+        "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b"
+      ],
+      "treatment_sql": "SELECT transaction_id\nFROM transactions\nWHERE (payload #>> '{risk_score}')::NUMERIC >= 80",
+      "treatment_sql_hash": "e4452d18c39358c269cdbb2d24baf22c298262aa7979356d927e36ce287ce54b"
+    },
+    {
+      "case_id": "risk_09",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "9d70af840a409a881a98cb81ea45921d74f1e02ca85810b4253a64cc6284f66f",
+        "9d70af840a409a881a98cb81ea45921d74f1e02ca85810b4253a64cc6284f66f",
+        "9d70af840a409a881a98cb81ea45921d74f1e02ca85810b4253a64cc6284f66f"
+      ],
+      "control_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT DISTINCT ON (customer_id)\n           customer_id,\n           risk_score\n    FROM risk_assessments\n    ORDER BY customer_id, assessed_at DESC, assessment_id DESC\n) AS latest\nORDER BY risk_score DESC, customer_id\nLIMIT 3",
+      "control_sql_hash": "9d70af840a409a881a98cb81ea45921d74f1e02ca85810b4253a64cc6284f66f",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "FILTER_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT customer_id, risk_score FROM (SELECT DISTINCT ON (customer_id) customer_id, risk_score FROM risk_assessments ORDER BY customer_id, assessed_at DESC, assessment_id DESC) AS latest ORDER BY risk_score DESC, customer_id LIMIT 3",
+          "order_by": [
+            "risk_score DESC",
+            "customer_id"
+          ],
+          "projections": [
+            "customer_id",
+            "risk_score"
+          ],
+          "tables": [
+            "risk_assessments"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT customer_id, risk_score FROM (SELECT customer_id, risk_score, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC) AS rn FROM risk_assessments) AS latest WHERE rn = 1 ORDER BY risk_score DESC, customer_id LIMIT 3",
+          "order_by": [
+            "risk_score DESC",
+            "customer_id"
+          ],
+          "projections": [
+            "customer_id",
+            "risk_score"
+          ],
+          "tables": [
+            "risk_assessments"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY assessed_at DESC, assessment_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2",
+        "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2",
+        "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2"
+      ],
+      "treatment_sql": "SELECT customer_id, risk_score\nFROM (\n    SELECT customer_id, risk_score,\n           ROW_NUMBER() OVER (\n               PARTITION BY customer_id\n               ORDER BY assessed_at DESC, assessment_id DESC\n           ) AS rn\n    FROM risk_assessments\n) AS latest\nWHERE rn = 1\nORDER BY risk_score DESC, customer_id\nLIMIT 3",
+      "treatment_sql_hash": "3ba63e2636c55e3b361b023d94b0078c9b3cdea51d4fcc4d469bd9bb0bb53fb2"
+    },
+    {
+      "case_id": "risk_10",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "edde4f217264ef03abca6acf9708cdd0cd86d8145b503b13c3f98fa4fe839de5",
+        "edde4f217264ef03abca6acf9708cdd0cd86d8145b503b13c3f98fa4fe839de5",
+        "edde4f217264ef03abca6acf9708cdd0cd86d8145b503b13c3f98fa4fe839de5"
+      ],
+      "control_sql": "SELECT DISTINCT a.customer_id\nFROM alerts AS a\nWHERE a.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS w\n    WHERE w.customer_id = a.customer_id\n      AND w.cleared_at IS NULL\n  );",
+      "control_sql_hash": "edde4f217264ef03abca6acf9708cdd0cd86d8145b503b13c3f98fa4fe839de5",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "TABLE_SCOPE_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": true,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT DISTINCT a.customer_id FROM alerts AS a WHERE a.status = 'open' AND NOT EXISTS(SELECT 1 FROM watchlist_matches AS w WHERE w.customer_id = a.customer_id AND w.cleared_at IS NULL)",
+          "order_by": [],
+          "projections": [
+            "a.customer_id"
+          ],
+          "tables": [
+            "alerts AS a",
+            "watchlist_matches AS w"
+          ],
+          "where": "WHERE a.status = 'open' AND NOT EXISTS(SELECT 1 FROM watchlist_matches AS w WHERE w.customer_id = a.customer_id AND w.cleared_at IS NULL)",
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": true,
+          "has_subquery": false,
+          "joins": [
+            "JOIN customers AS c ON c.customer_id = a.customer_id"
+          ],
+          "normalized_sql": "SELECT DISTINCT a.customer_id FROM alerts AS a JOIN customers AS c ON c.customer_id = a.customer_id WHERE a.status = 'open' AND NOT EXISTS(SELECT 1 FROM watchlist_matches AS wm WHERE wm.customer_id = c.customer_id AND NOT wm.cleared_at IS NULL)",
+          "order_by": [],
+          "projections": [
+            "a.customer_id"
+          ],
+          "tables": [
+            "alerts AS a",
+            "customers AS c",
+            "watchlist_matches AS wm"
+          ],
+          "where": "WHERE a.status = 'open' AND NOT EXISTS(SELECT 1 FROM watchlist_matches AS wm WHERE wm.customer_id = c.customer_id AND NOT wm.cleared_at IS NULL)",
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "b84d1027221691384426cba7625fe771de3472d7b51256562e72e750e3f74da8",
+        "b84d1027221691384426cba7625fe771de3472d7b51256562e72e750e3f74da8",
+        "b84d1027221691384426cba7625fe771de3472d7b51256562e72e750e3f74da8"
+      ],
+      "treatment_sql": "SELECT DISTINCT a.customer_id\nFROM alerts AS a\nJOIN customers AS c ON c.customer_id = a.customer_id\nWHERE a.status = 'open'\n  AND NOT EXISTS (\n    SELECT 1\n    FROM watchlist_matches AS wm\n    WHERE wm.customer_id = c.customer_id\n      AND wm.cleared_at IS NOT NULL\n  )",
+      "treatment_sql_hash": "b84d1027221691384426cba7625fe771de3472d7b51256562e72e750e3f74da8"
+    },
+    {
+      "case_id": "risk_13",
+      "control_correct": false,
+      "control_selected_sql_hashes": [
+        "ed1b47b3911fb09372b99bc8208ab5c8aaa84edbe67aec43e93f6f91bad42082",
+        "ed1b47b3911fb09372b99bc8208ab5c8aaa84edbe67aec43e93f6f91bad42082",
+        "ed1b47b3911fb09372b99bc8208ab5c8aaa84edbe67aec43e93f6f91bad42082"
+      ],
+      "control_sql": "SELECT c.segment, ROUND(AVG(t.amount), 2) AS average_amount\nFROM transactions AS t\nJOIN accounts AS a ON a.account_id = t.account_id\nJOIN customers AS c ON c.customer_id = a.customer_id\nGROUP BY c.segment;",
+      "control_sql_hash": "ed1b47b3911fb09372b99bc8208ab5c8aaa84edbe67aec43e93f6f91bad42082",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "SEMANTICALLY_EQUIVALENT_REWRITE",
+        "control_features": {
+          "aggregates": [
+            "AVG(t.amount)"
+          ],
+          "group_by": [
+            "c.segment"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN accounts AS a ON a.account_id = t.account_id",
+            "JOIN customers AS c ON c.customer_id = a.customer_id"
+          ],
+          "normalized_sql": "SELECT c.segment, ROUND(CAST(AVG(t.amount) AS DECIMAL), 2) AS average_amount FROM transactions AS t JOIN accounts AS a ON a.account_id = t.account_id JOIN customers AS c ON c.customer_id = a.customer_id GROUP BY c.segment",
+          "order_by": [],
+          "projections": [
+            "c.segment",
+            "ROUND(CAST(AVG(t.amount) AS DECIMAL), 2) AS average_amount"
+          ],
+          "tables": [
+            "accounts AS a",
+            "customers AS c",
+            "transactions AS t"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": false,
+        "treatment_features": {
+          "aggregates": [
+            "AVG(t.amount)"
+          ],
+          "group_by": [
+            "c.segment"
+          ],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [
+            "JOIN accounts AS a ON a.account_id = t.account_id",
+            "JOIN customers AS c ON c.customer_id = a.customer_id"
+          ],
+          "normalized_sql": "SELECT c.segment, ROUND(CAST(AVG(t.amount) AS DECIMAL), 2) AS average_amount FROM transactions AS t JOIN accounts AS a ON a.account_id = t.account_id JOIN customers AS c ON c.customer_id = a.customer_id GROUP BY c.segment",
+          "order_by": [],
+          "projections": [
+            "c.segment",
+            "ROUND(CAST(AVG(t.amount) AS DECIMAL), 2) AS average_amount"
+          ],
+          "tables": [
+            "accounts AS a",
+            "customers AS c",
+            "transactions AS t"
+          ],
+          "where": null,
+          "windows": []
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [
+        "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861",
+        "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861",
+        "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861"
+      ],
+      "treatment_sql": "SELECT c.segment, ROUND(AVG(t.amount), 2) AS average_amount\nFROM transactions AS t\nJOIN accounts AS a ON a.account_id = t.account_id\nJOIN customers AS c ON c.customer_id = a.customer_id\nGROUP BY c.segment",
+      "treatment_sql_hash": "4a95c106d5674a1f027a57704246c803ac093a885235623446ed324813265861"
+    },
+    {
+      "case_id": "warehouse_19",
+      "control_correct": false,
+      "control_selected_sql_hashes": [],
+      "control_sql": "SELECT DISTINCT ON (product_id) product_id, on_hand_qty FROM inventory_snapshots ORDER BY product_id, snapshot_at DESC, snapshot_id DESC",
+      "control_sql_hash": "ef74aec55b10a0a451e7be7f46c53ac6a92f7d3b0765880de7dd3b8e15c38eaa",
+      "same_sql": false,
+      "semantic_perturbation": {
+        "category": "FILTER_CHANGE",
+        "control_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": false,
+          "joins": [],
+          "normalized_sql": "SELECT DISTINCT ON (product_id) product_id, on_hand_qty FROM inventory_snapshots ORDER BY product_id, snapshot_at DESC, snapshot_id DESC",
+          "order_by": [
+            "product_id",
+            "snapshot_at DESC",
+            "snapshot_id DESC"
+          ],
+          "projections": [
+            "product_id",
+            "on_hand_qty"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": null,
+          "windows": []
+        },
+        "first_discriminating_state": null,
+        "material": true,
+        "treatment_features": {
+          "aggregates": [],
+          "group_by": [],
+          "has_json_operator": false,
+          "has_null_predicate": false,
+          "has_subquery": true,
+          "joins": [],
+          "normalized_sql": "SELECT product_id, on_hand_qty FROM (SELECT product_id, on_hand_qty, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY snapshot_at DESC, snapshot_id DESC) AS rn FROM inventory_snapshots) AS ranked WHERE rn = 1",
+          "order_by": [],
+          "projections": [
+            "product_id",
+            "on_hand_qty"
+          ],
+          "tables": [
+            "inventory_snapshots"
+          ],
+          "where": "WHERE rn = 1",
+          "windows": [
+            "ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY snapshot_at DESC, snapshot_id DESC)"
+          ]
+        }
+      },
+      "treatment_correct": false,
+      "treatment_selected_sql_hashes": [],
+      "treatment_sql": "SELECT product_id, on_hand_qty\nFROM (\n    SELECT product_id, on_hand_qty,\n           ROW_NUMBER() OVER (\n               PARTITION BY product_id\n               ORDER BY snapshot_at DESC, snapshot_id DESC\n           ) AS rn\n    FROM inventory_snapshots\n) AS ranked\nWHERE rn = 1",
+      "treatment_sql_hash": "5a4d0f9fa0adb7da55b3c195d0f3a8315cc1e7af05b77957b93b1d69d024ad8e"
+    }
+  ]
+}

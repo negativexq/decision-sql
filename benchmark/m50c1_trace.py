@@ -821,6 +821,23 @@ def _reference_canary(pairs: list[m48b2.Pair], services: dict[str, Any]) -> dict
     return result
 
 
+def _runtime_outcome(outcome: dict[str, Any]) -> dict[str, Any]:
+    nested = outcome.get("runtime")
+    return nested if isinstance(nested, dict) else outcome
+
+
+def _outcome_status(outcome: dict[str, Any]) -> str | None:
+    return cast(str | None, _runtime_outcome(outcome).get("plan_failure", {}).get("status"))
+
+
+def _outcome_planned(outcome: dict[str, Any]) -> bool:
+    return bool(_runtime_outcome(outcome).get("planned"))
+
+
+def _outcome_executed(outcome: dict[str, Any]) -> bool:
+    return bool(_runtime_outcome(outcome).get("executed"))
+
+
 def _overlay(
     pairs: list[m48b2.Pair],
     parsed_records: list[dict[str, Any]],
@@ -852,9 +869,7 @@ def _overlay(
                 "DECISION_FALSE_ANSWER" if decision == "ANSWER" else "DECISION_WRONG_BLOCK_TYPE"
             )
         elif decision == "ANSWER":
-            failure_statuses = [
-                state["outcome"].get("plan_failure", {}).get("status") for state in states
-            ]
+            failure_statuses = [_outcome_status(state["outcome"]) for state in states]
             if "SQL_PARSE_ERROR" in failure_statuses:
                 divergence = "SQL_PARSE"
             elif "POLICY_REJECTION" in failure_statuses:
@@ -863,7 +878,7 @@ def _overlay(
                 divergence = "SEMANTIC_GRAIN"
             elif "QUERY_COST_REJECTION" in failure_statuses:
                 divergence = "COST"
-            elif any(not state["outcome"].get("executed") for state in states):
+            elif any(not _outcome_executed(state["outcome"]) for state in states):
                 divergence = "EXECUTION"
             elif not base_correct:
                 divergence = "RESULT_BASE"
@@ -887,15 +902,19 @@ def _overlay(
                 "full_counterfactual_correct": full_correct,
                 "first_runtime_failure_stage": trace_by_id[case_id]["first_runtime_failure_stage"],
                 "runtime_failure_statuses": [
-                    state["outcome"].get("plan_failure", {}).get("status")
+                    _outcome_status(state["outcome"])
                     or (
                         "EXECUTION_ERROR"
-                        if state["outcome"].get("planned") and not state["outcome"].get("executed")
+                        if _outcome_planned(state["outcome"])
+                        and not _outcome_executed(state["outcome"])
                         else None
                     )
                     for state in states
-                    if state["outcome"].get("plan_failure")
-                    or (state["outcome"].get("planned") and not state["outcome"].get("executed"))
+                    if _outcome_status(state["outcome"])
+                    or (
+                        _outcome_planned(state["outcome"])
+                        and not _outcome_executed(state["outcome"])
+                    )
                 ],
                 "first_evaluator_divergence_stage": divergence,
                 "runtime_terminal_stage": trace_by_id[case_id]["terminal_runtime_stage"],
@@ -958,18 +977,18 @@ def _failure_funnel(
         states = runtime_by_id[item["case_id"]].get("states", [])
         if states:
             outcomes = [state["outcome"] for state in states]
-            statuses = [outcome.get("plan_failure", {}).get("status") for outcome in outcomes]
+            statuses = [_outcome_status(outcome) for outcome in outcomes]
             if "SQL_PARSE_ERROR" not in statuses:
                 funnel["sql_parse_pass"] += 1
             if "POLICY_REJECTION" not in statuses:
                 funnel["policy_pass"] += 1
             if "SEMANTIC_REJECTION" not in statuses:
                 funnel["grain_pass"] += 1
-            if all(outcome.get("planned") for outcome in outcomes):
+            if all(_outcome_planned(outcome) for outcome in outcomes):
                 funnel["explain_pass"] += 1
                 if "QUERY_COST_REJECTION" not in statuses:
                     funnel["query_plan_issued"] += 1
-            if all(outcome.get("executed") for outcome in outcomes):
+            if all(_outcome_executed(outcome) for outcome in outcomes):
                 funnel["execution_success"] += 1
         funnel["base_correct"] += int(item["base_correct"])
         funnel["full_counterfactual_correct"] += int(item["full_counterfactual_correct"])

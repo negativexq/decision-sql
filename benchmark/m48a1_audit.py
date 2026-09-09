@@ -35,6 +35,7 @@ REPORT_ROOT = ROOT / "reports"
 MANIFEST_ROOT = ROOT / "manifests"
 TRUTH_VERSION = "0.2.2-dev"
 TRUTH_HASH = "3bb0c505c1c154d8f8f14ab7e903e190ca4d0ed3488f740f68f45674585aec0e"
+EXPECTED_STARTING_COMMIT = "a94fc70c1b6771de0bdc2d5f7676334befde0b0e"
 M48A_REPLAY = ROOT / "audits" / "m48a" / "m48a_reference_runtime_replay.json"
 
 
@@ -84,7 +85,8 @@ def historical_preservation() -> dict[str, Any]:
         "experiment": "M48A.1",
         "provider_calls": 0,
         "model_calls": 0,
-        "starting_commit": _git_head(),
+        "starting_commit": EXPECTED_STARTING_COMMIT,
+        "capture_commit": _git_head(),
         "historical_experiments": [
             "M39",
             "M41",
@@ -482,6 +484,7 @@ def run() -> dict[str, Any]:
     result = {
         "experiment": "M48A.1",
         "starting_commit": baseline["starting_commit"],
+        "audit_commit": _git_head(),
         "provider_calls": 0,
         "model_calls": 0,
         "truth_version": TRUTH_VERSION,

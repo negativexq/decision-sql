@@ -1,0 +1,30 @@
+{
+  "experiment": "M50C",
+  "verdict": "M50C_ABORTED_POST_RESPONSE_CONTRACT_DEFECT",
+  "phase": "C_ZERO_CALL_REPLAY",
+  "provider_attempts": 180,
+  "control_attempts": 90,
+  "treatment_attempts": 90,
+  "retries": 0,
+  "model_calls_after_response_freeze": 0,
+  "provider_calls_after_response_freeze": 0,
+  "defect": {
+    "kind": "READER_ROLE_ACCESS_REPLAY_CONTRACT_MISMATCH",
+    "observed": "M50C reused m48b._prepare_state after schema reset without restoring reader-role schema/table grants.",
+    "required_frozen_path": "M48B.1 reader-role grant restoration wrapper",
+    "evidence": {
+      "control_runtime": "benchmark/audits/m50c/m50c_control_runtime.json",
+      "treatment_runtime": "benchmark/audits/m50c/m50c_treatment_runtime.json",
+      "control_failure_status": "EXECUTION_ERROR",
+      "treatment_failure_status": "EXECUTION_ERROR",
+      "observed_reader_error": "relation access was unavailable to the restricted reader after schema reset"
+    },
+    "runtime_and_scoring_outcomes_invalidated": true
+  },
+  "responses_preserved": true,
+  "response_freeze": "benchmark/audits/m50c/m50c_response_freeze.json",
+  "historical_hash_mismatches": [],
+  "no_harness_patch_after_response": true,
+  "no_rerun": true,
+  "next_action": "New experiment identity required after correcting the pre-response replay contract."
+}

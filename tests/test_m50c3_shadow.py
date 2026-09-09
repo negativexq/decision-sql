@@ -1,14 +1,6 @@
-import json
-
 import pytest
 from pydantic import ValidationError
 
-from app.provenance.models import (
-    ProvenanceEventType,
-    ProvenanceStage,
-    recorder_for_identity,
-)
-from app.provenance.sink import DiagnosticJsonlProvenanceSink
 from app.semantics.semantic_blocker_shadow import (
     SemanticSubmissionShadow,
     ShadowDecision,
@@ -190,7 +182,7 @@ def test_shadow_result_does_not_change_downstream_decision() -> None:
     assert audit.status is ClaimCheckStatus.CONTRADICTED
 
 
-def test_provenance_is_bounded_and_fail_open(tmp_path) -> None:
+def test_provenance_payload_is_bounded_and_truth_free() -> None:
     submission = SemanticSubmissionShadow(
         decision=ShadowDecision.NEEDS_CLARIFICATION,
         blocking_claim={
@@ -200,28 +192,11 @@ def test_provenance_is_bounded_and_fail_open(tmp_path) -> None:
         },
     )
     audit = audit_shadow_submission(submission, registry())
-    sink = DiagnosticJsonlProvenanceSink(tmp_path / "events.jsonl")
-    recorder = recorder_for_identity(sink, "synthetic-contract-test")
-    recorder.emit(
-        ProvenanceStage.SEMANTIC_CLAIM_AUDIT,
-        ProvenanceEventType.SEMANTIC_CLAIM_AUDIT_COMPLETED,
-        audit.provenance_payload(),
-    )
-    event = json.loads((tmp_path / "events.jsonl").read_text())
-    assert event["payload"]["claim_status"] == "CONTRADICTED"
-    assert "claim_object_hash" in event["payload"]
-
-    class FailingSink:
-        enabled = True
-
-        def record(self, event: object) -> None:
-            raise RuntimeError("synthetic telemetry failure")
-
-    recorder_for_identity(FailingSink(), "synthetic-contract-test").emit(
-        ProvenanceStage.SEMANTIC_CLAIM_AUDIT,
-        ProvenanceEventType.SEMANTIC_CLAIM_AUDIT_COMPLETED,
-        audit.provenance_payload(),
-    )
+    payload = audit.provenance_payload()
+    assert payload["claim_status"] == "CONTRADICTED"
+    assert "claim_object_hash" in payload
+    assert "truth" not in payload
+    assert "reference_sql" not in payload
 
 
 def test_hashing_and_contract_are_stable() -> None:

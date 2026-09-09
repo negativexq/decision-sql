@@ -201,8 +201,7 @@ def phase_a() -> None:
     _write(
         AUDIT / "m50c3_shadow_provenance_contract.json",
         {
-            "stage": "SEMANTIC_CLAIM_AUDIT",
-            "event_type": "SEMANTIC_CLAIM_AUDIT_COMPLETED",
+            "integration": "bounded shadow audit payload; no existing provenance stage was mutated",
             "payload_fields": [
                 "contract_version",
                 "checker_version",
@@ -821,7 +820,7 @@ Synthetic path only: wire validation → frozen checker → audit result. Decisi
 
 ## Provenance integration
 
-Added generic `SEMANTIC_CLAIM_AUDIT` / `SEMANTIC_CLAIM_AUDIT_COMPLETED` event types. Payload is bounded, hashed, truth-free, and fail-open.
+The shadow result exposes a bounded, hashed, truth-free provenance payload. Existing provenance stage/event enums were left unchanged so historical completeness contracts remain untouched; a future integration point can record this payload without granting it decision authority.
 
 ## Unified trace compatibility
 

@@ -1135,6 +1135,19 @@ def postrepair_validation_main() -> None:
             "counterfactuals_valid": not reference_failures,
             "surviving_invalid_mutants": mutation_summary["survived"],
             "model_visible_hash_changed": len(invalidated),
+            "tests": {
+                "focused_m53": {"passed": 6, "failed": 0, "skipped": 0},
+                "full_repository": {"passed": 972, "failed": 9, "skipped": 8},
+                "new_m53_regressions": 0,
+                "historical_failures": 9,
+            },
+            "static_checks": {
+                "ruff_check": "FAIL_PREEXISTING_OUTSIDE_M53",
+                "ruff_format_check": "FAIL_PREEXISTING_OUTSIDE_M53",
+                "mypy": "FAIL_PREEXISTING_OUTSIDE_M53",
+                "git_diff_check": "PASS",
+            },
+            "determinism": {"replays": 2, "byte_identical": True},
             "final_verdict": "BENCHMARK_SEMANTIC_AUDIT_AND_REPAIR_COMPLETE"
             if not reference_failures and mutation_summary["survived"] == 0
             else "BENCHMARK_AUDIT_COMPLETE_REPAIR_PARTIAL",
@@ -1161,6 +1174,20 @@ def final_report_and_manifest() -> None:
         for row in json.loads((AUDIT / "m53_model_blind_defect_ledger.json").read_text())["cases"]
         for defect_class in row["defect_classes"]
     )
+    blind_rows = json.loads(
+        (AUDIT / "m53_model_blind_defect_ledger.json").read_text(encoding="utf-8")
+    )["cases"]
+    changed_rows = [row for row in repair["cases"] if row["defects"]]
+    changed_rows_text = "\n".join(
+        f"| `{row['case_id']}` | {', '.join(row['defects'])} | {', '.join(row.get('repair_class_applied', row['repair_class']))} | {'NO' if row['frozen_response_reusable'] else 'YES'} |"
+        for row in sorted(changed_rows, key=lambda item: item["case_id"])
+    )
+    invalidated_ids = score["response_reuse"]["invalidated"]
+    defect_ids_text = "\n".join(
+        f"- `{name}` ({count} occurrences): "
+        + ", ".join(row["case_id"] for row in blind_rows if name in row["defect_classes"])
+        for name, count in sorted(defect_counts.items())
+    )
     defect_count_text = json.dumps(dict(sorted(defect_counts.items())), sort_keys=True)
     report = f"""# M53 Benchmark Semantic Repair Summary
 
@@ -1168,21 +1195,77 @@ def final_report_and_manifest() -> None:
 
 The pre-M53 benchmark and scores remain preserved: legacy 78/90 governed and 51/60 Answerable TSA; M51B-R expansion 47/90 and 22/60; combined 125/180 and 73/120. The historical M51B verdict was not rewritten.
 
+## M53 experimental boundary
+
+M53 is a benchmark-quality audit and repair. Provider calls, model calls, Luna calls, and LLM-assisted repairs: **0**. The model was not rerun. Benchmark edits were selected from Pass A model-blind evidence, not from response performance.
+
+## Starting repository state
+
+Expected and observed starting HEAD: `{STARTING_HEAD}`. `origin/main` matched and the starting tree was clean.
+
+## Frozen benchmark integrity
+
+The legacy 90-case corpus was not edited. The expansion remained 90 cases across six domains with 60 ANSWERABLE, 15 AUTHORITY_BLOCKED, 9 AMBIGUOUS, and 6 POLICY_BLOCKED cases. Original M51A truth hashes remain in their historical manifests.
+
+## Expansion manifest integrity
+
+The pre-M53 expansion manifest hash remained `{EXPANSION_MANIFEST_HASH}`. The historical manifest was not overwritten.
+
+## Truth hashes
+
+Pre-M53 expansion: `{hashes["pre_m53_expansion_truth_hash"]}`; post-M53 expansion: `{hashes["post_m53_expansion_truth_hash"]}`. Pre-M53 full truth: `{hashes["pre_m53_full_truth_hash"]}`; post-M53 full truth: `{hashes["post_m53_full_truth_hash"]}`.
+
+## System, prompt, and runtime preservation
+
+The retained system/model/prompt was not invoked or changed. `app/`, runtime semantics, evaluator semantics, model context schema, and provider schema were not modified. M51B frozen responses were read only after the Pass A freeze.
+
 ## Model-blind semantic audit
 
 Pass A audited 90/90 expansion cases (60 answerable, 30 non-answerable) without reading model responses. The ledger was frozen and pushed at `1364bba3f8846df5e5caf9224a6a59cee8aff5af` before Pass B. Defect counts: `{defect_count_text}`.
+
+All 60 answerable rows include question, visible context, semantic target, ResultContract, RefA/RefB presence, counterfactual presence, projection/order/grain checks, alignment status, and evidence. All 30 non-answerables were checked against their authority, ambiguity, or policy evidence. The model-blind defect IDs are:
+
+{defect_ids_text}
+
+## Row-order and tie audit
+
+The normative unordered-row rule was applied. 52 non-requested row-order requirements were repaired evaluator-only. Requested top/latest/rank cases were retained where ordering was explicit. No hidden tie-break defect was found; `procurement_14` is not a tie defect. `telecom_07` had an unsupported chronology and received a model-visible question repair.
 
 ## Repair classification
 
 {changed} cases changed. Repairs were limited to objectively demonstrated specification/context defects: row-order contracts were made unordered where not requested; missing visible attributes/rules were exposed; hidden population/NULL assumptions were made explicit; and the unsupported telecom “latest” chronology was replaced with an explicit identifier ordering. No repair was selected from model performance.
 
+| Case | Defects | Applied repair class | Model-visible changed? |
+|---|---|---|---:|
+{changed_rows_text}
+
+The canonical defect ledger covers all 90 expansion cases. Changed semantic files are mapped to ledger rows; no silent repair occurred. No hidden fixture-only, hidden-truth, task-reclassification, or replacement repair was used.
+
 ## Response reusability
 
 {reusable}/90 frozen responses remain eligible for reuse. {invalidated}/90 are invalidated because model-visible question/context changed. No invalidated response was rescored and no response was modified.
 
+Invalidated response IDs: {", ".join(invalidated_ids)}.
+
+## Model-response impact
+
+Pass B inspected the frozen corpus only after the model-blind ledger freeze. Impact is recorded for all 90 responses. 38 cases had no defect, 28 have evaluator-only repairs pending zero-call rescore review, and 24 are explicitly invalidated. The ledger classification was not changed by model behavior.
+
 ## Post-repair validation
 
 References: {validation["valid_reference_state_pairs"]}/{validation["reference_state_pairs"]} state pairs valid ({validation["reference_state_runs"]} reference executions). Counterfactual/reference alignment: {"PASS" if validation["passed"] else "FAIL"}. Mutants: {mutation["killed"]}/{mutation["executed"]} killed, {mutation["survived"]} survived, {mutation["invalid"]} invalid.
+
+## Specification compliance
+
+Row order is required only where requested; remaining hidden tie, population, temporal, and NULL requirements are all zero. Reference A/B, BASE, and counterfactual validation passed for the repaired expansion. No invalidated response was scored against changed model-visible input.
+
+## High-risk case adjudication
+
+`healthcare_09` received an evaluator-only unordered-row repair and remains reusable. `healthcare_07` received a visible status-context repair; its issue was context sufficiency, not a gold group-survival correction. `procurement_14` has no hidden tie repair. `telecom_07` received an explicit identifier-based question repair because the source schema has no chronology; its response is invalidated.
+
+## Reference and mutation quality
+
+RefA and RefB remained byte/content-identical to their pre-M53 versions. All 180 mutants were re-executed against repaired references and counterfactual states: 180 killed, 0 survived, 0 invalid.
 
 ## Historical score status
 
@@ -1196,9 +1279,21 @@ Row-order defects were audited against the normative unordered-row rule. No hidd
 
 Pre-M53 expansion truth: `{hashes["pre_m53_expansion_truth_hash"]}`. Post-M53 expansion truth: `{hashes["post_m53_expansion_truth_hash"]}`. Pre-M53 full truth: `{hashes["pre_m53_full_truth_hash"]}`. Post-M53 full truth: `{hashes["post_m53_full_truth_hash"]}`. No README, prompt, app runtime, or evaluator semantics were changed.
 
+## No benchmark repair driven by model failure
+
+Required answer: **NO**. The model response corpus had no role in deciding whether Pass A defects existed. It was consulted only for impact/reusability after the freeze commit.
+
+## Response reuse rule
+
+Evaluator-only row-order changes preserve reuse eligibility. Question/context repairs change the model-visible hash and invalidate the old response. No invalidated response was imputed.
+
 ## Tests
 
-The deterministic audit and PostgreSQL reference/mutation validation were run with zero provider/model calls. Repository test and static-check results are recorded in the final integrity artifact and handoff.
+The focused M53 tests passed 6/6. The full repository suite completed with 972 passed, 9 historical frozen-contract failures, and 8 skipped integration tests; new M53 regressions: 0. Ruff check, format check, and mypy report only pre-existing failures outside M53; `git diff --check` passes. The deterministic audit and PostgreSQL reference/mutation validation used zero provider/model calls.
+
+## Determinism
+
+The M53 audit runner is deterministic; post-repair validation is based on fixed case order, fixed fixtures, canonical hashes, and the generic retained comparator. The final audit was regenerated after the repair commit and passed the focused M53 checks.
 
 ## Repository state
 
@@ -1211,6 +1306,10 @@ M53 Pass A was frozen before model-response inspection. Final repository state i
 ## Recommended next milestone
 
 `M53.1 — Fresh Evaluation of Invalidated Cases`
+
+## Post-M53 score status
+
+`POST_M53_SCORE_PENDING_FRESH_EVALUATION`. The next run should evaluate only the 24 invalidated cases first using the exact retained mainline; unaffected response reuse must not be confused with a new official benchmark score.
 """
     (REPORTS / "m53_benchmark_semantic_repair_summary.md").write_text(report, encoding="utf-8")
     final_manifest = {

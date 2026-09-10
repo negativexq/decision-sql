@@ -14,6 +14,7 @@ from app.semantics.semantic_errors import (
 from app.semantics.semantic_mapping import SemanticMappingSnapshot
 from app.semantics.semantic_query import SemanticQueryIR, SemanticQueryProvenance, plan_to_ir
 from app.semantics.semantic_validation import SemanticConsistencyValidator
+from app.sql.authority import ExecutionAuthority
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError, SqlPlanFailure
 from app.sql.service import SqlSafetyService
 from app.text_to_sql.models import GenerationPath, TextToSqlResult, TextToSqlStatus
@@ -90,7 +91,11 @@ class SemanticQueryService:
                 sql=compiled.sql,
                 source=CandidateSource.SEMANTIC_QUERY_COMPILER,
                 correlation_id=request.correlation_id,
-                execution_authority=self.safety_service.default_execution_authority,
+                execution_authority=getattr(
+                    self.safety_service,
+                    "default_execution_authority",
+                    ExecutionAuthority.from_catalog(self.safety_service.catalog),
+                ),
             )
             planned = self.safety_service.plan(candidate)
             if isinstance(planned, SqlPlanFailure):

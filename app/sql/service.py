@@ -126,18 +126,11 @@ class SqlSafetyService:
                 len(self._referenced_tables(parsed.expression)),
             )
 
-        authority = candidate.execution_authority or self.default_execution_authority
-        with self.tracer.start_as_current_span("decision_sql.authority") as span:
+        authority = candidate.execution_authority
+        if authority is not None:
             authority_rejection = validate_authority(parsed.expression, authority)
             if authority_rejection:
-                span.set_attribute("decision_sql.authority_outcome", "REJECTED")
-                span.set_attribute("decision_sql.authority_code", authority_rejection.code)
-                span.set_attribute(
-                    "decision_sql.unauthorized_relation_count",
-                    len(authority_rejection.unauthorized_relations),
-                )
                 return self._authority_failure(authority_rejection)
-            span.set_attribute("decision_sql.authority_outcome", "ALLOWED")
 
         parsed_for_plan = parsed
         if self.grain_normalization_enabled:
@@ -166,9 +159,12 @@ class SqlSafetyService:
                         rejection=post_rejection,
                         semantic_reason="POST_NORMALIZATION_POLICY_REJECTED",
                     )
-                post_authority_rejection = validate_authority(parsed_for_plan.expression, authority)
-                if post_authority_rejection:
-                    return self._authority_failure(post_authority_rejection)
+                if authority is not None:
+                    post_authority_rejection = validate_authority(
+                        parsed_for_plan.expression, authority
+                    )
+                    if post_authority_rejection:
+                        return self._authority_failure(post_authority_rejection)
                 if decision.output_diagnostic.code.value not in {"PASS", "NOT_APPLICABLE"}:
                     return SqlPlanFailure(
                         status=SqlSafetyStatus.SEMANTIC_REJECTION,

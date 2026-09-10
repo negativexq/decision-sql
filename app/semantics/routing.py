@@ -37,6 +37,7 @@ from app.semantics.contract import (
     metric_provenance,
 )
 from app.semantics.models import MetricCatalog
+from app.sql.authority import ExecutionAuthority
 from app.sql.models import (
     QueryExecution,
     QueryPlan,
@@ -134,6 +135,8 @@ class GovernedRouteDecision(BaseModel):
 
 
 class _SafetyService(Protocol):
+    default_execution_authority: ExecutionAuthority
+
     def plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure: ...
 
     def execute(self, plan: QueryPlan) -> QueryExecution | SqlExecutionError: ...
@@ -470,7 +473,11 @@ class GovernedMetricRouteService:
                 },
             )
 
-        compiled = compiled.model_copy(update={"correlation_id": request.correlation_id})
+        candidate_update: dict[str, object] = {"correlation_id": request.correlation_id}
+        authority = getattr(self.safety_service, "default_execution_authority", None)
+        if authority is not None:
+            candidate_update["execution_authority"] = authority
+        compiled = compiled.model_copy(update=candidate_update)
 
         compile_latency = (perf_counter() - compile_started) * 1000
         plan_started = perf_counter()

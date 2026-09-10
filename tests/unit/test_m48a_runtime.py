@@ -22,7 +22,6 @@ from app.semantics.grain_runtime import (
     GrainRuntimeStatus,
     RuntimeGrainSafetyCoordinator,
 )
-from app.sql.authority import ExecutionAuthority
 from app.sql.models import (
     ExplainEstimate,
     PolicyCode,
@@ -218,11 +217,6 @@ def _service(
     )
     service.reader_engine = engine  # type: ignore[assignment]
     service.policy = _AllowPolicy()  # type: ignore[assignment]
-    service.default_execution_authority = (
-        ExecutionAuthority.from_table_names(entity.physical_table for entity in catalog.entities)
-        if catalog is not None
-        else ExecutionAuthority.from_table_names(("parent", "child"))
-    )
     cost = _CostGate()
     executor = _Executor()
     service.cost_gate = cost  # type: ignore[assignment]

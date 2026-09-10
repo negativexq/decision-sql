@@ -92,15 +92,16 @@ runtime.
   rejects it before database contact, EXPLAIN, or execution.
 - Policy blocked: the global read-only SQL policy rejects the proposal.
 
-## Visual walkthrough
+## Screenshots
 
-The repository includes browser-rendered demo captures at 1440×900:
+The repository includes real browser-rendered demo captures at 1440×900:
 
-- [Playground](m62/screenshots/01-playground.png): the natural-language entry point and horizontal operator navigation.
-- [Safety replay](m62/screenshots/02-safety-replay.png): `ANSWER` separated from deterministic authority rejection.
-- [Runs](m62/screenshots/03-runs.png): recent run history with source, model decision, and runtime outcome.
-- [Traces](m62/screenshots/04-traces.png): the actual gate timeline, including rejected and skipped stages.
-- [Schema](m62/screenshots/05-schema.png): the full governed catalog and authorized relationships.
+- [Playground](screenshots/decision-sql-playground.png): the natural-language entry point and operator navigation.
+- [Safety replay](screenshots/decision-sql-safety-replay.png): `ANSWER` separated from deterministic authority rejection.
+- [Trace inspection](screenshots/decision-sql-trace.png): the actual gate timeline and selected-stage evidence.
+- [Recent runs](screenshots/decision-sql-runs.png): run history with source, model decision, and runtime outcome.
+- [Model-visible governed context](screenshots/decision-sql-governed-context.png): the bounded context attached to a request.
+- [Governed catalog](screenshots/decision-sql-governed-catalog.png): the server-owned catalog and authorized relationships.
 
 OpenTelemetry configuration remains available through the existing
 `OTEL_EXPORTER_OTLP_ENDPOINT` setting. The structured UI trace is an additional

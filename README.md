@@ -92,7 +92,7 @@ flowchart TD
 The evaluator is outside the production trust boundary. It scores behavior; it
 does not route requests or grant execution authority.
 
-![Safety Replay: model answer rejected by deterministic execution authority](docs/m62/screenshots/02-safety-replay.png)
+![Safety Replay: model answer rejected by deterministic execution authority](docs/screenshots/decision-sql-safety-replay.png)
 
 ## Operator playground
 

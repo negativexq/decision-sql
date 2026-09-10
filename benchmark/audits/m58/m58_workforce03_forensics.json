@@ -1,0 +1,35 @@
+{
+  "case_id": "workforce_03",
+  "causal_inference": "M54 correctly treated this ambiguous request as NEEDS_CLARIFICATION. Both Candidate C runs changed the typed decision to ANSWER and emitted the same status-based SQL. The observed regression is stable; Candidate C's answerability discipline appears to overweight answering when the semantic state mapping remains ambiguous.",
+  "confidence": "HIGH",
+  "domain": "workforce_ops",
+  "m54_state": {
+    "decision": "NEEDS_CLARIFICATION",
+    "first_divergence": null,
+    "governed": true
+  },
+  "m56r_state": {
+    "decision": "ANSWER",
+    "first_divergence": "DECISION",
+    "governed": false,
+    "request_fingerprint": "19b4f3d286393fe8069fa49dedf99b5a0fef2517f29715648de64a993ba49b37",
+    "sql_hash": "f99b720c5d57cc3dbc1121d7efaf304e8559728f0417a94574b4b90412553620"
+  },
+  "m57_state": {
+    "decision": "ANSWER",
+    "first_divergence": "DECISION",
+    "governed": false,
+    "request_fingerprint": "19b4f3d286393fe8069fa49dedf99b5a0fef2517f29715648de64a993ba49b37",
+    "sql_hash": "f99b720c5d57cc3dbc1121d7efaf304e8559728f0417a94574b4b90412553620"
+  },
+  "observed_evidence": {
+    "case": "benchmark/cases/m51_expansion/{case_id}.json",
+    "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+    "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+    "m57": "benchmark/audits/m57/m57_responses.jsonl",
+    "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+  },
+  "primary_mechanism": "DECISION_CALIBRATION",
+  "stability_class": "PERSISTENT_REGRESSION",
+  "task_type": "AMBIGUOUS"
+}

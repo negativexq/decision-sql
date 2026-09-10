@@ -1,0 +1,107 @@
+[
+  {
+    "case_id": "workforce_10",
+    "causal_inference": "The false abstention in M54 became ANSWER in both Candidate C runs, with valid employee-preserving aggregation. This is a reproduced answerability-calibration recovery.",
+    "confidence": "HIGH",
+    "domain": "workforce_ops",
+    "m54_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "2b5b60fda713295e8a8dd701856cc795d527bd02525ee5aa241609eec26c8faa",
+      "sql_hash": "8d5f7c6c006d15f8ea8b9e4fbf1db7affa49fc4bd5b404a7598163413b5bf576"
+    },
+    "m57_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "2b5b60fda713295e8a8dd701856cc795d527bd02525ee5aa241609eec26c8faa",
+      "sql_hash": "01aa9b2557a559119bc8838c50136fd11165a51078adf58e4952a9152e6e1c32"
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "DECISION_CALIBRATION",
+    "stability_class": "RECOVERED_STABLE",
+    "task_type": "ANSWERABLE"
+  },
+  {
+    "case_id": "procurement_05",
+    "causal_inference": "M54's candidate was rejected for fanout risk. Both Candidate C runs used the same EXISTS form, preserving requisition grain when approval rows repeat. The grain-safe recovery reproduced.",
+    "confidence": "HIGH",
+    "domain": "procurement_ops",
+    "m54_state": {
+      "decision": "ANSWER",
+      "first_divergence": "GRAIN",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "6625ae305a7cfcdec4c64241267f9deeb21fa18de37727ed9de05862fcd298a1",
+      "sql_hash": "84912dabab028f2e3fbcddf10c5641184a8ba5c5f9b3696b3d7d5411508eedaf"
+    },
+    "m57_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "6625ae305a7cfcdec4c64241267f9deeb21fa18de37727ed9de05862fcd298a1",
+      "sql_hash": "84912dabab028f2e3fbcddf10c5641184a8ba5c5f9b3696b3d7d5411508eedaf"
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "FANOUT_SEMANTICS",
+    "stability_class": "RECOVERED_STABLE",
+    "task_type": "ANSWERABLE"
+  },
+  {
+    "case_id": "workforce_02",
+    "causal_inference": "M54's candidate counted absence rows. Both Candidate C runs used inclusive date arithmetic (ends_on - starts_on + 1), reproducing the temporal semantic recovery.",
+    "confidence": "HIGH",
+    "domain": "workforce_ops",
+    "m54_state": {
+      "decision": "ANSWER",
+      "first_divergence": "RESULT_COUNTERFACTUAL",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "c2844fb6d6c9732f94adb4a3fcbd6a455bec86054d042e83c7ff235d70ff30ad",
+      "sql_hash": "49ee0ec069c397945362f2f40874e46f3b14d901e01a834594ca712b64b59ffe"
+    },
+    "m57_state": {
+      "decision": "ANSWER",
+      "first_divergence": null,
+      "governed": true,
+      "request_fingerprint": "c2844fb6d6c9732f94adb4a3fcbd6a455bec86054d042e83c7ff235d70ff30ad",
+      "sql_hash": "49ee0ec069c397945362f2f40874e46f3b14d901e01a834594ca712b64b59ffe"
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "TEMPORAL_SEMANTICS",
+    "stability_class": "RECOVERED_STABLE",
+    "task_type": "ANSWERABLE"
+  }
+]

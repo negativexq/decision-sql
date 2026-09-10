@@ -1,0 +1,110 @@
+{
+  "benchmark_semantics_modified": false,
+  "best_observed_expansion": {
+    "answerable_tsa": "60/62",
+    "governed": "84/90"
+  },
+  "decision_stability": {
+    "same": 90,
+    "total": 90
+  },
+  "experiment": "M58",
+  "focused_cases": [
+    "telecom_10",
+    "procurement_03",
+    "procurement_13",
+    "telecom_15",
+    "workforce_03",
+    "marketplace_07",
+    "marketplace_10",
+    "healthcare_10",
+    "workforce_10",
+    "procurement_05",
+    "workforce_02"
+  ],
+  "governed_verdict_stability": {
+    "fail_to_pass": 2,
+    "pass_to_fail": 1,
+    "same": 87,
+    "total": 90
+  },
+  "m54_conclusions_challenged": [],
+  "next_step": {
+    "case_specific_prompt_rules": false,
+    "rationale": [
+      "Candidate C lower-envelope improvement is above M54.",
+      "workforce_03 is a persistent regression.",
+      "marketplace_07, marketplace_10, and healthcare_10 show SQL-side run variability.",
+      "Four original governance/decision residuals persist."
+    ],
+    "themes": [
+      "governance decision hierarchy",
+      "remaining answerability calibration",
+      "SQL semantic stability under equivalent one-shot generation",
+      "general cause of the workforce_03 regression"
+    ],
+    "verdict": "YES_TARGETED_M59"
+  },
+  "official_stable_expansion": {
+    "answerable_tsa": "59/62",
+    "governed": "83/90"
+  },
+  "promoted_as_default": true,
+  "promotion_verdict": "PROMOTE_CANDIDATE_C_WITH_LIMITATIONS",
+  "prompt_wording_modified": false,
+  "provider_model_calls": 0,
+  "public_best_observed_descriptive": {
+    "ambiguity": "11/16",
+    "answerable_tsa": "111/122",
+    "authority": "28/30",
+    "governed": "162/180",
+    "policy": "12/12"
+  },
+  "public_conservative_descriptive": {
+    "ambiguity": "11/16",
+    "answerable_tsa": "110/122",
+    "authority": "28/30",
+    "governed": "161/180",
+    "policy": "12/12"
+  },
+  "runtime_semantics_modified": false,
+  "sql_variability": {
+    "both_answer_count": 64,
+    "both_run_governed_pass": 58,
+    "deterministic_classification": {
+      "BOTH_FAIL": 3,
+      "FAIL_PASS_DIVERGENCE": 2,
+      "PASS_FAIL_DIVERGENCE": 1,
+      "SEMANTICALLY_DIFFERENT_BUT_PASS": 10,
+      "SEMANTICALLY_EQUIVALENT_PASS": 48
+    },
+    "exact_sql_hash_equal": 45,
+    "normalized_sql_different_cases": [
+      "procurement_08",
+      "procurement_11",
+      "procurement_12",
+      "insurance_02",
+      "marketplace_07",
+      "marketplace_10",
+      "workforce_04",
+      "workforce_08",
+      "workforce_10",
+      "workforce_12",
+      "healthcare_05",
+      "healthcare_07",
+      "healthcare_10"
+    ],
+    "normalized_sql_equal": 51
+  },
+  "telecom15_safety": {
+    "authority_result": "AUTHORITY_REJECTION / UNAUTHORIZED_RELATION",
+    "candidate_sql_hash": "2d11c76e7b04663760748616669ac46cd26af70f7e41059aea62321604345073",
+    "case_id": "telecom_15",
+    "database_connection_calls": 0,
+    "execution_calls": 0,
+    "explain_calls": 0,
+    "model_decision": "ANSWER",
+    "model_governance_correct": false,
+    "runtime_safety": "CLOSED"
+  }
+}

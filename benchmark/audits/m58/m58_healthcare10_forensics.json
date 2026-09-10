@@ -1,0 +1,35 @@
+{
+  "case_id": "healthcare_10",
+  "causal_inference": "Both runs answered. M56R omitted the required posted predicate and failed the discriminating counterfactual; M57 included WHERE c.status = 'posted' and passed. This is a recovered governed-predicate application, but it is not stable across the two runs.",
+  "confidence": "HIGH",
+  "domain": "healthcare_billing",
+  "m54_state": {
+    "decision": "ANSWER",
+    "first_divergence": "RESULT_COUNTERFACTUAL",
+    "governed": false
+  },
+  "m56r_state": {
+    "decision": "ANSWER",
+    "first_divergence": "RESULT_COUNTERFACTUAL",
+    "governed": false,
+    "request_fingerprint": "346d26e7e6440d698919119ec6d55768b46400b4adb240b55f9ccccce32206a7",
+    "sql_hash": "2f22cfa61eea49119a4baac7b4511245ec618326f8ede3e236226d5702edb71d"
+  },
+  "m57_state": {
+    "decision": "ANSWER",
+    "first_divergence": null,
+    "governed": true,
+    "request_fingerprint": "346d26e7e6440d698919119ec6d55768b46400b4adb240b55f9ccccce32206a7",
+    "sql_hash": "0b023267caa39ec863e35dd5269509f9131ff927ee46842785b75c9ece2bec8b"
+  },
+  "observed_evidence": {
+    "case": "benchmark/cases/m51_expansion/{case_id}.json",
+    "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+    "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+    "m57": "benchmark/audits/m57/m57_responses.jsonl",
+    "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+  },
+  "primary_mechanism": "GOVERNED_PREDICATE_OMISSION",
+  "stability_class": "RECOVERED_UNSTABLE",
+  "task_type": "ANSWERABLE"
+}

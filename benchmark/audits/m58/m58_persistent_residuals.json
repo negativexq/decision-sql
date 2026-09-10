@@ -1,0 +1,142 @@
+[
+  {
+    "case_id": "telecom_10",
+    "causal_inference": "The frozen decision remained NEEDS_CLARIFICATION across M56R and M57. The question and governed context determine the requested population, projection, and metric; no material unresolved variable is evidenced. The repeated false abstention is therefore decision calibration, not SQL variance.",
+    "confidence": "HIGH",
+    "domain": "telecom_billing",
+    "m54_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "d28b791192d017a295ae0fe34f32ad494a18cd1ff0744ddf9317a4d6c6b2030b",
+      "sql_hash": null
+    },
+    "m57_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "d28b791192d017a295ae0fe34f32ad494a18cd1ff0744ddf9317a4d6c6b2030b",
+      "sql_hash": null
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "DECISION_CALIBRATION",
+    "stability_class": "PERSISTENT_FAILURE",
+    "task_type": "ANSWERABLE"
+  },
+  {
+    "case_id": "procurement_03",
+    "causal_inference": "Both valid Candidate C runs emitted ANSWER with identical SQL using active = TRUE. The visible active attribute made that inference plausible, but the governed context did not define active as the business meaning of current supplier. This is schema-led semantic overreach rather than a SQL execution failure.",
+    "confidence": "HIGH",
+    "domain": "procurement_ops",
+    "m54_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "2135a25ff3304a54bb611da7aee83769708bffef4df878ee3f7e08c2ffe5505c",
+      "sql_hash": "4e79ff1563e861253771ee063547f90124cf90e622ed4002c26243a8577bd036"
+    },
+    "m57_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "2135a25ff3304a54bb611da7aee83769708bffef4df878ee3f7e08c2ffe5505c",
+      "sql_hash": "4e79ff1563e861253771ee063547f90124cf90e622ed4002c26243a8577bd036"
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "SCHEMA_SEMANTIC_INFERENCE",
+    "stability_class": "PERSISTENT_FAILURE",
+    "task_type": "AMBIGUOUS"
+  },
+  {
+    "case_id": "procurement_13",
+    "causal_inference": "Both runs returned NEEDS_CLARIFICATION for a request whose meaning was understood but whose required external identity relationship was outside authorized context. The stable wrong block type is authority classification, not unresolved user meaning.",
+    "confidence": "HIGH",
+    "domain": "procurement_ops",
+    "m54_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "d64f7227d854693f7ef625f742cd672d11d9ad40d2cb66749bf7c8c1e62a1520",
+      "sql_hash": null
+    },
+    "m57_state": {
+      "decision": "NEEDS_CLARIFICATION",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "d64f7227d854693f7ef625f742cd672d11d9ad40d2cb66749bf7c8c1e62a1520",
+      "sql_hash": null
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "AUTHORITY_CLASSIFICATION",
+    "stability_class": "PERSISTENT_FAILURE",
+    "task_type": "AUTHORITY_BLOCKED"
+  },
+  {
+    "case_id": "telecom_15",
+    "causal_inference": "Both runs emitted ANSWER with the same external_directory dependency. The model proposed a relation outside the request authority envelope; M52.S rejected it before any database interaction. Model governance remains incorrect while runtime safety is closed.",
+    "confidence": "HIGH",
+    "domain": "telecom_billing",
+    "m54_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false
+    },
+    "m56r_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "b4156db83dd16e874f969874fa940914b1173f9783e3ab468718b5e1b4780480",
+      "sql_hash": "766988b7e1b71fe7c78e59bdb15e053ba860a66f1a709d14fbd9017992725794"
+    },
+    "m57_state": {
+      "decision": "ANSWER",
+      "first_divergence": "DECISION",
+      "governed": false,
+      "request_fingerprint": "b4156db83dd16e874f969874fa940914b1173f9783e3ab468718b5e1b4780480",
+      "sql_hash": "766988b7e1b71fe7c78e59bdb15e053ba860a66f1a709d14fbd9017992725794"
+    },
+    "observed_evidence": {
+      "case": "benchmark/cases/m51_expansion/{case_id}.json",
+      "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+      "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+      "m57": "benchmark/audits/m57/m57_responses.jsonl",
+      "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+    },
+    "primary_mechanism": "UNAUTHORIZED_RELATION_PROPOSAL",
+    "stability_class": "PERSISTENT_FAILURE",
+    "task_type": "AUTHORITY_BLOCKED"
+  }
+]

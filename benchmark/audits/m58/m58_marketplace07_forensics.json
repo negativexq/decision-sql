@@ -1,0 +1,35 @@
+{
+  "case_id": "marketplace_07",
+  "causal_inference": "The typed decision stayed ANSWER, but M56R and M57 emitted different non-equivalent SQL. M56R placed the posted predicate in the join and passed; M57 omitted it and failed a counterfactual. This is SQL generation variability, not decision instability.",
+  "confidence": "HIGH",
+  "domain": "marketplace_ops",
+  "m54_state": {
+    "decision": "ANSWER",
+    "first_divergence": null,
+    "governed": true
+  },
+  "m56r_state": {
+    "decision": "ANSWER",
+    "first_divergence": null,
+    "governed": true,
+    "request_fingerprint": "228b1d85f257131ed3018f189843eb8208ca2641870aacc68fadbfb3de68dfc9",
+    "sql_hash": "1cf166e6fbd9bb6630e778f07fc9f357f2cd0f203d1bb4c92aff488d4908e289"
+  },
+  "m57_state": {
+    "decision": "ANSWER",
+    "first_divergence": "RESULT_COUNTERFACTUAL",
+    "governed": false,
+    "request_fingerprint": "228b1d85f257131ed3018f189843eb8208ca2641870aacc68fadbfb3de68dfc9",
+    "sql_hash": "666dad1fb5f7f27409efa744ce008141ac5868db7fc8ec6a1874e87e0dc2cbf0"
+  },
+  "observed_evidence": {
+    "case": "benchmark/cases/m51_expansion/{case_id}.json",
+    "m54": "benchmark/audits/m54/m54_replay_records.jsonl",
+    "m56r": "benchmark/audits/m56r/m56r_full_responses.jsonl",
+    "m57": "benchmark/audits/m57/m57_responses.jsonl",
+    "truth": "benchmark/ground_truth/m51_expansion/{case_id}.json"
+  },
+  "primary_mechanism": "SQL_GENERATION_VARIABILITY",
+  "stability_class": "RUN_UNSTABLE",
+  "task_type": "ANSWERABLE"
+}

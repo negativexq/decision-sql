@@ -368,7 +368,7 @@ Governed delta: `+33.33%`; Answerable TSA delta: `+50.00%`. This is **not a mode
 ## Response acquisition provenance
 
 Acquisition is temporally mixed: **YES**. Sources are 10 historical M51B, 24 M53.1, and 56 M53.2 responses.
-The source diagnostics are not experimental arms: M51B reused **10/10**, M53.1 fresh **24/24**, and M53.2 fresh **56/56**.
+The source diagnostics are not experimental arms: M51B reused **10/10** ({"answerable_count": 5, "answerable_tsa_correct": 4, "answerable_tsa_rate": 0.8, "count": 10, "governed_correct": 8, "governed_rate": 0.8}), M53.1 fresh **24/24** ({"answerable_count": 24, "answerable_tsa_correct": 22, "answerable_tsa_rate": 0.9166666666666666, "count": 24, "governed_correct": 22, "governed_rate": 0.9166666666666666}), and M53.2 fresh **56/56** ({"answerable_count": 31, "answerable_tsa_correct": 26, "answerable_tsa_rate": 0.8387096774193549, "count": 56, "governed_correct": 47, "governed_rate": 0.8392857142857143}).
 
 ## Token accounting
 

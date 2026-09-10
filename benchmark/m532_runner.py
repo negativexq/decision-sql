@@ -768,6 +768,30 @@ def write_analysis(
     latency = summarize_numbers(
         [row["latency_ms"] for row in fresh_rows if isinstance(row.get("latency_ms"), (int, float))]
     )
+    source_by_id = {row["case_id"]: row["response_source"] for row in result["assignment"]}
+    source_metrics = {}
+    for source in ("M51B_FROZEN_REUSED", "M531_FRESH", "M532_FRESH"):
+        source_records = [
+            row for row in result["records"] if source_by_id[row["case_id"]] == source
+        ]
+        answerable_records = [row for row in source_records if row["task_type"] == "ANSWERABLE"]
+        source_metrics[source] = {
+            "count": len(source_records),
+            "governed_correct": sum(bool(row["governed_correct"]) for row in source_records),
+            "governed_rate": sum(bool(row["governed_correct"]) for row in source_records)
+            / len(source_records),
+            "answerable_count": len(answerable_records),
+            "answerable_tsa_correct": sum(
+                bool(row["full_counterfactual_correct"]) for row in answerable_records
+            ),
+            "answerable_tsa_rate": (
+                sum(bool(row["full_counterfactual_correct"]) for row in answerable_records)
+                / len(answerable_records)
+                if answerable_records
+                else None
+            ),
+        }
+    dump(AUDIT / "m532_response_source_metrics.json", source_metrics)
     dump(
         AUDIT / "m532_fresh56_validation.json",
         {
@@ -1087,7 +1111,7 @@ Governed delta: `{metrics["governed"]["rate"] - 47 / 90:+.2%}`; Answerable TSA d
 ## Response acquisition provenance
 
 Acquisition is temporally mixed: **YES**. Sources are 10 historical M51B, 24 M53.1, and 56 M53.2 responses.
-The source diagnostics are not experimental arms: M51B reused **10/10**, M53.1 fresh **24/24**, and M53.2 fresh **56/56**.
+The source diagnostics are not experimental arms: M51B reused **10/10** ({json.dumps(source_metrics["M51B_FROZEN_REUSED"], sort_keys=True)}), M53.1 fresh **24/24** ({json.dumps(source_metrics["M531_FRESH"], sort_keys=True)}), and M53.2 fresh **56/56** ({json.dumps(source_metrics["M532_FRESH"], sort_keys=True)}).
 
 ## Token accounting
 

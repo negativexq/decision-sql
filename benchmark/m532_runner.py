@@ -546,6 +546,48 @@ def evaluate_frozen(data: dict[str, Any], fresh: dict[str, dict[str, Any]]) -> d
         {"rows": data["rows"], "services": data["services"]}, responses
     )
     metrics = m51b._metrics({"rows": data["rows"]}, responses, records, runtime_first)
+    lineage = m531r1.evaluate()
+    old_traces = {
+        row["case_id"]: row for row in load_jsonl(M51B_AUDIT / "m51b_runtime_traces.jsonl")
+    }
+    repair_ledger = {
+        row["case_id"]: row
+        for row in load_json(AUDIT.parent / "m53" / "m53_expansion_defect_ledger.json")["cases"]
+    }
+    reusable10_impact_rows = []
+    record_by_id = {row["case_id"]: row for row in records}
+    for cid in lineage["reusable"]:
+        old = bool(old_traces[cid]["governed_correct"])
+        new = bool(record_by_id[cid]["governed_correct"])
+        category = (
+            "UNCHANGED_CORRECT"
+            if old and new
+            else "UNCHANGED_INCORRECT"
+            if not old and not new
+            else "OLD_FALSE_NEGATIVE_FIXED"
+            if not old
+            else "OLD_FALSE_POSITIVE_FIXED"
+        )
+        reusable10_impact_rows.append(
+            {
+                "case_id": cid,
+                "old_pre_m53_result": old,
+                "post_m53_result": new,
+                "score_changed": old != new,
+                "change_category": category,
+                "repair_classes": repair_ledger.get(cid, {}).get(
+                    "repair_class_applied", ["R0_NO_REPAIR"]
+                ),
+                "decision": record_by_id[cid]["decision"],
+            }
+        )
+    reusable10_impact = {
+        "count": len(reusable10_impact_rows),
+        "categories": dict(
+            sorted(Counter(row["change_category"] for row in reusable10_impact_rows).items())
+        ),
+        "cases": reusable10_impact_rows,
+    }
     overlays = [
         {
             "case_id": rec["case_id"],
@@ -678,6 +720,7 @@ def evaluate_frozen(data: dict[str, Any], fresh: dict[str, dict[str, Any]]) -> d
         "runtime_first": runtime_first,
         "cf_only": cf_only,
         "response_map_hash": response_map_hash,
+        "reusable10_impact": reusable10_impact,
     }
 
 
@@ -743,10 +786,7 @@ def write_analysis(
     dump(AUDIT / "m532_fresh_response_corpus_integrity.json", integrity)
     dump(
         AUDIT / "m532_evaluator_only_reusable10_impact.json",
-        {
-            "count": 10,
-            "note": "M53.1-R.1 established exact-current reuse; no provisional 66-case impact promoted.",
-        },
+        result["reusable10_impact"],
     )
     dump(
         AUDIT / "m532_historical_comparison.json",
@@ -1026,6 +1066,7 @@ Stored as `PRELIMINARY_M532`; causal interpretation is deferred to M54.
 ## Reusable-10 evaluator repair impact
 
 Only the exact reusable 10 are eligible for historical comparison; no provisional 66-case diagnostic was promoted.
+{json.dumps(result["reusable10_impact"], indent=2, sort_keys=True)}
 
 ## Historical pre-M53 comparison
 
@@ -1042,6 +1083,7 @@ Governed delta: `{metrics["governed"]["rate"] - 47 / 90:+.2%}`; Answerable TSA d
 ## Response acquisition provenance
 
 Acquisition is temporally mixed: **YES**. Sources are 10 historical M51B, 24 M53.1, and 56 M53.2 responses.
+The source diagnostics are not experimental arms: M51B reused **10/10**, M53.1 fresh **24/24**, and M53.2 fresh **56/56**.
 
 ## Token accounting
 

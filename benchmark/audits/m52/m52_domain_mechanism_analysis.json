@@ -1,0 +1,146 @@
+{
+  "by_root": {
+    "AGGREGATION_SEMANTICS": {
+      "classification": "DOMAIN_LOCAL",
+      "domains": [
+        "insurance_claims"
+      ],
+      "failures": 1
+    },
+    "ANTI_JOIN_SEMANTICS": {
+      "classification": "DOMAIN_LOCAL",
+      "domains": [
+        "workforce_ops"
+      ],
+      "failures": 1
+    },
+    "FILTER_PLACEMENT": {
+      "classification": "CROSS_DOMAIN",
+      "domains": [
+        "marketplace_ops",
+        "workforce_ops"
+      ],
+      "failures": 2
+    },
+    "GROUP_SURVIVAL": {
+      "classification": "BROAD_SYSTEMATIC",
+      "domains": [
+        "healthcare_billing",
+        "insurance_claims",
+        "marketplace_ops",
+        "procurement_ops",
+        "workforce_ops"
+      ],
+      "failures": 9
+    },
+    "LATEST_ROW_SELECTION": {
+      "classification": "BROAD_SYSTEMATIC",
+      "domains": [
+        "healthcare_billing",
+        "insurance_claims",
+        "procurement_ops",
+        "workforce_ops"
+      ],
+      "failures": 5
+    },
+    "NULL_SEMANTICS": {
+      "classification": "DOMAIN_LOCAL",
+      "domains": [
+        "insurance_claims",
+        "procurement_ops",
+        "telecom_billing"
+      ],
+      "failures": 4
+    },
+    "POPULATION_SCOPE": {
+      "classification": "DOMAIN_LOCAL",
+      "domains": [
+        "telecom_billing"
+      ],
+      "failures": 1
+    },
+    "TEMPORAL_BOUNDARY": {
+      "classification": "CROSS_DOMAIN",
+      "domains": [
+        "healthcare_billing",
+        "telecom_billing"
+      ],
+      "failures": 3
+    }
+  },
+  "classification_rule": "DOMAIN_LOCAL=1, CROSS_DOMAIN=2, BROAD_SYSTEMATIC>=3 domains",
+  "domain_scores": {
+    "healthcare_billing": {
+      "ambiguity_correct": 2,
+      "answerable_correct": 4,
+      "authority_correct": 2,
+      "base_mismatches": 3,
+      "counterfactual_only_mismatches": 1,
+      "false_abstentions": 2,
+      "false_answers": 0,
+      "governed_correct": 9,
+      "policy_correct": 1,
+      "total": 15
+    },
+    "insurance_claims": {
+      "ambiguity_correct": 1,
+      "answerable_correct": 3,
+      "authority_correct": 3,
+      "base_mismatches": 5,
+      "counterfactual_only_mismatches": 1,
+      "false_abstentions": 1,
+      "false_answers": 0,
+      "governed_correct": 8,
+      "policy_correct": 1,
+      "total": 15
+    },
+    "marketplace_ops": {
+      "ambiguity_correct": 1,
+      "answerable_correct": 5,
+      "authority_correct": 2,
+      "base_mismatches": 2,
+      "counterfactual_only_mismatches": 2,
+      "false_abstentions": 1,
+      "false_answers": 1,
+      "governed_correct": 9,
+      "policy_correct": 1,
+      "total": 15
+    },
+    "procurement_ops": {
+      "ambiguity_correct": 0,
+      "answerable_correct": 4,
+      "authority_correct": 1,
+      "base_mismatches": 5,
+      "counterfactual_only_mismatches": 0,
+      "false_abstentions": 1,
+      "false_answers": 1,
+      "governed_correct": 6,
+      "policy_correct": 1,
+      "total": 15
+    },
+    "telecom_billing": {
+      "ambiguity_correct": 1,
+      "answerable_correct": 2,
+      "authority_correct": 2,
+      "base_mismatches": 3,
+      "counterfactual_only_mismatches": 2,
+      "false_abstentions": 3,
+      "false_answers": 1,
+      "governed_correct": 6,
+      "policy_correct": 1,
+      "total": 15
+    },
+    "workforce_ops": {
+      "ambiguity_correct": 2,
+      "answerable_correct": 4,
+      "authority_correct": 2,
+      "base_mismatches": 3,
+      "counterfactual_only_mismatches": 1,
+      "false_abstentions": 2,
+      "false_answers": 0,
+      "governed_correct": 9,
+      "policy_correct": 1,
+      "total": 15
+    }
+  }
+}

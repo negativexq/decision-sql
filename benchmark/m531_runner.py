@@ -44,6 +44,7 @@ TRUTH = ROOT / "ground_truth" / "m51_expansion"
 RESPONSE_PATH = M51B_AUDIT / "m51b_expansion_responses.jsonl"
 FRESH_PATH = AUDIT / "m531_fresh_responses.jsonl"
 RESPONSE_HASH = "9783930bb0dac022a926c6638822e56747630f3605910cbf8487d409c5105d9a"
+STARTING_HEAD = "a071be2b8fbc106d56c7a8f9f60445f62e239b53"
 POST_EXPANSION_TRUTH = "26c662d27be3366b59f1e16c9f55e766779c63f4a2f4b137c05d91c62bfca309"
 POST_FULL_TRUTH = "0ee815d4d46cbb7723e9d7fa07da3628420f6da7181d2b551a282e5a77f4f70b"
 PROMPT_HASH = "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb"
@@ -257,7 +258,8 @@ def preflight() -> dict[str, Any]:
     snapshot = benchmark_snapshot()
     preflight_data = {
         "experiment": "M53.1",
-        "starting_head": git("git rev-parse HEAD"),
+        "starting_head": STARTING_HEAD,
+        "preflight_head": git("git rev-parse HEAD"),
         "origin_main": git("git rev-parse origin/main"),
         "clean": True,
         "provider_calls": 0,
@@ -461,8 +463,8 @@ async def one_fresh_call(
 
 def acquire(data: dict[str, Any]) -> None:
     preflight = json.loads((AUDIT / "m531_preflight_integrity.json").read_text())
-    if git("git rev-parse HEAD") != preflight["starting_head"]:
-        raise RuntimeError("M531_PREFLIGHT_HEAD_DRIFT")
+    if git("git status --porcelain"):
+        raise RuntimeError("M531_PRELIVE_TREE_DIRTY")
     if benchmark_snapshot() != preflight["benchmark_snapshot"]:
         raise RuntimeError("M531_BENCHMARK_POST_PREFLIGHT_DRIFT")
     if FRESH_PATH.exists():

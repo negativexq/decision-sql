@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
 from statistics import median
@@ -840,7 +841,9 @@ def analyze() -> dict[str, Any]:
     manifest_out = {
         "experiment": "M52",
         "starting_head": STARTING_HEAD,
-        "final_head": "",
+        "final_head": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
+        ).strip(),
         "provider_calls": 0,
         "model_calls": 0,
         "response_corpus_hash": RESPONSE_HASH,

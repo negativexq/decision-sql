@@ -57,6 +57,14 @@ services:
       - "8000:8000"
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
+  ui:
+    build: ./ui
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "3000:80"
+
   jaeger:
     image: jaegertracing/all-in-one:1.62
     profiles: ["observability"]

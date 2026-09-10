@@ -45,6 +45,7 @@ from app.semantics.routing import (
 )
 from app.semantics.semantic_mapping import SemanticMappingSnapshot, render_semantic_mapping_context
 from app.semantics.service import SemanticQueryService
+from app.sql.authority import ExecutionAuthority
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError, SqlPlanFailure
 from app.sql.service import SqlSafetyService
 from app.text_to_sql.grounding import (
@@ -466,6 +467,7 @@ class TextToSqlService:
                 sql=proposal.sql,
                 source=CandidateSource.LLM,
                 correlation_id=request.correlation_id,
+                execution_authority=ExecutionAuthority.from_context(context),
             )
             planned = self.safety_service.plan(candidate)
             base: dict[str, Any] = {

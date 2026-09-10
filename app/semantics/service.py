@@ -90,6 +90,7 @@ class SemanticQueryService:
                 sql=compiled.sql,
                 source=CandidateSource.SEMANTIC_QUERY_COMPILER,
                 correlation_id=request.correlation_id,
+                execution_authority=self.safety_service.default_execution_authority,
             )
             planned = self.safety_service.plan(candidate)
             if isinstance(planned, SqlPlanFailure):

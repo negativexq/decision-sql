@@ -27,6 +27,7 @@ from app.semantics.grain_runtime import (
     GrainRuntimeStatus,
     RuntimeGrainSafetyCoordinator,
 )
+from app.sql.authority import AuthorityRejection, ExecutionAuthority, validate_authority
 from app.sql.models import (
     ExplainEstimate,
     PolicyCode,
@@ -69,6 +70,10 @@ class SqlSafetyService:
         self.reader_engine = reader_engine
         self.parser = SQLParser()
         self.catalog = catalog or build_default_catalog(Base.metadata)
+        authority_tables = [table.name for table in self.catalog.tables if table.queryable]
+        if measure_catalog is not None:
+            authority_tables.extend(entity.physical_table for entity in measure_catalog.entities)
+        self.default_execution_authority = ExecutionAuthority.from_table_names(authority_tables)
         self.policy = SQLPolicy(self.catalog)
         self.cost_gate = QueryCostGate()
         self.executor = ReadOnlyExecutor(
@@ -121,6 +126,19 @@ class SqlSafetyService:
                 len(self._referenced_tables(parsed.expression)),
             )
 
+        authority = candidate.execution_authority or self.default_execution_authority
+        with self.tracer.start_as_current_span("decision_sql.authority") as span:
+            authority_rejection = validate_authority(parsed.expression, authority)
+            if authority_rejection:
+                span.set_attribute("decision_sql.authority_outcome", "REJECTED")
+                span.set_attribute("decision_sql.authority_code", authority_rejection.code)
+                span.set_attribute(
+                    "decision_sql.unauthorized_relation_count",
+                    len(authority_rejection.unauthorized_relations),
+                )
+                return self._authority_failure(authority_rejection)
+            span.set_attribute("decision_sql.authority_outcome", "ALLOWED")
+
         parsed_for_plan = parsed
         if self.grain_normalization_enabled:
             assert self.grain_coordinator is not None
@@ -148,6 +166,9 @@ class SqlSafetyService:
                         rejection=post_rejection,
                         semantic_reason="POST_NORMALIZATION_POLICY_REJECTED",
                     )
+                post_authority_rejection = validate_authority(parsed_for_plan.expression, authority)
+                if post_authority_rejection:
+                    return self._authority_failure(post_authority_rejection)
                 if decision.output_diagnostic.code.value not in {"PASS", "NOT_APPLICABLE"}:
                     return SqlPlanFailure(
                         status=SqlSafetyStatus.SEMANTIC_REJECTION,
@@ -274,6 +295,8 @@ class SqlSafetyService:
             if isinstance(result, SqlPlanFailure) and result.rejection
             else result.semantic_reason
             if isinstance(result, SqlPlanFailure) and result.semantic_reason
+            else result.authority_rejection.code
+            if isinstance(result, SqlPlanFailure) and result.authority_rejection
             else result.status.value
             if isinstance(result, SqlPlanFailure)
             else None
@@ -312,6 +335,15 @@ class SqlSafetyService:
             status=SqlSafetyStatus.POLICY_REJECTION,
             failure_stage=FailureStage.POLICY_REJECTION,
             rejection=rejection,
+        )
+
+    @staticmethod
+    def _authority_failure(rejection: AuthorityRejection) -> SqlPlanFailure:
+        return SqlPlanFailure(
+            status=SqlSafetyStatus.AUTHORITY_REJECTION,
+            failure_stage=FailureStage.AUTHORITY_REJECTION,
+            error=rejection.message,
+            authority_rejection=rejection,
         )
 
     @staticmethod

@@ -6,12 +6,14 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.domain import FailureStage
+from app.sql.authority import AuthorityRejection, ExecutionAuthority
 
 
 class SqlSafetyStatus(StrEnum):
     ALLOWED = "ALLOWED"
     SQL_PARSE_ERROR = "SQL_PARSE_ERROR"
     POLICY_REJECTION = "POLICY_REJECTION"
+    AUTHORITY_REJECTION = "AUTHORITY_REJECTION"
     SEMANTIC_REJECTION = "SEMANTIC_REJECTION"
     QUERY_COST_REJECTION = "QUERY_COST_REJECTION"
     EXECUTION_ERROR = "EXECUTION_ERROR"
@@ -35,6 +37,7 @@ class SqlCandidate(BaseModel):
     sql: str = Field(min_length=1)
     source: CandidateSource = CandidateSource.INTERNAL
     correlation_id: str | None = None
+    execution_authority: ExecutionAuthority | None = None
 
 
 class PolicyCode(StrEnum):
@@ -102,6 +105,7 @@ class SqlPlanFailure(BaseModel):
     failure_stage: FailureStage | None = None
     error: str | None = None
     rejection: PolicyRejection | None = None
+    authority_rejection: AuthorityRejection | None = None
     estimate: ExplainEstimate | None = None
     semantic_reason: str | None = None
 

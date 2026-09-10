@@ -1,0 +1,178 @@
+{
+  "benchmark_semantics_modified": false,
+  "historical_test_failure_ids": [
+    "test_m34_1_pilot_sources_match_pre_audit_hashes",
+    "test_m36_2_has_exactly_30_cases_and_frozen_m35r1_is_untouched",
+    "test_m39_frozen_request_contract_has_90_cases_and_no_leakage",
+    "test_m42_prompt_clarifies_authorized_traversal_without_case_hints",
+    "test_m44_prompt_has_only_generic_fanout_language",
+    "test_m531_post_m53_truth_and_response_hashes_are_frozen",
+    "test_frozen_schedule_and_partition_validate_without_calls",
+    "test_m95r_frozen_sources_remain_unchanged",
+    "test_m95r_run_meets_the_exploratory_boundary_gates",
+    "test_m96_strategy_audit_accepts_fixed_v1_primary_shadow_protocol",
+    "test_frozen_v1_and_v2_comparator_hashes_are_unchanged"
+  ],
+  "historical_test_failures": 11,
+  "historical_test_failures_are_m55_regressions": false,
+  "judges": 0,
+  "llm_calls": 0,
+  "m54_conclusions_challenged": [],
+  "m54_manifest_final_head": "f8056d21237f0aa75ecf004ef6c4a25227b6735b",
+  "m54_manifest_pointer_conflict": true,
+  "m54_metrics_preserved": {
+    "ambiguity": {
+      "correct": 6,
+      "total": 7
+    },
+    "answer_selections": 62,
+    "answerable_answer_selections": 60,
+    "answerable_runtime_tsa": {
+      "correct": 57,
+      "rate": 0.9193548387096774,
+      "total": 62
+    },
+    "authority": {
+      "correct": 13,
+      "total": 15
+    },
+    "base_correct": {
+      "correct": 58,
+      "rate": 0.9354838709677419,
+      "total": 62
+    },
+    "cf_only": {
+      "count": 1,
+      "ids": [
+        "healthcare_10"
+      ]
+    },
+    "conditional_answer_correct": 57,
+    "domains": {
+      "healthcare_billing": {
+        "answerable_total": 10,
+        "answerable_tsa_correct": 9,
+        "base_correct": 10,
+        "governed_correct": 14,
+        "total": 15
+      },
+      "insurance_claims": {
+        "answerable_total": 10,
+        "answerable_tsa_correct": 10,
+        "base_correct": 10,
+        "governed_correct": 15,
+        "total": 15
+      },
+      "marketplace_ops": {
+        "answerable_total": 11,
+        "answerable_tsa_correct": 11,
+        "base_correct": 11,
+        "governed_correct": 15,
+        "total": 15
+      },
+      "procurement_ops": {
+        "answerable_total": 10,
+        "answerable_tsa_correct": 9,
+        "base_correct": 9,
+        "governed_correct": 12,
+        "total": 15
+      },
+      "telecom_billing": {
+        "answerable_total": 11,
+        "answerable_tsa_correct": 10,
+        "base_correct": 10,
+        "governed_correct": 13,
+        "total": 15
+      },
+      "workforce_ops": {
+        "answerable_total": 10,
+        "answerable_tsa_correct": 8,
+        "base_correct": 8,
+        "governed_correct": 13,
+        "total": 15
+      }
+    },
+    "false_abstentions": [
+      "telecom_10",
+      "workforce_10"
+    ],
+    "false_answers": [
+      "procurement_03",
+      "telecom_15"
+    ],
+    "first_divergence": {
+      "DECISION_FALSE_ABSTENTION": 2,
+      "DECISION_FALSE_ANSWER": 2,
+      "DECISION_WRONG_BLOCK_TYPE": 1,
+      "GRAIN": 1,
+      "RESULT_BASE": 1,
+      "RESULT_COUNTERFACTUAL": 1
+    },
+    "full_counterfactual_correct": {
+      "correct": 57,
+      "rate": 0.9193548387096774,
+      "total": 62
+    },
+    "governed": {
+      "correct": 82,
+      "rate": 0.9111111111111111,
+      "total": 90
+    },
+    "policy": {
+      "correct": 6,
+      "total": 6
+    },
+    "task_distribution": {
+      "AMBIGUOUS": 7,
+      "ANSWERABLE": 62,
+      "AUTHORITY_BLOCKED": 15,
+      "POLICY_BLOCKED": 6
+    },
+    "unauthorized_answers": 1
+  },
+  "m54_primary_class_counts": {
+    "GOVERNANCE_DECISION": 3,
+    "MODEL_DECISION": 2,
+    "MODEL_SQL_SEMANTICS": 3
+  },
+  "m54_verdict": "M54_REPAIRS_AND_REPLAY_COMPLETE",
+  "m55_mechanism_counts": {
+    "AMBIGUITY_OVERDETECTION": 2,
+    "AUTHORITY_AS_AMBIGUITY": 1,
+    "FANOUT_DOUBLE_COUNTING": 1,
+    "MISSING_GOVERNED_PREDICATE": 1,
+    "PLAUSIBLE_SCHEMA_INFERENCE": 1,
+    "ROW_COUNT_FOR_DURATION": 1,
+    "UNAUTHORIZED_RELATION_PROPOSAL": 1
+  },
+  "milestone": "M55",
+  "model_calls": 0,
+  "official_score_published": false,
+  "official_score_source": "M54 frozen result only",
+  "origin_main": "47396e57bc8fd79e5a04b02448e7ae4940ccace4",
+  "pre_m55_working_tree_clean": true,
+  "prompt_gap_counts": {
+    "PROMPT_RULE_PRESENT_BUT_IGNORED": 6,
+    "PROMPT_RULE_TOO_WEAK": 2
+  },
+  "prompt_modified": false,
+  "provider_calls": 0,
+  "repairs": 0,
+  "residual_case_count": 8,
+  "residual_case_ids": [
+    "telecom_10",
+    "workforce_10",
+    "procurement_03",
+    "procurement_13",
+    "telecom_15",
+    "procurement_05",
+    "workforce_02",
+    "healthcare_10"
+  ],
+  "response_corpora_modified": false,
+  "retries": 0,
+  "runtime_semantics_modified": false,
+  "selectors": 0,
+  "starting_head": "47396e57bc8fd79e5a04b02448e7ae4940ccace4",
+  "verdict": "M55_RESIDUAL_MODEL_FORENSICS_COMPLETE"
+}

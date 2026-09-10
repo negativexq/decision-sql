@@ -1,0 +1,58 @@
+{
+  "case_gaps": [
+    {
+      "case_id": "telecom_10",
+      "evidence": "Observed: the frozen response selected NEEDS_CLARIFICATION with reason_code AMBIGUOUS_SEMANTICS and supplied no SQL. Inference: the question and visible context already identify market, June's half-open interval, total megabytes, and the subscribers-to-usage relationship; the abstention therefore over-detects ambiguity. No model rationale was captured, so the internal cause is not directly observable.",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:29-36"
+    },
+    {
+      "case_id": "workforce_10",
+      "evidence": "Observed: the frozen response selected NEEDS_CLARIFICATION with reason_code AMBIGUOUS_SEMANTICS and supplied no SQL. Inference: the question explicitly fixes per-employee population, payroll-adjustment measure, zero for no qualifying rows, and inclusion of entities with no qualifying rows. This is the same abstention pattern as telecom_10, with more explicit population language. No model rationale was captured.",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:29-36"
+    },
+    {
+      "case_id": "procurement_03",
+      "evidence": "Observed: the frozen SQL filters suppliers.active = TRUE and the visible attribute describes active sourcing. Inference: active is a plausible schema affordance, but no governed rule maps current supplier to that field; the audit evidence identifies active-versus-recent-approval interpretations. The model answered by inferring business meaning from schema metadata rather than preserving the unresolved semantic distinction.",
+      "prompt_gap_class": "PROMPT_RULE_TOO_WEAK",
+      "relevant_prompt_section": "governed_context_v1.md:3-11,31-36"
+    },
+    {
+      "case_id": "procurement_13",
+      "evidence": "Observed: the request asks for supplier-owner email and the frozen response selects NEEDS_CLARIFICATION. The case evidence identifies the external_supplier_trap relationship as unauthorized and no authorized alternative exists. Inference: the model treated an understood but unauthorized dependency as semantic uncertainty, confusing 'what does the user mean?' with 'the requested relation is not available to this request.'",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:5-11,31-36,55"
+    },
+    {
+      "case_id": "telecom_15",
+      "evidence": "Observed: the frozen response emits ANSWER with SELECT subscriber_id FROM external_directory. The visible catalog describes that table as an untrusted external directory and the external subscriber relationship is unauthorized. Inference: the model proposed a technically visible but request-unauthorized relation instead of BLOCKED_AUTHORITY. M52.S then correctly rejected the relation before database interaction; that runtime protection does not make the model decision correct.",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:5-11,31-36"
+    },
+    {
+      "case_id": "procurement_05",
+      "evidence": "Observed: the candidate joins requisitions to approvals and sums the requisition-level estimated_amount. The approval relationship is many approvals to one requisition, and the M54 duplicate-approval fixture distinguishes the unsafe result. Inference: the SQL lets a qualifying child row multiply a parent measure, so SUM is not invariant at the requested department grain. The runtime GRAIN rejection is an appropriate safety response, not the causal model failure.",
+      "prompt_gap_class": "PROMPT_RULE_TOO_WEAK",
+      "relevant_prompt_section": "governed_context_v1.md:20-27"
+    },
+    {
+      "case_id": "workforce_02",
+      "evidence": "Observed: the candidate uses COUNT(a.absence_id) after filtering approved absences. The visible temporal rule and question require inclusive calendar days, and the two-day approved absence counterfactual exposes the mismatch: one row contributes one under COUNT but two under (ends_on - starts_on)+1.",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:3,29-36,63"
+    },
+    {
+      "case_id": "healthcare_10",
+      "evidence": "Observed: the candidate ranks SUM(c.amount) but has no c.status='posted' predicate. The visible charge/payment rules define posted status, and the open-charge counterfactual changes the result while BASE happens to match. Inference: BASE success was accidental under non-discriminating data; the counterfactual exposes omission of a required governed predicate. Ranking syntax is not independently demonstrated to be wrong in the frozen evidence.",
+      "prompt_gap_class": "PROMPT_RULE_PRESENT_BUT_IGNORED",
+      "relevant_prompt_section": "governed_context_v1.md:3,29-36"
+    }
+  ],
+  "gap_counts": {
+    "PROMPT_RULE_PRESENT_BUT_IGNORED": 6,
+    "PROMPT_RULE_TOO_WEAK": 2
+  },
+  "prompt_path": "benchmark/prompts/governed_context_v1.md",
+  "prompt_sha256": "9b9a860022978cf3dd53d4d5762a3dd9df785e489ca7d8575143507e1c0138f0"
+}

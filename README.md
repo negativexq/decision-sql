@@ -92,6 +92,16 @@ flowchart TD
 The evaluator is outside the production trust boundary. It scores behavior; it
 does not route requests or grant execution authority.
 
+## Operator playground
+
+The local operator console presents a real natural-language request lifecycle:
+model proposal, deterministic gates, EXPLAIN/cost admission, read-only
+execution, bounded results, and trace events. Start it with
+`docker compose up --build`; the UI is at `http://localhost:3000` and the API
+at `http://localhost:8000`. It includes presentation-safe successful,
+clarification, policy, and authority-rejection scenarios without exposing
+benchmark truth or accepting raw SQL.
+
 ### What the model owns
 
 The model owns the first-pass typed decision and, when it chooses `ANSWER`, the

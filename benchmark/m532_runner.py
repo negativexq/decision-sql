@@ -546,6 +546,9 @@ def evaluate_frozen(data: dict[str, Any], fresh: dict[str, dict[str, Any]]) -> d
         {"rows": data["rows"], "services": data["services"]}, responses
     )
     metrics = m51b._metrics({"rows": data["rows"]}, responses, records, runtime_first)
+    metrics["answerable_answer_selections"] = sum(
+        row["task_type"] == "ANSWERABLE" and row["decision"] == "ANSWER" for row in records
+    )
     lineage = m531r1.evaluate()
     old_traces = {
         row["case_id"]: row for row in load_jsonl(M51B_AUDIT / "m51b_runtime_traces.jsonl")
@@ -658,6 +661,7 @@ def evaluate_frozen(data: dict[str, Any], fresh: dict[str, dict[str, Any]]) -> d
             "answerable_runtime_tsa": metrics["answerable_runtime_tsa"],
             "base_correct": metrics["base_correct"],
             "answer_selections": metrics["answer_selections"],
+            "answerable_answer_selections": metrics["answerable_answer_selections"],
             "conditional_answer_correct": metrics["conditional_answer_correct"],
             "wrong_refusals": metrics["wrong_refusals"],
             "counterfactual_only": {"count": len(cf_only), "ids": cf_only},
@@ -1021,7 +1025,7 @@ Corpus hash: `{integrity["corpus_hash"]}`. Responses were persisted write-once b
 
 ## Conditional ANSWER correctness
 
-ANSWER decisions: {metrics["answer_selections"]}; correct answerable ANSWER executions: {metrics["conditional_answer_correct"]}; false abstentions: {metrics["wrong_refusals"]}.
+ANSWER decisions: {metrics["answer_selections"]} total, {metrics["answerable_answer_selections"]} on ANSWERABLE cases; correct answerable ANSWER executions: {metrics["conditional_answer_correct"]}/{metrics["answerable_answer_selections"]}; false abstentions: {metrics["wrong_refusals"]}.
 
 ## False abstentions
 

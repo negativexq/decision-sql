@@ -5,7 +5,7 @@ export function SqlViewer({ sql }: { sql: string | null }) {
   if (!sql) return <div className="empty-box">No SQL proposal entered the runtime.</div>;
   return (
     <div className="sql-box">
-      <button className="copy-button" onClick={() => { void navigator.clipboard.writeText(sql); setCopied(true); }}>
+      <button type="button" className="copy-button" onClick={() => { void navigator.clipboard.writeText(sql); setCopied(true); }}>
         {copied ? "Copied" : "Copy SQL"}
       </button>
       <pre><code>{sql}</code></pre>

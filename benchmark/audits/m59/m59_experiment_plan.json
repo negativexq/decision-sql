@@ -1,0 +1,1009 @@
+{
+  "abort_rules": [
+    "provenance mismatch before call",
+    "candidate structural delta outside contract content",
+    "benchmark or runtime drift",
+    "second attempt"
+  ],
+  "arms": {
+    "CANDIDATE_D": {
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "contract_version": "CANDIDATE_D",
+      "delta_from_control": "contract content only",
+      "prompt": "# Decision-SQL governed context instructions v1\n\nYou are answering one independent Decision-SQL benchmark question. Use only the question and the complete `GOVERNED_CONTEXT_V1` supplied with it.\n\n## Governance rules\n\n- Use only relationships listed in `authorized_relationships`.\n- Do not infer additional relationships from matching column names, matching data types, overlapping values, numeric identifiers, email addresses, codes, or apparent foreign-key structure.\n- If answering the request requires a relationship that is not authorized, return `BLOCKED_AUTHORITY` and no SQL.\n- If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.\n- If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.\n\n## Typed JSON scalar semantics\n\n- When the governed context documents a JSON-derived attribute with a semantic SQL type such as `NUMERIC`, use that documented semantic type when constructing SQL.\n- PostgreSQL text-returning JSON extraction operators or expressions, including `->>` and `#>>`, produce text. If the documented attribute is numeric, explicitly coerce the extracted scalar to an appropriate numeric SQL type before numeric comparison, arithmetic, aggregation, numeric ordering, or returning it where the requested result is semantically numeric.\n- Do not infer a JSON path or type that is not explicitly documented in the governed context.\n- Use the exact documented JSON path and documented semantic type.\n\n## Decisions and output\n\nAllowed decisions are exactly:\n\n- `ANSWER`: the question is sufficiently specified and can be answered using only the visible schema, attributes, authorized relationships, metrics, business rules, temporal rules, and policy.\n- `BLOCKED_AUTHORITY`: the intent is clear, but an authority or relationship required by the request is absent from the authorized context.\n- `NEEDS_CLARIFICATION`: materially different interpretations remain unresolved.\n- `BLOCKED_POLICY`: the requested operation violates the visible read-only policy.\n\nReturn one JSON object with exactly these four fields:\n\n```json\n{\n  \"case_id\": \"the supplied case identifier\",\n  \"decision\": \"ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY\",\n  \"sql\": \"one PostgreSQL SELECT statement or null\",\n  \"reason_code\": null\n}\n```\n\nCopy the supplied Case ID exactly into `case_id`. Do not invent, modify, or infer a different identifier.\n\nFor `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` statement and `reason_code` must be `null`. Do not include commentary, multiple candidates, analysis, a logical plan, a confidence value, or a second statement in `sql`.\n\nThe final SQL projection is part of the answer. Return only the fields requested by the question and visible task semantics. Do not add descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. Fields used only to filter, join, group, order, qualify, or calculate an intermediate value must not appear automatically. When the question names output fields in order, return them in that order. SQL aliases do not change semantic identity, and row ordering is separate from column ordering.\n\nFor `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: \"MISSING_AUTHORIZED_RELATIONSHIP\"`.\n\nFor `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: \"AMBIGUOUS_SEMANTICS\"`.\n\nFor `BLOCKED_POLICY`, use `sql: null` and `reason_code: \"READ_ONLY_POLICY\"`.\n\nThe only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.\n\nThe database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each case is independent: do not use memory from another case and do not expect benchmark feedback.\n\n\n## Final contract check before emitting a decision\n\n1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.\n2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.\n3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.\n\nDo not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.\n\n\n## Decision and governance hierarchy\n\nUse this order for the typed decision:\n\n1. If a material semantic variable required for the result has multiple materially different interpretations supported by the visible governed context, return `NEEDS_CLARIFICATION`. Before doing so, identify the exact unresolved variable; do not invent ambiguity merely because another interpretation is imaginable.\n2. If the requested meaning is clear but a required entity, attribute, or relationship is outside the authorized context, return `BLOCKED_AUTHORITY`, not clarification and not an SQL proposal using that dependency.\n3. Otherwise, answer using only semantics established by the question and governed context.\n\nSchema structure and column names describe available data shape, but do not by themselves establish business-rule synonyms. Do not equate terms such as active, current, status, owner, or type unless the governed context establishes that mapping or the question directly defines the field semantics. Every SQL dependency must be traceable to the authorized context.\n"
+    },
+    "CANDIDATE_E": {
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "contract_version": "CANDIDATE_E",
+      "delta_from_control": "contract content only",
+      "prompt": "# Decision-SQL governed context instructions v1\n\nYou are answering one independent Decision-SQL benchmark question. Use only the question and the complete `GOVERNED_CONTEXT_V1` supplied with it.\n\n## Governance rules\n\n- Use only relationships listed in `authorized_relationships`.\n- Do not infer additional relationships from matching column names, matching data types, overlapping values, numeric identifiers, email addresses, codes, or apparent foreign-key structure.\n- If answering the request requires a relationship that is not authorized, return `BLOCKED_AUTHORITY` and no SQL.\n- If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.\n- If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.\n\n## Typed JSON scalar semantics\n\n- When the governed context documents a JSON-derived attribute with a semantic SQL type such as `NUMERIC`, use that documented semantic type when constructing SQL.\n- PostgreSQL text-returning JSON extraction operators or expressions, including `->>` and `#>>`, produce text. If the documented attribute is numeric, explicitly coerce the extracted scalar to an appropriate numeric SQL type before numeric comparison, arithmetic, aggregation, numeric ordering, or returning it where the requested result is semantically numeric.\n- Do not infer a JSON path or type that is not explicitly documented in the governed context.\n- Use the exact documented JSON path and documented semantic type.\n\n## Decisions and output\n\nAllowed decisions are exactly:\n\n- `ANSWER`: the question is sufficiently specified and can be answered using only the visible schema, attributes, authorized relationships, metrics, business rules, temporal rules, and policy.\n- `BLOCKED_AUTHORITY`: the intent is clear, but an authority or relationship required by the request is absent from the authorized context.\n- `NEEDS_CLARIFICATION`: materially different interpretations remain unresolved.\n- `BLOCKED_POLICY`: the requested operation violates the visible read-only policy.\n\nReturn one JSON object with exactly these four fields:\n\n```json\n{\n  \"case_id\": \"the supplied case identifier\",\n  \"decision\": \"ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY\",\n  \"sql\": \"one PostgreSQL SELECT statement or null\",\n  \"reason_code\": null\n}\n```\n\nCopy the supplied Case ID exactly into `case_id`. Do not invent, modify, or infer a different identifier.\n\nFor `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` statement and `reason_code` must be `null`. Do not include commentary, multiple candidates, analysis, a logical plan, a confidence value, or a second statement in `sql`.\n\nThe final SQL projection is part of the answer. Return only the fields requested by the question and visible task semantics. Do not add descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. Fields used only to filter, join, group, order, qualify, or calculate an intermediate value must not appear automatically. When the question names output fields in order, return them in that order. SQL aliases do not change semantic identity, and row ordering is separate from column ordering.\n\nFor `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: \"MISSING_AUTHORIZED_RELATIONSHIP\"`.\n\nFor `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: \"AMBIGUOUS_SEMANTICS\"`.\n\nFor `BLOCKED_POLICY`, use `sql: null` and `reason_code: \"READ_ONLY_POLICY\"`.\n\nThe only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.\n\nThe database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each case is independent: do not use memory from another case and do not expect benchmark feedback.\n\n\n## Final contract check before emitting a decision\n\n1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.\n2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.\n3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.\n\nDo not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.\n\n\n## Decision and governance hierarchy\n\nUse this order for the typed decision:\n\n1. If a material semantic variable required for the result has multiple materially different interpretations supported by the visible governed context, return `NEEDS_CLARIFICATION`. Before doing so, identify the exact unresolved variable; do not invent ambiguity merely because another interpretation is imaginable.\n2. If the requested meaning is clear but a required entity, attribute, or relationship is outside the authorized context, return `BLOCKED_AUTHORITY`, not clarification and not an SQL proposal using that dependency.\n3. Otherwise, answer using only semantics established by the question and governed context.\n\nSchema structure and column names describe available data shape, but do not by themselves establish business-rule synonyms. Do not equate terms such as active, current, status, owner, or type unless the governed context establishes that mapping or the question directly defines the field semantics. Every SQL dependency must be traceable to the authorized context.\n\n\n## Silent semantic consistency check\n\nBefore emitting the structured result, silently verify:\n\n- population: the SQL preserves the requested population;\n- measure: expressions compute the requested measure rather than a proxy;\n- grain: joins cannot multiply a measure before aggregation;\n- predicates: required governed status, state, decision, and time rules are present;\n- authority: every relation and relationship used is authorized in the visible context;\n- projection: output fields match the requested semantics;\n- temporal behavior: duration, latest, current, and as-of requests use their governed operation.\n\nDo not expose this checklist or add fields to the response. Emit only the existing structured result.\n"
+    },
+    "CONTROL_C": {
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "contract_version": "CONTROL_C",
+      "delta_from_control": "none",
+      "prompt": "# Decision-SQL governed context instructions v1\n\nYou are answering one independent Decision-SQL benchmark question. Use only the question and the complete `GOVERNED_CONTEXT_V1` supplied with it.\n\n## Governance rules\n\n- Use only relationships listed in `authorized_relationships`.\n- Do not infer additional relationships from matching column names, matching data types, overlapping values, numeric identifiers, email addresses, codes, or apparent foreign-key structure.\n- If answering the request requires a relationship that is not authorized, return `BLOCKED_AUTHORITY` and no SQL.\n- If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.\n- If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.\n\n## Typed JSON scalar semantics\n\n- When the governed context documents a JSON-derived attribute with a semantic SQL type such as `NUMERIC`, use that documented semantic type when constructing SQL.\n- PostgreSQL text-returning JSON extraction operators or expressions, including `->>` and `#>>`, produce text. If the documented attribute is numeric, explicitly coerce the extracted scalar to an appropriate numeric SQL type before numeric comparison, arithmetic, aggregation, numeric ordering, or returning it where the requested result is semantically numeric.\n- Do not infer a JSON path or type that is not explicitly documented in the governed context.\n- Use the exact documented JSON path and documented semantic type.\n\n## Decisions and output\n\nAllowed decisions are exactly:\n\n- `ANSWER`: the question is sufficiently specified and can be answered using only the visible schema, attributes, authorized relationships, metrics, business rules, temporal rules, and policy.\n- `BLOCKED_AUTHORITY`: the intent is clear, but an authority or relationship required by the request is absent from the authorized context.\n- `NEEDS_CLARIFICATION`: materially different interpretations remain unresolved.\n- `BLOCKED_POLICY`: the requested operation violates the visible read-only policy.\n\nReturn one JSON object with exactly these four fields:\n\n```json\n{\n  \"case_id\": \"the supplied case identifier\",\n  \"decision\": \"ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY\",\n  \"sql\": \"one PostgreSQL SELECT statement or null\",\n  \"reason_code\": null\n}\n```\n\nCopy the supplied Case ID exactly into `case_id`. Do not invent, modify, or infer a different identifier.\n\nFor `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` statement and `reason_code` must be `null`. Do not include commentary, multiple candidates, analysis, a logical plan, a confidence value, or a second statement in `sql`.\n\nThe final SQL projection is part of the answer. Return only the fields requested by the question and visible task semantics. Do not add descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. Fields used only to filter, join, group, order, qualify, or calculate an intermediate value must not appear automatically. When the question names output fields in order, return them in that order. SQL aliases do not change semantic identity, and row ordering is separate from column ordering.\n\nFor `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: \"MISSING_AUTHORIZED_RELATIONSHIP\"`.\n\nFor `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: \"AMBIGUOUS_SEMANTICS\"`.\n\nFor `BLOCKED_POLICY`, use `sql: null` and `reason_code: \"READ_ONLY_POLICY\"`.\n\nThe only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.\n\nThe database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each case is independent: do not use memory from another case and do not expect benchmark feedback.\n\n\n## Final contract check before emitting a decision\n\n1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.\n2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.\n3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.\n\nDo not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.\n"
+    }
+  },
+  "benchmark_semantics_modified": false,
+  "canonical_builder": "benchmark.m51b_runner._requests -> _provider_request",
+  "canonical_builder_source_hash": "ff695c5a4f9b26ffe9d88f30ee9c4a917c90e670e72b70a7b3739a9ed41b8a23",
+  "experiment": "M59",
+  "full_run_call_budget_if_challenger_selected": 90,
+  "full_run_case_count": 90,
+  "hard_constraints": {
+    "authority_not_below_control": true,
+    "policy_not_below_control": true,
+    "runtime_safety_unchanged": true,
+    "stable_fixes_preserved": [
+      "workforce_10",
+      "procurement_05",
+      "workforce_02"
+    ]
+  },
+  "invalid_prior_m56_evidence_excluded": true,
+  "model": "gpt-5.6-luna",
+  "provider": "OpenAICompatibleProvider",
+  "reasoning": "none",
+  "response_schema_hash": "010aa47f4fcb61eeb54976642641414170df4a73d29cb2027342773987011a46",
+  "retry_policy": {
+    "calls_per_case_per_arm": 1,
+    "retries": 0
+  },
+  "runtime_semantics_modified": false,
+  "secondary_metrics": [
+    "answerable_tsa",
+    "authority_correct",
+    "ambiguity_correct",
+    "policy_correct"
+  ],
+  "selection_call_budget": 90,
+  "selection_case_count": 30,
+  "selection_case_ids": [
+    "healthcare_02",
+    "healthcare_08",
+    "healthcare_04",
+    "healthcare_03",
+    "healthcare_10",
+    "insurance_05",
+    "insurance_09",
+    "insurance_03",
+    "insurance_01",
+    "insurance_10",
+    "marketplace_04",
+    "marketplace_11",
+    "marketplace_02",
+    "marketplace_15",
+    "marketplace_13",
+    "procurement_03",
+    "procurement_13",
+    "procurement_05",
+    "procurement_04",
+    "procurement_08",
+    "telecom_10",
+    "telecom_15",
+    "telecom_01",
+    "telecom_04",
+    "telecom_07",
+    "workforce_10",
+    "workforce_02",
+    "workforce_05",
+    "workforce_03",
+    "workforce_11"
+  ],
+  "selection_metric": "governed_correct_count",
+  "selection_schedule": [
+    {
+      "arm": "CONTROL_C",
+      "case_id": "healthcare_02",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "healthcare_billing",
+      "ordinal": 1,
+      "provider_request_fingerprint": "663bfb157b9d24b5f00ea267009d5c119dd9c39ca0adff8aa4f77a77dda45b34",
+      "request_sha256": "6320ba8b4df5c046e29356ce59fd3e002e8674743bb20e519c910c3d0fddf595",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "healthcare_08",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "healthcare_billing",
+      "ordinal": 2,
+      "provider_request_fingerprint": "dc47664b619deb07a96eac0d0c400bfa9b13862cc39310227a9d8209ed2620c8",
+      "request_sha256": "81a8ef314bf7a49358d916393d8ddeabcf3b054e1cfd09dcb2a19adba2b1bf40",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "healthcare_04",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "healthcare_billing",
+      "ordinal": 3,
+      "provider_request_fingerprint": "f3f254940ffece8e0a5bff763f1432334e739a9571e4f8081097f207d3431251",
+      "request_sha256": "096223675156fce771b9572a0f756a813e52489bf1fb1b2abf40a394fc45011d",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "healthcare_03",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "healthcare_billing",
+      "ordinal": 4,
+      "provider_request_fingerprint": "5b7c74737894cf20654e986bdcc7d26ac2360f46cf65f2eed38e7be92fdef368",
+      "request_sha256": "169b7b4135a88fb1d29aa1f0e66caaa047d15b7978d115a13cdc82b75015afb0",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "healthcare_10",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "healthcare_billing",
+      "ordinal": 5,
+      "provider_request_fingerprint": "346d26e7e6440d698919119ec6d55768b46400b4adb240b55f9ccccce32206a7",
+      "request_sha256": "f6258dfd8b32a4d1f297fcaf999dce020b8f994d97573477f0d12227aee8fba2",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "insurance_05",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "insurance_claims",
+      "ordinal": 6,
+      "provider_request_fingerprint": "a45ac6d25efb835ec1911688be256671df422b46ca1d57d418be7722e41df890",
+      "request_sha256": "25267df9ebe051bc095c68446ee9189199280314cd86a4538b12f1b9676bea33",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "insurance_09",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "insurance_claims",
+      "ordinal": 7,
+      "provider_request_fingerprint": "21a6ec4da88b560dcf63c077ab0a48a5bfc28924b2d67b7147276a083e8f795f",
+      "request_sha256": "91368b65beed0c613e3fbadf9c8f1d482413d3308bb4c8770db075acabacd22e",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "insurance_03",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "insurance_claims",
+      "ordinal": 8,
+      "provider_request_fingerprint": "6cd00291976ea8a21e1034413f90aacad3ce0126f3f74cf5f262a18323e412c5",
+      "request_sha256": "fba3a13d5f24addd7a77c671ff45ff37f7f088048371cdbd1a41fc4c3a6c2c19",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "insurance_01",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "insurance_claims",
+      "ordinal": 9,
+      "provider_request_fingerprint": "f1ae3d527008836255d36af8866ee4d731b5ed74c7d3efa4a44fc830b21fe1c4",
+      "request_sha256": "8304f5b86c587c5ae8d3bf478bd368faec02e5670a75b3809fe1533417d6a22a",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "insurance_10",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "insurance_claims",
+      "ordinal": 10,
+      "provider_request_fingerprint": "67ff88e59538695f82a31dcf7050ecca3d477e02266ea86dd5af9afbe57ffc60",
+      "request_sha256": "39957b753eb0b03f3a50a16d1152ce904cbc61c8417f2f62812812af89dcca1e",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "marketplace_04",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "marketplace_ops",
+      "ordinal": 11,
+      "provider_request_fingerprint": "90b94afea3d0641b253d6da7bbf93cc5d49c24e767c590e0fc6969b3c1706e68",
+      "request_sha256": "0e3ec2ea578ef264834c9e1e425b948cb28059a90c4c8944c7c70b6dcd89c143",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "marketplace_11",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "marketplace_ops",
+      "ordinal": 12,
+      "provider_request_fingerprint": "99cbceeafce8c1396831e501ca28e2662fa71a2e3b2a631d17ee2a5c24c4d435",
+      "request_sha256": "fcebd78cef45caf556cf853bb8f1e6575d39546f76101e580fe02e7a9086efaf",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "marketplace_02",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "marketplace_ops",
+      "ordinal": 13,
+      "provider_request_fingerprint": "937468b640c15dbe23be84133cb7d263ddde77d3b16bc99dad5c3f019f662ae1",
+      "request_sha256": "82401c257fa9f68f2af86078d208968286f26adc5afd12ba5c717329e7bb75b8",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "marketplace_15",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "marketplace_ops",
+      "ordinal": 14,
+      "provider_request_fingerprint": "c0300339fe513291f42f453b106f8b45b571b7e668082ae78eca18b1158c0ee9",
+      "request_sha256": "0292fcb01208678a939600b1e9fbf73000ddd7d080c4c6ef46538509f5a9996d",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "marketplace_13",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "marketplace_ops",
+      "ordinal": 15,
+      "provider_request_fingerprint": "49e42e867786eb98063a3e8439b81ea4bb850f7968e4715ba25fa92f343af3ce",
+      "request_sha256": "84988188fe400ca3d41da1c6c5539510b374ad948ec92782be1fb948047eb846",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "procurement_03",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "procurement_ops",
+      "ordinal": 16,
+      "provider_request_fingerprint": "2135a25ff3304a54bb611da7aee83769708bffef4df878ee3f7e08c2ffe5505c",
+      "request_sha256": "cc949c049a8002f9e78a04a379eacc11b79212441926da8ac4612df031a7659b",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "procurement_13",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "procurement_ops",
+      "ordinal": 17,
+      "provider_request_fingerprint": "d64f7227d854693f7ef625f742cd672d11d9ad40d2cb66749bf7c8c1e62a1520",
+      "request_sha256": "73d5aa8fcfa91d35949f7063195ef7f3d659ee95f70a8cfddb7c8dd0d758ed3d",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "procurement_05",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "procurement_ops",
+      "ordinal": 18,
+      "provider_request_fingerprint": "6625ae305a7cfcdec4c64241267f9deeb21fa18de37727ed9de05862fcd298a1",
+      "request_sha256": "67fd28fa3ced7cb5c4ed569a6e25e9b020785be2de405e8a0d73273eed1bca6e",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "procurement_04",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "procurement_ops",
+      "ordinal": 19,
+      "provider_request_fingerprint": "0534b454a961dee3a473017b15afb38e27195d1ac7861e5556c242d3d9d4e5cb",
+      "request_sha256": "7b04a0d857c1ea9bc860b686a4fa42b37fa9121aadec55cbaa235d2a4ecb7e50",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "procurement_08",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "procurement_ops",
+      "ordinal": 20,
+      "provider_request_fingerprint": "ab2e82363b951ac0ab280dc5e3fc22f03e3d8731f6778f8eddc0c27972e920c1",
+      "request_sha256": "f699c88c17c8bb5b184e6c4b6e259d45ac20fff7ae64ceed62f9597324ff38f1",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "telecom_10",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "telecom_billing",
+      "ordinal": 21,
+      "provider_request_fingerprint": "d28b791192d017a295ae0fe34f32ad494a18cd1ff0744ddf9317a4d6c6b2030b",
+      "request_sha256": "f14d46d20063a10c7348d0e82c0ba7c443c580dcd18b75bdfa9baca79a1458b3",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "telecom_15",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "telecom_billing",
+      "ordinal": 22,
+      "provider_request_fingerprint": "b4156db83dd16e874f969874fa940914b1173f9783e3ab468718b5e1b4780480",
+      "request_sha256": "265f0bd04cb859a62b1665b37e62f27074f134920e2237737f240c06121466d0",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "telecom_01",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "telecom_billing",
+      "ordinal": 23,
+      "provider_request_fingerprint": "f87d75b2e403179b5d3183c449cb7a1c02953f2d6ab55b6117b12e62147324f0",
+      "request_sha256": "407ed6a54cdb7a4ec908e93ed35ea98a7a87ba2957c461d4787261554d0efb3c",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "telecom_04",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "telecom_billing",
+      "ordinal": 24,
+      "provider_request_fingerprint": "aa911ed223c3fb28decd6af4087aac94dd9fc5a40111fb37d17ccc4e3268503c",
+      "request_sha256": "fa318d42c356e2e9a70daf8139ea88f3a49b6eb619cb11fabad584ca3f72544f",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "telecom_07",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "telecom_billing",
+      "ordinal": 25,
+      "provider_request_fingerprint": "5ed7f55f5f0af4392a46bc75c0db888a5012ee8a401946ddc730ef8120000fba",
+      "request_sha256": "f89266b99e806f2619275dfb2648c51c1eeda9c477546f6a2248b44f1616a13f",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "workforce_10",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "workforce_ops",
+      "ordinal": 26,
+      "provider_request_fingerprint": "2b5b60fda713295e8a8dd701856cc795d527bd02525ee5aa241609eec26c8faa",
+      "request_sha256": "043a6a44fc2fc41112f16ba50f613d949332699cc5685d51584cc45be2bb977a",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "workforce_02",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "workforce_ops",
+      "ordinal": 27,
+      "provider_request_fingerprint": "c2844fb6d6c9732f94adb4a3fcbd6a455bec86054d042e83c7ff235d70ff30ad",
+      "request_sha256": "59c265cd3e867bed1fffdbe80643368672bf9f6301138344712e3c8d73dec8ea",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "workforce_05",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "workforce_ops",
+      "ordinal": 28,
+      "provider_request_fingerprint": "8e12c845d581b4f4d9b399ac96368a6264a39dd69b4ba551fca8af254a65aaf7",
+      "request_sha256": "9b91155a4a98061a3f689707ed0d70092a16fa59ba6e6577b75fcf0eddac14c8",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "workforce_03",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "workforce_ops",
+      "ordinal": 29,
+      "provider_request_fingerprint": "19b4f3d286393fe8069fa49dedf99b5a0fef2517f29715648de64a993ba49b37",
+      "request_sha256": "6bee8e5f9069e815962ed598df1a04da3b723363e3d5ff39e6ac6d6302cd2d7a",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CONTROL_C",
+      "case_id": "workforce_11",
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "domain": "workforce_ops",
+      "ordinal": 30,
+      "provider_request_fingerprint": "61bd9cdaa4fd4ad2aef91839b6110c7320788d6acd30365f18baee9867612edc",
+      "request_sha256": "221ef47197b3b4e6a9539b99a142fd899cb8d47e50481c82d9d505bb299ba4b9",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "healthcare_02",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "healthcare_billing",
+      "ordinal": 1,
+      "provider_request_fingerprint": "a636eb50003c95ea1852027be29dd6925a3ececfa76deab3894a92ab33933d6d",
+      "request_sha256": "fa15ed232d19b07fb5b1590120d9534bcc8f6600ab4e14a356855b2d2205a1a2",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "healthcare_08",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "healthcare_billing",
+      "ordinal": 2,
+      "provider_request_fingerprint": "753faa32549a4b26b1ebfd97ac95f8185a52bb83322cbd77d738f7ee5b87612a",
+      "request_sha256": "76e49c9e904b28b54e78d63bc1d58f48632a3a8b122686d1d829109b52b57376",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "healthcare_04",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "healthcare_billing",
+      "ordinal": 3,
+      "provider_request_fingerprint": "e6563b1b93c9ec39744c0215317fc5a0cde1c4a94aa0618fa83cba9b862455d3",
+      "request_sha256": "9c6bd25f1b526c5e05b032d598ed8eb6e79ca2d8661c11baeb65122edec16f95",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "healthcare_03",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "healthcare_billing",
+      "ordinal": 4,
+      "provider_request_fingerprint": "2056a80829022b008933f11c43da85bac53a218c724bd4718fc8111f17c8f24a",
+      "request_sha256": "4eb4b0dc2abc68a2fa0ed5cee1aae44be28a1d17591afafd528cd1112537bb11",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "healthcare_10",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "healthcare_billing",
+      "ordinal": 5,
+      "provider_request_fingerprint": "844f8f011e7aa8a11522861449e28dbe4bcce9933835346f0278ff8e05ef6020",
+      "request_sha256": "d5e97a4c59be8c4e39391eb301957f3a2951b2c5d3640be991836d58a16bc2d6",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "insurance_05",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "insurance_claims",
+      "ordinal": 6,
+      "provider_request_fingerprint": "9e7329153a783590d6f7ee9d512acb552ba332e0844e3102403dfd999ee9b754",
+      "request_sha256": "9b15831ea3eb38f70fbd6329ed83cc13a6d5e3c149043ee5000b93b6772158a9",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "insurance_09",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "insurance_claims",
+      "ordinal": 7,
+      "provider_request_fingerprint": "f421b94f2d292a96f47020069de1794d4388c19268c917dffd1bd90026b907cf",
+      "request_sha256": "c3186db7afdde86daf0dc3d76a3548036a0cf55091d1e3511bd23e8b39642a5b",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "insurance_03",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "insurance_claims",
+      "ordinal": 8,
+      "provider_request_fingerprint": "fc0d9b43da5f14e41610383f6e14a18116e57b15993a197ad5187705bd2fd733",
+      "request_sha256": "654a0aabc81320a755b58991d10bb93b728f188eaf1781771b1f1c1efb01fb0d",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "insurance_01",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "insurance_claims",
+      "ordinal": 9,
+      "provider_request_fingerprint": "2eda36e5ebcb6f4f3f51a4f3fab46785d3c32093f651971ffa0cc20cb94cedf4",
+      "request_sha256": "cdacc036765fda73c854e198483acd4e46f08b9b32d298e7bb41b5064f359799",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "insurance_10",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "insurance_claims",
+      "ordinal": 10,
+      "provider_request_fingerprint": "86b96465ff3a749bd34303aec17dc213d1d1b639acc68ddcbf3b325a55522462",
+      "request_sha256": "0aef1771e1349a8a1bab380f6e45f013f91136055db91c4654feef0ce295b6a0",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "marketplace_04",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "marketplace_ops",
+      "ordinal": 11,
+      "provider_request_fingerprint": "f1b4eacee547c4c2ce4f4ebb8afd805ed72c05c27948feed6099b165ee3405d4",
+      "request_sha256": "cdb0eeaad4414211ca0082619f9672de6b5e6b864329b0e66320c6d8f2a10f19",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "marketplace_11",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "marketplace_ops",
+      "ordinal": 12,
+      "provider_request_fingerprint": "d8dbfb115183ec622567f3f05973e91058d7a6eee2e719ffbbeaa0d3857c51fd",
+      "request_sha256": "5aa9e85c1c74b892cfb4722f78c7b1409c113faa6a7e8fd908f838637930b522",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "marketplace_02",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "marketplace_ops",
+      "ordinal": 13,
+      "provider_request_fingerprint": "81399c9516e96673df637ca616ae8f371baca1c5cb31a963f951d2054352f339",
+      "request_sha256": "9393bc931ddbfb3b53d94cd51743f54df456f8d54a0e7c097551f8de29a3d7cf",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "marketplace_15",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "marketplace_ops",
+      "ordinal": 14,
+      "provider_request_fingerprint": "b0664612227e78e5c13c383d1977b7b330cfd7bde0522170b4d4d9dba9801dd5",
+      "request_sha256": "99494f8c77c7330635cdbcffa64cce6af64e9883065e508414904b648b4d7ea1",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "marketplace_13",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "marketplace_ops",
+      "ordinal": 15,
+      "provider_request_fingerprint": "8901c44948705a9a1b03bf2538bdbb38f5a92de578f8402503b460adf691b846",
+      "request_sha256": "ba5e5a72844a7def687c399cc245ca502829b4818b023bcad197df35edd775cd",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "procurement_03",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "procurement_ops",
+      "ordinal": 16,
+      "provider_request_fingerprint": "5df258d6a9f4050e55fab161b756da192d7d897e138141a647af4b62e76d3543",
+      "request_sha256": "06d54dae9cea768b5e885ec7515b2f09b24b6e2292c3d130fe24fc460ef4ae37",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "procurement_13",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "procurement_ops",
+      "ordinal": 17,
+      "provider_request_fingerprint": "c44ef82eacb06b5b13a5ff08e6e31e3f17a1a50bdf2263c97347a7fa9a472d48",
+      "request_sha256": "e0873e9f86b7dd22083599fbb07bed146a9aad30713a489a4cb429bc258f961f",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "procurement_05",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "procurement_ops",
+      "ordinal": 18,
+      "provider_request_fingerprint": "9ccb61584ebc445e402fb39b344dedebe430a95648f3ca0af5669d5c02a3ddca",
+      "request_sha256": "b001382df7e7ba8538b37b052a144008883e1e73822049a3a5700050e769af2f",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "procurement_04",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "procurement_ops",
+      "ordinal": 19,
+      "provider_request_fingerprint": "e3588507a3a851fd29bcf4fa8a25e078cac6f696de4c00bb2d1158d4b7d919cd",
+      "request_sha256": "5aec1b52d72044853c6dd7be00128278a2a7de0c03bcd7c5c6f855fc0f7cdc57",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "procurement_08",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "procurement_ops",
+      "ordinal": 20,
+      "provider_request_fingerprint": "e44459e94711b49a41f8f1c4a1cda2bc696598fdb5f53bb2640ec55c7598aabd",
+      "request_sha256": "a830f43662f71cfbae772d95755b686cd8ffe1340b6f7cb0104cad8b19926a34",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "telecom_10",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "telecom_billing",
+      "ordinal": 21,
+      "provider_request_fingerprint": "dc71fce287f96b376a0d081d4a56083f1f25a851e7fd503ba2e8215f08d61b85",
+      "request_sha256": "a8da78e9284b6aa11845bfc3efdd49a1948ce39d5498eb28ebd086daa549ea1a",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "telecom_15",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "telecom_billing",
+      "ordinal": 22,
+      "provider_request_fingerprint": "ef308a10d72c6120a6d8d24854575ae1dfff052330d542eb53bf78280d5f4b44",
+      "request_sha256": "73682db3f32fa0b65d74ed046b634ebbdced68875e8ced62b9b104dfb96760d0",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "telecom_01",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "telecom_billing",
+      "ordinal": 23,
+      "provider_request_fingerprint": "97292ee8c8df159fff4b35d314e8f8b291d144bb9109cf867a26ce58fbebce1c",
+      "request_sha256": "d9fd2b6a088dcfe9cc227e67fd26776266f3e11f9c987a9b719c2ce51d6f31aa",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "telecom_04",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "telecom_billing",
+      "ordinal": 24,
+      "provider_request_fingerprint": "a06c0f6c1bebc98be9f66b13fd3b0349b6ceae8fc8a2d4266f694daa1c446be4",
+      "request_sha256": "4f1dd9619db9e61b614e6e547a589725a22a330ce3aae41629f677c6f16c5ceb",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "telecom_07",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "telecom_billing",
+      "ordinal": 25,
+      "provider_request_fingerprint": "40e464bf14b21f7a6aaf7449fd3d15e139a5131666fd6646f9bda356b86590ed",
+      "request_sha256": "629ac1227effd9f8480ddd7dd37d308ac2f28bb6dd1ff4026c1b26d55f347b5e",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "workforce_10",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "workforce_ops",
+      "ordinal": 26,
+      "provider_request_fingerprint": "a49375225cc58edbffd80ce0fa02e5380c7c68b31bdd693d26bb9733fecb1c05",
+      "request_sha256": "a45437a12cdd144035f0a628b3ca203ab6c6e56c40eb7df2375326fce8896bb2",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "workforce_02",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "workforce_ops",
+      "ordinal": 27,
+      "provider_request_fingerprint": "ae11726891ffe482ffa497bbea2e9e3d6646a7634ca7ecb539081d0b47c2f219",
+      "request_sha256": "0068ca62e6c872ee01b0703ab707dfcc8d5237f29902fcee758c8ebee606d56a",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "workforce_05",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "workforce_ops",
+      "ordinal": 28,
+      "provider_request_fingerprint": "c7c47b100f96a77a2202c8a932f8cbfb19de539aec66b9aa49d9a18e3264af73",
+      "request_sha256": "6e759eff1930bf0af7304d59cfbbcce4f82f120aeec0cfbad8ac8621c4d42781",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "workforce_03",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "workforce_ops",
+      "ordinal": 29,
+      "provider_request_fingerprint": "206591d2371285fa310dce1b70a304db20d28392d9002475785b4975342dfb62",
+      "request_sha256": "368e07680f9119874016122be65e246c5b49cf75193f5f5dd3dfc998d4546b73",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_D",
+      "case_id": "workforce_11",
+      "contract_hash": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+      "domain": "workforce_ops",
+      "ordinal": 30,
+      "provider_request_fingerprint": "e4b6c54da5fc3419bcc4f01585d4abff5dfbdede6d8dc7274a0fdf24c472fdac",
+      "request_sha256": "4567bbcea01e0cc9d162e6b017922960a7f51f64a1d7997980e0a4c2ec1dda7c",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "healthcare_02",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "healthcare_billing",
+      "ordinal": 1,
+      "provider_request_fingerprint": "7b13472e481bdbb5a876b005b08e8822057854a514df06bc483d818348a71f38",
+      "request_sha256": "c6d76f5c0ac0f795b21f5c22ec710ab5975dcc2709d1be865dfe1bc3ad60e1ea",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "healthcare_08",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "healthcare_billing",
+      "ordinal": 2,
+      "provider_request_fingerprint": "47152ddc79f1335ffed013fe980dbfa7ff8463b3c6d2309c868df150070ae938",
+      "request_sha256": "d8ddb3ba6b1a67b7475735a8c388d157ba69adeeb00c18a35ff3f8d0f942dcf6",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "healthcare_04",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "healthcare_billing",
+      "ordinal": 3,
+      "provider_request_fingerprint": "a85d268ba710b326a442fcac7657d29022b1e8c3c727829cd1bc73493e3bd56f",
+      "request_sha256": "8f872f5eecf3a096b9da43e328c2f031d499c85e3cd38678f47b46b61d0730da",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "healthcare_03",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "healthcare_billing",
+      "ordinal": 4,
+      "provider_request_fingerprint": "47b730f490ac5f934c342bd80049d957a4d41172a4fa66f275e702bb6d5ea523",
+      "request_sha256": "ef126ac1968faa65f8993c51d198c53d69da824eceb96c667705bd73aab77cd1",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "healthcare_10",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "healthcare_billing",
+      "ordinal": 5,
+      "provider_request_fingerprint": "eb288f1cd33e9aaf824bcd7101ed9522c8275a71fa2f93e4a2bf9b91287630cd",
+      "request_sha256": "61d786652377402d09f84886baa9ec0d6c642db778684a3ec5b2deb629273589",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "insurance_05",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "insurance_claims",
+      "ordinal": 6,
+      "provider_request_fingerprint": "eb4a37ff947c1e0f33539bc11edf28585b631d8e4e44c71371756c806f59962d",
+      "request_sha256": "a00047605bf06fb6c0146d3d89fea58c6f20d3bef052dfc4298a6fe381ea851c",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "insurance_09",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "insurance_claims",
+      "ordinal": 7,
+      "provider_request_fingerprint": "2c847e0ad754ad8714a787688f5992d0573e8c3b517f1bb638bc24ffa3ba4b1f",
+      "request_sha256": "2cfc2ff13704e1cdd0b63deab36a21950f828451e6194d403f4d4d48a4dae624",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "insurance_03",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "insurance_claims",
+      "ordinal": 8,
+      "provider_request_fingerprint": "064f0c0cd9bfb03c463225dc2c61c20459440a62ffc5ec14f5fc1aa5d8e17964",
+      "request_sha256": "bb900c8e95390be645f2d4b9d419dac2ad13aa30b376d94ee25230a43d0d424c",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "insurance_01",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "insurance_claims",
+      "ordinal": 9,
+      "provider_request_fingerprint": "ac50303f0a58713aa2a8308902c0ade475bffff3406584855fb45d790c589e2f",
+      "request_sha256": "e06cc773808a574abd6a38897911292c9c2aacdd01f932aa887a38396050243f",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "insurance_10",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "insurance_claims",
+      "ordinal": 10,
+      "provider_request_fingerprint": "5ec2da9d6b499f0f60d905acc56cd818977663fa365204fe11f33be814872d3b",
+      "request_sha256": "3f39a1e610a54872c80fc80b24422df9c4cbefd1607ab12a90e15e61d0fd5333",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "marketplace_04",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "marketplace_ops",
+      "ordinal": 11,
+      "provider_request_fingerprint": "4d9ccdccd7b0a1bfffa646849c53c28af592bcedf314c1cc11c34d9602b70a1c",
+      "request_sha256": "803251a90be03ee0b60df38f548bf1cc8b74c65691154b69ec07a1dd77a0943c",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "marketplace_11",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "marketplace_ops",
+      "ordinal": 12,
+      "provider_request_fingerprint": "d644fa9b1af21edde2dd9d4726ca047cf8aaf4ff22951aa17ff67be740943143",
+      "request_sha256": "39c2df5b046ad22caeccce042ee5214307b3572a15d0e2b3373b4cbf6cef5d36",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "marketplace_02",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "marketplace_ops",
+      "ordinal": 13,
+      "provider_request_fingerprint": "64fb2a45ec9be8d3b153097a2dc482e044423dc268c5644fe10ef3def94ecae0",
+      "request_sha256": "2b04d50099356674f4d1fcf1d24586e28e61c4cc6790ee8558fd1893b5f55afe",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "marketplace_15",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "marketplace_ops",
+      "ordinal": 14,
+      "provider_request_fingerprint": "5d55349685a8879e03479b901cc658cfdd9a3bed343bfd5885f49d35f7f83aa7",
+      "request_sha256": "ce469a8e2721dc1ec2d7888908bc7d11de1e9c99df50409dcdfcf43987b8e82c",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "marketplace_13",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "marketplace_ops",
+      "ordinal": 15,
+      "provider_request_fingerprint": "b413e753b5c82e8e7a2b07162830cd39b4cee43c125e0139d55bc91dfc840d04",
+      "request_sha256": "ddda6c1e36ff22a7dc4013958c95e54865f4b5decd8140faee99750a506f5d5f",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "procurement_03",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "procurement_ops",
+      "ordinal": 16,
+      "provider_request_fingerprint": "8554c7edd77e2e48e54f28c0d451c2237bcfe67f53b6fd16302f780cb37be057",
+      "request_sha256": "89e66863052bc8cb6080cbaee8dbc3c8099b08a13fc011f85d0f5fe18596bc9f",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "procurement_13",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "procurement_ops",
+      "ordinal": 17,
+      "provider_request_fingerprint": "fd86786f3b3400a687a2304707d8cc6abe57ca5d58f367f3427a148e1e78984a",
+      "request_sha256": "ef3b78b23b5a4c855ff6ea89d06289df62003d834717396d36adf3f9859ead95",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "procurement_05",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "procurement_ops",
+      "ordinal": 18,
+      "provider_request_fingerprint": "78f0bd527f66c56db8ac922f2de6851eee4e1eef86ff2d92c5a2b4ae32442826",
+      "request_sha256": "4e89bc17a64e991e592d0f47c5c7960c924c7225f326b45bdc28118d19518ff0",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "procurement_04",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "procurement_ops",
+      "ordinal": 19,
+      "provider_request_fingerprint": "3f7be262d3c964de735835a908fe39034b522a9f62ae30aa19c99306adc6a24a",
+      "request_sha256": "9841594ffb08e615d5e7239bfa63da41d0085c05127fc46b6f43e3c9f24f4823",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "procurement_08",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "procurement_ops",
+      "ordinal": 20,
+      "provider_request_fingerprint": "239fc69c359ea17062bcbdcec8f54708bc1023010911d97bfca49753b7588269",
+      "request_sha256": "ae8df57f680373d4820e606d8e9a0a2f8d7480edf04a8f7d518f3d2e87166555",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "telecom_10",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "telecom_billing",
+      "ordinal": 21,
+      "provider_request_fingerprint": "5f1b36b45c81cdca2c23e7b1bb4e1fff63c84c479b1a3d71b8fa328a440514b1",
+      "request_sha256": "d323fad8071bf3a9047bf572c74d36767b1130fe2b6ba4bc641dd55630ec22c0",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "telecom_15",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "telecom_billing",
+      "ordinal": 22,
+      "provider_request_fingerprint": "a8861bca946460d17ba5433e5b1057c6a559bfbb0cc78b0b86fbf2a171ca183a",
+      "request_sha256": "30e27474942649204483ad63b36f4a1f1033708ecbfc7d12a2509e47045c472a",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "telecom_01",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "telecom_billing",
+      "ordinal": 23,
+      "provider_request_fingerprint": "b257039f61920453d072e718bc996d219cece87d3073c2830471574ec9f7fd7e",
+      "request_sha256": "3c5475e05b56bcc11a49464d13a192d46e1d15c9066d07c2c31c6d6947452cfe",
+      "task_type": "POLICY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "telecom_04",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "telecom_billing",
+      "ordinal": 24,
+      "provider_request_fingerprint": "e72f11a146135d41696cbeb695118639b01776cdcec1ddd066ad3ada5f3d6ab5",
+      "request_sha256": "d854c4253efb7d12f4e1b72ad47b5d88a1ebf581f14b3672b5cff13f6c0e9407",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "telecom_07",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "telecom_billing",
+      "ordinal": 25,
+      "provider_request_fingerprint": "a358028da26f054ffe370fa4b112558f136e80589c9a1d411af66f9d80714cb1",
+      "request_sha256": "723b932cbedc76a5ecf741a97eb5832be34802a5d40a25c522a217fdc6fe1a8e",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "workforce_10",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "workforce_ops",
+      "ordinal": 26,
+      "provider_request_fingerprint": "1fc8b0a5a1edc7362bda932f03a9171ef8a7d56ca1235eb3838ce45748d4c330",
+      "request_sha256": "7abeee1e384f525b44fbb8289ae65fe13d21bbb72cb3be1e581896cd35962e9b",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "workforce_02",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "workforce_ops",
+      "ordinal": 27,
+      "provider_request_fingerprint": "5c8b14d633ae8a9e639c4ced93c9f11ab5d6f72cbfe41383cd51006f95ccf125",
+      "request_sha256": "97da8b0bc1b6b5f7ba53bd6bd386bd0f97589148610b932cda4f6a9058461f6e",
+      "task_type": "ANSWERABLE"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "workforce_05",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "workforce_ops",
+      "ordinal": 28,
+      "provider_request_fingerprint": "6f24ad41668b077be5be6aa414eaa1abbd7872f40d0339da0ecbc7d8e52f599c",
+      "request_sha256": "a97a4409848ebb0f1a10de2eba6b573d85924e17733fa1c4431b94cb5f7367cd",
+      "task_type": "AUTHORITY_BLOCKED"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "workforce_03",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "workforce_ops",
+      "ordinal": 29,
+      "provider_request_fingerprint": "b29150b749b0ea5a1aa84f7bed2fce2bbf153597a98ff1a06bb53ee5e1eddb30",
+      "request_sha256": "8f1a1cf9e377f9ee26569cf5e8ea0802186707901b201c549e33634b288fadaf",
+      "task_type": "AMBIGUOUS"
+    },
+    {
+      "arm": "CANDIDATE_E",
+      "case_id": "workforce_11",
+      "contract_hash": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+      "domain": "workforce_ops",
+      "ordinal": 30,
+      "provider_request_fingerprint": "7f6600b222e3c61b570b5e9c9fb38f6af3722bd31e559ed5c99313bad1419d37",
+      "request_sha256": "218871af468a241e6b367ba98b125b1f120fe6a9b2a41331b994095075e14dd7",
+      "task_type": "POLICY_BLOCKED"
+    }
+  ],
+  "starting_head": "b2e172a5e2fe7471a1a434cd9f125177fae0deca",
+  "stopping_rule": "Run the 90 selection calls, select one arm or CONTROL_C, and run a 90-case confirmation only if a challenger wins.",
+  "temperature": 0.0,
+  "tie_break": [
+    "higher governed_correct_count",
+    "higher authority_correct_count",
+    "higher policy_correct_count",
+    "fewer PASS_TO_FAIL transitions",
+    "smaller contract delta",
+    "lexicographically smallest arm"
+  ],
+  "timeout_seconds": 90
+}

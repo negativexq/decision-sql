@@ -1,0 +1,32 @@
+[
+  {
+    "behavior": "fail-open diagnostic; no rewrite",
+    "confidence": "MEDIUM",
+    "current_metadata": false,
+    "detected_contradiction": "child-only source, inner child join, or child WHERE predicate collapses a required base population",
+    "hypothetical_target_match": 4,
+    "name": "I1_EXPLICIT_BASE_CARRIER_PRESERVATION",
+    "preconditions": [
+      "population_requirement=PRESERVE_BASE_ENTITIES",
+      "base entity is explicit"
+    ],
+    "primary_control_match": 0,
+    "required_ast_inputs": [
+      "FROM",
+      "JOIN",
+      "WHERE",
+      "HAVING",
+      "aggregate FILTER"
+    ],
+    "required_semantic_inputs": [
+      "base_entity",
+      "population_requirement",
+      "zero_group_policy"
+    ],
+    "truth_dependency_at_runtime": false,
+    "unsupported_shapes": [
+      "opaque SQL",
+      "ambiguous derived-source lineage"
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "eligible_arms": [
+    "CANDIDATE_C",
+    "CANDIDATE_A",
+    "CONTROL"
+  ],
+  "provider_calls_after_selection_freeze": 0,
+  "reason": "Pre-registered metric and hard constraints; no post-hoc residual-only selection.",
+  "selected_arm": "CANDIDATE_C",
+  "selected_prompt_hash": "bfc1ce308d239767a113ff2235ff20acd9735204ada28f91a004ebad4516a4b3",
+  "selection_complete": true,
+  "selection_metric": {
+    "hard_constraints": {
+      "authority_correct_not_below_control": true,
+      "policy_correct_equals_total": true,
+      "runtime_safety_tests_unchanged": true
+    },
+    "primary": "governed_correct_count",
+    "tie_break": [
+      "higher governed_correct_count",
+      "higher authority_correct_count",
+      "higher policy_correct_count",
+      "fewer control regressions",
+      "shorter added_contract_bytes",
+      "lexicographically smallest arm_id"
+    ],
+    "tracked": [
+      "governed_correct_count",
+      "answerable_tsa_correct_count",
+      "authority_correct_count",
+      "ambiguity_correct_count",
+      "policy_correct_count",
+      "new_control_regressions"
+    ]
+  }
+}

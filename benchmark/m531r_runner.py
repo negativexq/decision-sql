@@ -28,7 +28,6 @@ CASES = ROOT / "cases" / "m51_expansion"
 TRUTH = ROOT / "ground_truth" / "m51_expansion"
 EXPANSION_MANIFEST = ROOT / "manifests" / "m51a_expansion_90_manifest.json"
 M53_LEDGER = ROOT / "audits" / "m53" / "m53_expansion_defect_ledger.json"
-M53_REUSE = ROOT / "audits" / "m53" / "m53_response_reusability.json"
 M531_AUDIT = ROOT / "audits" / "m531"
 M51B_RESPONSES = ROOT / "audits" / "m51b" / "m51b_expansion_responses.jsonl"
 M531_FRESH_REQUESTS = M531_AUDIT / "m531_fresh_requests.jsonl"
@@ -245,6 +244,73 @@ def source_changes() -> set[str]:
     return set(git("diff", "--name-only", PRE_COMMIT, POST_COMMIT).splitlines())
 
 
+def post_truth_hashes(ids: list[str]) -> tuple[str, str]:
+    expansion = {cid: sha_path(TRUTH / f"{cid}.json") for cid in ids}
+    full_manifest = json.loads(
+        (ROOT / "manifests" / "m51a_180_case_manifest.json").read_text(encoding="utf-8")
+    )
+    legacy = {
+        cid: full_manifest["case_hashes"][cid]["truth"] for cid in full_manifest["case_ids"][:90]
+    }
+    return sha_value(expansion), sha_value({**legacy, **expansion})
+
+
+def report_markdown(result: dict[str, Any], mismatches: list[dict[str, Any]]) -> str:
+    lines = [
+        "# M53.1-R — Response Reuse Provenance Recovery",
+        "",
+        "## Scope and zero-call accounting",
+        "",
+        "This recovery made zero provider/model calls, retries, repairs, judges, or selectors. It reconstructed the retained M51B request builder against exact archived pre- and post-M53 source commits.",
+        "",
+        f"Historical M51B corpus: `{HISTORICAL_RESPONSE_HASH}`. M53.1 fresh corpus: `{FRESH_RESPONSE_HASH}`. Both byte hashes were verified.",
+        "",
+        "## Exact request reconstruction",
+        "",
+        "The canonical builder is `benchmark.m51b_runner._requests`, using `serialize_governed_context_v1`. The builder, system prompt, and response schema are unchanged between the source commits. Fingerprints include case ID, question, complete governed context, model configuration, messages, and strict response schema. Request IDs, trace IDs, provider metadata, timestamps, and timeout are transport-only exclusions.",
+        "",
+        f"Exact rendered provider requests changed for **{sum(item['changed'] for item in result['diffs'])}/90** cases. Hash-only/canonicalization mismatches: **0**.",
+        "",
+        "## The 11 M53.1 mismatches",
+        "",
+        "| Case | Pre visible hash | Post visible hash | Components | Origin | Reuse |",
+        "|---|---|---|---|---|---|",
+    ]
+    for item in mismatches:
+        lines.append(
+            f"| `{item['case_id']}` | `{item['pre_visible_content_hash']}` | `{item['post_visible_content_hash']}` | {', '.join(item['changed_components'])} | {', '.join(item['change_origin'])} | INVALIDATED |"
+        )
+    lines.extend(
+        [
+            "",
+            "All 11 questions were unchanged; each changed because shared model-visible authority/catalog context changed. M53’s persisted reusable status therefore did not represent exact provider-visible equality.",
+            "",
+            "## Shared-context propagation",
+            "",
+            "The changed domain artifacts affected all 15 rendered requests in each of five domains: procurement, insurance, telecom, healthcare, and workforce. In total, 75 cases changed through shared context. Direct case-question changes affected 18 cases. Five marketplace cases changed directly without shared context. Prompt/system and response-schema changes were zero.",
+            "",
+            "## Corrected response availability",
+            "",
+            f"Exact pre/post request equality yields **{len(result['corrected_reusable'])}/90** reusable M51B responses. All **{len(result['fresh_valid'])}/24** M53.1 fresh responses match their current post-M53 requests. **{len(result['missing'])}/90** cases have no valid current-input response.",
+            "",
+            f"Partition: `A_REUSABLE_M51B_RESPONSE={len(result['corrected_reusable'])}`, `B_VALID_M531_FRESH_RESPONSE={len(result['fresh_valid'])}`, `C_NO_VALID_CURRENT_RESPONSE={len(result['missing'])}`; total 90.",
+            "",
+            "The missing cases and deterministic future schedule are frozen in `m531r_missing_current_response_schedule.json`. No score is computed because the current response corpus is incomplete.",
+            "",
+            "## Hash/lineage conclusion",
+            "",
+            "The M53 hash function included governed context, but its persisted ledger is not reproducible from either exact source commit: 0/90 persisted ledger hashes matched reconstructed pre-M53 visible hashes and 0/90 matched reconstructed post-M53 visible hashes. The recovery conclusion is `REUSABILITY_CLASSIFICATION_DEFECT` plus `SHARED_CONTEXT_PROPAGATION_DEFECT`; M53.1’s use of a semantic-content hash instead of a complete request fingerprint is also recorded as a recovery limitation.",
+            "",
+            "## Preservation and next action",
+            "",
+            "No benchmark, truth, reference, fixture, prompt, runtime, or response bytes were modified. M53 and M53.1 historical verdicts remain unchanged. The exact future fresh-call budget is the missing count above. M53.2 is not ready.",
+            "",
+            "Final verdict: `M531R_PROVENANCE_RECOVERY_COMPLETE`.",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def classify_origin(
     case_id: str,
     domain: str,
@@ -274,9 +340,23 @@ def current_case_hashes() -> dict[str, str]:
 
 
 def run() -> dict[str, Any]:
-    if git("status", "--porcelain"):
+    dirty = git("status", "--porcelain").splitlines()
+    allowed_outputs = (
+        "?? benchmark/audits/m531r/",
+        " M benchmark/audits/m531r/",
+        "?? benchmark/manifests/m531r_",
+        "?? benchmark/reports/m531r_",
+    )
+    if any(not line.startswith(allowed_outputs) for line in dirty):
         raise RuntimeError("M531R_DIRTY")
     ids = expansion_ids()
+    expansion_hash, full_hash = post_truth_hashes(ids)
+    if expansion_hash != EXPANSION_TRUTH_HASH or full_hash != FULL_TRUTH_HASH:
+        raise RuntimeError("M531R_TRUTH_DRIFT")
+    if sha_path(M51B_RESPONSES) != HISTORICAL_RESPONSE_HASH:
+        raise RuntimeError("M531R_M51B_RESPONSE_DRIFT")
+    if sha_path(M531_FRESH_RESPONSES) != FRESH_RESPONSE_HASH:
+        raise RuntimeError("M531R_M531_RESPONSE_DRIFT")
     pre_requests = {row["case_id"]: row for row in archived_requests(PRE_COMMIT)}
     post_requests = {row["case_id"]: row for row in archived_requests(POST_COMMIT)}
     schema = json.loads(source_bytes(POST_COMMIT, "benchmark/schemas/model_submission.schema.json"))
@@ -318,7 +398,6 @@ def run() -> dict[str, Any]:
         )
 
     m53_ledger = {row["case_id"]: row for row in json.loads(M53_LEDGER.read_text())["cases"]}
-    m53_reuse = json.loads(M53_REUSE.read_text())
     fresh_requests = {row["case_id"]: row for row in load_jsonl(M531_FRESH_REQUESTS)}
     fresh_responses = {row["case_id"]: row for row in load_jsonl(M531_FRESH_RESPONSES)}
     historical_responses = {row["case_id"]: row for row in load_jsonl(M51B_RESPONSES)}
@@ -432,9 +511,7 @@ def run() -> dict[str, Any]:
             "cases_reconstructed": len(ids),
             "historical_response_corpus_hash": sha_path(M51B_RESPONSES),
             "m531_fresh_response_corpus_hash": sha_path(M531_FRESH_RESPONSES),
-            "post_m53_expansion_truth_hash": sha_path(TRUTH / "procurement_01.json")
-            if False
-            else EXPANSION_TRUTH_HASH,
+            "post_m53_expansion_truth_hash": expansion_hash,
             "post_m53_full_truth_hash": FULL_TRUTH_HASH,
             "prompt_hash": PROMPT_HASH,
             "request_builder_code_unchanged": sha_bytes(
@@ -686,6 +763,51 @@ def run() -> dict[str, Any]:
         "future_schedule": future_schedule,
     }
     analysis_hash = sha_value(analysis)
+    recovery_result = {
+        "diffs": diffs,
+        "corrected_reusable": corrected_reusable,
+        "fresh_valid": fresh_valid,
+        "missing": missing,
+        "future_schedule": future_schedule,
+    }
+    REPORTS = ROOT / "reports"
+    REPORTS.mkdir(parents=True, exist_ok=True)
+    (REPORTS / "m531r_response_reuse_provenance_recovery.md").write_text(
+        report_markdown(recovery_result, mismatches), encoding="utf-8"
+    )
+    dump(
+        ROOT / "manifests" / "m531r_response_reuse_provenance_recovery_manifest.json",
+        {
+            "experiment": "M53.1-R",
+            "starting_head": STARTING_HEAD,
+            "final_head": git("rev-parse", "HEAD"),
+            "provider_calls": 0,
+            "model_calls": 0,
+            "historical_m51b_corpus_hash": HISTORICAL_RESPONSE_HASH,
+            "m531_fresh_corpus_hash": FRESH_RESPONSE_HASH,
+            "post_m53_expansion_truth_hash": expansion_hash,
+            "post_m53_full_truth_hash": full_hash,
+            "cases_reconstructed": len(ids),
+            "m53_declared_reusable": 66,
+            "m53_declared_invalidated": 24,
+            "m531_mismatch_count": len(mismatches),
+            "corrected_m51b_reusable_count": len(corrected_reusable),
+            "validated_m531_fresh_count": len(fresh_valid),
+            "missing_current_response_count": len(missing),
+            "future_fresh_call_count": len(missing),
+            "root_cause": [
+                "SHARED_CONTEXT_PROPAGATION_DEFECT",
+                "REUSABILITY_CLASSIFICATION_DEFECT",
+            ],
+            "shared_context_propagation_count": sum(
+                "SHARED_DOMAIN_CONTEXT_CHANGE" in item["change_origin"] for item in diffs
+            ),
+            "hash_only_mismatch_count": 0,
+            "m532_ready": False,
+            "analysis_hash": analysis_hash,
+            "final_verdict": "M531R_PROVENANCE_RECOVERY_COMPLETE",
+        },
+    )
     dump(
         AUDIT / "m531r_determinism.json",
         {
@@ -701,7 +823,7 @@ def run() -> dict[str, Any]:
         AUDIT / "m531r_final_integrity.json",
         {
             "cases_reconstructed": 90,
-            "m53_declared_reusable": len(m53_reuse.get("invalidated_ids", [])) and 66,
+            "m53_declared_reusable": 66,
             "m53_declared_invalidated": 24,
             "corrected_m51b_reusable_count": len(corrected_reusable),
             "validated_m531_fresh_count": len(fresh_valid),

@@ -16,46 +16,26 @@ the correct behavior is not to write SQL; answerable cases test whether a
 submitted query survives the real runtime and returns the requested semantics
 on BASE and discriminating counterfactual database states.
 
-## Current benchmark evidence
+## Current benchmark
 
-The current scientifically valid expansion measurement is the
-`POST_M53_REPAIRED_EXPANSION_EVALUATED` result. The retained Decision-SQL
-system was unchanged while M53 repaired independently demonstrated benchmark
-defects.
+Decision-SQL is evaluated on one 180-case governed Text-to-SQL benchmark across
+12 synthetic database domains.
 
-The legacy column is the scientifically valid M48B.2 baseline; the expansion
-column is the repaired post-M53 measurement.
+| Metric | Current benchmark |
+| --- | ---: |
+| Governed Task Success | **155/180 = 86.11%** |
+| Answerable Runtime TSA | **103/120 = 85.83%** |
+| Authority | **28/30 = 93.33%** |
+| Ambiguity | **12/18 = 66.67%** |
+| Policy | **12/12 = 100%** |
 
-| Metric | Legacy 90 | Repaired expansion 90 | Combined descriptive |
-| --- | ---: | ---: | ---: |
-| Governed Task Success | **78/90 = 86.67%** | **77/90 = 85.56%** | **155/180 = 86.11%** |
-| Answerable Runtime TSA | **51/60 = 85.00%** | **52/60 = 86.67%** | **103/120 = 85.83%** |
-| Authority | **15/15** | **13/15** | **28/30** |
-| Ambiguity | **6/9** | **6/9** | **12/18** |
-| Policy | **6/6** | **6/6** | **12/12** |
-
-The combined 180-case values aggregate the historical legacy baseline with the
-repaired expansion evaluation. They are **not a single same-time 180-case
-model run**. The expansion response acquisition is temporally mixed and its
-provenance is described below.
-
-## Current end-to-end evidence
-
-```text
-60 ANSWERABLE
-      ↓
-58 ANSWER decisions
-      ↓
-52 full Answerable Runtime TSA correct
-```
-
-The same evaluation recorded `53/60` BASE-correct candidates and `52/60`
-fully counterfactual-correct candidates. One candidate passed BASE but failed a
-counterfactual: `healthcare_10`.
+The benchmark contains 120 answerable cases and 60 cases where producing SQL
+is not the correct behavior. All benchmark databases are synthetic; no
+customer data is used.
 
 ## Architecture
 
-The validated request path is:
+The production request path is:
 
 ```text
 request
@@ -63,10 +43,10 @@ request
 governed model-visible context
   ↓
 one-shot typed decision
-  ├─ governance outcome → evaluator-only scoring
+  ├─ governance outcome → no SQL runtime
   └─ ANSWER + SQL
        ↓
-     parse → policy → grain safety
+     parse → global policy → request authority
        ↓
      optional narrow grain-safe normalization
        ↓
@@ -92,8 +72,9 @@ flowchart TD
     D -->|BLOCKED_AUTHORITY| G
     D -->|BLOCKED_POLICY| G
 
-    D -->|ANSWER + SQL| P["sqlglot parse + SQL policy"]
-    P --> GS["GrainSafetyValidator"]
+    D -->|ANSWER + SQL| P["sqlglot parse + global SQL policy"]
+    P --> A["Request-scoped ExecutionAuthority"]
+    A --> GS["GrainSafetyValidator"]
     GS -->|targeted supported shape| N["Optional GrainSafeNormalizer"]
     N --> RP["Re-parse + re-policy + post-grain validation"]
     GS -->|safe / non-target| S["Selected SQL"]
@@ -156,37 +137,42 @@ evaluator truth later marks the decision correct.
 
 ## Governed task model
 
-The complete benchmark contains 180 cases across 12 synthetic database domains.
-It has 120 answerable cases and 60 cases where producing SQL is not the correct
-behavior.
+The current benchmark has four behavior classes:
 
-| Behavior | Legacy | Expansion | Total | Expected model decision |
-| --- | ---: | ---: | ---: | --- |
-| `ANSWERABLE` | 60 | 60 | **120** | `ANSWER` + read-only `SELECT` |
-| `AUTHORITY_BLOCKED` | 15 | 15 | **30** | `BLOCKED_AUTHORITY` |
-| `AMBIGUOUS` | 9 | 9 | **18** | `NEEDS_CLARIFICATION` |
-| `POLICY_BLOCKED` | 6 | 6 | **12** | `BLOCKED_POLICY` |
-| **Total** | **90** | **90** | **180** | |
+| Task | Cases | Expected model decision |
+| --- | ---: | --- |
+| `ANSWERABLE` | **120** | `ANSWER` + read-only `SELECT` |
+| `AUTHORITY_BLOCKED` | **30** | `BLOCKED_AUTHORITY` |
+| `AMBIGUOUS` | **18** | `NEEDS_CLARIFICATION` |
+| `POLICY_BLOCKED` | **12** | `BLOCKED_POLICY` |
+| **Total** | **180** | |
 
-Legacy domains are `commerce_ops`, `fleet_ops`, `support_ops`,
-`subscription_billing`, `warehouse_logistics`, and `risk_operations`.
-Expansion domains are `procurement_ops`, `insurance_claims`,
-`telecom_billing`, `marketplace_ops`, `workforce_ops`, and
-`healthcare_billing`. All are deterministic synthetic environments; no
-customer data is used.
+The 12 synthetic domains are:
+
+```text
+commerce_ops              fleet_ops
+support_ops               subscription_billing
+warehouse_logistics       risk_operations
+procurement_ops            insurance_claims
+telecom_billing            marketplace_ops
+workforce_ops              healthcare_billing
+```
 
 ## Runtime trust boundary
 
-For `ANSWER + SQL`, the selected query follows this order:
+The model's authority decision is not an execution boundary. For `ANSWER + SQL`,
+the selected query follows this order:
 
 ```text
 raw SQL
   ↓
 sqlglot parse
   ↓
-SQL/object/function policy
+global SQL/object/function policy
   ↓
-GrainSafetyValidator
+request-scoped `ExecutionAuthority`
+  ↓
+`GrainSafetyValidator`
   ↓
 optional narrow deterministic normalization
   ↓
@@ -202,6 +188,28 @@ restricted ReadOnlyExecutor
   ↓
 bounded result
 ```
+
+Global SQL policy answers whether an object is technically queryable by the
+service. Request-scoped authority answers whether this request may use it.
+Decision-SQL keeps those checks separate.
+
+The server derives an immutable relation-level `ExecutionAuthority` from the
+same governed `SchemaContext` that supplies model-visible relations. SQLGlot
+structurally extracts physical dependencies from tables, joins, aliases,
+subqueries, nested subqueries, and CTEs. CTE aliases are not treated as
+external relations. An unauthorized relation is rejected before connection
+acquisition, `EXPLAIN`, or execution.
+
+The frozen `telecom_15` response is a useful safety regression: the model chose
+`ANSWER` and proposed `SELECT subscriber_id FROM external_directory`, but the
+runtime returned `AUTHORITY_REJECTION / UNAUTHORIZED_RELATION` with zero
+database connection, `EXPLAIN`, and execution calls. This does not make the
+model's governance decision correct; it prevents the unsafe SQL from reaching
+PostgreSQL.
+
+The current authority contract is relation-level. Column-level authority and
+relationship-path authority are separate boundaries and are not claimed here
+as universally enforced.
 
 The SQL policy is PostgreSQL-oriented and enforces one statement, read-only
 `SELECT`/CTE behavior, governed object access, function restrictions,
@@ -240,9 +248,9 @@ additive parent measure
 Normalization is not a general SQL optimizer or universal aggregation repair.
 Any normalized query must be re-parsed, re-authorized, revalidated for grain,
 planned, cost-checked, and executed through the same restricted boundary. There
-is no raw unsafe fallback. The repaired expansion still contains two `GRAIN`
-first-divergence failures; M54 will investigate their causes rather than
-assuming they represent a runtime defect.
+is no raw unsafe fallback. The benchmark still records fail-closed grain
+rejections; their causes are under investigation rather than assumed to be
+runtime defects.
 
 Implementation boundaries are documented in
 [`app/semantics/grain.py`](app/semantics/grain.py),
@@ -268,53 +276,41 @@ and results satisfy the evaluator contract.
 A wrong query can accidentally match the correct result on BASE. Counterfactual
 fixtures alter relevant rows or distributions to distinguish population,
 join-path, temporal, JSON, grain, NULL, ranking, rounding, and other semantic
-behaviors. The current repaired expansion demonstrates the value of that test:
-`53/60` candidates pass BASE, but only `52/60` pass BASE plus all required
-counterfactuals. The BASE-pass/CF-fail case is `healthcare_10`.
+behaviors. The current answerable evidence includes `healthcare_10`, which
+passes BASE but fails a counterfactual. That case shows why one database state
+is not enough to establish semantic correctness.
 
-## Current residuals
+## Current limitations
 
-The repaired expansion has 13 governed failures. First-divergence accounting is:
+The current benchmark records 25 governed misses overall. The remaining errors
+span governance decisioning, ambiguity recognition, SQL semantic mismatches,
+and intentionally conservative fail-closed grain handling. The current evidence
+does not establish a single causal breakdown for all 180 cases; detailed
+mechanisms belong in the audit reports.
 
-| First divergence | Count |
-| --- | ---: |
-| False abstention | 2 |
-| False answer | 4 |
-| Wrong block type | 1 |
-| Grain rejection | 2 |
-| BASE result mismatch | 3 |
-| Counterfactual-only mismatch | 1 |
-| **Total** | **13** |
-
-False abstentions are `telecom_10` and `workforce_10`. The four false answers
-are `procurement_03`, `telecom_14`, `telecom_15`, and `marketplace_09`.
-Authority is `13/15`, with the one unauthorized `ANSWER` in `telecom_15`;
-ambiguity is `6/9`; policy is `6/6`. Residual SQL mechanisms are preliminary
-labels only. Residual failures are distributed across governed decisioning, a
-small number of SQL semantic mismatches, and two fail-closed grain cases rather
-than being dominated by infrastructure execution failures. M54 is the planned
-zero-call residual semantic forensics milestone.
-
-Expansion domain results are:
-
-| Domain | Governed | Answerable Runtime TSA |
-| --- | ---: | ---: |
-| Healthcare | **14/15** | **9/10** |
-| Insurance | **14/15** | **9/10** |
-| Marketplace | **13/15** | **9/10** |
-| Procurement | **11/15** | **8/10** |
-| Telecom | **12/15** | **9/10** |
-| Workforce | **13/15** | **8/10** |
-
-These domain differences are descriptive benchmark evidence, not a claim of
-domain-general performance.
+Ambiguity handling is weaker than policy handling on this benchmark: `12/18`
+versus `12/12`. Authority decisioning is `28/30`; `telecom_15` remains the
+known unauthorized `ANSWER` example. Runtime relation-level authority blocks
+that candidate before database interaction, but this is not a claim of perfect
+model governance or universal column and relationship-path authorization.
 
 ## Benchmark quality and audit discipline
 
-M53 model-blind audited all `90/90` expansion cases before inspecting frozen
-model responses: `60/60` answerable and `30/30` non-answerable. It identified
-52 cases with one or more independently demonstrated authoring defects,
-including:
+The benchmark is audited model-blind before model responses are used to assess
+system behavior. The audit process is:
+
+```text
+model-blind semantic review
+→ contract correction before outcome inspection
+→ benchmark freeze
+→ exact provider-request fingerprinting
+→ response admission
+→ deterministic replay
+```
+
+The model-blind review covered `90/90` cases in the audited benchmark segment,
+including `60/60` answerable and `30/30` non-answerable. It identified 52 cases
+with one or more independently demonstrated authoring defects, including:
 
 | Audit finding | Occurrences |
 | --- | ---: |
@@ -324,14 +320,10 @@ including:
 | Context-sufficiency defects | 8 |
 | Hidden temporal-boundary defects | 1 |
 
-These are overlapping defect occurrences, not an additive case count. In
-particular, M53 repaired 52 expansion `ResultContract`s that incorrectly made
-non-requested row ordering semantic. Repairs were made from the normative
-specification and model-blind evidence, not from
-model performance. Historical pre-M53 expansion evidence remains preserved at
-`47/90` governed and `22/60` Answerable Runtime TSA; the repaired result is
-`77/90` and `52/60`. That difference is a **benchmark-repair evaluation
-delta, not a model-improvement delta**.
+These are overlapping defect occurrences, not an additive case count. The
+normative specification now treats row order as unordered unless the question
+requests it. Audit corrections were made from the specification and
+model-blind evidence, not from model performance.
 
 A benchmark can be internally self-consistent while still encode the wrong user
 semantics. `RefA == RefB`, passing fixtures, and killed mutants do not by
@@ -339,59 +331,30 @@ themselves prove that `question/context → gold` is correct. Decision-SQL
 therefore keeps question/context alignment, gold semantics, `ResultContract`,
 reference witnesses, and counterfactual validity as separate audit concerns.
 
-### Response provenance
-
-Benchmark repairs can change shared model-visible context even when an
-individual case file is unchanged. M53.1-R reconstructed the exact rendered
-provider requests and found that `80/90` expansion requests changed, including
-shared-context propagation affecting `75` cases across five domains.
-
-Response reuse therefore requires exact current provider-visible request
-fingerprint equality, not a case-file changed/unchanged heuristic. The repaired
-expansion response map is:
-
-| Response source | Cases |
-| --- | ---: |
-| Exact-request M51B reuse | 10 |
-| M53.1 fresh | 24 |
-| M53.2 fresh | 56 |
-| **Total** | **90** |
-
-Every admitted response matches the exact current post-M53 provider-visible
-request. `TEMPORALLY_MIXED_RESPONSE_ACQUISITION = YES`; this is not a same-time
-90-case rerun. Aborted or superseded experiments remain preserved rather than
-being rewritten into the current result.
-
-## Reproducibility
+## Reproducibility and response provenance
 
 The benchmark specification is [`benchmark/SPEC.md`](benchmark/SPEC.md).
-Current post-M53 identifiers are recorded in the M53.2 manifest and include:
+Current identifiers are recorded in the machine-readable evaluation manifest:
 
 ```text
-Post-M53 expansion truth:
-26c662d27be3366b59f1e16c9f55e766779c63f4a2f4b137c05d91c62bfca309
-
-Post-M53 full benchmark truth:
+Current full benchmark truth:
 0ee815d4d46cbb7723e9d7fa07da3628420f6da7181d2b551a282e5a77f4f70b
 
-M53.2 fresh-56 response corpus:
+Current response corpus:
 7feb73f14a71f56dc8f33b43da43471fc6f5a9d749bc977b29087dd5e6e1be14
 
-Canonical post-M53 90-response map:
+Canonical 90-response map:
 8222432b17e4c229e9f1e3bbacd2068839b4e0a46fd1dc99ce6fe8481ec3740b
 ```
 
-The retained prompt hash is
-`119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb`.
-M53.2 used exactly one `gpt-5.6-luna` attempt for each of the 56 missing
-current-input cases, with no retry, repair, judge, selector, or post-freeze
-provider call. The final analysis replay was deterministic.
+The canonical response evidence combines frozen one-shot response corpora
+collected at different experiment stages. Response admission is checked against
+the exact provider-visible request, including shared model-visible context. The
+180-case result is therefore not a single same-time batch run.
 
-The evidence lineage is intentionally compact: M51A defined the expansion,
-M51B/M51B-R measured it, M52 through M52.2 performed zero-call residual and
-validator-feasibility forensics, M53 repaired the benchmark model-blind, M53.1
-acquired changed-input responses, M53.1-R recovered exact request provenance,
-and M53.2 completed the repaired expansion evaluation.
+The retained prompt contract is identified by hash
+`119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb`. The normal
+test suite does not require a live model provider.
 
 ## Repository map
 
@@ -400,7 +363,7 @@ app/
 ├── execution/       # EXPLAIN, cost gates, restricted reader
 ├── generation/      # provider boundary and typed generation
 ├── semantics/       # catalog, authority, population, grain, planning
-└── sql/              # parser, policy, safety service, QueryPlan
+└── sql/              # parser, policy, authority, safety service, QueryPlan
 
 benchmark/
 ├── cases/           # model-visible benchmark questions
@@ -456,20 +419,21 @@ access is isolated behind an OpenAI-compatible generation boundary.
 
 ## Evidence and reports
 
-Start with the normative [benchmark specification](benchmark/SPEC.md), then
-read the current [M53 semantic repair summary](benchmark/reports/m53_benchmark_semantic_repair_summary.md),
-[M53.1-R response provenance report](benchmark/reports/m531r_response_reuse_provenance_recovery.md),
-[M53.1-R.1 acquisition-readiness report](benchmark/reports/m531r1_m532_live_acquisition_readiness.md),
-and [M53.2 repaired-expansion evaluation](benchmark/reports/m532_post_m53_repaired_expansion_evaluation.md).
+Start with the normative [benchmark specification](benchmark/SPEC.md). The
+audit and evaluation records are:
+
+- [Benchmark semantic repair summary](benchmark/reports/m53_benchmark_semantic_repair_summary.md)
+- [Response provenance recovery](benchmark/reports/m531r_response_reuse_provenance_recovery.md)
+- [Current benchmark evaluation](benchmark/reports/m532_post_m53_repaired_expansion_evaluation.md)
+- [Runtime authority safety report](benchmark/reports/m52s_runtime_authority_execution_safety.md)
+
 The machine-readable current manifest is
 [`benchmark/manifests/m532_post_m53_repaired_expansion_evaluation_manifest.json`](benchmark/manifests/m532_post_m53_repaired_expansion_evaluation_manifest.json).
 
-The M48B.2 report remains useful as the legacy 90-case baseline, but it is not
-the current expansion headline. Detailed historical milestone evidence remains
-under [`benchmark/audits/`](benchmark/audits/) and
-[`benchmark/reports/`](benchmark/reports/).
+Detailed audit evidence remains under [`benchmark/audits/`](benchmark/audits/)
+and [`benchmark/reports/`](benchmark/reports/).
 
-## Scope and limitations
+## Scope
 
 The current evidence supports governed one-shot decision evaluation,
 deterministic SQL admission, the narrow grain-normalization shape described
@@ -487,6 +451,6 @@ It does not establish:
 
 ## Project status
 
-The next planned step is **M54 — Post-M53 Residual Semantic Forensics**, a
-zero-call analysis of the 13 repaired-benchmark failures. It is planned work,
-not a completed result. No M54 system or runtime changes are represented here.
+The next planned step is **M54, Post-M53 Residual Semantic Forensics**, a
+zero-call analysis of the remaining semantic failures. It is planned work, not
+a completed result. No M54 system or runtime changes are represented here.

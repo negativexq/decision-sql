@@ -12,6 +12,7 @@ from app.db.models import Base
 from app.execution.cost import QueryCostGate
 from app.execution.reader import ReaderRoleError, ReadOnlyExecutor
 from app.models.domain import FailureStage
+from app.observability.run_trace import TraceStageSink, TraceStageStatus
 from app.observability.tracing import get_tracer
 from app.provenance.canonical import text_hash
 from app.provenance.models import (
@@ -68,6 +69,7 @@ class SqlSafetyService:
         settings: Settings | None = None,
         catalog: SchemaCatalog | None = None,
         tracer: trace.Tracer | None = None,
+        stage_recorder: TraceStageSink | None = None,
         provenance_sink: ProvenanceSink | None = None,
         measure_catalog: MeasureCatalog | None = None,
         grain_normalization_enabled: bool = False,
@@ -89,6 +91,7 @@ class SqlSafetyService:
             reader_role=self.settings.reader_role,
         )
         self.tracer = tracer or get_tracer()
+        self.stage_recorder = stage_recorder
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         if grain_normalization_enabled and measure_catalog is None:
             raise ValueError("Grain normalization requires an explicit MeasureCatalog.")
@@ -107,11 +110,18 @@ class SqlSafetyService:
 
     def _plan(self, candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure:
         """Parse, authorize, cost-check, and return an executable QueryPlan."""
+        parse_started = perf_counter()
         with self.tracer.start_as_current_span("decision_sql.validate") as span:
             span.set_attribute("decision_sql.statement_length", len(candidate.sql))
             try:
                 parsed = self.parser.parse(candidate.sql)
             except SQLParseFailure as error:
+                self._record_stage(
+                    "sql_parse",
+                    TraceStageStatus.FAILED,
+                    reason=str(error),
+                    duration_ms=(perf_counter() - parse_started) * 1000,
+                )
                 span.set_attribute("decision_sql.policy_outcome", SqlSafetyStatus.SQL_PARSE_ERROR)
                 return SqlPlanFailure(
                     status=SqlSafetyStatus.SQL_PARSE_ERROR,
@@ -119,10 +129,24 @@ class SqlSafetyService:
                     error=str(error),
                 )
             span.set_attribute("decision_sql.statement_type", type(parsed.expression).__name__)
+            self._record_stage(
+                "sql_parse",
+                TraceStageStatus.PASS,
+                metadata={"statement_type": type(parsed.expression).__name__},
+                duration_ms=(perf_counter() - parse_started) * 1000,
+            )
 
+        policy_started = perf_counter()
         with self.tracer.start_as_current_span("decision_sql.policy") as span:
             rejection = self.policy.validate(parsed)
             if rejection:
+                self._record_stage(
+                    "global_policy",
+                    TraceStageStatus.REJECTED,
+                    reason=rejection.code.value,
+                    metadata={"object": rejection.object} if rejection.object else None,
+                    duration_ms=(perf_counter() - policy_started) * 1000,
+                )
                 span.set_attribute("decision_sql.policy_outcome", SqlSafetyStatus.POLICY_REJECTION)
                 span.set_attribute("decision_sql.rejection_code", rejection.code)
                 return self._policy_failure(rejection)
@@ -131,11 +155,24 @@ class SqlSafetyService:
                 "decision_sql.referenced_table_count",
                 len(self._referenced_tables(parsed.expression)),
             )
+            self._record_stage(
+                "global_policy",
+                TraceStageStatus.PASS,
+                metadata={
+                    "referenced_table_count": len(self._referenced_tables(parsed.expression))
+                },
+                duration_ms=(perf_counter() - policy_started) * 1000,
+            )
 
         if candidate.execution_authority is None and candidate.source in {
             CandidateSource.LLM,
             CandidateSource.FUTURE_LLM,
         }:
+            self._record_stage(
+                "execution_authority",
+                TraceStageStatus.REJECTED,
+                reason=AuthorityCode.MISSING_REQUEST_AUTHORITY.value,
+            )
             return self._authority_failure(
                 AuthorityRejection(
                     code=AuthorityCode.MISSING_REQUEST_AUTHORITY,
@@ -149,7 +186,24 @@ class SqlSafetyService:
         if authority is not None:
             authority_rejection = validate_authority(parsed.expression, authority)
             if authority_rejection:
+                self._record_stage(
+                    "execution_authority",
+                    TraceStageStatus.REJECTED,
+                    reason=authority_rejection.code.value,
+                    metadata={"relations": authority_rejection.unauthorized_relations},
+                )
                 return self._authority_failure(authority_rejection)
+            self._record_stage(
+                "execution_authority",
+                TraceStageStatus.PASS,
+                metadata={"allowed_relation_count": len(authority.allowed_relations)},
+            )
+        else:
+            self._record_stage(
+                "execution_authority",
+                TraceStageStatus.SKIPPED,
+                reason="No authority envelope",
+            )
 
         parsed_for_plan = parsed
         if self.grain_normalization_enabled:
@@ -158,7 +212,17 @@ class SqlSafetyService:
                 decision = self.grain_coordinator.inspect(candidate.sql)
                 self._record_grain_decision(span, decision)
             if decision.status is GrainRuntimeStatus.REJECTED:
+                self._record_stage(
+                    "grain_safety",
+                    TraceStageStatus.REJECTED,
+                    reason=decision.runtime_reason.value,
+                )
                 return self._semantic_failure(decision)
+            self._record_stage(
+                "grain_safety",
+                TraceStageStatus.PASS,
+                reason=decision.runtime_reason.value,
+            )
             if decision.status is GrainRuntimeStatus.NORMALIZED:
                 try:
                     parsed_for_plan = self.parser.parse(decision.selected_sql)
@@ -192,8 +256,23 @@ class SqlSafetyService:
                         semantic_reason="POST_NORMALIZATION_GRAIN_REJECTED",
                     )
 
+        else:
+            self._record_stage(
+                "grain_safety",
+                TraceStageStatus.SKIPPED,
+                reason="Normalization disabled",
+            )
+
+        connection_started = perf_counter()
+        connection_opened = False
         try:
             with self.reader_engine.connect() as connection:
+                connection_opened = True
+                self._record_stage(
+                    "database_connection",
+                    TraceStageStatus.PASS,
+                    duration_ms=(perf_counter() - connection_started) * 1000,
+                )
                 with connection.begin():
                     self.executor.configure_transaction(connection)
                     normalized_sql = self.parser.normalize(parsed_for_plan)
@@ -201,6 +280,11 @@ class SqlSafetyService:
                         try:
                             estimate = self.cost_gate.explain(connection, normalized_sql)
                         except Exception as error:
+                            self._record_stage(
+                                "explain",
+                                TraceStageStatus.FAILED,
+                                reason="EXPLAIN_ERROR",
+                            )
                             span.set_attribute("decision_sql.policy_outcome", "EXPLAIN_ERROR")
                             raise _AbortedPlanning(
                                 SqlPlanFailure(
@@ -213,9 +297,22 @@ class SqlSafetyService:
                                 )
                             ) from error
                         self._record_estimate(span, estimate)
+                        self._record_stage(
+                            "explain",
+                            TraceStageStatus.PASS,
+                            metadata={
+                                "estimated_cost": estimate.total_cost,
+                                "estimated_rows": estimate.plan_rows,
+                            },
+                        )
                         if self.cost_gate.exceeds(
                             estimate, self.settings.max_plan_rows, self.settings.max_plan_cost
                         ):
+                            self._record_stage(
+                                "cost_gate",
+                                TraceStageStatus.REJECTED,
+                                reason=PolicyCode.QUERY_TOO_EXPENSIVE.value,
+                            )
                             span.set_attribute(
                                 "decision_sql.policy_outcome", SqlSafetyStatus.QUERY_COST_REJECTION
                             )
@@ -228,6 +325,8 @@ class SqlSafetyService:
                                 ),
                                 estimate=estimate,
                             )
+
+                    self._record_stage("cost_gate", TraceStageStatus.PASS)
 
                     plan = QueryPlan(
                         plan_id=uuid4(),
@@ -251,6 +350,13 @@ class SqlSafetyService:
                 error="Candidate planning requires the configured reader role.",
             )
         except Exception:
+            if not connection_opened:
+                self._record_stage(
+                    "database_connection",
+                    TraceStageStatus.FAILED,
+                    reason="DATABASE_CONNECTION_ERROR",
+                    duration_ms=(perf_counter() - connection_started) * 1000,
+                )
             return SqlPlanFailure(
                 status=SqlSafetyStatus.EXECUTION_ERROR,
                 failure_stage=FailureStage.EXECUTION_ERROR,
@@ -276,6 +382,7 @@ class SqlSafetyService:
         started = perf_counter()
         try:
             with self.reader_engine.connect() as connection:
+                self._record_stage("database_connection", TraceStageStatus.PASS)
                 with connection.begin():
                     self.executor.configure_transaction(connection)
                     with self.tracer.start_as_current_span("decision_sql.execute") as span:
@@ -288,8 +395,15 @@ class SqlSafetyService:
                         span.set_attribute("decision_sql.row_count", execution.row_count)
                         span.set_attribute("decision_sql.truncated", execution.truncated)
                         span.set_attribute("decision_sql.latency_ms", execution.latency_ms)
+                        self._record_stage(
+                            "execution",
+                            TraceStageStatus.PASS,
+                            metadata={"row_count": execution.row_count},
+                            duration_ms=execution.latency_ms,
+                        )
                         return execution
         except _AbortedExecution as aborted:
+            self._record_stage("execution", TraceStageStatus.FAILED, reason="EXECUTION_ERROR")
             return aborted.result
         except ReaderRoleError:
             return SqlExecutionError(
@@ -298,6 +412,11 @@ class SqlSafetyService:
                 error="Candidate SQL execution requires the configured reader role.",
             )
         except Exception:
+            self._record_stage(
+                "execution",
+                TraceStageStatus.FAILED,
+                reason="EXECUTION_ERROR",
+            )
             return SqlExecutionError(
                 plan_id=plan.plan_id,
                 correlation_id=plan.correlation_id,
@@ -418,3 +537,21 @@ class SqlSafetyService:
         span.set_attribute("decision_sql.estimated_rows", estimate.plan_rows)
         span.set_attribute("decision_sql.estimated_cost", estimate.total_cost)
         span.set_attribute("decision_sql.top_level_node_type", estimate.top_level_node_type)
+
+    def _record_stage(
+        self,
+        name: str,
+        status: TraceStageStatus,
+        *,
+        reason: str | None = None,
+        metadata: dict[str, object] | None = None,
+        duration_ms: float | None = None,
+    ) -> None:
+        if self.stage_recorder is not None:
+            self.stage_recorder.record_stage(
+                name,
+                status,
+                reason=reason,
+                metadata=metadata,
+                duration_ms=duration_ms,
+            )

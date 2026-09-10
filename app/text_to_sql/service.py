@@ -20,6 +20,7 @@ from app.generation.result_shape import (
     validate_result_shape,
 )
 from app.models.domain import ExecutionMode, FailureStage, TextToSqlRequest
+from app.observability.run_trace import TraceStageSink, TraceStageStatus
 from app.observability.tracing import get_tracer
 from app.provenance.canonical import semantic_hash, text_hash
 from app.provenance.models import (
@@ -83,6 +84,7 @@ class TextToSqlService:
         context_mode: SchemaContextMode = SchemaContextMode.RETRIEVED,
         strategy: GenerationStrategy | None = None,
         tracer: trace.Tracer | None = None,
+        stage_recorder: TraceStageSink | None = None,
         generation_mode: GenerationMode | None = None,
         schema_serializer: Callable[[SchemaContext], str] = serialize_schema_context,
         provenance_sink: ProvenanceSink | None = None,
@@ -104,6 +106,7 @@ class TextToSqlService:
             else GenerationStrategy.M2_ONE_SHOT
         )
         self.tracer = tracer or get_tracer()
+        self.stage_recorder = stage_recorder
         self.schema_serializer = schema_serializer
         self.provenance_sink = provenance_sink or NoOpProvenanceSink()
         self.settings = settings or getattr(safety_service, "settings", None) or get_settings()
@@ -262,9 +265,16 @@ class TextToSqlService:
             root_span.set_attribute("decision_sql.context_mode", self.context_mode.name)
             root_span.set_attribute("decision_sql.generation_mode", self.generation_mode.value)
             root_span.set_attribute("decision_sql.result_shape_contract", result_shape_contract)
+            context_started = perf_counter()
             try:
                 context = self._resolve_context(request.question)
             except SchemaResolutionError as error:
+                self._record_stage(
+                    "context",
+                    TraceStageStatus.FAILED,
+                    reason=str(error),
+                    duration_ms=(perf_counter() - context_started) * 1000,
+                )
                 root_span.set_attribute(
                     "decision_sql.final_stage", FailureStage.SCHEMA_RETRIEVAL_ERROR
                 )
@@ -279,6 +289,15 @@ class TextToSqlService:
                     provider_calls_succeeded=provider_calls_succeeded,
                     provider_calls_failed=provider_calls_failed,
                 )
+            self._record_stage(
+                "context",
+                TraceStageStatus.PASS,
+                metadata={
+                    "selected_tables": context.context_metadata.selected_table_count,
+                    "selected_columns": context.context_metadata.selected_column_count,
+                },
+                duration_ms=(perf_counter() - context_started) * 1000,
+            )
             root_span.set_attribute(
                 "decision_sql.selected_table_count", context.context_metadata.selected_table_count
             )
@@ -421,6 +440,7 @@ class TextToSqlService:
                     span.set_attribute(
                         "decision_sql.intent_column_count", len(intent.selected_columns)
                     )
+            generation_started = perf_counter()
             with self.tracer.start_as_current_span("decision_sql.sql.generate") as span:
                 try:
                     provider_calls_attempted += 1
@@ -444,6 +464,12 @@ class TextToSqlService:
                     root_span.set_attribute(
                         "decision_sql.final_stage", FailureStage.SQL_GENERATION_ERROR
                     )
+                    self._record_stage(
+                        "generation",
+                        TraceStageStatus.FAILED,
+                        reason="SQL_GENERATION_ERROR",
+                        duration_ms=(perf_counter() - generation_started) * 1000,
+                    )
                     return TextToSqlResult(
                         status=TextToSqlStatus.SQL_GENERATION_ERROR,
                         correlation_id=request.correlation_id,
@@ -462,6 +488,13 @@ class TextToSqlService:
                 span.set_attribute("decision_sql.generation_status", "success")
                 span.set_attribute("decision_sql.provider", proposal.provider)
                 span.set_attribute("decision_sql.model", proposal.model)
+                self._record_stage(
+                    "generation",
+                    TraceStageStatus.PASS,
+                    metadata={"provider": proposal.provider, "model": proposal.model},
+                    duration_ms=(perf_counter() - generation_started) * 1000,
+                )
+                self._record_stage("response_admission", TraceStageStatus.PASS)
 
             candidate = SqlCandidate(
                 sql=proposal.sql,
@@ -589,6 +622,24 @@ class TextToSqlService:
         schema = self.schema_serializer(context)
         mapping = SemanticMappingSnapshot.from_schema(self.safety_service.catalog)
         return f"{schema}\n\n{render_semantic_mapping_context(mapping)}"
+
+    def _record_stage(
+        self,
+        name: str,
+        status: TraceStageStatus,
+        *,
+        reason: str | None = None,
+        metadata: dict[str, object] | None = None,
+        duration_ms: float | None = None,
+    ) -> None:
+        if self.stage_recorder is not None:
+            self.stage_recorder.record_stage(
+                name,
+                status,
+                reason=reason,
+                metadata=metadata,
+                duration_ms=duration_ms,
+            )
 
 
 def _validate_result_shape_visibility(

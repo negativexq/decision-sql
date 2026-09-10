@@ -1,0 +1,823 @@
+{
+  "databases": [
+    {
+      "database_id": "procurement_ops",
+      "preparation": {
+        "analyze_ms": 22.531375056132674,
+        "database_id": "procurement_ops",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.138325+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "approvals",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.138822+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.139392+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "po_lines",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.139877+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "purchase_orders",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.140245+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "receipts",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.140739+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 6,
+            "relation": "requisitions",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.141215+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "suppliers",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "1a6c0790ccd545be1c34ce241d227c9e8a271d2e014930d87f4a4170c34d246e",
+        "preparation_ms": 50.180790945887566
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 1.966875046491623,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.161959Z",
+          "latency_ms": 1.7744579818099737,
+          "plan_id": "9308c5de-d9df-4b40-988a-b34aeb2b51f7",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "9308c5de-d9df-4b40-988a-b34aeb2b51f7",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 1.7928339075297117,
+        "planned": true,
+        "result_correct": false
+      }
+    },
+    {
+      "database_id": "insurance_claims",
+      "preparation": {
+        "analyze_ms": 48.65995794534683,
+        "database_id": "insurance_claims",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.219011+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 2,
+            "relation": "adjusters",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.219594+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 4,
+            "relation": "claim_assignments",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 5,
+            "last_analyze": "2026-09-10 11:31:40.219970+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 5,
+            "pg_stats_rows": 4,
+            "relation": "claim_events",
+            "reltuples": 5.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.220523+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 5,
+            "relation": "claim_payments",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 5,
+            "last_analyze": "2026-09-10 11:31:40.221054+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 5,
+            "pg_stats_rows": 6,
+            "relation": "claims",
+            "reltuples": 5.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.221440+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.221869+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 6,
+            "relation": "policies",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.222251+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 3,
+            "relation": "policyholders",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "a35e82f4ae546be952f9593f1284168fabf1d37c86ed0ae856873f9405091065",
+        "preparation_ms": 81.04874985292554
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 2.0662080496549606,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.258915Z",
+          "latency_ms": 1.8581249751150608,
+          "plan_id": "e28aee68-3339-4c62-97f5-ba6be901a338",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "e28aee68-3339-4c62-97f5-ba6be901a338",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 2.7514160610735416,
+        "planned": true,
+        "result_correct": false
+      }
+    },
+    {
+      "database_id": "telecom_billing",
+      "preparation": {
+        "analyze_ms": 38.34979212842882,
+        "database_id": "telecom_billing",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.305946+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.306698+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 5,
+            "relation": "invoices",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.307315+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 4,
+            "relation": "outages",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.307788+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 5,
+            "relation": "payments",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.308240+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 3,
+            "relation": "plans",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.308712+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 3,
+            "relation": "subscribers",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 5,
+            "last_analyze": "2026-09-10 11:31:40.309195+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 5,
+            "pg_stats_rows": 4,
+            "relation": "subscriptions",
+            "reltuples": 5.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.309788+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "usage_records",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "9e2a2444fcca753fd55c9597ba1f3b20f80a08f414489d402e3132b455d5fc18",
+        "preparation_ms": 71.08583301305771
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 2.685624873265624,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.348102Z",
+          "latency_ms": 2.5077080354094505,
+          "plan_id": "eb394af7-d11c-4991-9ca0-97ce1a7ce27d",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "eb394af7-d11c-4991-9ca0-97ce1a7ce27d",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 2.699292032048106,
+        "planned": true,
+        "result_correct": false
+      }
+    },
+    {
+      "database_id": "marketplace_ops",
+      "preparation": {
+        "analyze_ms": 26.61412488669157,
+        "database_id": "marketplace_ops",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.401526+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 2,
+            "relation": "buyers",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.402045+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 4,
+            "relation": "disputes",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.402418+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.403097+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "listings",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.403506+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "order_lines",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.403902+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "orders",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.404311+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 5,
+            "relation": "payouts",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.404699+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 4,
+            "relation": "reviews",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.405140+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 3,
+            "relation": "sellers",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "52382951949a297e6a90bddeb414b888a0db92a5bd1db827053106a44fdaff6e",
+        "preparation_ms": 64.42683306522667
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 1.9624170381575823,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.437912Z",
+          "latency_ms": 1.7280001193284988,
+          "plan_id": "4eca26ec-e94e-405e-adef-329ff9d237e6",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "4eca26ec-e94e-405e-adef-329ff9d237e6",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 2.8567498084157705,
+        "planned": true,
+        "result_correct": false
+      }
+    },
+    {
+      "database_id": "workforce_ops",
+      "preparation": {
+        "analyze_ms": 26.983957970514894,
+        "database_id": "workforce_ops",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.483670+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 5,
+            "relation": "absences",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.484252+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "employees",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.484597+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.485096+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 5,
+            "relation": "payroll_adjustments",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.485706+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 4,
+            "relation": "shifts",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.486078+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 2,
+            "relation": "teams",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.486522+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "timesheets",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.486938+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 4,
+            "relation": "training_records",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "cc61591eed085034eaec2599ba9f09a28d3a7b19d8dcaf90e4b37329c7556a40",
+        "preparation_ms": 59.71895810216665
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 2.045084023848176,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.513368Z",
+          "latency_ms": 1.830416964367032,
+          "plan_id": "d79c015a-8f54-4002-9755-1a1eec71e129",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "d79c015a-8f54-4002-9755-1a1eec71e129",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 2.775707980617881,
+        "planned": true,
+        "result_correct": false
+      }
+    },
+    {
+      "database_id": "healthcare_billing",
+      "preparation": {
+        "analyze_ms": 21.22341701760888,
+        "database_id": "healthcare_billing",
+        "fixture_id": "base",
+        "lifecycle": "ANALYZE_CURRENT_STATE",
+        "metadata": [
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.558700+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 4,
+            "relation": "charges",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.559137+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 3,
+            "relation": "diagnoses",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.559713+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 5,
+            "relation": "encounters",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 1,
+            "last_analyze": "2026-09-10 11:31:40.560131+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 1,
+            "pg_stats_rows": 3,
+            "relation": "external_directory",
+            "reltuples": 1.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 4,
+            "last_analyze": "2026-09-10 11:31:40.560650+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 4,
+            "pg_stats_rows": 4,
+            "relation": "patients",
+            "reltuples": 4.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 2,
+            "last_analyze": "2026-09-10 11:31:40.561119+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 2,
+            "pg_stats_rows": 5,
+            "relation": "payments",
+            "reltuples": 2.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.561524+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 4,
+            "relation": "procedures",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          },
+          {
+            "actual_rows": 3,
+            "last_analyze": "2026-09-10 11:31:40.561916+00:00",
+            "last_autoanalyze": null,
+            "n_live_tup": 3,
+            "pg_stats_rows": 3,
+            "relation": "providers",
+            "reltuples": 3.0,
+            "reltuples_delta": 0.0
+          }
+        ],
+        "metadata_hash": "f9efd2ad932d08ebd21120ef6a536cb065bd4e6ed7739e41244175afe58192dd",
+        "preparation_ms": 54.98362495563924
+      },
+      "probe": {
+        "comparison_reason": "RESULT_MISMATCH",
+        "execute_ms": 2.092959126457572,
+        "executed": true,
+        "execution": {
+          "columns": [
+            "?column?"
+          ],
+          "correlation_id": null,
+          "executed_at_utc": "2026-09-10T11:31:40.584331Z",
+          "latency_ms": 1.878916984423995,
+          "plan_id": "b8e191d8-50e6-4109-9508-ea70efb5c2a2",
+          "row_count": 1,
+          "rows": [
+            {
+              "?column?": 1
+            }
+          ],
+          "session_timezone": "UTC",
+          "status": "ALLOWED",
+          "truncated": false
+        },
+        "plan": {
+          "candidate_source": "internal",
+          "correlation_id": null,
+          "estimate": {
+            "plan_rows": 1,
+            "top_level_node_type": "Result",
+            "total_cost": 0.01
+          },
+          "executable": true,
+          "normalized_sql": "SELECT 1",
+          "plan_id": "b8e191d8-50e6-4109-9508-ea70efb5c2a2",
+          "policy_decision": "ALLOWED",
+          "referenced_columns": [],
+          "referenced_functions": [],
+          "referenced_tables": [],
+          "statement_type": "Select"
+        },
+        "plan_ms": 3.070250153541565,
+        "planned": true,
+        "result_correct": false
+      }
+    }
+  ],
+  "model_calls": 0,
+  "passed": true,
+  "provider_calls": 0
+}

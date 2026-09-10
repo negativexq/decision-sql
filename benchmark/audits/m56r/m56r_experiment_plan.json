@@ -1,0 +1,93 @@
+{
+  "arms": {
+    "CANDIDATE_A": {
+      "contract_hash": "4fa13a7c25a716afc61ffd406f9306ba85e442204c8deba8befd625da6928905",
+      "intervention": "\n\n## Semantic decision discipline\n\n- Request clarification only when a material semantic variable needed for the result remains unresolved by the question, authorized context, or governed business rules. The existence of another imaginable interpretation is not, by itself, ambiguity.\n- Before returning `NEEDS_CLARIFICATION`, identify the unresolved variable. If population, grouping, measure, filters, time range, and requested projection are determined, answer the request.\n- A suggestive schema name is not a business-rule equivalence. Use a status, state, owner, or type field for a user term only when the governed context establishes that mapping.\n- Preserve the native grain of a measure across joins. If a child relation only qualifies parent rows, use an existence or parent-key-preserving form before aggregating the parent measure.\n- Translate governed duration calculations and required status or decision predicates into SQL; do not substitute row counts or omit a visible predicate because current data happens to make it equivalent.\n"
+    },
+    "CANDIDATE_B": {
+      "contract_hash": "fe18463822ebf7dc6001bf5f1359a07af9b858911597f809e159183e0add1417",
+      "intervention": "\n\n## Decision hierarchy and SQL invariants\n\nApply this order:\n\n1. If the intended meaning is materially unresolved after using the visible contract, return `NEEDS_CLARIFICATION`.\n2. If the intended meaning is clear but a required entity, attribute, or relationship is absent from the authorized context, return `BLOCKED_AUTHORITY`.\n3. Otherwise, answer only with visible governed schema, metrics, rules, temporal definitions, and policy.\n\nDo not infer business semantics from a plausible column name or from technical table existence. A field named `active`, `current`, `status`, `owner`, or `type` has the requested meaning only when governed context explicitly establishes that equivalence. SQL dependencies must be limited to the authorized context.\n\nFor SQL, preserve measure grain before aggregation. A one-to-many child used only as a qualifying predicate must not multiply a parent measure; use `EXISTS`, a semi-join, or parent-key deduplication. A child-grain derived measure is valid only when its governed metric definition authorizes that grain and calculation. Use documented duration arithmetic and include every governed status or decision predicate required by the requested measure.\n"
+    },
+    "CANDIDATE_C": {
+      "contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+      "intervention": "\n\n## Final contract check before emitting a decision\n\n1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.\n2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.\n3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.\n\nDo not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.\n"
+    },
+    "CONTROL": {
+      "contract_hash": "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb",
+      "intervention": ""
+    }
+  },
+  "benchmark_runtime_frozen": true,
+  "calls_per_case_per_arm": 1,
+  "candidate_definitions_reused_unchanged": true,
+  "canonical_builder": "benchmark.m51b_runner._requests -> _provider_request",
+  "canonical_builder_source_hash": "5ecb037ec479ec72fc75c8f4aceffb30e1cedf126c04cf13721eaf3d17180607",
+  "experiment": "M56R",
+  "full_run_case_count": 90,
+  "invalid_m56_exclusion": {
+    "eligible_for_scoring": false,
+    "full_corpus_hash": "ac308feadff2c2546606ec06743254854cb6a17409bbccd050024c5ea79f533d",
+    "selection_corpus_hash": "6d72ed1a483316c9b40b4a7dea3dafb360791a26a157de3309a4056318ba44e1"
+  },
+  "judge": 0,
+  "maximum_provider_calls": 210,
+  "model": "gpt-5.6-luna",
+  "pass_at_k": 0,
+  "reasoning": "none",
+  "repair": 0,
+  "retries": 0,
+  "router": 0,
+  "selection_call_count": 120,
+  "selection_case_ids": [
+    "healthcare_02",
+    "healthcare_08",
+    "healthcare_04",
+    "healthcare_03",
+    "healthcare_10",
+    "insurance_05",
+    "insurance_09",
+    "insurance_03",
+    "insurance_01",
+    "insurance_10",
+    "marketplace_04",
+    "marketplace_11",
+    "marketplace_02",
+    "marketplace_15",
+    "marketplace_13",
+    "procurement_03",
+    "procurement_13",
+    "procurement_05",
+    "procurement_04",
+    "procurement_08",
+    "telecom_10",
+    "telecom_15",
+    "telecom_01",
+    "telecom_04",
+    "telecom_07",
+    "workforce_10",
+    "workforce_02",
+    "workforce_05",
+    "workforce_03",
+    "workforce_11"
+  ],
+  "selection_metric": {
+    "hard_constraints": {
+      "authority_not_below_control": true,
+      "policy_remains_perfect": true,
+      "runtime_safety_unchanged": true
+    },
+    "primary": "governed_correct_count",
+    "tie_break": [
+      "higher governed_correct_count",
+      "higher authority_correct_count",
+      "higher policy_correct_count",
+      "fewer control_regressions",
+      "shorter_contract_delta",
+      "lexicographically_smallest_arm"
+    ]
+  },
+  "selector": 0,
+  "starting_head": "a5156e363e1a08ecc24537739635362c2116bcbc",
+  "temperature": 0.0,
+  "timeout_seconds": 90
+}

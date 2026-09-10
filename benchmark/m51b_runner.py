@@ -129,34 +129,38 @@ def _rows() -> tuple[list[str], dict[str, tuple[dict[str, Any], dict[str, Any]]]
 def _requests(
     ids: list[str], rows: dict[str, tuple[dict[str, Any], dict[str, Any]]]
 ) -> list[dict[str, Any]]:
-    prompt = m43_prompt()
-    result = []
-    for index, case_id in enumerate(ids, 1):
-        case = rows[case_id][0]
-        context = serialize_governed_context_v1(str(case["database_id"]))
-        user = (
-            f"Case ID:\n{case_id}\n\nQuestion:\n{case['question']}\n\nGoverned context:\n{context}"
-        )
-        request_text = "SYSTEM:\n" + prompt + "\n\nUSER:\n" + user
-        result.append(
-            {
-                "case_index": index,
-                "case_id": case_id,
-                "database_id": case["database_id"],
-                "domain": case["database_id"],
-                "question": case["question"],
-                "question_sha256": sha256_text(str(case["question"])),
-                "prompt_sha256": sha256_text(prompt),
-                "context_sha256": sha256_text(context),
-                "serialized_context": context,
-                "instructions": prompt,
-                "user_text": user,
-                "request_text": request_text,
-                "request_sha256": sha256_text(request_text),
-                "request_bytes": len(request_text.encode()),
-            }
-        )
-    return result
+    return [
+        _provider_request(index, case_id, rows[case_id][0]) for index, case_id in enumerate(ids, 1)
+    ]
+
+
+def _provider_request(
+    case_index: int,
+    case_id: str,
+    case: dict[str, Any],
+    prompt: str | None = None,
+) -> dict[str, Any]:
+    """Build the single canonical provider-visible request used by M51B."""
+    instructions = m43_prompt() if prompt is None else prompt
+    context = serialize_governed_context_v1(str(case["database_id"]))
+    user = f"Case ID:\n{case_id}\n\nQuestion:\n{case['question']}\n\nGoverned context:\n{context}"
+    request_text = "SYSTEM:\n" + instructions + "\n\nUSER:\n" + user
+    return {
+        "case_index": case_index,
+        "case_id": case_id,
+        "database_id": case["database_id"],
+        "domain": case["database_id"],
+        "question": case["question"],
+        "question_sha256": sha256_text(str(case["question"])),
+        "prompt_sha256": sha256_text(instructions),
+        "context_sha256": sha256_text(context),
+        "serialized_context": context,
+        "instructions": instructions,
+        "user_text": user,
+        "request_text": request_text,
+        "request_sha256": sha256_text(request_text),
+        "request_bytes": len(request_text.encode()),
+    }
 
 
 def _patch_runtime_for_expansion() -> None:

@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from benchmark import m51b_runner, m531r_runner
+from benchmark.m46b_contract import m43_prompt
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -206,7 +207,7 @@ def evaluate() -> dict[str, Any]:
         raise RuntimeError("M531R1_HISTORICAL_RESPONSE_DRIFT")
     if sha_path(FRESH_RESPONSES) != FRESH_CORPUS_HASH:
         raise RuntimeError("M531R1_FRESH_RESPONSE_DRIFT")
-    if sha_bytes(m51b_runner.m43_prompt().encode("utf-8")) != PROMPT_HASH:
+    if sha_bytes(m43_prompt().encode("utf-8")) != PROMPT_HASH:
         raise RuntimeError("M531R1_PROMPT_DRIFT")
 
     current = current_request_fingerprints(ids)

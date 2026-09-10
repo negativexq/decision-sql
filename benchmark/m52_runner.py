@@ -318,7 +318,7 @@ def analyze() -> dict[str, Any]:
             "failures": n,
             "domains": sorted(root_domains[root]),
             "classification": "BROAD_SYSTEMATIC"
-            if n >= 5 and len(root_domains[root]) >= 3
+            if n >= 3 and len(root_domains[root]) >= 3
             else "CROSS_DOMAIN"
             if len(root_domains[root]) == 2
             else "DOMAIN_LOCAL",

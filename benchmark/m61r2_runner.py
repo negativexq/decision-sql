@@ -18,6 +18,7 @@ import hashlib
 import json
 import os
 import re
+import statistics
 import subprocess
 import time
 from collections import Counter
@@ -1028,7 +1029,7 @@ def postprocess(rows: list[dict[str, Any]], state: dict[str, Any], winner: str) 
         {
             "observations": len(rows),
             "latency_ms": {
-                "median": latencies[len(latencies) // 2] if latencies else None,
+                "median": statistics.median(latencies) if latencies else None,
                 "p95": latencies[min(len(latencies) - 1, int(len(latencies) * 0.95))]
                 if latencies
                 else None,

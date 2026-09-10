@@ -4,7 +4,7 @@ from sqlglot import exp
 
 from app.catalog.models import ColumnMetadata, SchemaCatalog, TableMetadata
 from app.sql.authority import ExecutionAuthority, external_relations, validate_authority
-from app.sql.models import SqlCandidate, SqlPlanFailure, SqlSafetyStatus
+from app.sql.models import CandidateSource, SqlCandidate, SqlPlanFailure, SqlSafetyStatus
 from app.sql.parser import SQLParser
 from app.sql.service import SqlSafetyService
 
@@ -64,6 +64,21 @@ def test_unauthorized_single_relation_is_rejected_before_database_connection() -
     assert result.failure_stage.value == "AUTHORITY_REJECTION"
     assert result.authority_rejection is not None
     assert result.authority_rejection.unauthorized_relations == ("public.forbidden_table",)
+    engine.connect.assert_not_called()
+
+
+def test_model_candidate_without_authority_is_rejected_before_database_connection() -> None:
+    engine = Mock()
+    service = SqlSafetyService(engine, catalog=catalog("allowed_table"))
+
+    result = service.plan(
+        SqlCandidate(sql="SELECT id FROM allowed_table", source=CandidateSource.LLM)
+    )
+
+    assert isinstance(result, SqlPlanFailure)
+    assert result.status is SqlSafetyStatus.AUTHORITY_REJECTION
+    assert result.authority_rejection is not None
+    assert result.authority_rejection.code.value == "MISSING_REQUEST_AUTHORITY"
     engine.connect.assert_not_called()
 
 

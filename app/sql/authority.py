@@ -73,6 +73,7 @@ class AuthorityCode(StrEnum):
     """Stable authority failure code without coupling to global SQL policy codes."""
 
     UNAUTHORIZED_RELATION = "UNAUTHORIZED_RELATION"
+    MISSING_REQUEST_AUTHORITY = "MISSING_REQUEST_AUTHORITY"
 
 
 class AuthorityRejection(BaseModel):

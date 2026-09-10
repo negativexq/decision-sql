@@ -182,19 +182,19 @@ also verifies that a CTE alias is not treated as an external physical relation.
 The dedicated M52.S tests:
 
 ```text
-10 passed
+11 passed
 ```
 
 The focused M52.S/parent runtime suite:
 
 ```text
-104 passed, 1 skipped
+105 passed, 1 skipped
 ```
 
 Changed-code Ruff check and mypy checks pass. The full repository suite is:
 
 ```text
-1002 passed, 8 skipped, 9 failed
+1003 passed, 8 skipped, 9 failed
 ```
 
 The nine failures are pre-existing frozen historical hash/prompt/source

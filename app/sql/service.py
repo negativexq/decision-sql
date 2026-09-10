@@ -27,8 +27,14 @@ from app.semantics.grain_runtime import (
     GrainRuntimeStatus,
     RuntimeGrainSafetyCoordinator,
 )
-from app.sql.authority import AuthorityRejection, ExecutionAuthority, validate_authority
+from app.sql.authority import (
+    AuthorityCode,
+    AuthorityRejection,
+    ExecutionAuthority,
+    validate_authority,
+)
 from app.sql.models import (
+    CandidateSource,
     ExplainEstimate,
     PolicyCode,
     PolicyRejection,
@@ -126,7 +132,20 @@ class SqlSafetyService:
                 len(self._referenced_tables(parsed.expression)),
             )
 
+        if candidate.execution_authority is None and candidate.source in {
+            CandidateSource.LLM,
+            CandidateSource.FUTURE_LLM,
+        }:
+            return self._authority_failure(
+                AuthorityRejection(
+                    code=AuthorityCode.MISSING_REQUEST_AUTHORITY,
+                    message="Model-sourced SQL requires a request execution authority envelope.",
+                )
+            )
+
         authority = candidate.execution_authority
+        if authority is None and candidate.source is not CandidateSource.INTERNAL:
+            authority = self.default_execution_authority
         if authority is not None:
             authority_rejection = validate_authority(parsed.expression, authority)
             if authority_rejection:

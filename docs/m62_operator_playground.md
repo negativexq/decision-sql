@@ -97,7 +97,6 @@ runtime.
 The repository includes real browser-rendered demo captures at 1440×900:
 
 - [Playground](screenshots/decision-sql-playground.png): the natural-language entry point and operator navigation.
-- [Safety replay](screenshots/decision-sql-safety-replay.png): `ANSWER` separated from deterministic authority rejection.
 - [Trace inspection](screenshots/decision-sql-trace.png): the actual gate timeline and selected-stage evidence.
 - [Recent runs](screenshots/decision-sql-runs.png): run history with source, model decision, and runtime outcome.
 - [Model-visible governed context](screenshots/decision-sql-governed-context.png): the bounded context attached to a request.

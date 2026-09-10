@@ -165,7 +165,7 @@ authority envelope. The exact candidate SQL hash remained
 decision remained `ANSWER`, and the result was `AUTHORITY_REJECTION`. The engine
 connection spy recorded zero calls. Replaying the same canonical diagnostic
 twice produced byte-identical output with deterministic replay hash:
-`b8e9a3bb73f75c73635a2bc8dded165759d98f81b3b361c8f292a5c18f6ee5fe`.
+`188bf8cd756deff9139b5b495bc839599c95c9f026c17b786a402825d5cfbc3c`.
 
 ## Tests
 

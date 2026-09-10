@@ -92,6 +92,8 @@ flowchart TD
 The evaluator is outside the production trust boundary. It scores behavior; it
 does not route requests or grant execution authority.
 
+![Safety Replay: model answer rejected by deterministic execution authority](docs/m62/screenshots/02-safety-replay.png)
+
 ## Operator playground
 
 The local operator console presents a real natural-language request lifecycle:

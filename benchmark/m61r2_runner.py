@@ -976,6 +976,11 @@ def postprocess(rows: list[dict[str, Any]], state: dict[str, Any], winner: str) 
     }
     latencies = sorted(row["latency_ms"] for row in rows)
     usage = [row["usage"] for row in rows if row["usage"]]
+    usage_values = [item.get("usage", {}) for item in usage]
+    token_totals = {
+        name: sum(int(item.get(name, 0)) for item in usage_values)
+        for name in ("prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens")
+    }
     dump(
         "m61r2_question_accuracy.json",
         {
@@ -1029,6 +1034,7 @@ def postprocess(rows: list[dict[str, Any]], state: dict[str, Any], winner: str) 
                 else None,
             },
             "usage_records": len(usage),
+            "token_totals": token_totals,
             "cost": "not reported by provider",
         },
     )
@@ -1073,6 +1079,9 @@ production runtime remains unchanged.
 - Fresh full-run dbt-comparable result: **{summary["dbt_comparable_correct"]}/{summary["total"]}**
 - Fully stable questions: **{summary["fully_stable_questions"]}/11**
 - Provider calls: **242** (22 selection + 220 full run); retries: **0**.
+- Typed decisions: `ANSWER` 121, `BLOCKED_AUTHORITY` 81, `NEEDS_CLARIFICATION` 18.
+- Full-run failures: 81 false authority blocks, 18 abstentions, 24 join-path
+  errors, and 4 business-semantic errors.
 
 The historical production-faithful M61R result was **82/220**. These numbers
 measure different epistemic contracts: the raw arm permits ordinary inference

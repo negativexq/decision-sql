@@ -14,6 +14,9 @@ production runtime remains unchanged.
 - Fresh full-run dbt-comparable result: **93/220**
 - Fully stable questions: **2/11**
 - Provider calls: **242** (22 selection + 220 full run); retries: **0**.
+- Typed decisions: `ANSWER` 121, `BLOCKED_AUTHORITY` 81, `NEEDS_CLARIFICATION` 18.
+- Full-run failures: 81 false authority blocks, 18 abstentions, 24 join-path
+  errors, and 4 business-semantic errors.
 
 The historical production-faithful M61R result was **82/220**. These numbers
 measure different epistemic contracts: the raw arm permits ordinary inference

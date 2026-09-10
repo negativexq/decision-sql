@@ -304,8 +304,8 @@ def prepare() -> None:
         dict[str, Any],
         {
             "experiment": "M56",
-            "prompt_path": str(PROMPT_PATH.relative_to(ROOT.parent)),
-            "prompt_sha256": sha_path(PROMPT_PATH),
+            "prompt_path": "benchmark.m46b_contract.m43_prompt (M43 request ledger)",
+            "prompt_sha256": sha256_text(BASE_PROMPT),
             "prompt_lines": {
                 "ambiguity_and_decisions": "governed_context_v1.md:29-36",
                 "authority_rules": "governed_context_v1.md:5-11",

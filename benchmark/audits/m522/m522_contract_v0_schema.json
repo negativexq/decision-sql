@@ -1,0 +1,96 @@
+{
+  "$defs": {
+    "CarrierV0": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "inclusion": {
+          "$ref": "#/$defs/PopulationInclusionMode"
+        }
+      },
+      "required": [
+        "entity_id",
+        "inclusion"
+      ],
+      "title": "CarrierV0",
+      "type": "object"
+    },
+    "MeasureV0": {
+      "additionalProperties": false,
+      "properties": {
+        "contributing_population_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contributing Population Ref"
+        },
+        "source_entity_id": {
+          "title": "Source Entity Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_entity_id"
+      ],
+      "title": "MeasureV0",
+      "type": "object"
+    },
+    "PopulationInclusionMode": {
+      "enum": [
+        "ALL_BASE_ENTITIES",
+        "MATCHING_ENTITIES_ONLY"
+      ],
+      "title": "PopulationInclusionMode",
+      "type": "string"
+    },
+    "ResultGrainV0": {
+      "additionalProperties": false,
+      "properties": {
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_id"
+      ],
+      "title": "ResultGrainV0",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Minimal typed proposal; audit-only and intentionally no SQL escape hatch.",
+  "properties": {
+    "carrier": {
+      "$ref": "#/$defs/CarrierV0"
+    },
+    "measure": {
+      "$ref": "#/$defs/MeasureV0"
+    },
+    "result_grain": {
+      "$ref": "#/$defs/ResultGrainV0"
+    },
+    "version": {
+      "const": "PopulationSemanticContractV0",
+      "default": "PopulationSemanticContractV0",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_grain",
+    "carrier",
+    "measure"
+  ],
+  "title": "PopulationSemanticContractV0",
+  "type": "object"
+}

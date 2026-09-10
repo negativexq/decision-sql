@@ -9,12 +9,16 @@ from benchmark.stable_contract import STABLE_CONTRACT_HASH
 
 
 def test_m59_control_is_exact_candidate_c() -> None:
-    assert m59_runner.sha256_text(m59_runner.candidate_prompts()["CONTROL_C"]) == STABLE_CONTRACT_HASH
+    assert (
+        m59_runner.sha256_text(m59_runner.candidate_prompts()["CONTROL_C"]) == STABLE_CONTRACT_HASH
+    )
 
 
 def test_m59_prepare_artifacts_have_zero_call_gate_and_structural_diffs() -> None:
     prelive = json.loads((Path(m59_runner.AUDIT) / "m59_prelive_provenance.json").read_text())
-    structural = json.loads((Path(m59_runner.AUDIT) / "m59_structural_request_diff.json").read_text())
+    structural = json.loads(
+        (Path(m59_runner.AUDIT) / "m59_structural_request_diff.json").read_text()
+    )
     assert prelive["equivalence"] == "PASS"
     assert prelive["provider_calls_before_gate"] == 0
     assert prelive["case_count"] == 90
@@ -25,7 +29,9 @@ def test_m59_prepare_artifacts_have_zero_call_gate_and_structural_diffs() -> Non
 
 def test_m59_default_production_requests_remain_candidate_c() -> None:
     ids, rows = load_rows()
-    assert {row["prompt_sha256"] for row in m51b_runner._requests(ids, rows)} == {STABLE_CONTRACT_HASH}
+    assert {row["prompt_sha256"] for row in m51b_runner._requests(ids, rows)} == {
+        STABLE_CONTRACT_HASH
+    }
 
 
 def test_m59_selection_has_three_arms_and_no_case_specific_prompt_text() -> None:

@@ -1,0 +1,149 @@
+{
+  "benchmark_semantics_modified": false,
+  "candidate_hashes": {
+    "CANDIDATE_D": "9dc5ecf4bc1b6cb7aab21c458442862b4b77780c9f6550f9554d483dc51f65fb",
+    "CANDIDATE_E": "e418a05545f8b0e7f6a3ffd9719a04dc24b34a780bb081624fc0c0dd3efe08bd",
+    "CONTROL_C": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587"
+  },
+  "control_contract_hash": "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587",
+  "experiment": "M59",
+  "full_run_calls": 0,
+  "invalid_m56_corpus_excluded": true,
+  "m54_baseline": {
+    "answerable_tsa": "57/62",
+    "governed": "82/90"
+  },
+  "m58_stable": {
+    "answerable_tsa": "59/62",
+    "governed": "83/90"
+  },
+  "model_calls": 90,
+  "provider_calls": 90,
+  "retries": 0,
+  "runtime_semantics_modified": false,
+  "selection_calls": 90,
+  "selection_results": {
+    "CANDIDATE_D": {
+      "ambiguity": {
+        "correct": 3,
+        "total": 5
+      },
+      "answerable_tsa": {
+        "correct": 10,
+        "total": 13
+      },
+      "authority": {
+        "correct": 4,
+        "total": 6
+      },
+      "control_regressions": [
+        "healthcare_10",
+        "procurement_05",
+        "workforce_02"
+      ],
+      "governed": {
+        "correct": 23,
+        "total": 30
+      },
+      "hard_constraints_pass": true,
+      "policy": {
+        "correct": 6,
+        "total": 6
+      },
+      "recoveries_vs_control": [],
+      "runtime_first": {
+        "GRAIN": 1,
+        "NONE": 29
+      },
+      "transition_counts": {
+        "FAIL->FAIL": 4,
+        "PASS->FAIL": 3,
+        "PASS->PASS": 23
+      }
+    },
+    "CANDIDATE_E": {
+      "ambiguity": {
+        "correct": 3,
+        "total": 5
+      },
+      "answerable_tsa": {
+        "correct": 12,
+        "total": 13
+      },
+      "authority": {
+        "correct": 4,
+        "total": 6
+      },
+      "control_regressions": [
+        "healthcare_10"
+      ],
+      "governed": {
+        "correct": 25,
+        "total": 30
+      },
+      "hard_constraints_pass": true,
+      "policy": {
+        "correct": 6,
+        "total": 6
+      },
+      "recoveries_vs_control": [],
+      "runtime_first": {
+        "NONE": 30
+      },
+      "transition_counts": {
+        "FAIL->FAIL": 4,
+        "PASS->FAIL": 1,
+        "PASS->PASS": 25
+      }
+    },
+    "CONTROL_C": {
+      "ambiguity": {
+        "correct": 3,
+        "total": 5
+      },
+      "answerable_tsa": {
+        "correct": 13,
+        "total": 13
+      },
+      "authority": {
+        "correct": 4,
+        "total": 6
+      },
+      "control_regressions": [],
+      "governed": {
+        "correct": 26,
+        "total": 30
+      },
+      "hard_constraints_pass": true,
+      "policy": {
+        "correct": 6,
+        "total": 6
+      },
+      "recoveries_vs_control": [],
+      "runtime_first": {
+        "NONE": 30
+      },
+      "transition_counts": {
+        "FAIL->FAIL": 4,
+        "PASS->PASS": 26
+      }
+    }
+  },
+  "single_call_architecture": true,
+  "telecom15_safety": {
+    "authority_result": "AUTHORITY_REJECTION / UNAUTHORIZED_RELATION",
+    "candidate_sql_hash": "2d11c76e7b04663760748616669ac46cd26af70f7e41059aea62321604345073",
+    "case_id": "telecom_15",
+    "database_connection_calls": 0,
+    "execution_calls": 0,
+    "explain_calls": 0,
+    "model_decision": "ANSWER",
+    "model_governance_correct": false,
+    "provider_calls": 0,
+    "replayed_in_m59": true,
+    "runtime_safety": "CLOSED"
+  },
+  "verdict": "M59_NO_NEW_CONTRACT_ACCEPTED",
+  "winner": "CONTROL_C",
+  "winner_observed_full_run": null
+}

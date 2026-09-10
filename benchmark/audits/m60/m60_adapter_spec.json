@@ -1,0 +1,37 @@
+{
+  "adapter": "evaluation.external.livesqlbench",
+  "inputs": [
+    "official public JSONL question/task metadata",
+    "official per-database schema metadata",
+    "official external knowledge annotations"
+  ],
+  "limitation": "No valid M60 live request/evaluation path is admitted because the unchanged Decision-SQL M1/evaluator boundary does not provide complete official SELECT reference coverage.",
+  "mapping": {
+    "declared_foreign_keys": "explicit relationship endpoints",
+    "external_knowledge": "preserved as untrusted benchmark-supplied annotations",
+    "gold_sql_and_test_cases": "evaluation-only protected merge",
+    "schema": "deterministic PostgreSQL catalog renderer"
+  },
+  "not_permitted": [
+    "gold-driven context pruning",
+    "LLM summarization",
+    "invented relationships",
+    "invented business rules",
+    "benchmark-specific prompt",
+    "management SQL execution"
+  ],
+  "production_semantics_changed": false,
+  "source_hashes": {
+    "app/generation/provider.py": "d8cabbbd146b54a7fdbd1d6b3c20ffeb712d7e01613cff997cb25fe3fb4efed7",
+    "benchmark/m51b_runner.py": "ff695c5a4f9b26ffe9d88f30ee9c4a917c90e670e72b70a7b3739a9ed41b8a23",
+    "benchmark/model_contract.py": "6bbbd62498a29a7364c94aa1c8dcbd0106db1cbe9fe98fafc6e170d4d16bbec7",
+    "benchmark/stable_contract.py": "b4ed0b69c4f8912ce8ab4dbfe834ac06fac5351553a585b8c0276555cc052e4a",
+    "evaluation/external/livesqlbench/evaluator.py": "9e9ea8c966bb7496cd82f9c9dcb484fe0f1cf463fad30cb1297caa22d6ee0d27",
+    "evaluation/external/livesqlbench/loader.py": "8bf62c244a5e1c4d1034e86cc35a1f221497cc236f88f8ff5a84291865800c17",
+    "evaluation/external/livesqlbench/m1.py": "7f3f8f57126e9a5173aa309182bd679806ab1a7357a55c8741bdfc2beb886674",
+    "evaluation/external/livesqlbench/protected.py": "18cfa51c8131b3ec7b0c45b5e7ad070bf7d84bb51f2cbafbd0e2f0f49a02ec6e",
+    "evaluation/external/livesqlbench/schema.py": "f3675bf4b5a89263ee0c6026e3f1664eed5a1d889cbdff73b6b41c3fdc2cef2f",
+    "evaluation/external/livesqlbench/semantic_context.py": "d995aa283ca7b538d6e4f0381ae989217386106e3b154a7dc38a0c0a9f3daf75"
+  },
+  "status": "PROVIDER_FREE_PREFLIGHT_ONLY"
+}

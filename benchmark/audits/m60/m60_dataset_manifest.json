@@ -1,0 +1,1996 @@
+{
+  "benchmark": "LiveSQLBench",
+  "dataset_manifest_sha256": "da691a2e21a558d5314d4bb9017988b5e8ff2887f2ccf3a70ad81ed3cb2452ec",
+  "dialect": "PostgreSQL",
+  "edition": "Base-Lite",
+  "manual_select_exclusions": 0,
+  "metadata_file_sha256": {
+    "alien/alien_column_meaning_base.json": "75b578cec2d43fd0f61f622c5301946a58aa20de7007a8957f17a8bf935e520a",
+    "alien/alien_kb.jsonl": "3e7980042fd8f6967af782c6ad2a298eea7837dee59c814f0acf0c8e74aca00e",
+    "alien/alien_schema.txt": "a617bfa075c337b88114da0842631621978ac7a8e484089119cd7457f0eb93b9",
+    "archeology/archeology_column_meaning_base.json": "a2b818d1b40c62be6cae28a7c008b8efd3470f6df08c2a16f8e35387da1a5e7d",
+    "archeology/archeology_kb.jsonl": "b64c434aee78fc682d3db8017c8614a3d6f47bd11181dfdbf6c4c38b343262c5",
+    "archeology/archeology_schema.txt": "198411c9e58dbcd8bdda31cb923a7316f7c21ab53b6a1310fe2d86e35f42e38c",
+    "credit/credit_column_meaning_base.json": "70be7a3967e21e948bf7510b8c0536e9fd88f6043c40c9b8b45da777642f69e8",
+    "credit/credit_kb.jsonl": "82344a5a9d963493eb83a2ea86bdcfec86acb1fa30e2e96e4c9e81a0e3a51afe",
+    "credit/credit_schema.txt": "1bac81365ec226c5d8d88468f904e2da18a07d85a40dc5d3878ae139165c3fa9",
+    "cross_db/cross_db_column_meaning_base.json": "f1401b14f70c692f20a1df423aa8539c8a083015dac26771d7ed6273f8c71c2b",
+    "cross_db/cross_db_kb.jsonl": "6dd80fad129c03d83ca1e57097b12b41efddcd5937603b4f6d052d1a04995c7a",
+    "cross_db/cross_db_schema.txt": "3b6f89ebeebd7d3e0864239012d100d58f9378290cfb1ab558c0fc19e7ca549a",
+    "crypto/crypto_column_meaning_base.json": "cf0573b3ec6a39719e1088678fcd1583f92f1b254fa69f66505ceebc99d31b70",
+    "crypto/crypto_kb.jsonl": "9e44290dc8903a04f048b0e44daafddd854753253a6813d582c27003ead87e84",
+    "crypto/crypto_schema.txt": "6425a94dfae4afbaba2e33199bcb5d09e06398e458ddde00efb1eb209d099954",
+    "cybermarket/cybermarket_column_meaning_base.json": "f5fae02b8c2d610cb0417138755cfb6ec9632cd5067c3bf1243f9015cd64df43",
+    "cybermarket/cybermarket_kb.jsonl": "b4a5dc174b6abc19ef0e5efdc0c55a8aad46d57efef2c987a1f7ec7c43f06f18",
+    "cybermarket/cybermarket_schema.txt": "83804ed3d202ddf66598a01bd17cf7f9b717b5d08e31e751ad26f39eb98c08fa",
+    "disaster/disaster_column_meaning_base.json": "85db12fa405ba3b97784518092d90612476f2874f5aad9dcc24e836f782bd7e9",
+    "disaster/disaster_kb.jsonl": "a6d26857dd67678d0c7a552f8ebe57738ac40f4eda1bb426e20f6b2be329f4bf",
+    "disaster/disaster_schema.txt": "9ffb23c8dfb8afd518d07d44634f29f00715dbe4a777fea397c2b3882fdebff9",
+    "fake/fake_column_meaning_base.json": "3376e7207b8aaeb9445558ad9ac93ad9c720b07d62bf3830af036bcb755337dc",
+    "fake/fake_kb.jsonl": "94bc895e90ebf949a52e91bb09c39b4cd5cc67a400d8cddd3c109c6ca79d441f",
+    "fake/fake_schema.txt": "b53628e49a4868b618ceb1a16026a4177600b3217a7e20aa228bca0e62ae5993",
+    "gaming/gaming_column_meaning_base.json": "2c81d6cc2570161b0fcb35df5b6342a3f2d4ede72c08322ec19619c4fc0440d8",
+    "gaming/gaming_kb.jsonl": "3edc78653d8cc14711c89fd0bea1e4099cf23c9ac2033976170e0cdc48315482",
+    "gaming/gaming_schema.txt": "e4b8bec9d73afc494d25e73537ea7307b741bc33b3ab3f5a54fb7fcf265cfb96",
+    "insider/insider_column_meaning_base.json": "59e2f7fd0c2dbaf3fa149bf8a1fd76b42b6daec67050b59df37b3566493d56b4",
+    "insider/insider_kb.jsonl": "eeb7821a7eb2ad405cb3ce360b159a26fcc8886ac509855d62a33d213fdb8b97",
+    "insider/insider_schema.txt": "6e42d4ec7b950b0d976d93b4ac0c58a4eede1b5c466d6e13bf6b49e4bda6928f",
+    "mental/mental_column_meaning_base.json": "f5382adb48eab389bedb2774816f986d4d605a3b6ad424f7c7343ff24abf3ebd",
+    "mental/mental_kb.jsonl": "27bc07ca16587061aaa72a8d3607353ea11a78e05d11ec632756a8c2a85a3c2f",
+    "mental/mental_schema.txt": "dc0910859761d6a962c0347a0be9a96368e85cfa4e2c1e20c37ceb7e6a3691b0",
+    "museum/museum_column_meaning_base.json": "19037b28cc6a982f5fba0ba3b5a9b40f1d4faa067b9de9f0ea5a263e3add8f04",
+    "museum/museum_kb.jsonl": "d1d9b4c3a5522c59cc57463dd1e92fb52c71112b4054ea4b8dcd9cbed021cbeb",
+    "museum/museum_schema.txt": "f1e3a855dd3a45f36689978506353a304ce1a5473c9bb6b80072224c3da6d441",
+    "news/news_column_meaning_base.json": "37484aa45d659fcc3c7e73ec89816fb72ee9e13f19af739d070fba31915d22ef",
+    "news/news_kb.jsonl": "f40ebb30a9ad3b044d09d791eb497d9a7a014030e6ac5438f28f4f0a65267988",
+    "news/news_schema.txt": "1eb186e95dabf7d342e03d89ae8089d63a30140b7751cba7e73c38ca1f451549",
+    "polar/polar_column_meaning_base.json": "0fec5b0fc5b6aef05a6288a30c5ca1fc4bc11ab7da6edc826dd9bd8ea2d312a0",
+    "polar/polar_kb.jsonl": "d980e657893f43c3e622add7c21ad5dc56ab485c3987b8531fa5508db8c9abbc",
+    "polar/polar_schema.txt": "c8af116a6b835d39a8b34e07b7fdf1e2f9aa8a17ffdecee9088681a94b128cfd",
+    "robot/robot_column_meaning_base.json": "902a04bec3ef195b74754e6eab04b7ba5ae1f350b45f206ed2ff0801eab7f69c",
+    "robot/robot_kb.jsonl": "e7eb914cb32dff87117bf1d8182631986c387954f6a1059f747ddacdbeaa6579",
+    "robot/robot_schema.txt": "fb495ca778c2cea80172856a465dfaef564aab0dbf450e79eb720961474ea9fe",
+    "solar/solar_column_meaning_base.json": "02ac182f79550cc0047165a080fe35bde0e9bf32264ac49a98d8ebe419d96fbf",
+    "solar/solar_kb.jsonl": "df5aa052c51b74bcde21ea1935ee7c432abd893077c5b6f00220ea1ba1eee995",
+    "solar/solar_schema.txt": "17e58b311eef89fd9663be9f331f6b7fec68cbdb15dbe2fd02c71358b5f31dca",
+    "vaccine/vaccine_column_meaning_base.json": "46de27c703c754f2cfb8c83598e381ebd21ae40d3e1882f30de12084067de4b9",
+    "vaccine/vaccine_kb.jsonl": "f843e9b10de2c5c2b63963b7c1e65087b6512006536d86e4c6b20b3ea1c2bf97",
+    "vaccine/vaccine_schema.txt": "c149c68331e751264f525fbaa67d1083f9242b5e296e2b70c0c97d865ceecaff",
+    "virtual/virtual_column_meaning_base.json": "d2ff435c893e031b67a9f608a08b3fa376bf6363a0c7ac6bb6e356c35b6367a0",
+    "virtual/virtual_kb.jsonl": "f4967a884d1130cbc7da4d7de8e108a8498d2f8eb6d91e94cae7df820b6afec9",
+    "virtual/virtual_schema.txt": "be3f59cb39e7a53473744bd9a82e56406edc97372e99ea4866f85b1b72fa0942"
+  },
+  "milestone": "M60",
+  "official_database_image": {
+    "digest": "sha256:1ae45d7aa5d64dd8eb82e4058f56b4b9625d5035b9b9dc0d2afa0295d9d3053c",
+    "image": "docker.io/shawnxxh/bird-interact-postgresql:latest"
+  },
+  "population": {
+    "databases": [
+      "alien",
+      "archeology",
+      "credit",
+      "cross_db",
+      "crypto",
+      "cybermarket",
+      "disaster",
+      "fake",
+      "gaming",
+      "insider",
+      "mental",
+      "museum",
+      "news",
+      "polar",
+      "robot",
+      "solar",
+      "vaccine",
+      "virtual"
+    ],
+    "management": 90,
+    "select": 180,
+    "total": 270,
+    "unclassified": 0
+  },
+  "release": {
+    "dataset_commit": "507d7d98f477b9d6a990628ea021bd2501cfd6e2",
+    "dataset_source": "https://huggingface.co/datasets/birdsql/livesqlbench-base-lite",
+    "evaluator_repository_commit": "e15cd221267e06fabfaf6a3d4a69308280ce9a7c",
+    "evaluator_source": "https://github.com/bird-bench/livesqlbench",
+    "protected_gt_sha256": "eb3ddfff4371a5f7aeacefefbfc5ff039fbf5fec57ff69ae64c1b0378a3a94b2",
+    "protected_rows": 270,
+    "public_dataset_sha256": "f2b2cd4402450f3bde1961e8f92f24100cc2ac6e908ef9a80b996d265c3a7884"
+  },
+  "source_root": "official local checkout outside repository: livesqlbench-base-lite-audit",
+  "tasks": [
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": null,
+      "external_id": "alien_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "alien_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "alien_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "alien_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "alien_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "alien",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "alien_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": null,
+      "external_id": "archeology_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "archeology_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "archeology_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "archeology_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "archeology_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "archeology",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "archeology_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": null,
+      "external_id": "cross_db_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cross_db_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cross_db_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cross_db_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cross_db_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cross_db",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cross_db_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": null,
+      "external_id": "polar_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "polar_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "polar_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "polar_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "polar_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "polar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "polar_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": null,
+      "external_id": "gaming_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "gaming_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "gaming_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "gaming_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "gaming_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "gaming",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "gaming_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": null,
+      "external_id": "credit_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "credit_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "credit_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "credit_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "credit_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "credit",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "credit_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": null,
+      "external_id": "cybermarket_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cybermarket_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cybermarket_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cybermarket_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cybermarket_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "cybermarket",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "cybermarket_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": null,
+      "external_id": "museum_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "museum_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "museum_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "museum_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "museum_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "museum",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "museum_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": null,
+      "external_id": "solar_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "solar_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "solar_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "solar_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "solar_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "solar",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "solar_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": null,
+      "external_id": "mental_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "mental_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "mental_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "mental_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "mental_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "mental",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "mental_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": null,
+      "external_id": "news_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "news_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "news_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "news_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "news_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "news",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "news_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": null,
+      "external_id": "crypto_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "crypto_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "crypto_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "crypto_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "crypto_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "crypto",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "crypto_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": null,
+      "external_id": "insider_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "insider_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "insider_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "insider_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "insider_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "insider",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "insider_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": null,
+      "external_id": "vaccine_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "vaccine_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "vaccine_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "vaccine_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "vaccine_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "vaccine",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "vaccine_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": null,
+      "external_id": "robot_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "robot_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "robot_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "robot_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "robot_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "robot",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "robot_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": null,
+      "external_id": "disaster_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "disaster_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "disaster_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "disaster_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "disaster_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "disaster",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "disaster_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": null,
+      "external_id": "fake_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "fake_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "fake_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "fake_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "fake_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "fake",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "fake_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_1",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_2",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_3",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_4",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_5",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_6",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_7",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_8",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_9",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": null,
+      "external_id": "virtual_10",
+      "included_in_primary": true,
+      "operation_class": "SELECT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "virtual_M_1",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "virtual_M_2",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "virtual_M_3",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "virtual_M_4",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    },
+    {
+      "database_id": "virtual",
+      "exclusion_reason": "OUT_OF_PRODUCT_SCOPE_READ_ONLY_SYSTEM",
+      "external_id": "virtual_M_5",
+      "included_in_primary": false,
+      "operation_class": "MANAGEMENT"
+    }
+  ]
+}

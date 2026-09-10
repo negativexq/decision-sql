@@ -1,0 +1,65 @@
+{
+  "benchmark_semantics_changed": false,
+  "blockers": [
+    {
+      "case_id": "mental_5",
+      "reason": "QUERY_TOO_EXPENSIVE at unchanged M1 policy boundary",
+      "status": "NOT_EVALUABLE"
+    },
+    {
+      "case_id": "news_8",
+      "reason": "multi-statement SQL_PARSE_ERROR",
+      "status": "NOT_EVALUABLE"
+    },
+    {
+      "case_id": "news_9",
+      "reason": "multi-statement SQL_PARSE_ERROR",
+      "status": "NOT_EVALUABLE"
+    },
+    {
+      "case_id": "solar_6",
+      "reason": "multi-statement SQL_PARSE_ERROR",
+      "status": "NOT_EVALUABLE"
+    },
+    {
+      "case_id": "solar_7",
+      "reason": "multi-statement SQL_PARSE_ERROR",
+      "status": "NOT_EVALUABLE"
+    }
+  ],
+  "candidate_c_unchanged": true,
+  "ground_truth_leakage": false,
+  "management_calls": 0,
+  "milestone": "M60",
+  "population": {
+    "management": 90,
+    "manual_select_exclusions": 0,
+    "select": 180,
+    "total": 270
+  },
+  "preflight": {
+    "classification": "LIVESQLBENCH_BASE_LITE_FINAL_PREFLIGHT_BLOCKED",
+    "m1_accepted": 175,
+    "m1_planning_errors": 4,
+    "m1_rejected": 1,
+    "reference_evaluable": 175,
+    "reference_fail": 5,
+    "reference_not_evaluable": 5,
+    "reference_pass": 170,
+    "reference_fail_cases": [
+      "insider_1",
+      "vaccine_10",
+      "vaccine_2",
+      "vaccine_7",
+      "virtual_2"
+    ],
+    "provider_free_rerun_result_sha256": "7349374c04117ec96359baccb1d99ca618cd83c42e951b52fe6c09dd4a3c69bb",
+    "provider_free_rerun_final_manifest_hash": "7884e5cc6619d387a425d7c8972dff57294a88011205db5e0a37c18e82f9fdf2"
+  },
+  "provider_calls": 0,
+  "reason": "Official Base-Lite assets are present and integrity checks pass, but the unchanged Decision-SQL M1/evaluator path cannot provide a complete interpretable official reference evaluation for all 180 SELECT tasks.",
+  "retries": 0,
+  "runtime_semantics_changed": false,
+  "select_calls": 0,
+  "verdict": "M60_ABORTED_EVALUATOR_INTEGRITY_FAILURE"
+}

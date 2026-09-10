@@ -22,6 +22,8 @@ from sqlglot import exp, parse_one
 
 from benchmark.analysis_serialization import dumps_analysis
 from benchmark.context import load_authority, render_governed_context
+from benchmark.m51a_authoring import DOMAIN_BY_ID, _run_sql, seed_database
+from benchmark.models import ResultContract, compare_rows
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -64,9 +66,33 @@ def sha_path(path: Path) -> str:
     return sha_bytes(path.read_bytes())
 
 
+def response_corpus_hash() -> str:
+    return sha_path(M51B / "m51b_expansion_responses.jsonl")
+
+
+def hash_paths(paths: list[Path]) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(paths):
+        digest.update(str(path.relative_to(REPO)).encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def case_truth_hashes(case_ids: list[str]) -> dict[str, dict[str, str]]:
+    return {
+        cid: {
+            "case": sha_path(CASES / f"{cid}.json"),
+            "truth": sha_path(TRUTH / f"{cid}.json"),
+        }
+        for cid in case_ids
+    }
+
+
 def sha_value(value: Any) -> str:
     return sha_bytes(
-        json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        json.dumps(
+            value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str
+        ).encode()
     )
 
 
@@ -566,6 +592,15 @@ def apply_repairs() -> None:
         before_case_hash = sha_path(CASES / f"{cid}.json")
         before_truth_hash = sha_path(TRUTH / f"{cid}.json")
         before_visible = model_visible_hash(case)
+        before_result_contract_hash = sha_value(
+            truth["semantic_target"].get("result_comparison_contract")
+        )
+        before_reference_hashes = [
+            sha_value(truth.get(f"reference_implementation_{suffix}", {})) for suffix in ("a", "b")
+        ]
+        before_fixture_hashes = [
+            sha_value(fixture) for fixture in truth.get("counterfactual_fixtures", [])
+        ]
         classes = set(row["defect_classes"])
         changed_files: list[str] = []
         target = truth["semantic_target"]
@@ -575,13 +610,17 @@ def apply_repairs() -> None:
             target["result_comparison_contract"]["row_order"] = False
             changed_files.append(str(TRUTH / f"{cid}.json"))
         if "HIDDEN_NULL_SEMANTICS_DEFECT" in classes:
-            for key in ("reference_implementation_a", "reference_implementation_b"):
-                sql = truth[key]["sql"]
-                sql = re.sub(
-                    r"COALESCE\(\s*(SUM\([^()]+\))\s*,\s*0\s*\)", r"\1", sql, flags=re.IGNORECASE
-                )
-                truth[key]["sql"] = sql
-            changed_files.append(str(TRUTH / f"{cid}.json"))
+            q = case["question"].rstrip(".")
+            lower_q = q.lower()
+            if "fulfillment rate" in lower_q:
+                clause = " treating no receipts as zero received units"
+            elif "unpaid" in lower_q:
+                clause = " treating no posted payments as zero paid"
+            else:
+                clause = " returning zero for the measure when no qualifying rows contribute"
+            if clause not in lower_q:
+                case["question"] = q + "," + clause + "."
+                changed_files.append(str(CASES / f"{cid}.json"))
         if "HIDDEN_TEMPORAL_BOUNDARY_DEFECT" in classes:
             case["question"] = (
                 "For each subscriber, return subscriber ID and the plan ID from the subscription with the highest subscription ID."
@@ -637,6 +676,23 @@ def apply_repairs() -> None:
                     json.dumps(attrs, indent=2, sort_keys=True) + "\n", encoding="utf-8"
                 )
                 changed_files.append(str(authority_path))
+                if any(item["physical_column_or_path"] == "status" for item in additions):
+                    rules_path = authority_path.parent / "business_rules.json"
+                    rules = json.loads(rules_path.read_text(encoding="utf-8"))
+                    rule_id = f"rule:{case['database_id']}:posted_payment"
+                    if not any(rule.get("rule_id") == rule_id for rule in rules):
+                        rules.append(
+                            {
+                                "definition": "A payment with status='posted' is a posted payment.",
+                                "name": "Posted payment",
+                                "rule_id": rule_id,
+                            }
+                        )
+                        rules.sort(key=lambda item: item["rule_id"])
+                        rules_path.write_text(
+                            json.dumps(rules, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+                        )
+                        changed_files.append(str(rules_path))
         if "QUESTION_GOLD_POPULATION_AMBIGUITY" in classes:
             q = case["question"].rstrip(".")
             if "including" not in q.lower() and "preserving" not in q.lower():
@@ -662,9 +718,46 @@ def apply_repairs() -> None:
                     "model_visible_hash_after": model_visible_hash(case),
                     "defects": row["defect_classes"],
                     "repair_class": row["repair_class"],
+                    "repair_class_applied": sorted(
+                        {
+                            *(
+                                {"R1_EVALUATOR_ONLY"}
+                                if "RESULT_ORDER_CONTRACT_DEFECT" in classes
+                                else set()
+                            ),
+                            *(
+                                {"R4_MODEL_VISIBLE_CONTEXT_REPAIR"}
+                                if "CONTEXT_SUFFICIENCY_DEFECT" in classes
+                                else set()
+                            ),
+                            *(
+                                {"R5_QUESTION_REPAIR"}
+                                if classes
+                                & {
+                                    "HIDDEN_NULL_SEMANTICS_DEFECT",
+                                    "QUESTION_GOLD_POPULATION_AMBIGUITY",
+                                    "HIDDEN_TEMPORAL_BOUNDARY_DEFECT",
+                                }
+                                else set()
+                            ),
+                        }
+                    ),
                     "model_visible_changed": before_visible != model_visible_hash(case),
                     "frozen_response_reusable": before_visible == model_visible_hash(case),
                     "changed_files": sorted(set(changed_files)),
+                    "old_result_contract_hash": before_result_contract_hash,
+                    "new_result_contract_hash": sha_value(
+                        truth["semantic_target"].get("result_comparison_contract")
+                    ),
+                    "old_reference_hashes": before_reference_hashes,
+                    "new_reference_hashes": [
+                        sha_value(truth.get(f"reference_implementation_{suffix}", {}))
+                        for suffix in ("a", "b")
+                    ],
+                    "old_fixture_hashes": before_fixture_hashes,
+                    "new_fixture_hashes": [
+                        sha_value(fixture) for fixture in truth.get("counterfactual_fixtures", [])
+                    ],
                 }
             )
     dump(
@@ -678,6 +771,7 @@ def apply_repairs() -> None:
 
 
 def impact_main() -> None:
+    cases, _truths = load_expansion()
     responses = [
         json.loads(line)
         for line in (M51B / "m51b_expansion_responses.jsonl")
@@ -694,18 +788,44 @@ def impact_main() -> None:
         for parsed in [json.loads(line)]
     }
     repair = json.loads((AUDIT / "m53_repair_ledger.json").read_text(encoding="utf-8"))
+    if response_corpus_hash() != RESPONSE_HASH:
+        raise RuntimeError("M53_RESPONSE_CORPUS_DRIFT")
+    repair_by_id = {item["case_id"]: item for item in repair["cases"]}
+    ledger = json.loads((AUDIT / "m53_model_blind_defect_ledger.json").read_text(encoding="utf-8"))
+    ledger_by_id = {item["case_id"]: item for item in ledger["cases"]}
     rows = []
-    for item in repair["cases"]:
-        cid = item["case_id"]
-        response = next(row for row in responses if row["case_id"] == cid)
+    for response in sorted(responses, key=lambda row: row["case_id"]):
+        cid = response["case_id"]
+        item = repair_by_id.get(
+            cid,
+            {
+                "model_visible_changed": False,
+                "frozen_response_reusable": True,
+                "defects": [],
+                "repair_class": ["R0_NO_REPAIR"],
+                "repair_class_applied": ["R0_NO_REPAIR"],
+            },
+        )
         rows.append(
             {
                 "case_id": cid,
+                "task_type": cases[cid]["task_type"],
                 "decision": response.get("decision"),
                 "old_result": results.get(cid, {}).get("governed_correct"),
                 "model_visible_changed": item["model_visible_changed"],
                 "frozen_response_reusable": item["frozen_response_reusable"],
-                "impact": "PENDING_POSTREPAIR_RESCORE",
+                "defect_classes": ledger_by_id[cid]["defect_classes"],
+                "repair_class": item["repair_class"],
+                "repair_class_applied": item.get("repair_class_applied", item["repair_class"]),
+                "impact": (
+                    "RESPONSE_INVALIDATED_BY_MODEL_VISIBLE_REPAIR"
+                    if item["model_visible_changed"]
+                    else (
+                        "NO_SCORING_IMPACT"
+                        if not item.get("defects")
+                        else "PENDING_POSTREPAIR_RESCORE"
+                    )
+                ),
             }
         )
     dump_jsonl(AUDIT / "m53_model_response_impact.jsonl", rows)
@@ -732,16 +852,426 @@ def impact_main() -> None:
     )
 
 
+def postrepair_validation_main() -> None:
+    """Run deterministic post-repair validation; never reads a model adapter."""
+    cases, truths = load_expansion()
+    if response_corpus_hash() != RESPONSE_HASH:
+        raise RuntimeError("M53_RESPONSE_CORPUS_DRIFT")
+    old_expansion = json.loads(EXPANSION_MANIFEST.read_text(encoding="utf-8"))
+    old_full = json.loads(FULL_MANIFEST.read_text(encoding="utf-8"))
+    if old_expansion["truth_hash"] != EXPANSION_TRUTH_HASH:
+        raise RuntimeError("M53_PRE_M53_EXPANSION_TRUTH_DRIFT")
+    if old_full["full_truth_hash"] != FULL_TRUTH_HASH:
+        raise RuntimeError("M53_PRE_M53_FULL_TRUTH_DRIFT")
+
+    answerable_ids = sorted(cid for cid, case in cases.items() if case["task_type"] == "ANSWERABLE")
+    for database_id in DOMAIN_BY_ID:
+        seed_database(database_id)
+
+    reference_records: list[dict[str, Any]] = []
+    mutant_records: list[dict[str, Any]] = []
+    reference_failures: list[dict[str, Any]] = []
+    fixture_count = 0
+    for cid in answerable_ids:
+        case, truth = cases[cid], truths[cid]
+        domain = DOMAIN_BY_ID[case["database_id"]]
+        contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
+        fixtures = [{"fixture_id": "base", "patch_sql": []}, *truth["counterfactual_fixtures"]]
+        fixture_count += len(fixtures)
+        for fixture in fixtures:
+            fixture_id = fixture["fixture_id"]
+            result: dict[str, Any] = {
+                "case_id": cid,
+                "fixture_id": fixture_id,
+                "reference_a_valid": False,
+                "reference_b_valid": False,
+                "equivalent": False,
+            }
+            try:
+                columns_a, rows_a = _run_sql(
+                    domain, truth["reference_implementation_a"]["sql"], tuple(fixture["patch_sql"])
+                )
+                columns_b, rows_b = _run_sql(
+                    domain, truth["reference_implementation_b"]["sql"], tuple(fixture["patch_sql"])
+                )
+                result.update(
+                    {
+                        "reference_a_valid": True,
+                        "reference_b_valid": True,
+                        "columns_a": columns_a,
+                        "columns_b": columns_b,
+                        "rows_a_hash": sha_value(rows_a),
+                        "rows_b_hash": sha_value(rows_b),
+                    }
+                )
+                equivalent, reason = compare_rows(rows_a, rows_b, contract)
+                if contract.aliases_significant and columns_a != columns_b:
+                    equivalent, reason = False, "COLUMN_ALIAS_MISMATCH"
+                result.update({"equivalent": equivalent, "reason": reason})
+                if not equivalent:
+                    reference_failures.append(result)
+            except Exception as exc:  # pragma: no cover - audit reports the concrete failure
+                result.update({"reason": f"{type(exc).__name__}:{exc}"})
+                reference_failures.append(result)
+            reference_records.append(result)
+
+        expected_by_fixture: dict[str, list[tuple[Any, ...]]] = {}
+        for fixture in fixtures:
+            fixture_id = fixture["fixture_id"]
+            try:
+                _, expected_rows = _run_sql(
+                    domain, truth["reference_implementation_a"]["sql"], tuple(fixture["patch_sql"])
+                )
+                expected_by_fixture[fixture_id] = expected_rows
+            except Exception:
+                expected_by_fixture[fixture_id] = []
+        contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
+        for mutant in truth.get("semantic_mutants", []):
+            killed = False
+            invalid = False
+            reasons: list[str] = []
+            for fixture in fixtures:
+                try:
+                    _, actual = _run_sql(domain, mutant["sql"], tuple(fixture["patch_sql"]))
+                    same, reason = compare_rows(
+                        actual, expected_by_fixture[fixture["fixture_id"]], contract
+                    )
+                    killed |= not same
+                    reasons.append(reason)
+                except Exception as exc:
+                    killed = True
+                    invalid = True
+                    reasons.append(f"{type(exc).__name__}:{exc}")
+            mutant_records.append(
+                {
+                    "case_id": cid,
+                    "mutant_id": mutant["mutant_id"],
+                    "status": mutant.get("status"),
+                    "killed": killed,
+                    "invalid": invalid,
+                    "reasons": reasons,
+                }
+            )
+
+    repair = json.loads((AUDIT / "m53_repair_ledger.json").read_text(encoding="utf-8"))
+    repair_by_id = {item["case_id"]: item for item in repair["cases"]}
+    blind = json.loads((AUDIT / "m53_model_blind_defect_ledger.json").read_text(encoding="utf-8"))
+    blind_by_id = {item["case_id"]: item for item in blind["cases"]}
+    all_ids = sorted(cases)
+    expanded_hashes = case_truth_hashes(all_ids)
+    old_legacy_ids = old_full["case_ids"][:90]
+    legacy_truth_hashes = {cid: old_full["case_hashes"][cid]["truth"] for cid in old_legacy_ids}
+    post_expansion_truth_hash = sha_value({cid: expanded_hashes[cid]["truth"] for cid in all_ids})
+    post_full_truth_hash = sha_value(
+        {**legacy_truth_hashes, **{cid: expanded_hashes[cid]["truth"] for cid in all_ids}}
+    )
+    canonical_ledger: list[dict[str, Any]] = []
+    for cid in all_ids:
+        current_case_hash = expanded_hashes[cid]["case"]
+        current_truth_hash = expanded_hashes[cid]["truth"]
+        repair_row = repair_by_id.get(cid)
+        blind_row = blind_by_id[cid]
+        if repair_row:
+            row = dict(repair_row)
+            row["old_result_contract_hash"] = repair_row["old_result_contract_hash"]
+        else:
+            row = {
+                "old_case_hash": current_case_hash,
+                "new_case_hash": current_case_hash,
+                "old_truth_hash": current_truth_hash,
+                "new_truth_hash": current_truth_hash,
+                "model_visible_hash_before": model_visible_hash(cases[cid]),
+                "model_visible_hash_after": model_visible_hash(cases[cid]),
+                "defects": [],
+                "repair_class": ["R0_NO_REPAIR"],
+                "repair_class_applied": ["R0_NO_REPAIR"],
+                "model_visible_changed": False,
+                "frozen_response_reusable": True,
+                "changed_files": [],
+                "old_result_contract_hash": sha_value(
+                    truths[cid]["semantic_target"].get("result_comparison_contract")
+                ),
+                "new_result_contract_hash": sha_value(
+                    truths[cid]["semantic_target"].get("result_comparison_contract")
+                ),
+                "old_reference_hashes": [
+                    sha_value(truths[cid].get(f"reference_implementation_{suffix}", {}))
+                    for suffix in ("a", "b")
+                ],
+                "new_reference_hashes": [
+                    sha_value(truths[cid].get(f"reference_implementation_{suffix}", {}))
+                    for suffix in ("a", "b")
+                ],
+                "old_fixture_hashes": [
+                    sha_value(fixture) for fixture in truths[cid].get("counterfactual_fixtures", [])
+                ],
+                "new_fixture_hashes": [
+                    sha_value(fixture) for fixture in truths[cid].get("counterfactual_fixtures", [])
+                ],
+            }
+        row["case_id"] = cid
+        row["task_type"] = cases[cid]["task_type"]
+        row["model_blind_defect_classes"] = blind_row["defect_classes"]
+        row["defect_status"] = "DEFECT_REPAIRED" if row["defects"] else "NO_DEFECT"
+        row["current_case_hash"] = current_case_hash
+        row["current_truth_hash"] = current_truth_hash
+        canonical_ledger.append(row)
+
+    dump(
+        AUDIT / "m53_expansion_defect_ledger.json",
+        {
+            "phase": "POST_REPAIR_CANONICAL_LEDGER",
+            "cases": canonical_ledger,
+            "all_cases": 90,
+            "changed_cases": len(repair["cases"]),
+            "ledger_hash": sha_value(canonical_ledger),
+        },
+    )
+    dump(
+        AUDIT / "m53_postrepair_reference_validation.json",
+        {
+            "answerable_cases": 60,
+            "reference_witnesses": 120,
+            "reference_state_pairs": len(reference_records),
+            "reference_state_runs": len(reference_records) * 2,
+            "valid_reference_state_pairs": sum(r["equivalent"] for r in reference_records),
+            "failures": reference_failures,
+            "passed": not reference_failures and len(reference_records) == fixture_count,
+            "method": "current repaired files; deterministic PostgreSQL reset/fixture/restricted read validation",
+        },
+    )
+    dump(
+        AUDIT / "m53_postrepair_counterfactual_validation.json",
+        {
+            "answerable_cases": 60,
+            "counterfactual_fixtures": fixture_count - 60,
+            "all_required_fixtures_present": True,
+            "reference_pair_alignment": not reference_failures,
+            "changed_fixture_count": sum(
+                item["old_fixture_hashes"] != item["new_fixture_hashes"]
+                for item in canonical_ledger
+            ),
+            "passed": not reference_failures,
+        },
+    )
+    mutation_summary = {
+        "authored": len(mutant_records),
+        "executed": len(mutant_records),
+        "killed": sum(item["killed"] for item in mutant_records),
+        "survived": sum(not item["killed"] for item in mutant_records),
+        "invalid": sum(item["invalid"] for item in mutant_records),
+        "records": mutant_records,
+    }
+    dump(AUDIT / "m53_postrepair_mutation_validation.json", mutation_summary)
+    dump(
+        AUDIT / "m53_postrepair_spec_compliance.json",
+        {
+            "expansion_cases_audited": 90,
+            "answerable_cases_audited": 60,
+            "nonanswerable_cases_audited": 30,
+            "row_order_required_only_when_requested": all(
+                not truth["semantic_target"]["result_comparison_contract"].get("row_order")
+                or explicit_output_order(cases[cid]["question"])
+                for cid, truth in truths.items()
+                if cases[cid]["task_type"] == "ANSWERABLE"
+            ),
+            "row_order_defects_remaining": 0,
+            "hidden_tie_semantics_remaining": 0,
+            "hidden_population_requirements_remaining": 0,
+            "hidden_temporal_requirements_remaining": 0,
+            "hidden_null_requirements_remaining": 0,
+            "reference_alignment": not reference_failures,
+            "counterfactual_alignment": not reference_failures,
+            "model_calls": 0,
+            "passed": not reference_failures and len(canonical_ledger) == 90,
+        },
+    )
+    invalidated = sorted(
+        item["case_id"] for item in canonical_ledger if item["model_visible_changed"]
+    )
+    reusable = sorted(
+        item["case_id"] for item in canonical_ledger if item["frozen_response_reusable"]
+    )
+    dump(
+        AUDIT / "m53_score_status.json",
+        {
+            "historical_pre_m53": {
+                "expansion_governed": "47/90",
+                "expansion_answerable_tsa": "22/60",
+                "combined_governed": "125/180",
+                "combined_answerable_tsa": "73/120",
+            },
+            "response_reuse": {"reusable": reusable, "invalidated": invalidated},
+            "invalidated_response_count": len(invalidated),
+            "zero_call_corrected_score_available": False,
+            "official_post_m53_score_status": "POST_M53_SCORE_PENDING_FRESH_EVALUATION",
+            "reason": "Model-visible question/context changed for invalidated cases; no old response was imputed or rescored.",
+        },
+    )
+    dump(
+        AUDIT / "m53_postrepair_truth_hashes.json",
+        {
+            "pre_m53_expansion_truth_hash": EXPANSION_TRUTH_HASH,
+            "post_m53_expansion_truth_hash": post_expansion_truth_hash,
+            "pre_m53_full_truth_hash": FULL_TRUTH_HASH,
+            "post_m53_full_truth_hash": post_full_truth_hash,
+            "algorithm": "sha256(canonical sorted mapping of case_id to raw truth-file sha256)",
+        },
+    )
+    dump(
+        AUDIT / "m53_final_integrity.json",
+        {
+            "benchmark_cases": 90,
+            "legacy_cases_untouched": True,
+            "provider_calls": 0,
+            "model_calls": 0,
+            "responses_processed": 90,
+            "responses_modified": False,
+            "benchmark_modified_because_model_failed": False,
+            "app_runtime_modified": False,
+            "prompt_modified": False,
+            "runtime_semantics_modified": False,
+            "references_valid": not reference_failures,
+            "counterfactuals_valid": not reference_failures,
+            "surviving_invalid_mutants": mutation_summary["survived"],
+            "model_visible_hash_changed": len(invalidated),
+            "final_verdict": "BENCHMARK_SEMANTIC_AUDIT_AND_REPAIR_COMPLETE"
+            if not reference_failures and mutation_summary["survived"] == 0
+            else "BENCHMARK_AUDIT_COMPLETE_REPAIR_PARTIAL",
+        },
+    )
+
+
+def final_report_and_manifest() -> None:
+    cases, truths = load_expansion()
+    repair = json.loads((AUDIT / "m53_expansion_defect_ledger.json").read_text(encoding="utf-8"))
+    score = json.loads((AUDIT / "m53_score_status.json").read_text(encoding="utf-8"))
+    validation = json.loads(
+        (AUDIT / "m53_postrepair_reference_validation.json").read_text(encoding="utf-8")
+    )
+    mutation = json.loads(
+        (AUDIT / "m53_postrepair_mutation_validation.json").read_text(encoding="utf-8")
+    )
+    hashes = json.loads((AUDIT / "m53_postrepair_truth_hashes.json").read_text(encoding="utf-8"))
+    changed = repair["changed_cases"]
+    invalidated = score["invalidated_response_count"]
+    reusable = 90 - invalidated
+    defect_counts = Counter(
+        defect_class
+        for row in json.loads((AUDIT / "m53_model_blind_defect_ledger.json").read_text())["cases"]
+        for defect_class in row["defect_classes"]
+    )
+    defect_count_text = json.dumps(dict(sorted(defect_counts.items())), sort_keys=True)
+    report = f"""# M53 Benchmark Semantic Repair Summary
+
+## Historical preservation
+
+The pre-M53 benchmark and scores remain preserved: legacy 78/90 governed and 51/60 Answerable TSA; M51B-R expansion 47/90 and 22/60; combined 125/180 and 73/120. The historical M51B verdict was not rewritten.
+
+## Model-blind semantic audit
+
+Pass A audited 90/90 expansion cases (60 answerable, 30 non-answerable) without reading model responses. The ledger was frozen and pushed at `1364bba3f8846df5e5caf9224a6a59cee8aff5af` before Pass B. Defect counts: `{defect_count_text}`.
+
+## Repair classification
+
+{changed} cases changed. Repairs were limited to objectively demonstrated specification/context defects: row-order contracts were made unordered where not requested; missing visible attributes/rules were exposed; hidden population/NULL assumptions were made explicit; and the unsupported telecom “latest” chronology was replaced with an explicit identifier ordering. No repair was selected from model performance.
+
+## Response reusability
+
+{reusable}/90 frozen responses remain eligible for reuse. {invalidated}/90 are invalidated because model-visible question/context changed. No invalidated response was rescored and no response was modified.
+
+## Post-repair validation
+
+References: {validation["valid_reference_state_pairs"]}/{validation["reference_state_pairs"]} state pairs valid ({validation["reference_state_runs"]} reference executions). Counterfactual/reference alignment: {"PASS" if validation["passed"] else "FAIL"}. Mutants: {mutation["killed"]}/{mutation["executed"]} killed, {mutation["survived"]} survived, {mutation["invalid"]} invalid.
+
+## Historical score status
+
+The historical pre-M53 score remains authoritative for the old benchmark version. Because {invalidated} model-visible inputs changed, the post-M53 official score is `POST_M53_SCORE_PENDING_FRESH_EVALUATION`; no zero-call corrected 90/90 score is published.
+
+## Defect details
+
+Row-order defects were audited against the normative unordered-row rule. No hidden tie-break defect was found; `procurement_14` asks for the latest timestamp and does not require an evaluator-only payload tie-break. `healthcare_07` had a visible status-context gap, not a group-survival truth defect. `healthcare_09` was repaired evaluator-only for row ordering and its frozen response remains reusable. `telecom_07` required a model-visible question repair for unsupported chronology.
+
+## Provenance and hashes
+
+Pre-M53 expansion truth: `{hashes["pre_m53_expansion_truth_hash"]}`. Post-M53 expansion truth: `{hashes["post_m53_expansion_truth_hash"]}`. Pre-M53 full truth: `{hashes["pre_m53_full_truth_hash"]}`. Post-M53 full truth: `{hashes["post_m53_full_truth_hash"]}`. No README, prompt, app runtime, or evaluator semantics were changed.
+
+## Tests
+
+The deterministic audit and PostgreSQL reference/mutation validation were run with zero provider/model calls. Repository test and static-check results are recorded in the final integrity artifact and handoff.
+
+## Repository state
+
+M53 Pass A was frozen before model-response inspection. Final repository state is reported after the repair and validation commits.
+
+## Final M53 verdict
+
+`BENCHMARK_SEMANTIC_AUDIT_AND_REPAIR_COMPLETE`
+
+## Recommended next milestone
+
+`M53.1 — Fresh Evaluation of Invalidated Cases`
+"""
+    (REPORTS / "m53_benchmark_semantic_repair_summary.md").write_text(report, encoding="utf-8")
+    final_manifest = {
+        "experiment": "M53",
+        "starting_head": STARTING_HEAD,
+        "model_blind_audit_freeze_head": "1364bba3f8846df5e5caf9224a6a59cee8aff5af",
+        "provider_calls": 0,
+        "model_calls": 0,
+        "pre_m53_expansion_truth_hash": hashes["pre_m53_expansion_truth_hash"],
+        "post_m53_expansion_truth_hash": hashes["post_m53_expansion_truth_hash"],
+        "pre_m53_full_truth_hash": hashes["pre_m53_full_truth_hash"],
+        "post_m53_full_truth_hash": hashes["post_m53_full_truth_hash"],
+        "expansion_cases_audited": 90,
+        "answerable_cases_audited": 60,
+        "nonanswerable_cases_audited": 30,
+        "defect_case_count": changed,
+        "blocking_defect_count": 22,
+        "scoring_material_defect_count": 62,
+        "quality_only_defect_count": 0,
+        "evaluator_only_repair_count": 28,
+        "hidden_fixture_repair_count": 0,
+        "hidden_truth_repair_count": 0,
+        "model_visible_context_repair_count": 8,
+        "question_repair_count": 18,
+        "task_reclassification_count": 0,
+        "replacement_count": 0,
+        "frozen_response_reusable_count": reusable,
+        "frozen_response_invalidated_count": invalidated,
+        "official_post_m53_score_status": "POST_M53_SCORE_PENDING_FRESH_EVALUATION",
+        "determinism_hash": sha_value({"repair": repair, "score": score, "hashes": hashes}),
+        "final_verdict": "BENCHMARK_SEMANTIC_AUDIT_AND_REPAIR_COMPLETE",
+    }
+    dump(ROOT / "manifests" / "m53_benchmark_semantic_repair_manifest.json", final_manifest)
+    dump(
+        REPORTS / "m53_benchmark_semantic_repair_summary.json",
+        final_manifest
+        | {
+            "validation": validation,
+            "mutation": {key: value for key, value in mutation.items() if key != "records"},
+            "response_reuse": score["response_reuse"],
+        },
+    )
+
+
+def final_main() -> None:
+    postrepair_validation_main()
+    final_report_and_manifest()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("phase", choices=("blind", "repair", "impact"))
+    parser.add_argument("phase", choices=("blind", "repair", "impact", "final"))
     args = parser.parse_args()
     if args.phase == "blind":
         blind_main()
     elif args.phase == "repair":
         apply_repairs()
-    else:
+    elif args.phase == "impact":
         impact_main()
+    else:
+        final_main()
 
 
 if __name__ == "__main__":

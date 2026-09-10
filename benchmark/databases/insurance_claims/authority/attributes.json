@@ -1,5 +1,237 @@
 [
   {
+    "attribute_id": "attribute:insurance_claims:adjusters:adjuster_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:adjusters",
+    "nullable": false,
+    "physical_column_or_path": "adjuster_id",
+    "semantic_description": "Stable adjuster identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:adjusters:adjuster_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:adjusters",
+    "nullable": false,
+    "physical_column_or_path": "adjuster_name",
+    "semantic_description": "Adjuster name."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_assignments:adjuster_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_assignments",
+    "nullable": false,
+    "physical_column_or_path": "adjuster_id",
+    "semantic_description": "Adjuster reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_assignments:assigned_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:insurance_claims:claim_assignments",
+    "nullable": false,
+    "physical_column_or_path": "assigned_at",
+    "semantic_description": "Assignment timestamp."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_assignments:assignment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_assignments",
+    "nullable": false,
+    "physical_column_or_path": "assignment_id",
+    "semantic_description": "Stable assignment identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_assignments:claim_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_assignments",
+    "nullable": false,
+    "physical_column_or_path": "claim_id",
+    "semantic_description": "Claim reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_events:claim_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_events",
+    "nullable": false,
+    "physical_column_or_path": "claim_id",
+    "semantic_description": "Claim reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_events:event_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:insurance_claims:claim_events",
+    "nullable": false,
+    "physical_column_or_path": "event_at",
+    "semantic_description": "Event timestamp."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_events:event_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_events",
+    "nullable": false,
+    "physical_column_or_path": "event_id",
+    "semantic_description": "Stable claim-event identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_events:event_type",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:claim_events",
+    "nullable": false,
+    "physical_column_or_path": "event_type",
+    "semantic_description": "Lifecycle event type."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_payments:amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:insurance_claims:claim_payments",
+    "nullable": false,
+    "physical_column_or_path": "amount",
+    "semantic_description": "Payment amount."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_payments:claim_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_payments",
+    "nullable": false,
+    "physical_column_or_path": "claim_id",
+    "semantic_description": "Claim reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_payments:paid_on",
+    "data_type": "DATE",
+    "entity_id": "entity:insurance_claims:claim_payments",
+    "nullable": false,
+    "physical_column_or_path": "paid_on",
+    "semantic_description": "Payment date."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_payments:payment_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claim_payments",
+    "nullable": false,
+    "physical_column_or_path": "payment_id",
+    "semantic_description": "Stable payment identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claim_payments:payment_status",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:claim_payments",
+    "nullable": false,
+    "physical_column_or_path": "payment_status",
+    "semantic_description": "Payment state."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:claim_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "claim_id",
+    "semantic_description": "Stable claim identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:claim_status",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "claim_status",
+    "semantic_description": "Claim state."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:loss_amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "loss_amount",
+    "semantic_description": "Reported loss amount."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:loss_data",
+    "data_type": "JSONB",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "loss_data",
+    "semantic_description": "Structured loss details."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:opened_on",
+    "data_type": "DATE",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "opened_on",
+    "semantic_description": "Claim opening date."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:claims:policy_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": false,
+    "physical_column_or_path": "policy_id",
+    "semantic_description": "Policy reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:external_directory:holder_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:external_directory",
+    "nullable": false,
+    "physical_column_or_path": "holder_id",
+    "semantic_description": "Untrusted holder identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:loss_data:severity",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:claims",
+    "nullable": true,
+    "physical_column_or_path": "loss_data.severity",
+    "semantic_description": "Numeric loss severity in loss metadata."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:effective_on",
+    "data_type": "DATE",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "effective_on",
+    "semantic_description": "Coverage start date."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:expires_on",
+    "data_type": "DATE",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "expires_on",
+    "semantic_description": "Coverage end date."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:holder_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "holder_id",
+    "semantic_description": "Policyholder reference."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:policy_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "policy_id",
+    "semantic_description": "Stable policy identifier."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:product",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "product",
+    "semantic_description": "Coverage product."
+  },
+  {
+    "attribute_id": "attribute:insurance_claims:policies:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:insurance_claims:policies",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Policy state."
+  },
+  {
     "attribute_id": "attribute:insurance_claims:policyholders:holder_id",
     "data_type": "INTEGER",
     "entity_id": "entity:insurance_claims:policyholders",
@@ -22,229 +254,5 @@
     "nullable": false,
     "physical_column_or_path": "region",
     "semantic_description": "Residence region."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:policy_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "policy_id",
-    "semantic_description": "Stable policy identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:holder_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "holder_id",
-    "semantic_description": "Policyholder reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:product",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "product",
-    "semantic_description": "Coverage product."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:status",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "status",
-    "semantic_description": "Policy state."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:effective_on",
-    "data_type": "DATE",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "effective_on",
-    "semantic_description": "Coverage start date."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:policies:expires_on",
-    "data_type": "DATE",
-    "entity_id": "entity:insurance_claims:policies",
-    "nullable": false,
-    "physical_column_or_path": "expires_on",
-    "semantic_description": "Coverage end date."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:claim_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "claim_id",
-    "semantic_description": "Stable claim identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:policy_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "policy_id",
-    "semantic_description": "Policy reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:opened_on",
-    "data_type": "DATE",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "opened_on",
-    "semantic_description": "Claim opening date."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:loss_amount",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "loss_amount",
-    "semantic_description": "Reported loss amount."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:claim_status",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "claim_status",
-    "semantic_description": "Claim state."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claims:loss_data",
-    "data_type": "JSONB",
-    "entity_id": "entity:insurance_claims:claims",
-    "nullable": false,
-    "physical_column_or_path": "loss_data",
-    "semantic_description": "Structured loss details."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_payments:payment_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_payments",
-    "nullable": false,
-    "physical_column_or_path": "payment_id",
-    "semantic_description": "Stable payment identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_payments:claim_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_payments",
-    "nullable": false,
-    "physical_column_or_path": "claim_id",
-    "semantic_description": "Claim reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_payments:paid_on",
-    "data_type": "DATE",
-    "entity_id": "entity:insurance_claims:claim_payments",
-    "nullable": false,
-    "physical_column_or_path": "paid_on",
-    "semantic_description": "Payment date."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_payments:amount",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:insurance_claims:claim_payments",
-    "nullable": false,
-    "physical_column_or_path": "amount",
-    "semantic_description": "Payment amount."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_payments:payment_status",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:claim_payments",
-    "nullable": false,
-    "physical_column_or_path": "payment_status",
-    "semantic_description": "Payment state."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_events:event_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_events",
-    "nullable": false,
-    "physical_column_or_path": "event_id",
-    "semantic_description": "Stable claim-event identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_events:claim_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_events",
-    "nullable": false,
-    "physical_column_or_path": "claim_id",
-    "semantic_description": "Claim reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_events:event_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:insurance_claims:claim_events",
-    "nullable": false,
-    "physical_column_or_path": "event_at",
-    "semantic_description": "Event timestamp."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_events:event_type",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:claim_events",
-    "nullable": false,
-    "physical_column_or_path": "event_type",
-    "semantic_description": "Lifecycle event type."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:adjusters:adjuster_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:adjusters",
-    "nullable": false,
-    "physical_column_or_path": "adjuster_id",
-    "semantic_description": "Stable adjuster identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:adjusters:adjuster_name",
-    "data_type": "TEXT",
-    "entity_id": "entity:insurance_claims:adjusters",
-    "nullable": false,
-    "physical_column_or_path": "adjuster_name",
-    "semantic_description": "Adjuster name."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_assignments:assignment_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_assignments",
-    "nullable": false,
-    "physical_column_or_path": "assignment_id",
-    "semantic_description": "Stable assignment identifier."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_assignments:claim_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_assignments",
-    "nullable": false,
-    "physical_column_or_path": "claim_id",
-    "semantic_description": "Claim reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_assignments:adjuster_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:claim_assignments",
-    "nullable": false,
-    "physical_column_or_path": "adjuster_id",
-    "semantic_description": "Adjuster reference."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:claim_assignments:assigned_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:insurance_claims:claim_assignments",
-    "nullable": false,
-    "physical_column_or_path": "assigned_at",
-    "semantic_description": "Assignment timestamp."
-  },
-  {
-    "attribute_id": "attribute:insurance_claims:external_directory:holder_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:insurance_claims:external_directory",
-    "nullable": false,
-    "physical_column_or_path": "holder_id",
-    "semantic_description": "Untrusted holder identifier."
   }
 ]

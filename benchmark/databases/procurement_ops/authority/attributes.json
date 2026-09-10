@@ -1,211 +1,11 @@
 [
   {
-    "attribute_id": "attribute:procurement_ops:suppliers:supplier_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:suppliers",
-    "nullable": false,
-    "physical_column_or_path": "supplier_id",
-    "semantic_description": "Stable supplier identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:suppliers:supplier_name",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:suppliers",
-    "nullable": false,
-    "physical_column_or_path": "supplier_name",
-    "semantic_description": "Supplier display name."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:suppliers:region",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:suppliers",
-    "nullable": false,
-    "physical_column_or_path": "region",
-    "semantic_description": "Supplier operating region."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:suppliers:active",
-    "data_type": "BOOLEAN",
-    "entity_id": "entity:procurement_ops:suppliers",
-    "nullable": false,
-    "physical_column_or_path": "active",
-    "semantic_description": "Whether sourcing is active."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:suppliers:profile",
-    "data_type": "JSONB",
-    "entity_id": "entity:procurement_ops:suppliers",
-    "nullable": false,
-    "physical_column_or_path": "profile",
-    "semantic_description": "Supplier profile metadata."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:req_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "req_id",
-    "semantic_description": "Stable requisition identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:department",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "department",
-    "semantic_description": "Requesting department."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:requested_on",
-    "data_type": "DATE",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "requested_on",
-    "semantic_description": "Request date."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:status",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "status",
-    "semantic_description": "Requisition state."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:estimated_amount",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "estimated_amount",
-    "semantic_description": "Estimated request amount."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:requisitions:metadata",
-    "data_type": "JSONB",
-    "entity_id": "entity:procurement_ops:requisitions",
-    "nullable": false,
-    "physical_column_or_path": "metadata",
-    "semantic_description": "Request metadata."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:purchase_orders:po_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:purchase_orders",
-    "nullable": false,
-    "physical_column_or_path": "po_id",
-    "semantic_description": "Stable purchase-order identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:purchase_orders:supplier_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:purchase_orders",
-    "nullable": false,
-    "physical_column_or_path": "supplier_id",
-    "semantic_description": "Supplier reference."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:purchase_orders:ordered_on",
-    "data_type": "DATE",
-    "entity_id": "entity:procurement_ops:purchase_orders",
-    "nullable": false,
-    "physical_column_or_path": "ordered_on",
-    "semantic_description": "Order date."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:purchase_orders:status",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:purchase_orders",
-    "nullable": false,
-    "physical_column_or_path": "status",
-    "semantic_description": "Order state."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:po_lines:line_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:po_lines",
-    "nullable": false,
-    "physical_column_or_path": "line_id",
-    "semantic_description": "Stable line identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:po_lines:po_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:po_lines",
-    "nullable": false,
-    "physical_column_or_path": "po_id",
-    "semantic_description": "Purchase-order reference."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:po_lines:sku",
-    "data_type": "TEXT",
-    "entity_id": "entity:procurement_ops:po_lines",
-    "nullable": false,
-    "physical_column_or_path": "sku",
-    "semantic_description": "Ordered stock code."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:po_lines:ordered_qty",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:po_lines",
-    "nullable": false,
-    "physical_column_or_path": "ordered_qty",
-    "semantic_description": "Units ordered."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:po_lines:unit_cost",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:procurement_ops:po_lines",
-    "nullable": false,
-    "physical_column_or_path": "unit_cost",
-    "semantic_description": "Unit cost."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:receipts:receipt_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:receipts",
-    "nullable": false,
-    "physical_column_or_path": "receipt_id",
-    "semantic_description": "Stable receipt identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:receipts:line_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:receipts",
-    "nullable": false,
-    "physical_column_or_path": "line_id",
-    "semantic_description": "Purchase-order line reference."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:receipts:received_on",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:procurement_ops:receipts",
-    "nullable": false,
-    "physical_column_or_path": "received_on",
-    "semantic_description": "Receipt timestamp."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:receipts:received_qty",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:receipts",
-    "nullable": false,
-    "physical_column_or_path": "received_qty",
-    "semantic_description": "Units received."
-  },
-  {
     "attribute_id": "attribute:procurement_ops:approvals:approval_id",
     "data_type": "INTEGER",
     "entity_id": "entity:procurement_ops:approvals",
     "nullable": false,
     "physical_column_or_path": "approval_id",
     "semantic_description": "Stable approval identifier."
-  },
-  {
-    "attribute_id": "attribute:procurement_ops:approvals:req_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:procurement_ops:approvals",
-    "nullable": false,
-    "physical_column_or_path": "req_id",
-    "semantic_description": "Requisition reference."
   },
   {
     "attribute_id": "attribute:procurement_ops:approvals:approved_at",
@@ -224,11 +24,219 @@
     "semantic_description": "Approval decision."
   },
   {
+    "attribute_id": "attribute:procurement_ops:approvals:req_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:approvals",
+    "nullable": false,
+    "physical_column_or_path": "req_id",
+    "semantic_description": "Requisition reference."
+  },
+  {
     "attribute_id": "attribute:procurement_ops:external_directory:supplier_id",
     "data_type": "INTEGER",
     "entity_id": "entity:procurement_ops:external_directory",
     "nullable": false,
     "physical_column_or_path": "supplier_id",
     "semantic_description": "Untrusted supplier identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:metadata:risk_score",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": true,
+    "physical_column_or_path": "metadata.risk_score",
+    "semantic_description": "Numeric risk score in profile/request metadata."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:po_lines:line_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:po_lines",
+    "nullable": false,
+    "physical_column_or_path": "line_id",
+    "semantic_description": "Stable line identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:po_lines:ordered_qty",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:po_lines",
+    "nullable": false,
+    "physical_column_or_path": "ordered_qty",
+    "semantic_description": "Units ordered."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:po_lines:po_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:po_lines",
+    "nullable": false,
+    "physical_column_or_path": "po_id",
+    "semantic_description": "Purchase-order reference."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:po_lines:sku",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:po_lines",
+    "nullable": false,
+    "physical_column_or_path": "sku",
+    "semantic_description": "Ordered stock code."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:po_lines:unit_cost",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:procurement_ops:po_lines",
+    "nullable": false,
+    "physical_column_or_path": "unit_cost",
+    "semantic_description": "Unit cost."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:purchase_orders:ordered_on",
+    "data_type": "DATE",
+    "entity_id": "entity:procurement_ops:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "ordered_on",
+    "semantic_description": "Order date."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:purchase_orders:po_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "po_id",
+    "semantic_description": "Stable purchase-order identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:purchase_orders:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Order state."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:purchase_orders:supplier_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:purchase_orders",
+    "nullable": false,
+    "physical_column_or_path": "supplier_id",
+    "semantic_description": "Supplier reference."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:receipts:line_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:receipts",
+    "nullable": false,
+    "physical_column_or_path": "line_id",
+    "semantic_description": "Purchase-order line reference."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:receipts:receipt_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:receipts",
+    "nullable": false,
+    "physical_column_or_path": "receipt_id",
+    "semantic_description": "Stable receipt identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:receipts:received_on",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:procurement_ops:receipts",
+    "nullable": false,
+    "physical_column_or_path": "received_on",
+    "semantic_description": "Receipt timestamp."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:receipts:received_qty",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:receipts",
+    "nullable": false,
+    "physical_column_or_path": "received_qty",
+    "semantic_description": "Units received."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:department",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "department",
+    "semantic_description": "Requesting department."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:estimated_amount",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "estimated_amount",
+    "semantic_description": "Estimated request amount."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:metadata",
+    "data_type": "JSONB",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "metadata",
+    "semantic_description": "Request metadata."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:req_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "req_id",
+    "semantic_description": "Stable requisition identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:requested_on",
+    "data_type": "DATE",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "requested_on",
+    "semantic_description": "Request date."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:requisitions:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:requisitions",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Requisition state."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:suppliers:active",
+    "data_type": "BOOLEAN",
+    "entity_id": "entity:procurement_ops:suppliers",
+    "nullable": false,
+    "physical_column_or_path": "active",
+    "semantic_description": "Whether sourcing is active."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:suppliers:profile",
+    "data_type": "JSONB",
+    "entity_id": "entity:procurement_ops:suppliers",
+    "nullable": false,
+    "physical_column_or_path": "profile",
+    "semantic_description": "Supplier profile metadata."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:suppliers:region",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:suppliers",
+    "nullable": false,
+    "physical_column_or_path": "region",
+    "semantic_description": "Supplier operating region."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:suppliers:supplier_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:procurement_ops:suppliers",
+    "nullable": false,
+    "physical_column_or_path": "supplier_id",
+    "semantic_description": "Stable supplier identifier."
+  },
+  {
+    "attribute_id": "attribute:procurement_ops:suppliers:supplier_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:procurement_ops:suppliers",
+    "nullable": false,
+    "physical_column_or_path": "supplier_name",
+    "semantic_description": "Supplier display name."
   }
 ]

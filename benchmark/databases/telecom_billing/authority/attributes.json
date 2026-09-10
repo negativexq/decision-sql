@@ -1,147 +1,19 @@
 [
   {
-    "attribute_id": "attribute:telecom_billing:subscribers:subscriber_id",
+    "attribute_id": "attribute:telecom_billing:details:overhead_kb",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": true,
+    "physical_column_or_path": "details.overhead_kb",
+    "semantic_description": "Numeric overhead in usage detail metadata."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:external_directory:subscriber_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:subscribers",
+    "entity_id": "entity:telecom_billing:external_directory",
     "nullable": false,
     "physical_column_or_path": "subscriber_id",
-    "semantic_description": "Stable subscriber identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscribers:subscriber_name",
-    "data_type": "TEXT",
-    "entity_id": "entity:telecom_billing:subscribers",
-    "nullable": false,
-    "physical_column_or_path": "subscriber_name",
-    "semantic_description": "Subscriber name."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscribers:market",
-    "data_type": "TEXT",
-    "entity_id": "entity:telecom_billing:subscribers",
-    "nullable": false,
-    "physical_column_or_path": "market",
-    "semantic_description": "Service market."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:plans:plan_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:plans",
-    "nullable": false,
-    "physical_column_or_path": "plan_id",
-    "semantic_description": "Stable plan identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:plans:plan_name",
-    "data_type": "TEXT",
-    "entity_id": "entity:telecom_billing:plans",
-    "nullable": false,
-    "physical_column_or_path": "plan_name",
-    "semantic_description": "Plan name."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:plans:monthly_fee",
-    "data_type": "NUMERIC",
-    "entity_id": "entity:telecom_billing:plans",
-    "nullable": false,
-    "physical_column_or_path": "monthly_fee",
-    "semantic_description": "Monthly recurring fee."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscriptions:subscription_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:subscriptions",
-    "nullable": false,
-    "physical_column_or_path": "subscription_id",
-    "semantic_description": "Stable subscription identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscriptions:subscriber_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:subscriptions",
-    "nullable": false,
-    "physical_column_or_path": "subscriber_id",
-    "semantic_description": "Subscriber reference."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscriptions:plan_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:subscriptions",
-    "nullable": false,
-    "physical_column_or_path": "plan_id",
-    "semantic_description": "Plan reference."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:subscriptions:status",
-    "data_type": "TEXT",
-    "entity_id": "entity:telecom_billing:subscriptions",
-    "nullable": false,
-    "physical_column_or_path": "status",
-    "semantic_description": "Subscription state."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:usage_records:usage_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:usage_records",
-    "nullable": false,
-    "physical_column_or_path": "usage_id",
-    "semantic_description": "Stable usage identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:usage_records:subscriber_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:usage_records",
-    "nullable": false,
-    "physical_column_or_path": "subscriber_id",
-    "semantic_description": "Subscriber reference."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:usage_records:used_on",
-    "data_type": "DATE",
-    "entity_id": "entity:telecom_billing:usage_records",
-    "nullable": false,
-    "physical_column_or_path": "used_on",
-    "semantic_description": "Usage date."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:usage_records:megabytes",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:usage_records",
-    "nullable": false,
-    "physical_column_or_path": "megabytes",
-    "semantic_description": "Consumed megabytes."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:usage_records:details",
-    "data_type": "JSONB",
-    "entity_id": "entity:telecom_billing:usage_records",
-    "nullable": false,
-    "physical_column_or_path": "details",
-    "semantic_description": "Usage detail payload."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:invoices:invoice_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:invoices",
-    "nullable": false,
-    "physical_column_or_path": "invoice_id",
-    "semantic_description": "Stable invoice identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:invoices:subscriber_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:invoices",
-    "nullable": false,
-    "physical_column_or_path": "subscriber_id",
-    "semantic_description": "Subscriber reference."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:invoices:issued_on",
-    "data_type": "DATE",
-    "entity_id": "entity:telecom_billing:invoices",
-    "nullable": false,
-    "physical_column_or_path": "issued_on",
-    "semantic_description": "Invoice issue date."
+    "semantic_description": "Untrusted subscriber identifier."
   },
   {
     "attribute_id": "attribute:telecom_billing:invoices:amount_due",
@@ -152,6 +24,22 @@
     "semantic_description": "Invoice amount."
   },
   {
+    "attribute_id": "attribute:telecom_billing:invoices:invoice_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "invoice_id",
+    "semantic_description": "Stable invoice identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:invoices:issued_on",
+    "data_type": "DATE",
+    "entity_id": "entity:telecom_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "issued_on",
+    "semantic_description": "Invoice issue date."
+  },
+  {
     "attribute_id": "attribute:telecom_billing:invoices:status",
     "data_type": "TEXT",
     "entity_id": "entity:telecom_billing:invoices",
@@ -160,12 +48,52 @@
     "semantic_description": "Invoice state."
   },
   {
-    "attribute_id": "attribute:telecom_billing:payments:payment_id",
+    "attribute_id": "attribute:telecom_billing:invoices:subscriber_id",
     "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:invoices",
+    "nullable": false,
+    "physical_column_or_path": "subscriber_id",
+    "semantic_description": "Subscriber reference."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:outages:ended_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:telecom_billing:outages",
+    "nullable": true,
+    "physical_column_or_path": "ended_at",
+    "semantic_description": "Outage end."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:outages:market",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:outages",
+    "nullable": false,
+    "physical_column_or_path": "market",
+    "semantic_description": "Affected market."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:outages:outage_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:outages",
+    "nullable": false,
+    "physical_column_or_path": "outage_id",
+    "semantic_description": "Stable outage identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:outages:started_at",
+    "data_type": "TIMESTAMPTZ",
+    "entity_id": "entity:telecom_billing:outages",
+    "nullable": false,
+    "physical_column_or_path": "started_at",
+    "semantic_description": "Outage start."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:payments:amount",
+    "data_type": "NUMERIC",
     "entity_id": "entity:telecom_billing:payments",
     "nullable": false,
-    "physical_column_or_path": "payment_id",
-    "semantic_description": "Stable payment identifier."
+    "physical_column_or_path": "amount",
+    "semantic_description": "Payment amount."
   },
   {
     "attribute_id": "attribute:telecom_billing:payments:invoice_id",
@@ -184,51 +112,139 @@
     "semantic_description": "Payment date."
   },
   {
-    "attribute_id": "attribute:telecom_billing:payments:amount",
-    "data_type": "NUMERIC",
+    "attribute_id": "attribute:telecom_billing:payments:payment_id",
+    "data_type": "INTEGER",
     "entity_id": "entity:telecom_billing:payments",
     "nullable": false,
-    "physical_column_or_path": "amount",
-    "semantic_description": "Payment amount."
+    "physical_column_or_path": "payment_id",
+    "semantic_description": "Stable payment identifier."
   },
   {
-    "attribute_id": "attribute:telecom_billing:outages:outage_id",
-    "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:outages",
-    "nullable": false,
-    "physical_column_or_path": "outage_id",
-    "semantic_description": "Stable outage identifier."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:outages:market",
+    "attribute_id": "attribute:telecom_billing:payments:status",
     "data_type": "TEXT",
-    "entity_id": "entity:telecom_billing:outages",
+    "entity_id": "entity:telecom_billing:payments",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Payment state; the literal status value 'posted' denotes a posted payment."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:plans:monthly_fee",
+    "data_type": "NUMERIC",
+    "entity_id": "entity:telecom_billing:plans",
+    "nullable": false,
+    "physical_column_or_path": "monthly_fee",
+    "semantic_description": "Monthly recurring fee."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:plans:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:plans",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Stable plan identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:plans:plan_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:plans",
+    "nullable": false,
+    "physical_column_or_path": "plan_name",
+    "semantic_description": "Plan name."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscribers:market",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:subscribers",
     "nullable": false,
     "physical_column_or_path": "market",
-    "semantic_description": "Affected market."
+    "semantic_description": "Service market."
   },
   {
-    "attribute_id": "attribute:telecom_billing:outages:started_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:telecom_billing:outages",
-    "nullable": false,
-    "physical_column_or_path": "started_at",
-    "semantic_description": "Outage start."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:outages:ended_at",
-    "data_type": "TIMESTAMPTZ",
-    "entity_id": "entity:telecom_billing:outages",
-    "nullable": true,
-    "physical_column_or_path": "ended_at",
-    "semantic_description": "Outage end."
-  },
-  {
-    "attribute_id": "attribute:telecom_billing:external_directory:subscriber_id",
+    "attribute_id": "attribute:telecom_billing:subscribers:subscriber_id",
     "data_type": "INTEGER",
-    "entity_id": "entity:telecom_billing:external_directory",
+    "entity_id": "entity:telecom_billing:subscribers",
     "nullable": false,
     "physical_column_or_path": "subscriber_id",
-    "semantic_description": "Untrusted subscriber identifier."
+    "semantic_description": "Stable subscriber identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscribers:subscriber_name",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:subscribers",
+    "nullable": false,
+    "physical_column_or_path": "subscriber_name",
+    "semantic_description": "Subscriber name."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscriptions:plan_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "plan_id",
+    "semantic_description": "Plan reference."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscriptions:status",
+    "data_type": "TEXT",
+    "entity_id": "entity:telecom_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "status",
+    "semantic_description": "Subscription state."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscriptions:subscriber_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "subscriber_id",
+    "semantic_description": "Subscriber reference."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:subscriptions:subscription_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:subscriptions",
+    "nullable": false,
+    "physical_column_or_path": "subscription_id",
+    "semantic_description": "Stable subscription identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:usage_records:details",
+    "data_type": "JSONB",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": false,
+    "physical_column_or_path": "details",
+    "semantic_description": "Usage detail payload."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:usage_records:megabytes",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": false,
+    "physical_column_or_path": "megabytes",
+    "semantic_description": "Consumed megabytes."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:usage_records:subscriber_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": false,
+    "physical_column_or_path": "subscriber_id",
+    "semantic_description": "Subscriber reference."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:usage_records:usage_id",
+    "data_type": "INTEGER",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": false,
+    "physical_column_or_path": "usage_id",
+    "semantic_description": "Stable usage identifier."
+  },
+  {
+    "attribute_id": "attribute:telecom_billing:usage_records:used_on",
+    "data_type": "DATE",
+    "entity_id": "entity:telecom_billing:usage_records",
+    "nullable": false,
+    "physical_column_or_path": "used_on",
+    "semantic_description": "Usage date."
   }
 ]

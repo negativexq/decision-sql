@@ -17,7 +17,7 @@ export function AppShell({ page, onNavigate, children, health }: { page: string;
     <div className="shell">
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="topbar">
-        <div className="topbar-brand"><div className="brand-mark">DS</div><div className="brand-copy"><strong>Decision-SQL</strong><span>Governed query console</span></div></div>
+        <div className="topbar-brand"><div className="brand-mark">DS</div><div className="brand-copy"><strong>Decision-SQL</strong><span>Governed query console</span></div><span className="environment-tag">LOCAL</span></div>
         <div className="topbar-title"><span className="eyebrow">OPERATOR CONSOLE</span><h1>{page}</h1></div>
         <nav className="main-nav" aria-label="Primary navigation">{nav.map((item) => <button type="button" className={page === item ? "active" : ""} aria-current={page === item ? "page" : undefined} key={item} onClick={() => onNavigate(item)}><NavIcon name={item} />{item}</button>)}</nav>
         <div className="health"><span className={`health-dot ${health?.status === "ok" ? "ok" : "unknown"}`} />API {health?.status === "ok" ? "healthy" : "checking"}<span className="health-separator" /><span className={`health-dot ${health?.database === "ok" ? "ok" : "unknown"}`} />Database {health?.database === "ok" ? "ready" : "unavailable"}</div>

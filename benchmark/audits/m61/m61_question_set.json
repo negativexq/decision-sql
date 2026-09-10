@@ -1,0 +1,108 @@
+{
+  "benchmark": "dbt ACME benchmark family",
+  "source_repository": "dbt-labs/dbt-llm-sl-bench",
+  "source_commit": "a29f2429b1bb38cee9d591892299e96f1e197ff9",
+  "source_files": {
+    "base_config": "src/llm_bench/config/base.py",
+    "question_rdf": "benchmark_questions.ttl",
+    "published_question_count": "results_analysis/pages/index.md"
+  },
+  "selection_rule": "Use the ordered 11-entry BaseConfig.selected_challenges list; resolve each exact text to its sole QandA:Inquiry and select that inquiry's dwt:SqlQuery member, excluding its SPARQL sibling.",
+  "ttl_observation": {
+    "sql_query_records": 86,
+    "inquiry_records": 43,
+    "note": "The TTL contains more records than the published comparison. The exact 11 is not obtained by running every SQL record; it is the official ordered selection list resolved to inquiry and SQL-gold identifiers."
+  },
+  "count": 11,
+  "questions": [
+    {
+      "ordinal": 1,
+      "external_question_id": "IQ_317ef7a6c42204b1933a510805c57e45",
+      "question": "What is the total amount of premiums that a policy holder has paid by policy number?",
+      "gold_sql_identifier": "query-f5d4c866-9520-4dc5-9590-b9f911398901",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_317ef7a6c42204b1933a510805c57e45 QandA:expects"
+    },
+    {
+      "ordinal": 2,
+      "external_question_id": "IQ_6da3f7fcefcdd7453548c0956632a211",
+      "question": "What is the average time to settle a claim by policy number?",
+      "gold_sql_identifier": "query-578baedd-93d7-46b0-b7ab-ca1f91b383d6",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_6da3f7fcefcdd7453548c0956632a211 QandA:expects"
+    },
+    {
+      "ordinal": 3,
+      "external_question_id": "IQ_985f30d50b59256c4b01d42901b0f9fb",
+      "question": "What is the total amount of premiums that a policy holder has paid?",
+      "gold_sql_identifier": "query-366dfab8-1aea-4d48-ac19-84b98432b89d",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_985f30d50b59256c4b01d42901b0f9fb QandA:expects"
+    },
+    {
+      "ordinal": 4,
+      "external_question_id": "IQ_a8f3cd24b58a0e3dc8a30c45d315b195",
+      "question": "How many policies have agents sold by agent id?",
+      "gold_sql_identifier": "query-b3338843-13e3-4c03-a4f1-43dd0f9803de",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_a8f3cd24b58a0e3dc8a30c45d315b195 QandA:expects"
+    },
+    {
+      "ordinal": 5,
+      "external_question_id": "IQ_5b813c2c3d7949916d33976f2da518a0",
+      "question": "What is the total loss amounts, which is the sum of loss payment, loss reserve amount by claim number?",
+      "gold_sql_identifier": "query-6d422626-f4b2-4bb0-ad24-461851e7373f",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_5b813c2c3d7949916d33976f2da518a0 QandA:expects"
+    },
+    {
+      "ordinal": 6,
+      "external_question_id": "IQ_b2c56b1858b24690742a6b86af872858",
+      "question": "How many policies does each policy holder have by policy holder id?",
+      "gold_sql_identifier": "query-8beaef83-b3eb-4f69-be45-b190f250fc3c",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_b2c56b1858b24690742a6b86af872858 QandA:expects"
+    },
+    {
+      "ordinal": 7,
+      "external_question_id": "IQ_43461e701debb68f0f8ac1dceb945650",
+      "question": "What is the total amount of premiums paid by policy number?",
+      "gold_sql_identifier": "query-c8932855-1d82-4bc2-8346-1abeced0457a",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_43461e701debb68f0f8ac1dceb945650 QandA:expects"
+    },
+    {
+      "ordinal": 8,
+      "external_question_id": "IQ_419b164c362608054523707eaf5a57f3",
+      "question": "How many claims have been placed by policy number?",
+      "gold_sql_identifier": "query-0a848d91-fc89-4774-ae38-3b1015a1dc42",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_419b164c362608054523707eaf5a57f3 QandA:expects"
+    },
+    {
+      "ordinal": 9,
+      "external_question_id": "IQ_2b95bb37fe905f8c74b35d72e65f3d08",
+      "question": "What is the average policy size which is the the total amount of premium divided by the number of policies?",
+      "gold_sql_identifier": "query-4080805b-3146-45f9-8325-51e2d3c00e8d",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_2b95bb37fe905f8c74b35d72e65f3d08 QandA:expects"
+    },
+    {
+      "ordinal": 10,
+      "external_question_id": "IQ_8f2344e8d1bba2cc39fcae99afd42e4a",
+      "question": "How many policies do we have?",
+      "gold_sql_identifier": "query-4c423660-1dc0-4f7e-9af9-911cdf0e2a0b",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_8f2344e8d1bba2cc39fcae99afd42e4a QandA:expects"
+    },
+    {
+      "ordinal": 11,
+      "external_question_id": "IQ_f1b8ef62994d657eda300db1a4b71046",
+      "question": "How many claims do we have?",
+      "gold_sql_identifier": "query-5ff84445-a342-4998-a0b3-3071790bbfc5",
+      "gold_type": "dwt:SqlQuery",
+      "source_provenance": "benchmark_questions.ttl: dwt:IQ_f1b8ef62994d657eda300db1a4b71046 QandA:expects"
+    }
+  ],
+  "status": "EXACT_11_RESOLVED_BEFORE_CALLS"
+}

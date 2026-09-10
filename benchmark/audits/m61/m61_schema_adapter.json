@@ -1,0 +1,30 @@
+{
+  "milestone": "M61",
+  "source_schema": "ACME_small.ddl",
+  "source_sha256": "fadce6246c995a8aec742dc3a13221a90a3b332c416495b253194b8e74eb593d",
+  "adapter_status": "SPECIFIED_NOT_EXECUTED",
+  "adapter_hash": null,
+  "reason": "M61 stopped before external execution and provider request construction because required dbt Semantic Layer credentials were unavailable.",
+  "allowed_transformations": [
+    "table to typed entity metadata",
+    "column to typed attribute metadata",
+    "declared primary key to identity metadata",
+    "declared foreign key to relationship metadata",
+    "declared type and nullability to schema metadata"
+  ],
+  "forbidden_transformations": [
+    "gold-derived relationships",
+    "question-specific context selection",
+    "business synonyms invented from names",
+    "LLM-generated summaries",
+    "gold-derived metric definitions"
+  ],
+  "required_checks": {
+    "all_tables": "NOT_RUN",
+    "all_columns": "NOT_RUN",
+    "primary_keys": "NOT_RUN",
+    "foreign_keys": "NOT_RUN",
+    "deterministic_serialization": "NOT_RUN",
+    "gold_blind": "NOT_RUN"
+  }
+}

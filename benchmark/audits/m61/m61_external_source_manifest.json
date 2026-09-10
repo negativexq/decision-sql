@@ -1,0 +1,51 @@
+{
+  "milestone": "M61",
+  "benchmark_name": "dbt ACME benchmark family",
+  "target": "dbt ACME benchmark question set",
+  "official_source": {
+    "repository": "dbt-labs/dbt-llm-sl-bench",
+    "url": "https://github.com/dbt-labs/dbt-llm-sl-bench",
+    "commit": "a29f2429b1bb38cee9d591892299e96f1e197ff9",
+    "commit_source": "git ls-remote refs/heads/main",
+    "commit_date": "2026-08-10T23:30:44+02:00"
+  },
+  "related_dbt_project": {
+    "repository": "dbt-labs/semantic-layer-llm-benchmarking",
+    "url": "https://github.com/dbt-labs/semantic-layer-llm-benchmarking",
+    "main_commit": "ac20c9292fa88ec44d30aeeae61ee41a51e31748",
+    "additional_models_commit_not_used": "e4bdee5baeaa9b0ecb8345315c4adfffbeb2f0d1"
+  },
+  "artifacts": {
+    "question_source": {
+      "path": "benchmark_questions.ttl",
+      "sha256": "8374ad09d33967414e202f00f1aeb7151ab9773fd917d2d7f1344eada4a81dad"
+    },
+    "raw_schema": {
+      "path": "ACME_small.ddl",
+      "sha256": "fadce6246c995a8aec742dc3a13221a90a3b332c416495b253194b8e74eb593d"
+    },
+    "official_comparator": {
+      "path": "src/llm_bench/services/comparison.py",
+      "sha256": "73a6e83202caa56b6e1964f5d53cb3f9f9929f29906b799c81a2698ed2d7cbea"
+    },
+    "official_question_loader": {
+      "path": "src/llm_bench/utils/challenge_loader.py",
+      "sha256": "5fdff69a4776a44109b9ddbf25427e96ea77b96ac113959e5e0561c45bb9ef5d"
+    },
+    "official_base_config": {
+      "path": "src/llm_bench/config/base.py",
+      "sha256": "e18d18d9fe49abc0740004a6a916c3016d82f88585fa00cd1100fdc7d9a7145d"
+    },
+    "official_database_service": {
+      "path": "src/llm_bench/services/database.py",
+      "sha256": "81a84bbffd59986c4fbad7beca8c8d114084c7f31a0a83621bbc8b6d59d89c54"
+    }
+  },
+  "schema_variant": "ACME_small.ddl",
+  "question_set_artifact": "benchmark/audits/m61/m61_question_set.json",
+  "question_set_sha256": "33d0eb1dca380bce9c3b759daeb83c8a1d4633ffe694a98562f66ce07bc1d71d",
+  "question_set_status": "RESOLVED_11_FROM_OFFICIAL_CONFIG_AND_INQUIRY_IDS",
+  "comparability": "BENCHMARK_FAMILY_COMPARABLE",
+  "comparability_reason": "The exact first-party 11-question set and raw schema are pinned, but a historical Bodo run configuration/database state was not independently frozen here; numerical comparison is therefore not claimed as exact artifact comparability.",
+  "official_full_run_status": "NOT_RUN"
+}

@@ -1,0 +1,32 @@
+{
+  "milestone": "M61",
+  "status": "DESIGNED_PROVIDER_FREE; LIVE_NOT_REACHED",
+  "provider_visible_allowed": [
+    "natural-language question",
+    "ACME_small schema metadata derived deterministically from the official DDL",
+    "declared primary-key and foreign-key metadata",
+    "Candidate C production contract"
+  ],
+  "evaluator_only_forbidden": [
+    "gold SQL",
+    "gold result",
+    "reference result",
+    "expected output",
+    "hidden test cases",
+    "per-question correctness labels",
+    "previous model outputs",
+    "dbt or PyDough answers",
+    "gold-derived join paths"
+  ],
+  "adapter_rule": "schema-only, deterministic, gold-blind, question-independent",
+  "leakage_assertions": {
+    "gold_sql_to_provider": false,
+    "gold_result_to_provider": false,
+    "test_cases_to_provider": false,
+    "expected_output_to_provider": false,
+    "correct_join_path_to_provider": false,
+    "previous_outputs_to_provider": false
+  },
+  "automated_live_assertions": "NOT_RUN_BECAUSE_DBT_CREDENTIAL_GATE_BLOCKED_PRELIVE",
+  "verdict": "NO_PROVIDER_PAYLOAD_WAS_BUILT_OR_SENT"
+}

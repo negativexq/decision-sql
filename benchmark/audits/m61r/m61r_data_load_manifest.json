@@ -1,0 +1,403 @@
+{
+  "all_source_rows_loaded": true,
+  "duplicate_header_normalization": {
+    "Agreement.csv": "second duplicate Agreement_Type_Code deterministically suffixed __2"
+  },
+  "source_commit": "ac20c9292fa88ec44d30aeeae61ee41a51e31748",
+  "tables": [
+    {
+      "columns": [
+        "agreement_type_code",
+        "agreement_name",
+        "agreement_original_inception_date",
+        "product_identifier",
+        "agreement_type_code__2"
+      ],
+      "filename": "Agreement.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "agreement"
+    },
+    {
+      "columns": [
+        "agreement_identifier",
+        "assessment_identifier"
+      ],
+      "filename": "Agreement_Assessment.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "agreement_assessment"
+    },
+    {
+      "columns": [
+        "agreement_identifier",
+        "party_identifier",
+        "party_role_code",
+        "effective_date",
+        "expiration_date"
+      ],
+      "filename": "Agreement_Party_Role.csv",
+      "loaded_rows": 4,
+      "source_rows": 4,
+      "target_table": "agreement_party_role"
+    },
+    {
+      "columns": [
+        "party_identifier",
+        "assessment_identifier",
+        "party_role_code",
+        "begin_date",
+        "end_date"
+      ],
+      "filename": "Assesment_Party_Role.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "assesment_party_role"
+    },
+    {
+      "columns": [
+        "assessment_identifier",
+        "begin_date",
+        "assessment_description",
+        "end_date",
+        "assessment_reason_description"
+      ],
+      "filename": "Assessment.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "assessment"
+    },
+    {
+      "columns": [
+        "assessment_result_identifier",
+        "assessment_identifier",
+        "assessment_result_type_code"
+      ],
+      "filename": "Assessment_Result.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "assessment_result"
+    },
+    {
+      "columns": [
+        "catastrophe_identifier",
+        "catastrophe_type_code",
+        "catastrophe_name",
+        "industry_catastrophe_code",
+        "company_catastrophe_code"
+      ],
+      "filename": "Catastrophe.csv",
+      "loaded_rows": 4,
+      "source_rows": 4,
+      "target_table": "catastrophe"
+    },
+    {
+      "columns": [
+        "claim_identifier",
+        "catastrophe_identifier",
+        "claim_description",
+        "claims_made_date",
+        "company_claim_number",
+        "company_subclaim_number",
+        "insurable_object_identifier",
+        "occurrence_identifier",
+        "entry_into_claims_made_program_date",
+        "claim_open_date",
+        "claim_close_date",
+        "claim_reopen_date",
+        "claim_status_code",
+        "claim_reported_date"
+      ],
+      "filename": "Claim.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "claim"
+    },
+    {
+      "columns": [
+        "claim_amount_identifier",
+        "claim_identifier",
+        "claim_offer_identifier",
+        "amount_type_code",
+        "event_date",
+        "claim_amount",
+        "insurance_type_code"
+      ],
+      "filename": "Claim_Amount.csv",
+      "loaded_rows": 8,
+      "source_rows": 8,
+      "target_table": "claim_amount"
+    },
+    {
+      "columns": [
+        "claim_identifier",
+        "effective_date",
+        "policy_coverage_detail_identifier"
+      ],
+      "filename": "Claim_Coverage.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "claim_coverage"
+    },
+    {
+      "columns": [
+        "claim_amount_identifier"
+      ],
+      "filename": "Expense_Payment.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "expense_payment"
+    },
+    {
+      "columns": [
+        "claim_amount_identifier"
+      ],
+      "filename": "Expense_Reserve.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "expense_reserve"
+    },
+    {
+      "columns": [
+        "policyno",
+        "claimnumber",
+        "premium",
+        "insuredlocation",
+        "loss_ratio",
+        "nearest_firestation_miles",
+        "number_of_firefighters",
+        "fireplace",
+        "year_built"
+      ],
+      "filename": "FireClaim.csv",
+      "loaded_rows": 820,
+      "source_rows": 820,
+      "target_table": "fireclaim"
+    },
+    {
+      "columns": [
+        "geographic_location_identifier",
+        "parent_geographic_location_identifier",
+        "geographic_location_type_code",
+        "location_code",
+        "location_name",
+        "location_number",
+        "state_code",
+        "location_address_identifier",
+        "physical_location_identifier"
+      ],
+      "filename": "Geographic_Location.csv",
+      "loaded_rows": 8,
+      "source_rows": 8,
+      "target_table": "geographic_location"
+    },
+    {
+      "columns": [
+        "insurable_object_identifier",
+        "geographic_location_identifier",
+        "insurable_object_type_code"
+      ],
+      "filename": "Insurable_Object.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "insurable_object"
+    },
+    {
+      "columns": [
+        "location_address_identifier",
+        "line_1_address",
+        "municipality_name",
+        "line_2_address",
+        "postal_code",
+        "country_code",
+        "state_code",
+        "begin_date",
+        "end_date"
+      ],
+      "filename": "Location_Address.csv",
+      "loaded_rows": 8,
+      "source_rows": 8,
+      "target_table": "location_address"
+    },
+    {
+      "columns": [
+        "claim_amount_identifier"
+      ],
+      "filename": "Loss_Payment.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "loss_payment"
+    },
+    {
+      "columns": [
+        "claim_amount_identifier"
+      ],
+      "filename": "Loss_Reserve.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "loss_reserve"
+    },
+    {
+      "columns": [
+        "occurrence_identifier",
+        "catastrophic_event_indicator",
+        "geographic_location_identifier",
+        "occurrence_begin_date",
+        "occurrence_end_date",
+        "occurrence_begin_time",
+        "occurrence_end_time",
+        "occurrence_name"
+      ],
+      "filename": "Occurrence.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "occurrence"
+    },
+    {
+      "columns": [
+        "organization_identifier",
+        "industry_code",
+        "organization_name",
+        "dun_and_bradstreet_identifier",
+        "organization_type_code",
+        "alternate_name",
+        "organization_description",
+        "acronym_name",
+        "industry_type_code"
+      ],
+      "filename": "Organization.csv",
+      "loaded_rows": 1,
+      "source_rows": 1,
+      "target_table": "organization"
+    },
+    {
+      "columns": [
+        "party_identifier",
+        "party_name",
+        "begin_date",
+        "end_date",
+        "party_type_code"
+      ],
+      "filename": "Party.csv",
+      "loaded_rows": 30,
+      "source_rows": 30,
+      "target_table": "party"
+    },
+    {
+      "columns": [
+        "party_role_code",
+        "party_role_name",
+        "party_role_description"
+      ],
+      "filename": "Party_Role.csv",
+      "loaded_rows": 3,
+      "source_rows": 3,
+      "target_table": "party_role"
+    },
+    {
+      "columns": [
+        "person_identifier",
+        "first_name",
+        "middle_name",
+        "last_name",
+        "full_legal_name",
+        "nickname",
+        "suffix_name",
+        "birth_date",
+        "birth_place_name",
+        "gender_code",
+        "prefix_name"
+      ],
+      "filename": "Person.csv",
+      "loaded_rows": 29,
+      "source_rows": 29,
+      "target_table": "person"
+    },
+    {
+      "columns": [
+        "physical_location_identifier",
+        "physical_location_name",
+        "latitude_value",
+        "longitude_value",
+        "altitude_value",
+        "altitude_mean_sea_level_value",
+        "horizontal_accuracy_value",
+        "vertical_accuracy_value",
+        "travel_direction_description",
+        "location_address_identifier"
+      ],
+      "filename": "Physical_Location.csv",
+      "loaded_rows": 8,
+      "source_rows": 8,
+      "target_table": "physical_location"
+    },
+    {
+      "columns": [
+        "policy_identifier",
+        "effective_date",
+        "expiration_date",
+        "policy_number",
+        "status_code",
+        "geographic_location_identifier"
+      ],
+      "filename": "Policy.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "policy"
+    },
+    {
+      "columns": [
+        "policy_amount_identifier",
+        "geographic_location_identifier",
+        "policy_identifier",
+        "effective_date",
+        "amount_type_code",
+        "earning_begin_date",
+        "earning_end_date",
+        "policy_coverage_detail_identifier",
+        "policy_amount",
+        "insurable_object_identifier",
+        "insurance_type_code"
+      ],
+      "filename": "Policy_Amount.csv",
+      "loaded_rows": 12,
+      "source_rows": 12,
+      "target_table": "policy_amount"
+    },
+    {
+      "columns": [
+        "effective_date",
+        "policy_coverage_detail_identifier",
+        "coverage_identifier",
+        "insurable_object_identifier",
+        "policy_identifier",
+        "coverage_part_code",
+        "coverage_description",
+        "expiration_date",
+        "coverage_inclusion_exclusion_code"
+      ],
+      "filename": "Policy_Coverage_Detail.csv",
+      "loaded_rows": 6,
+      "source_rows": 6,
+      "target_table": "policy_coverage_detail"
+    },
+    {
+      "columns": [
+        "policy_amount_identifier"
+      ],
+      "filename": "Premium.csv",
+      "loaded_rows": 6,
+      "source_rows": 6,
+      "target_table": "premium"
+    },
+    {
+      "columns": [
+        "assessment_result_identifier"
+      ],
+      "filename": "Underwriting_Assessment.csv",
+      "loaded_rows": 2,
+      "source_rows": 2,
+      "target_table": "underwriting_assessment"
+    }
+  ]
+}

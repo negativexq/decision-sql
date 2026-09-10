@@ -1,0 +1,27 @@
+{
+  "experiment": "M53.1",
+  "stage": "POST_RESPONSE_ANALYSIS",
+  "blocking": true,
+  "failure": "M531_INPUT_CONSISTENCY",
+  "description": "Eleven cases classified by the frozen M53 reusability ledger as evaluator-only/reusable do not match the independently recomputed current post-M53 model-visible input hash.",
+  "reusable_cases_checked": 66,
+  "mismatch_count": 11,
+  "mismatches": [
+    {"case_id": "procurement_02", "persisted_m53_hash": "f9a990c9fb0c9c5ec892f2576b5c44b3de5e07b1b8b1c8348fcde4de68f36534", "current_post_m53_hash": "83ec9dcadf2ce2bfbb2e60461cd418cbf4f54817439297bb24db080163159cde"},
+    {"case_id": "procurement_05", "persisted_m53_hash": "d5863eae5cb91a9e6f254a2a982bfeea3a701ab7fbee519d8ba0dd0fc785e442", "current_post_m53_hash": "fb8828c6f45213501d2a60fc741fcb6810520f181d6389f66486cb369ee255c1"},
+    {"case_id": "procurement_08", "persisted_m53_hash": "3ae9b39de4d7f11bef6f971bba93ec8829a103a61a23599dbdd5603ac0cc9e48", "current_post_m53_hash": "39b1a917fb19397394213845b6427af0c41e97a33187875d7aa3997780d1e9ef"},
+    {"case_id": "procurement_11", "persisted_m53_hash": "1781a1a9e51639f65a2377bb924dce498685db69043135a270cccd17ff9db44c", "current_post_m53_hash": "e5523e57042c5d8d05614fa5a33dd330e154362556939558431e342f07c629e6"},
+    {"case_id": "insurance_04", "persisted_m53_hash": "dc8d52cb50167e7bdf12e2679194a80e307f262ae7c7e933efdfa5b71741b5c9", "current_post_m53_hash": "4f953997b28c0b64d9cf963214e062909497ba1c3db97d40d08c6b96ac530850"},
+    {"case_id": "telecom_02", "persisted_m53_hash": "64a9ccbdb5b93a69fcb080038b69689832b407d3d9a139d12cd5bdc05ec76316", "current_post_m53_hash": "75ff39fff48abef95207f39fb848dad71e80e87700639a274a93f7f4376b2d76"},
+    {"case_id": "telecom_05", "persisted_m53_hash": "827fe118211754a223b26921036a813a17217e98faa4f166d9899c79fdc20d9e", "current_post_m53_hash": "73b1c6f8ffecd83e7756e4958655e2d1ea99811988772018a6d4c27eb9f51f37"},
+    {"case_id": "telecom_08", "persisted_m53_hash": "04ebc34032e38d8340160559a036082e8d8ffa073c71a17c4871b14bb8baa641", "current_post_m53_hash": "66f95e8eb617ea08ff258c7532cfad6ec5df3347b3da5c874fd34612b4f31f25"},
+    {"case_id": "healthcare_02", "persisted_m53_hash": "7e17cd5bfb52ab8e687c6ab812a6cf6a12b10a7bb2c6a171fd7464ec9aec2f70", "current_post_m53_hash": "c78aaef94d2da85988ef67392cfc9d09822e541fe49a7650925431fffe963a52"},
+    {"case_id": "healthcare_05", "persisted_m53_hash": "c843983d1cf88bb7cacb488e334a4515bc7043bfb08485f63683d54abea86a2c", "current_post_m53_hash": "cdf616827ffa7ca39e381b7105e8bf9ad4a4e632020e46350981692fcd8e032c"},
+    {"case_id": "healthcare_06", "persisted_m53_hash": "d7cd38c0461b7832738948307ab9313f9e0631225ef761ab1dab8dc26de2e03e", "current_post_m53_hash": "9ca18fdaee4df1b0ee0a4ac58b05a81f1c720029234e669d2914d500e1f46d95"}
+  ],
+  "provider_calls_after_fresh_freeze": 0,
+  "model_calls_after_fresh_freeze": 0,
+  "benchmark_edits_after_fresh_call": 0,
+  "response_edits": 0,
+  "required_action": "Preserve M53.1 responses and abort. Reconcile M53 input-hash provenance in a separate zero-call recovery milestone before any scoring."
+}

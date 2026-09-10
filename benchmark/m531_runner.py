@@ -513,7 +513,7 @@ def evaluator_first(record: dict[str, Any], case: dict[str, Any]) -> str:
         if record["decision"] != "ANSWER":
             return "DECISION_FALSE_ABSTENTION"
         if record.get("first_failure") in {"SQL_PARSE", "POLICY", "GRAIN", "COST", "EXECUTION"}:
-            return record["first_failure"]
+            return str(record["first_failure"])
         return "RESULT_COUNTERFACTUAL" if record.get("base_correct") else "RESULT_BASE"
     if record["decision"] == "ANSWER":
         return "DECISION_FALSE_ANSWER"

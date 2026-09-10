@@ -1,0 +1,23 @@
+{
+  "experiment": "M53.1",
+  "status": "ABORTED",
+  "verdict": "M531_ABORTED_POST_EXPOSURE_BENCHMARK_DEFECT",
+  "starting_head": "a071be2b8fbc106d56c7a8f9f60445f62e239b53",
+  "post_m53_truth_hashes_verified": true,
+  "historical_response_corpus_hash_verified": true,
+  "reusable_rescore_processed": "66/66",
+  "fresh_calls": "24/24",
+  "fresh_provider_successes": 24,
+  "fresh_response_corpus_hash": "1bb22e9c70455d7710fc5990f8b9af0dc54090bc6f83ab182f9113cb22647ab4",
+  "blocking_issue": {
+    "type": "REUSE_INPUT_PROVENANCE_CONTRACT_DEFECT",
+    "affected_reusable_cases": 11,
+    "cases": ["procurement_02", "procurement_05", "procurement_08", "procurement_11", "insurance_04", "telecom_02", "telecom_05", "telecom_08", "healthcare_02", "healthcare_05", "healthcare_06"],
+    "detail": "The M53 frozen reusable ledger says these inputs were unchanged, but current post-M53 model-visible input hashes differ. The old responses therefore cannot be admitted to the complete 90-case score under the exact-input reuse contract."
+  },
+  "post_freeze_calls": 0,
+  "benchmark_edits_after_exposure": 0,
+  "score": "NOT_COMPUTED",
+  "m54_ready": false,
+  "recommended_next_milestone": "M53.1-R — Zero-Call Response Reuse Provenance Recovery"
+}

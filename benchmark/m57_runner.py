@@ -279,6 +279,9 @@ def analyze() -> None:
     responses = load_jsonl(AUDIT / "m57_responses.jsonl")
     m56 = load_json(ROOT / "audits/m56r/m56r_full_run_results.json")
     m56_responses = load_jsonl(ROOT / "audits/m56r/m56r_full_responses.jsonl")
+    m54_records = {
+        row["case_id"]: row for row in load_jsonl(ROOT / "audits/m54/m54_replay_records.jsonl")
+    }
     services = m56r.setup_services(rows)
     m57_records, runtime_first = m56r.score_arm(responses, rows, services)
     old_records = {row["case_id"]: row for row in m56["records"]}
@@ -400,11 +403,9 @@ def analyze() -> None:
         residual.append(
             {
                 "case_id": case_id,
-                "m54_governed": load_jsonl(ROOT / "audits/m54/m54_replay_records.jsonl")[0].get(
-                    "governed_correct"
-                )
-                if False
-                else None,
+                "m54_governed": m54_records[case_id]["governed_correct"],
+                "m54_decision": m54_records[case_id]["decision"],
+                "m54_first_divergence": m54_records[case_id].get("first_failure"),
                 "m56r_governed": old_records[case_id]["governed_correct"],
                 "m57_governed": new_records[case_id]["governed_correct"],
                 "m56r_decision": old_records[case_id]["decision"],
@@ -518,7 +519,7 @@ def finalize() -> None:
             "prompt_changed": False,
             "single_call_architecture": True,
             "verdict": verdict,
-            "recommended_stable_metric": f"M57 {metrics['governed']['correct']}/90 governed, {metrics['answerable_tsa']['correct']}/{metrics['answerable_tsa']['total']} TSA",
+            "recommended_stable_metric": "Conservative lower envelope: 83/90 governed, 59/62 Answerable TSA",
         },
     )
     dump(
@@ -577,7 +578,8 @@ descriptive historical composition, not a same-time 180-case run.
 
 ## Recommendation
 
-Best observed valid result remains M56R `83/90` governed and `59/62` TSA.
+Best observed valid result is M57 `84/90` governed and `60/62` TSA.
+The conservative two-run lower envelope is `83/90` governed and `59/62` TSA.
 M57 result is `{verdict}`. M57 does not promote or edit the public README;
 M58/M57 follow-up can decide the conservative stable-public policy.
 """

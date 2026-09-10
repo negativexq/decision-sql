@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.decision.models import ProposalSource
 from app.decision.models import RuntimeOutcome as ProductRuntimeOutcome
 from app.generation.decision_contract import DecisionReasonCode, DecisionType
+from app.governance.context import GovernedContext
 from app.observability.run_trace import RunTrace
 
 
@@ -47,6 +48,8 @@ class RunRecord(BaseModel):
     runtime_reason: str | None = None
     provider: str | None = None
     model: str | None = None
+    model_context: GovernedContext | None = None
+    model_context_hash: str | None = None
     proposed_sql: str | None = None
     rows: list[dict[str, Any]] = Field(default_factory=list)
     columns: list[str] = Field(default_factory=list)
@@ -93,7 +96,11 @@ class SchemaEntity(BaseModel):
 
 
 class GovernedSchemaResponse(BaseModel):
-    title: str = "Model-visible governed context"
+    title: str = "Governed Catalog"
+    description: str = (
+        "Server-owned queryable schema and relationships. Individual runs receive "
+        "a bounded model-visible subset."
+    )
     entities: list[SchemaEntity]
 
 
@@ -118,6 +125,8 @@ class PlaygroundResponse(BaseModel):
     runtime_reason: str | None
     provider: str | None
     model: str | None
+    model_context: GovernedContext | None
+    model_context_hash: str | None
     rows: list[dict[str, Any]]
     columns: list[str]
     row_count: int

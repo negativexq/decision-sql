@@ -51,12 +51,13 @@ async def test_unauthorized_preset_uses_real_runtime_authority_gate(
     assert all(
         stage.status is TraceStageStatus.SKIPPED
         for stage in record.trace.stages
-        if stage.name in {"database_connection", "explain", "cost_gate", "execution"}
+        if stage.name
+        in {"planning_connection", "explain", "cost_gate", "execution_connection", "execution"}
     )
     event_types = [event.event_type for event in record.trace.events]
     assert (
         event_types.index("stage.execution_authority.rejected")
-        < event_types.index("stage.database_connection.skipped")
+        < event_types.index("stage.planning_connection.skipped")
         < event_types.index("stage.response.pass")
     )
 
@@ -106,7 +107,7 @@ def test_schema_and_run_routes_are_available(operator_application: OperatorAppli
         presets = client.get("/api/playground/presets")
         runs = client.get("/api/runs")
         assert schema.status_code == 200
-        assert schema.json()["title"] == "Model-visible governed context"
+        assert schema.json()["title"] == "Governed Catalog"
         assert presets.status_code == 200
         assert len(presets.json()) >= 3
         assert runs.status_code == 200

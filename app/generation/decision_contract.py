@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, model_validator
 
 
 PRODUCTION_DECISION_CONTRACT_VERSION = "CANDIDATE_C"
+PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
     "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587"
 )
@@ -101,6 +102,9 @@ class DecisionReasonCode(StrEnum):
     MISSING_AUTHORIZED_RELATIONSHIP = "MISSING_AUTHORIZED_RELATIONSHIP"
     AMBIGUOUS_SEMANTICS = "AMBIGUOUS_SEMANTICS"
     READ_ONLY_POLICY = "READ_ONLY_POLICY"
+    # Retained for compatibility with the historical Candidate C wire enum.
+    # It is intentionally not valid for any canonical decision below.
+    NO_REASON = "NO_REASON"
 
 
 class ProductionDecision(BaseModel):
@@ -108,7 +112,7 @@ class ProductionDecision(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    case_id: str | None = None
+    case_id: str
     decision: DecisionType
     sql: str | None = None
     reason_code: DecisionReasonCode | None = None
@@ -137,12 +141,29 @@ def production_decision_prompt() -> str:
 
 
 def production_decision_schema() -> dict[str, Any]:
-    schema = ProductionDecision.model_json_schema()
-    # The provider must return every key once; nullable fields preserve the
-    # existing Candidate C wire shape while Pydantic enforces semantics.
-    schema["additionalProperties"] = False
-    schema["required"] = ["case_id", "decision", "sql", "reason_code"]
-    return schema
+    """Return the flat Candidate C wire schema used by the provider boundary."""
+    # Keep this provider-compatible schema flat.  Pydantic remains the
+    # semantic validator after admission; this shape is also the historical
+    # benchmark wire protocol, now owned by the product module.
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "Decision-SQL provider-safe submission",
+        "type": "object",
+        "required": ["case_id", "decision", "sql", "reason_code"],
+        "additionalProperties": False,
+        "properties": {
+            "case_id": {"type": "string"},
+            "decision": {
+                "type": "string",
+                "enum": [item.value for item in DecisionType],
+            },
+            "sql": {"type": ["string", "null"]},
+            "reason_code": {
+                "type": ["string", "null"],
+                "enum": [item.value for item in DecisionReasonCode] + [None],
+            },
+        },
+    }
 
 
 def production_decision_contract_hash() -> str:

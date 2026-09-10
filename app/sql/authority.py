@@ -10,6 +10,7 @@ from sqlglot import exp
 from sqlglot.optimizer.scope import traverse_scope
 
 from app.catalog.models import SchemaCatalog, SchemaContext
+from app.governance.context import GovernedContext
 
 
 def canonical_relation(schema: str | None, table: str) -> str:
@@ -66,6 +67,13 @@ class ExecutionAuthority(BaseModel):
             allowed_relations=tuple(
                 canonical_relation("public", table.name) for table in context.tables
             )
+        )
+
+    @classmethod
+    def from_governed_context(cls, context: GovernedContext) -> ExecutionAuthority:
+        """Build request authority from the product-owned visible entity set."""
+        return cls.from_table_names(
+            entity.physical_table for entity in context.schema_catalog if entity.queryable
         )
 
 

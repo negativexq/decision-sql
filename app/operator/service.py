@@ -11,7 +11,11 @@ from app.config import Settings
 from app.db.models import Base
 from app.decision.models import ProposalSource
 from app.decision.service import DecisionSqlApplication
-from app.generation.decision_contract import DecisionType, ProductionDecision
+from app.generation.decision_contract import (
+    PRODUCTION_DECISION_CASE_ID,
+    DecisionType,
+    ProductionDecision,
+)
 from app.generation.provider import LLMProvider, OpenAICompatibleProvider
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.operator.models import (
@@ -77,12 +81,12 @@ class OperatorApplication:
             ),
             DemoPreset(
                 id="needs_clarification",
-                label="Needs clarification",
+                label="Ambiguous live request",
                 description=(
-                    "A live request whose model decision can decline an unresolved question."
+                    "A schema-resolvable request for testing model clarification semantics."
                 ),
-                category="NEEDS_CLARIFICATION",
-                question="Tell me something interesting about the universe.",
+                category="AMBIGUOUS_LIVE_REQUEST",
+                question="What is the order value?",
                 mode=ProposalSource.LIVE_MODEL,
             ),
             DemoPreset(
@@ -134,6 +138,8 @@ class OperatorApplication:
             runtime_reason=result.runtime_reason,
             provider=result.provider,
             model=result.model,
+            model_context=result.model_context,
+            model_context_hash=result.model_context_hash,
             proposed_sql=result.proposed_sql,
             rows=result.rows,
             columns=result.columns,
@@ -212,6 +218,7 @@ class OperatorApplication:
         replay: ProductionDecision | None = None
         if preset_id == "unauthorized_query":
             replay = ProductionDecision(
+                case_id=PRODUCTION_DECISION_CASE_ID,
                 decision=DecisionType.ANSWER,
                 sql="SELECT subscriber_id FROM external_directory",
             )
@@ -230,7 +237,11 @@ class OperatorApplication:
             catalog = catalog.model_copy(update={"tables": (*catalog.tables, external)})
             resolver = _ContextOnlyResolver(self.resolver, "show customers")
         elif preset_id == "policy_blocked":
-            replay = ProductionDecision(decision=DecisionType.ANSWER, sql="DELETE FROM orders")
+            replay = ProductionDecision(
+                case_id=PRODUCTION_DECISION_CASE_ID,
+                decision=DecisionType.ANSWER,
+                sql="DELETE FROM orders",
+            )
         safety = SqlSafetyService(
             self.engine,
             settings=self.settings,

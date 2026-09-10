@@ -79,9 +79,10 @@ _LABELS = {
     "global_policy": "Global policy",
     "execution_authority": "Execution authority",
     "grain_safety": "Grain safety",
-    "database_connection": "Database connection",
+    "planning_connection": "Planning database connection",
     "explain": "EXPLAIN",
     "cost_gate": "Cost gate",
+    "execution_connection": "Execution database connection",
     "execution": "Read-only execution",
     "response": "Response",
 }
@@ -196,9 +197,10 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "global_policy",
     "execution_authority",
     "grain_safety",
-    "database_connection",
+    "planning_connection",
     "explain",
     "cost_gate",
+    "execution_connection",
     "execution",
     "response",
 )

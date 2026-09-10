@@ -104,7 +104,8 @@ a provider call. Start it with
 `docker compose up --build`; the UI is at `http://localhost:3000` and the API
 at `http://localhost:8000`. It includes presentation-safe successful,
 clarification, policy, and authority-rejection scenarios without exposing
-benchmark truth or accepting raw SQL.
+benchmark truth or accepting raw SQL. Each run also exposes the exact bounded
+model-visible context used for that request.
 
 ### What the model owns
 

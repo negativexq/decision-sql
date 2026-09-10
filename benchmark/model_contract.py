@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
+from app.generation.decision_contract import production_decision_schema
+
 # The contract intentionally keeps the generated request readable.
 # ruff: noqa: E501
 from benchmark.context import load_authority, render_governed_context
@@ -47,7 +49,9 @@ def governance_instructions() -> str:
 
 
 def submission_schema() -> dict[str, Any]:
-    return cast(dict[str, Any], json.loads(SUBMISSION_SCHEMA_PATH.read_text(encoding="utf-8")))
+    # Historical benchmark callers retain this compatibility entry point, but
+    # the canonical Candidate C wire schema is product-owned.
+    return production_decision_schema()
 
 
 def _ordered_context(value: dict[str, Any]) -> dict[str, Any]:

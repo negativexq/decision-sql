@@ -269,7 +269,7 @@ class SqlSafetyService:
             with self.reader_engine.connect() as connection:
                 connection_opened = True
                 self._record_stage(
-                    "database_connection",
+                    "planning_connection",
                     TraceStageStatus.PASS,
                     duration_ms=(perf_counter() - connection_started) * 1000,
                 )
@@ -344,6 +344,13 @@ class SqlSafetyService:
         except _AbortedPlanning as aborted:
             return aborted.result
         except ReaderRoleError:
+            if not connection_opened:
+                self._record_stage(
+                    "planning_connection",
+                    TraceStageStatus.FAILED,
+                    reason="DATABASE_CONNECTION_ERROR",
+                    duration_ms=(perf_counter() - connection_started) * 1000,
+                )
             return SqlPlanFailure(
                 status=SqlSafetyStatus.EXECUTION_ERROR,
                 failure_stage=FailureStage.EXECUTION_ERROR,
@@ -352,7 +359,7 @@ class SqlSafetyService:
         except Exception:
             if not connection_opened:
                 self._record_stage(
-                    "database_connection",
+                    "planning_connection",
                     TraceStageStatus.FAILED,
                     reason="DATABASE_CONNECTION_ERROR",
                     duration_ms=(perf_counter() - connection_started) * 1000,
@@ -380,9 +387,11 @@ class SqlSafetyService:
             )
 
         started = perf_counter()
+        connection_opened = False
         try:
             with self.reader_engine.connect() as connection:
-                self._record_stage("database_connection", TraceStageStatus.PASS)
+                connection_opened = True
+                self._record_stage("execution_connection", TraceStageStatus.PASS)
                 with connection.begin():
                     self.executor.configure_transaction(connection)
                     with self.tracer.start_as_current_span("decision_sql.execute") as span:
@@ -406,12 +415,24 @@ class SqlSafetyService:
             self._record_stage("execution", TraceStageStatus.FAILED, reason="EXECUTION_ERROR")
             return aborted.result
         except ReaderRoleError:
+            if not connection_opened:
+                self._record_stage(
+                    "execution_connection",
+                    TraceStageStatus.FAILED,
+                    reason="DATABASE_CONNECTION_ERROR",
+                )
             return SqlExecutionError(
                 plan_id=plan.plan_id,
                 correlation_id=plan.correlation_id,
                 error="Candidate SQL execution requires the configured reader role.",
             )
         except Exception:
+            if not connection_opened:
+                self._record_stage(
+                    "execution_connection",
+                    TraceStageStatus.FAILED,
+                    reason="DATABASE_CONNECTION_ERROR",
+                )
             self._record_stage(
                 "execution",
                 TraceStageStatus.FAILED,

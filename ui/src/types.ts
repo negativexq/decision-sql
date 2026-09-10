@@ -57,6 +57,8 @@ export interface RunRecord {
   runtime_reason: string | null;
   provider: string | null;
   model: string | null;
+  model_context: GovernedContext | null;
+  model_context_hash: string | null;
   proposed_sql: string | null;
   rows: Record<string, unknown>[];
   columns: string[];
@@ -95,5 +97,52 @@ export interface SchemaEntity {
 
 export interface SchemaResponse {
   title: string;
+  description: string;
   entities: SchemaEntity[];
 }
+
+export interface GovernedContext {
+  context_profile: "GOVERNED_CONTEXT_V1";
+  database_id: string;
+  context_scope: "REQUEST_BOUNDED";
+  schema_catalog: GovernedEntity[];
+  attributes: GovernedAttribute[];
+  authorized_relationships: GovernedRelationship[];
+  metrics: GovernedMetric[];
+  business_rules: GovernedBusinessRule[];
+  temporal_rules: GovernedTemporalRule[];
+  policy: GovernedPolicy;
+}
+
+export interface GovernedEntity {
+  entity_id: string;
+  physical_table: string;
+  description: string;
+  queryable: boolean;
+}
+
+export interface GovernedAttribute {
+  attribute_id: string;
+  entity_id: string;
+  physical_column_or_path: string;
+  semantic_type: string;
+  description: string;
+  queryable: boolean;
+  primary_key: boolean;
+  foreign_key_entity_id: string | null;
+  foreign_key_attribute_id: string | null;
+}
+
+export interface GovernedRelationship {
+  relationship_id: string;
+  source_entity_id: string;
+  source_attribute_id: string;
+  target_entity_id: string;
+  target_attribute_id: string;
+  authorized: true;
+}
+
+export interface GovernedMetric { metric_id: string; name: string; description: string; }
+export interface GovernedBusinessRule { rule_id: string; description: string; }
+export interface GovernedTemporalRule { temporal_rule_id: string; description: string; }
+export interface GovernedPolicy { policy_id: string; mode: "READ_ONLY"; allowed_statement_types: string[]; }

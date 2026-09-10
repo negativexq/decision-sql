@@ -6,6 +6,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.generation.decision_contract import DecisionReasonCode, DecisionType
+from app.governance.context import GovernedContext
 from app.observability.run_trace import RunTrace
 
 
@@ -34,6 +35,8 @@ class DecisionApplicationResult(BaseModel):
     proposal_source: ProposalSource
     provider: str | None = None
     model: str | None = None
+    model_context: GovernedContext | None = None
+    model_context_hash: str | None = None
     runtime_outcome: RuntimeOutcome
     runtime_reason: str | None = None
     rows: list[dict[str, Any]] = Field(default_factory=list)

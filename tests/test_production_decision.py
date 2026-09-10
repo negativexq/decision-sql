@@ -9,26 +9,32 @@ from app.config import Settings
 from app.db.models import Base
 from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
+    PRODUCTION_DECISION_CASE_ID,
+    DecisionReasonCode,
     DecisionType,
     ProductionDecision,
     production_decision_contract_hash,
+    production_decision_schema,
 )
 from app.generation.provider import OpenAICompatibleProvider, ProductionDecisionProposal
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.retrieval.context import SchemaContextResolver
 from app.sql.service import SqlSafetyService
+from benchmark.model_contract import submission_schema
 
 
 class FakeDecisionProvider:
     def __init__(self, decision: ProductionDecision) -> None:
         self.decision = decision
         self.calls = 0
+        self.last_schema_context: str | None = None
 
     async def propose_decision(
         self, question: str, schema_context: str
     ) -> ProductionDecisionProposal:
-        del question, schema_context
+        del question
         self.calls += 1
+        self.last_schema_context = schema_context
         return ProductionDecisionProposal(
             decision=self.decision,
             provider="fake",
@@ -44,19 +50,54 @@ def test_candidate_c_prompt_hash_is_preserved() -> None:
 
 
 def test_production_decision_invariants_and_extra_fields() -> None:
-    assert ProductionDecision(decision="ANSWER", sql="SELECT 1").decision is DecisionType.ANSWER
     assert (
         ProductionDecision(
-            decision="BLOCKED_AUTHORITY", reason_code="MISSING_AUTHORIZED_RELATIONSHIP"
+            case_id=PRODUCTION_DECISION_CASE_ID, decision="ANSWER", sql="SELECT 1"
+        ).decision
+        is DecisionType.ANSWER
+    )
+    assert (
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="BLOCKED_AUTHORITY",
+            reason_code="MISSING_AUTHORIZED_RELATIONSHIP",
         ).sql
         is None
     )
     with pytest.raises(ValidationError):
-        ProductionDecision(decision="ANSWER")
+        ProductionDecision(decision="ANSWER")  # type: ignore[call-arg]
     with pytest.raises(ValidationError):
-        ProductionDecision(decision="NEEDS_CLARIFICATION", sql="SELECT 1")
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="NEEDS_CLARIFICATION",
+            sql="SELECT 1",
+        )
     with pytest.raises(ValidationError):
-        ProductionDecision(decision="ANSWER", sql="SELECT 1", unexpected="x")
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="ANSWER",
+            sql="SELECT 1",
+            unexpected="x",  # type: ignore[call-arg]
+        )
+    with pytest.raises(ValidationError):
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="ANSWER",
+            sql="SELECT 1",
+            reason_code=DecisionReasonCode.NO_REASON,
+        )
+    schema = production_decision_schema()
+    assert schema == submission_schema()
+    assert set(schema["properties"]) == {"case_id", "decision", "sql", "reason_code"}
+    assert schema["required"] == ["case_id", "decision", "sql", "reason_code"]
+    assert schema["additionalProperties"] is False
+    assert set(schema["properties"]["decision"]["enum"]) == {
+        "ANSWER",
+        "BLOCKED_AUTHORITY",
+        "NEEDS_CLARIFICATION",
+        "BLOCKED_POLICY",
+    }
+    assert "NO_REASON" in schema["properties"]["reason_code"]["enum"]
 
 
 @pytest.mark.asyncio
@@ -100,7 +141,11 @@ async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once()
     settings = Settings(_env_file=None, reader_role="reader")
     catalog = build_default_catalog(Base.metadata)
     provider = FakeDecisionProvider(
-        ProductionDecision(decision="NEEDS_CLARIFICATION", reason_code="AMBIGUOUS_SEMANTICS")
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="NEEDS_CLARIFICATION",
+            reason_code="AMBIGUOUS_SEMANTICS",
+        )
     )
 
     class SpySafety:
@@ -117,12 +162,15 @@ async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once()
     collector.record_stage("request", TraceStageStatus.PASS)
     result = await DecisionSqlApplication(
         SchemaContextResolver(catalog),
-        provider,
-        safety,
-        settings,  # type: ignore[arg-type]
+        provider,  # type: ignore[arg-type]
+        safety,  # type: ignore[arg-type]
+        settings,
     ).run("Which products?", collector)
 
     assert provider.calls == 1
+    assert provider.last_schema_context is not None
+    assert '"authorized_relationships"' in provider.last_schema_context
+    assert '"policy"' in provider.last_schema_context
     assert safety.calls == 0
     assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
     assert result.runtime_outcome == "NOT_ENTERED"
@@ -136,13 +184,20 @@ async def test_answer_uses_same_typed_response_and_separates_runtime_rejection()
     settings = Settings(_env_file=None, reader_role="reader")
     catalog = build_default_catalog(Base.metadata)
     provider = FakeDecisionProvider(
-        ProductionDecision(decision="ANSWER", sql="SELECT id FROM external_directory")
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="ANSWER",
+            sql="SELECT id FROM external_directory",
+        )
     )
     safety = SqlSafetyService(create_engine("sqlite://"), settings=settings, catalog=catalog)
     collector = RunTraceCollector("run_runtime_reject")
     collector.record_stage("request", TraceStageStatus.PASS)
     result = await DecisionSqlApplication(
-        SchemaContextResolver(catalog), provider, safety, settings
+        SchemaContextResolver(catalog),
+        provider,  # type: ignore[arg-type]
+        safety,
+        settings,
     ).run("List product IDs", collector)
 
     assert provider.calls == 1
@@ -150,3 +205,35 @@ async def test_answer_uses_same_typed_response_and_separates_runtime_rejection()
     assert result.proposed_sql == "SELECT id FROM external_directory"
     assert result.runtime_outcome == "POLICY_REJECTED"
     assert result.trace.stages
+
+
+@pytest.mark.asyncio
+async def test_case_id_mismatch_fails_admission_before_sql_runtime() -> None:
+    settings = Settings(_env_file=None, reader_role="reader")
+    catalog = build_default_catalog(Base.metadata)
+    provider = FakeDecisionProvider(
+        ProductionDecision(case_id="other", decision="ANSWER", sql="SELECT 1")
+    )
+
+    class SpySafety:
+        def plan(self, candidate: object) -> object:
+            del candidate
+            raise AssertionError("case-id mismatch entered SQL runtime")
+
+    collector = RunTraceCollector("run_case_id_mismatch")
+    collector.record_stage("request", TraceStageStatus.PASS)
+    result = await DecisionSqlApplication(
+        SchemaContextResolver(catalog),
+        provider,  # type: ignore[arg-type]
+        SpySafety(),  # type: ignore[arg-type]
+        settings,
+    ).run("List products", collector)
+
+    assert result.model_decision is None
+    assert result.runtime_reason == "CASE_ID_MISMATCH"
+    assert {stage.name: stage.status for stage in result.trace.stages}[
+        "decision_admission"
+    ] is TraceStageStatus.FAILED
+    assert {stage.name: stage.status for stage in result.trace.stages}[
+        "sql_parse"
+    ] is TraceStageStatus.SKIPPED

@@ -14,6 +14,7 @@ from app.generation.blueprint import (
     parse_blueprint_payload,
 )
 from app.generation.decision_contract import (
+    PRODUCTION_DECISION_CASE_ID,
     ProductionDecision,
     production_decision_prompt,
     production_decision_schema,
@@ -1866,7 +1867,9 @@ class StaticLLMProvider:
             raise ValueError("Static provider requires sql or decision")
         legacy_sql = sql or (decision.sql if decision is not None else None) or "SELECT 1"
         self.proposal = SqlProposal(sql=legacy_sql, provider="static", model=model)
-        self.decision = decision or ProductionDecision(decision="ANSWER", sql=sql)
+        self.decision = decision or ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID, decision="ANSWER", sql=sql
+        )
         self.decision_proposal = ProductionDecisionProposal(
             decision=self.decision, provider="static", model=model
         )

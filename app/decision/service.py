@@ -4,18 +4,26 @@ from time import perf_counter
 
 from app.config import Settings
 from app.decision.models import DecisionApplicationResult, ProposalSource, RuntimeOutcome
-from app.generation.decision_contract import DecisionType, ProductionDecision
+from app.generation.decision_contract import (
+    PRODUCTION_DECISION_CASE_ID,
+    DecisionType,
+    ProductionDecision,
+)
 from app.generation.provider import (
     LLMProvider,
     MalformedProviderResponse,
     ProductionDecisionProposal,
+)
+from app.governance.context import (
+    governed_context_from_schema_context,
+    governed_context_hash,
+    serialize_governed_context,
 )
 from app.observability.run_trace import TRACE_STAGE_ORDER, RunTraceCollector, TraceStageStatus
 from app.retrieval.context import (
     SchemaContextMode,
     SchemaContextResolver,
     SchemaResolutionError,
-    serialize_schema_context,
 )
 from app.sql.authority import ExecutionAuthority
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError, SqlPlanFailure
@@ -74,17 +82,24 @@ class DecisionSqlApplication:
                 runtime_reason="CONTEXT_RESOLUTION_FAILURE",
                 trace=trace,
             )
+        model_context = governed_context_from_schema_context(context)
+        model_context_hash = governed_context_hash(model_context)
         collector.record_stage(
             "context",
             TraceStageStatus.PASS,
             metadata={
-                "selected_tables": context.context_metadata.selected_table_count,
-                "selected_columns": context.context_metadata.selected_column_count,
-                "relationship_count": context.context_metadata.relationship_count,
+                "context_hash": model_context_hash,
+                "entity_count": len(model_context.schema_catalog),
+                "attribute_count": len(model_context.attributes),
+                "relationship_count": len(model_context.authorized_relationships),
+                "metric_count": len(model_context.metrics),
+                "business_rule_count": len(model_context.business_rules),
+                "temporal_rule_count": len(model_context.temporal_rules),
+                "policy_mode": model_context.policy.mode,
             },
             duration_ms=(perf_counter() - context_started) * 1000,
         )
-        schema_text = serialize_schema_context(context)
+        schema_text = serialize_governed_context(model_context)
 
         if replay_decision is not None:
             collector.record_stage(
@@ -133,6 +148,8 @@ class DecisionSqlApplication:
                 trace = collector.finish("GENERATION_ERROR")
                 return DecisionApplicationResult(
                     proposal_source=proposal_source,
+                    model_context=model_context,
+                    model_context_hash=model_context_hash,
                     runtime_outcome=RuntimeOutcome.GENERATION_ERROR,
                     runtime_reason="INVALID_TYPED_DECISION",
                     trace=trace,
@@ -161,6 +178,8 @@ class DecisionSqlApplication:
                     proposal_source=proposal_source,
                     provider=None,
                     model=None,
+                    model_context=model_context,
+                    model_context_hash=model_context_hash,
                     runtime_outcome=RuntimeOutcome.GENERATION_ERROR,
                     runtime_reason="PROVIDER_FAILURE",
                     trace=trace,
@@ -178,6 +197,41 @@ class DecisionSqlApplication:
             collector.record_stage("proposal_replay", TraceStageStatus.SKIPPED, reason="LIVE_MODEL")
 
         decision = proposal.decision
+        if decision.case_id != PRODUCTION_DECISION_CASE_ID:
+            collector.record_stage(
+                "decision_admission",
+                TraceStageStatus.FAILED,
+                reason="CASE_ID_MISMATCH",
+                metadata={"expected_case_id": PRODUCTION_DECISION_CASE_ID},
+            )
+            collector.skip_unrecorded(
+                tuple(
+                    name
+                    for name in TRACE_STAGE_ORDER
+                    if name
+                    not in {
+                        "request",
+                        "context",
+                        "generation",
+                        "proposal_replay",
+                        "decision_admission",
+                        "response",
+                    }
+                ),
+                "DECISION_ADMISSION_FAILURE",
+            )
+            collector.record_stage("response", TraceStageStatus.FAILED, reason="CASE_ID_MISMATCH")
+            trace = collector.finish("GENERATION_ERROR")
+            return DecisionApplicationResult(
+                proposal_source=proposal_source,
+                provider=proposal.provider,
+                model=proposal.model,
+                model_context=model_context,
+                model_context_hash=model_context_hash,
+                runtime_outcome=RuntimeOutcome.GENERATION_ERROR,
+                runtime_reason="CASE_ID_MISMATCH",
+                trace=trace,
+            )
         collector.record_stage(
             "decision_admission",
             TraceStageStatus.PASS,
@@ -213,6 +267,8 @@ class DecisionSqlApplication:
                 proposed_sql=None,
                 provider=proposal.provider,
                 model=proposal.model,
+                model_context=model_context,
+                model_context_hash=model_context_hash,
                 runtime_outcome=RuntimeOutcome.NOT_ENTERED,
                 trace=trace,
             )
@@ -221,14 +277,20 @@ class DecisionSqlApplication:
             sql=decision.sql or "",
             source=CandidateSource.LLM,
             correlation_id=collector.run_id,
-            execution_authority=ExecutionAuthority.from_context(context),
+            execution_authority=ExecutionAuthority.from_governed_context(model_context),
         )
         planned = self.safety_service.plan(candidate)
         runtime_outcome, runtime_reason = _runtime_from_plan(planned)
         execution = None
         if isinstance(planned, SqlPlanFailure):
             collector.skip_unrecorded(
-                ("database_connection", "explain", "cost_gate", "execution"),
+                (
+                    "planning_connection",
+                    "explain",
+                    "cost_gate",
+                    "execution_connection",
+                    "execution",
+                ),
                 "EARLIER_RUNTIME_REJECTION",
             )
         else:
@@ -246,6 +308,8 @@ class DecisionSqlApplication:
             proposal_source=proposal_source,
             provider=proposal.provider,
             model=proposal.model,
+            model_context=model_context,
+            model_context_hash=model_context_hash,
             runtime_outcome=RuntimeOutcome(runtime_outcome),
             runtime_reason=runtime_reason,
             rows=execution.rows

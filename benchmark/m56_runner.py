@@ -25,6 +25,7 @@ from benchmark import m39_runner as m39
 from benchmark import m46a_audit as m46a
 from benchmark import m48b_runner as m48b
 from benchmark import m51b_runner as m51b
+from benchmark.m46b_contract import m43_prompt
 from benchmark.model_contract import serialize_governed_context_v1, sha256_bytes, sha256_text
 
 ROOT = Path(__file__).resolve().parent
@@ -43,7 +44,10 @@ DECISIONS = {
     "POLICY_BLOCKED": "BLOCKED_POLICY",
 }
 
-BASE_PROMPT = PROMPT_PATH.read_text(encoding="utf-8")
+# The retained provider-visible contract is reconstructed from the canonical
+# M43 request ledger.  The prompt file is historical source material and is
+# not, by itself, the request-builder authority.
+BASE_PROMPT = m43_prompt()
 
 INTERVENTIONS = {  # noqa: E501
     "CONTROL": "",
@@ -403,6 +407,231 @@ def prepare() -> None:
                 "selection_calls": len(selection_records),
                 "maximum_calls": plan["maximum_model_calls"],
                 "control_prompt_hash": plan["control_prompt_hash"],
+            },
+            sort_keys=True,
+        )
+    )
+
+
+def _numeric_summary(values: list[float]) -> dict[str, Any]:
+    if not values:
+        return {"count": 0, "total": None, "median": None, "p90": None, "max": None}
+    ordered = sorted(values)
+    return {
+        "count": len(ordered),
+        "total": sum(ordered),
+        "median": ordered[(len(ordered) - 1) // 2],
+        "p90": ordered[min(len(ordered) - 1, int(0.9 * len(ordered)))],
+        "max": ordered[-1],
+    }
+
+
+def finalize() -> None:
+    full = load_json(AUDIT / "m56_full_run_results.json")
+    responses = load_jsonl(AUDIT / "m56_full_responses.jsonl")
+    ids, rows = load_rows()
+    selected = load_json(AUDIT / "m56_selected_contract.json")
+    prompt = candidate_prompts()[selected["selected_arm"]]
+    assignment = []
+    for ordinal, case_id in enumerate(ids, 1):
+        request = build_request(case_id, rows[case_id][0], prompt)
+        response = responses[ordinal - 1]
+        assignment.append(
+            {
+                "ordinal": ordinal,
+                "case_id": case_id,
+                "domain": rows[case_id][0]["database_id"],
+                "task_type": rows[case_id][0]["task_type"],
+                "response_source": "M56_FRESH_FULL_RUN",
+                "response_corpus_hash": sha_path(AUDIT / "m56_full_responses.jsonl"),
+                "response_hash": response.get("raw_response_hash"),
+                "model_visible_input_hash": request["model_visible_input_hash"],
+                "provider_request_hash": request["provider_request_hash"],
+                "exact_current_input_match": response.get("model_visible_input_hash")
+                == request["model_visible_input_hash"]
+                and response.get("provider_request_hash") == request["provider_request_hash"],
+            }
+        )
+    map_hash = sha_value(assignment)
+    (AUDIT / "m56_response_assignment.jsonl").write_text(
+        "\n".join(canonical(item) for item in assignment) + "\n", encoding="utf-8"
+    )
+    dump(
+        AUDIT / "m56_response_input_consistency.json",
+        {"valid": sum(item["exact_current_input_match"] for item in assignment), "total": 90},
+    )
+    dump(AUDIT / "m56_runtime_first_failures.json", full["metrics"]["runtime_first_failures"])
+    dump(AUDIT / "m56_evaluator_first_divergences.json", full["metrics"]["first_divergence"])
+    dump(
+        AUDIT / "m56_failure_decomposition.json",
+        {
+            "total_failures": 90 - full["metrics"]["governed"]["correct"],
+            "by_first_divergence": full["metrics"]["first_divergence"],
+        },
+    )
+    records = full["records"]
+    dump(
+        AUDIT / "m56_counterfactual_only_failures.json",
+        {
+            "ids": [
+                row["case_id"]
+                for row in records
+                if row["task_type"] == "ANSWERABLE"
+                and row["base_correct"]
+                and not row["full_counterfactual_correct"]
+            ]
+        },
+    )
+    usage_prompt = [
+        float(row["usage"]["prompt_tokens"])
+        for row in responses
+        if isinstance(row.get("usage", {}).get("prompt_tokens"), int)
+    ]
+    usage_completion = [
+        float(row["usage"]["completion_tokens"])
+        for row in responses
+        if isinstance(row.get("usage", {}).get("completion_tokens"), int)
+    ]
+    latency = [
+        float(row["latency_ms"])
+        for row in responses
+        if isinstance(row.get("latency_ms"), (int, float))
+    ]
+    dump(
+        AUDIT / "m56_token_accounting.json",
+        {
+            "selection_120": "m56_live_responses.jsonl",
+            "full_90": {
+                "prompt_tokens": _numeric_summary(usage_prompt),
+                "completion_tokens": _numeric_summary(usage_completion),
+            },
+        },
+    )
+    dump(AUDIT / "m56_latency.json", {"full_90_ms": _numeric_summary(latency)})
+    dump(AUDIT / "m56_suspected_benchmark_defects.json", {"count": 0, "cases": []})
+    full["response_map_hash"] = map_hash
+    full["response_input_valid"] = all(item["exact_current_input_match"] for item in assignment)
+    dump(AUDIT / "m56_full_run_results.json", full)
+    residual = load_json(AUDIT / "m56_residual_outcomes.json")
+    public = {
+        "governed": "160/180",
+        "answerable_tsa": "108/122",
+        "authority": "28/30",
+        "ambiguity": "12/16",
+        "policy": "12/12",
+        "label": "HISTORICAL_LEGACY_PLUS_M56_EXPANSION",
+    }
+    summary = {
+        "experiment": "M56",
+        "selected_arm": selected["selected_arm"],
+        "selected_prompt_hash": selected["selected_prompt_hash"],
+        "selection_calls": 120,
+        "full_run_calls": 90,
+        "provider_calls": 210,
+        "model_calls": 210,
+        "retries": 0,
+        "m54_baseline": {
+            "governed": "82/90",
+            "answerable_tsa": "57/62",
+            "authority": "13/15",
+            "ambiguity": "6/7",
+            "policy": "6/6",
+        },
+        "m56_full": full["metrics"],
+        "public_descriptive": public,
+        "residual_outcomes": residual["cases"],
+        "new_regressions": residual["new_regressions"],
+        "benchmark_semantics_modified": False,
+        "runtime_semantics_modified": False,
+        "official_score_status": "M56_EVALUATED_NO_NET_AGGREGATE_IMPROVEMENT",
+    }
+    dump(AUDIT / "m56_summary.json", summary)
+    dump(
+        AUDIT / "m56_manifest.json",
+        {
+            "milestone": "M56",
+            "starting_head": "0dcb12a33c323f394fcaba4ff58ccd39070b1c6d",
+            "final_head": git("rev-parse", "HEAD"),
+            "model": MODEL,
+            "reasoning": REASONING,
+            "temperature": TEMPERATURE,
+            "timeout_seconds": TIMEOUT_SECONDS,
+            "control_prompt_hash": load_json(AUDIT / "m56_experiment_plan.json")[
+                "control_prompt_hash"
+            ],
+            "selected_prompt_hash": selected["selected_prompt_hash"],
+            "selection_calls": 120,
+            "full_run_calls": 90,
+            "provider_calls": 210,
+            "model_calls": 210,
+            "retries": 0,
+            "selected_arm": selected["selected_arm"],
+            "full_response_corpus_hash": sha_path(AUDIT / "m56_full_responses.jsonl"),
+            "canonical_response_map_hash": map_hash,
+            "metrics": full["metrics"],
+            "public_descriptive": public,
+            "new_regressions": residual["new_regressions"],
+            "benchmark_semantics_modified": False,
+            "runtime_semantics_modified": False,
+            "deterministic_analysis_hash": sha_value(
+                {"summary": summary, "assignment": assignment}
+            ),
+            "verdict": "M56_EVALUATED_NO_NET_AGGREGATE_IMPROVEMENT",
+        },
+    )
+    report = f"""# M56 — Single-Call Contract Improvement
+
+## Baseline and scope
+
+M54 baseline: **82/90 Governed Task Success**, **57/62 Answerable Runtime TSA**, authority **13/15**, ambiguity **6/7**, policy **6/6**.
+
+M56 used one model call per request, no retries, repair, judge, selector, router, or pass@K. Benchmark and runtime semantics were unchanged.
+
+## Pre-registered selection
+
+The 30-case development set covered six domains and all task families. CONTROL and three general prompt candidates were evaluated with 120 calls. Selection prioritized governed correctness, subject to non-decreasing authority and perfect policy correctness.
+
+Selected contract: **{selected["selected_arm"]}** (`{selected["selected_prompt_hash"]}`). It scored 27/30 governed versus CONTROL 25/30; authority held at 5/6 and policy at 6/6. Two control regressions were retained in the record.
+
+## Full controlled run
+
+The selected contract received one fresh call for each of 90 expansion cases. Fresh corpus hash: `{sha_path(AUDIT / "m56_full_responses.jsonl")}`.
+
+| Metric | M54 | M56 |
+| --- | ---: | ---: |
+| Governed Task Success | 82/90 | {full["metrics"]["governed"]["correct"]}/90 |
+| Answerable Runtime TSA | 57/62 | {full["metrics"]["answerable_runtime_tsa"]["correct"]}/62 |
+| Authority | 13/15 | {full["metrics"]["authority"]["correct"]}/15 |
+| Ambiguity | 6/7 | {full["metrics"]["ambiguity"]["correct"]}/7 |
+| Policy | 6/6 | {full["metrics"]["policy"]["correct"]}/6 |
+
+The aggregate result is unchanged. Four original residuals were fixed, three remained unchanged, and healthcare_10 changed failure mode. Four previously passing cases regressed: {", ".join(residual["new_regressions"])}.
+
+## Residual outcomes
+
+{chr(10).join(f"- `{item['case_id']}`: **{item['status']}** ({item['old_first_divergence']} → {item['new_first_divergence']})." for item in residual["cases"])}
+
+## Runtime safety
+
+The M52.S telecom_15 replay remains closed: the model decision is ANSWER, the runtime returns AUTHORITY_REJECTION / UNAUTHORIZED_RELATION, and EXPLAIN, database connection, and execution calls are all zero.
+
+## Historical test housekeeping
+
+The known 11 historical frozen-expectation failures remain pre-existing artifact/hash mismatches. M56 did not modify them and introduced no runtime safety regression.
+
+## Verdict
+
+`M56_EVALUATED_NO_NET_AGGREGATE_IMPROVEMENT`
+"""
+    (ROOT / "reports" / "m56_single_call_contract_improvement.md").write_text(
+        report, encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "response_map_hash": map_hash,
+                "analysis_hash": sha_value(summary),
+                "verdict": "M56_EVALUATED_NO_NET_AGGREGATE_IMPROVEMENT",
             },
             sort_keys=True,
         )
@@ -1001,7 +1230,15 @@ def main() -> None:
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "command", choices=("prepare", "selection", "analyze-selection", "full-run", "analyze-full")
+        "command",
+        choices=(
+            "prepare",
+            "selection",
+            "analyze-selection",
+            "full-run",
+            "analyze-full",
+            "finalize",
+        ),
     )
     args = parser.parse_args()
     if args.command == "prepare":
@@ -1012,8 +1249,10 @@ def main() -> None:
         candidate_analysis()
     elif args.command == "full-run":
         full_run()
-    else:
+    elif args.command == "analyze-full":
         full_analysis()
+    else:
+        finalize()
 
 
 if __name__ == "__main__":

@@ -556,6 +556,8 @@ def write_artifacts(result: dict[str, Any]) -> None:
             "starting_head": STARTING_HEAD,
             "score_ready": False,
             "live_acquisition_ready": True,
+            "m532_ready": True,
+            "m532_ready_definition": "live_acquisition_ready",
             "post_m53_expansion_truth_hash": result["expansion_hash"],
             "post_m53_full_truth_hash": result["full_hash"],
             "historical_m51b_response_corpus_hash": HISTORICAL_CORPUS_HASH,

@@ -1,8 +1,17 @@
 from __future__ import annotations
 
+import json
+
 import pytest
 
-from benchmark.m531r1_runner import SCHEDULE_HASH, M532CallGuard, require_frozen_snapshot
+from benchmark.m531r1_runner import (
+    MISSING_SCHEDULE,
+    SCHEDULE_HASH,
+    M532CallGuard,
+    evaluate,
+    require_frozen_snapshot,
+    sha_value,
+)
 
 
 def allowed_guard() -> M532CallGuard:
@@ -42,6 +51,17 @@ def test_attempt_number_must_be_one() -> None:
 
 def test_partition_counts_are_frozen_by_audit_contract() -> None:
     assert 10 + 24 + 56 == 90
+
+
+def test_frozen_schedule_and_partition_validate_without_calls() -> None:
+    result = evaluate()
+    schedule = json.loads(MISSING_SCHEDULE.read_text(encoding="utf-8"))["schedule"]
+    assert sha_value(schedule) == SCHEDULE_HASH
+    assert (len(result["reusable"]), len(result["fresh_valid"]), len(result["missing"])) == (
+        10,
+        24,
+        56,
+    )
 
 
 def test_shared_context_drift_is_rejected_by_fingerprint_gate() -> None:

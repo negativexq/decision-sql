@@ -280,26 +280,6 @@ behaviors. The current answerable evidence includes `healthcare_10`, which
 passes BASE but fails a counterfactual. That case shows why one database state
 is not enough to establish semantic correctness.
 
-## External evaluation — dbt ACME local reproduction
-
-Decision-SQL was also evaluated on the exact first-party dbt ACME question set
-using the frozen production contract, first-party ACME source data, a local
-PostgreSQL reconstruction, and dbt's retained result comparator. The result was
-**82/220 execution-equivalent observations (37.27%)** across 11 questions × 20
-fresh generations, with one provider call per observation and no retries or
-repair calls.
-
-This is a **local first-party reproduction**, not an official dbt Cloud or dbt
-Semantic Layer benchmark run. The official remote backend required credentials
-that were unavailable for the run. The internal governed benchmark and this
-external execution-result measurement are separate evidence; neither is a
-universal Text-to-SQL accuracy claim. The local reproduction artifacts are in
-[`benchmark/audits/m61r/`](benchmark/audits/m61r/).
-
-The benchmark's management/write operations remain outside Decision-SQL's
-intentionally read-only product scope and were not sent to a write-capable
-system.
-
 ## Current limitations
 
 The current benchmark records 20 governed misses overall. The remaining errors
@@ -447,7 +427,6 @@ audit and evaluation records are:
 - [Current benchmark evaluation](benchmark/reports/m532_post_m53_repaired_expansion_evaluation.md)
 - [Runtime authority safety report](benchmark/reports/m52s_runtime_authority_execution_safety.md)
 - [Post-M53 residual semantic forensics](benchmark/reports/m54_post_m53_residual_semantic_forensics.md)
-- [dbt ACME local first-party reproduction](benchmark/audits/m61r/m61r_report.md)
 
 The machine-readable current manifest is
 [`benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json`](benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json).

@@ -19,7 +19,9 @@ def _case(case_id: str = "synthetic_case") -> dict[str, str]:
 def test_control_uses_the_canonical_production_request_boundary() -> None:
     request = _case()
     production = m51b_runner._requests(["synthetic_case"], {"synthetic_case": (request, {})})
-    control = m51b_runner._provider_request(1, "synthetic_case", request)
+    control = m51b_runner._provider_request(
+        1, "synthetic_case", request, prompt=candidate_prompts()["CANDIDATE_C"]
+    )
 
     assert m56r_runner.provider_payload(production[0]) == m56r_runner.provider_payload(control)
     assert m56r_runner.request_fingerprint(production[0]) == m56r_runner.request_fingerprint(
@@ -28,7 +30,9 @@ def test_control_uses_the_canonical_production_request_boundary() -> None:
 
 
 def test_fingerprint_covers_full_provider_visible_payload() -> None:
-    control = m51b_runner._provider_request(1, "synthetic_case", _case())
+    control = m51b_runner._provider_request(
+        1, "synthetic_case", _case(), prompt=candidate_prompts()["CANDIDATE_C"]
+    )
     payload = m56r_runner.provider_payload(control)
     changed = json.loads(json.dumps(payload))
     changed["response_format"]["json_schema"]["strict"] = False

@@ -27,6 +27,7 @@ from benchmark import m48b_runner as m48b
 from benchmark import m51b_runner as m51b
 from benchmark.m46b_contract import m43_prompt
 from benchmark.model_contract import serialize_governed_context_v1, sha256_bytes, sha256_text
+from benchmark.stable_contract import STABLE_CONTRACT_INTERVENTION
 
 ROOT = Path(__file__).resolve().parent
 AUDIT = ROOT / "audits" / "m56"
@@ -75,16 +76,7 @@ Do not infer business semantics from a plausible column name or from technical t
 
 For SQL, preserve measure grain before aggregation. A one-to-many child used only as a qualifying predicate must not multiply a parent measure; use `EXISTS`, a semi-join, or parent-key deduplication. A child-grain derived measure is valid only when its governed metric definition authorizes that grain and calculation. Use documented duration arithmetic and include every governed status or decision predicate required by the requested measure.
 """,
-    "CANDIDATE_C": """
-
-## Final contract check before emitting a decision
-
-1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.
-2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.
-3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.
-
-Do not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.
-""",
+    "CANDIDATE_C": STABLE_CONTRACT_INTERVENTION,
 }
 
 

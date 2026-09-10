@@ -26,6 +26,7 @@ from benchmark import m39_runner as m39
 from benchmark import m46a_audit as m46a
 from benchmark import m48b_runner as m48b
 from benchmark import m51b_runner as m51b
+from benchmark.m46b_contract import m43_prompt
 from benchmark.m56_runner import INTERVENTIONS, candidate_prompts, load_rows, selection_cases
 from benchmark.model_contract import sha256_bytes, sha256_text, submission_schema
 
@@ -171,10 +172,10 @@ Historical tests separately checked prompt-file content and frozen ledger hashes
 
 def control_equivalence() -> list[dict[str, Any]]:
     ids, rows = load_rows()
-    production = {item["case_id"]: item for item in m51b._requests(ids, rows)}
+    production = {item["case_id"]: item for item in m51b._requests(ids, rows, prompt=m43_prompt())}
     result = []
     for index, case_id in enumerate(ids, 1):
-        control = m51b._provider_request(index, case_id, rows[case_id][0])
+        control = m51b._provider_request(index, case_id, rows[case_id][0], prompt=m43_prompt())
         left = provider_payload(production[case_id])
         right = provider_payload(control)
         differences = structural_diff(left, right)

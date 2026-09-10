@@ -117,7 +117,12 @@ def current_request_fingerprints(ids: list[str]) -> dict[str, dict[str, Any]]:
         )
         for case_id in ids
     }
-    requests = {row["case_id"]: row for row in m51b_runner._requests(ids, rows)}
+    requests = {
+        case_id: m51b_runner._provider_request(
+            index, case_id, rows[case_id][0], prompt=m43_prompt()
+        )
+        for index, case_id in enumerate(ids, 1)
+    }
     schema = load_json(ROOT / "schemas" / "model_submission.schema.json")
     return {case_id: m531r_runner.fingerprint(requests[case_id], schema) for case_id in ids}
 

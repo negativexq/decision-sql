@@ -32,7 +32,6 @@ from benchmark import m48b_runner as m48b
 from benchmark import m50c5_runner as m50c5
 from benchmark import m51a_authoring as m51a
 from benchmark.analysis_serialization import dumps_analysis
-from benchmark.m46b_contract import m43_prompt
 from benchmark.model_contract import (
     FORBIDDEN_REQUEST_TERMS,
     serialize_governed_context_v1,
@@ -41,6 +40,11 @@ from benchmark.model_contract import (
     submission_schema,
 )
 from benchmark.models import ResultContract, Submission, compare_rows
+from benchmark.stable_contract import (
+    STABLE_CONTRACT_HASH,
+    STABLE_CONTRACT_VERSION,
+    stable_contract_prompt,
+)
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
@@ -53,7 +57,9 @@ EXPANSION_TRUTH = ROOT / "ground_truth" / "m51_expansion"
 TRUTH_VERSION = "0.3.0-dev"
 EXPANSION_TRUTH_HASH = "7240dedfe1abc9f539fb1a873b2d021a33fa2268c9cc1b18a442f2f15b8646a9"
 FULL_TRUTH_HASH = "b70964d09c64c7296124d1a4b14b079fe931f3b928d830137ee1a6357c926173"
-PROMPT_HASH = "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb"
+CONTROL_PROMPT_HASH = "119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb"
+PROMPT_HASH = STABLE_CONTRACT_HASH
+DEFAULT_CONTRACT_VERSION = STABLE_CONTRACT_VERSION
 PLANNER_HASH = "a97222f4e036af28120a4ee12d9ef4352513796f54a15d6f2050b56a6ae77863"
 STARTING_HEAD = "645e77d3b9158e6b2e2d07185da04f001c92176a"
 DATABASES = tuple(domain.domain_id for domain in m51a.DOMAINS)
@@ -127,10 +133,13 @@ def _rows() -> tuple[list[str], dict[str, tuple[dict[str, Any], dict[str, Any]]]
 
 
 def _requests(
-    ids: list[str], rows: dict[str, tuple[dict[str, Any], dict[str, Any]]]
+    ids: list[str],
+    rows: dict[str, tuple[dict[str, Any], dict[str, Any]]],
+    prompt: str | None = None,
 ) -> list[dict[str, Any]]:
     return [
-        _provider_request(index, case_id, rows[case_id][0]) for index, case_id in enumerate(ids, 1)
+        _provider_request(index, case_id, rows[case_id][0], prompt=prompt)
+        for index, case_id in enumerate(ids, 1)
     ]
 
 
@@ -141,7 +150,7 @@ def _provider_request(
     prompt: str | None = None,
 ) -> dict[str, Any]:
     """Build the single canonical provider-visible request used by M51B."""
-    instructions = m43_prompt() if prompt is None else prompt
+    instructions = stable_contract_prompt() if prompt is None else prompt
     context = serialize_governed_context_v1(str(case["database_id"]))
     user = f"Case ID:\n{case_id}\n\nQuestion:\n{case['question']}\n\nGoverned context:\n{context}"
     request_text = "SYSTEM:\n" + instructions + "\n\nUSER:\n" + user
@@ -298,7 +307,7 @@ def _preflight() -> dict[str, Any]:
         != {"ANSWERABLE": 60, "AUTHORITY_BLOCKED": 15, "AMBIGUOUS": 9, "POLICY_BLOCKED": 6}
     ):
         raise RuntimeError("M51B_EXPANSION_DISTRIBUTION_MISMATCH")
-    prompt = m43_prompt()
+    prompt = stable_contract_prompt()
     if sha256_text(prompt) != PROMPT_HASH:
         raise RuntimeError("M51B_PROMPT_DRIFT")
     leakage = []

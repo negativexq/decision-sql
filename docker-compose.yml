@@ -50,6 +50,7 @@ services:
       DECISION_SQL_MAX_CONTEXT_TABLES: 5
       DECISION_SQL_MAX_COLUMNS_PER_TABLE: 8
       DECISION_SQL_RELATIONSHIP_DEPTH: 2
+      DECISION_SQL_LLM_API_KEY: ${DECISION_SQL_LLM_API_KEY:-}
     depends_on:
       seed:
         condition: service_completed_successfully

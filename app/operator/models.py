@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.decision.models import ProposalSource
+from app.decision.models import RuntimeOutcome as ProductRuntimeOutcome
+from app.generation.decision_contract import DecisionReasonCode, DecisionType
 from app.observability.run_trace import RunTrace
 
 
@@ -14,6 +16,7 @@ class DemoPreset(BaseModel):
     description: str
     category: str
     question: str
+    mode: ProposalSource
 
 
 class PlaygroundQueryRequest(BaseModel):
@@ -23,22 +26,10 @@ class PlaygroundQueryRequest(BaseModel):
     preset_id: str | None = Field(default=None, max_length=80)
 
 
-class DecisionValue(StrEnum):
-    ANSWER = "ANSWER"
-    NEEDS_CLARIFICATION = "NEEDS_CLARIFICATION"
-    BLOCKED_AUTHORITY = "BLOCKED_AUTHORITY"
-    BLOCKED_POLICY = "BLOCKED_POLICY"
-    GENERATION_FAILED = "GENERATION_FAILED"
+DecisionValue = DecisionType
 
 
-class RuntimeOutcome(StrEnum):
-    EXECUTED = "EXECUTED"
-    AUTHORITY_REJECTED = "AUTHORITY_REJECTED"
-    POLICY_REJECTED = "POLICY_REJECTED"
-    RUNTIME_REJECTED = "RUNTIME_REJECTED"
-    EXECUTION_ERROR = "EXECUTION_ERROR"
-    NOT_ENTERED = "NOT_ENTERED"
-    GENERATION_ERROR = "GENERATION_ERROR"
+RuntimeOutcome = ProductRuntimeOutcome
 
 
 class RunRecord(BaseModel):
@@ -48,10 +39,15 @@ class RunRecord(BaseModel):
     trace_id: str
     question: str
     preset_id: str | None = None
-    decision: DecisionValue
+    proposal_source: ProposalSource
+    replay_notice: str | None = None
+    model_decision: DecisionType | None = None
+    model_reason_code: DecisionReasonCode | None = None
     runtime_outcome: RuntimeOutcome
-    reason_code: str | None = None
-    sql: str | None = None
+    runtime_reason: str | None = None
+    provider: str | None = None
+    model: str | None = None
+    proposed_sql: str | None = None
     rows: list[dict[str, Any]] = Field(default_factory=list)
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0
@@ -66,9 +62,10 @@ class RunSummary(BaseModel):
     trace_id: str
     question: str
     preset_id: str | None = None
-    decision: DecisionValue
+    proposal_source: ProposalSource
+    model_decision: DecisionType | None = None
     runtime_outcome: RuntimeOutcome
-    reason_code: str | None = None
+    runtime_reason: str | None = None
     row_count: int = 0
     duration_ms: float | None = None
     created_at: str
@@ -113,10 +110,14 @@ class ApiHealthResponse(BaseModel):
 class PlaygroundResponse(BaseModel):
     run_id: str
     trace_id: str
-    decision: DecisionValue
-    sql: str | None
+    proposal_source: ProposalSource
+    model_decision: DecisionType | None
+    model_reason_code: DecisionReasonCode | None
+    proposed_sql: str | None
     runtime_outcome: RuntimeOutcome
-    reason_code: str | None
+    runtime_reason: str | None
+    provider: str | None
+    model: str | None
     rows: list[dict[str, Any]]
     columns: list[str]
     row_count: int

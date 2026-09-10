@@ -2,8 +2,9 @@ export type Decision =
   | "ANSWER"
   | "NEEDS_CLARIFICATION"
   | "BLOCKED_AUTHORITY"
-  | "BLOCKED_POLICY"
-  | "GENERATION_FAILED";
+  | "BLOCKED_POLICY";
+
+export type ProposalSource = "LIVE_MODEL" | "SAFETY_REPLAY" | "RUNTIME_POLICY_REPLAY";
 
 export type RuntimeOutcome =
   | "EXECUTED"
@@ -48,10 +49,15 @@ export interface RunRecord {
   trace_id: string;
   question: string;
   preset_id: string | null;
-  decision: Decision;
+  proposal_source: ProposalSource;
+  replay_notice: string | null;
+  model_decision: Decision | null;
+  model_reason_code: string | null;
   runtime_outcome: RuntimeOutcome;
-  reason_code: string | null;
-  sql: string | null;
+  runtime_reason: string | null;
+  provider: string | null;
+  model: string | null;
+  proposed_sql: string | null;
   rows: Record<string, unknown>[];
   columns: string[];
   row_count: number;
@@ -61,7 +67,7 @@ export interface RunRecord {
   trace: RunTrace;
 }
 
-export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "decision" | "runtime_outcome" | "reason_code" | "row_count" | "duration_ms" | "created_at">;
+export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "proposal_source" | "model_decision" | "runtime_outcome" | "runtime_reason" | "row_count" | "duration_ms" | "created_at">;
 
 export interface Preset {
   id: string;
@@ -69,6 +75,7 @@ export interface Preset {
   description: string;
   category: string;
   question: string;
+  mode: ProposalSource;
 }
 
 export interface SchemaColumn {

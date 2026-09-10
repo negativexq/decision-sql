@@ -1,10 +1,29 @@
 # M62 Operator Playground
 
-The local operator console is a thin presentation layer over the existing
-Decision-SQL application services. The browser submits a natural-language
-question to `POST /api/playground/query`; `TextToSqlService` performs one
-generation call and `SqlSafetyService` owns parse, policy, authority, grain,
-EXPLAIN, cost, and read-only execution decisions.
+The local operator console is a thin presentation layer over the canonical
+`DecisionSqlApplication`. The browser submits a natural-language question to
+`POST /api/playground/query`; one provider response is admitted as a typed
+production decision, and only `ANSWER` enters the existing `SqlSafetyService`.
+That service owns parse, policy, authority, grain, EXPLAIN, cost, and read-only
+execution decisions.
+
+## Production path alignment
+
+Live requests use the product-owned Candidate C decision contract and the
+shared schema-context lineage:
+
+```text
+question → governed context → one typed model decision → deterministic gates → result
+```
+
+`model_decision` and `runtime_outcome` are separate facts. A model `ANSWER`
+may still be rejected by execution authority or global policy. Non-`ANSWER`
+decisions do not enter SQL runtime, and context/provider/admission failures do
+not fabricate a model decision.
+
+Safety replays are server-bound frozen proposals evaluated by the current
+deterministic runtime without a provider call. They are visibly labelled in the
+console and are never treated as live generation.
 
 ## Local run
 
@@ -20,10 +39,9 @@ docker compose up --build
 
 The API uses the existing PostgreSQL reader role and the existing OpenAI-
 compatible provider configuration. Set `DECISION_SQL_LLM_API_KEY` in a local
-environment when running a live, non-preset request. Demo presets use the same
-application pipeline with deterministic local proposals so the console can
-show successful, clarification, policy, and authority-rejection paths without
-inventing outcomes.
+environment when running live requests. Live presets use that same provider
+path; safety and runtime-policy replays are deterministic local proposals and
+make no provider call.
 
 ## Console surfaces
 
@@ -42,11 +60,21 @@ runtime.
 ## Demo scenarios
 
 - Successful query: reaches EXPLAIN, cost admission, and read-only execution.
-- Needs clarification: context resolution fails before generation and SQL
-  runtime is not entered.
-- Unauthorized relation: the proposal parses, then the request authority
+- Needs clarification: the live model can emit a typed clarification decision;
+  SQL runtime is not entered.
+- Unauthorized relation: a labelled safety replay proposal parses, then the request authority
   rejects it before database contact, EXPLAIN, or execution.
 - Policy blocked: the global read-only SQL policy rejects the proposal.
+
+## Visual walkthrough
+
+The repository includes browser-rendered demo captures at 1440×900:
+
+- [Playground](m62/screenshots/01-playground.png): the natural-language entry point and horizontal operator navigation.
+- [Safety replay](m62/screenshots/02-safety-replay.png): `ANSWER` separated from deterministic authority rejection.
+- [Runs](m62/screenshots/03-runs.png): recent run history with source, model decision, and runtime outcome.
+- [Traces](m62/screenshots/04-traces.png): the actual gate timeline, including rejected and skipped stages.
+- [Schema](m62/screenshots/05-schema.png): the model-visible governed context and authorized relationships.
 
 OpenTelemetry configuration remains available through the existing
 `OTEL_EXPORTER_OTLP_ENDPOINT` setting. The structured UI trace is an additional

@@ -95,8 +95,10 @@ does not route requests or grant execution authority.
 ## Operator playground
 
 The local operator console presents a real natural-language request lifecycle:
-model proposal, deterministic gates, EXPLAIN/cost admission, read-only
-execution, bounded results, and trace events. Start it with
+typed model decision, deterministic gates, EXPLAIN/cost admission, read-only
+execution, bounded results, and trace events. Live requests use the canonical
+production path; safety replays evaluate server-bound frozen proposals without
+a provider call. Start it with
 `docker compose up --build`; the UI is at `http://localhost:3000` and the API
 at `http://localhost:8000`. It includes presentation-safe successful,
 clarification, policy, and authority-rejection scenarios without exposing

@@ -31,10 +31,19 @@ async def test_unauthorized_preset_uses_real_runtime_authority_gate(
 ) -> None:
     record = await operator_application.run("ignored", "unauthorized_query")
 
-    assert record.decision == "ANSWER"
+    assert record.model_decision == "ANSWER"
     assert record.runtime_outcome == "AUTHORITY_REJECTED"
-    assert record.reason_code == "UNAUTHORIZED_RELATION"
-    assert record.sql == "SELECT subscriber_id FROM external_directory"
+    assert record.runtime_reason == "UNAUTHORIZED_RELATION"
+    assert record.proposal_source == "SAFETY_REPLAY"
+    assert record.proposed_sql == "SELECT subscriber_id FROM external_directory"
+    assert any(
+        stage.name == "generation" and stage.status is TraceStageStatus.SKIPPED
+        for stage in record.trace.stages
+    )
+    assert any(
+        stage.name == "proposal_replay" and stage.status is TraceStageStatus.PASS
+        for stage in record.trace.stages
+    )
     assert any(
         stage.name == "execution_authority" and stage.status is TraceStageStatus.REJECTED
         for stage in record.trace.stages
@@ -53,17 +62,11 @@ async def test_unauthorized_preset_uses_real_runtime_authority_gate(
 
 
 @pytest.mark.asyncio
-async def test_clarification_path_does_not_enter_generation(
+async def test_live_clarification_preset_is_not_a_static_replay(
     operator_application: OperatorApplication,
 ) -> None:
-    record = await operator_application.run("ignored", "needs_clarification")
-
-    assert record.decision == "NEEDS_CLARIFICATION"
-    assert record.runtime_outcome == "NOT_ENTERED"
-    assert record.sql is None
-    statuses = {stage.name: stage.status for stage in record.trace.stages}
-    assert statuses["context"] is TraceStageStatus.FAILED
-    assert statuses["generation"] is TraceStageStatus.SKIPPED
+    preset = next(item for item in operator_application.presets if item.id == "needs_clarification")
+    assert preset.mode == "LIVE_MODEL"
 
 
 def test_trace_recorder_preserves_stage_detail_and_safe_metadata() -> None:

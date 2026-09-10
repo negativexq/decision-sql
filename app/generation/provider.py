@@ -13,6 +13,11 @@ from app.generation.blueprint import (
     blueprint_messages,
     parse_blueprint_payload,
 )
+from app.generation.decision_contract import (
+    ProductionDecision,
+    production_decision_prompt,
+    production_decision_schema,
+)
 from app.generation.governed_metric_grounding import GovernedMetricGroundingDTO
 from app.generation.hard_query_plans import (
     OperationPlan,
@@ -72,6 +77,21 @@ class SqlProposal(BaseModel):
 
 
 SQLProposal = SqlProposal
+
+
+class ProductionDecisionProposal(BaseModel):
+    """One typed decision and optional SQL from one provider response."""
+
+    model_config = ConfigDict(frozen=True)
+
+    decision: ProductionDecision
+    provider: str
+    model: str
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    cached_prompt_tokens: int | None = None
+    latency_ms: float | None = None
 
 
 class GovernedMetricGroundingProposal(BaseModel):
@@ -316,6 +336,11 @@ class QueryPlanProviderBoundaryError(LLMProviderError):
 
 
 class LLMProvider(Protocol):
+    async def propose_decision(
+        self, question: str, schema_context: str
+    ) -> ProductionDecisionProposal:
+        """Return the canonical typed production decision in one call."""
+
     async def propose_schema_alignment(
         self, question: str, schema_context: str
     ) -> SchemaAlignmentProposal:
@@ -464,6 +489,81 @@ class OpenAICompatibleProvider:
             latency_ms=(perf_counter() - started) * 1000,
         )
         return payload
+
+    async def propose_decision(
+        self, question: str, schema_context: str
+    ) -> ProductionDecisionProposal:
+        """Request one typed decision; SQL is never generated in a second call."""
+        if not self.settings.llm_api_key:
+            raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
+        messages = _production_decision_messages(question, schema_context)
+        response_format = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "decision_sql_production_decision",
+                "strict": True,
+                "schema": production_decision_schema(),
+            },
+        }
+        body = {
+            "model": self.settings.llm_model,
+            "messages": messages,
+            "response_format": response_format,
+        }
+        _add_temperature(body, self.settings.llm_temperature)
+        _add_reasoning_effort(body, self.settings.llm_reasoning_effort)
+        self._begin_model_io(
+            "production_decision", question, schema_context, messages, response_format
+        )
+        started = perf_counter()
+        try:
+            payload = await self._post(body)
+        except Exception:
+            self._complete_model_io(
+                None,
+                parsed_sql=None,
+                raw_content=None,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PRODUCTION_DECISION_PROVIDER",
+                failure_metadata={"exception_type": "provider_error"},
+            )
+            raise
+        content = _assistant_content(payload)
+        try:
+            data = json.loads(content) if content is not None else None
+            decision = ProductionDecision.model_validate(data)
+            usage = payload.get("usage") or {}
+            completion_details = usage.get("completion_tokens_details") or {}
+            prompt_details = usage.get("prompt_tokens_details") or {}
+            proposal = ProductionDecisionProposal(
+                decision=decision,
+                provider="openai-compatible",
+                model=payload.get("model") or self.settings.llm_model,
+                prompt_tokens=_optional_int(usage.get("prompt_tokens")),
+                completion_tokens=_optional_int(usage.get("completion_tokens")),
+                reasoning_tokens=_optional_int(completion_details.get("reasoning_tokens")),
+                cached_prompt_tokens=_optional_int(prompt_details.get("cached_tokens")),
+                latency_ms=(perf_counter() - started) * 1000,
+            )
+        except (TypeError, ValueError, KeyError, IndexError, json.JSONDecodeError) as error:
+            self._complete_model_io(
+                payload,
+                parsed_sql=None,
+                raw_content=content,
+                latency_ms=(perf_counter() - started) * 1000,
+                failure_stage="PRODUCTION_DECISION_ADMISSION",
+                failure_metadata={"exception_type": type(error).__name__},
+            )
+            raise MalformedProviderResponse(
+                "Provider response did not contain a valid production decision"
+            ) from error
+        self._complete_model_io(
+            payload,
+            parsed_sql=decision.sql,
+            raw_content=content,
+            latency_ms=proposal.latency_ms,
+        )
+        return proposal
 
     async def propose_intent(self, question: str, schema_context: str) -> IntentProposal:
         if not self.settings.llm_api_key:
@@ -1755,16 +1855,30 @@ class StaticLLMProvider:
 
     def __init__(
         self,
-        sql: str,
+        sql: str | None = None,
         model: str = "static-test",
         query_plan: QueryPlanV1 | None = None,
         semantic_plan: SemanticQueryPlan | None = None,
         logical_plan: LogicalQueryPlanV1 | None = None,
+        decision: ProductionDecision | None = None,
     ) -> None:
-        self.proposal = SqlProposal(sql=sql, provider="static", model=model)
+        if sql is None and decision is None:
+            raise ValueError("Static provider requires sql or decision")
+        legacy_sql = sql or (decision.sql if decision is not None else None) or "SELECT 1"
+        self.proposal = SqlProposal(sql=legacy_sql, provider="static", model=model)
+        self.decision = decision or ProductionDecision(decision="ANSWER", sql=sql)
+        self.decision_proposal = ProductionDecisionProposal(
+            decision=self.decision, provider="static", model=model
+        )
         self.query_plan = query_plan
         self.semantic_plan = semantic_plan
         self.logical_plan = logical_plan
+
+    async def propose_decision(
+        self, question: str, schema_context: str
+    ) -> ProductionDecisionProposal:
+        del question, schema_context
+        return self.decision_proposal
 
     async def propose_schema_alignment(
         self, question: str, schema_context: str
@@ -1931,6 +2045,12 @@ class StaticLLMProvider:
 
 
 class UnconfiguredLLMProvider:
+    async def propose_decision(
+        self, question: str, schema_context: str
+    ) -> ProductionDecisionProposal:
+        del question, schema_context
+        raise ProviderConfigurationError("No production decision provider is configured")
+
     async def propose_schema_alignment(
         self, question: str, schema_context: str
     ) -> SchemaAlignmentProposal:
@@ -2042,6 +2162,16 @@ def _intent_messages(question: str, schema_context: str) -> list[dict[str, str]]
         f"\n\nBOUNDED SCHEMA CONTEXT:\n{schema_context}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": question}]
+
+
+def _production_decision_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+    user = (
+        "Case ID:\noperator\n\nQuestion:\n" + question + "\n\nGoverned context:\n" + schema_context
+    )
+    return [
+        {"role": "system", "content": production_decision_prompt()},
+        {"role": "user", "content": user},
+    ]
 
 
 def _query_plan_v1_messages(question: str, schema_context: str) -> list[dict[str, str]]:

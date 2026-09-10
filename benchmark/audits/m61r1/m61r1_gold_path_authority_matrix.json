@@ -1,0 +1,550 @@
+[
+  {
+    "gold_columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 3,
+    "gold_tables": [
+      "agreement_party_role",
+      "policy",
+      "policy_amount",
+      "premium"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "agreement_party_role->policy": null,
+      "policy->policy_amount": [
+        "policy",
+        "policy_amount"
+      ],
+      "policy_amount->premium": [
+        "policy_amount",
+        "premium"
+      ]
+    },
+    "question_id": "IQ_317ef7a6c42204b1933a510805c57e45"
+  },
+  {
+    "gold_columns": [
+      "claim.claim_identifier",
+      "claim_coverage.claim_identifier",
+      "claim_coverage.policy_coverage_detail_identifier",
+      "policy.policy_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = claim_coverage.claim_identifier",
+        "provider_authorized": true,
+        "right_column": "claim_identifier",
+        "right_table": "claim_coverage",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "claim_coverage",
+        "predicate": "claim_coverage.policy_coverage_detail_identifier = policy_coverage_detail.policy_coverage_detail_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_coverage_detail",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 3,
+    "gold_tables": [
+      "claim",
+      "claim_coverage",
+      "policy",
+      "policy_coverage_detail"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "claim->claim_coverage": [
+        "claim",
+        "claim_coverage"
+      ],
+      "claim_coverage->policy": [
+        "claim_coverage",
+        "policy_coverage_detail",
+        "policy_amount",
+        "policy"
+      ],
+      "policy->policy_coverage_detail": [
+        "policy",
+        "policy_amount",
+        "policy_coverage_detail"
+      ]
+    },
+    "question_id": "IQ_6da3f7fcefcdd7453548c0956632a211"
+  },
+  {
+    "gold_columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 3,
+    "gold_tables": [
+      "agreement_party_role",
+      "policy",
+      "policy_amount",
+      "premium"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "agreement_party_role->policy": null,
+      "policy->policy_amount": [
+        "policy",
+        "policy_amount"
+      ],
+      "policy_amount->premium": [
+        "policy_amount",
+        "premium"
+      ]
+    },
+    "question_id": "IQ_985f30d50b59256c4b01d42901b0f9fb"
+  },
+  {
+    "gold_columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy.policy_number"
+    ],
+    "gold_edges": [
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 1,
+    "gold_tables": [
+      "agreement_party_role",
+      "policy"
+    ],
+    "path_status": "NO_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "agreement_party_role->policy": null
+    },
+    "question_id": "IQ_a8f3cd24b58a0e3dc8a30c45d315b195"
+  },
+  {
+    "gold_columns": [
+      "claim.claim_identifier",
+      "claim_amount.claim_amount",
+      "claim_amount.claim_amount_identifier",
+      "claim_amount.claim_identifier",
+      "loss_payment.claim_amount_identifier",
+      "loss_reserve.claim_amount_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "claim_amount_identifier",
+        "left_table": "claim_amount",
+        "predicate": "ca_lp.claim_amount_identifier = loss_payment.claim_amount_identifier",
+        "provider_authorized": false,
+        "right_column": "claim_amount_identifier",
+        "right_table": "loss_payment",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "claim_amount_identifier",
+        "left_table": "claim_amount",
+        "predicate": "ca_lr.claim_amount_identifier = loss_reserve.claim_amount_identifier",
+        "provider_authorized": false,
+        "right_column": "claim_amount_identifier",
+        "right_table": "loss_reserve",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = ca_lp.claim_identifier",
+        "provider_authorized": true,
+        "right_column": "claim_identifier",
+        "right_table": "claim_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = ca_lr.claim_identifier",
+        "provider_authorized": true,
+        "right_column": "claim_identifier",
+        "right_table": "claim_amount",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 4,
+    "gold_tables": [
+      "claim",
+      "claim_amount",
+      "loss_payment",
+      "loss_reserve"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "claim->claim_amount": [
+        "claim",
+        "claim_amount"
+      ],
+      "claim_amount->loss_payment": null,
+      "loss_payment->loss_reserve": null
+    },
+    "question_id": "IQ_5b813c2c3d7949916d33976f2da518a0"
+  },
+  {
+    "gold_columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy.policy_number"
+    ],
+    "gold_edges": [
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 1,
+    "gold_tables": [
+      "agreement_party_role",
+      "policy"
+    ],
+    "path_status": "NO_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "agreement_party_role->policy": null
+    },
+    "question_id": "IQ_b2c56b1858b24690742a6b86af872858"
+  },
+  {
+    "gold_columns": [
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 2,
+    "gold_tables": [
+      "policy",
+      "policy_amount",
+      "premium"
+    ],
+    "path_status": "FULLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "policy->policy_amount": [
+        "policy",
+        "policy_amount"
+      ],
+      "policy_amount->premium": [
+        "policy_amount",
+        "premium"
+      ]
+    },
+    "question_id": "IQ_43461e701debb68f0f8ac1dceb945650"
+  },
+  {
+    "gold_columns": [
+      "claim.claim_identifier",
+      "claim_coverage.claim_identifier",
+      "claim_coverage.policy_coverage_detail_identifier",
+      "policy.policy_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = claim_coverage.claim_identifier",
+        "provider_authorized": true,
+        "right_column": "claim_identifier",
+        "right_table": "claim_coverage",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "claim_coverage",
+        "predicate": "claim_coverage.policy_coverage_detail_identifier = policy_coverage_detail.policy_coverage_detail_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_coverage_detail",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 3,
+    "gold_tables": [
+      "claim",
+      "claim_coverage",
+      "policy",
+      "policy_coverage_detail"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "claim->claim_coverage": [
+        "claim",
+        "claim_coverage"
+      ],
+      "claim_coverage->policy": [
+        "claim_coverage",
+        "policy_coverage_detail",
+        "policy_amount",
+        "policy"
+      ],
+      "policy->policy_coverage_detail": [
+        "policy",
+        "policy_amount",
+        "policy_coverage_detail"
+      ]
+    },
+    "question_id": "IQ_419b164c362608054523707eaf5a57f3"
+  },
+  {
+    "gold_columns": [
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "gold_edges": [
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "AUTHORIZED_EXPLICITLY",
+        "ddl_declared": true,
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "policy_coverage_detail",
+        "predicate": "policy_coverage_detail.policy_coverage_detail_identifier = policy_amount.policy_coverage_detail_identifier",
+        "provider_authorized": true,
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_amount",
+        "runtime_catalog_visible": true
+      },
+      {
+        "classification": "STRUCTURALLY_AVAILABLE_BUT_NO_DDL_FK",
+        "ddl_declared": false,
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "provider_authorized": false,
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail",
+        "runtime_catalog_visible": true
+      }
+    ],
+    "gold_join_count": 3,
+    "gold_tables": [
+      "policy",
+      "policy_amount",
+      "policy_coverage_detail",
+      "premium"
+    ],
+    "path_status": "PARTIALLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {
+      "policy->policy_amount": [
+        "policy",
+        "policy_amount"
+      ],
+      "policy_amount->policy_coverage_detail": [
+        "policy_amount",
+        "policy_coverage_detail"
+      ],
+      "policy_coverage_detail->premium": [
+        "policy_coverage_detail",
+        "policy_amount",
+        "premium"
+      ]
+    },
+    "question_id": "IQ_2b95bb37fe905f8c74b35d72e65f3d08"
+  },
+  {
+    "gold_columns": [],
+    "gold_edges": [],
+    "gold_join_count": 0,
+    "gold_tables": [
+      "policy"
+    ],
+    "path_status": "FULLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {},
+    "question_id": "IQ_8f2344e8d1bba2cc39fcae99afd42e4a"
+  },
+  {
+    "gold_columns": [],
+    "gold_edges": [],
+    "gold_join_count": 0,
+    "gold_tables": [
+      "claim"
+    ],
+    "path_status": "FULLY_AUTHORIZED_GOLD_PATH",
+    "provider_graph_paths": {},
+    "question_id": "IQ_f1b8ef62994d657eda300db1a4b71046"
+  }
+]

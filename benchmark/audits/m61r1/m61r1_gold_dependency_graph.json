@@ -1,0 +1,451 @@
+[
+  {
+    "aggregation": [
+      "SUM(policy_amount)"
+    ],
+    "columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "filters": "WHERE agreement_party_role.party_role_code = 'PH'",
+    "gold_join_count": 3,
+    "gold_sql_hash": "d60d6572cd335c8bb275f4bfb039f451ad76cea69ed40cc24524ad9e21bcc2f8",
+    "grouping": [
+      "policy_number"
+    ],
+    "join_count": 3,
+    "join_edges": [
+      {
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy"
+      },
+      {
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount"
+      }
+    ],
+    "question": "What is the total amount of premiums that a policy holder has paid by policy number?",
+    "question_id": "IQ_317ef7a6c42204b1933a510805c57e45",
+    "tables": [
+      "agreement_party_role",
+      "policy",
+      "policy_amount",
+      "premium"
+    ]
+  },
+  {
+    "aggregation": [
+      "AVG(CAST(AGE(CAST(\"day\" AS TIMESTAMP), CAST(claim_open_date AS TIMESTAMP)) AS BIGINT))"
+    ],
+    "columns": [
+      "claim.claim_identifier",
+      "claim_coverage.claim_identifier",
+      "claim_coverage.policy_coverage_detail_identifier",
+      "policy.policy_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier"
+    ],
+    "filters": "WHERE NOT claim_close_date IS NULL",
+    "gold_join_count": 3,
+    "gold_sql_hash": "1c368b84b441c7925e9fcbb2c3ab7d12fd4c1d7e9145a3b87161ced396b13c74",
+    "grouping": [
+      "policy_number"
+    ],
+    "join_count": 3,
+    "join_edges": [
+      {
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = claim_coverage.claim_identifier",
+        "right_column": "claim_identifier",
+        "right_table": "claim_coverage"
+      },
+      {
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "claim_coverage",
+        "predicate": "claim_coverage.policy_coverage_detail_identifier = policy_coverage_detail.policy_coverage_detail_identifier",
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_coverage_detail"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail"
+      }
+    ],
+    "question": "What is the average time to settle a claim by policy number?",
+    "question_id": "IQ_6da3f7fcefcdd7453548c0956632a211",
+    "tables": [
+      "claim",
+      "claim_coverage",
+      "policy",
+      "policy_coverage_detail"
+    ]
+  },
+  {
+    "aggregation": [
+      "SUM(policy_amount)"
+    ],
+    "columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "filters": "WHERE agreement_party_role.party_role_code = 'PH'",
+    "gold_join_count": 3,
+    "gold_sql_hash": "848d0b8d91a2220f4a916417c72ad72823be587742d10e895d23de51335e818d",
+    "grouping": [
+      "party_identifier"
+    ],
+    "join_count": 3,
+    "join_edges": [
+      {
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy"
+      },
+      {
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount"
+      }
+    ],
+    "question": "What is the total amount of premiums that a policy holder has paid?",
+    "question_id": "IQ_985f30d50b59256c4b01d42901b0f9fb",
+    "tables": [
+      "agreement_party_role",
+      "policy",
+      "policy_amount",
+      "premium"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(policy.policy_number)"
+    ],
+    "columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy.policy_number"
+    ],
+    "filters": "WHERE agreement_party_role.party_role_code = 'AG'",
+    "gold_join_count": 1,
+    "gold_sql_hash": "2d730fd3092a9211f9138a71e534d5dfa547798bbccce765946100158733c491",
+    "grouping": [
+      "party_identifier"
+    ],
+    "join_count": 1,
+    "join_edges": [
+      {
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy"
+      }
+    ],
+    "question": "How many policies have agents sold by agent id?",
+    "question_id": "IQ_a8f3cd24b58a0e3dc8a30c45d315b195",
+    "tables": [
+      "agreement_party_role",
+      "policy"
+    ]
+  },
+  {
+    "aggregation": [],
+    "columns": [
+      "claim.claim_identifier",
+      "claim_amount.claim_amount",
+      "claim_amount.claim_amount_identifier",
+      "claim_amount.claim_identifier",
+      "loss_payment.claim_amount_identifier",
+      "loss_reserve.claim_amount_identifier"
+    ],
+    "filters": null,
+    "gold_join_count": 4,
+    "gold_sql_hash": "0df8652a136fcd017289157e83b0392f7eed65b4c0162863bbb43fc55de140c5",
+    "grouping": [],
+    "join_count": 4,
+    "join_edges": [
+      {
+        "left_column": "claim_amount_identifier",
+        "left_table": "claim_amount",
+        "predicate": "ca_lp.claim_amount_identifier = loss_payment.claim_amount_identifier",
+        "right_column": "claim_amount_identifier",
+        "right_table": "loss_payment"
+      },
+      {
+        "left_column": "claim_amount_identifier",
+        "left_table": "claim_amount",
+        "predicate": "ca_lr.claim_amount_identifier = loss_reserve.claim_amount_identifier",
+        "right_column": "claim_amount_identifier",
+        "right_table": "loss_reserve"
+      },
+      {
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = ca_lp.claim_identifier",
+        "right_column": "claim_identifier",
+        "right_table": "claim_amount"
+      },
+      {
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = ca_lr.claim_identifier",
+        "right_column": "claim_identifier",
+        "right_table": "claim_amount"
+      }
+    ],
+    "question": "What is the total loss amounts, which is the sum of loss payment, loss reserve amount by claim number?",
+    "question_id": "IQ_5b813c2c3d7949916d33976f2da518a0",
+    "tables": [
+      "claim",
+      "claim_amount",
+      "loss_payment",
+      "loss_reserve"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(policy.policy_number)"
+    ],
+    "columns": [
+      "agreement_party_role.agreement_identifier",
+      "agreement_party_role.party_role_code",
+      "policy.policy_identifier",
+      "policy.policy_number"
+    ],
+    "filters": "WHERE agreement_party_role.party_role_code = 'PH'",
+    "gold_join_count": 1,
+    "gold_sql_hash": "7660cc0d215da7f534b06a2b71b8cca37579701669ebb162329710b4556ddeeb",
+    "grouping": [
+      "party_identifier"
+    ],
+    "join_count": 1,
+    "join_edges": [
+      {
+        "left_column": "agreement_identifier",
+        "left_table": "agreement_party_role",
+        "predicate": "agreement_party_role.agreement_identifier = policy.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy"
+      }
+    ],
+    "question": "How many policies does each policy holder have by policy holder id?",
+    "question_id": "IQ_b2c56b1858b24690742a6b86af872858",
+    "tables": [
+      "agreement_party_role",
+      "policy"
+    ]
+  },
+  {
+    "aggregation": [
+      "SUM(policy_amount)"
+    ],
+    "columns": [
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "filters": null,
+    "gold_join_count": 2,
+    "gold_sql_hash": "bfeaa4bf203e67797db2d9af3a26f6de55fc5af0e25c7b29e34e4a2569284031",
+    "grouping": [
+      "policy_number"
+    ],
+    "join_count": 2,
+    "join_edges": [
+      {
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_amount.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_amount"
+      }
+    ],
+    "question": "What is the total amount of premiums paid by policy number?",
+    "question_id": "IQ_43461e701debb68f0f8ac1dceb945650",
+    "tables": [
+      "policy",
+      "policy_amount",
+      "premium"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(company_claim_number)"
+    ],
+    "columns": [
+      "claim.claim_identifier",
+      "claim_coverage.claim_identifier",
+      "claim_coverage.policy_coverage_detail_identifier",
+      "policy.policy_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier"
+    ],
+    "filters": null,
+    "gold_join_count": 3,
+    "gold_sql_hash": "fde9f8a8f46db62c81067841dd076fa4ee5c1612b23c8cfdb6d9206041e79aa6",
+    "grouping": [
+      "policy_number"
+    ],
+    "join_count": 3,
+    "join_edges": [
+      {
+        "left_column": "claim_identifier",
+        "left_table": "claim",
+        "predicate": "claim.claim_identifier = claim_coverage.claim_identifier",
+        "right_column": "claim_identifier",
+        "right_table": "claim_coverage"
+      },
+      {
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "claim_coverage",
+        "predicate": "claim_coverage.policy_coverage_detail_identifier = policy_coverage_detail.policy_coverage_detail_identifier",
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_coverage_detail"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail"
+      }
+    ],
+    "question": "How many claims have been placed by policy number?",
+    "question_id": "IQ_419b164c362608054523707eaf5a57f3",
+    "tables": [
+      "claim",
+      "claim_coverage",
+      "policy",
+      "policy_coverage_detail"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(DISTINCT policy_number)",
+      "SUM(policy_amount)"
+    ],
+    "columns": [
+      "policy.policy_identifier",
+      "policy_amount.policy_amount_identifier",
+      "policy_amount.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_coverage_detail_identifier",
+      "policy_coverage_detail.policy_identifier",
+      "premium.policy_amount_identifier"
+    ],
+    "filters": null,
+    "gold_join_count": 3,
+    "gold_sql_hash": "11aa5ea5e4b1c309844ea3478012a58b686efe7800f7bc659d796b66d773d1f3",
+    "grouping": [],
+    "join_count": 3,
+    "join_edges": [
+      {
+        "left_column": "policy_amount_identifier",
+        "left_table": "premium",
+        "predicate": "premium.policy_amount_identifier = policy_amount.policy_amount_identifier",
+        "right_column": "policy_amount_identifier",
+        "right_table": "policy_amount"
+      },
+      {
+        "left_column": "policy_coverage_detail_identifier",
+        "left_table": "policy_coverage_detail",
+        "predicate": "policy_coverage_detail.policy_coverage_detail_identifier = policy_amount.policy_coverage_detail_identifier",
+        "right_column": "policy_coverage_detail_identifier",
+        "right_table": "policy_amount"
+      },
+      {
+        "left_column": "policy_identifier",
+        "left_table": "policy",
+        "predicate": "policy.policy_identifier = policy_coverage_detail.policy_identifier",
+        "right_column": "policy_identifier",
+        "right_table": "policy_coverage_detail"
+      }
+    ],
+    "question": "What is the average policy size which is the the total amount of premium divided by the number of policies?",
+    "question_id": "IQ_2b95bb37fe905f8c74b35d72e65f3d08",
+    "tables": [
+      "policy",
+      "policy_amount",
+      "policy_coverage_detail",
+      "premium"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(*)"
+    ],
+    "columns": [],
+    "filters": null,
+    "gold_join_count": 0,
+    "gold_sql_hash": "4b178577b91d3455764ff1d10fcbffb959f2ff74f68f8dcc099869549e2db390",
+    "grouping": [],
+    "join_count": 0,
+    "join_edges": [],
+    "question": "How many policies do we have?",
+    "question_id": "IQ_8f2344e8d1bba2cc39fcae99afd42e4a",
+    "tables": [
+      "policy"
+    ]
+  },
+  {
+    "aggregation": [
+      "COUNT(*)"
+    ],
+    "columns": [],
+    "filters": null,
+    "gold_join_count": 0,
+    "gold_sql_hash": "ad2b07ee1054023431b06cedece6949ac24141515a9db47e31d9be1f5c795cb2",
+    "grouping": [],
+    "join_count": 0,
+    "join_edges": [],
+    "question": "How many claims do we have?",
+    "question_id": "IQ_f1b8ef62994d657eda300db1a4b71046",
+    "tables": [
+      "claim"
+    ]
+  }
+]

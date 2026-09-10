@@ -1,0 +1,251 @@
+{
+  "component_count": 17,
+  "interpretation": "The provider-visible context exposes all CSV-header tables, while only DDL-resolved relationships are explicit authority edges; runtime relation authority is broader and permits all 29 catalog relations.",
+  "isolated_tables": [
+    "agreement",
+    "agreement_assessment",
+    "assesment_party_role",
+    "assessment",
+    "assessment_result",
+    "expense_payment",
+    "expense_reserve",
+    "fireclaim",
+    "location_address",
+    "loss_payment",
+    "loss_reserve",
+    "organization",
+    "person",
+    "physical_location",
+    "underwriting_assessment"
+  ],
+  "tables": {
+    "agreement": {
+      "connected_component": "component_00",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "agreement_assessment": {
+      "connected_component": "component_01",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "agreement_party_role": {
+      "connected_component": "component_02",
+      "incoming_authorized_relationships": [],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:agreement_party_role:party_identifier:party:party_identifier",
+        "relationship:acme_small:agreement_party_role:party_role_code:party_role:party_role_code"
+      ]
+    },
+    "assesment_party_role": {
+      "connected_component": "component_03",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "assessment": {
+      "connected_component": "component_04",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "assessment_result": {
+      "connected_component": "component_05",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "catastrophe": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:claim:catastrophe_identifier:catastrophe:catastrophe_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "claim": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:claim:claim_identifier:claim:claim_identifier",
+        "relationship:acme_small:claim_amount:claim_identifier:claim:claim_identifier",
+        "relationship:acme_small:claim_coverage:claim_identifier:claim:claim_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:claim:catastrophe_identifier:catastrophe:catastrophe_identifier",
+        "relationship:acme_small:claim:claim_identifier:claim:claim_identifier",
+        "relationship:acme_small:claim:insurable_object_identifier:insurable_object:insurable_object_identifier",
+        "relationship:acme_small:claim:occurrence_identifier:occurrence:occurrence_identifier"
+      ]
+    },
+    "claim_amount": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:claim_amount:claim_identifier:claim:claim_identifier"
+      ]
+    },
+    "claim_coverage": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:claim_coverage:claim_identifier:claim:claim_identifier",
+        "relationship:acme_small:claim_coverage:effective_date:policy_coverage_detail:effective_date",
+        "relationship:acme_small:claim_coverage:policy_coverage_detail_identifier:policy_coverage_detail:policy_coverage_detail_identifier"
+      ]
+    },
+    "expense_payment": {
+      "connected_component": "component_06",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "expense_reserve": {
+      "connected_component": "component_07",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "fireclaim": {
+      "connected_component": "component_08",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "geographic_location": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:policy:geographic_location_identifier:geographic_location:geographic_location_identifier",
+        "relationship:acme_small:policy_amount:geographic_location_identifier:geographic_location:geographic_location_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "insurable_object": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:claim:insurable_object_identifier:insurable_object:insurable_object_identifier",
+        "relationship:acme_small:policy_amount:insurable_object_identifier:insurable_object:insurable_object_identifier",
+        "relationship:acme_small:policy_coverage_detail:insurable_object_identifier:insurable_object:insurable_object_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "location_address": {
+      "connected_component": "component_09",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "loss_payment": {
+      "connected_component": "component_10",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "loss_reserve": {
+      "connected_component": "component_11",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "occurrence": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:claim:occurrence_identifier:occurrence:occurrence_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "organization": {
+      "connected_component": "component_12",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "party": {
+      "connected_component": "component_02",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:agreement_party_role:party_identifier:party:party_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "party_role": {
+      "connected_component": "component_02",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:agreement_party_role:party_role_code:party_role:party_role_code"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": []
+    },
+    "person": {
+      "connected_component": "component_13",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "physical_location": {
+      "connected_component": "component_14",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    },
+    "policy": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:policy_amount:policy_identifier:policy:policy_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:policy:geographic_location_identifier:geographic_location:geographic_location_identifier"
+      ]
+    },
+    "policy_amount": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:premium:policy_amount_identifier:policy_amount:policy_amount_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:policy_amount:effective_date:policy_coverage_detail:effective_date",
+        "relationship:acme_small:policy_amount:geographic_location_identifier:geographic_location:geographic_location_identifier",
+        "relationship:acme_small:policy_amount:insurable_object_identifier:insurable_object:insurable_object_identifier",
+        "relationship:acme_small:policy_amount:policy_coverage_detail_identifier:policy_coverage_detail:policy_coverage_detail_identifier",
+        "relationship:acme_small:policy_amount:policy_identifier:policy:policy_identifier"
+      ]
+    },
+    "policy_coverage_detail": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [
+        "relationship:acme_small:claim_coverage:effective_date:policy_coverage_detail:effective_date",
+        "relationship:acme_small:claim_coverage:policy_coverage_detail_identifier:policy_coverage_detail:policy_coverage_detail_identifier",
+        "relationship:acme_small:policy_amount:effective_date:policy_coverage_detail:effective_date",
+        "relationship:acme_small:policy_amount:policy_coverage_detail_identifier:policy_coverage_detail:policy_coverage_detail_identifier"
+      ],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:policy_coverage_detail:insurable_object_identifier:insurable_object:insurable_object_identifier"
+      ]
+    },
+    "premium": {
+      "connected_component": "component_15",
+      "incoming_authorized_relationships": [],
+      "isolated": false,
+      "outgoing_authorized_relationships": [
+        "relationship:acme_small:premium:policy_amount_identifier:policy_amount:policy_amount_identifier"
+      ]
+    },
+    "underwriting_assessment": {
+      "connected_component": "component_16",
+      "incoming_authorized_relationships": [],
+      "isolated": true,
+      "outgoing_authorized_relationships": []
+    }
+  }
+}

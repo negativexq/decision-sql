@@ -1,0 +1,2396 @@
+{
+  "cases": [
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "healthcare_07",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "healthcare_07_cf1_665417",
+          "patch_sql": [
+            "INSERT INTO payments VALUES (9009,1,'2026-06-23',25,'posted')"
+          ],
+          "purpose": "adds posted payment"
+        },
+        {
+          "fixture_id": "healthcare_07_cf2_8f24d2",
+          "patch_sql": [
+            "INSERT INTO payments VALUES (9010,1,'2026-06-23',25,'pending')"
+          ],
+          "purpose": "adds pending payment"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "CONTEXT_SUFFICIENCY_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "healthcare_billing",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "CONTEXT_SUFFICIENCY_DEFECT",
+          "missing_physical_columns": [
+            {
+              "column": "status",
+              "table": "payments"
+            }
+          ],
+          "repair_class": "R4_MODEL_VISIBLE_CONTEXT_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Reference relies on physical column(s) absent from the model-visible attribute catalog."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "b4f9c7a35f03047826fda4da3b81c801812eea720d26d75c6ff710637845fd05",
+      "question": "For each patient, return patient ID and total posted payment amount, including patients with none.",
+      "reference_A": {
+        "sql": "SELECT p.patient_id,COALESCE(SUM(x.amount),0) AS posted_amount FROM patients p LEFT JOIN payments x ON x.patient_id=p.patient_id AND x.status='posted' GROUP BY p.patient_id ORDER BY p.patient_id"
+      },
+      "reference_B": {
+        "sql": "SELECT p.patient_id,COALESCE((SELECT SUM(x.amount) FROM payments x WHERE x.patient_id=p.patient_id AND x.status='posted'),0) AS posted_amount FROM patients p ORDER BY p.patient_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R4_MODEL_VISIBLE_CONTEXT_REPAIR"
+      ],
+      "requested_projection": [
+        "patient_id",
+        "posted_amount"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "patient_id",
+            "posted_amount"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "patient_id",
+          "posted_amount"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "patient_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "posted_amount"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "group_survival",
+          "null_semantics",
+          "population"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:healthcare_billing:encounter_patient",
+          "relationship:healthcare_billing:encounter_provider",
+          "relationship:healthcare_billing:procedure_encounter",
+          "relationship:healthcare_billing:charge_procedure",
+          "relationship:healthcare_billing:payment_patient",
+          "relationship:healthcare_billing:diagnosis_encounter"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": true,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:encounters:patient_id",
+          "left_entity": "entity:healthcare_billing:encounters",
+          "relationship_id": "relationship:healthcare_billing:encounter_patient",
+          "right_attribute": "attribute:healthcare_billing:patients:patient_id",
+          "right_entity": "entity:healthcare_billing:patients"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:encounters:provider_id",
+          "left_entity": "entity:healthcare_billing:encounters",
+          "relationship_id": "relationship:healthcare_billing:encounter_provider",
+          "right_attribute": "attribute:healthcare_billing:providers:provider_id",
+          "right_entity": "entity:healthcare_billing:providers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:procedures:encounter_id",
+          "left_entity": "entity:healthcare_billing:procedures",
+          "relationship_id": "relationship:healthcare_billing:procedure_encounter",
+          "right_attribute": "attribute:healthcare_billing:encounters:encounter_id",
+          "right_entity": "entity:healthcare_billing:encounters"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:charges:procedure_id",
+          "left_entity": "entity:healthcare_billing:charges",
+          "relationship_id": "relationship:healthcare_billing:charge_procedure",
+          "right_attribute": "attribute:healthcare_billing:procedures:procedure_id",
+          "right_entity": "entity:healthcare_billing:procedures"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:payments:patient_id",
+          "left_entity": "entity:healthcare_billing:payments",
+          "relationship_id": "relationship:healthcare_billing:payment_patient",
+          "right_attribute": "attribute:healthcare_billing:patients:patient_id",
+          "right_entity": "entity:healthcare_billing:patients"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:healthcare_billing:diagnoses:encounter_id",
+          "left_entity": "entity:healthcare_billing:diagnoses",
+          "relationship_id": "relationship:healthcare_billing:diagnosis_encounter",
+          "right_attribute": "attribute:healthcare_billing:encounters:encounter_id",
+          "right_entity": "entity:healthcare_billing:encounters"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "An encounter with status='completed' is a completed visit.",
+          "name": "Completed encounter",
+          "rule_id": "rule:healthcare_billing:completed_encounter"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:healthcare_billing:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "insurance_14",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "insurance_14_cf1_e1fe18",
+          "patch_sql": [
+            "INSERT INTO claim_payments VALUES (9005,201,'2026-06-22',50,'posted')"
+          ],
+          "purpose": "adds payment"
+        },
+        {
+          "fixture_id": "insurance_14_cf2_8f24d2",
+          "patch_sql": [
+            "INSERT INTO claim_payments VALUES (9006,202,'2026-06-22',50,'pending')"
+          ],
+          "purpose": "adds pending payment"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "insurance_claims",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "10ec72608ed6de0732ef0b178c8907a74c20fbc98106c0701aee09081d4b7810",
+      "question": "For each claim, return claim ID and total paid amount, including claims with no payments.",
+      "reference_A": {
+        "sql": "SELECT c.claim_id,COALESCE(SUM(p.amount),0) AS paid_amount FROM claims c LEFT JOIN claim_payments p ON p.claim_id=c.claim_id GROUP BY c.claim_id ORDER BY c.claim_id"
+      },
+      "reference_B": {
+        "sql": "SELECT c.claim_id,COALESCE((SELECT SUM(p.amount) FROM claim_payments p WHERE p.claim_id=c.claim_id),0) AS paid_amount FROM claims c ORDER BY c.claim_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY"
+      ],
+      "requested_projection": [
+        "claim_id",
+        "paid_amount"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "claim_id",
+            "paid_amount"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "claim_id",
+          "paid_amount"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "claim_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "paid_amount"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "group_survival",
+          "null_semantics",
+          "correlated"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:insurance_claims:policy_holder",
+          "relationship:insurance_claims:claim_policy",
+          "relationship:insurance_claims:payment_claim",
+          "relationship:insurance_claims:event_claim",
+          "relationship:insurance_claims:assignment_claim",
+          "relationship:insurance_claims:assignment_adjuster"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": true,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:policies:holder_id",
+          "left_entity": "entity:insurance_claims:policies",
+          "relationship_id": "relationship:insurance_claims:policy_holder",
+          "right_attribute": "attribute:insurance_claims:policyholders:holder_id",
+          "right_entity": "entity:insurance_claims:policyholders"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:claims:policy_id",
+          "left_entity": "entity:insurance_claims:claims",
+          "relationship_id": "relationship:insurance_claims:claim_policy",
+          "right_attribute": "attribute:insurance_claims:policies:policy_id",
+          "right_entity": "entity:insurance_claims:policies"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:claim_payments:claim_id",
+          "left_entity": "entity:insurance_claims:claim_payments",
+          "relationship_id": "relationship:insurance_claims:payment_claim",
+          "right_attribute": "attribute:insurance_claims:claims:claim_id",
+          "right_entity": "entity:insurance_claims:claims"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:claim_events:claim_id",
+          "left_entity": "entity:insurance_claims:claim_events",
+          "relationship_id": "relationship:insurance_claims:event_claim",
+          "right_attribute": "attribute:insurance_claims:claims:claim_id",
+          "right_entity": "entity:insurance_claims:claims"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:claim_assignments:claim_id",
+          "left_entity": "entity:insurance_claims:claim_assignments",
+          "relationship_id": "relationship:insurance_claims:assignment_claim",
+          "right_attribute": "attribute:insurance_claims:claims:claim_id",
+          "right_entity": "entity:insurance_claims:claims"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:insurance_claims:claim_assignments:adjuster_id",
+          "left_entity": "entity:insurance_claims:claim_assignments",
+          "relationship_id": "relationship:insurance_claims:assignment_adjuster",
+          "right_attribute": "attribute:insurance_claims:adjusters:adjuster_id",
+          "right_entity": "entity:insurance_claims:adjusters"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "A claim with claim_status='open' is unresolved.",
+          "name": "Open claim",
+          "rule_id": "rule:insurance_claims:open_claim"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:insurance_claims:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "marketplace_07",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "marketplace_07_cf1_c20fca",
+          "patch_sql": [
+            "INSERT INTO payouts VALUES (9017,1,'2026-06-26',12,'posted')"
+          ],
+          "purpose": "adds posted payout"
+        },
+        {
+          "fixture_id": "marketplace_07_cf2_d5437a",
+          "patch_sql": [
+            "INSERT INTO payouts VALUES (9018,1,'2026-06-26',12,'held')"
+          ],
+          "purpose": "adds held payout"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "marketplace_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "de73f7cef55df4d20e999d08afae2d3bf328611e22a8288819169f81baaa4164",
+      "question": "For each seller, return seller ID and total posted payout amount.",
+      "reference_A": {
+        "sql": "SELECT s.seller_id,COALESCE(SUM(p.amount),0) AS posted_payout FROM sellers s LEFT JOIN payouts p ON p.seller_id=s.seller_id AND p.status='posted' GROUP BY s.seller_id ORDER BY s.seller_id"
+      },
+      "reference_B": {
+        "sql": "SELECT s.seller_id,COALESCE((SELECT SUM(p.amount) FROM payouts p WHERE p.seller_id=s.seller_id AND p.status='posted'),0) AS posted_payout FROM sellers s ORDER BY s.seller_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "seller_id",
+        "posted_payout"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "seller_id",
+            "posted_payout"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "seller_id",
+          "posted_payout"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "seller_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "posted_payout"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "group_survival",
+          "null_semantics"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:marketplace_ops:listing_seller",
+          "relationship:marketplace_ops:order_buyer",
+          "relationship:marketplace_ops:line_order",
+          "relationship:marketplace_ops:line_listing",
+          "relationship:marketplace_ops:payout_seller",
+          "relationship:marketplace_ops:review_listing",
+          "relationship:marketplace_ops:dispute_order"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:listings:seller_id",
+          "left_entity": "entity:marketplace_ops:listings",
+          "relationship_id": "relationship:marketplace_ops:listing_seller",
+          "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+          "right_entity": "entity:marketplace_ops:sellers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:orders:buyer_id",
+          "left_entity": "entity:marketplace_ops:orders",
+          "relationship_id": "relationship:marketplace_ops:order_buyer",
+          "right_attribute": "attribute:marketplace_ops:buyers:buyer_id",
+          "right_entity": "entity:marketplace_ops:buyers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:order_lines:order_id",
+          "left_entity": "entity:marketplace_ops:order_lines",
+          "relationship_id": "relationship:marketplace_ops:line_order",
+          "right_attribute": "attribute:marketplace_ops:orders:order_id",
+          "right_entity": "entity:marketplace_ops:orders"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:order_lines:listing_id",
+          "left_entity": "entity:marketplace_ops:order_lines",
+          "relationship_id": "relationship:marketplace_ops:line_listing",
+          "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+          "right_entity": "entity:marketplace_ops:listings"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:payouts:seller_id",
+          "left_entity": "entity:marketplace_ops:payouts",
+          "relationship_id": "relationship:marketplace_ops:payout_seller",
+          "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+          "right_entity": "entity:marketplace_ops:sellers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:reviews:listing_id",
+          "left_entity": "entity:marketplace_ops:reviews",
+          "relationship_id": "relationship:marketplace_ops:review_listing",
+          "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+          "right_entity": "entity:marketplace_ops:listings"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:disputes:order_id",
+          "left_entity": "entity:marketplace_ops:disputes",
+          "relationship_id": "relationship:marketplace_ops:dispute_order",
+          "right_attribute": "attribute:marketplace_ops:orders:order_id",
+          "right_entity": "entity:marketplace_ops:orders"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "An order with status='completed' is included in settled sales.",
+          "name": "Completed order",
+          "rule_id": "rule:marketplace_ops:completed_order"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:marketplace_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "marketplace_10",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "marketplace_10_cf1_1aad9d",
+          "patch_sql": [
+            "INSERT INTO orders VALUES (9021,1,'2026-06-27','completed')",
+            "INSERT INTO order_lines VALUES (9022,9021,101,3)"
+          ],
+          "purpose": "adds completed sale"
+        },
+        {
+          "fixture_id": "marketplace_10_cf2_6b7eb2",
+          "patch_sql": [
+            "INSERT INTO orders VALUES (9023,1,'2026-06-27','returned')",
+            "INSERT INTO order_lines VALUES (9024,9023,101,3)"
+          ],
+          "purpose": "adds returned sale"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "marketplace_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "3d41ea145876704789879a85a1ca7c329bf4143d54849f543bc321f12f28c700",
+      "question": "For each listing, return listing ID and total quantity sold in completed orders.",
+      "reference_A": {
+        "sql": "SELECT l.listing_id,COALESCE(SUM(ol.quantity) FILTER (WHERE o.status='completed'),0) AS sold_quantity FROM listings l LEFT JOIN order_lines ol ON ol.listing_id=l.listing_id LEFT JOIN orders o ON o.order_id=ol.order_id GROUP BY l.listing_id ORDER BY l.listing_id"
+      },
+      "reference_B": {
+        "sql": "SELECT l.listing_id,COALESCE((SELECT SUM(ol.quantity) FROM order_lines ol JOIN orders o ON o.order_id=ol.order_id WHERE ol.listing_id=l.listing_id AND o.status='completed'),0) AS sold_quantity FROM listings l ORDER BY l.listing_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "listing_id",
+        "sold_quantity"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "listing_id",
+            "sold_quantity"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "listing_id",
+          "sold_quantity"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "listing_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "sold_quantity"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "aggregate",
+          "filter_scope",
+          "population"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:marketplace_ops:listing_seller",
+          "relationship:marketplace_ops:order_buyer",
+          "relationship:marketplace_ops:line_order",
+          "relationship:marketplace_ops:line_listing",
+          "relationship:marketplace_ops:payout_seller",
+          "relationship:marketplace_ops:review_listing",
+          "relationship:marketplace_ops:dispute_order"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:listings:seller_id",
+          "left_entity": "entity:marketplace_ops:listings",
+          "relationship_id": "relationship:marketplace_ops:listing_seller",
+          "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+          "right_entity": "entity:marketplace_ops:sellers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:orders:buyer_id",
+          "left_entity": "entity:marketplace_ops:orders",
+          "relationship_id": "relationship:marketplace_ops:order_buyer",
+          "right_attribute": "attribute:marketplace_ops:buyers:buyer_id",
+          "right_entity": "entity:marketplace_ops:buyers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:order_lines:order_id",
+          "left_entity": "entity:marketplace_ops:order_lines",
+          "relationship_id": "relationship:marketplace_ops:line_order",
+          "right_attribute": "attribute:marketplace_ops:orders:order_id",
+          "right_entity": "entity:marketplace_ops:orders"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:order_lines:listing_id",
+          "left_entity": "entity:marketplace_ops:order_lines",
+          "relationship_id": "relationship:marketplace_ops:line_listing",
+          "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+          "right_entity": "entity:marketplace_ops:listings"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:payouts:seller_id",
+          "left_entity": "entity:marketplace_ops:payouts",
+          "relationship_id": "relationship:marketplace_ops:payout_seller",
+          "right_attribute": "attribute:marketplace_ops:sellers:seller_id",
+          "right_entity": "entity:marketplace_ops:sellers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:reviews:listing_id",
+          "left_entity": "entity:marketplace_ops:reviews",
+          "relationship_id": "relationship:marketplace_ops:review_listing",
+          "right_attribute": "attribute:marketplace_ops:listings:listing_id",
+          "right_entity": "entity:marketplace_ops:listings"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:marketplace_ops:disputes:order_id",
+          "left_entity": "entity:marketplace_ops:disputes",
+          "relationship_id": "relationship:marketplace_ops:dispute_order",
+          "right_attribute": "attribute:marketplace_ops:orders:order_id",
+          "right_entity": "entity:marketplace_ops:orders"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "An order with status='completed' is included in settled sales.",
+          "name": "Completed order",
+          "rule_id": "rule:marketplace_ops:completed_order"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:marketplace_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "procurement_10",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "procurement_10_cf1_24987f",
+          "patch_sql": [
+            "INSERT INTO receipts VALUES (9011,301,'2026-06-23 10:00+00',1)"
+          ],
+          "purpose": "adds a partial receipt"
+        },
+        {
+          "fixture_id": "procurement_10_cf2_8be9d3",
+          "patch_sql": [
+            "INSERT INTO receipts VALUES (9012,302,'2026-06-24 10:00+00',0)"
+          ],
+          "purpose": "adds a zero receipt row"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "procurement_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "95805e5ede144feff0f53dac7a57d10bf45836a5e905ade7b862381da992300e",
+      "question": "For each purchase-order line, return line ID and fulfillment rate, received units divided by ordered units.",
+      "reference_A": {
+        "sql": "SELECT l.line_id, COALESCE(SUM(r.received_qty),0)::NUMERIC / NULLIF(l.ordered_qty,0) AS fulfillment_rate FROM po_lines l LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY l.line_id,l.ordered_qty ORDER BY l.line_id"
+      },
+      "reference_B": {
+        "sql": "SELECT line_id, COALESCE(received_qty,0)::NUMERIC / NULLIF(ordered_qty,0) AS fulfillment_rate FROM (SELECT l.line_id,l.ordered_qty,SUM(r.received_qty) AS received_qty FROM po_lines l LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY l.line_id,l.ordered_qty) q ORDER BY line_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY"
+      ],
+      "requested_projection": [
+        "line_id",
+        "fulfillment_rate"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": "0.0001",
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [
+          "received_qty / ordered_qty"
+        ],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "line_id",
+            "fulfillment_rate"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "line_id",
+          "fulfillment_rate"
+        ],
+        "population": "matching-only",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "line_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "fulfillment_rate"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "aggregation",
+          "population",
+          "null_semantics"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:procurement_ops:po_supplier",
+          "relationship:procurement_ops:line_po",
+          "relationship:procurement_ops:receipt_line",
+          "relationship:procurement_ops:approval_request"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": "0.0001",
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": true,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:purchase_orders:supplier_id",
+          "left_entity": "entity:procurement_ops:purchase_orders",
+          "relationship_id": "relationship:procurement_ops:po_supplier",
+          "right_attribute": "attribute:procurement_ops:suppliers:supplier_id",
+          "right_entity": "entity:procurement_ops:suppliers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:po_lines:po_id",
+          "left_entity": "entity:procurement_ops:po_lines",
+          "relationship_id": "relationship:procurement_ops:line_po",
+          "right_attribute": "attribute:procurement_ops:purchase_orders:po_id",
+          "right_entity": "entity:procurement_ops:purchase_orders"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:receipts:line_id",
+          "left_entity": "entity:procurement_ops:receipts",
+          "relationship_id": "relationship:procurement_ops:receipt_line",
+          "right_attribute": "attribute:procurement_ops:po_lines:line_id",
+          "right_entity": "entity:procurement_ops:po_lines"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:approvals:req_id",
+          "left_entity": "entity:procurement_ops:approvals",
+          "relationship_id": "relationship:procurement_ops:approval_request",
+          "right_attribute": "attribute:procurement_ops:requisitions:req_id",
+          "right_entity": "entity:procurement_ops:requisitions"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "An approval with decision='approved' is the authoritative approval.",
+          "name": "Approved requisition",
+          "rule_id": "rule:procurement_ops:approved_requisition"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:procurement_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "procurement_15",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "procurement_15_cf1_85299a",
+          "patch_sql": [
+            "INSERT INTO purchase_orders VALUES (9025,4,'2026-06-28','open')",
+            "INSERT INTO po_lines VALUES (9026,9025,'SKU-R',3,5)",
+            "INSERT INTO receipts VALUES (9027,9026,'2026-06-29 09:00+00',3)"
+          ],
+          "purpose": "adds a receipt chain"
+        },
+        {
+          "fixture_id": "procurement_15_cf2_6e00f8",
+          "patch_sql": [
+            "INSERT INTO purchase_orders VALUES (9028,4,'2026-06-28','open')",
+            "INSERT INTO po_lines VALUES (9029,9028,'SKU-S',3,5)"
+          ],
+          "purpose": "adds an unreceived order"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "procurement_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "50eaa07a1ae8699f9c681c3a6bd12b246ce01aff8aa7e0e14a48607777407da9",
+      "question": "Return supplier IDs and total received units, including suppliers with no receipts.",
+      "reference_A": {
+        "sql": "SELECT s.supplier_id, COALESCE(SUM(r.received_qty),0) AS received_units FROM suppliers s LEFT JOIN purchase_orders p ON p.supplier_id=s.supplier_id LEFT JOIN po_lines l ON l.po_id=p.po_id LEFT JOIN receipts r ON r.line_id=l.line_id GROUP BY s.supplier_id ORDER BY s.supplier_id"
+      },
+      "reference_B": {
+        "sql": "SELECT s.supplier_id, COALESCE((SELECT SUM(r.received_qty) FROM purchase_orders p JOIN po_lines l ON l.po_id=p.po_id JOIN receipts r ON r.line_id=l.line_id WHERE p.supplier_id=s.supplier_id),0) AS received_units FROM suppliers s ORDER BY s.supplier_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY"
+      ],
+      "requested_projection": [
+        "supplier_id",
+        "received_units"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "supplier_id",
+            "received_units"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "supplier_id",
+          "received_units"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "supplier_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "received_units"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "multi_join",
+          "group_survival",
+          "population"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:procurement_ops:po_supplier",
+          "relationship:procurement_ops:line_po",
+          "relationship:procurement_ops:receipt_line",
+          "relationship:procurement_ops:approval_request"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": true,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:purchase_orders:supplier_id",
+          "left_entity": "entity:procurement_ops:purchase_orders",
+          "relationship_id": "relationship:procurement_ops:po_supplier",
+          "right_attribute": "attribute:procurement_ops:suppliers:supplier_id",
+          "right_entity": "entity:procurement_ops:suppliers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:po_lines:po_id",
+          "left_entity": "entity:procurement_ops:po_lines",
+          "relationship_id": "relationship:procurement_ops:line_po",
+          "right_attribute": "attribute:procurement_ops:purchase_orders:po_id",
+          "right_entity": "entity:procurement_ops:purchase_orders"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:receipts:line_id",
+          "left_entity": "entity:procurement_ops:receipts",
+          "relationship_id": "relationship:procurement_ops:receipt_line",
+          "right_attribute": "attribute:procurement_ops:po_lines:line_id",
+          "right_entity": "entity:procurement_ops:po_lines"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:procurement_ops:approvals:req_id",
+          "left_entity": "entity:procurement_ops:approvals",
+          "relationship_id": "relationship:procurement_ops:approval_request",
+          "right_attribute": "attribute:procurement_ops:requisitions:req_id",
+          "right_entity": "entity:procurement_ops:requisitions"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "An approval with decision='approved' is the authoritative approval.",
+          "name": "Approved requisition",
+          "rule_id": "rule:procurement_ops:approved_requisition"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:procurement_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "telecom_12",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "telecom_12_cf1_665417",
+          "patch_sql": [
+            "INSERT INTO payments VALUES (9005,301,'2026-06-22',10,'posted')"
+          ],
+          "purpose": "adds posted payment"
+        },
+        {
+          "fixture_id": "telecom_12_cf2_01aaa5",
+          "patch_sql": [
+            "INSERT INTO payments VALUES (9006,302,'2026-06-22',10,'failed')"
+          ],
+          "purpose": "adds failed payment"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "CONTEXT_SUFFICIENCY_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "telecom_billing",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "CONTEXT_SUFFICIENCY_DEFECT",
+          "missing_physical_columns": [
+            {
+              "column": "status",
+              "table": "payments"
+            }
+          ],
+          "repair_class": "R4_MODEL_VISIBLE_CONTEXT_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Reference relies on physical column(s) absent from the model-visible attribute catalog."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "4b66cd9c233ba3042d2fed3bcc9e054a0ad781467e3156210db1e884085689b0",
+      "question": "For each invoice, return invoice ID and the amount still unpaid.",
+      "reference_A": {
+        "sql": "SELECT i.invoice_id,i.amount_due-COALESCE(SUM(p.amount),0) AS unpaid_amount FROM invoices i LEFT JOIN payments p ON p.invoice_id=i.invoice_id AND p.status='posted' GROUP BY i.invoice_id,i.amount_due ORDER BY i.invoice_id"
+      },
+      "reference_B": {
+        "sql": "SELECT i.invoice_id,i.amount_due-COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.invoice_id=i.invoice_id AND p.status='posted'),0) AS unpaid_amount FROM invoices i ORDER BY i.invoice_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R4_MODEL_VISIBLE_CONTEXT_REPAIR",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "invoice_id",
+        "unpaid_amount"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [
+          "amount_due - posted payments"
+        ],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "invoice_id",
+            "unpaid_amount"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "invoice_id",
+          "unpaid_amount"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "invoice_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "unpaid_amount"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "group_survival",
+          "null_semantics",
+          "correlated"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:telecom_billing:subscription_subscriber",
+          "relationship:telecom_billing:subscription_plan",
+          "relationship:telecom_billing:usage_subscriber",
+          "relationship:telecom_billing:invoice_subscriber",
+          "relationship:telecom_billing:payment_invoice"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:subscriptions:subscriber_id",
+          "left_entity": "entity:telecom_billing:subscriptions",
+          "relationship_id": "relationship:telecom_billing:subscription_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:subscriptions:plan_id",
+          "left_entity": "entity:telecom_billing:subscriptions",
+          "relationship_id": "relationship:telecom_billing:subscription_plan",
+          "right_attribute": "attribute:telecom_billing:plans:plan_id",
+          "right_entity": "entity:telecom_billing:plans"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:usage_records:subscriber_id",
+          "left_entity": "entity:telecom_billing:usage_records",
+          "relationship_id": "relationship:telecom_billing:usage_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:invoices:subscriber_id",
+          "left_entity": "entity:telecom_billing:invoices",
+          "relationship_id": "relationship:telecom_billing:invoice_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:payments:invoice_id",
+          "left_entity": "entity:telecom_billing:payments",
+          "relationship_id": "relationship:telecom_billing:payment_invoice",
+          "right_attribute": "attribute:telecom_billing:invoices:invoice_id",
+          "right_entity": "entity:telecom_billing:invoices"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "A subscription with status='active' is current.",
+          "name": "Active subscription",
+          "rule_id": "rule:telecom_billing:active_subscription"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:telecom_billing:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "workforce_01",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "workforce_01_cf1_6339ce",
+          "patch_sql": [
+            "INSERT INTO timesheets VALUES (9015,1,'2026-06-26',4,true)"
+          ],
+          "purpose": "adds approved hours"
+        },
+        {
+          "fixture_id": "workforce_01_cf2_f908a0",
+          "patch_sql": [
+            "INSERT INTO timesheets VALUES (9016,1,'2026-06-26',4,false)"
+          ],
+          "purpose": "adds unapproved hours"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "workforce_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "d9d7f77f1e9ec9169b327380b567cba5690cf72d8524c9a436fe94c0204e48b7",
+      "question": "For each employee, return employee ID and total hours including approved timesheets only.",
+      "reference_A": {
+        "sql": "SELECT e.employee_id,COALESCE(SUM(t.hours) FILTER (WHERE t.approved),0) AS approved_hours FROM employees e LEFT JOIN timesheets t ON t.employee_id=e.employee_id GROUP BY e.employee_id ORDER BY e.employee_id"
+      },
+      "reference_B": {
+        "sql": "SELECT e.employee_id,COALESCE((SELECT SUM(t.hours) FROM timesheets t WHERE t.employee_id=e.employee_id AND t.approved),0) AS approved_hours FROM employees e ORDER BY e.employee_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "employee_id",
+        "approved_hours"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "employee_id",
+            "approved_hours"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "employee_id",
+          "approved_hours"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "employee_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "approved_hours"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "aggregate",
+          "filter_scope",
+          "population"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:workforce_ops:employee_team",
+          "relationship:workforce_ops:shift_employee",
+          "relationship:workforce_ops:timesheet_employee",
+          "relationship:workforce_ops:absence_employee",
+          "relationship:workforce_ops:training_employee",
+          "relationship:workforce_ops:adjustment_employee"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:employees:team_id",
+          "left_entity": "entity:workforce_ops:employees",
+          "relationship_id": "relationship:workforce_ops:employee_team",
+          "right_attribute": "attribute:workforce_ops:teams:team_id",
+          "right_entity": "entity:workforce_ops:teams"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:shifts:employee_id",
+          "left_entity": "entity:workforce_ops:shifts",
+          "relationship_id": "relationship:workforce_ops:shift_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:timesheets:employee_id",
+          "left_entity": "entity:workforce_ops:timesheets",
+          "relationship_id": "relationship:workforce_ops:timesheet_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:absences:employee_id",
+          "left_entity": "entity:workforce_ops:absences",
+          "relationship_id": "relationship:workforce_ops:absence_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:training_records:employee_id",
+          "left_entity": "entity:workforce_ops:training_records",
+          "relationship_id": "relationship:workforce_ops:training_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:payroll_adjustments:employee_id",
+          "left_entity": "entity:workforce_ops:payroll_adjustments",
+          "relationship_id": "relationship:workforce_ops:adjustment_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "Only timesheets with approved=true count toward reported hours.",
+          "name": "Approved hours",
+          "rule_id": "rule:workforce_ops:approved_hours"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:workforce_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "workforce_02",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "workforce_02_cf1_3b0507",
+          "patch_sql": [
+            "INSERT INTO absences VALUES (9019,1,'2026-06-28','2026-06-29','approved')"
+          ],
+          "purpose": "adds approved absence"
+        },
+        {
+          "fixture_id": "workforce_02_cf2_d1bf46",
+          "patch_sql": [
+            "INSERT INTO absences VALUES (9020,1,'2026-06-28','2026-06-29','pending')"
+          ],
+          "purpose": "adds pending absence"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "workforce_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "c7383b6e9b2d3fff864c43bbc229392c7519979f20aa06a301f4e873c1162f17",
+      "question": "For each employee, return employee ID and the count of absence days for approved absences.",
+      "reference_A": {
+        "sql": "SELECT e.employee_id,COALESCE(SUM((a.ends_on-a.starts_on)+1) FILTER (WHERE a.status='approved'),0) AS absence_days FROM employees e LEFT JOIN absences a ON a.employee_id=e.employee_id GROUP BY e.employee_id ORDER BY e.employee_id"
+      },
+      "reference_B": {
+        "sql": "SELECT e.employee_id,COALESCE((SELECT SUM((a.ends_on-a.starts_on)+1) FROM absences a WHERE a.employee_id=e.employee_id AND a.status='approved'),0) AS absence_days FROM employees e ORDER BY e.employee_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "employee_id",
+        "absence_days"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "employee_id",
+            "absence_days"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "employee_id",
+          "absence_days"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "employee_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "absence_days"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "temporal",
+          "aggregate",
+          "population"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:workforce_ops:employee_team",
+          "relationship:workforce_ops:shift_employee",
+          "relationship:workforce_ops:timesheet_employee",
+          "relationship:workforce_ops:absence_employee",
+          "relationship:workforce_ops:training_employee",
+          "relationship:workforce_ops:adjustment_employee"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "VISIBLE_BUSINESS_RULE"
+          }
+        },
+        "temporal_semantics": {
+          "calculation": "inclusive calendar days",
+          "rule_id": "time:workforce_ops:clock"
+        }
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:employees:team_id",
+          "left_entity": "entity:workforce_ops:employees",
+          "relationship_id": "relationship:workforce_ops:employee_team",
+          "right_attribute": "attribute:workforce_ops:teams:team_id",
+          "right_entity": "entity:workforce_ops:teams"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:shifts:employee_id",
+          "left_entity": "entity:workforce_ops:shifts",
+          "relationship_id": "relationship:workforce_ops:shift_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:timesheets:employee_id",
+          "left_entity": "entity:workforce_ops:timesheets",
+          "relationship_id": "relationship:workforce_ops:timesheet_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:absences:employee_id",
+          "left_entity": "entity:workforce_ops:absences",
+          "relationship_id": "relationship:workforce_ops:absence_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:training_records:employee_id",
+          "left_entity": "entity:workforce_ops:training_records",
+          "relationship_id": "relationship:workforce_ops:training_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:payroll_adjustments:employee_id",
+          "left_entity": "entity:workforce_ops:payroll_adjustments",
+          "relationship_id": "relationship:workforce_ops:adjustment_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "Only timesheets with approved=true count toward reported hours.",
+          "name": "Approved hours",
+          "rule_id": "rule:workforce_ops:approved_hours"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:workforce_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    },
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "workforce_10",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "workforce_10_cf1_27ffa3",
+          "patch_sql": [
+            "INSERT INTO payroll_adjustments VALUES (9005,1,25,'2026-06-21','bonus')"
+          ],
+          "purpose": "adds bonus"
+        },
+        {
+          "fixture_id": "workforce_10_cf2_d63fa4",
+          "patch_sql": [
+            "INSERT INTO payroll_adjustments VALUES (9006,1,-10,'2026-06-21','deduction')"
+          ],
+          "purpose": "adds deduction"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_NULL_SEMANTICS_DEFECT",
+        "QUESTION_GOLD_POPULATION_AMBIGUITY"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "workforce_ops",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_NULL_SEMANTICS_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Reference defaults an empty SUM to zero although the visible request does not specify a NULL replacement."
+        },
+        {
+          "class": "QUESTION_GOLD_POPULATION_AMBIGUITY",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Gold requires base-entity preservation, but the question does not state how zero-contribution groups are handled."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "f0a8830e3d5362a7592dc01c7ec7e4ee68f3a75bb72a507981c42bf53f931cba",
+      "question": "For each employee, return employee ID and total payroll adjustment amount.",
+      "reference_A": {
+        "sql": "SELECT e.employee_id,COALESCE(SUM(a.amount),0) AS adjustment_total FROM employees e LEFT JOIN payroll_adjustments a ON a.employee_id=e.employee_id GROUP BY e.employee_id ORDER BY e.employee_id"
+      },
+      "reference_B": {
+        "sql": "SELECT e.employee_id,COALESCE((SELECT SUM(a.amount) FROM payroll_adjustments a WHERE a.employee_id=e.employee_id),0) AS adjustment_total FROM employees e ORDER BY e.employee_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "employee_id",
+        "adjustment_total"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "employee_id",
+            "adjustment_total"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "employee_id",
+          "adjustment_total"
+        ],
+        "population": "base-entity-preserving",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "employee_id"
+            },
+            {
+              "role": "MEASURE",
+              "semantic_name": "adjustment_total"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "group_survival",
+          "population",
+          "null_semantics"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:workforce_ops:employee_team",
+          "relationship:workforce_ops:shift_employee",
+          "relationship:workforce_ops:timesheet_employee",
+          "relationship:workforce_ops:absence_employee",
+          "relationship:workforce_ops:training_employee",
+          "relationship:workforce_ops:adjustment_employee"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:employees:team_id",
+          "left_entity": "entity:workforce_ops:employees",
+          "relationship_id": "relationship:workforce_ops:employee_team",
+          "right_attribute": "attribute:workforce_ops:teams:team_id",
+          "right_entity": "entity:workforce_ops:teams"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:shifts:employee_id",
+          "left_entity": "entity:workforce_ops:shifts",
+          "relationship_id": "relationship:workforce_ops:shift_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:timesheets:employee_id",
+          "left_entity": "entity:workforce_ops:timesheets",
+          "relationship_id": "relationship:workforce_ops:timesheet_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:absences:employee_id",
+          "left_entity": "entity:workforce_ops:absences",
+          "relationship_id": "relationship:workforce_ops:absence_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:training_records:employee_id",
+          "left_entity": "entity:workforce_ops:training_records",
+          "relationship_id": "relationship:workforce_ops:training_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:workforce_ops:payroll_adjustments:employee_id",
+          "left_entity": "entity:workforce_ops:payroll_adjustments",
+          "relationship_id": "relationship:workforce_ops:adjustment_employee",
+          "right_attribute": "attribute:workforce_ops:employees:employee_id",
+          "right_entity": "entity:workforce_ops:employees"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "Only timesheets with approved=true count toward reported hours.",
+          "name": "Approved hours",
+          "rule_id": "rule:workforce_ops:approved_hours"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:workforce_ops:clock",
+          "timezone": "UTC"
+        }
+      ]
+    }
+  ],
+  "count": 10
+}

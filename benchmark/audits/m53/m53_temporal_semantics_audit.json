@@ -1,0 +1,227 @@
+{
+  "cases": [
+    {
+      "BASE_semantics": "AUDITED_MODEL_BLIND; runtime results withheld until Pass B",
+      "case_id": "telecom_07",
+      "counterfactual_semantics": [
+        {
+          "fixture_id": "telecom_07_cf1_f91158",
+          "patch_sql": [
+            "INSERT INTO subscriptions VALUES (9007,1,2,'active')"
+          ],
+          "purpose": "adds latest plan"
+        },
+        {
+          "fixture_id": "telecom_07_cf2_d6d933",
+          "patch_sql": [
+            "INSERT INTO subscriptions VALUES (9008,2,1,'paused')"
+          ],
+          "purpose": "adds older plan"
+        }
+      ],
+      "defect_classes": [
+        "RESULT_ORDER_CONTRACT_DEFECT",
+        "HIDDEN_TEMPORAL_BOUNDARY_DEFECT"
+      ],
+      "defect_status": "DEFECT_SUSPECTED",
+      "domain": "telecom_billing",
+      "evidence": [
+        {
+          "class": "RESULT_ORDER_CONTRACT_DEFECT",
+          "repair_class": "R1_EVALUATOR_ONLY",
+          "severity": "SCORING_MATERIAL",
+          "summary": "Question does not request output row ordering, but gold requires ordered rows."
+        },
+        {
+          "class": "HIDDEN_TEMPORAL_BOUNDARY_DEFECT",
+          "repair_class": "R5_QUESTION_REPAIR",
+          "severity": "BLOCKING",
+          "summary": "Latest payload selection is implemented by subscription_id order, but the visible contract defines no chronology."
+        }
+      ],
+      "gold_to_counterfactual_alignment": "TWO_OR_MORE_FIXTURES_PRESENT",
+      "gold_to_references_alignment": "TWO_REFERENCE_WITNESSES_PRESENT",
+      "gold_to_result_contract_alignment": "STATIC_CONTRACT_PRESENT",
+      "model_visible_input_hash_v0": "843f4c440adab0839476c35a2878a54735df0632bc7b82689a745dfcfbb79225",
+      "question": "For each subscriber, return subscriber ID and the plan ID of the latest subscription record.",
+      "reference_A": {
+        "sql": "SELECT DISTINCT ON (subscriber_id) subscriber_id,plan_id FROM subscriptions ORDER BY subscriber_id,subscription_id DESC"
+      },
+      "reference_B": {
+        "sql": "SELECT subscriber_id,plan_id FROM (SELECT subscriber_id,plan_id,ROW_NUMBER() OVER (PARTITION BY subscriber_id ORDER BY subscription_id DESC) rn FROM subscriptions) q WHERE rn=1 ORDER BY subscriber_id"
+      },
+      "reference_diversity": "NON_IDENTICAL_SQL_WITNESSES",
+      "repair_class": [
+        "R1_EVALUATOR_ONLY",
+        "R5_QUESTION_REPAIR"
+      ],
+      "requested_projection": [
+        "subscriber_id",
+        "plan_id"
+      ],
+      "requested_result_grain": [],
+      "requested_row_order": false,
+      "result_contract": {
+        "aliases_significant": false,
+        "column_count": 2,
+        "duplicates_significant": true,
+        "numeric_tolerance": null,
+        "row_order": true,
+        "timestamp_timezone": "UTC"
+      },
+      "semantic_target": {
+        "aggregations": [],
+        "behavior": "ANSWERABLE",
+        "calculations": [],
+        "filters": [],
+        "grouping": [],
+        "limit": null,
+        "null_default_semantics": "preserve SQL NULL semantics",
+        "ordering": {
+          "columns": [
+            "subscriber_id",
+            "plan_id"
+          ],
+          "direction": "ASC"
+        },
+        "outputs": [
+          "subscriber_id",
+          "plan_id"
+        ],
+        "population": "matching-only",
+        "projection_contract": {
+          "extra_fields_allowed": false,
+          "fields": [
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "subscriber_id"
+            },
+            {
+              "role": "IDENTIFIER",
+              "semantic_name": "plan_id"
+            }
+          ],
+          "mode": "EXACT",
+          "source": "QUESTION_EXPLICIT"
+        },
+        "query_shape_tags": [
+          "latest_row",
+          "window"
+        ],
+        "reference_independence": "HIGH",
+        "relationships": [
+          "relationship:telecom_billing:subscription_subscriber",
+          "relationship:telecom_billing:subscription_plan",
+          "relationship:telecom_billing:usage_subscriber",
+          "relationship:telecom_billing:invoice_subscriber",
+          "relationship:telecom_billing:payment_invoice"
+        ],
+        "result_comparison_contract": {
+          "aliases_significant": false,
+          "column_count": 2,
+          "duplicates_significant": true,
+          "numeric_tolerance": null,
+          "row_order": true,
+          "timestamp_timezone": "UTC"
+        },
+        "semantic_provenance": {
+          "filters": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "limit": {
+            "source": "NOT_APPLICABLE"
+          },
+          "ordering": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "population": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "rounding": {
+            "source": "QUESTION_EXPLICIT"
+          },
+          "temporal": {
+            "source": "NOT_APPLICABLE"
+          }
+        },
+        "temporal_semantics": {}
+      },
+      "task_type": "ANSWERABLE",
+      "unique_answerability": false,
+      "visible_authority": [
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:subscriptions:subscriber_id",
+          "left_entity": "entity:telecom_billing:subscriptions",
+          "relationship_id": "relationship:telecom_billing:subscription_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:subscriptions:plan_id",
+          "left_entity": "entity:telecom_billing:subscriptions",
+          "relationship_id": "relationship:telecom_billing:subscription_plan",
+          "right_attribute": "attribute:telecom_billing:plans:plan_id",
+          "right_entity": "entity:telecom_billing:plans"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:usage_records:subscriber_id",
+          "left_entity": "entity:telecom_billing:usage_records",
+          "relationship_id": "relationship:telecom_billing:usage_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:invoices:subscriber_id",
+          "left_entity": "entity:telecom_billing:invoices",
+          "relationship_id": "relationship:telecom_billing:invoice_subscriber",
+          "right_attribute": "attribute:telecom_billing:subscribers:subscriber_id",
+          "right_entity": "entity:telecom_billing:subscribers"
+        },
+        {
+          "authorized": true,
+          "cardinality": "many_to_one",
+          "description": "Authorized operational relationship.",
+          "direction": "left_to_right",
+          "left_attribute": "attribute:telecom_billing:payments:invoice_id",
+          "left_entity": "entity:telecom_billing:payments",
+          "relationship_id": "relationship:telecom_billing:payment_invoice",
+          "right_attribute": "attribute:telecom_billing:invoices:invoice_id",
+          "right_entity": "entity:telecom_billing:invoices"
+        }
+      ],
+      "visible_semantic_rules": [
+        {
+          "definition": "A subscription with status='active' is current.",
+          "name": "Active subscription",
+          "rule_id": "rule:telecom_billing:active_subscription"
+        }
+      ],
+      "visible_temporal_rules": [
+        {
+          "benchmark_now": "2026-06-30T12:00:00Z",
+          "bounds": "Stored timestamps use UTC and date boundaries are ISO half-open intervals.",
+          "clock_mode": "fixed",
+          "temporal_rule_id": "time:telecom_billing:clock",
+          "timezone": "UTC"
+        }
+      ]
+    }
+  ],
+  "count": 1
+}

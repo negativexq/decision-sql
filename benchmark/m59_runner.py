@@ -621,6 +621,34 @@ def score(
     return records, metrics
 
 
+def stable_record(record: dict[str, Any]) -> dict[str, Any]:
+    """Keep only deterministic scientific fields from a runtime replay."""
+    return {
+        key: record.get(key)
+        for key in (
+            "case_id",
+            "task_type",
+            "decision",
+            "parse_status",
+            "governed_correct",
+            "base_correct",
+            "full_counterfactual_correct",
+            "first_failure",
+        )
+    } | {
+        "states": [
+            {
+                "fixture_id": state["fixture_id"],
+                "runtime_disposition": state["outcome"].get("runtime_disposition"),
+                "result_contract_outcome": state["outcome"].get("result_contract_outcome"),
+                "comparison_reason": state["outcome"].get("comparison_reason"),
+                "executed": state["outcome"].get("executed"),
+            }
+            for state in record.get("states", [])
+        ]
+    }
+
+
 def analyze_selection() -> dict[str, Any]:
     ids, rows = load_rows()
     responses = load_jsonl(AUDIT / "m59_selection_responses.jsonl")
@@ -651,7 +679,7 @@ def analyze_selection() -> dict[str, Any]:
         )
         result = {
             **value["metrics"],
-            "records": value["records"],
+            "records": [stable_record(row) for row in value["records"]],
             "control_regressions": regressions,
             "recoveries_vs_control": recoveries,
             "transition_counts": dict(sorted(counts.items())),

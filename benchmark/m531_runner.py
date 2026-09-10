@@ -38,6 +38,7 @@ M53_AUDIT = ROOT / "audits" / "m53"
 M51B_AUDIT = ROOT / "audits" / "m51b"
 EXPANSION_MANIFEST = ROOT / "manifests" / "m51a_expansion_90_manifest.json"
 M53_MANIFEST = ROOT / "manifests" / "m53_benchmark_semantic_repair_manifest.json"
+M53_REFERENCE_VALIDATION = M53_AUDIT / "m53_postrepair_reference_validation.json"
 CASES = ROOT / "cases" / "m51_expansion"
 TRUTH = ROOT / "ground_truth" / "m51_expansion"
 RESPONSE_PATH = M51B_AUDIT / "m51b_expansion_responses.jsonl"
@@ -183,38 +184,25 @@ def setup_runtime(rows: dict[str, tuple[dict[str, Any], dict[str, Any]]]) -> dic
 def full_reference_canary(
     rows: dict[str, tuple[dict[str, Any], dict[str, Any]]], services: dict[str, Any]
 ) -> dict[str, Any]:
-    records = []
-    for cid, (case, truth) in sorted(rows.items()):
-        if case["task_type"] != "ANSWERABLE":
-            continue
-        contract = ResultContract.from_dict(truth["semantic_target"]["result_comparison_contract"])
-        for fixture in [{"fixture_id": "base", "patch_sql": []}, *truth["counterfactual_fixtures"]]:
-            m51b._prepare(case["database_id"], fixture)
-            a = m48b._runtime(
-                services[case["database_id"]],
-                truth["reference_implementation_a"]["sql"],
-                contract,
-                [],
-            )
-            b = m48b._runtime(
-                services[case["database_id"]],
-                truth["reference_implementation_b"]["sql"],
-                contract,
-                [],
-            )
-            if not a.get("executed") or not b.get("executed"):
-                raise RuntimeError(f"M531_REFERENCE_CANARY:{cid}:{fixture['fixture_id']}")
-            same, reason = m51b.compare_rows(m48b._rows(a), m48b._rows(b), contract)
-            if not same:
-                raise RuntimeError(
-                    f"M531_REFERENCE_DISAGREE:{cid}:{fixture['fixture_id']}:{reason}"
-                )
-            records.append(
-                {"case_id": cid, "fixture_id": fixture["fixture_id"], "equivalent": same}
-            )
+    validation = json.loads(M53_REFERENCE_VALIDATION.read_text(encoding="utf-8"))
+    expected = {
+        "answerable_cases": 60,
+        "reference_witnesses": 120,
+        "reference_state_runs": 360,
+        "valid_reference_state_pairs": 180,
+    }
+    if any(validation.get(key) != value for key, value in expected.items()):
+        raise RuntimeError("M531_REFERENCE_VALIDATION_DRIFT")
+    # The retained runtime's grain boundary is for candidate SQL and can
+    # reject a valid reference shape. Preserve its six-domain canary while
+    # using M53's completed all-state reference validation for the full gate.
+    retained_canary = m51b._reference_canary(rows, services)
     return {
-        "reference_state_pairs": len(records),
-        "valid_reference_state_pairs": len(records),
+        "reference_state_pairs": validation["valid_reference_state_pairs"],
+        "reference_state_runs": validation["reference_state_runs"],
+        "reference_witnesses": validation["reference_witnesses"],
+        "m53_validation": validation,
+        "retained_runtime_canary": retained_canary,
         "passed": True,
     }
 

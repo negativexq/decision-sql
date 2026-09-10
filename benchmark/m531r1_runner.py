@@ -181,12 +181,20 @@ def _verify_parent_state() -> dict[str, Any]:
     m53 = load_json(M53_MANIFEST)
     m531 = load_json(M531_MANIFEST)
     m531r = load_json(M531R_MANIFEST)
-    return {
+    state = {
         "m53_verdict": m53["final_verdict"],
         "m531_verdict": m531["final_verdict"],
         "m531r_verdict": m531r["final_verdict"],
         "historical_m531r_m532_ready": m531r["m532_ready"],
     }
+    if state != {
+        "m53_verdict": "BENCHMARK_SEMANTIC_AUDIT_AND_REPAIR_COMPLETE",
+        "m531_verdict": "M531_ABORTED_POST_EXPOSURE_BENCHMARK_DEFECT",
+        "m531r_verdict": "M531R_PROVENANCE_RECOVERY_COMPLETE",
+        "historical_m531r_m532_ready": False,
+    }:
+        raise RuntimeError("M531R1_PARENT_VERDICT_DRIFT")
+    return state
 
 
 def evaluate() -> dict[str, Any]:
@@ -263,6 +271,14 @@ def evaluate() -> dict[str, Any]:
 
     fresh_requests = {row["case_id"]: row for row in load_jsonl(FRESH_REQUESTS)}
     fresh_responses = {row["case_id"]: row for row in load_jsonl(FRESH_RESPONSES)}
+    historical_responses = {row["case_id"]: row for row in load_jsonl(HISTORICAL_RESPONSES)}
+    reusable_response_matches = {
+        cid: cid in historical_responses
+        and historical_responses[cid]["request_hash"] == current[cid]["retained_request_text_hash"]
+        for cid in reusable
+    }
+    if len(reusable_response_matches) != 10 or not all(reusable_response_matches.values()):
+        raise RuntimeError("M531R1_REUSABLE_INPUT_DRIFT")
     fresh_ids = set(b)
     fresh_matches = {
         cid: cid in fresh_requests
@@ -325,6 +341,7 @@ def evaluate() -> dict[str, Any]:
         "schedule_by_id": schedule_by_id,
         "current": current,
         "fresh_matches": fresh_matches,
+        "reusable_matches": reusable_response_matches,
         "fresh_requests": fresh_requests,
         "fresh_responses": fresh_responses,
         "expansion_hash": expansion_hash,
@@ -333,6 +350,37 @@ def evaluate() -> dict[str, Any]:
         "snapshot_hash": snapshot_hash(current_snapshot),
         "source_hashes": source_hashes,
         "post_source_hashes": post_source_hashes,
+        "runtime_unchanged": not bool(
+            subprocess.run(
+                ["git", "diff", "--name-only", m531r_runner.POST_COMMIT, "--", "app"],
+                cwd=REPO,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+        ),
+        "semantic_sources_unchanged": not bool(
+            subprocess.run(
+                [
+                    "git",
+                    "diff",
+                    "--name-only",
+                    m531r_runner.POST_COMMIT,
+                    "--",
+                    "benchmark/cases",
+                    "benchmark/ground_truth",
+                    "benchmark/databases",
+                    "benchmark/prompts",
+                    "benchmark/schemas",
+                    "benchmark/m51b_runner.py",
+                    "benchmark/model_contract.py",
+                ],
+                cwd=REPO,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+        ),
         "parent": _verify_parent_state(),
         "dry_run": dry_run,
         "readiness": readiness,
@@ -378,6 +426,8 @@ def write_artifacts(result: dict[str, Any]) -> None:
             "model_calls": 0,
             "historical_verdicts_preserved": result["parent"],
             "benchmark_semantics_modified": False,
+            "runtime_semantics_modified": not result["runtime_unchanged"],
+            "semantic_sources_modified": not result["semantic_sources_unchanged"],
             "responses_modified": False,
             "truth_hashes": {"expansion": result["expansion_hash"], "full": result["full_hash"]},
             "corpus_hashes": {"m51b": HISTORICAL_CORPUS_HASH, "m531_fresh": FRESH_CORPUS_HASH},
@@ -526,8 +576,11 @@ def write_artifacts(result: dict[str, Any]) -> None:
             "retry_enabled": False,
             "post_exposure_benchmark_edits_allowed": False,
             "post_freeze_provider_calls_allowed": 0,
+            "benchmark_edit_after_exposure_allowed": False,
             "blocking_reasons": [],
             "score_ready_reason": "56 current requests do not yet have valid responses.",
+            "runtime_semantics_unchanged": result["runtime_unchanged"],
+            "benchmark_semantics_unchanged": result["semantic_sources_unchanged"],
             "recommended_next_milestone": "M53.2 — Fresh Evaluation of Remaining 56 Invalidated Cases",
         },
     )
@@ -571,7 +624,7 @@ def write_artifacts(result: dict[str, Any]) -> None:
             "truth_modified": False,
             "responses_modified": False,
             "benchmark_modified": False,
-            "mainline_behavior_modified": False,
+            "mainline_behavior_modified": not result["runtime_unchanged"],
             "determinism": "PASS",
             "analysis_hash": analysis_hash,
             "final_verdict": "M532_LIVE_ACQUISITION_READY",

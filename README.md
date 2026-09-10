@@ -23,13 +23,13 @@ Decision-SQL is evaluated on one 180-case governed Text-to-SQL benchmark across
 
 | Metric | Current benchmark |
 | --- | ---: |
-| Governed Task Success | **155/180 = 86.11%** |
-| Answerable Runtime TSA | **103/120 = 85.83%** |
+| Governed Task Success | **160/180 = 88.89%** |
+| Answerable Runtime TSA | **108/122 = 88.52%** |
 | Authority | **28/30 = 93.33%** |
-| Ambiguity | **12/18 = 66.67%** |
+| Ambiguity | **12/16 = 75.00%** |
 | Policy | **12/12 = 100%** |
 
-The benchmark contains 120 answerable cases and 60 cases where producing SQL
+The benchmark contains 122 answerable cases and 58 cases where producing SQL
 is not the correct behavior. All benchmark databases are synthetic; no
 customer data is used.
 
@@ -141,9 +141,9 @@ The current benchmark has four behavior classes:
 
 | Task | Cases | Expected model decision |
 | --- | ---: | --- |
-| `ANSWERABLE` | **120** | `ANSWER` + read-only `SELECT` |
+| `ANSWERABLE` | **122** | `ANSWER` + read-only `SELECT` |
 | `AUTHORITY_BLOCKED` | **30** | `BLOCKED_AUTHORITY` |
-| `AMBIGUOUS` | **18** | `NEEDS_CLARIFICATION` |
+| `AMBIGUOUS` | **16** | `NEEDS_CLARIFICATION` |
 | `POLICY_BLOCKED` | **12** | `BLOCKED_POLICY` |
 | **Total** | **180** | |
 
@@ -282,13 +282,13 @@ is not enough to establish semantic correctness.
 
 ## Current limitations
 
-The current benchmark records 25 governed misses overall. The remaining errors
+The current benchmark records 20 governed misses overall. The remaining errors
 span governance decisioning, ambiguity recognition, SQL semantic mismatches,
 and intentionally conservative fail-closed grain handling. The current evidence
 does not establish a single causal breakdown for all 180 cases; detailed
 mechanisms belong in the audit reports.
 
-Ambiguity handling is weaker than policy handling on this benchmark: `12/18`
+Ambiguity handling is weaker than policy handling on this benchmark: `12/16`
 versus `12/12`. Authority decisioning is `28/30`; `telecom_15` remains the
 known unauthorized `ANSWER` example. Runtime relation-level authority blocks
 that candidate before database interaction, but this is not a claim of perfect
@@ -337,14 +337,14 @@ The benchmark specification is [`benchmark/SPEC.md`](benchmark/SPEC.md).
 Current identifiers are recorded in the machine-readable evaluation manifest:
 
 ```text
-Current full benchmark truth:
-0ee815d4d46cbb7723e9d7fa07da3628420f6da7181d2b551a282e5a77f4f70b
+Post-M54 full benchmark truth:
+672a749fad616908bb1a1c243ad21eb7798ec60c5520bc109cafc7e7b95a890a
 
-Current response corpus:
+M53.2 fresh response corpus:
 7feb73f14a71f56dc8f33b43da43471fc6f5a9d749bc977b29087dd5e6e1be14
 
-Canonical 90-response map:
-8222432b17e4c229e9f1e3bbacd2068839b4e0a46fd1dc99ce6fe8481ec3740b
+Post-M54 canonical response map:
+e3ba0e8b02ea64ce75f34df0bebdd4d54f904e33675273d143d8cc8456e4ed21
 ```
 
 The canonical response evidence combines frozen one-shot response corpora
@@ -426,9 +426,10 @@ audit and evaluation records are:
 - [Response provenance recovery](benchmark/reports/m531r_response_reuse_provenance_recovery.md)
 - [Current benchmark evaluation](benchmark/reports/m532_post_m53_repaired_expansion_evaluation.md)
 - [Runtime authority safety report](benchmark/reports/m52s_runtime_authority_execution_safety.md)
+- [Post-M53 residual semantic forensics](benchmark/reports/m54_post_m53_residual_semantic_forensics.md)
 
 The machine-readable current manifest is
-[`benchmark/manifests/m532_post_m53_repaired_expansion_evaluation_manifest.json`](benchmark/manifests/m532_post_m53_repaired_expansion_evaluation_manifest.json).
+[`benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json`](benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json).
 
 Detailed audit evidence remains under [`benchmark/audits/`](benchmark/audits/)
 and [`benchmark/reports/`](benchmark/reports/).
@@ -451,6 +452,6 @@ It does not establish:
 
 ## Project status
 
-The next planned step is **M54, Post-M53 Residual Semantic Forensics**, a
-zero-call analysis of the remaining semantic failures. It is planned work, not
-a completed result. No M54 system or runtime changes are represented here.
+The current residual evidence is recorded in the M54 forensic report. Further
+system changes, if any, are separate from the benchmark repair and replay
+described here.

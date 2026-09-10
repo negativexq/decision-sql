@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.semantics.grain import (
     AggregationBehavior,
+    DerivedMeasureSemantics,
     GrainAlignmentAnalyzer,
     GrainContractError,
     GrainDiagnosticCode,
@@ -130,6 +131,97 @@ def test_child_measure_aggregation_is_safe() -> None:
     """
     result = GrainSafetyValidator(_catalog()).validate(sql)
     assert result.code is GrainDiagnosticCode.PASS
+
+
+def test_governed_child_grain_derived_measure_is_safe() -> None:
+    catalog = _catalog().model_copy(
+        update={
+            "derived_measures": (
+                DerivedMeasureSemantics(
+                    measure_id="derived:test:line_value",
+                    metric_id="metric:test:line_value",
+                    expression_signature="children.amount * parents.amount",
+                    source_attribute_ids=(
+                        "attribute:child:amount",
+                        "attribute:parent:amount",
+                    ),
+                    source_entity_ids=("entity:child", "entity:parent"),
+                    authorized_relationship_ids=("relationship:child_parent",),
+                    provenance=("PUBLIC_METRIC_DEFINITION",),
+                ),
+            )
+        }
+    )
+    result = GrainSafetyValidator(catalog).validate(
+        "SELECT p.group_id, SUM(c.amount * p.amount) FROM parents p "
+        "JOIN children c ON c.parent_id=p.parent_id GROUP BY p.group_id"
+    )
+    assert result.code is GrainDiagnosticCode.PASS
+
+
+def test_ungoverned_parent_expression_remains_rejected() -> None:
+    catalog = _catalog().model_copy(
+        update={
+            "derived_measures": (
+                DerivedMeasureSemantics(
+                    measure_id="derived:test:line_value",
+                    metric_id="metric:test:line_value",
+                    expression_signature="children.amount * parents.amount",
+                    source_attribute_ids=(
+                        "attribute:child:amount",
+                        "attribute:parent:amount",
+                    ),
+                    source_entity_ids=("entity:child", "entity:parent"),
+                    authorized_relationship_ids=("relationship:child_parent",),
+                    provenance=("PUBLIC_METRIC_DEFINITION",),
+                ),
+            )
+        }
+    )
+    result = GrainSafetyValidator(catalog).validate(
+        "SELECT p.group_id, SUM(p.amount * 2) FROM parents p "
+        "JOIN children c ON c.parent_id=p.parent_id GROUP BY p.group_id"
+    )
+    assert result.code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+
+
+def test_governed_derived_measure_requires_the_declared_relationship_path() -> None:
+    base_catalog = _catalog()
+    catalog = base_catalog.model_copy(
+        update={
+            "relationships": (
+                *base_catalog.relationships,
+                GrainRelationship(
+                    relationship_id="relationship:child_parent_alternate",
+                    from_entity_id="entity:child",
+                    from_attribute_ids=("attribute:child:other_parent_id",),
+                    to_entity_id="entity:parent",
+                    to_attribute_ids=("attribute:parent:parent_id",),
+                    cardinality="many_to_one",
+                    provenance=("PUBLIC_RELATIONSHIP_CARDINALITY",),
+                ),
+            ),
+            "derived_measures": (
+                DerivedMeasureSemantics(
+                    measure_id="derived:test:line_value",
+                    metric_id="metric:test:line_value",
+                    expression_signature="children.amount * parents.amount",
+                    source_attribute_ids=(
+                        "attribute:child:amount",
+                        "attribute:parent:amount",
+                    ),
+                    source_entity_ids=("entity:child", "entity:parent"),
+                    authorized_relationship_ids=("relationship:child_parent",),
+                    provenance=("PUBLIC_METRIC_DEFINITION",),
+                ),
+            ),
+        }
+    )
+    result = GrainSafetyValidator(catalog).validate(
+        "SELECT p.group_id, SUM(c.amount * p.amount) FROM parents p "
+        "JOIN children c ON c.other_parent_id=p.parent_id GROUP BY p.group_id"
+    )
+    assert result.code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
 
 
 def test_existence_query_is_not_misclassified_as_measure_fanout() -> None:

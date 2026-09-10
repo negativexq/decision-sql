@@ -15,6 +15,7 @@ from sqlglot import exp
 
 from app.semantics.grain import (
     AggregationBehavior,
+    DerivedMeasureSemantics,
     GrainAlignmentAnalyzer,
     GrainDiagnosticCode,
     GrainEntity,
@@ -240,6 +241,27 @@ def _used_in_sum_or_average(cases: list[dict[str, Any]], table: str, column: str
     return False
 
 
+def _expression_signature(
+    expression: exp.Expression,
+    aliases: dict[str, str],
+    attributes_by_column: dict[str, list[dict[str, Any]]],
+) -> str | None:
+    """Canonicalize a governed formula and its SQL realization."""
+    normalized = expression.copy()
+    for column in normalized.find_all(exp.Column):
+        table = aliases.get(column.table.lower()) if column.table else None
+        if table is None and not column.table:
+            matches = attributes_by_column.get(column.name.lower(), ())
+            tables = {item["entity_id"].split(":")[-1].lower() for item in matches}
+            if len(tables) != 1:
+                return None
+            table = next(iter(tables))
+        if table is None:
+            return None
+        column.set("table", exp.to_identifier(table))
+    return normalized.sql(dialect="postgres", pretty=False).lower()
+
+
 def _role(
     attribute: dict[str, Any], used_sum: bool, used: bool
 ) -> tuple[str, AggregationBehavior | None]:
@@ -265,11 +287,13 @@ def _build_catalogs(
         authority = _public_context(database_id)
         keys = _schema_keys(database_id)
         attrs_by_physical = {}
+        attrs_by_column: dict[str, list[dict[str, Any]]] = defaultdict(list)
         attr_by_id: dict[str, dict[str, Any]] = {}
         for attr in authority["attributes"]:
             path = attr["physical_column_or_path"]
             if " " not in path and "#>>" not in path and "->>" not in path:
                 attrs_by_physical[(attr["entity_id"].split(":")[-1], path.lower())] = attr
+                attrs_by_column[path.lower()].append(attr)
             attr_by_id[attr["attribute_id"]] = attr
         entities: list[GrainEntity] = []
         for entity in authority["entities"]:
@@ -408,8 +432,65 @@ def _build_catalogs(
             )
             for measure in base_measures
         )
+        derived_measures: list[DerivedMeasureSemantics] = []
+        for metric in authority["metrics"]:
+            formula = str(metric.get("formula", ""))
+            try:
+                formula_tree = sqlglot.parse_one(formula, read="postgres")
+            except Exception:
+                continue
+            aggregate = next(formula_tree.find_all(exp.Sum), None)
+            if not isinstance(aggregate, exp.Sum):
+                continue
+            source_columns = list(aggregate.this.find_all(exp.Column))
+            if len(source_columns) < 2:
+                continue
+            source_attributes: list[dict[str, Any]] = []
+            for column in source_columns:
+                matches = attrs_by_column.get(column.name.lower(), [])
+                if len(matches) != 1:
+                    source_attributes = []
+                    break
+                source_attributes.append(matches[0])
+            if not source_attributes:
+                continue
+            source_entity_ids = tuple(
+                dict.fromkeys(item["entity_id"] for item in source_attributes)
+            )
+            relationship_ids: list[str] = []
+            for source_entity_id in source_entity_ids[1:]:
+                path = graph.rollup_path(source_entity_id, source_entity_ids[0])
+                if path is None:
+                    path = graph.rollup_path(source_entity_ids[0], source_entity_id)
+                if path is None:
+                    relationship_ids = []
+                    break
+                relationship_ids.extend(step.relationship_id for step in path)
+            if len(source_entity_ids) > 1 and not relationship_ids:
+                continue
+            signature = _expression_signature(aggregate.this, {}, attrs_by_column)
+            if signature is None:
+                continue
+            derived_measures.append(
+                DerivedMeasureSemantics(
+                    measure_id=f"derived:{metric['metric_id']}",
+                    metric_id=metric["metric_id"],
+                    expression_signature=signature,
+                    source_attribute_ids=tuple(item["attribute_id"] for item in source_attributes),
+                    source_entity_ids=source_entity_ids,
+                    authorized_relationship_ids=tuple(dict.fromkeys(relationship_ids)),
+                    provenance=(
+                        "PUBLIC_METRIC_DEFINITION",
+                        "PUBLIC_ATTRIBUTE_SEMANTICS",
+                        "PUBLIC_RELATIONSHIP_CARDINALITY",
+                    ),
+                )
+            )
         catalog = MeasureCatalog(
-            entities=tuple(entities), relationships=relationships, measures=measures
+            entities=tuple(entities),
+            relationships=relationships,
+            measures=measures,
+            derived_measures=tuple(derived_measures),
         )
         catalog.validate_contract()
         catalogs[database_id] = catalog
@@ -418,6 +499,7 @@ def _build_catalogs(
             "entity_count": len(entities),
             "relationship_count": len(relationships),
             "measure_count": len(measures),
+            "derived_measure_count": len(derived_measures),
             "numeric_attributes": numeric_records,
         }
         inventory["numeric_attributes"].extend(numeric_records)
@@ -432,7 +514,9 @@ def _build_catalogs(
         "measures": sum(
             item["semantic_role"] == "MEASURE" for item in inventory["numeric_attributes"]
         ),
-        "derived_measures": 0,
+        "derived_measures": sum(
+            item["derived_measure_count"] for item in inventory["databases"].values()
+        ),
         "unknown": sum(
             item["semantic_role"] == "UNKNOWN" for item in inventory["numeric_attributes"]
         ),
@@ -444,7 +528,7 @@ def _build_catalogs(
             item["aggregation_behavior"] == "NON_ADDITIVE"
             for item in inventory["numeric_attributes"]
         ),
-        "derived": 0,
+        "derived": sum(item["derived_measure_count"] for item in inventory["databases"].values()),
         "required_unknown": 0,
     }
     return catalogs, inventory

@@ -14,9 +14,9 @@ def test_m51a_expansion_has_frozen_shape_without_model_calls() -> None:
     rows = new_cases()
     assert len(rows) == 90
     assert Counter(case["task_type"] for case, _ in rows) == {
-        "ANSWERABLE": 60,
+        "ANSWERABLE": 62,
         "AUTHORITY_BLOCKED": 15,
-        "AMBIGUOUS": 9,
+        "AMBIGUOUS": 7,
         "POLICY_BLOCKED": 6,
     }
     assert len(DOMAINS) == 6

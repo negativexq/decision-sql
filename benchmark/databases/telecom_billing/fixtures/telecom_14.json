@@ -4,5 +4,22 @@
     "patch_sql": []
   },
   "case_id": "telecom_14",
-  "counterfactual_fixtures": []
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "telecom_14_cf1_d052b3",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9021,4,2,'active')",
+        "INSERT INTO subscriptions VALUES (9022,4,3,'paused')"
+      ],
+      "purpose": "adds active and inactive subscriptions"
+    },
+    {
+      "fixture_id": "telecom_14_cf2_06e8e6",
+      "patch_sql": [
+        "INSERT INTO subscriptions VALUES (9023,1,3,'active')",
+        "INSERT INTO subscriptions VALUES (9024,1,2,'active')"
+      ],
+      "purpose": "adds multiple active subscriptions"
+    }
+  ]
 }

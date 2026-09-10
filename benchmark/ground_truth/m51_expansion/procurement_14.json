@@ -14,17 +14,25 @@
         "INSERT INTO receipts VALUES (9014,302,'2026-05-01 12:00+00',2)"
       ],
       "purpose": "adds an older receipt"
+    },
+    {
+      "fixture_id": "procurement_14_cf3_90db49",
+      "patch_sql": [
+        "INSERT INTO po_lines VALUES (305,204,'SKU-E',1,7.00)"
+      ],
+      "purpose": "adds a purchase-order line without a receipt"
     }
   ],
   "database_id": "procurement_ops",
   "evidence": {},
   "reference_implementation_a": {
-    "sql": "SELECT DISTINCT ON (line_id) line_id, received_on AS latest_received_on FROM receipts ORDER BY line_id, received_on DESC, receipt_id DESC"
+    "sql": "SELECT pl.line_id, MAX(r.received_on) AS latest_received_on FROM po_lines pl LEFT JOIN receipts r ON r.line_id=pl.line_id GROUP BY pl.line_id"
   },
   "reference_implementation_b": {
-    "sql": "SELECT line_id, received_on AS latest_received_on FROM (SELECT line_id,received_on,ROW_NUMBER() OVER (PARTITION BY line_id ORDER BY received_on DESC,receipt_id DESC) AS rn FROM receipts) q WHERE rn=1 ORDER BY line_id"
+    "sql": "SELECT pl.line_id, (SELECT MAX(r.received_on) FROM receipts r WHERE r.line_id=pl.line_id) AS latest_received_on FROM po_lines pl"
   },
   "required_context_facts": [
+    "entities:procurement_ops:po_lines",
     "entities:procurement_ops:receipts"
   ],
   "semantic_mutants": [
@@ -54,6 +62,15 @@
       "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT DISTINCT ON (line_id) line_id, received_on AS latest_received_on FROM receipts ORDER BY line_id, received_on DESC, receipt_id DESC) AS candidate",
       "status": "VALID",
       "target_component": "projection"
+    },
+    {
+      "description": "Drops purchase-order lines without receipts.",
+      "failure_category": "POPULATION_SCOPE_ERROR",
+      "mutant_id": "m54_procurement_14_matching_only",
+      "semantic_rationale": "Tests preservation of every purchase-order line, including eventless lines.",
+      "sql": "SELECT line_id, MAX(received_on) AS latest_received_on FROM receipts GROUP BY line_id",
+      "status": "VALID",
+      "target_component": "population"
     }
   ],
   "semantic_target": {
@@ -69,7 +86,7 @@
       "line_id",
       "latest_received_on"
     ],
-    "population": "matching-only",
+    "population": "base-entity-preserving",
     "projection_contract": {
       "extra_fields_allowed": false,
       "fields": [

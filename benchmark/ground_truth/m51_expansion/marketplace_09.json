@@ -1,53 +1,92 @@
 {
   "case_id": "marketplace_09",
-  "counterfactual_fixtures": [],
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_09_cf1_5f14dc",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9029,1,'books',10,true)",
+        "INSERT INTO listings VALUES (9030,2,'games',11,false)"
+      ],
+      "purpose": "adds active and inactive listings"
+    },
+    {
+      "fixture_id": "marketplace_09_cf2_7950a2",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9031,3,'tools',14,false)",
+        "INSERT INTO orders VALUES (9032,1,'2026-06-29','completed')",
+        "INSERT INTO order_lines VALUES (9033,9032,9031,1)"
+      ],
+      "purpose": "adds an inactive listing with a completed sale"
+    }
+  ],
   "database_id": "marketplace_ops",
   "evidence": {
-    "discriminating_patch_sql": "INSERT INTO listings VALUES (9029,1,'books',10,true)",
-    "expected_behavior": "NEEDS_CLARIFICATION",
-    "interpretation_a": "listing flag versus listing with recent completed sale",
-    "interpretation_b": "a different legitimate scope or status interpretation",
-    "proof_sql_a": "SELECT 1",
-    "proof_sql_b": "SELECT 2"
+    "visible_attribute": "listings.active BOOLEAN NOT NULL: Whether listing is active.",
+    "service_identity": "listings.active is the requested active listing predicate",
+    "audit_basis": "The governed schema directly defines the active flag; recent sale is not an alternative meaning of active."
   },
-  "reference_implementation_a": {},
-  "reference_implementation_b": {},
+  "reference_implementation_a": {
+    "sql": "SELECT listing_id FROM listings WHERE active"
+  },
+  "reference_implementation_b": {
+    "sql": "SELECT listing_id FROM (SELECT listing_id,active FROM listings) q WHERE active"
+  },
   "required_context_facts": [
-    "policy:marketplace_ops:readonly"
+    "entities:marketplace_ops:listings",
+    "attribute:marketplace_ops:listings:active"
   ],
-  "semantic_mutants": [],
+  "semantic_mutants": [
+    {
+      "description": "Returns inactive listings.",
+      "failure_category": "STATUS_FILTER_ERROR",
+      "mutant_id": "m54_marketplace_09_status",
+      "semantic_rationale": "The schema attribute directly defines active status.",
+      "sql": "SELECT listing_id FROM listings",
+      "status": "VALID",
+      "target_component": "filter"
+    },
+    {
+      "description": "Uses completed sales instead of the active flag.",
+      "failure_category": "SEMANTIC_SCOPE_ERROR",
+      "mutant_id": "m54_marketplace_09_sale",
+      "semantic_rationale": "A completed sale does not define whether a listing is active.",
+      "sql": "SELECT DISTINCT l.listing_id FROM listings l JOIN order_lines ol ON ol.listing_id=l.listing_id JOIN orders o ON o.order_id=ol.order_id WHERE o.status='completed'",
+      "status": "VALID",
+      "target_component": "semantic_scope"
+    }
+  ],
   "semantic_target": {
     "aggregations": [],
-    "behavior": "AMBIGUOUS",
+    "behavior": "ANSWERABLE",
     "calculations": [],
-    "filters": [],
+    "filters": ["listings.active=true"],
     "grouping": [],
     "limit": null,
+    "null_default_semantics": "preserve SQL NULL semantics",
     "ordering": {},
-    "outputs": [],
-    "population": "not_applicable",
+    "outputs": ["listing_id"],
+    "population": "matching-only",
     "projection_contract": {
       "extra_fields_allowed": false,
-      "fields": [],
-      "mode": "NOT_APPLICABLE"
+      "fields": [{"role": "IDENTIFIER", "semantic_name": "listing_id"}],
+      "mode": "EXACT",
+      "source": "QUESTION_AND_VISIBLE_ATTRIBUTE"
     },
-    "query_shape_tags": [
-      "governance",
-      "ambiguous"
-    ],
+    "query_shape_tags": ["filter_scope", "governance"],
+    "reference_independence": "HIGH",
     "relationships": [],
     "result_comparison_contract": {
       "aliases_significant": false,
-      "column_count": 0,
+      "column_count": 1,
       "duplicates_significant": true,
       "numeric_tolerance": null,
       "row_order": false,
       "timestamp_timezone": "UTC"
     },
     "semantic_provenance": {
-      "population": {
-        "source": "NOT_APPLICABLE"
-      }
+      "filters": {"source": "VISIBLE_ATTRIBUTE"},
+      "population": {"source": "QUESTION_AND_VISIBLE_ATTRIBUTE"},
+      "ordering": {"source": "NOT_APPLICABLE"}
     },
     "temporal_semantics": {}
   }

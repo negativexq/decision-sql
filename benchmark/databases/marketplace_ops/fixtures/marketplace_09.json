@@ -4,5 +4,23 @@
     "patch_sql": []
   },
   "case_id": "marketplace_09",
-  "counterfactual_fixtures": []
+  "counterfactual_fixtures": [
+    {
+      "fixture_id": "marketplace_09_cf1_5f14dc",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9029,1,'books',10,true)",
+        "INSERT INTO listings VALUES (9030,2,'games',11,false)"
+      ],
+      "purpose": "adds active and inactive listings"
+    },
+    {
+      "fixture_id": "marketplace_09_cf2_7950a2",
+      "patch_sql": [
+        "INSERT INTO listings VALUES (9031,3,'tools',14,false)",
+        "INSERT INTO orders VALUES (9032,1,'2026-06-29','completed')",
+        "INSERT INTO order_lines VALUES (9033,9032,9031,1)"
+      ],
+      "purpose": "adds an inactive listing with a completed sale"
+    }
+  ]
 }

@@ -16,12 +16,19 @@
         "INSERT INTO approvals VALUES (9010,9009,'2026-07-01 10:00+00','approved')"
       ],
       "purpose": "adds a July approval outside the window"
+    },
+    {
+      "fixture_id": "procurement_05_cf3_2b6a66",
+      "patch_sql": [
+        "INSERT INTO approvals VALUES (9011,101,'2026-06-23 10:00+00','approved')"
+      ],
+      "purpose": "adds duplicate approved approvals"
     }
   ],
   "database_id": "procurement_ops",
   "evidence": {},
   "reference_implementation_a": {
-    "sql": "SELECT r.department, SUM(r.estimated_amount) AS approved_amount FROM requisitions r JOIN approvals a ON a.req_id=r.req_id WHERE a.decision='approved' AND r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' GROUP BY r.department ORDER BY r.department"
+    "sql": "SELECT department, SUM(estimated_amount) AS approved_amount FROM (SELECT r.department,r.estimated_amount FROM requisitions r WHERE r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' AND EXISTS (SELECT 1 FROM approvals a WHERE a.req_id=r.req_id AND a.decision='approved')) q GROUP BY department ORDER BY department"
   },
   "reference_implementation_b": {
     "sql": "SELECT department, SUM(estimated_amount) AS approved_amount FROM (SELECT r.department,r.estimated_amount FROM requisitions r WHERE r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' AND EXISTS (SELECT 1 FROM approvals a WHERE a.req_id=r.req_id AND a.decision='approved')) q GROUP BY department ORDER BY department"
@@ -57,6 +64,15 @@
       "sql": "SELECT candidate.*, 1 AS diagnostic_extra FROM (SELECT r.department, SUM(r.estimated_amount) AS approved_amount FROM requisitions r JOIN approvals a ON a.req_id=r.req_id WHERE a.decision='approved' AND r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' GROUP BY r.department ORDER BY r.department) AS candidate",
       "status": "VALID",
       "target_component": "projection"
+    },
+    {
+      "description": "Aggregates before deduplicating repeated approvals.",
+      "failure_category": "FANOUT_DUPLICATION",
+      "mutant_id": "m54_procurement_05_duplicate_approval",
+      "semantic_rationale": "Tests that multiple qualifying approvals do not multiply a requisition amount.",
+      "sql": "SELECT r.department, SUM(r.estimated_amount) AS approved_amount FROM requisitions r JOIN approvals a ON a.req_id=r.req_id WHERE a.decision='approved' AND r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' GROUP BY r.department",
+      "status": "VALID",
+      "target_component": "aggregation"
     }
   ],
   "semantic_target": {

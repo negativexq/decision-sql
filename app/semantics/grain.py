@@ -91,6 +91,18 @@ class MeasureSemantics(_Frozen):
     used_by_cases: tuple[str, ...] = ()
 
 
+class DerivedMeasureSemantics(_Frozen):
+    """Server-owned formula and lineage for a governed derived measure."""
+
+    measure_id: str = Field(min_length=1)
+    metric_id: str = Field(min_length=1)
+    expression_signature: str = Field(min_length=1)
+    source_attribute_ids: tuple[str, ...] = Field(min_length=1)
+    source_entity_ids: tuple[str, ...] = Field(min_length=1)
+    authorized_relationship_ids: tuple[str, ...] = ()
+    provenance: tuple[str, ...] = Field(min_length=1)
+
+
 class MeasureCatalog(_Frozen):
     """Immutable, deterministic collection of server-owned measure facts."""
 
@@ -98,6 +110,7 @@ class MeasureCatalog(_Frozen):
     entities: tuple[GrainEntity, ...] = ()
     relationships: tuple[GrainRelationship, ...] = ()
     measures: tuple[MeasureSemantics, ...] = ()
+    derived_measures: tuple[DerivedMeasureSemantics, ...] = ()
 
     @property
     def content_hash(self) -> str:
@@ -165,6 +178,30 @@ class MeasureCatalog(_Frozen):
                     )
             if not measure.provenance:
                 raise GrainContractError(f"measure has no provenance: {measure.measure_id}")
+        derived_ids: set[str] = set()
+        for derived in self.derived_measures:
+            if derived.measure_id in measure_ids or derived.measure_id in derived_ids:
+                raise GrainContractError(f"duplicate measure: {derived.measure_id}")
+            derived_ids.add(derived.measure_id)
+            if not derived.source_attribute_ids:
+                raise GrainContractError(f"derived measure has no sources: {derived.measure_id}")
+            if not derived.source_entity_ids:
+                raise GrainContractError(
+                    f"derived measure has no source entities: {derived.measure_id}"
+                )
+            if any(entity_id not in entity_ids for entity_id in derived.source_entity_ids):
+                raise GrainContractError(
+                    f"derived measure has unknown entity: {derived.measure_id}"
+                )
+            if any(
+                relationship_id not in relationship_ids
+                for relationship_id in derived.authorized_relationship_ids
+            ):
+                raise GrainContractError(
+                    f"derived measure has unknown relationship: {derived.measure_id}"
+                )
+            if not derived.provenance:
+                raise GrainContractError(f"derived measure has no provenance: {derived.measure_id}")
 
 
 class RollupStep(_Frozen):
@@ -378,10 +415,14 @@ class GrainSafetyValidator:
             column.sql(dialect="postgres") for column in self._group_columns(select)
         )
         parent_measures: list[tuple[MeasureSemantics, exp.AggFunc, str]] = []
+        authorized_derived = False
         for aggregate in select.find_all(exp.AggFunc):
             if not isinstance(aggregate, (exp.Sum, exp.Avg)):
                 continue
             expression = aggregate.this
+            if self._authorized_derived_expression(select, expression, aliases):
+                authorized_derived = True
+                continue
             for column in expression.find_all(exp.Column):
                 table = aliases.get(column.table.lower())
                 if table is None:
@@ -408,6 +449,16 @@ class GrainSafetyValidator:
                             grouping_columns=group_columns,
                         )
         if not parent_measures:
+            if authorized_derived:
+                return GrainDiagnostic(
+                    code=GrainDiagnosticCode.PASS,
+                    message="Governed derived measure is evaluated at its authorized source grain.",
+                    aggregate_expressions=tuple(
+                        aggregate.sql(dialect="postgres")
+                        for aggregate in select.find_all(exp.AggFunc)
+                    ),
+                    grouping_columns=group_columns,
+                )
             return GrainDiagnostic(
                 code=GrainDiagnosticCode.NOT_APPLICABLE,
                 message="No modeled additive measure is aggregated in this select scope.",
@@ -466,6 +517,117 @@ class GrainSafetyValidator:
             native_grains=tuple(item[0].native_grain for item in parent_measures),
             grouping_columns=group_columns,
         )
+
+    def _authorized_derived_expression(
+        self, select: exp.Select, expression: exp.Expression, aliases: dict[str, str]
+    ) -> bool:
+        signature = self._expression_signature(expression, aliases)
+        if signature is None:
+            return False
+        direct_tables = set(aliases.values())
+        for derived in self.catalog.derived_measures:
+            if derived.expression_signature != signature:
+                continue
+            source_tables = {
+                self.catalog.entity(entity_id).physical_table.lower()
+                for entity_id in derived.source_entity_ids
+            }
+            if not source_tables.issubset(direct_tables):
+                continue
+            if not self._authorized_scope_is_connected(select, direct_tables, derived):
+                continue
+            return True
+        return False
+
+    def _authorized_scope_is_connected(
+        self, select: exp.Select, direct_tables: set[str], derived: DerivedMeasureSemantics
+    ) -> bool:
+        entity_by_table = {
+            entity.physical_table.lower(): entity.entity_id for entity in self.catalog.entities
+        }
+        direct_entities = {
+            entity_by_table[table] for table in direct_tables if table in entity_by_table
+        }
+        if len(direct_entities) != len(direct_tables):
+            return False
+        if not set(derived.source_entity_ids).issubset(direct_entities):
+            return False
+        observed_relationships = self._observed_relationship_ids(select)
+        if not set(derived.authorized_relationship_ids).issubset(observed_relationships):
+            return False
+        edges = []
+        for relationship in self.catalog.relationships:
+            if relationship.relationship_id not in observed_relationships:
+                continue
+            if (
+                relationship.from_entity_id in direct_entities
+                and relationship.to_entity_id in direct_entities
+            ):
+                edges.append((relationship.from_entity_id, relationship.to_entity_id))
+        reachable = {next(iter(derived.source_entity_ids))}
+        changed = True
+        while changed:
+            changed = False
+            for left, right in edges:
+                if left in reachable and right not in reachable:
+                    reachable.add(right)
+                    changed = True
+                elif right in reachable and left not in reachable:
+                    reachable.add(left)
+                    changed = True
+        return direct_entities.issubset(reachable)
+
+    def _observed_relationship_ids(self, select: exp.Select) -> set[str]:
+        table_aliases = self._direct_table_aliases(select)
+        observed: set[str] = set()
+        for join in select.args.get("joins", []):
+            on = join.args.get("on")
+            if on is None:
+                continue
+            columns = list(on.find_all(exp.Column))
+            endpoints = {
+                (table_aliases[column.table.lower()], column.name.lower())
+                for column in columns
+                if column.table and column.table.lower() in table_aliases
+            }
+            if len(endpoints) < 2:
+                continue
+            for relationship in self.catalog.relationships:
+                from_table = self.catalog.entity(relationship.from_entity_id).physical_table.lower()
+                to_table = self.catalog.entity(relationship.to_entity_id).physical_table.lower()
+                from_column = relationship.from_attribute_ids[0].split(":")[-1].lower()
+                to_column = relationship.to_attribute_ids[0].split(":")[-1].lower()
+                if {
+                    (from_table, from_column),
+                    (to_table, to_column),
+                }.issubset(endpoints):
+                    observed.add(relationship.relationship_id)
+        return observed
+
+    def _expression_signature(
+        self, expression: exp.Expression, aliases: dict[str, str]
+    ) -> str | None:
+        normalized = expression.copy()
+        columns = list(normalized.find_all(exp.Column))
+        for column in columns:
+            table = aliases.get(column.table.lower()) if column.table else None
+            if table is None and not column.table:
+                candidates = [
+                    entity.physical_table.lower()
+                    for entity in self.catalog.entities
+                    if any(
+                        measure.physical_column_or_path.lower() == column.name.lower()
+                        and measure.physical_table.lower() == entity.physical_table.lower()
+                        for measure in self.catalog.measures
+                    )
+                ]
+                if len(set(candidates)) != 1:
+                    return None
+                table = candidates[0]
+            if table is None:
+                return None
+            column.set("table", exp.to_identifier(table))
+        return normalized.sql(dialect="postgres", pretty=False).lower()
 
     @staticmethod
     def _direct_table_aliases(select: exp.Select) -> dict[str, str]:

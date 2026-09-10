@@ -277,6 +277,43 @@ def _case(domain: Domain, spec: CaseSpec) -> tuple[dict[str, Any], dict[str, Any
         },
         "reference_independence": "HIGH",
     }
+    mutants = _mutants(cid, spec.ref_a)
+    if cid == "procurement_05":
+        mutants.append(
+            {
+                "mutant_id": "m54_procurement_05_duplicate_approval",
+                "failure_category": "FANOUT_DUPLICATION",
+                "description": "Aggregates before deduplicating repeated approvals.",
+                "semantic_rationale": "Tests that multiple qualifying approvals do not multiply a requisition amount.",
+                "sql": "SELECT r.department, SUM(r.estimated_amount) AS approved_amount FROM requisitions r JOIN approvals a ON a.req_id=r.req_id WHERE a.decision='approved' AND r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' GROUP BY r.department",
+                "status": "VALID",
+                "target_component": "aggregation",
+            }
+        )
+    elif cid == "procurement_14":
+        mutants.append(
+            {
+                "mutant_id": "m54_procurement_14_matching_only",
+                "failure_category": "POPULATION_SCOPE_ERROR",
+                "description": "Drops purchase-order lines without receipts.",
+                "semantic_rationale": "Tests preservation of every purchase-order line, including eventless lines.",
+                "sql": "SELECT line_id, MAX(received_on) AS latest_received_on FROM receipts GROUP BY line_id",
+                "status": "VALID",
+                "target_component": "population",
+            }
+        )
+    elif cid == "insurance_11":
+        mutants.append(
+            {
+                "mutant_id": "m54_insurance_11_matching_only",
+                "failure_category": "POPULATION_SCOPE_ERROR",
+                "description": "Drops claims without lifecycle events.",
+                "semantic_rationale": "Tests preservation of every claim, including claims without events.",
+                "sql": "SELECT claim_id, MAX(event_at) AS latest_event_at FROM claim_events GROUP BY claim_id",
+                "status": "VALID",
+                "target_component": "population",
+            }
+        )
     truth = {
         "case_id": cid,
         "database_id": domain.domain_id,
@@ -295,7 +332,7 @@ def _case(domain: Domain, spec: CaseSpec) -> tuple[dict[str, Any], dict[str, Any
             }
             for index, (purpose, patch_sql) in enumerate(spec.fixtures, 1)
         ],
-        "semantic_mutants": _mutants(cid, spec.ref_a),
+        "semantic_mutants": mutants,
     }
     return case, truth
 
@@ -547,7 +584,7 @@ PROCUREMENT = _domain(
         CaseSpec(
             3,
             "For each department, return department and the estimated amount of approved requisitions requested in June 2026.",
-            "SELECT r.department, SUM(r.estimated_amount) AS approved_amount FROM requisitions r JOIN approvals a ON a.req_id=r.req_id WHERE a.decision='approved' AND r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' GROUP BY r.department ORDER BY r.department",
+            "SELECT department, SUM(estimated_amount) AS approved_amount FROM (SELECT r.department,r.estimated_amount FROM requisitions r WHERE r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' AND EXISTS (SELECT 1 FROM approvals a WHERE a.req_id=r.req_id AND a.decision='approved')) q GROUP BY department ORDER BY department",
             "SELECT department, SUM(estimated_amount) AS approved_amount FROM (SELECT r.department,r.estimated_amount FROM requisitions r WHERE r.requested_on >= DATE '2026-06-01' AND r.requested_on < DATE '2026-07-01' AND EXISTS (SELECT 1 FROM approvals a WHERE a.req_id=r.req_id AND a.decision='approved')) q GROUP BY department ORDER BY department",
             ("department", "approved_amount"),
             ("temporal", "aggregation", "approval"),
@@ -565,6 +602,10 @@ PROCUREMENT = _domain(
                         "INSERT INTO requisitions VALUES (9009,'IT','2026-07-01','approved',200,'{}')",
                         "INSERT INTO approvals VALUES (9010,9009,'2026-07-01 10:00+00','approved')",
                     ),
+                ),
+                (
+                    "adds duplicate approved approvals",
+                    ("INSERT INTO approvals VALUES (9011,101,'2026-06-23 10:00+00','approved')",),
                 ),
             ),
             ("requisitions", "approvals"),
@@ -597,10 +638,10 @@ PROCUREMENT = _domain(
         CaseSpec(
             5,
             "For each purchase-order line, return its latest receipt timestamp.",
-            "SELECT DISTINCT ON (line_id) line_id, received_on AS latest_received_on FROM receipts ORDER BY line_id, received_on DESC, receipt_id DESC",
-            "SELECT line_id, received_on AS latest_received_on FROM (SELECT line_id,received_on,ROW_NUMBER() OVER (PARTITION BY line_id ORDER BY received_on DESC,receipt_id DESC) AS rn FROM receipts) q WHERE rn=1 ORDER BY line_id",
+            "SELECT pl.line_id, MAX(r.received_on) AS latest_received_on FROM po_lines pl LEFT JOIN receipts r ON r.line_id=pl.line_id GROUP BY pl.line_id",
+            "SELECT pl.line_id, (SELECT MAX(r.received_on) FROM receipts r WHERE r.line_id=pl.line_id) AS latest_received_on FROM po_lines pl",
             ("line_id", "latest_received_on"),
-            ("latest_row", "window", "temporal"),
+            ("latest_row", "window", "temporal", "population"),
             (
                 (
                     "adds a newer receipt",
@@ -610,8 +651,14 @@ PROCUREMENT = _domain(
                     "adds an older receipt",
                     ("INSERT INTO receipts VALUES (9014,302,'2026-05-01 12:00+00',2)",),
                 ),
+                (
+                    "adds a purchase-order line without a receipt",
+                    ("INSERT INTO po_lines VALUES (305,204,'SKU-E',1,7.00)",),
+                ),
             ),
-            ("receipts",),
+            ("po_lines", "receipts"),
+            population="base-entity-preserving",
+            row_order=False,
             temporal={
                 "rule_id": "time:procurement_ops:clock",
                 "latest": "maximum received_on then receipt_id",
@@ -948,10 +995,10 @@ INSURANCE = _domain(
         CaseSpec(
             4,
             "For each claim, return the timestamp of its latest lifecycle event.",
-            "SELECT DISTINCT ON (claim_id) claim_id,event_at AS latest_event_at FROM claim_events ORDER BY claim_id,event_at DESC,event_id DESC",
-            "SELECT claim_id,event_at AS latest_event_at FROM (SELECT claim_id,event_at,ROW_NUMBER() OVER (PARTITION BY claim_id ORDER BY event_at DESC,event_id DESC) AS rn FROM claim_events) q WHERE rn=1 ORDER BY claim_id",
+            "SELECT c.claim_id, MAX(e.event_at) AS latest_event_at FROM claims c LEFT JOIN claim_events e ON e.claim_id=c.claim_id GROUP BY c.claim_id",
+            "SELECT c.claim_id, (SELECT MAX(e.event_at) FROM claim_events e WHERE e.claim_id=c.claim_id) AS latest_event_at FROM claims c",
             ("claim_id", "latest_event_at"),
-            ("latest_row", "window", "temporal"),
+            ("latest_row", "window", "temporal", "population"),
             (
                 (
                     "adds newer event",
@@ -965,8 +1012,14 @@ INSURANCE = _domain(
                         "INSERT INTO claim_events VALUES (9008,202,'2026-05-01 10:00+00','received')",
                     ),
                 ),
+                (
+                    "adds a claim without a lifecycle event",
+                    ("INSERT INTO claims VALUES (206,104,'2026-06-20',400,'open','{}')",),
+                ),
             ),
-            ("claim_events",),
+            ("claims", "claim_events"),
+            population="base-entity-preserving",
+            row_order=False,
             temporal={
                 "rule_id": "time:insurance_claims:clock",
                 "latest": "maximum event_at then event_id",
@@ -2561,6 +2614,77 @@ def new_cases() -> list[tuple[dict[str, Any], dict[str, Any]]]:
             elif task_type == "AMBIGUOUS":
                 item = value
                 question, interpretation_a, *rest = item
+                if (
+                    domain.domain_id == "telecom_billing"
+                    and question == "Which service is current?"
+                ):
+                    rows.append(
+                        _case(
+                            domain,
+                            CaseSpec(
+                                number,
+                                question,
+                                "SELECT p.plan_name FROM subscriptions s JOIN plans p ON p.plan_id=s.plan_id WHERE s.status='active'",
+                                "SELECT p.plan_name FROM plans p JOIN subscriptions s ON s.plan_id=p.plan_id WHERE s.status='active'",
+                                ("plan_name",),
+                                ("filter_scope", "relationship", "governance"),
+                                (
+                                    (
+                                        "adds active and inactive subscriptions",
+                                        (
+                                            "INSERT INTO subscriptions VALUES (9021,4,2,'active')",
+                                            "INSERT INTO subscriptions VALUES (9022,4,3,'paused')",
+                                        ),
+                                    ),
+                                    (
+                                        "adds multiple active subscriptions",
+                                        (
+                                            "INSERT INTO subscriptions VALUES (9023,1,3,'active')",
+                                            "INSERT INTO subscriptions VALUES (9024,1,2,'active')",
+                                        ),
+                                    ),
+                                ),
+                                ("subscriptions", "plans"),
+                                population="matching-only",
+                                row_order=False,
+                            ),
+                        )
+                    )
+                    continue
+                if domain.domain_id == "marketplace_ops" and question == "Which listing is active?":
+                    rows.append(
+                        _case(
+                            domain,
+                            CaseSpec(
+                                number,
+                                question,
+                                "SELECT listing_id FROM listings WHERE active",
+                                "SELECT listing_id FROM (SELECT listing_id,active FROM listings) q WHERE active",
+                                ("listing_id",),
+                                ("filter_scope", "governance"),
+                                (
+                                    (
+                                        "adds active and inactive listings",
+                                        (
+                                            "INSERT INTO listings VALUES (9029,1,'books',10,true)",
+                                            "INSERT INTO listings VALUES (9030,2,'games',11,false)",
+                                        ),
+                                    ),
+                                    (
+                                        "adds an inactive listing with a completed sale",
+                                        (
+                                            "INSERT INTO listings VALUES (9031,3,'tools',14,false)",
+                                            "INSERT INTO orders VALUES (9032,1,'2026-06-29','completed')",
+                                            "INSERT INTO order_lines VALUES (9033,9032,9031,1)",
+                                        ),
+                                    ),
+                                ),
+                                ("listings",),
+                                population="matching-only",
+                            ),
+                        )
+                    )
+                    continue
                 if len(rest) == 1:
                     interpretation_b = "a different legitimate scope or status interpretation"
                     patch_sql = rest[0]
@@ -2817,11 +2941,11 @@ def validate_expansion() -> dict[str, Any]:
             )
         ):
             structure_errors.append(f"{case['case_id']}:leakage")
-    sufficiency = len(answerable) == 60 and not structure_errors
+    sufficiency = len(answerable) == 62 and not structure_errors
     authority_valid = len(authority) == 15 and all(
         not truth["evidence"]["authorized_alternative"] for truth in authority
     )
-    ambiguity_valid = len(ambiguous) == 9 and all(
+    ambiguity_valid = len(ambiguous) == 7 and all(
         truth["evidence"].get("interpretation_a") and truth["evidence"].get("interpretation_b")
         for truth in ambiguous
     )
@@ -2918,9 +3042,9 @@ def write_manifests(validation: dict[str, Any]) -> dict[str, Any]:
         "case_ids": expansion_ids,
         "domains": [domain.domain_id for domain in DOMAINS],
         "task_distribution": {
-            "ANSWERABLE": 60,
+            "ANSWERABLE": 62,
             "AUTHORITY_BLOCKED": 15,
-            "AMBIGUOUS": 9,
+            "AMBIGUOUS": 7,
             "POLICY_BLOCKED": 6,
         },
         "reference_witness_count": 120,
@@ -2940,9 +3064,9 @@ def write_manifests(validation: dict[str, Any]) -> dict[str, Any]:
         "expansion_domain_count": 6,
         "reference_witness_count": 240,
         "task_distribution": {
-            "ANSWERABLE": 120,
+            "ANSWERABLE": 122,
             "AUTHORITY_BLOCKED": 30,
-            "AMBIGUOUS": 18,
+            "AMBIGUOUS": 16,
             "POLICY_BLOCKED": 12,
         },
         "case_ids": legacy_ids + expansion_ids,
@@ -3150,15 +3274,15 @@ def write_audits(validation: dict[str, Any], manifests: dict[str, Any]) -> None:
             "expansion": task_distribution,
             "full_180": full_distribution,
             "required_expansion": {
-                "ANSWERABLE": 60,
+                "ANSWERABLE": 62,
                 "AUTHORITY_BLOCKED": 15,
-                "AMBIGUOUS": 9,
+                "AMBIGUOUS": 7,
                 "POLICY_BLOCKED": 6,
             },
             "required_full": {
-                "ANSWERABLE": 120,
+                "ANSWERABLE": 122,
                 "AUTHORITY_BLOCKED": 30,
-                "AMBIGUOUS": 18,
+                "AMBIGUOUS": 16,
                 "POLICY_BLOCKED": 12,
             },
         },
@@ -3255,7 +3379,7 @@ def write_audits(validation: dict[str, Any], manifests: dict[str, Any]) -> None:
     _dump(
         AUDIT / "m51a_counterfactual_validation.json",
         {
-            "answerable_cases": 60,
+            "answerable_cases": 62,
             "cases_with_at_least_two_counterfactuals": sum(
                 len(truth["counterfactual_fixtures"]) >= 2
                 for case, truth in rows
@@ -3393,7 +3517,7 @@ def write_audits(validation: dict[str, Any], manifests: dict[str, Any]) -> None:
         {
             "passed": validation["passed"]
             and task_distribution
-            == {"ANSWERABLE": 60, "AUTHORITY_BLOCKED": 15, "AMBIGUOUS": 9, "POLICY_BLOCKED": 6},
+            == {"ANSWERABLE": 62, "AUTHORITY_BLOCKED": 15, "AMBIGUOUS": 7, "POLICY_BLOCKED": 6},
             "validation": validation,
             "manifests": manifests,
         },

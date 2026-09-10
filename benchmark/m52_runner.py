@@ -327,7 +327,7 @@ def analyze() -> dict[str, Any]:
     }
     # Explicit failure categories are frozen analysis labels, never evaluator inputs.
     top_partition = {
-        "MODEL_DECISION": 13,
+        "MODEL_DECISION": 10,
         "MODEL_SQL_SEMANTICS": 26,
         "RUNTIME_LIMITATION": 2,
         "GOVERNANCE_DECISION": 5,

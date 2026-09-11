@@ -1,20 +1,101 @@
 # Decision-SQL
 
-**Governed one-shot Text-to-SQL with deterministic runtime safety and execution-based semantic evaluation.**
+**Governed one-shot Text-to-SQL with deterministic runtime safety.**
 
 > The model proposes. Deterministic software decides what may execute.
 
-Decision-SQL is an engineering system for governed analytics requests. A model
-receives a natural-language question and a model-visible governed context, then
-emits one typed decision: answer with read-only SQL, ask for clarification, or
-block on authority or policy. The model never receives permission to execute
-SQL directly. Deterministic services own admission, planning, cost checks, and
-restricted execution.
+Decision-SQL turns a natural-language analytics request into one typed model
+decision. The model receives a request-bounded governed context and may return
+`ANSWER` with read-only SQL, `NEEDS_CLARIFICATION`, `BLOCKED_AUTHORITY`, or
+`BLOCKED_POLICY`. It never receives permission to execute SQL.
 
-The benchmark measures both sides of that boundary. Governance cases test when
-the correct behavior is not to write SQL; answerable cases test whether a
-submitted query survives the real runtime and returns the requested semantics
-on BASE and discriminating counterfactual database states.
+Deterministic services own SQL admission, request authority, grain safety,
+planning, cost checks, and restricted read-only execution. Evaluation is a
+separate evidence boundary that measures the resulting behavior.
+
+![Decision-SQL Operator Playground](docs/screenshots/decision-sql-playground.png)
+
+## Why Decision-SQL
+
+| Capability | Boundary |
+| --- | --- |
+| Typed decisions | The model must explicitly answer, clarify, or block on authority or policy. |
+| Deterministic execution boundary | `ANSWER` proposes SQL; it does not grant permission to execute. |
+| Execution-based correctness | Results are checked against typed semantic contracts, not SQL-string equality. |
+
+## Architecture
+
+The production request path ends at a bounded result; the evaluator is not a
+runtime stage:
+
+```mermaid
+flowchart TD
+    Q["Natural-language request"]
+    C["Request-bounded governed context"]
+    L["One-shot model generation"]
+    D{"Typed decision"}
+    G["Governance outcome<br/>No SQL runtime"]
+    P["SQL parse + global policy"]
+    A["Request-scoped ExecutionAuthority"]
+    GS["Grain safety"]
+    N["Optional narrow normalization"]
+    V["Re-parse + re-policy + revalidation"]
+    E["PostgreSQL EXPLAIN"]
+    CG["Cost gate"]
+    QP["Accepted QueryPlan"]
+    RO["Restricted read-only execution"]
+    R["Bounded result"]
+
+    Q --> C --> L --> D
+    D -->|NEEDS_CLARIFICATION| G
+    D -->|BLOCKED_AUTHORITY| G
+    D -->|BLOCKED_POLICY| G
+    D -->|ANSWER + SQL| P --> A --> GS
+    GS -->|supported shape| N --> V --> E
+    GS -->|safe / non-target| E
+    E --> CG --> QP --> RO --> R
+```
+
+Evaluation is outside that production path:
+
+```text
+production bounded result
+      ↓
+execution-based evaluator
+      ↓
+BASE + counterfactual fixtures
+      ↓
+typed semantic correctness
+```
+
+The evaluator scores behavior; it does not route requests or grant execution
+authority.
+
+## Operator Playground
+
+The local Operator Playground makes one request lifecycle inspectable:
+Playground, Runs, Traces, Governed Catalog, and the exact bounded context used
+by an individual run. LIVE requests use the canonical Candidate C typed-decision
+contract, one provider call, and the deterministic runtime. Safety and policy
+replays are explicitly labelled and do not masquerade as live model output.
+
+Start the local stack with:
+
+```bash
+docker compose up --build
+```
+
+Then open:
+
+```text
+UI:  http://localhost:3000
+API: http://localhost:8000
+```
+
+The UI accepts natural-language requests only. It does not expose arbitrary SQL
+execution or evaluator truth. Run details show model decision, runtime outcome,
+proposed SQL when present, deterministic stages, bounded results, and safe trace
+events.
 
 ## Current benchmark
 
@@ -30,100 +111,12 @@ Decision-SQL is evaluated on one 180-case governed Text-to-SQL benchmark across
 | Policy | **12/12 = 100%** |
 
 The benchmark contains 122 answerable cases and 58 cases where producing SQL
-is not the correct behavior. All benchmark databases are synthetic; no
-customer data is used.
-
-## Architecture
-
-The production request path is:
-
-```text
-request
-  ↓
-governed model-visible context
-  ↓
-one-shot typed decision
-  ├─ governance outcome → no SQL runtime
-  └─ ANSWER + SQL
-       ↓
-     parse → global policy → request authority
-       ↓
-     optional narrow grain-safe normalization
-       ↓
-     re-parse → re-policy → post-grain validation
-       ↓
-     PostgreSQL EXPLAIN → cost gate → QueryPlan
-       ↓
-     restricted read-only execution
-       ↓
-     BASE + counterfactual semantic evaluation
-```
-
-```mermaid
-flowchart TD
-    Q["Natural-language request"]
-    C["Model-visible governed context"]
-    L["One-shot LLM generation"]
-    D{"Typed decision"}
-
-    Q --> C --> L --> D
-
-    D -->|NEEDS_CLARIFICATION| G["Governance outcome<br/>No SQL runtime"]
-    D -->|BLOCKED_AUTHORITY| G
-    D -->|BLOCKED_POLICY| G
-
-    D -->|ANSWER + SQL| P["sqlglot parse + global SQL policy"]
-    P --> A["Request-scoped ExecutionAuthority"]
-    A --> GS["GrainSafetyValidator"]
-    GS -->|targeted supported shape| N["Optional GrainSafeNormalizer"]
-    N --> RP["Re-parse + re-policy + post-grain validation"]
-    GS -->|safe / non-target| S["Selected SQL"]
-    RP --> S
-    S --> E["PostgreSQL EXPLAIN"]
-    E --> CG["Query cost gate"]
-    CG --> QP["Accepted QueryPlan"]
-    QP --> RO["Restricted read-only execution"]
-    RO --> R["Bounded result"]
-    R --> EV["Execution-based evaluator"]
-    G --> EV
-    T["Evaluator-only truth"] -.-> EV
-```
-
-The evaluator is outside the production trust boundary. It scores behavior; it
-does not route requests or grant execution authority.
-
-![Decision-SQL Operator Playground](docs/screenshots/decision-sql-playground.png)
-![Model-visible governed context for a bounded request](docs/screenshots/decision-sql-governed-context.png)
-
-## Operator playground
-
-The local operator console presents a real natural-language request lifecycle:
-typed model decision, deterministic gates, EXPLAIN/cost admission, read-only
-execution, bounded results, and trace events. Live requests use the canonical
-production path; safety replays evaluate server-bound frozen proposals without
-a provider call. Start it with
-`docker compose up --build`; the UI is at `http://localhost:3000` and the API
-at `http://localhost:8000`. It includes presentation-safe successful,
-clarification, policy, and authority-rejection scenarios without exposing
-benchmark truth or accepting raw SQL. Each run also exposes the exact bounded
-model-visible context used for that request.
-
-### What the model owns
-
-The model owns the first-pass typed decision and, when it chooses `ANSWER`, the
-proposed SQL. It does not own authorization, physical schema truth, relationship
-authority, grain safety, cost admission, or the right to execute.
-
-### What deterministic software owns
-
-The server validates the response schema, parses SQL, enforces read-only and
-object policy, checks governed relationships and grain safety, applies only
-narrow supported normalization, runs PostgreSQL `EXPLAIN`, applies cost limits,
-issues an immutable `QueryPlan`, and executes through a restricted reader.
+is not the correct behavior. All benchmark databases are synthetic; no customer
+data is used.
 
 ## Why governed one-shot Text-to-SQL?
 
-One-shot evaluation makes the first-pass behavior observable:
+One-shot evaluation keeps first-pass behavior visible:
 
 ```text
 1 case
@@ -135,49 +128,15 @@ One-shot evaluation makes the first-pass behavior observable:
 → no pass@K
 ```
 
-This prevents a retry or repair loop from hiding model decision errors, SQL
-semantic errors, or unsafe assumptions. It does not claim that production
-applications can never use confirmation or repair workflows; it defines a clear
-measurement boundary for this system.
-
-The main trust-boundary principle is simple:
-
-```text
-model proposes SQL ≠ model receives permission to execute SQL
-```
-
-For a governance decision that is not `ANSWER`, the SQL runtime is bypassed.
-For `ANSWER + SQL`, the actual submission enters the same deterministic parse,
-policy, grain, planning, and restricted-execution path regardless of whether
-evaluator truth later marks the decision correct.
-
-## Governed task model
-
-The current benchmark has four behavior classes:
-
-| Task | Cases | Expected model decision |
-| --- | ---: | --- |
-| `ANSWERABLE` | **122** | `ANSWER` + read-only `SELECT` |
-| `AUTHORITY_BLOCKED` | **30** | `BLOCKED_AUTHORITY` |
-| `AMBIGUOUS` | **16** | `NEEDS_CLARIFICATION` |
-| `POLICY_BLOCKED` | **12** | `BLOCKED_POLICY` |
-| **Total** | **180** | |
-
-The 12 synthetic domains are:
-
-```text
-commerce_ops              fleet_ops
-support_ops               subscription_billing
-warehouse_logistics       risk_operations
-procurement_ops            insurance_claims
-telecom_billing            marketplace_ops
-workforce_ops              healthcare_billing
-```
+For a non-`ANSWER` decision, the SQL runtime is bypassed. For `ANSWER + SQL`,
+the proposal enters deterministic parsing, policy, authority, grain, planning,
+and restricted execution. This makes the boundary explicit instead of hiding
+decision or SQL errors behind a repair loop.
 
 ## Runtime trust boundary
 
-The model's authority decision is not an execution boundary. For `ANSWER + SQL`,
-the selected query follows this order:
+The model's decision is not an execution permission. An accepted `ANSWER + SQL`
+proposal follows this deterministic order:
 
 ```text
 raw SQL
@@ -186,9 +145,9 @@ sqlglot parse
   ↓
 global SQL/object/function policy
   ↓
-request-scoped `ExecutionAuthority`
+request-scoped ExecutionAuthority
   ↓
-`GrainSafetyValidator`
+GrainSafetyValidator
   ↓
 optional narrow deterministic normalization
   ↓
@@ -210,33 +169,46 @@ service. Request-scoped authority answers whether this request may use it.
 Decision-SQL keeps those checks separate.
 
 The server derives an immutable relation-level `ExecutionAuthority` from the
-same governed `SchemaContext` that supplies model-visible relations. SQLGlot
-structurally extracts physical dependencies from tables, joins, aliases,
-subqueries, nested subqueries, and CTEs. CTE aliases are not treated as
-external relations. An unauthorized relation is rejected before connection
-acquisition, `EXPLAIN`, or execution.
+request's governed context. SQLGlot extracts physical dependencies from tables,
+joins, aliases, subqueries, nested subqueries, and CTEs; CTE aliases are not
+treated as external relations. An unauthorized relation is rejected before
+either the planning connection or the execution connection is acquired, so
+`EXPLAIN` and execution are not entered.
 
 The frozen `telecom_15` response is a useful safety regression: the model chose
 `ANSWER` and proposed `SELECT subscriber_id FROM external_directory`, but the
 runtime returned `AUTHORITY_REJECTION / UNAUTHORIZED_RELATION` with zero
-database connection, `EXPLAIN`, and execution calls. This does not make the
-model's governance decision correct; it prevents the unsafe SQL from reaching
-PostgreSQL.
+planning connection, `EXPLAIN`, execution connection, and execution calls. This
+does not make the model's governance decision correct; it prevents unsafe SQL
+from reaching PostgreSQL.
 
 The current authority contract is relation-level. Column-level authority and
 relationship-path authority are separate boundaries and are not claimed here
-as universally enforced.
+as universally enforced. The SQL policy is PostgreSQL-oriented, read-only, and
+single-statement. Accepted execution requires an immutable `QueryPlan`; raw SQL
+or copied plan objects cannot bypass planning.
 
-The SQL policy is PostgreSQL-oriented and enforces one statement, read-only
-`SELECT`/CTE behavior, governed object access, function restrictions,
-relationship/object policy, and complexity controls. The reader uses a
-read-only transaction, reader-role enforcement, statement timeout, and bounded
-result rows. Accepted execution requires a `QueryPlan`; raw SQL or copied plan
-objects cannot bypass planning.
+## Governed context
 
-This is a deterministic application boundary, not a claim of universal SQL
-security, complete tenant/RLS coverage, or safety for SQL outside the frozen
-contracts.
+The product-owned context serializer is deterministic and exposes the semantic
+boundary the model is allowed to use:
+
+```text
+schema_catalog
+attributes
+authorized_relationships
+metrics
+business_rules
+temporal_rules
+policy
+```
+
+Only server-owned authorized relationships enter the model-visible context.
+The same request-scoped context lineage informs runtime authority, while runtime
+checks remain independently authoritative. Empty governance sections are
+explicit when no such metadata is configured; absence is not silently omitted.
+
+![Model-visible governed context for a bounded request](docs/screenshots/decision-sql-governed-context.png)
 
 ## Server-owned grain safety
 
@@ -262,11 +234,8 @@ additive parent measure
 ```
 
 Normalization is not a general SQL optimizer or universal aggregation repair.
-Any normalized query must be re-parsed, re-authorized, revalidated for grain,
-planned, cost-checked, and executed through the same restricted boundary. There
-is no raw unsafe fallback. The benchmark still records fail-closed grain
-rejections; their causes are under investigation rather than assumed to be
-runtime defects.
+Any normalized query is re-parsed, re-authorized, revalidated for grain,
+planned, cost-checked, and executed through the same restricted boundary.
 
 Implementation boundaries are documented in
 [`app/semantics/grain.py`](app/semantics/grain.py),
@@ -277,32 +246,34 @@ Implementation boundaries are documented in
 ## Execution-based correctness
 
 Correctness is not exact SQL-string or AST matching. For answerable cases, the
-evaluator uses two reference SQL witnesses, a typed `ResultContract`, BASE
-execution, and every required counterfactual state. Comparisons preserve types,
+evaluator uses reference SQL witnesses, a typed `ResultContract`, BASE
+execution, and required counterfactual states. Comparisons preserve types,
 NULLs, duplicates, and declared order semantics. Row order is unordered unless
-the question requests it; a reference `ORDER BY` alone does not make row order
-semantic.
+the question requests it.
 
-Reference SQL is evidence of a valid implementation, not canonical SQL that a
-model must reproduce. The candidate is accepted only when its actual runtime
-and results satisfy the evaluator contract.
+```text
+candidate SQL
+  ↓
+BASE execution
+  ↓
+counterfactual executions
+  ↓
+typed ResultContract comparison
+```
 
-### Counterfactual fixtures
-
-A wrong query can accidentally match the correct result on BASE. Counterfactual
-fixtures alter relevant rows or distributions to distinguish population,
-join-path, temporal, JSON, grain, NULL, ranking, rounding, and other semantic
-behaviors. The current answerable evidence includes `healthcare_10`, which
-passes BASE but fails a counterfactual. That case shows why one database state
-is not enough to establish semantic correctness.
+A wrong query can accidentally match BASE. Counterfactual fixtures distinguish
+population, join-path, temporal, JSON, grain, NULL, ranking, rounding, and
+other semantic behavior. `healthcare_10`, for example, passes BASE but fails a
+counterfactual, showing why one database state is not enough to establish
+semantic correctness.
 
 ## Current limitations
 
-The current benchmark records 20 governed misses overall. The remaining errors
-span governance decisioning, ambiguity recognition, SQL semantic mismatches,
-and intentionally conservative fail-closed grain handling. The current evidence
-does not establish a single causal breakdown for all 180 cases; detailed
-mechanisms belong in the audit reports.
+The current benchmark records 20 governed misses. Remaining errors span
+governance decisioning, ambiguity recognition, SQL semantic mismatches, and
+intentionally conservative fail-closed grain handling. The evidence does not
+establish one causal breakdown for all 180 cases; detailed mechanisms remain in
+the audit reports.
 
 Ambiguity handling is weaker than policy handling on this benchmark: `12/16`
 versus `12/12`. Authority decisioning is `28/30`; `telecom_15` remains the
@@ -313,7 +284,7 @@ model governance or universal column and relationship-path authorization.
 ## Benchmark quality and audit discipline
 
 The benchmark is audited model-blind before model responses are used to assess
-system behavior. The audit process is:
+system behavior:
 
 ```text
 model-blind semantic review
@@ -324,32 +295,14 @@ model-blind semantic review
 → deterministic replay
 ```
 
-The model-blind review covered `90/90` cases in the audited benchmark segment,
-including `60/60` answerable and `30/30` non-answerable. It identified 52 cases
-with one or more independently demonstrated authoring defects, including:
-
-| Audit finding | Occurrences |
-| --- | ---: |
-| Non-requested row-order `ResultContract` defects | 52 |
-| Question/gold population ambiguities | 13 |
-| Hidden NULL-semantics defects | 10 |
-| Context-sufficiency defects | 8 |
-| Hidden temporal-boundary defects | 1 |
-
-These are overlapping defect occurrences, not an additive case count. The
-normative specification now treats row order as unordered unless the question
-requests it. Audit corrections were made from the specification and
-model-blind evidence, not from model performance.
-
-A benchmark can be internally self-consistent while still encode the wrong user
-semantics. `RefA == RefB`, passing fixtures, and killed mutants do not by
-themselves prove that `question/context → gold` is correct. Decision-SQL
-therefore keeps question/context alignment, gold semantics, `ResultContract`,
-reference witnesses, and counterfactual validity as separate audit concerns.
+The audited benchmark segment covered `90/90` cases, including `60/60`
+answerable and `30/30` non-answerable. Audit corrections were made from the
+specification and model-blind evidence, not from model performance. Detailed
+defect counts and forensic mechanisms remain in the linked reports.
 
 ## Reproducibility and response provenance
 
-The benchmark specification is [`benchmark/SPEC.md`](benchmark/SPEC.md).
+The normative specification is [`benchmark/SPEC.md`](benchmark/SPEC.md).
 Current identifiers are recorded in the machine-readable evaluation manifest:
 
 ```text
@@ -363,50 +316,64 @@ Post-M54 canonical response map:
 e3ba0e8b02ea64ce75f34df0bebdd4d54f904e33675273d143d8cc8456e4ed21
 ```
 
-The canonical response evidence combines frozen one-shot response corpora
-collected at different experiment stages. Response admission is checked against
-the exact provider-visible request, including shared model-visible context. The
-180-case result is therefore not a single same-time batch run.
+The 180-case result combines frozen one-shot response corpora collected at
+different experiment stages; it is not a single same-time batch run.
 
-The retained prompt contract is identified by hash
-`119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb`. The normal
-test suite does not require a live model provider.
+Current production Candidate C contract:
+
+```text
+3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587
+```
+
+Historical benchmark artifacts may retain older prompt or request hashes,
+including `119ec8cfe489b9ef373e764a2e0702dcc0dc298090b906f41e582858c1f59ecb`.
+Those values are immutable provenance for historical runs, not the current
+production contract.
 
 ## Repository map
 
 ```text
 app/
+├── api/             # FastAPI routes
+├── catalog/         # server-owned physical catalog
+├── decision/        # canonical production request lifecycle
 ├── execution/       # EXPLAIN, cost gates, restricted reader
-├── generation/      # provider boundary and typed generation
-├── semantics/       # catalog, authority, population, grain, planning
-└── sql/              # parser, policy, authority, safety service, QueryPlan
+├── generation/      # Candidate C contract and provider boundary
+├── governance/      # product-owned governed context
+├── observability/   # OTEL and operator trace
+├── operator/        # Playground and run facade
+├── retrieval/       # bounded context resolution
+├── semantics/       # grain safety and normalization
+└── sql/             # parser, policy, authority, QueryPlan safety
+
+ui/                  # React operator console
 
 benchmark/
 ├── cases/           # model-visible benchmark questions
 ├── ground_truth/    # evaluator-only semantic truth
-├── fixtures/        # evaluator-only counterfactual data patches
+├── fixtures/        # evaluator-only counterfactual patches
 ├── references/      # evaluator-only SQL witnesses
 ├── audits/          # frozen milestone and provenance evidence
 ├── reports/         # human-readable findings
 └── manifests/       # machine-readable experiment contracts
 
 tests/               # runtime, contract, and benchmark-harness tests
-docs/                # deeper architecture and research history
+docs/                # architecture and research documentation
 ```
 
 The production boundary is concentrated in
+[`app/decision/service.py`](app/decision/service.py),
+[`app/governance/context.py`](app/governance/context.py),
+[`app/generation/decision_contract.py`](app/generation/decision_contract.py),
 [`app/sql/service.py`](app/sql/service.py),
-[`app/sql/parser.py`](app/sql/parser.py),
-[`app/sql/policy.py`](app/sql/policy.py),
-[`app/execution/cost.py`](app/execution/cost.py), and
+[`app/sql/authority.py`](app/sql/authority.py), and
 [`app/execution/reader.py`](app/execution/reader.py). Benchmark truth,
-references, fixtures, and audit artifacts are separate from model-visible
-requests and production routing.
+references, fixtures, and audit artifacts remain separate from production
+routing and model-visible requests.
 
 ## Running locally and tests
 
-The project targets Python 3.12. With the development dependencies installed,
-the repository checks are:
+The project targets Python 3.12. With development dependencies installed:
 
 ```bash
 python -m pytest -q
@@ -415,29 +382,29 @@ ruff format --check .
 mypy .
 ```
 
-The deterministic test suite does not require a live model provider. To start
-the local PostgreSQL-backed application stack, use the checked-in Compose
-definition:
-
-```bash
-docker compose up --build
-```
-
-It provisions PostgreSQL, migrations, seed data, and the API. Provider-backed
-evaluation is a separate explicitly configured operation; it is not implied by
-running the normal test suite.
+The deterministic test suite does not require a live provider. Compose starts
+the complete local demo stack: PostgreSQL, migrations, seed data, API, and UI.
+Provider-backed LIVE generation is an explicitly configured operation and is
+not implied by running the normal test suite.
 
 ## Tech stack
 
-The active project uses Python 3.12, FastAPI, PostgreSQL 16, SQLAlchemy,
-Alembic, `sqlglot`, Pydantic, pytest, Ruff, mypy, and OpenTelemetry. Model
-access is isolated behind an OpenAI-compatible generation boundary.
+```text
+Python 3.12       FastAPI             PostgreSQL 16
+SQLAlchemy        Alembic             sqlglot
+Pydantic          OpenTelemetry       Docker Compose
+pytest            Ruff                mypy
+React             TypeScript          Vite
+```
+
+Model access is isolated behind an OpenAI-compatible provider boundary.
 
 ## Evidence and reports
 
-Start with the normative [benchmark specification](benchmark/SPEC.md). The
-audit and evaluation records are:
+Start with the normative [benchmark specification](benchmark/SPEC.md). Useful
+evidence includes:
 
+- [Operator Playground documentation](docs/m62_operator_playground.md)
 - [Benchmark semantic repair summary](benchmark/reports/m53_benchmark_semantic_repair_summary.md)
 - [Response provenance recovery](benchmark/reports/m531r_response_reuse_provenance_recovery.md)
 - [Current benchmark evaluation](benchmark/reports/m532_post_m53_repaired_expansion_evaluation.md)
@@ -446,9 +413,9 @@ audit and evaluation records are:
 
 The machine-readable current manifest is
 [`benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json`](benchmark/manifests/m54_post_m53_residual_semantic_forensics_manifest.json).
-
-Detailed audit evidence remains under [`benchmark/audits/`](benchmark/audits/)
-and [`benchmark/reports/`](benchmark/reports/).
+Detailed audit evidence remains under
+[`benchmark/audits/`](benchmark/audits/) and
+[`benchmark/reports/`](benchmark/reports/).
 
 ## Scope
 
@@ -468,6 +435,10 @@ It does not establish:
 
 ## Project status
 
-The current residual evidence is recorded in the M54 forensic report. Further
-system changes, if any, are separate from the benchmark repair and replay
-described here.
+The current implementation includes the canonical one-shot production decision
+path, request-bounded governed context, deterministic runtime safety,
+execution-based evaluation, and a local Operator Playground for inspecting
+decisions, SQL, traces, and model-visible context.
+
+Further benchmark or model-quality work is separate from the current production
+and demo boundary.

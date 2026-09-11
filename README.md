@@ -4,6 +4,8 @@
 
 > The model proposes. Deterministic software decides what may execute.
 
+[![CI](https://github.com/negativexq/decision-sql/actions/workflows/ci.yml/badge.svg)](https://github.com/negativexq/decision-sql/actions/workflows/ci.yml)
+
 Decision-SQL turns a natural-language analytics request into one typed model
 decision. The model receives a request-bounded governed context and may return
 `ANSWER` with read-only SQL, `NEEDS_CLARIFICATION`, `BLOCKED_AUTHORITY`, or

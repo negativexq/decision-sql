@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from collections import OrderedDict
 from datetime import UTC, datetime
+from uuid import uuid4
 
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 
 from app.catalog.default import build_default_catalog
 from app.catalog.models import ColumnMetadata, SchemaCatalog, SchemaContext, TableMetadata
@@ -17,6 +17,7 @@ from app.generation.decision_contract import (
     ProductionDecision,
 )
 from app.generation.provider import LLMProvider, OpenAICompatibleProvider
+from app.metadata.store import InMemoryRunStore, RunStore
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.operator.models import (
     DemoPreset,
@@ -27,6 +28,7 @@ from app.operator.models import (
     SchemaColumn,
     SchemaEntity,
     SchemaRelationship,
+    SourceDatabase,
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
 from app.sql.service import SqlSafetyService
@@ -42,6 +44,7 @@ class _ContextOnlyResolver(SchemaContextResolver):
             max_tables=base.max_tables,
             max_columns_per_table=base.max_columns_per_table,
             relationship_depth=base.relationship_depth,
+            full_context_max_tables=base.full_context_max_tables,
         )
         self._question = question
 
@@ -54,7 +57,13 @@ class _ContextOnlyResolver(SchemaContextResolver):
 class OperatorApplication:
     """Operator facade backed by the canonical production application service."""
 
-    def __init__(self, engine: Engine, settings: Settings, catalog: SchemaCatalog) -> None:
+    def __init__(
+        self,
+        engine: Engine,
+        settings: Settings,
+        catalog: SchemaCatalog,
+        run_store: RunStore | None = None,
+    ) -> None:
         self.engine = engine
         self.settings = settings
         self.catalog = catalog
@@ -64,9 +73,9 @@ class OperatorApplication:
             max_tables=settings.max_context_tables,
             max_columns_per_table=settings.max_columns_per_table,
             relationship_depth=settings.relationship_depth,
+            full_context_max_tables=settings.full_context_max_tables,
         )
-        self._runs: OrderedDict[str, RunRecord] = OrderedDict()
-        self._max_runs = 100
+        self.run_store: RunStore = run_store or InMemoryRunStore()
 
     @property
     def presets(self) -> tuple[DemoPreset, ...]:
@@ -107,8 +116,10 @@ class OperatorApplication:
             ),
         )
 
-    async def run(self, question: str, preset_id: str | None = None) -> RunRecord:
-        run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{len(self._runs) + 1:04d}"
+    async def run(
+        self, question: str, preset_id: str | None = None, actor: str = "anonymous"
+    ) -> RunRecord:
+        run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         collector = RunTraceCollector(run_id)
         collector.event("request.received", "Natural-language request received", "request")
         collector.record_stage("request", TraceStageStatus.PASS)
@@ -148,36 +159,23 @@ class OperatorApplication:
             duration_ms=result.trace.duration_ms,
             created_at=result.trace.started_at.isoformat(),
             trace=result.trace,
+            actor=actor,
         )
-        self._runs[run_id] = record
-        self._runs.move_to_end(run_id)
-        while len(self._runs) > self._max_runs:
-            self._runs.popitem(last=False)
+        self.run_store.save(record)
         return record
 
-    def list_runs(self) -> list[RunSummary]:
-        return [
-            RunSummary(
-                run_id=run.run_id,
-                trace_id=run.trace_id,
-                question=run.question,
-                preset_id=run.preset_id,
-                proposal_source=run.proposal_source,
-                model_decision=run.model_decision,
-                runtime_outcome=run.runtime_outcome,
-                runtime_reason=run.runtime_reason,
-                row_count=run.row_count,
-                duration_ms=run.duration_ms,
-                created_at=run.created_at,
-            )
-            for run in reversed(tuple(self._runs.values()))
-        ]
+    def list_runs(
+        self, *, actor: str | None = None, outcome: str | None = None, limit: int = 200
+    ) -> list[RunSummary]:
+        return self.run_store.list(actor=actor, outcome=outcome, limit=limit)
 
     def get_run(self, run_id: str) -> RunRecord | None:
-        return self._runs.get(run_id)
+        return self.run_store.get(run_id)
 
     def schema(self) -> GovernedSchemaResponse:
+        database, row_estimates = self._source_summary()
         return GovernedSchemaResponse(
+            database=database,
             entities=[
                 SchemaEntity(
                     name=table.name,
@@ -200,10 +198,31 @@ class OperatorApplication:
                         )
                         for relationship in table.relationships
                     ],
+                    row_estimate=row_estimates.get(table.name),
                 )
                 for table in self.catalog.tables
                 if table.queryable
-            ]
+            ],
+        )
+
+    def _source_summary(self) -> tuple[SourceDatabase, dict[str, int]]:
+        """Read connection identity and planner row estimates; degrade to disconnected."""
+        name = self.engine.url.database or "unknown"
+        try:
+            with self.engine.connect() as connection:
+                version = connection.execute(text("SHOW server_version")).scalar_one()
+                estimates = connection.execute(
+                    text(
+                        "SELECT c.relname, c.reltuples::bigint FROM pg_class c "
+                        "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                        "WHERE n.nspname = 'public' AND c.relkind = 'r'"
+                    )
+                ).all()
+        except Exception:
+            return SourceDatabase(name=name, connected=False), {}
+        return (
+            SourceDatabase(name=name, server_version=str(version), connected=True),
+            {str(row[0]): int(row[1]) for row in estimates if int(row[1]) >= 0},
         )
 
     def _service_for(
@@ -256,5 +275,7 @@ class OperatorApplication:
         )
 
 
-def build_operator_application(engine: Engine, settings: Settings) -> OperatorApplication:
-    return OperatorApplication(engine, settings, build_default_catalog(Base.metadata))
+def build_operator_application(
+    engine: Engine, settings: Settings, run_store: RunStore | None = None
+) -> OperatorApplication:
+    return OperatorApplication(engine, settings, build_default_catalog(Base.metadata), run_store)

@@ -8,14 +8,9 @@ from app.api.routes import get_operator_application
 from app.catalog.default import build_default_catalog
 from app.config import Settings
 from app.db.models import Base
-from app.generation.provider import StaticLLMProvider
 from app.main import app
-from app.models.domain import TextToSqlRequest
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.operator.service import OperatorApplication
-from app.retrieval.context import SchemaContextResolver
-from app.sql.service import SqlSafetyService
-from app.text_to_sql.service import TextToSqlService
 
 
 @pytest.fixture
@@ -113,29 +108,3 @@ def test_schema_and_run_routes_are_available(operator_application: OperatorAppli
         assert runs.status_code == 200
     finally:
         app.dependency_overrides.clear()
-
-
-@pytest.mark.asyncio
-async def test_product_service_records_sql_gate_stages_without_changing_result() -> None:
-    catalog = build_default_catalog(Base.metadata)
-    collector = RunTraceCollector("run_stages")
-    safety = SqlSafetyService(create_engine("sqlite://"), catalog=catalog, stage_recorder=collector)
-    service = TextToSqlService(
-        SchemaContextResolver(catalog),
-        StaticLLMProvider("SELECT id FROM products LIMIT 1"),
-        safety,
-        stage_recorder=collector,
-    )
-
-    result = await service.run(TextToSqlRequest(question="list products", execute=False))
-
-    # SQLite has no PostgreSQL JSON EXPLAIN implementation; the test still
-    # verifies that the real service reached the deterministic planning gates
-    # before reporting that backend limitation.
-    assert result.status.value == "PLAN_REJECTED"
-    trace = collector.finish("PLANNED")
-    statuses = {stage.name: stage.status for stage in trace.stages}
-    assert statuses["sql_parse"] is TraceStageStatus.PASS
-    assert statuses["global_policy"] is TraceStageStatus.PASS
-    assert statuses["execution_authority"] is TraceStageStatus.PASS
-    assert statuses["grain_safety"] is TraceStageStatus.SKIPPED

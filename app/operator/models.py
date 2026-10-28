@@ -25,6 +25,7 @@ class PlaygroundQueryRequest(BaseModel):
 
     question: str = Field(min_length=1, max_length=2000)
     preset_id: str | None = Field(default=None, max_length=80)
+    connection_id: str = Field(default="governed", min_length=1, max_length=64)
 
 
 DecisionValue = DecisionType
@@ -58,6 +59,10 @@ class RunRecord(BaseModel):
     duration_ms: float | None = None
     created_at: str
     trace: RunTrace
+    actor: str = "anonymous"
+    connection_id: str = "governed"
+    # False when the record was read back from the audit log, which keeps no result rows.
+    results_retained: bool = True
 
 
 class RunSummary(BaseModel):
@@ -72,6 +77,7 @@ class RunSummary(BaseModel):
     row_count: int = 0
     duration_ms: float | None = None
     created_at: str
+    actor: str = "anonymous"
 
 
 class SchemaColumn(BaseModel):
@@ -93,6 +99,17 @@ class SchemaEntity(BaseModel):
     description: str
     columns: list[SchemaColumn]
     relationships: list[SchemaRelationship]
+    row_estimate: int | None = None
+
+
+class SourceDatabase(BaseModel):
+    """Connection summary for the governed source; never exposes credentials."""
+
+    name: str
+    engine: str = "PostgreSQL"
+    server_version: str | None = None
+    schema_name: str = "public"
+    connected: bool
 
 
 class GovernedSchemaResponse(BaseModel):
@@ -101,34 +118,16 @@ class GovernedSchemaResponse(BaseModel):
         "Server-owned queryable schema and relationships. Individual runs receive "
         "a bounded model-visible subset."
     )
+    database: SourceDatabase | None = None
     entities: list[SchemaEntity]
 
 
 class RunListResponse(BaseModel):
     runs: list[RunSummary]
+    durable: bool = False
 
 
 class ApiHealthResponse(BaseModel):
     status: str
     api: str
     database: str
-
-
-class PlaygroundResponse(BaseModel):
-    run_id: str
-    trace_id: str
-    proposal_source: ProposalSource
-    model_decision: DecisionType | None
-    model_reason_code: DecisionReasonCode | None
-    proposed_sql: str | None
-    runtime_outcome: RuntimeOutcome
-    runtime_reason: str | None
-    provider: str | None
-    model: str | None
-    model_context: GovernedContext | None
-    model_context_hash: str | None
-    rows: list[dict[str, Any]]
-    columns: list[str]
-    row_count: int
-    truncated: bool
-    duration_ms: float | None

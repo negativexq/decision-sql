@@ -223,7 +223,7 @@ class OperatorApplication:
         name = self.engine.url.database or "unknown"
         try:
             with self.engine.connect() as connection:
-                version = connection.execute(text("SHOW server_version")).scalar_one()
+                version: object = connection.execute(text("SHOW server_version")).scalar_one()
                 estimates = connection.execute(
                     text(
                         "SELECT c.relname, c.reltuples::bigint FROM pg_class c "

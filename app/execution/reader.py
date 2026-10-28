@@ -56,6 +56,6 @@ class ReadOnlyExecutor:
     def configure_transaction(self, connection: Connection) -> None:
         connection.exec_driver_sql("SET TRANSACTION READ ONLY")
         connection.exec_driver_sql(f"SET LOCAL statement_timeout = {self.statement_timeout_ms}")
-        current_user = connection.exec_driver_sql("SELECT current_user").scalar_one()
+        current_user: object = connection.exec_driver_sql("SELECT current_user").scalar_one()
         if current_user != self.reader_role:
             raise ReaderRoleError("Candidate SQL execution requires the configured reader role.")

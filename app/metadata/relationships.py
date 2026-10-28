@@ -216,7 +216,32 @@ def check_declaration(
     )
     if resolved.key() in {item.key() for item in existing}:
         raise RelationshipRejectedError("This relationship already exists.")
+    other = _alternate_key_path(resolved, existing)
+    if other is not None:
+        raise RelationshipRejectedError(
+            f"{other.from_table} already points to {other.to_table} through "
+            f"{other.to_table}.{other.to_column}. A second path to another key of the same "
+            "row would make every join between these tables ambiguous."
+        )
     return resolved
+
+
+def _alternate_key_path(
+    declaration: RelationshipDeclaration, existing: list[RelationshipDeclaration]
+) -> RelationshipDeclaration | None:
+    """An existing link between the same tables that lands on a different target column.
+
+    Two columns pointing at the same target column are roles (home and away team);
+    a link to another unique key of the same table is a second name for one row.
+    """
+    for item in existing:
+        if (
+            item.from_table.lower() == declaration.from_table.lower()
+            and item.to_table.lower() == declaration.to_table.lower()
+            and item.to_column.lower() != declaration.to_column.lower()
+        ):
+            return item
+    return None
 
 
 def foreign_keys(catalog: SchemaCatalog) -> list[ForeignKeyRelationship]:
@@ -239,7 +264,8 @@ def candidate_relationships(
 
     A candidate is only a suggestion: the person declaring it decides.
     """
-    existing = {item.key() for item in foreign_keys(catalog)}
+    links: list[RelationshipDeclaration] = list(foreign_keys(catalog))
+    existing = {item.key() for item in links}
     targets = [
         (table, column)
         for table in catalog.tables
@@ -264,7 +290,10 @@ def candidate_relationships(
                     to_column=key.name,
                     reason=reason,
                 )
-                if suggestion.key() not in existing:
+                if (
+                    suggestion.key() not in existing
+                    and _alternate_key_path(suggestion, links) is None
+                ):
                     found.append(suggestion)
     return found[:limit]
 

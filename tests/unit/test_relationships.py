@@ -170,3 +170,59 @@ def test_in_memory_store_scopes_by_connection() -> None:
     assert not store.delete("c2", item.id)
     assert store.delete("c1", item.id)
     assert store.list("c1") == []
+
+
+def _players() -> SchemaCatalog:
+    return SchemaCatalog(
+        tables=(
+            TableMetadata(
+                name="player",
+                description="player",
+                columns=(column("player_api_id", primary_key=True), column("player_fifa_api_id")),
+            ),
+            TableMetadata(
+                name="player_attributes",
+                description="player_attributes",
+                columns=(
+                    column("id", primary_key=True),
+                    column("player_api_id"),
+                    column("player_fifa_api_id"),
+                    column("rival_player_api_id"),
+                ),
+                relationships=(
+                    RelationshipMetadata(
+                        column="player_api_id",
+                        referenced_table="player",
+                        referenced_column="player_api_id",
+                    ),
+                ),
+            ),
+        )
+    )
+
+
+def test_second_key_of_an_already_linked_row_is_neither_suggested_nor_accepted() -> None:
+    unique = {("player", "player_api_id"), ("player", "player_fifa_api_id")}
+    found = {
+        (item.from_column, item.to_column) for item in candidate_relationships(_players(), unique)
+    }
+    assert ("player_fifa_api_id", "player_fifa_api_id") not in found
+
+    alternate = RelationshipDeclaration(
+        from_table="player_attributes",
+        from_column="player_fifa_api_id",
+        to_table="player",
+        to_column="player_fifa_api_id",
+    )
+    with pytest.raises(RelationshipRejectedError, match="already points to player"):
+        check_declaration(_players(), alternate, foreign_keys(_players()))
+
+
+def test_a_second_role_to_the_same_key_is_still_allowed() -> None:
+    role = RelationshipDeclaration(
+        from_table="player_attributes",
+        from_column="rival_player_api_id",
+        to_table="player",
+        to_column="player_api_id",
+    )
+    assert check_declaration(_players(), role, foreign_keys(_players())) == role

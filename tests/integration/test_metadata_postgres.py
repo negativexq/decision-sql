@@ -190,9 +190,13 @@ def test_declared_relationship_is_checked_against_the_live_source(engine: Engine
 
     with pytest.raises(RelationshipRejectedError, match="already exists"):
         declare("orders", "customer_id", "customers", "id")
-    # Many orders share a customer, so customer_id cannot be the "one" side.
-    with pytest.raises(RelationshipRejectedError, match="repeated values"):
+    # Payments already reach orders through orders.id; another orders column would be a
+    # second path to the same row.
+    with pytest.raises(RelationshipRejectedError, match="already points to orders"):
         declare("payments", "order_id", "orders", "customer_id")
+    # Many items share an order, so order_id cannot be the "one" side.
+    with pytest.raises(RelationshipRejectedError, match="repeated values"):
+        declare("products", "id", "order_items", "order_id")
 
     item = declare("refunds", "id", "orders", "id")
     listed = service.relationships(summary.id)

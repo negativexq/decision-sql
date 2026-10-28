@@ -25,6 +25,7 @@ and read-only execution are deterministic code the model cannot bypass.
 | **Follow the checks** | Ten stages from context to execution, each with its outcome and timing. |
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |
+| **Declare joins** | When a database has no foreign keys, declare the joins questions may use; each one is checked against the data before it is saved. |
 
 ![Executed SQL above the answer](docs/screenshots/query-that-ran.jpg)
 
@@ -52,11 +53,18 @@ flowchart TD
 ```
 
 - **Governed context.** The model sees only queryable tables and columns, their
-  relationships, and their business meaning (which column is revenue, which
-  timestamp drives monthly trends). Small schemas are sent whole; large schemas
-  are narrowed by retrieval.
-- **One decision, no retries.** One request with a strict JSON schema. No repair
-  loop, judge, or second call, so first-pass behavior stays visible.
+  relationships (foreign keys and joins an administrator declared), the stored
+  spellings of categorical text columns, and the SQL functions policy allows.
+  Small schemas are sent whole; large schemas are narrowed by retrieval, and the
+  tables left out are listed by name.
+- **One decision, at most one more round.** One request with a strict JSON
+  schema. If the checks reject SQL for a reason the model can fix (a parse
+  error, an unknown column, a function outside the allowlist, the cost limit, a
+  fan-out), or the model names a table that was left out of the context, it gets
+  one more call. Authority and write rejections are final, and both rounds are
+  in the trace.
+- **A reason for every non-answer.** A clarification comes with the question to
+  answer and the readings to choose from; a refusal names the missing join.
 - **Deterministic gates.** One `SELECT` statement, allowlisted functions,
   only relations in the request's context, no fan-out aggregates, and plan cost
   under the configured limit before anything executes.
@@ -73,9 +81,10 @@ missing database or schema, SSL. Passwords are encrypted at rest and never shown
 again. Connector drivers are optional; an operator can install only the one they
 need from the UI.
 
-Questions currently run on the governed PostgreSQL source. Other saved
-connections can be tested and their tables browsed; running questions on them
-needs per-engine policy, read-only enforcement, and cost gates.
+Questions run on the governed source and on saved PostgreSQL connections,
+using the connection's own read-only role. Saved connections to other engines
+can be tested and their tables browsed; running questions on them needs
+per-engine policy, read-only enforcement, and cost gates.
 
 ![Audit log of every question and its outcome](docs/screenshots/audit-log.jpg)
 
@@ -124,19 +133,29 @@ Tests do not call a model. Integration tests under `tests/integration` run
 against the Docker Compose PostgreSQL (and optional MySQL or Trino containers)
 and skip when those are not reachable.
 
-## Research history
+## Measurement
 
-Decision-SQL started as a measured research project: more than 60 milestones of
-model-blind benchmark construction, one-shot evaluation, and forensic audits.
-That work shaped the current decision contract (Candidate C) and the runtime
-gates. It is kept on the `archive/research` branch: benchmark suites, runners,
-reports, and the experimental generation pipelines.
+The current decision contract was measured on 2026-10-29 with `gpt-6-luna`.
 
 | Evaluation | Result | Notes |
 | --- | ---: | --- |
+| Own field set: a wholesale schema with no foreign keys and no column descriptions, 31 questions, 3 runs each | 124/126 behaved as expected | Before any join was declared, all 30 join questions were refused. With joins declared: 67/69 answers matched the expected rows and none returned wrong rows (the other 2 asked for clarification), 12/12 ambiguous questions asked for clarification, 6/6 write requests were refused, and 6/6 questions about data the database does not hold were not answered. |
+| BIRD Mini-Dev, PostgreSQL, stratified 100 questions (30 simple, 50 moderate, 20 challenging) | 59/100 execution accuracy | 59/82 without the 18 questions whose gold SQL is disputed (for example ties broken by `LIMIT 1`, or a hint that contradicts the gold query). Databases without foreign keys had their joins declared through the relationships screen first. |
+
+The field set checks behavior, not only rows: whether the system refuses a
+join nobody authorized, asks when a question can be read two ways, and keeps
+quiet about data it does not have. It was written by the same team as the
+product, so it is a regression check rather than an independent score.
+
+Decision-SQL started as a research project. Earlier contracts and pipelines
+are kept on the `archive/research` branch with their benchmark suites and
+reports:
+
+| Earlier evaluation | Result | Notes |
+| --- | ---: | --- |
 | Internal governed benchmark, 180 cases, 12 synthetic domains | 160/180 governed task success | Answerable runtime 108/122, authority 28/30, ambiguity 12/16, policy 12/12 |
-| dbt ACME questions, local reproduction | 82/220 | 82 of 89 `ANSWER` decisions were correct; most misses were governed refusals over undefined business terms |
-| BIRD Mini-Dev, PostgreSQL | 225/500 execution accuracy | Earlier direct SQL pipeline, not the current decision contract |
+| dbt ACME questions, local reproduction | 82/220 | 82 of 89 `ANSWER` decisions were correct; most misses were refusals over undefined business terms |
+| BIRD Mini-Dev, PostgreSQL, 500 questions | 225/500 execution accuracy | A direct SQL pipeline without the decision contract |
 
 These numbers measure specific contracts and datasets. They are not a general
 Text-to-SQL accuracy claim.

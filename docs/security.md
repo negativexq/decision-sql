@@ -61,8 +61,9 @@ tests.
 - There are no tenant predicates or PostgreSQL row-level security.
 - Authority is relation-level; column- and join-path-level authorization is not
   complete.
-- Questions run only on the governed PostgreSQL source. Saved connections to
-  other engines are tested and browsed, not queried.
+- Questions run only on PostgreSQL: the governed source and saved PostgreSQL
+  connections. Saved connections to other engines are tested and browsed, not
+  queried.
 - Tracing records bounded stage metadata, not rows or full SQL; exporter
   deployment is not verified.
 

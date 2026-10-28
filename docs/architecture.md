@@ -9,7 +9,8 @@ credentials, authority, or an execution tool.
 ```text
 question
   -> governed context        app/retrieval, app/governance, app/catalog
-  -> one model decision      app/generation (Candidate C contract)
+  -> one model decision      app/generation (decision contract v2)
+  -> context expansion       app/decision (once, only for a table the model names)
   -> decision admission      app/decision
   -> SQL parse               app/sql/parser.py
   -> global policy           app/sql/policy.py
@@ -36,7 +37,16 @@ column is order revenue and which timestamp drives monthly trends.
   and can drop the measure or dimension a question needs, so small schemas skip
   it.
 - Larger schemas use bounded retrieval: top-k tables by keyword relevance,
-  relationship paths between them, and a per-table column cap.
+  relationship paths between them, up to `DECISION_SQL_CONTEXT_NEIGHBOR_TABLES`
+  (default 6) tables one relationship away, and a per-table column cap. The
+  remaining tables are listed by name in `other_tables`. A name grants nothing;
+  the model can only ask for the table (see below).
+- For saved PostgreSQL connections, relationships an administrator declared are
+  merged in like foreign keys, and categorical text columns carry their stored
+  values (`known_values`), read from `pg_stats`. Keys, long values, and columns
+  whose names suggest personal data never get values.
+- The policy section lists the SQL functions the runtime accepts, from the same
+  allowlist the policy gate uses.
 
 Non-queryable tables and columns never enter the context. The context is also
 the request's authority envelope: only relations in it may be executed.
@@ -53,9 +63,23 @@ JSON schema. The model returns one of:
 | `BLOCKED_AUTHORITY` | The data is outside the governed context | Bypassed |
 | `BLOCKED_POLICY` | The request would write or breach policy | Bypassed |
 
-There is no retry, repair loop, judge, or second call. The system prompt is the
-frozen Candidate C contract; `production_decision_contract_hash()` pins it, so
-changing the prompt is a visible contract change.
+A non-answer carries an explanation; a clarification also carries the question
+to ask and two to four readings, and a refusal names the missing joins.
+
+At most one more call follows, recorded as its own trace stage:
+
+- **Context expansion**: the model returned `BLOCKED_AUTHORITY` naming a table
+  from `other_tables`. The runtime rebuilds the context from the catalog with
+  that table and asks again.
+- **Repair round**: the checks rejected the SQL for a reason the model can fix
+  (parse error, unknown table or column, function outside the allowlist, cost
+  limit, fan-out). The model gets the runtime's own rejection code and message,
+  never database error text or rows. Authority, write, forbidden-relation, and
+  catalog rejections are final.
+
+Replays of recorded decisions never get either round. The system prompt is
+pinned by `production_decision_contract_hash()`, so changing it is a visible
+contract change.
 
 ### 3. Deterministic gates
 
@@ -70,8 +94,9 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   facts come from the source catalog itself: tables with a primary key are
   entities, foreign keys are many-to-one edges, and numeric non-key columns are
   measures at their table's grain. Summing a parent's column across its child
-  rows is stopped at planning time. Tables without a primary key, and joins
-  that are not declared as foreign keys, are not checked.
+  rows is stopped at planning time. Declared relationships count as foreign
+  keys. Tables without a primary key, and joins that are neither, are not
+  checked.
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 
@@ -101,9 +126,17 @@ self-declared until SSO is added.
 - Drivers are optional extras. With `DECISION_SQL_ALLOW_DRIVER_INSTALL=true`
   an operator can install one connector's allowlisted package from the UI.
 
-Questions run only on the governed PostgreSQL source. Saved connections can be
-tested and browsed; running questions on them needs dialect-aware policy,
-read-only enforcement, and cost gates for each engine.
+Questions run on the governed source and on saved PostgreSQL connections.
+Saved connections to other engines can be tested and browsed; running questions
+on them needs dialect-aware policy, read-only enforcement, and cost gates for
+each engine.
+
+Declared relationships (`decision_meta.declared_relationships`) are checked
+before they are saved: both columns exist, their types are compatible, the
+target column holds unique values, and the link is not a second path to
+another key of a row the source table already reaches. Suggestions come from
+column names, types, and unique keys, with the share of sampled values found in
+the target.
 
 ### Metadata isolation
 

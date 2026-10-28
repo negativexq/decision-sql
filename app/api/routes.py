@@ -14,6 +14,12 @@ from app.metadata.connectors import (
     IntrospectedTable,
 )
 from app.metadata.drivers.install import DriverInstallResult
+from app.metadata.relationships import (
+    ConnectionRelationships,
+    DeclaredRelationship,
+    RelationshipDeclaration,
+    RelationshipRejectedError,
+)
 from app.metadata.secrets import SecretsUnavailableError
 from app.metadata.service import (
     GOVERNED_CONNECTION_ID,
@@ -236,6 +242,55 @@ def connection_tables(connection_id: str, service: Connections) -> list[Introspe
     if tables is None:
         raise HTTPException(status_code=404, detail="Connection not found")
     return tables
+
+
+@router.get(
+    "/api/connections/{connection_id}/relationships", response_model=ConnectionRelationships
+)
+def connection_relationships(connection_id: str, service: Connections) -> ConnectionRelationships:
+    try:
+        result = service.relationships(connection_id)
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except SecretsUnavailableError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:  # driver errors are reported, not leaked as 500s
+        raise HTTPException(status_code=502, detail="Could not read the source schema.") from error
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
+
+
+@router.post(
+    "/api/connections/{connection_id}/relationships",
+    response_model=DeclaredRelationship,
+    status_code=201,
+)
+def declare_relationship(
+    connection_id: str,
+    declaration: RelationshipDeclaration,
+    service: Connections,
+    actor: Actor,
+) -> DeclaredRelationship:
+    try:
+        result = service.declare_relationship(connection_id, declaration, actor)
+    except RelationshipRejectedError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except SecretsUnavailableError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:  # driver errors are reported, not leaked as 500s
+        raise HTTPException(status_code=502, detail="Could not read the source schema.") from error
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
+
+
+@router.delete("/api/connections/{connection_id}/relationships/{relationship_id}", status_code=204)
+def remove_relationship(connection_id: str, relationship_id: str, service: Connections) -> None:
+    if not service.remove_relationship(connection_id, relationship_id):
+        raise HTTPException(status_code=404, detail="Relationship not found")
 
 
 @router.delete("/api/connections/{connection_id}", status_code=204)

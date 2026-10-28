@@ -39,6 +39,10 @@ class Settings(BaseSettings):
         default=5000, validation_alias="DECISION_SQL_STATEMENT_TIMEOUT_MS"
     )
     reader_role: str = Field(default="decision_reader", validation_alias="DECISION_SQL_READER_ROLE")
+    # One more model call when the runtime rejects SQL for a reason the model can fix.
+    repair_enabled: bool = Field(default=True, validation_alias="DECISION_SQL_REPAIR_ENABLED")
+    # Show the model how categorical text columns spell their values (from pg_stats).
+    value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     llm_model: str = Field(default="gpt-4o-mini", validation_alias="DECISION_SQL_LLM_MODEL")
     llm_base_url: str = Field(
         default="https://api.openai.com/v1", validation_alias="DECISION_SQL_LLM_BASE_URL"
@@ -64,6 +68,14 @@ class Settings(BaseSettings):
     relationship_depth: int = Field(default=2, validation_alias="DECISION_SQL_RELATIONSHIP_DEPTH")
     full_context_max_tables: int = Field(
         default=12, ge=0, validation_alias="DECISION_SQL_FULL_CONTEXT_MAX_TABLES"
+    )
+    # Tables one relationship away from the selected ones, added beyond max_context_tables.
+    context_neighbor_tables: int = Field(
+        default=6, ge=0, validation_alias="DECISION_SQL_CONTEXT_NEIGHBOR_TABLES"
+    )
+    # One more model call with a table the model named from the omitted list.
+    context_expansion_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_CONTEXT_EXPANSION_ENABLED"
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

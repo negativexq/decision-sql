@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -48,13 +49,17 @@ class _ContextOnlyResolver(SchemaContextResolver):
             max_columns_per_table=base.max_columns_per_table,
             relationship_depth=base.relationship_depth,
             full_context_max_tables=base.full_context_max_tables,
+            neighbor_limit=base.neighbor_limit,
         )
         self._question = question
 
     def resolve(
-        self, question: str, mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED
+        self,
+        question: str,
+        mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED,
+        include: Iterable[str] = (),
     ) -> SchemaContext:
-        return super().resolve(self._question, mode)
+        return super().resolve(self._question, mode, include)
 
 
 class OperatorApplication:
@@ -81,6 +86,7 @@ class OperatorApplication:
             max_columns_per_table=self.settings.max_columns_per_table,
             relationship_depth=self.settings.relationship_depth,
             full_context_max_tables=self.settings.full_context_max_tables,
+            neighbor_limit=self.settings.context_neighbor_tables,
         )
 
     @property
@@ -157,6 +163,7 @@ class OperatorApplication:
             ),
             model_decision=result.model_decision,
             model_reason_code=result.model_reason_code,
+            model_detail=result.model_detail,
             runtime_outcome=RuntimeOutcome(result.runtime_outcome),
             runtime_reason=result.runtime_reason,
             provider=result.provider,
@@ -164,6 +171,7 @@ class OperatorApplication:
             model_context=result.model_context,
             model_context_hash=result.model_context_hash,
             proposed_sql=result.proposed_sql,
+            repaired_from_sql=result.repaired_from_sql,
             rows=result.rows,
             columns=result.columns,
             row_count=result.row_count,
@@ -223,7 +231,7 @@ class OperatorApplication:
         name = self.engine.url.database or "unknown"
         try:
             with self.engine.connect() as connection:
-                version = connection.execute(text("SHOW server_version")).scalar_one()
+                version: object = connection.execute(text("SHOW server_version")).scalar_one()
                 estimates = connection.execute(
                     text(
                         "SELECT c.relname, c.reltuples::bigint FROM pg_class c "

@@ -13,12 +13,14 @@ from sqlalchemy import (
     Column,
     DateTime,
     Float,
+    ForeignKey,
     Integer,
     LargeBinary,
     MetaData,
     String,
     Table,
     Text,
+    UniqueConstraint,
 )
 
 METADATA_SCHEMA = "decision_meta"
@@ -36,11 +38,13 @@ audit_runs = Table(
     Column("proposal_source", String(40), nullable=False),
     Column("model_decision", String(40)),
     Column("model_reason_code", String(60)),
+    Column("model_detail", JSON),
     Column("runtime_outcome", String(40), nullable=False, index=True),
     Column("runtime_reason", String(120)),
     Column("provider", String(80)),
     Column("model", String(120)),
     Column("proposed_sql", Text),
+    Column("repaired_from_sql", Text),
     Column("columns", JSON, nullable=False),
     Column("row_count", Integer, nullable=False),
     Column("truncated", Boolean, nullable=False),
@@ -70,4 +74,24 @@ connections = Table(
     Column("last_tested_at", DateTime(timezone=True)),
     Column("last_test_ok", Boolean),
     Column("last_test_message", Text),
+)
+
+declared_relationships = Table(
+    "declared_relationships",
+    metadata,
+    Column("id", String(64), primary_key=True),
+    Column(
+        "connection_id",
+        String(64),
+        ForeignKey(f"{METADATA_SCHEMA}.connections.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    ),
+    Column("from_table", String(255), nullable=False),
+    Column("from_column", String(255), nullable=False),
+    Column("to_table", String(255), nullable=False),
+    Column("to_column", String(255), nullable=False),
+    Column("created_by", String(120), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    UniqueConstraint("connection_id", "from_table", "from_column", "to_table", "to_column"),
 )

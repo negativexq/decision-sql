@@ -1,5 +1,6 @@
 import re
 from collections import deque
+from collections.abc import Iterable
 from enum import StrEnum
 
 from app.catalog.models import (
@@ -44,6 +45,8 @@ class SchemaContextResolver:
         max_columns_per_table: int = 8,
         relationship_depth: int = 2,
         full_context_max_tables: int = 0,
+        neighbor_limit: int = 0,
+        max_omitted_tables: int = 200,
     ) -> None:
         self.catalog = catalog
         self.top_k = top_k
@@ -53,12 +56,23 @@ class SchemaContextResolver:
         # Small schemas are sent whole: keyword retrieval only matches English
         # tokens and can drop the measure or dimension a question needs.
         self.full_context_max_tables = full_context_max_tables
+        # Keyword retrieval misses tables the question never names, such as the fact
+        # table behind "champion" or "finish time"; direct neighbors of the selected
+        # tables are the likeliest place for them.
+        self.neighbor_limit = neighbor_limit
+        self.max_omitted_tables = max_omitted_tables
 
     def resolve(
         self,
         question: str,
         mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED,
+        include: Iterable[str] = (),
     ) -> SchemaContext:
+        """Select the context for one question.
+
+        ``include`` names tables that must be selected, such as the ones a model
+        asked for after seeing them listed as omitted.
+        """
         if not question.strip():
             raise SchemaResolutionError("Question is empty")
 
@@ -73,9 +87,13 @@ class SchemaContextResolver:
             seed_tables = selected
         else:
             seed_tables = []
+            required = [self.catalog.get_table(name) for name in include]
+            for table in required:
+                if table is not None and table not in seed_tables:
+                    seed_tables.append(table)
             for match in scores[: self.top_k]:
                 table = self.catalog.get_table(match.table_name)
-                if table is not None:
+                if table is not None and table not in seed_tables:
                     seed_tables.append(table)
             selected = [table for table in seed_tables if table is not None and table.queryable]
             if not selected:
@@ -89,7 +107,10 @@ class SchemaContextResolver:
                 (table for table in selected if table.name not in seed_names),
                 key=lambda item: item.name,
             )
-            selected = (seed_selection + expanded_selection)[: self.max_tables]
+            selected = (seed_selection + expanded_selection)[
+                : max(self.max_tables, len(seed_selection))
+            ]
+            selected += self._neighbors(selected, scores)
         else:
             selected = sorted(selected, key=lambda item: item.name)
         relationships = self._relationships_for(selected)
@@ -126,7 +147,40 @@ class SchemaContextResolver:
             relationships=tuple(relationships),
             selected_columns=tuple(selected_columns),
             context_metadata=metadata,
+            omitted_tables=self._omitted(selected, scores),
         )
+
+    def _neighbors(
+        self, selected: list[TableMetadata], scores: list[RelevanceScore]
+    ) -> list[TableMetadata]:
+        """Up to ``neighbor_limit`` tables one relationship away, most relevant first."""
+        if self.neighbor_limit <= 0:
+            return []
+        names = {table.name for table in selected}
+        adjacency = self._adjacency()
+        candidates = {
+            neighbor
+            for table in selected
+            for neighbor in adjacency.get(table.name, ())
+            if neighbor not in names
+        }
+        score = {item.table_name: item.score for item in scores}
+        ranked = sorted(candidates, key=lambda name: (-score.get(name, 0), name))
+        found = [self.catalog.get_table(name) for name in ranked[: self.neighbor_limit]]
+        return [table for table in found if table is not None and table.queryable]
+
+    def _omitted(
+        self, selected: list[TableMetadata], scores: list[RelevanceScore]
+    ) -> tuple[str, ...]:
+        names = {table.name for table in selected}
+        score = {item.table_name: item.score for item in scores}
+        left = [
+            table.name
+            for table in self.catalog.tables
+            if table.queryable and table.name not in names
+        ]
+        left.sort(key=lambda name: (-score.get(name, 0), name))
+        return tuple(left[: self.max_omitted_tables])
 
     def _score_tables(self, question: str) -> list[RelevanceScore]:
         question_tokens = _tokenize(question)
@@ -256,6 +310,8 @@ class SchemaContextResolver:
                 description=column.description,
                 sensitivity=column.sensitivity,
                 primary_key=column.primary_key,
+                known_values=column.known_values,
+                known_values_complete=column.known_values_complete,
                 foreign_key_table=next(
                     (
                         relationship.referenced_table

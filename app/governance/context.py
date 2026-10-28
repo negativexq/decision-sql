@@ -10,11 +10,18 @@ from __future__ import annotations
 import hashlib
 import json
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+)
 
 from app.catalog.models import RelevantRelationship, SchemaContext
+from app.sql.functions import model_visible_functions
 
 
 class GovernedContextScope(StrEnum):
@@ -42,6 +49,17 @@ class GovernedAttribute(BaseModel):
     primary_key: bool = False
     foreign_key_entity_id: str | None = None
     foreign_key_attribute_id: str | None = None
+    known_values: tuple[str, ...] = ()
+    known_values_complete: bool = False
+
+    @model_serializer(mode="wrap")
+    def _omit_absent_values(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        # Most attributes have no known values; leaving the keys out keeps the prompt small.
+        data: dict[str, Any] = handler(self)
+        if not self.known_values:
+            data.pop("known_values", None)
+            data.pop("known_values_complete", None)
+        return data
 
 
 class GovernedRelationship(BaseModel):
@@ -83,6 +101,8 @@ class GovernedPolicy(BaseModel):
     policy_id: str = "READ_ONLY"
     mode: Literal["READ_ONLY"] = "READ_ONLY"
     allowed_statement_types: tuple[str, ...] = ("SELECT",)
+    # The runtime policy rejects any other function, so the model must see the same list.
+    allowed_functions: tuple[str, ...] = Field(default_factory=model_visible_functions)
 
 
 class GovernedContext(BaseModel):
@@ -100,6 +120,16 @@ class GovernedContext(BaseModel):
     business_rules: tuple[GovernedBusinessRule, ...] = Field(default_factory=tuple)
     temporal_rules: tuple[GovernedTemporalRule, ...] = Field(default_factory=tuple)
     policy: GovernedPolicy = Field(default_factory=GovernedPolicy)
+    # Names of tables this bounded context leaves out.  A name grants nothing: the
+    # model may only ask for the table, and the runtime decides whether to add it.
+    other_tables: tuple[str, ...] = Field(default_factory=tuple)
+
+    @model_serializer(mode="wrap")
+    def _omit_empty_other_tables(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if not self.other_tables:
+            data.pop("other_tables", None)
+        return data
 
 
 def governed_context_from_schema_context(
@@ -125,6 +155,8 @@ def governed_context_from_schema_context(
             description=column.description,
             queryable=True,
             primary_key=column.primary_key,
+            known_values=column.known_values,
+            known_values_complete=column.known_values_complete,
             foreign_key_entity_id=(
                 entity_ids.get(column.foreign_key_table)
                 if column.foreign_key_table is not None
@@ -172,6 +204,7 @@ def governed_context_from_schema_context(
         authorized_relationships=tuple(
             sorted(relationships, key=lambda item: item.relationship_id)
         ),
+        other_tables=context.omitted_tables,
     )
 
 

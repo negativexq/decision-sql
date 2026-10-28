@@ -16,35 +16,46 @@ from app.generation.decision_contract import (
     production_decision_contract_hash,
     production_decision_schema,
 )
-from app.generation.provider import OpenAICompatibleProvider, ProductionDecisionProposal
+from app.generation.provider import (
+    OpenAICompatibleProvider,
+    ProductionDecisionProposal,
+    RuntimeRejectionFeedback,
+)
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.retrieval.context import SchemaContextResolver
 from app.sql.service import SqlSafetyService
 
 
 class FakeDecisionProvider:
-    def __init__(self, decision: ProductionDecision) -> None:
+    def __init__(self, decision: ProductionDecision, *repairs: ProductionDecision) -> None:
         self.decision = decision
+        self.repairs = list(repairs)
         self.calls = 0
         self.last_schema_context: str | None = None
+        self.feedback: list[RuntimeRejectionFeedback] = []
 
     async def propose_decision(
-        self, question: str, schema_context: str
+        self,
+        question: str,
+        schema_context: str,
+        repair: RuntimeRejectionFeedback | None = None,
     ) -> ProductionDecisionProposal:
         del question
         self.calls += 1
         self.last_schema_context = schema_context
+        if repair is not None:
+            self.feedback.append(repair)
         return ProductionDecisionProposal(
-            decision=self.decision,
+            decision=self.repairs.pop(0) if repair is not None else self.decision,
             provider="fake",
             model="fake-model",
             latency_ms=1.0,
         )
 
 
-def test_candidate_c_prompt_hash_is_preserved() -> None:
+def test_decision_prompt_hash_is_pinned() -> None:
     assert production_decision_contract_hash() == (
-        "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587"
+        "c11ac62ebf58c31e94895a6b9a49877bb8bc4f7eaafbfdd1d52eb1950ebcf98a"
     )
 
 
@@ -86,8 +97,18 @@ def test_production_decision_invariants_and_extra_fields() -> None:
             reason_code=DecisionReasonCode.NO_REASON,
         )
     schema = production_decision_schema()
-    assert set(schema["properties"]) == {"case_id", "decision", "sql", "reason_code"}
-    assert schema["required"] == ["case_id", "decision", "sql", "reason_code"]
+    fields = {
+        "case_id",
+        "decision",
+        "sql",
+        "reason_code",
+        "explanation",
+        "missing_relationships",
+        "clarification_question",
+        "interpretations",
+    }
+    assert set(schema["properties"]) == fields
+    assert set(schema["required"]) == fields
     assert schema["additionalProperties"] is False
     assert set(schema["properties"]["decision"]["enum"]) == {
         "ANSWER",
@@ -96,6 +117,52 @@ def test_production_decision_invariants_and_extra_fields() -> None:
         "BLOCKED_POLICY",
     }
     assert "NO_REASON" in schema["properties"]["reason_code"]["enum"]
+
+
+def test_non_answer_detail_keeps_only_fields_of_its_decision() -> None:
+    clarification = ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="NEEDS_CLARIFICATION",
+        reason_code="AMBIGUOUS_SEMANTICS",
+        explanation="  Total could mean   gross or net.  ",
+        clarification_question="Gross or net revenue?",
+        interpretations=["Gross revenue", "", "Net revenue", "a", "b", "c"],
+        missing_relationships=[{"from_table": "orders", "to_table": "customers"}],
+    )
+    assert clarification.detail is not None
+    assert clarification.detail.explanation == "Total could mean gross or net."
+    assert clarification.detail.interpretations == ("Gross revenue", "Net revenue", "a", "b")
+    assert clarification.detail.missing_relationships == ()
+
+    blocked = ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="BLOCKED_AUTHORITY",
+        reason_code="MISSING_AUTHORIZED_RELATIONSHIP",
+        explanation="orders and customers have no authorized join.",
+        missing_relationships=[{"from_table": "orders", "to_table": "customers"}],
+        clarification_question="ignored",
+    )
+    assert blocked.detail is not None
+    assert [(m.from_table, m.to_table) for m in blocked.detail.missing_relationships] == [
+        ("orders", "customers")
+    ]
+    assert blocked.detail.clarification_question is None
+
+    answer = ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="ANSWER",
+        sql="SELECT 1",
+        explanation="not shown",
+    )
+    assert answer.detail is None
+
+
+def test_decision_prompt_has_no_benchmark_framing() -> None:
+    from app.generation.decision_contract import production_decision_prompt
+
+    prompt = production_decision_prompt().lower()
+    assert "benchmark" not in prompt
+    assert "duration formula" not in prompt
 
 
 @pytest.mark.asyncio
@@ -143,6 +210,9 @@ async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once()
             case_id=PRODUCTION_DECISION_CASE_ID,
             decision="NEEDS_CLARIFICATION",
             reason_code="AMBIGUOUS_SEMANTICS",
+            explanation="Which products is unclear.",
+            clarification_question="Active products or all products?",
+            interpretations=["Active products", "All products"],
         )
     )
 
@@ -171,6 +241,9 @@ async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once()
     assert '"policy"' in provider.last_schema_context
     assert safety.calls == 0
     assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
+    assert result.model_detail is not None
+    assert result.model_detail.clarification_question == "Active products or all products?"
+    assert result.model_detail.interpretations == ("Active products", "All products")
     assert result.runtime_outcome == "NOT_ENTERED"
     statuses = {stage.name: stage.status for stage in result.trace.stages}
     assert statuses["sql_parse"] is TraceStageStatus.SKIPPED
@@ -179,7 +252,7 @@ async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once()
 
 @pytest.mark.asyncio
 async def test_answer_uses_same_typed_response_and_separates_runtime_rejection() -> None:
-    settings = Settings(_env_file=None, reader_role="reader")
+    settings = Settings(_env_file=None, reader_role="reader", repair_enabled=False)
     catalog = build_default_catalog(Base.metadata)
     provider = FakeDecisionProvider(
         ProductionDecision(
@@ -235,3 +308,109 @@ async def test_case_id_mismatch_fails_admission_before_sql_runtime() -> None:
     assert {stage.name: stage.status for stage in result.trace.stages}[
         "sql_parse"
     ] is TraceStageStatus.SKIPPED
+
+
+def _answer(sql: str) -> ProductionDecision:
+    return ProductionDecision(case_id=PRODUCTION_DECISION_CASE_ID, decision="ANSWER", sql=sql)
+
+
+async def _run_with(provider: FakeDecisionProvider, question: str = "List product names"):
+    settings = Settings(_env_file=None, reader_role="reader")
+    catalog = build_default_catalog(Base.metadata)
+    safety = SqlSafetyService(create_engine("sqlite://"), settings=settings, catalog=catalog)
+    collector = RunTraceCollector("run_repair")
+    collector.record_stage("request", TraceStageStatus.PASS)
+    # As in the operator service: planning stages land in the same trace.
+    safety.stage_recorder = collector
+    return await DecisionSqlApplication(
+        SchemaContextResolver(catalog),
+        provider,  # type: ignore[arg-type]
+        safety,
+        settings,
+    ).run(question, collector)
+
+
+@pytest.mark.asyncio
+async def test_fixable_rejection_gets_exactly_one_repair_round() -> None:
+    provider = FakeDecisionProvider(
+        _answer("SELECT name FROM external_directory"),
+        _answer("SELECT REGEXP_REPLACE(name, 'a', 'b') FROM products"),
+    )
+    result = await _run_with(provider)
+
+    assert provider.calls == 2
+    [feedback] = provider.feedback
+    assert feedback.stage == "global_policy"
+    assert feedback.code == "UNKNOWN_TABLE"
+    assert feedback.previous.sql == "SELECT name FROM external_directory"
+    assert result.repaired_from_sql == "SELECT name FROM external_directory"
+    assert result.proposed_sql == "SELECT REGEXP_REPLACE(name, 'a', 'b') FROM products"
+    # The repaired SQL is rejected too, and there is no second repair.
+    assert result.runtime_reason == "FORBIDDEN_FUNCTION"
+    stages = {stage.name: stage for stage in result.trace.stages}
+    assert stages["repair"].status is TraceStageStatus.PASS
+    assert stages["global_policy"].reason == "FORBIDDEN_FUNCTION"
+
+
+@pytest.mark.asyncio
+async def test_repair_may_turn_into_a_clarification() -> None:
+    provider = FakeDecisionProvider(
+        _answer("SELECT name FROM external_directory"),
+        ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID,
+            decision="NEEDS_CLARIFICATION",
+            reason_code="AMBIGUOUS_SEMANTICS",
+            clarification_question="Products or partners?",
+            interpretations=["Products", "Partners"],
+        ),
+    )
+    result = await _run_with(provider)
+
+    assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
+    assert result.runtime_outcome == "NOT_ENTERED"
+    assert result.repaired_from_sql == "SELECT name FROM external_directory"
+    assert result.model_detail is not None
+    assert result.model_detail.interpretations == ("Products", "Partners")
+    stages = {stage.name: stage.status for stage in result.trace.stages}
+    assert stages["repair"] is TraceStageStatus.PASS
+    assert stages["global_policy"] is TraceStageStatus.SKIPPED
+
+
+@pytest.mark.asyncio
+async def test_final_rejections_are_never_repaired() -> None:
+    for sql in ("DELETE FROM products", "SELECT usename FROM pg_catalog.pg_user"):
+        provider = FakeDecisionProvider(_answer(sql))
+        result = await _run_with(provider)
+
+        assert provider.calls == 1, sql
+        assert result.repaired_from_sql is None
+        stages = {stage.name: stage for stage in result.trace.stages}
+        assert stages["repair"].status is TraceStageStatus.SKIPPED
+        assert stages["repair"].reason == "FINAL_REJECTION"
+
+
+@pytest.mark.asyncio
+async def test_failed_repair_keeps_the_original_rejection() -> None:
+    provider = FakeDecisionProvider(_answer("SELECT name FROM external_directory"))
+    result = await _run_with(provider)  # no repair decision queued: the provider call fails
+
+    assert provider.calls == 2
+    assert result.proposed_sql == "SELECT name FROM external_directory"
+    assert result.repaired_from_sql is None
+    assert result.runtime_reason == "UNKNOWN_TABLE"
+    assert {stage.name: stage.status for stage in result.trace.stages}[
+        "repair"
+    ] is TraceStageStatus.FAILED
+
+
+def test_repair_conversation_carries_the_rejection_without_rows() -> None:
+    from app.generation.provider import _production_decision_messages
+
+    feedback = RuntimeRejectionFeedback(
+        previous=_answer("SELECT 1"), stage="sql_parse", code="SQL_PARSE_ERROR", message="bad"
+    )
+    messages = _production_decision_messages("Q", "{}", feedback)
+
+    assert [message["role"] for message in messages] == ["system", "user", "assistant", "user"]
+    assert '"sql":"SELECT 1"' in messages[2]["content"]
+    assert '"code": "SQL_PARSE_ERROR"' in messages[3]["content"]

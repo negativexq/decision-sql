@@ -16,6 +16,10 @@ class ColumnMetadata(BaseModel):
     sensitivity: Sensitivity = Sensitivity.PUBLIC
     queryable: bool = True
     primary_key: bool = False
+    # Stored spellings of a categorical column, or format examples of a code or date
+    # column.  Complete means these are all the values the column holds.
+    known_values: tuple[str, ...] = ()
+    known_values_complete: bool = False
 
 
 class RelationshipMetadata(BaseModel):
@@ -81,6 +85,8 @@ class RelevantColumn(BaseModel):
     primary_key: bool = False
     foreign_key_table: str | None = None
     foreign_key_column: str | None = None
+    known_values: tuple[str, ...] = ()
+    known_values_complete: bool = False
 
 
 class RelevantTable(BaseModel):
@@ -114,3 +120,5 @@ class SchemaContext(BaseModel):
     relationships: tuple[RelevantRelationship, ...] = Field(default_factory=tuple)
     selected_columns: tuple[RelevantColumn, ...] = Field(default_factory=tuple)
     context_metadata: ContextMetadata
+    # Queryable tables left out of a bounded context, by name only, most relevant first.
+    omitted_tables: tuple[str, ...] = Field(default_factory=tuple)

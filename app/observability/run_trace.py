@@ -75,6 +75,8 @@ _LABELS = {
     "generation": "Model generation",
     "decision_admission": "Production decision admission",
     "proposal_replay": "Frozen proposal replay",
+    "context_expansion": "Context expansion",
+    "repair": "Repair round",
     "sql_parse": "SQL parse",
     "global_policy": "Global policy",
     "execution_authority": "Execution authority",
@@ -142,6 +144,14 @@ class RunTraceCollector:
                 )
             )
 
+    def forget(self, names: tuple[str, ...]) -> None:
+        """Drop stage results that a later attempt will record again.
+
+        The events keep the earlier results, so the history stays auditable.
+        """
+        with self._lock:
+            self._stages = [item for item in self._stages if item.name not in names]
+
     def skip_unrecorded(self, names: tuple[str, ...], reason: str) -> None:
         recorded = {stage.name for stage in self._stages}
         for name in names:
@@ -193,6 +203,8 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "generation",
     "proposal_replay",
     "decision_admission",
+    "context_expansion",
+    "repair",
     "sql_parse",
     "global_policy",
     "execution_authority",

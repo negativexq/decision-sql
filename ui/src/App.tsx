@@ -86,6 +86,8 @@ export default function App() {
 
   const open = (summary: RunSummary) => {
     void api.run(summary.run_id).then((record) => {
+      // Follow-ups from this run (rerun, picking an interpretation) must ask the same source.
+      chooseSource(record.connection_id);
       setRun(record);
       setView("ask");
     });

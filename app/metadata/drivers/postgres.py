@@ -3,6 +3,7 @@ from __future__ import annotations
 from time import perf_counter
 
 import psycopg
+from psycopg import sql
 
 from app.catalog.models import (
     ColumnMetadata,
@@ -19,6 +20,7 @@ from app.metadata.connectors import (
     group_columns,
     missing_schema,
 )
+from app.metadata.values import ColumnStats, sample_stats
 
 
 class PostgresConnector:
@@ -133,6 +135,134 @@ class PostgresConnector:
                 (schema, schema),
             ).fetchall()
         return build_catalog(columns, primary_keys, foreign_keys)
+
+    def unique_keys(self, config: ConnectionConfig, password: str | None) -> set[tuple[str, str]]:
+        """Columns that are unique on their own: a single-column primary key or unique index."""
+        schema = config.schema_name or "public"
+        with self._connect(config, password) as connection:
+            rows = connection.execute(
+                "SELECT c.relname, a.attname FROM pg_index i "
+                "JOIN pg_class c ON c.oid = i.indrelid "
+                "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                "JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = i.indkey[0] "
+                "WHERE i.indisunique AND i.indnkeyatts = 1 AND i.indpred IS NULL "
+                "AND n.nspname = %s",
+                (schema,),
+            ).fetchall()
+        return {(table, column) for table, column in rows}
+
+    def has_duplicates(
+        self, config: ConnectionConfig, password: str | None, table: str, column: str
+    ) -> bool:
+        """True when a non-null value repeats; bounded by the session's statement timeout."""
+        schema = config.schema_name or "public"
+        query = sql.SQL(
+            "SELECT EXISTS (SELECT 1 FROM {table} WHERE {column} IS NOT NULL "
+            "GROUP BY {column} HAVING COUNT(*) > 1)"
+        ).format(table=sql.Identifier(schema, table), column=sql.Identifier(column))
+        with self._connect(config, password) as connection:
+            row = connection.execute(query).fetchone()
+        return bool(row and row[0])
+
+    def match_rates(
+        self,
+        config: ConnectionConfig,
+        password: str | None,
+        pairs: list[tuple[tuple[str, str], tuple[str, str]]],
+        sample: int = 1000,
+    ) -> list[float | None]:
+        """Share of sampled non-null source values present in the target column, per pair.
+
+        None when the source column is empty or the check fails or times out.
+        """
+        schema = config.schema_name or "public"
+        rates: list[float | None] = []
+        with self._connect(config, password) as connection:
+            for (source_table, source_column), (target_table, target_column) in pairs:
+                query = sql.SQL(
+                    "SELECT COUNT(*), COUNT(*) FILTER (WHERE EXISTS "
+                    "(SELECT 1 FROM {target_table} t WHERE t.{target_column} = s.v)) "
+                    "FROM (SELECT {source_column} AS v FROM {source_table} "
+                    "WHERE {source_column} IS NOT NULL LIMIT %s) s"
+                ).format(
+                    source_table=sql.Identifier(schema, source_table),
+                    source_column=sql.Identifier(source_column),
+                    target_table=sql.Identifier(schema, target_table),
+                    target_column=sql.Identifier(target_column),
+                )
+                try:
+                    row = connection.execute(query, (sample,)).fetchone()
+                except psycopg.Error:
+                    rates.append(None)
+                    continue
+                rates.append(round(row[1] / row[0], 4) if row and row[0] else None)
+        return rates
+
+    def column_stats(
+        self,
+        config: ConnectionConfig,
+        password: str | None,
+        columns: set[tuple[str, str]],
+        small_table_pages: int = 128,
+        sample_limit: int = 200,
+    ) -> list[ColumnStats]:
+        """Planner statistics for the given columns.
+
+        A small table that was never analyzed has no statistics; its columns are
+        read directly, bounded by the table's size and the session's timeout.
+        """
+        if not columns:
+            return []
+        schema = config.schema_name or "public"
+        found: list[ColumnStats] = []
+        with self._connect(config, password) as connection:
+            rows = connection.execute(
+                "SELECT s.tablename, s.attname, s.null_frac, "
+                "s.most_common_vals::text::text[], s.most_common_freqs, "
+                "s.histogram_bounds::text::text[], s.n_distinct, c.reltuples "
+                "FROM pg_stats s JOIN pg_namespace n ON n.nspname = s.schemaname "
+                "JOIN pg_class c ON c.relnamespace = n.oid AND c.relname = s.tablename "
+                "WHERE s.schemaname = %s",
+                (schema,),
+            ).fetchall()
+            for table, column, null_frac, common, freqs, bounds, distinct, tuples in rows:
+                if (table, column) in columns:
+                    found.append(
+                        ColumnStats(
+                            table,
+                            column,
+                            null_frac or 0.0,
+                            common,
+                            freqs,
+                            bounds,
+                            distinct or 0.0,
+                            max(tuples or 0.0, 0.0),
+                        )
+                    )
+            analyzed = {table for table, *_ in rows}
+            small = {
+                table
+                for table, pages in connection.execute(
+                    "SELECT c.relname, c.relpages FROM pg_class c "
+                    "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                    "WHERE n.nspname = %s AND c.relkind IN ('r', 'p', 'm')",
+                    (schema,),
+                ).fetchall()
+                if pages <= small_table_pages
+            }
+            for table, column in sorted(columns):
+                if table in analyzed or table not in small:
+                    continue
+                query = sql.SQL(
+                    "SELECT {column}::text, COUNT(*) FROM {table} "
+                    "GROUP BY 1 ORDER BY 2 DESC LIMIT %s"
+                ).format(table=sql.Identifier(schema, table), column=sql.Identifier(column))
+                try:
+                    counts = connection.execute(query, (sample_limit,)).fetchall()
+                except psycopg.Error:
+                    continue
+                found.append(sample_stats(table, column, counts))
+        return found
 
 
 def build_catalog(

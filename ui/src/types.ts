@@ -44,6 +44,13 @@ export interface RunTrace {
   events: TraceEvent[];
 }
 
+export interface DecisionDetail {
+  explanation: string | null;
+  missing_relationships: { from_table: string; to_table: string }[];
+  clarification_question: string | null;
+  interpretations: string[];
+}
+
 export interface RunRecord {
   run_id: string;
   trace_id: string;
@@ -53,6 +60,7 @@ export interface RunRecord {
   replay_notice: string | null;
   model_decision: Decision | null;
   model_reason_code: string | null;
+  model_detail: DecisionDetail | null;
   runtime_outcome: RuntimeOutcome;
   runtime_reason: string | null;
   provider: string | null;
@@ -60,6 +68,7 @@ export interface RunRecord {
   model_context: GovernedContext | null;
   model_context_hash: string | null;
   proposed_sql: string | null;
+  repaired_from_sql: string | null;
   rows: Record<string, unknown>[];
   columns: string[];
   row_count: number;
@@ -228,4 +237,29 @@ export interface DriverInstallResult {
   message: string;
   packages: string[];
   log_tail: string;
+}
+
+export interface RelationshipDeclaration {
+  from_table: string;
+  from_column: string;
+  to_table: string;
+  to_column: string;
+}
+
+export interface DeclaredRelationship extends RelationshipDeclaration {
+  id: string;
+  connection_id: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface RelationshipSuggestion extends RelationshipDeclaration {
+  reason: string;
+  match_rate: number | null;
+}
+
+export interface ConnectionRelationships {
+  foreign_keys: RelationshipDeclaration[];
+  declared: DeclaredRelationship[];
+  suggestions: RelationshipSuggestion[];
 }

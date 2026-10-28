@@ -13,6 +13,7 @@ from app.governance.context import (
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
 from app.sql.authority import ExecutionAuthority
+from app.sql.functions import model_visible_functions
 
 
 def _context() -> GovernedContext:
@@ -40,7 +41,9 @@ def test_governed_context_is_deterministic_and_explicit() -> None:
         "policy_id": "READ_ONLY",
         "mode": "READ_ONLY",
         "allowed_statement_types": ["SELECT"],
+        "allowed_functions": list(model_visible_functions()),
     }
+    assert "LOWER" in payload["policy"]["allowed_functions"]
 
 
 def test_governed_context_contains_only_structural_metadata() -> None:

@@ -29,6 +29,21 @@ class ProductionDecisionProposal(BaseModel):
     latency_ms: float | None = None
 
 
+class RuntimeRejectionFeedback(BaseModel):
+    """What the runtime tells the model when it asks for one repaired decision.
+
+    Built only from the runtime's own rejection: stage, code, and a message that
+    never contains result rows or database error text.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    previous: ProductionDecision
+    stage: str
+    code: str
+    message: str
+
+
 class ProviderErrorDetail(BaseModel):
     """Bounded, sanitized provider failure metadata."""
 
@@ -60,9 +75,16 @@ class MalformedProviderResponse(LLMProviderError):
 
 class LLMProvider(Protocol):
     async def propose_decision(
-        self, question: str, schema_context: str
+        self,
+        question: str,
+        schema_context: str,
+        repair: RuntimeRejectionFeedback | None = None,
     ) -> ProductionDecisionProposal:
-        """Return the canonical typed production decision in one call."""
+        """Return the canonical typed production decision in one call.
+
+        With ``repair``, the same conversation continues with the runtime's
+        rejection of the previous decision and asks for a replacement.
+        """
 
 
 class OpenAICompatibleProvider:
@@ -74,12 +96,15 @@ class OpenAICompatibleProvider:
         self.settings = settings or get_settings()
 
     async def propose_decision(
-        self, question: str, schema_context: str
+        self,
+        question: str,
+        schema_context: str,
+        repair: RuntimeRejectionFeedback | None = None,
     ) -> ProductionDecisionProposal:
-        """Request one typed decision; SQL is never generated in a second call."""
+        """Request one typed decision; SQL and decision always arrive in the same response."""
         if not self.settings.llm_api_key:
             raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
-        messages = _production_decision_messages(question, schema_context)
+        messages = _production_decision_messages(question, schema_context, repair)
         response_format = {
             "type": "json_schema",
             "json_schema": {
@@ -153,14 +178,27 @@ class OpenAICompatibleProvider:
             raise MalformedProviderResponse("Provider returned invalid JSON") from error
 
 
-def _production_decision_messages(question: str, schema_context: str) -> list[dict[str, str]]:
+def _production_decision_messages(
+    question: str, schema_context: str, repair: RuntimeRejectionFeedback | None = None
+) -> list[dict[str, str]]:
     user = (
         "Case ID:\noperator\n\nQuestion:\n" + question + "\n\nGoverned context:\n" + schema_context
     )
-    return [
+    messages = [
         {"role": "system", "content": production_decision_prompt()},
         {"role": "user", "content": user},
     ]
+    if repair is not None:
+        rejection = {"stage": repair.stage, "code": repair.code, "message": repair.message}
+        messages += [
+            {"role": "assistant", "content": repair.previous.model_dump_json()},
+            {
+                "role": "user",
+                "content": "Runtime rejection:\n"
+                + json.dumps(rejection, ensure_ascii=False, indent=2),
+            },
+        ]
+    return messages
 
 
 def _assistant_content(payload: Any) -> str | None:

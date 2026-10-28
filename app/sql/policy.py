@@ -5,6 +5,7 @@ from sqlglot import exp
 from sqlglot.optimizer.scope import Scope, traverse_scope
 
 from app.catalog.models import SchemaCatalog, TableMetadata
+from app.sql.functions import SAFE_FUNCTION_FAMILIES, SAFE_FUNCTIONS
 from app.sql.models import PolicyCode, PolicyRejection
 from app.sql.parser import ParsedSQL
 
@@ -16,84 +17,6 @@ FORBIDDEN_CATALOGS = {
     "pg_user",
     "information_schema",
 }
-
-SAFE_FUNCTION_FAMILIES = {
-    "SAFE_AGGREGATE": frozenset(
-        {
-            "ARRAY_AGG",
-            "AVG",
-            "CORR",
-            "COUNT",
-            "JSON_AGG",
-            "JSONB_AGG",
-            "JSON_OBJECT_AGG",
-            "JSONB_OBJECT_AGG",
-            "MAX",
-            "MIN",
-            "PERCENTILE_CONT",
-            "REGR_SLOPE",
-            "STDDEV",
-            "STRING_AGG",
-            "SUM",
-        }
-    ),
-    "SAFE_DATETIME": frozenset({"AGE", "DATE_TRUNC", "EXTRACT", "TO_CHAR", "TIMESTAMP_TRUNC"}),
-    "SAFE_NULL_HANDLING": frozenset({"COALESCE", "NULLIF"}),
-    "SAFE_NUMERIC": frozenset(
-        {"ABS", "EXP", "GREATEST", "LEAST", "LN", "LOG", "POWER", "ROUND", "SQRT"}
-    ),
-    "SAFE_STRING": frozenset(
-        {
-            "ARRAY_TO_STRING",
-            "CONCAT_WS",
-            "JSONB_EXTRACT_PATH_TEXT",
-            "JSONB_EXTRACT_PATH",
-            # SQLGlot represents PostgreSQL's read-only jsonb #>> operator
-            # as JSONB_EXTRACT_SCALAR.  It extracts text and has no side
-            # effects or external access.
-            "JSONB_EXTRACT_SCALAR",
-            "JSON_EXTRACT",
-            "JSON_EXTRACT_SCALAR",
-            "ROW_TO_JSON",
-            "STRING_TO_ARRAY",
-            "TRIM",
-        }
-    ),
-    "SAFE_ARRAY": frozenset({"ARRAY", "ARRAY_REMOVE", "CARDINALITY", "UNNEST"}),
-    "SAFE_JSON": frozenset({"JSON_BUILD_OBJECT", "JSONB_BUILD_OBJECT"}),
-    "SAFE_WINDOW": frozenset(
-        {
-            "DENSE_RANK",
-            "FIRST_VALUE",
-            "LAG",
-            "LAST_VALUE",
-            "LEAD",
-            "NTH_VALUE",
-            "NTILE",
-            "PERCENT_RANK",
-            "RANK",
-            "ROW_NUMBER",
-        }
-    ),
-    "SAFE_SUBQUERY": frozenset({"EXISTS"}),
-    "SAFE_CAST": frozenset({"CAST"}),
-    # These expressions are read-only; their execution context is recorded
-    # as provenance rather than treated as a safety violation.
-    "SAFE_STABLE_TEMPORAL": frozenset(
-        {
-            "CURRENT_DATE",
-            "CURRENT_TIME",
-            "CURRENT_TIMESTAMP",
-            "LOCALTIME",
-            "LOCALTIMESTAMP",
-            "NOW",
-            "STATEMENT_TIMESTAMP",
-            "TRANSACTION_TIMESTAMP",
-        }
-    ),
-}
-
-SAFE_FUNCTIONS = set().union(*SAFE_FUNCTION_FAMILIES.values())
 
 STABLE_TEMPORAL_FUNCTIONS = frozenset(SAFE_FUNCTION_FAMILIES["SAFE_STABLE_TEMPORAL"])
 VOLATILE_NONDETERMINISTIC_FUNCTIONS = frozenset({"CLOCK_TIMESTAMP", "RANDOM"})
@@ -434,6 +357,13 @@ class SQLPolicy:
             if isinstance(alias, exp.TableAlias) and alias.alias_or_name:
                 return frozenset({self._identifier_name(alias.alias_or_name)})
             return frozenset({"unnest"})
+        if isinstance(scope.expression, (exp.Lateral, exp.Values)):
+            # LATERAL (VALUES ...) AS t(a, b) and (VALUES ...) AS t(a, b) name their columns
+            # in the alias; without this the policy reports them as unknown.
+            alias = scope.expression.args.get("alias")
+            explicit = alias.args.get("columns") if isinstance(alias, exp.TableAlias) else None
+            if explicit:
+                return frozenset(column.name.lower() for column in explicit)
         if isinstance(scope.expression, exp.Lateral):
             nested = scope.sources.get("")
             if isinstance(nested, Scope):
@@ -524,6 +454,9 @@ class SQLPolicy:
             return "JSON_AGG"
         if isinstance(function, exp.JSONObjectAgg):
             return "JSON_OBJECT_AGG"
+        if isinstance(function, exp.JSONBObjectAgg):
+            # The generic class-name fallback spells this J_S_O_N_B_OBJECT_AGG.
+            return "JSONB_OBJECT_AGG"
         if isinstance(function, exp.GroupConcat):
             return "STRING_AGG"
         if isinstance(function, exp.Explode):

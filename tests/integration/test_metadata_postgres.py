@@ -17,6 +17,7 @@ from app.operator.models import RunRecord, RuntimeOutcome
 from app.sql.authority import ExecutionAuthority
 from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError
 from app.sql.service import SqlSafetyService
+from tests.integration.conftest import postgres_unavailable
 
 ADMIN_URL = os.getenv(
     "ADMIN_DATABASE_URL",
@@ -33,9 +34,11 @@ def engine() -> Iterator[Engine]:
                 text("SELECT to_regclass('decision_meta.audit_runs') IS NOT NULL")
             ).scalar_one()
     except Exception:
-        pytest.skip("PostgreSQL is not available; run Docker Compose for integration tests")
+        postgres_unavailable(
+            "PostgreSQL is not available; run Docker Compose for integration tests"
+        )
     if not present:
-        pytest.skip("Run `alembic upgrade head` to create the decision_meta schema")
+        postgres_unavailable("Run `alembic upgrade head` to create the decision_meta schema")
     yield engine
     with engine.begin() as connection:
         connection.execute(delete(audit_runs).where(audit_runs.c.run_id.like("run_it_%")))

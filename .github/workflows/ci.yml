@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  backend-quality:
-    name: backend-quality
+  backend:
+    name: backend
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -24,66 +24,21 @@ jobs:
           cache: pip
 
       - name: Install backend dependencies
-        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev,evaluation]"
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
 
-      # Keep the quality gate focused on the current production surface. Older
-      # research-era modules retain their historical snapshot checks separately.
       - name: Ruff lint
-        run: >-
-          ruff check
-          app/api app/catalog app/decision app/execution app/generation
-          app/governance app/operator app/observability app/retrieval app/sql
+        run: ruff check app tests
 
       - name: Ruff format
-        run: >-
-          ruff format --check
-          app/api app/catalog app/decision app/execution app/generation
-          app/governance app/operator app/observability app/retrieval app/sql
+        run: ruff format --check app tests
 
       - name: Mypy
-        run: >-
-          mypy
-          app/api app/catalog app/decision app/execution app/generation
-          app/governance app/operator app/observability app/retrieval app/sql
+        run: mypy app
 
-  backend-tests:
-    name: backend-tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - name: Install backend dependencies
-        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev,evaluation]"
-
-      # Historical audit tests remain immutable research evidence. Their
-      # archived snapshots are not part of the current product CI gate.
-      - name: Run current product backend tests
-        run: >-
-          pytest -q
-          tests/test_governed_context.py
-          tests/test_operator.py
-          tests/test_production_decision.py
-          tests/unit/test_context_availability.py
-          tests/unit/test_generation_provider.py
-          tests/unit/test_grain_semantics.py
-          tests/unit/test_health.py
-          tests/unit/test_observability.py
-          tests/unit/test_query_plan_v1.py
-          tests/unit/test_query_plan_wire_v2.py
-          tests/unit/test_retrieval.py
-          tests/unit/test_role_metadata.py
-          tests/unit/test_schema_context_v2.py
-          tests/unit/test_sql_parser.py
-          tests/unit/test_sql_policy.py
-          tests/unit/test_text_to_sql.py
-          tests/unit/test_models.py
+      # Integration tests skip themselves when PostgreSQL or a connector
+      # database is not reachable; run them locally against Docker Compose.
+      - name: Tests
+        run: pytest -q tests
 
   frontend:
     name: frontend

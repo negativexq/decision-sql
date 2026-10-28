@@ -25,10 +25,3 @@ def semantic_hash(value: Any) -> str:
 
 def text_hash(value: str) -> str:
     return sha256(value.encode("utf-8")).hexdigest()
-
-
-def bounded_text(value: str | None, limit: int = 16_384) -> str | None:
-    """Keep provider output bounded while preserving the exact prefix for diagnostics."""
-    if value is None:
-        return None
-    return value if len(value) <= limit else value[:limit]

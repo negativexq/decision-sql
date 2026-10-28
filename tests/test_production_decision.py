@@ -20,7 +20,6 @@ from app.generation.provider import OpenAICompatibleProvider, ProductionDecision
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.retrieval.context import SchemaContextResolver
 from app.sql.service import SqlSafetyService
-from benchmark.model_contract import submission_schema
 
 
 class FakeDecisionProvider:
@@ -87,7 +86,6 @@ def test_production_decision_invariants_and_extra_fields() -> None:
             reason_code=DecisionReasonCode.NO_REASON,
         )
     schema = production_decision_schema()
-    assert schema == submission_schema()
     assert set(schema["properties"]) == {"case_id", "decision", "sql", "reason_code"}
     assert schema["required"] == ["case_id", "decision", "sql", "reason_code"]
     assert schema["additionalProperties"] is False

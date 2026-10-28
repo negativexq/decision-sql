@@ -132,9 +132,5 @@ class ProvenanceRecorder:
             return
 
 
-def recorder_for(sink: ProvenanceSink, request: TextToSqlRequest) -> ProvenanceRecorder:
-    return ProvenanceRecorder(sink, request)
-
-
 def recorder_for_identity(sink: ProvenanceSink, identity: str) -> ProvenanceRecorder:
     return ProvenanceRecorder.for_identity(sink, identity)

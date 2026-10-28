@@ -67,9 +67,12 @@ export interface RunRecord {
   duration_ms: number | null;
   created_at: string;
   trace: RunTrace;
+  actor: string;
+  connection_id: string;
+  results_retained: boolean;
 }
 
-export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "proposal_source" | "model_decision" | "runtime_outcome" | "runtime_reason" | "row_count" | "duration_ms" | "created_at">;
+export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "proposal_source" | "model_decision" | "runtime_outcome" | "runtime_reason" | "row_count" | "duration_ms" | "created_at" | "actor">;
 
 export interface Preset {
   id: string;
@@ -93,11 +96,21 @@ export interface SchemaEntity {
   description: string;
   columns: SchemaColumn[];
   relationships: { source_column: string; target_table: string; target_column: string }[];
+  row_estimate: number | null;
+}
+
+export interface SourceDatabase {
+  name: string;
+  engine: string;
+  server_version: string | null;
+  schema_name: string;
+  connected: boolean;
 }
 
 export interface SchemaResponse {
   title: string;
   description: string;
+  database: SourceDatabase | null;
   entities: SchemaEntity[];
 }
 
@@ -146,3 +159,72 @@ export interface GovernedMetric { metric_id: string; name: string; description: 
 export interface GovernedBusinessRule { rule_id: string; description: string; }
 export interface GovernedTemporalRule { temporal_rule_id: string; description: string; }
 export interface GovernedPolicy { policy_id: string; mode: "READ_ONLY"; allowed_statement_types: string[]; }
+
+export type ConnectorKind = "postgresql" | "mysql" | "sqlserver" | "trino" | "snowflake" | "bigquery";
+
+export interface ConnectorField {
+  name: string;
+  label: string;
+  kind: "text" | "number" | "password" | "select" | "textarea";
+  required: boolean;
+  placeholder: string | null;
+  options: string[];
+  default: string | null;
+}
+
+export interface ConnectorType {
+  kind: ConnectorKind;
+  label: string;
+  description: string;
+  available: boolean;
+  installable: boolean;
+  unavailable_reason: string | null;
+  default_port: number | null;
+  fields: ConnectorField[];
+}
+
+export interface ConnectionSummary {
+  id: string;
+  name: string;
+  kind: ConnectorKind;
+  host: string;
+  port: number | null;
+  database: string;
+  username: string;
+  schema_name: string;
+  ssl_mode: string;
+  options: Record<string, string>;
+  has_password: boolean;
+  built_in: boolean;
+  governed: boolean;
+  created_by: string;
+  created_at: string | null;
+  last_tested_at: string | null;
+  last_test_ok: boolean | null;
+  last_test_message: string | null;
+}
+
+export interface ConnectionTestResult {
+  ok: boolean;
+  message: string;
+  error_kind: string | null;
+  field: string | null;
+  detail: string | null;
+  server_version: string | null;
+  latency_ms: number | null;
+  table_count: number | null;
+  can_write: boolean | null;
+}
+
+export interface IntrospectedTable {
+  name: string;
+  row_estimate: number | null;
+  columns: { name: string; type: string; nullable: boolean }[];
+}
+
+export interface DriverInstallResult {
+  ok: boolean;
+  message: string;
+  packages: string[];
+  log_tail: string;
+}

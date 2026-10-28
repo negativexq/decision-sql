@@ -37,8 +37,12 @@ services:
   api:
     build: .
     environment:
-      APP_ENV: local
       DATABASE_URL: postgresql+psycopg://decision_reader:decision_reader_password@postgres:5432/decision_sql
+      # Local demo only: production should use a dedicated role limited to decision_meta.
+      DECISION_SQL_METADATA_DATABASE_URL: postgresql+psycopg://decision_admin:decision_admin_password@postgres:5432/decision_sql
+      # Lets operators install allowlisted connector drivers from the UI; keep off in production.
+      DECISION_SQL_ALLOW_DRIVER_INSTALL: ${DECISION_SQL_ALLOW_DRIVER_INSTALL:-true}
+      DECISION_SQL_SECRET_KEY: ${DECISION_SQL_SECRET_KEY:-ZGVjaXNpb24tc3FsLWxvY2FsLWRlbW8tb25seS1rZXk=}
       OTEL_SERVICE_NAME: decision-sql
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       DECISION_SQL_MAX_PLAN_ROWS: 100000
@@ -56,7 +60,6 @@ services:
       DECISION_SQL_LLM_TIMEOUT_SECONDS: ${DECISION_SQL_LLM_TIMEOUT_SECONDS:-30}
       DECISION_SQL_LLM_TEMPERATURE: ${DECISION_SQL_LLM_TEMPERATURE:-0}
       DECISION_SQL_LLM_REASONING_EFFORT: ${DECISION_SQL_LLM_REASONING_EFFORT:-}
-      DECISION_SQL_LLM_PROMPT_PROFILE: ${DECISION_SQL_LLM_PROMPT_PROFILE:-hardened}
     depends_on:
       seed:
         condition: service_completed_successfully

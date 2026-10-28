@@ -191,6 +191,11 @@ class DecisionSqlApplication:
                     "provider": proposal.provider,
                     "model": proposal.model,
                     "model_decision": proposal.decision.decision.value,
+                    # Token usage is kept with the run so cost is auditable per question.
+                    "prompt_tokens": proposal.prompt_tokens,
+                    "completion_tokens": proposal.completion_tokens,
+                    "reasoning_tokens": proposal.reasoning_tokens,
+                    "cached_prompt_tokens": proposal.cached_prompt_tokens,
                 },
                 duration_ms=proposal.latency_ms,
             )

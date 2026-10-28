@@ -1,25 +1,10 @@
-from enum import StrEnum
 from functools import lru_cache
-from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class GovernedMetricsMode(StrEnum):
-    OFF = "off"
-    SHADOW = "shadow"
-    ON = "on"
-
-
-class VerifiedMemoryMode(StrEnum):
-    OFF = "off"
-    SHADOW = "shadow"
-    ON = "on"
-
-
 class Settings(BaseSettings):
-    app_env: str = Field(default="local", validation_alias="APP_ENV")
     database_url: str = Field(
         default="postgresql+psycopg://decision_reader:decision_reader_password@localhost:5432/decision_sql",
         validation_alias="DATABASE_URL",
@@ -27,6 +12,21 @@ class Settings(BaseSettings):
     admin_database_url: str = Field(
         default="postgresql+psycopg://decision_admin:decision_admin_password@localhost:5432/decision_sql",
         validation_alias="ADMIN_DATABASE_URL",
+    )
+    metadata_database_url: str | None = Field(
+        default=None,
+        validation_alias="DECISION_SQL_METADATA_DATABASE_URL",
+        description="Writable store for audit records and connections; never the reader role.",
+    )
+    secret_key: str | None = Field(
+        default=None,
+        validation_alias="DECISION_SQL_SECRET_KEY",
+        description="Fernet key that encrypts stored connection passwords.",
+    )
+    allow_driver_install: bool = Field(
+        default=False,
+        validation_alias="DECISION_SQL_ALLOW_DRIVER_INSTALL",
+        description="Let operators install allowlisted connector drivers from the UI.",
     )
     otel_service_name: str = Field(default="decision-sql", validation_alias="OTEL_SERVICE_NAME")
     otel_exporter_otlp_endpoint: str | None = Field(
@@ -56,47 +56,14 @@ class Settings(BaseSettings):
     llm_reasoning_effort: str | None = Field(
         default=None, validation_alias="DECISION_SQL_LLM_REASONING_EFFORT"
     )
-    llm_prompt_profile: Literal["legacy", "hardened"] = Field(
-        default="hardened", validation_alias="DECISION_SQL_LLM_PROMPT_PROFILE"
-    )
-    eval_capture_model_io: bool = Field(
-        default=False, validation_alias="DECISION_SQL_EVAL_CAPTURE_MODEL_IO"
-    )
     schema_top_k: int = Field(default=3, validation_alias="DECISION_SQL_SCHEMA_TOP_K")
-    max_context_tables: int = Field(
-        default=5, validation_alias="DECISION_SQL_MAX_CONTEXT_TABLES"
-    )
+    max_context_tables: int = Field(default=5, validation_alias="DECISION_SQL_MAX_CONTEXT_TABLES")
     max_columns_per_table: int = Field(
         default=8, validation_alias="DECISION_SQL_MAX_COLUMNS_PER_TABLE"
     )
-    relationship_depth: int = Field(
-        default=2, validation_alias="DECISION_SQL_RELATIONSHIP_DEPTH"
-    )
-    governed_metrics_mode: GovernedMetricsMode = Field(
-        default=GovernedMetricsMode.OFF,
-        validation_alias="DECISION_SQL_GOVERNED_METRICS_MODE",
-    )
-    governed_metrics_shadow_execute: bool = Field(
-        default=False,
-        validation_alias="DECISION_SQL_GOVERNED_METRICS_SHADOW_EXECUTE",
-    )
-    governed_metric_runtime_enabled: bool = Field(
-        default=False,
-        validation_alias="DECISION_SQL_GOVERNED_METRIC_RUNTIME_ENABLED",
-    )
-    verified_query_memory_mode: VerifiedMemoryMode = Field(
-        default=VerifiedMemoryMode.OFF,
-        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_MODE",
-    )
-    verified_query_memory_shadow_sample_rate: float = Field(
-        default=0.0,
-        ge=0.0,
-        le=1.0,
-        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_SHADOW_SAMPLE_RATE",
-    )
-    verified_query_memory_shadow_execute: bool = Field(
-        default=False,
-        validation_alias="DECISION_SQL_VERIFIED_QUERY_MEMORY_SHADOW_EXECUTE",
+    relationship_depth: int = Field(default=2, validation_alias="DECISION_SQL_RELATIONSHIP_DEPTH")
+    full_context_max_tables: int = Field(
+        default=12, ge=0, validation_alias="DECISION_SQL_FULL_CONTEXT_MAX_TABLES"
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

@@ -167,4 +167,5 @@ def production_decision_schema() -> dict[str, Any]:
 
 
 def production_decision_contract_hash() -> str:
+    """Hash of the frozen Candidate C prompt; a change here is a contract change."""
     return hashlib.sha256(production_decision_prompt().encode("utf-8")).hexdigest()

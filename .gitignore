@@ -15,21 +15,5 @@ build/
 !.env.example
 .codex/
 
-# Evaluation runs can contain raw model I/O, duplicated result rows, and
-# benchmark-specific execution traces. Keep them locally, but do not commit
-# generated run directories by default.
-evaluation/results/
-
-# Local benchmark downloads, database exports, and temporary database state.
-evaluation/external/**/raw/
-evaluation/external/**/downloads/
-evaluation/external/**/cache/
-evaluation/external/**/*.sql
-evaluation/external/**/*.dump
-evaluation/external/**/*.sql.gz
-evaluation/external/**/postgres-data/
 .docker-data/
 **/.DS_Store
-
-# Protected LiveSQLBench ground truth/evaluation artifacts are local-only.
-evaluation/external/livesqlbench/protected/

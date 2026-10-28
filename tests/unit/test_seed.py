@@ -21,16 +21,20 @@ def test_seed_is_deterministic_and_idempotent() -> None:
     first_counts = seed_database(engine)
     second_counts = seed_database(engine)
 
-    assert first_counts == second_counts == {
-        "regions": 4,
-        "sales_representatives": 8,
-        "customers": 40,
-        "products": 24,
-        "orders": 120,
-        "order_items": 240,
-        "payments": 72,
-        "refunds": 10,
-    }
+    assert (
+        first_counts
+        == second_counts
+        == {
+            "regions": 4,
+            "sales_representatives": 8,
+            "customers": 40,
+            "products": 24,
+            "orders": 120,
+            "order_items": 240,
+            "payments": 72,
+            "refunds": 10,
+        }
+    )
     with engine.connect() as connection:
         assert connection.execute(select(func.count()).select_from(Order)).scalar_one() == 120
         assert (

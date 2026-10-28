@@ -110,10 +110,6 @@ def _source_table_name(table: exp.Table) -> str:
     return table.name.lower()
 
 
-def _column_matches(column: exp.Column, alias: str, physical_name: str) -> bool:
-    return column.table.lower() == alias.lower() and column.name.lower() == physical_name.lower()
-
-
 class GrainSafeNormalizer:
     """Normalize exactly one proven direct child-fanout shape."""
 

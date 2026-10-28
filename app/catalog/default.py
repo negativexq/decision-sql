@@ -30,8 +30,37 @@ TABLE_ALIASES = {
     "refunds": ("refund", "return"),
 }
 
+# Governed business meaning. The model may only answer when it can tell which
+# column carries a concept, so revenue, time and grouping columns say so here.
 COLUMN_DESCRIPTIONS = {
     "customers.external_key": "External customer identifier; not queryable in M1.",
+    "customers.region_id": "Region the customer belongs to; use for revenue or orders by region.",
+    "customers.sales_rep_id": "Sales representative who owns the customer account.",
+    "customers.created_at": "When the customer account was created.",
+    "sales_representatives.region_id": "Region the sales representative covers.",
+    "regions.name": "Region display name.",
+    "products.category": "Product category display name.",
+    "products.name": "Product display name.",
+    "products.unit_price": "Current list price of the product.",
+    "orders.ordered_at": "When the order was placed; the date to use for daily, monthly or "
+    "yearly revenue and order trends.",
+    "orders.status": "Order lifecycle status: completed, pending or cancelled.",
+    "orders.sales_rep_id": "Sales representative credited with the order.",
+    "orders.currency": "ISO currency code of the order amounts.",
+    "orders.subtotal": "Order amount before order-level discount.",
+    "orders.discount_amount": "Order-level discount amount.",
+    "orders.total_amount": "Order revenue: the governed order total after discount. Use this "
+    "column for revenue, sales, spend and order value; sum it per order, never per line item.",
+    "order_items.quantity": "Units of the product sold on this line.",
+    "order_items.unit_price": "Price per unit charged on this line.",
+    "order_items.discount_amount": "Discount applied to this line. Line revenue is "
+    "quantity * unit_price - discount_amount; use it only for product or category revenue.",
+    "payments.amount": "Cash collected for the order; not revenue.",
+    "payments.paid_at": "When the payment was collected.",
+    "payments.status": "Payment settlement status.",
+    "refunds.amount": "Amount refunded to the customer for the order.",
+    "refunds.refunded_at": "When the refund was issued.",
+    "refunds.reason": "Reason given for the refund.",
 }
 
 

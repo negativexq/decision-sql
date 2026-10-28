@@ -9,7 +9,6 @@ diagnostic in M46A: it never rewrites SQL, blocks execution, or changes scores.
 from __future__ import annotations
 
 import json
-from collections import deque
 from enum import StrEnum
 from hashlib import sha256
 from typing import Any
@@ -204,14 +203,6 @@ class MeasureCatalog(_Frozen):
                 raise GrainContractError(f"derived measure has no provenance: {derived.measure_id}")
 
 
-class RollupStep(_Frozen):
-    relationship_id: str
-    source_entity_id: str
-    target_entity_id: str
-    direction: str
-    cardinality: str
-
-
 class GrainGraph(_Frozen):
     """Deterministic relationship/cardinality graph for grain reasoning."""
 
@@ -236,126 +227,12 @@ class GrainGraph(_Frozen):
                 return entity
         raise GrainContractError(f"unknown graph entity: {entity_id}")
 
-    def rollup_path(
-        self, source_entity_id: str, target_entity_id: str
-    ) -> tuple[RollupStep, ...] | None:
-        """Find a safe many-side-to-one-side rollup path, if one exists."""
-        if source_entity_id == target_entity_id:
-            return ()
-        queue: deque[tuple[str, tuple[RollupStep, ...]]] = deque([(source_entity_id, ())])
-        visited = {source_entity_id}
-        while queue:
-            current, path = queue.popleft()
-            for relationship in self.relationships:
-                cardinality = relationship.cardinality.upper().replace("-", "_")
-                next_entity: str | None = None
-                direction = "FORWARD"
-                if relationship.from_entity_id == current and cardinality in {
-                    "MANY_TO_ONE",
-                    "ONE_TO_ONE",
-                }:
-                    next_entity = relationship.to_entity_id
-                elif relationship.to_entity_id == current and cardinality == "ONE_TO_ONE":
-                    next_entity = relationship.from_entity_id
-                    direction = "REVERSE"
-                if next_entity is None or next_entity in visited:
-                    continue
-                step = RollupStep(
-                    relationship_id=relationship.relationship_id,
-                    source_entity_id=current,
-                    target_entity_id=next_entity,
-                    direction=direction,
-                    cardinality=relationship.cardinality,
-                )
-                next_path = path + (step,)
-                if next_entity == target_entity_id:
-                    return next_path
-                visited.add(next_entity)
-                queue.append((next_entity, next_path))
-        return None
-
     def fanout_edges_from(self, parent_entity_id: str) -> tuple[GrainRelationship, ...]:
         return tuple(
             relationship
             for relationship in self.relationships
             if relationship.to_entity_id == parent_entity_id
             and relationship.cardinality.upper().replace("-", "_") == "MANY_TO_ONE"
-        )
-
-
-class AlignmentStatus(StrEnum):
-    ALIGNED = "ALIGNED"
-    REQUIRES_ROLLUP = "REQUIRES_ROLLUP"
-    UNSAFE_FANOUT = "UNSAFE_FANOUT"
-    UNRESOLVED = "UNRESOLVED"
-
-
-class GrainAlignmentResult(_Frozen):
-    alignment_status: AlignmentStatus
-    left_measure_id: str
-    right_measure_id: str
-    left_native_grain: GrainKey
-    right_native_grain: GrainKey
-    alignment_grain: GrainKey | None = None
-    required_rollups: tuple[RollupStep, ...] = ()
-    fanout_edges: tuple[GrainRelationship, ...] = ()
-    reason_code: str
-
-
-class GrainAlignmentAnalyzer:
-    """Compute measure alignment constraints without generating SQL."""
-
-    def __init__(self, catalog: MeasureCatalog) -> None:
-        catalog.validate_contract()
-        self.catalog = catalog
-        self.graph = GrainGraph.from_catalog(catalog)
-
-    def align(self, left_measure_id: str, right_measure_id: str) -> GrainAlignmentResult:
-        left = self.catalog.measure(left_measure_id)
-        right = self.catalog.measure(right_measure_id)
-        if left.native_grain == right.native_grain:
-            return GrainAlignmentResult(
-                alignment_status=AlignmentStatus.ALIGNED,
-                left_measure_id=left.measure_id,
-                right_measure_id=right.measure_id,
-                left_native_grain=left.native_grain,
-                right_native_grain=right.native_grain,
-                alignment_grain=left.native_grain,
-                reason_code="SAME_NATIVE_GRAIN",
-            )
-        right_to_left = self.graph.rollup_path(right.entity_id, left.entity_id)
-        if right_to_left is not None:
-            return GrainAlignmentResult(
-                alignment_status=AlignmentStatus.REQUIRES_ROLLUP,
-                left_measure_id=left.measure_id,
-                right_measure_id=right.measure_id,
-                left_native_grain=left.native_grain,
-                right_native_grain=right.native_grain,
-                alignment_grain=left.native_grain,
-                required_rollups=right_to_left,
-                fanout_edges=self.graph.fanout_edges_from(left.entity_id),
-                reason_code="RIGHT_MEASURE_ROLLS_UP_TO_LEFT_GRAIN",
-            )
-        left_to_right = self.graph.rollup_path(left.entity_id, right.entity_id)
-        if left_to_right is not None:
-            return GrainAlignmentResult(
-                alignment_status=AlignmentStatus.REQUIRES_ROLLUP,
-                left_measure_id=left.measure_id,
-                right_measure_id=right.measure_id,
-                left_native_grain=left.native_grain,
-                right_native_grain=right.native_grain,
-                alignment_grain=right.native_grain,
-                required_rollups=left_to_right,
-                fanout_edges=self.graph.fanout_edges_from(right.entity_id),
-                reason_code="LEFT_MEASURE_ROLLS_UP_TO_RIGHT_GRAIN",
-            )
-        return GrainAlignmentResult(
-            alignment_status=AlignmentStatus.UNRESOLVED,
-            left_measure_id=left.measure_id,
-            right_measure_id=right.measure_id,
-            left_native_grain=left.native_grain,
-            right_native_grain=right.native_grain,
-            reason_code="NO_SAFE_COMMON_ROLLUP_PATH",
         )
 
 

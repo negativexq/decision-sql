@@ -3,7 +3,6 @@ from __future__ import annotations
 from app.semantics.grain import (
     AggregationBehavior,
     DerivedMeasureSemantics,
-    GrainAlignmentAnalyzer,
     GrainContractError,
     GrainDiagnosticCode,
     GrainEntity,
@@ -73,16 +72,6 @@ def test_numeric_identifier_is_not_implicitly_a_measure() -> None:
     assert all(
         not measure.source_attribute_id.endswith("parent_id") for measure in catalog.measures
     )
-
-
-def test_child_rolls_up_to_parent_grain() -> None:
-    result = GrainAlignmentAnalyzer(_catalog()).align(
-        "measure:parent_amount", "measure:child_amount"
-    )
-    assert result.alignment_status.value == "REQUIRES_ROLLUP"
-    assert result.alignment_grain is not None
-    assert result.alignment_grain.entity_id == "entity:parent"
-    assert [edge.relationship_id for edge in result.fanout_edges] == ["relationship:child_parent"]
 
 
 def test_direct_parent_fanout_is_detected() -> None:

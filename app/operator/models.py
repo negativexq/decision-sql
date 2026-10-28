@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.decision.models import ProposalSource
 from app.decision.models import RuntimeOutcome as ProductRuntimeOutcome
-from app.generation.decision_contract import DecisionReasonCode, DecisionType
+from app.generation.decision_contract import DecisionDetail, DecisionReasonCode, DecisionType
 from app.governance.context import GovernedContext
 from app.observability.run_trace import RunTrace
 
@@ -45,6 +45,7 @@ class RunRecord(BaseModel):
     replay_notice: str | None = None
     model_decision: DecisionType | None = None
     model_reason_code: DecisionReasonCode | None = None
+    model_detail: DecisionDetail | None = None
     runtime_outcome: RuntimeOutcome
     runtime_reason: str | None = None
     provider: str | None = None
@@ -52,6 +53,7 @@ class RunRecord(BaseModel):
     model_context: GovernedContext | None = None
     model_context_hash: str | None = None
     proposed_sql: str | None = None
+    repaired_from_sql: str | None = None
     rows: list[dict[str, Any]] = Field(default_factory=list)
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0

@@ -15,6 +15,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.catalog.models import RelevantRelationship, SchemaContext
+from app.sql.functions import model_visible_functions
 
 
 class GovernedContextScope(StrEnum):
@@ -83,6 +84,8 @@ class GovernedPolicy(BaseModel):
     policy_id: str = "READ_ONLY"
     mode: Literal["READ_ONLY"] = "READ_ONLY"
     allowed_statement_types: tuple[str, ...] = ("SELECT",)
+    # The runtime policy rejects any other function, so the model must see the same list.
+    allowed_functions: tuple[str, ...] = Field(default_factory=model_visible_functions)
 
 
 class GovernedContext(BaseModel):

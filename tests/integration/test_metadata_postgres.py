@@ -7,7 +7,13 @@ import pytest
 from cryptography.fernet import Fernet
 from sqlalchemy import Engine, create_engine, delete, text
 
+from app.generation.decision_contract import DecisionDetail, MissingRelationship
 from app.metadata.connectors import ConnectionConfig
+from app.metadata.relationships import (
+    RelationshipDeclaration,
+    RelationshipRejectedError,
+    SqlRelationshipStore,
+)
 from app.metadata.secrets import SecretBox
 from app.metadata.service import ConnectionService
 from app.metadata.store import SqlConnectionStore, SqlRunStore
@@ -75,6 +81,33 @@ def test_audit_log_persists_runs_without_result_rows(engine: Engine) -> None:
     assert [run.run_id for run in store.list(actor="ayse@example.com") if run.run_id == "run_it_1"]
 
 
+def test_audit_log_keeps_the_explanation_of_a_non_answer(engine: Engine) -> None:
+    store = SqlRunStore(engine)
+    trace = RunTraceCollector("run_it_detail").finish("NOT_ENTERED")
+    detail = DecisionDetail(
+        explanation="orders and customers have no authorized join.",
+        missing_relationships=(MissingRelationship(from_table="orders", to_table="customers"),),
+    )
+    store.save(
+        RunRecord(
+            run_id="run_it_detail",
+            trace_id=trace.trace_id,
+            question="Revenue by customer",
+            proposal_source="LIVE_MODEL",
+            model_decision="BLOCKED_AUTHORITY",
+            model_reason_code="MISSING_AUTHORIZED_RELATIONSHIP",
+            model_detail=detail,
+            runtime_outcome=RuntimeOutcome.NOT_ENTERED,
+            created_at=trace.started_at.isoformat(),
+            trace=trace,
+        )
+    )
+
+    restored = store.get("run_it_detail")
+    assert restored is not None
+    assert restored.model_detail == detail
+
+
 def test_connection_round_trip_against_the_local_database(engine: Engine) -> None:
     box = SecretBox(Fernet.generate_key().decode())
     service = ConnectionService(SqlConnectionStore(engine), box, engine)
@@ -120,4 +153,59 @@ def test_connection_round_trip_against_the_local_database(engine: Engine) -> Non
     executed = safety.execute(plan)  # type: ignore[arg-type]
     assert not isinstance(executed, SqlExecutionError)
     assert executed.row_count > 0
+    assert service.delete(summary.id)
+
+
+def test_declared_relationship_is_checked_against_the_live_source(engine: Engine) -> None:
+    box = SecretBox(Fernet.generate_key().decode())
+    service = ConnectionService(
+        SqlConnectionStore(engine), box, engine, relationships=SqlRelationshipStore(engine)
+    )
+    summary, result = service.create(
+        ConnectionConfig(
+            kind="postgresql",
+            name="it-relationships",
+            host="localhost",
+            port=5432,
+            database="decision_sql",
+            username="decision_reader",
+            password="decision_reader_password",
+            ssl_mode="disable",
+        ),
+        "ayse@example.com",
+    )
+    assert result.ok, result.message
+
+    def declare(from_table: str, from_column: str, to_table: str, to_column: str) -> object:
+        return service.declare_relationship(
+            summary.id,
+            RelationshipDeclaration(
+                from_table=from_table,
+                from_column=from_column,
+                to_table=to_table,
+                to_column=to_column,
+            ),
+            "ayse@example.com",
+        )
+
+    with pytest.raises(RelationshipRejectedError, match="already exists"):
+        declare("orders", "customer_id", "customers", "id")
+    # Many orders share a customer, so customer_id cannot be the "one" side.
+    with pytest.raises(RelationshipRejectedError, match="repeated values"):
+        declare("payments", "order_id", "orders", "customer_id")
+
+    item = declare("refunds", "id", "orders", "id")
+    listed = service.relationships(summary.id)
+    assert listed is not None
+    assert [entry.id for entry in listed.declared] == [item.id]  # type: ignore[attr-defined]
+    source = service.question_source(summary.id)
+    assert source is not None
+    refunds = source.catalog.get_table("refunds")
+    assert refunds is not None
+    assert any(
+        relationship.referenced_table == "orders" and relationship.column == "id"
+        for relationship in refunds.relationships
+    )
+
+    assert service.remove_relationship(summary.id, item.id)  # type: ignore[attr-defined]
     assert service.delete(summary.id)

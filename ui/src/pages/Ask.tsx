@@ -106,7 +106,13 @@ export function Ask({
       {loading && <Pending question={question} />}
 
       {!loading && run && (
-        <RunResult key={run.run_id} run={run} onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)} />
+        <RunResult
+          key={run.run_id}
+          run={run}
+          onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)}
+          onAsk={(text) => onSubmit(text)}
+          onManageConnections={onManageConnections}
+        />
       )}
 
       {!loading && !run && showStarters && (
@@ -149,7 +155,17 @@ function Pending({ question }: { question: string }) {
   );
 }
 
-function RunResult({ run, onRerun }: { run: RunRecord; onRerun: () => void }) {
+function RunResult({
+  run,
+  onRerun,
+  onAsk,
+  onManageConnections,
+}: {
+  run: RunRecord;
+  onRerun: () => void;
+  onAsk: (question: string) => void;
+  onManageConnections: () => void;
+}) {
   const outcome = runOutcome(run);
   const executed = run.runtime_outcome === "EXECUTED" && run.results_retained;
   const chartable = executed && chartShape(run.columns, run.rows) !== null;
@@ -198,6 +214,13 @@ function RunResult({ run, onRerun }: { run: RunRecord; onRerun: () => void }) {
         )}
       </div>
 
+      {run.repaired_from_sql && (
+        <details className="repaired">
+          <summary>The checks rejected the first query, so the model rewrote it once.</summary>
+          <SqlViewer sql={run.repaired_from_sql} />
+        </details>
+      )}
+
       <GatePath
         trace={run.trace}
         onSelect={(selected) => {
@@ -213,7 +236,7 @@ function RunResult({ run, onRerun }: { run: RunRecord; onRerun: () => void }) {
         </div>
       )}
 
-      {run.runtime_outcome !== "EXECUTED" && <Explanation run={run} />}
+      {run.runtime_outcome !== "EXECUTED" && <Explanation run={run} onAsk={onAsk} onManageConnections={onManageConnections} />}
 
       <div className="tabs" role="tablist" aria-label="Result views" hidden={!executed}>
         {tabs.filter((item) => !item.hidden).map((item) => (
@@ -239,16 +262,29 @@ function RunResult({ run, onRerun }: { run: RunRecord; onRerun: () => void }) {
   );
 }
 
-function Explanation({ run }: { run: RunRecord }) {
+function Explanation({
+  run,
+  onAsk,
+  onManageConnections,
+}: {
+  run: RunRecord;
+  onAsk: (question: string) => void;
+  onManageConnections: () => void;
+}) {
   const decision = run.model_decision;
+  const detail = run.model_detail;
   let title: string;
   let body: string;
   if (decision === "NEEDS_CLARIFICATION") {
-    title = "This question can be read more than one way.";
-    body = "Add the metric, time range or grouping you mean, then run it again.";
+    title = detail?.clarification_question ?? "This question can be read more than one way.";
+    body = detail?.interpretations.length
+      ? "Pick the reading you mean, or rephrase the question."
+      : "Add the metric, time range or grouping you mean, then run it again.";
   } else if (decision === "BLOCKED_AUTHORITY") {
     title = "The data this question needs is outside your access.";
-    body = "The model declined before writing any SQL. Ask an administrator to add the source if you need it.";
+    body = detail?.missing_relationships.length
+      ? "No authorized relationship connects the tables below. Declare how they join on the connection, then ask again."
+      : "The model declined before writing any SQL. Ask an administrator to add the source if you need it.";
   } else if (decision === "BLOCKED_POLICY") {
     title = "This request is not allowed by the workspace policy.";
     body = "Only read-only questions can be answered here.";
@@ -273,6 +309,32 @@ function Explanation({ run }: { run: RunRecord }) {
     <div className={`callout callout-${tone}`}>
       <strong>{title}</strong> {body}
       {run.model_reason_code && <code className="reason">{run.model_reason_code}</code>}
+      {detail?.explanation && <span className="callout-detail">{detail.explanation}</span>}
+      {detail && detail.missing_relationships.length > 0 && (
+        <ul className="missing-joins">
+          {detail.missing_relationships.map((item) => (
+            <li key={`${item.from_table}-${item.to_table}`}>
+              <code>{item.from_table}</code> and <code>{item.to_table}</code>
+            </li>
+          ))}
+        </ul>
+      )}
+      {decision === "BLOCKED_AUTHORITY" && run.connection_id !== "governed" && (
+        <button type="button" className="button ghost small callout-action" onClick={onManageConnections}>
+          Open relationships
+        </button>
+      )}
+      {decision === "NEEDS_CLARIFICATION" && detail && detail.interpretations.length > 0 && (
+        <ul className="interpretations">
+          {detail.interpretations.map((reading) => (
+            <li key={reading}>
+              <button type="button" className="interpretation" onClick={() => onAsk(`${run.question}\n\nI mean: ${reading}`)}>
+                {reading}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

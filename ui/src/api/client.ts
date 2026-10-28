@@ -1,10 +1,13 @@
 import type {
+  ConnectionRelationships,
   ConnectionSummary,
   ConnectionTestResult,
   ConnectorType,
+  DeclaredRelationship,
   DriverInstallResult,
   IntrospectedTable,
   Preset,
+  RelationshipDeclaration,
   RunRecord,
   RunSummary,
   SchemaResponse,
@@ -89,4 +92,16 @@ export const api = {
     request<ConnectionTestResult>(`/api/connections/${encodeURIComponent(id)}/test`, { method: "POST" }),
   connectionTables: (id: string) => request<IntrospectedTable[]>(`/api/connections/${encodeURIComponent(id)}/tables`),
   deleteConnection: (id: string) => request<void>(`/api/connections/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  relationships: (id: string) =>
+    request<ConnectionRelationships>(`/api/connections/${encodeURIComponent(id)}/relationships`),
+  declareRelationship: (id: string, declaration: RelationshipDeclaration) =>
+    request<DeclaredRelationship>(`/api/connections/${encodeURIComponent(id)}/relationships`, {
+      method: "POST",
+      body: JSON.stringify(declaration),
+    }),
+  removeRelationship: (id: string, relationshipId: string) =>
+    request<void>(
+      `/api/connections/${encodeURIComponent(id)}/relationships/${encodeURIComponent(relationshipId)}`,
+      { method: "DELETE" },
+    ),
 };

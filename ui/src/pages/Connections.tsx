@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { api, type ConnectionInput } from "../api/client";
+import { Relationships } from "../components/Relationships";
 import { KIND_LABEL, formatCount, formatMs, relativeTime } from "../format";
 import type { ConnectionSummary, ConnectionTestResult, ConnectorType, DriverInstallResult, IntrospectedTable } from "../types";
 
@@ -151,8 +152,9 @@ function ConnectionDetail({
         </p>
       ) : (
         <p className="panel-note">
-          Saved connections can be tested and browsed. Questions still run against the governed source until this
-          connection gets a reviewed catalog and access policy.
+          {connection.queryable
+            ? "Questions can run on this connection. They read its schema each time and pass the same policy, access and cost checks."
+            : "This connection can be tested and its tables browsed. Questions run on PostgreSQL connections for now."}
         </p>
       )}
 
@@ -208,6 +210,8 @@ function ConnectionDetail({
           )}
         </div>
       )}
+
+      {!connection.built_in && connection.queryable && <Relationships connectionId={connection.id} tables={tables} />}
 
       <h3 className="panel-title">Tables {tables && <span className="muted">{tables.length}</span>}</h3>
       {tables === null && !error && <p className="panel-note">Reading the schema…</p>}

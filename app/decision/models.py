@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.generation.decision_contract import DecisionReasonCode, DecisionType
+from app.generation.decision_contract import DecisionDetail, DecisionReasonCode, DecisionType
 from app.governance.context import GovernedContext
 from app.observability.run_trace import RunTrace
 
@@ -31,7 +31,10 @@ class DecisionApplicationResult(BaseModel):
 
     model_decision: DecisionType | None = None
     model_reason_code: DecisionReasonCode | None = None
+    model_detail: DecisionDetail | None = None
     proposed_sql: str | None = None
+    # SQL the runtime rejected before the repair round replaced it.
+    repaired_from_sql: str | None = None
     proposal_source: ProposalSource
     provider: str | None = None
     model: str | None = None

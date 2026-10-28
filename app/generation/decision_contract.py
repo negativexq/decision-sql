@@ -2,9 +2,8 @@
 
 """Canonical production decision contract.
 
-The prompt bytes are intentionally kept identical to the accepted Candidate C
-contract.  Benchmark adapters may import this module, but product code never
-depends on the benchmark package.
+The prompt bytes are pinned by hash: any wording change is a contract change and
+must update ``PRODUCTION_DECISION_CONTRACT_HASH`` deliberately.
 """
 
 from __future__ import annotations
@@ -13,21 +12,21 @@ import hashlib
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
-PRODUCTION_DECISION_CONTRACT_VERSION = "CANDIDATE_C"
+PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "3fb439e68cc158db6da5ea4bea31085d00776eb9573e5d743522922f74fb5587"
+    "9a9f9045ec301daf4cab59b0da2b40d1527d6faf0ebc13948325d7357e399638"
 )
 
 
-# This is the exact accepted Candidate C prompt.  Keep the source in the
-# product package so the production dependency direction is unambiguous.
-_CANDIDATE_C_PROMPT = r"""# Decision-SQL governed context instructions v1
+# V2 keeps Candidate C's governance rules and adds the explanation fields, so a
+# refusal or clarification tells the user what is missing instead of only a code.
+_DECISION_PROMPT = r"""# Decision-SQL governed context instructions v2
 
-You are answering one independent Decision-SQL benchmark question. Use only the question and the complete `GOVERNED_CONTEXT_V1` supplied with it.
+You are answering one question a user asked about their own database. Use only the question and the complete `GOVERNED_CONTEXT_V1` supplied with it.
 
 ## Governance rules
 
@@ -36,6 +35,7 @@ You are answering one independent Decision-SQL benchmark question. Use only the 
 - If answering the request requires a relationship that is not authorized, return `BLOCKED_AUTHORITY` and no SQL.
 - If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.
 - If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.
+- Call only the SQL functions listed in `policy.allowed_functions`. Operators such as `||`, `LIKE`, `ILIKE`, arithmetic, comparisons, `CASE`, and `::` casts are not functions and are allowed. If a transformation has no listed function, build it from listed functions and operators.
 
 ## Typed JSON scalar semantics
 
@@ -53,14 +53,18 @@ Allowed decisions are exactly:
 - `NEEDS_CLARIFICATION`: materially different interpretations remain unresolved.
 - `BLOCKED_POLICY`: the requested operation violates the visible read-only policy.
 
-Return one JSON object with exactly these four fields:
+Return one JSON object with exactly these eight fields:
 
 ```json
 {
   "case_id": "the supplied case identifier",
   "decision": "ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY",
   "sql": "one PostgreSQL SELECT statement or null",
-  "reason_code": null
+  "reason_code": null,
+  "explanation": null,
+  "missing_relationships": null,
+  "clarification_question": null,
+  "interpretations": null
 }
 ```
 
@@ -70,24 +74,33 @@ For `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` state
 
 The final SQL projection is part of the answer. Return only the fields requested by the question and visible task semantics. Do not add descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. Fields used only to filter, join, group, order, qualify, or calculate an intermediate value must not appear automatically. When the question names output fields in order, return them in that order. SQL aliases do not change semantic identity, and row ordering is separate from column ordering.
 
-For `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: "MISSING_AUTHORIZED_RELATIONSHIP"`.
+For `ANSWER`, `explanation`, `missing_relationships`, `clarification_question`, and `interpretations` must all be `null`.
 
-For `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: "AMBIGUOUS_SEMANTICS"`.
+For every other decision, `explanation` is one or two plain sentences, in the language of the question, that say exactly what prevents an answer. Name the tables, columns, or wording involved.
 
-For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`.
+For `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: "MISSING_AUTHORIZED_RELATIONSHIP"`. In `missing_relationships`, list each pair of physical tables from the context that would need an authorized relationship, as `{"from_table": "...", "to_table": "..."}`. `clarification_question` and `interpretations` must be `null`.
+
+For `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: "AMBIGUOUS_SEMANTICS"`. `clarification_question` is the single question the user can answer to resolve the ambiguity. `interpretations` lists two to four materially different readings, each one sentence specific enough to answer without further questions. `missing_relationships` must be `null`.
+
+For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`. `missing_relationships`, `clarification_question`, and `interpretations` must be `null`.
 
 The only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.
 
-The database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each case is independent: do not use memory from another case and do not expect benchmark feedback.
+The database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request.
+
+
+## Runtime rejection
+
+A later message may report that the runtime rejected the SQL you proposed, with the stage, code, and message of the rejection. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the rejection requires and keep the meaning of the answer. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
 
 
 ## Final contract check before emitting a decision
 
 1. Meaning: what exact population, grouping, measure, filters, time range, and projection does the question request? Clarify only if one of these material choices is still unresolved in the visible governed context.
 2. Authority: is the meaning clear, but a needed relation or path absent from `authorized_relationships`? If so, return `BLOCKED_AUTHORITY`. Do not use a technically visible table or a matching column as authorization.
-3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. Use the governed duration formula rather than counting events, and retain required governed status or decision filters.
+3. Semantics: does each aggregate operate at its native grain? Use existence or key-preserving logic when a qualifying child could duplicate a parent measure. When the context supplies metrics, business rules, or temporal rules, apply them as written and retain the filters they require.
 
-Do not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy merely because the BASE data does not expose the difference.
+Do not turn a plausible schema interpretation into a business rule. Do not omit a governed predicate or replace a governed measure with a convenient proxy.
 """
 
 
@@ -107,6 +120,32 @@ class DecisionReasonCode(StrEnum):
     NO_REASON = "NO_REASON"
 
 
+_EXPLANATION_LIMIT = 600
+_INTERPRETATION_LIMIT = 300
+_MAX_INTERPRETATIONS = 4
+_MAX_MISSING_RELATIONSHIPS = 6
+
+
+class MissingRelationship(BaseModel):
+    """A table pair the model says would need an authorized relationship."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    from_table: str = Field(max_length=200)
+    to_table: str = Field(max_length=200)
+
+
+class DecisionDetail(BaseModel):
+    """Model-written explanation of a non-answer. Display text only: it never grants authority."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    explanation: str | None = None
+    missing_relationships: tuple[MissingRelationship, ...] = ()
+    clarification_question: str | None = None
+    interpretations: tuple[str, ...] = ()
+
+
 class ProductionDecision(BaseModel):
     """Untrusted, single-response model decision with optional SQL."""
 
@@ -116,6 +155,28 @@ class ProductionDecision(BaseModel):
     decision: DecisionType
     sql: str | None = None
     reason_code: DecisionReasonCode | None = None
+    explanation: str | None = None
+    missing_relationships: tuple[MissingRelationship, ...] | None = None
+    clarification_question: str | None = None
+    interpretations: tuple[str, ...] | None = None
+
+    @field_validator("explanation", "clarification_question", mode="before")
+    @classmethod
+    def _bound_text(cls, value: Any) -> Any:
+        return _bounded(value, _EXPLANATION_LIMIT)
+
+    @field_validator("interpretations", mode="before")
+    @classmethod
+    def _bound_interpretations(cls, value: Any) -> Any:
+        if not isinstance(value, list | tuple):
+            return value
+        items = [_bounded(item, _INTERPRETATION_LIMIT) for item in value]
+        return [item for item in items if item][:_MAX_INTERPRETATIONS]
+
+    @field_validator("missing_relationships", mode="before")
+    @classmethod
+    def _bound_relationships(cls, value: Any) -> Any:
+        return value[:_MAX_MISSING_RELATIONSHIPS] if isinstance(value, list | tuple) else value
 
     @model_validator(mode="after")
     def validate_contract(self) -> ProductionDecision:
@@ -132,24 +193,61 @@ class ProductionDecision(BaseModel):
             raise ValueError(f"{self.decision.value} requires its canonical reason_code and no sql")
         return self
 
+    @property
+    def detail(self) -> DecisionDetail | None:
+        """The explanation fields that belong to this decision.
+
+        Fields the contract assigns to another decision are dropped rather than
+        rejected: they are display text, and a misplaced one is no reason to
+        discard an otherwise valid decision.
+        """
+        if self.decision is DecisionType.ANSWER:
+            return None
+        clarifying = self.decision is DecisionType.NEEDS_CLARIFICATION
+        return DecisionDetail(
+            explanation=self.explanation,
+            missing_relationships=(
+                self.missing_relationships or ()
+                if self.decision is DecisionType.BLOCKED_AUTHORITY
+                else ()
+            ),
+            clarification_question=self.clarification_question if clarifying else None,
+            interpretations=(self.interpretations or ()) if clarifying else (),
+        )
+
+
+def _bounded(value: Any, limit: int) -> Any:
+    if not isinstance(value, str):
+        return value
+    text = " ".join(value.split())
+    return text[:limit] or None
+
 
 def production_decision_prompt() -> str:
-    actual = hashlib.sha256(_CANDIDATE_C_PROMPT.encode("utf-8")).hexdigest()
+    actual = hashlib.sha256(_DECISION_PROMPT.encode("utf-8")).hexdigest()
     if actual != PRODUCTION_DECISION_CONTRACT_HASH:
         raise RuntimeError(f"PRODUCTION_DECISION_CONTRACT_HASH_MISMATCH:{actual}")
-    return _CANDIDATE_C_PROMPT
+    return _DECISION_PROMPT
 
 
 def production_decision_schema() -> dict[str, Any]:
-    """Return the flat Candidate C wire schema used by the provider boundary."""
-    # Keep this provider-compatible schema flat.  Pydantic remains the
-    # semantic validator after admission; this shape is also the historical
-    # benchmark wire protocol, now owned by the product module.
+    """Return the provider-facing wire schema for one decision."""
+    # Strict structured output needs every field listed as required; optional
+    # fields are expressed as nullable.  Pydantic remains the semantic validator.
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Decision-SQL provider-safe submission",
         "type": "object",
-        "required": ["case_id", "decision", "sql", "reason_code"],
+        "required": [
+            "case_id",
+            "decision",
+            "sql",
+            "reason_code",
+            "explanation",
+            "missing_relationships",
+            "clarification_question",
+            "interpretations",
+        ],
         "additionalProperties": False,
         "properties": {
             "case_id": {"type": "string"},
@@ -162,10 +260,25 @@ def production_decision_schema() -> dict[str, Any]:
                 "type": ["string", "null"],
                 "enum": [item.value for item in DecisionReasonCode] + [None],
             },
+            "explanation": {"type": ["string", "null"]},
+            "missing_relationships": {
+                "type": ["array", "null"],
+                "items": {
+                    "type": "object",
+                    "required": ["from_table", "to_table"],
+                    "additionalProperties": False,
+                    "properties": {
+                        "from_table": {"type": "string"},
+                        "to_table": {"type": "string"},
+                    },
+                },
+            },
+            "clarification_question": {"type": ["string", "null"]},
+            "interpretations": {"type": ["array", "null"], "items": {"type": "string"}},
         },
     }
 
 
 def production_decision_contract_hash() -> str:
-    """Hash of the frozen Candidate C prompt; a change here is a contract change."""
+    """Hash of the pinned decision prompt; a change here is a contract change."""
     return hashlib.sha256(production_decision_prompt().encode("utf-8")).hexdigest()

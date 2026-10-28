@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass
 from threading import Lock
 
+import psycopg
 from sqlalchemy import URL, Engine, create_engine
 
 from app.catalog.models import SchemaCatalog
@@ -25,10 +26,23 @@ from app.metadata.connectors import (
 from app.metadata.drivers import load_connector
 from app.metadata.drivers.install import DriverInstallResult, install_driver
 from app.metadata.drivers.postgres import PostgresConnector
+from app.metadata.relationships import (
+    ConnectionRelationships,
+    DeclaredRelationship,
+    InMemoryRelationshipStore,
+    RelationshipDeclaration,
+    RelationshipRejectedError,
+    RelationshipStore,
+    candidate_relationships,
+    check_declaration,
+    foreign_keys,
+    merge_declared,
+)
 from app.metadata.secrets import SecretBox
-from app.metadata.store import ConnectionStore
+from app.metadata.store import ConnectionStore, StoredConnection
 
 GOVERNED_CONNECTION_ID = "governed"
+_MIN_MATCH_RATE = 0.5
 ANONYMOUS_ACTOR = "anonymous"
 _ACTOR = re.compile(r"^[A-Za-z0-9._@+-]{1,120}$")
 
@@ -65,8 +79,10 @@ class ConnectionService:
         secrets: SecretBox,
         governed_engine: Engine,
         allow_driver_install: bool = False,
+        relationships: RelationshipStore | None = None,
     ) -> None:
         self.store = store
+        self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
         self.governed_engine = governed_engine
         self.allow_driver_install = allow_driver_install
@@ -124,10 +140,93 @@ class ConnectionService:
             engine = self._engines.pop(connection_id, None)
         if engine is not None:
             engine.dispose()
+        # The SQL store cascades; the in-memory one needs the explicit cleanup.
+        for relationship in self.relationship_store.list(connection_id):
+            self.relationship_store.delete(connection_id, relationship.id)
         return self.store.delete(connection_id)
 
     def question_source(self, connection_id: str) -> QuestionSource | None:
         """Read the connection's schema now, so the question sees its current tables."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        config = item.config()
+        catalog = merge_declared(
+            connector.catalog(config, password), self.relationship_store.list(item.id)
+        )
+        return QuestionSource(
+            connection_id=item.id,
+            engine=self._reader_engine(item.id, config, password),
+            catalog=catalog,
+            reader_role=config.username,
+        )
+
+    def relationships(self, connection_id: str) -> ConnectionRelationships | None:
+        """Foreign keys, declared relationships, and checked suggestions for one source."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        config = item.config()
+        catalog = connector.catalog(config, password)
+        declared = self.relationship_store.list(item.id)
+        candidates = candidate_relationships(
+            merge_declared(catalog, declared), connector.unique_keys(config, password)
+        )
+        rates = connector.match_rates(
+            config,
+            password,
+            [((c.from_table, c.from_column), (c.to_table, c.to_column)) for c in candidates],
+        )
+        suggestions = sorted(
+            (
+                candidate.model_copy(update={"match_rate": rate})
+                for candidate, rate in zip(candidates, rates, strict=True)
+                # Matching names whose values mostly do not match are not a relationship.
+                if rate is None or rate >= _MIN_MATCH_RATE
+            ),
+            key=lambda item: -(item.match_rate or 0.0),
+        )
+        return ConnectionRelationships(
+            foreign_keys=foreign_keys(catalog), declared=declared, suggestions=suggestions
+        )
+
+    def declare_relationship(
+        self, connection_id: str, declaration: RelationshipDeclaration, actor: str
+    ) -> DeclaredRelationship | None:
+        """Save a relationship after checking names, types, and that the target is unique."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        config = item.config()
+        catalog = connector.catalog(config, password)
+        declared = self.relationship_store.list(item.id)
+        checked = check_declaration(catalog, declaration, [*foreign_keys(catalog), *declared])
+        target = (checked.to_table, checked.to_column)
+        if target not in connector.unique_keys(config, password):
+            try:
+                repeated = connector.has_duplicates(config, password, *target)
+            except psycopg.Error as error:
+                raise RelationshipRejectedError(
+                    f"Could not confirm that {checked.to_table}.{checked.to_column} is unique "
+                    "within the time limit. Add a unique index on it, then declare again."
+                ) from error
+            if repeated:
+                raise RelationshipRejectedError(
+                    f"{checked.to_table}.{checked.to_column} has repeated values, so one "
+                    f"{checked.from_table} row could match several {checked.to_table} rows. "
+                    "Point the relationship at a column whose values are unique."
+                )
+        return self.relationship_store.create(item.id, checked, actor)
+
+    def remove_relationship(self, connection_id: str, relationship_id: str) -> bool:
+        return self.relationship_store.delete(connection_id, relationship_id)
+
+    def _postgres(
+        self, connection_id: str
+    ) -> tuple[StoredConnection, PostgresConnector, str | None] | None:
         item = self.store.get(connection_id)
         if item is None:
             return None
@@ -139,14 +238,7 @@ class ConnectionService:
         connector = self._connector(item.kind)
         if not isinstance(connector, PostgresConnector):
             raise ConnectorUnavailableError("This connection does not support questions.")
-        config = item.config()
-        password = self._password(item.password_encrypted)
-        return QuestionSource(
-            connection_id=item.id,
-            engine=self._reader_engine(item.id, config, password),
-            catalog=connector.catalog(config, password),
-            reader_role=config.username,
-        )
+        return item, connector, self._password(item.password_encrypted)
 
     def _reader_engine(
         self, connection_id: str, config: ConnectionConfig, password: str | None

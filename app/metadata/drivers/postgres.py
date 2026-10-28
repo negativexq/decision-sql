@@ -3,6 +3,7 @@ from __future__ import annotations
 from time import perf_counter
 
 import psycopg
+from psycopg import sql
 
 from app.catalog.models import (
     ColumnMetadata,
@@ -133,6 +134,68 @@ class PostgresConnector:
                 (schema, schema),
             ).fetchall()
         return build_catalog(columns, primary_keys, foreign_keys)
+
+    def unique_keys(self, config: ConnectionConfig, password: str | None) -> set[tuple[str, str]]:
+        """Columns that are unique on their own: a single-column primary key or unique index."""
+        schema = config.schema_name or "public"
+        with self._connect(config, password) as connection:
+            rows = connection.execute(
+                "SELECT c.relname, a.attname FROM pg_index i "
+                "JOIN pg_class c ON c.oid = i.indrelid "
+                "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                "JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = i.indkey[0] "
+                "WHERE i.indisunique AND i.indnkeyatts = 1 AND i.indpred IS NULL "
+                "AND n.nspname = %s",
+                (schema,),
+            ).fetchall()
+        return {(table, column) for table, column in rows}
+
+    def has_duplicates(
+        self, config: ConnectionConfig, password: str | None, table: str, column: str
+    ) -> bool:
+        """True when a non-null value repeats; bounded by the session's statement timeout."""
+        schema = config.schema_name or "public"
+        query = sql.SQL(
+            "SELECT EXISTS (SELECT 1 FROM {table} WHERE {column} IS NOT NULL "
+            "GROUP BY {column} HAVING COUNT(*) > 1)"
+        ).format(table=sql.Identifier(schema, table), column=sql.Identifier(column))
+        with self._connect(config, password) as connection:
+            row = connection.execute(query).fetchone()
+        return bool(row and row[0])
+
+    def match_rates(
+        self,
+        config: ConnectionConfig,
+        password: str | None,
+        pairs: list[tuple[tuple[str, str], tuple[str, str]]],
+        sample: int = 1000,
+    ) -> list[float | None]:
+        """Share of sampled non-null source values present in the target column, per pair.
+
+        None when the source column is empty or the check fails or times out.
+        """
+        schema = config.schema_name or "public"
+        rates: list[float | None] = []
+        with self._connect(config, password) as connection:
+            for (source_table, source_column), (target_table, target_column) in pairs:
+                query = sql.SQL(
+                    "SELECT COUNT(*), COUNT(*) FILTER (WHERE EXISTS "
+                    "(SELECT 1 FROM {target_table} t WHERE t.{target_column} = s.v)) "
+                    "FROM (SELECT {source_column} AS v FROM {source_table} "
+                    "WHERE {source_column} IS NOT NULL LIMIT %s) s"
+                ).format(
+                    source_table=sql.Identifier(schema, source_table),
+                    source_column=sql.Identifier(source_column),
+                    target_table=sql.Identifier(schema, target_table),
+                    target_column=sql.Identifier(target_column),
+                )
+                try:
+                    row = connection.execute(query, (sample,)).fetchone()
+                except psycopg.Error:
+                    rates.append(None)
+                    continue
+                rates.append(round(row[1] / row[0], 4) if row and row[0] else None)
+        return rates
 
 
 def build_catalog(

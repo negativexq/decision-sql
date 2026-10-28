@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 
 from app.catalog.default import build_default_catalog
 from app.db.models import Base
+from app.sql.functions import model_visible_functions
 from app.sql.models import PolicyCode, SqlCandidate, SqlSafetyStatus
 from app.sql.parser import SQLParser
 from app.sql.policy import SQLPolicy
@@ -92,6 +93,67 @@ def test_function_policy_remains_deny_first() -> None:
         assert rejection is not None
         assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
         assert rejection.object == name
+
+
+def test_pure_text_and_numeric_functions_are_allowed() -> None:
+    sql_policy = policy()
+    queries = (
+        "SELECT LOWER(name), UPPER(name), INITCAP(name), LENGTH(name) FROM products",
+        "SELECT SUBSTRING(name FROM 1 FOR 3), SUBSTR(name, 1, 3), LEFT(name, 2), RIGHT(name, 2) "
+        "FROM products",
+        "SELECT BTRIM(name), LTRIM(name), REPLACE(name, 'a', 'b'), POSITION('a' IN name), "
+        "STRPOS(name, 'a') FROM products",
+        "SELECT CONCAT(name, '!'), SPLIT_PART(name, ' ', 1), LPAD(name, 10, ' ') FROM products",
+        "SELECT FLOOR(unit_price), CEIL(unit_price), TRUNC(unit_price), SIGN(unit_price) "
+        "FROM products",
+        "SELECT JSONB_OBJECT_AGG(name, unit_price) FROM products",
+    )
+
+    for query in queries:
+        assert sql_policy.validate(parsed(query)) is None, query
+
+    for query in (
+        "SELECT REGEXP_REPLACE(name, 'a+', 'b') FROM products",
+        "SELECT MD5(name) FROM products",
+    ):
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None
+        assert rejection.code is PolicyCode.FORBIDDEN_FUNCTION
+
+
+def test_every_function_shown_to_the_model_passes_the_policy() -> None:
+    """The model sees ``model_visible_functions``; none of them may be rejected at runtime."""
+    special = {
+        "CURRENT_DATE": "CURRENT_DATE",
+        "CURRENT_TIME": "CURRENT_TIME",
+        "CURRENT_TIMESTAMP": "CURRENT_TIMESTAMP",
+        "LOCALTIME": "LOCALTIME",
+        "LOCALTIMESTAMP": "LOCALTIMESTAMP",
+        "ARRAY": "ARRAY[1, 2]",
+        "CAST": "CAST(unit_price AS INTEGER)",
+        "EXISTS": "EXISTS(SELECT 1 FROM products)",
+        "EXTRACT": "EXTRACT(YEAR FROM CURRENT_DATE)",
+        "POSITION": "POSITION('a' IN name)",
+        "MODE": "MODE() WITHIN GROUP (ORDER BY name)",
+        "PERCENTILE_CONT": "PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY unit_price)",
+        "PERCENTILE_DISC": "PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY unit_price)",
+    }
+    sql_policy = policy()
+    for name in model_visible_functions():
+        call = special.get(name)
+        candidates = (
+            [call] if call else [f"{name}(name)", f"{name}(name, 1)", f"{name}(name, 1, 2)"]
+        )
+        for candidate in candidates:
+            try:
+                statement = parsed(f"SELECT {candidate} FROM products")
+            except Exception:  # noqa: BLE001 - try the next arity
+                continue
+            break
+        else:
+            raise AssertionError(f"no parsable call for {name}")
+        rejection = sql_policy.validate(statement)
+        assert rejection is None or rejection.code is not PolicyCode.FORBIDDEN_FUNCTION, name
 
 
 def test_temporal_policy_distinguishes_stable_context_from_volatile_values() -> None:

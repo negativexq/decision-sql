@@ -38,6 +38,7 @@ _AUDIT_FIELDS = (
     "provider",
     "model",
     "proposed_sql",
+    "repaired_from_sql",
     "columns",
     "row_count",
     "truncated",
@@ -105,6 +106,9 @@ class SqlRunStore:
         values: dict[str, Any] = record.model_dump(mode="json", include=set(_AUDIT_FIELDS))
         values["model_context"] = (
             record.model_context.model_dump(mode="json") if record.model_context else None
+        )
+        values["model_detail"] = (
+            record.model_detail.model_dump(mode="json") if record.model_detail else None
         )
         values["trace"] = record.trace.model_dump(mode="json")
         values["created_at"] = datetime.fromisoformat(record.created_at)

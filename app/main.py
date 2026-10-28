@@ -6,6 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router
 from app.config import get_settings
 from app.db.session import build_engine, build_reader_engine
+from app.metadata.relationships import (
+    InMemoryRelationshipStore,
+    RelationshipStore,
+    SqlRelationshipStore,
+)
 from app.metadata.secrets import SecretBox
 from app.metadata.service import ConnectionService
 from app.metadata.store import (
@@ -26,10 +31,12 @@ configure_tracing(settings)
 reader_engine = build_reader_engine(settings)
 run_store: RunStore
 connection_store: ConnectionStore
+relationship_store: RelationshipStore
 if settings.metadata_database_url:
     metadata_engine = build_engine(settings.metadata_database_url)
     run_store = SqlRunStore(metadata_engine)
     connection_store = SqlConnectionStore(metadata_engine)
+    relationship_store = SqlRelationshipStore(metadata_engine)
 else:
     logger.warning(
         "DECISION_SQL_METADATA_DATABASE_URL is not set: audit log and connections are "
@@ -37,6 +44,7 @@ else:
     )
     run_store = InMemoryRunStore()
     connection_store = InMemoryConnectionStore()
+    relationship_store = InMemoryRelationshipStore()
 
 app = FastAPI(title="DecisionSQL", version="0.1.0")
 operator_application: OperatorApplication = build_operator_application(
@@ -47,6 +55,7 @@ connection_service = ConnectionService(
     SecretBox(settings.secret_key),
     reader_engine,
     allow_driver_install=settings.allow_driver_install,
+    relationships=relationship_store,
 )
 app.add_middleware(
     CORSMiddleware,

@@ -260,6 +260,23 @@ class DecisionSqlApplication:
                 ],
             },
         )
+        expanded = None
+        if replay_decision is not None:
+            # Frozen replays must stay exactly as recorded.
+            collector.record_stage(
+                "context_expansion", TraceStageStatus.SKIPPED, reason=proposal_source.value
+            )
+        elif not self.settings.context_expansion_enabled:
+            collector.record_stage(
+                "context_expansion", TraceStageStatus.SKIPPED, reason="EXPANSION_NOT_ALLOWED"
+            )
+        else:
+            expanded = await self._expand_context(question, model_context, decision, collector)
+        if expanded is not None:
+            model_context, proposal = expanded
+            model_context_hash = governed_context_hash(model_context)
+            schema_text = serialize_governed_context(model_context)
+            decision = proposal.decision
         if decision.decision is not DecisionType.ANSWER:
             return self._non_answer(
                 decision, proposal, proposal_source, model_context, model_context_hash, collector
@@ -359,6 +376,79 @@ class DecisionSqlApplication:
             execution_authority=authority,
         )
 
+    async def _expand_context(
+        self,
+        question: str,
+        model_context: GovernedContext,
+        decision: ProductionDecision,
+        collector: RunTraceCollector,
+    ) -> tuple[GovernedContext, ProductionDecisionProposal] | None:
+        """Add the omitted tables the model asked for and ask once more.
+
+        The model can only name tables from ``other_tables``; the runtime rebuilds
+        the context from the catalog, so authority still comes from the catalog
+        and the relationships it holds, never from the model's request.
+        """
+        omitted = set(model_context.other_tables)
+        requested = sorted(
+            {
+                table
+                for item in (decision.detail.missing_relationships if decision.detail else ())
+                for table in (item.from_table, item.to_table)
+                if table in omitted
+            }
+        )
+        if decision.decision is not DecisionType.BLOCKED_AUTHORITY or not requested:
+            collector.record_stage(
+                "context_expansion", TraceStageStatus.SKIPPED, reason="NOT_NEEDED"
+            )
+            return None
+        started = perf_counter()
+        base = {"requested_tables": requested}
+        try:
+            context = self.resolver.resolve(
+                question, mode=SchemaContextMode.RETRIEVED, include=requested
+            )
+            expanded = governed_context_from_schema_context(context)
+            proposal = await self.provider.propose_decision(
+                question, serialize_governed_context(expanded)
+            )
+        except Exception as error:
+            collector.record_stage(
+                "context_expansion",
+                TraceStageStatus.FAILED,
+                reason="EXPANSION_FAILURE",
+                metadata={**base, "error_type": type(error).__name__},
+                duration_ms=(perf_counter() - started) * 1000,
+            )
+            return None
+        if proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID:
+            collector.record_stage(
+                "context_expansion",
+                TraceStageStatus.FAILED,
+                reason="CASE_ID_MISMATCH",
+                metadata=base,
+                duration_ms=proposal.latency_ms,
+            )
+            return None
+        collector.record_stage(
+            "context_expansion",
+            TraceStageStatus.PASS,
+            reason=proposal.decision.decision.value,
+            metadata={
+                **base,
+                "context_hash": governed_context_hash(expanded),
+                "entity_count": len(expanded.schema_catalog),
+                "model_decision": proposal.decision.decision.value,
+                "prompt_tokens": proposal.prompt_tokens,
+                "completion_tokens": proposal.completion_tokens,
+                "reasoning_tokens": proposal.reasoning_tokens,
+                "cached_prompt_tokens": proposal.cached_prompt_tokens,
+            },
+            duration_ms=proposal.latency_ms,
+        )
+        return expanded, proposal
+
     async def _repair(
         self,
         question: str,
@@ -427,6 +517,7 @@ class DecisionSqlApplication:
                     "generation",
                     "proposal_replay",
                     "decision_admission",
+                    "context_expansion",
                     "repair",
                     "response",
                 }

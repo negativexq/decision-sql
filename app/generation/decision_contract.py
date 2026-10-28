@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "676f23103a50f5585a9b84f5a93c64bf88513b6989cf3c0df569d2c14ded92a9"
+    "c11ac62ebf58c31e94895a6b9a49877bb8bc4f7eaafbfdd1d52eb1950ebcf98a"
 )
 
 
@@ -92,7 +92,11 @@ For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`. `mi
 
 The only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.
 
-The database context is complete at the database level. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request.
+The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request.
+
+## Tables outside the context
+
+When the context has `other_tables`, the database has more tables than the ones detailed, and those are their names. A name is not authority: never reference a table that is not in `schema_catalog`. If the question needs data that none of the detailed tables holds and one of `other_tables` likely holds it, return `BLOCKED_AUTHORITY` and list in `missing_relationships` the detailed table it would join to and that table from `other_tables`. The runtime may then supply its details and ask again. When `other_tables` is absent, every table in the database is detailed.
 
 
 ## Runtime rejection

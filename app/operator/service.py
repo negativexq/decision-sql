@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -48,13 +49,17 @@ class _ContextOnlyResolver(SchemaContextResolver):
             max_columns_per_table=base.max_columns_per_table,
             relationship_depth=base.relationship_depth,
             full_context_max_tables=base.full_context_max_tables,
+            neighbor_limit=base.neighbor_limit,
         )
         self._question = question
 
     def resolve(
-        self, question: str, mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED
+        self,
+        question: str,
+        mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED,
+        include: Iterable[str] = (),
     ) -> SchemaContext:
-        return super().resolve(self._question, mode)
+        return super().resolve(self._question, mode, include)
 
 
 class OperatorApplication:
@@ -81,6 +86,7 @@ class OperatorApplication:
             max_columns_per_table=self.settings.max_columns_per_table,
             relationship_depth=self.settings.relationship_depth,
             full_context_max_tables=self.settings.full_context_max_tables,
+            neighbor_limit=self.settings.context_neighbor_tables,
         )
 
     @property

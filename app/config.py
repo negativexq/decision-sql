@@ -69,6 +69,14 @@ class Settings(BaseSettings):
     full_context_max_tables: int = Field(
         default=12, ge=0, validation_alias="DECISION_SQL_FULL_CONTEXT_MAX_TABLES"
     )
+    # Tables one relationship away from the selected ones, added beyond max_context_tables.
+    context_neighbor_tables: int = Field(
+        default=6, ge=0, validation_alias="DECISION_SQL_CONTEXT_NEIGHBOR_TABLES"
+    )
+    # One more model call with a table the model named from the omitted list.
+    context_expansion_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_CONTEXT_EXPANSION_ENABLED"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 

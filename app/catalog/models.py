@@ -120,3 +120,5 @@ class SchemaContext(BaseModel):
     relationships: tuple[RelevantRelationship, ...] = Field(default_factory=tuple)
     selected_columns: tuple[RelevantColumn, ...] = Field(default_factory=tuple)
     context_metadata: ContextMetadata
+    # Queryable tables left out of a bounded context, by name only, most relevant first.
+    omitted_tables: tuple[str, ...] = Field(default_factory=tuple)

@@ -120,6 +120,16 @@ class GovernedContext(BaseModel):
     business_rules: tuple[GovernedBusinessRule, ...] = Field(default_factory=tuple)
     temporal_rules: tuple[GovernedTemporalRule, ...] = Field(default_factory=tuple)
     policy: GovernedPolicy = Field(default_factory=GovernedPolicy)
+    # Names of tables this bounded context leaves out.  A name grants nothing: the
+    # model may only ask for the table, and the runtime decides whether to add it.
+    other_tables: tuple[str, ...] = Field(default_factory=tuple)
+
+    @model_serializer(mode="wrap")
+    def _omit_empty_other_tables(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if not self.other_tables:
+            data.pop("other_tables", None)
+        return data
 
 
 def governed_context_from_schema_context(
@@ -194,6 +204,7 @@ def governed_context_from_schema_context(
         authorized_relationships=tuple(
             sorted(relationships, key=lambda item: item.relationship_id)
         ),
+        other_tables=context.omitted_tables,
     )
 
 

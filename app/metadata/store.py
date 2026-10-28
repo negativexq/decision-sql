@@ -14,7 +14,12 @@ from uuid import uuid4
 
 from sqlalchemy import Engine, delete, func, insert, select, update
 
-from app.metadata.connectors import ConnectionConfig, ConnectionSummary, ConnectionTestResult
+from app.metadata.connectors import (
+    QUESTION_KINDS,
+    ConnectionConfig,
+    ConnectionSummary,
+    ConnectionTestResult,
+)
 from app.metadata.tables import audit_runs, connections
 from app.observability.run_trace import RunTrace
 from app.operator.models import RunRecord, RunSummary
@@ -160,7 +165,12 @@ class StoredConnection(ConnectionSummary):
         )
 
     def summary(self) -> ConnectionSummary:
-        return ConnectionSummary.model_validate(self.model_dump(exclude={"password_encrypted"}))
+        return ConnectionSummary.model_validate(
+            {
+                **self.model_dump(exclude={"password_encrypted"}),
+                "queryable": self.kind in QUESTION_KINDS,
+            }
+        )
 
 
 class DuplicateConnectionError(ValueError):
@@ -259,6 +269,7 @@ class SqlConnectionStore:
                 "has_password",
                 "built_in",
                 "governed",
+                "queryable",
                 "last_tested_at",
                 "last_test_ok",
                 "last_test_message",

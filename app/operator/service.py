@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -17,6 +18,7 @@ from app.generation.decision_contract import (
     ProductionDecision,
 )
 from app.generation.provider import LLMProvider, OpenAICompatibleProvider
+from app.metadata.service import GOVERNED_CONNECTION_ID, QuestionSource
 from app.metadata.store import InMemoryRunStore, RunStore
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.operator.models import (
@@ -31,6 +33,7 @@ from app.operator.models import (
     SourceDatabase,
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
+from app.semantics.measures import measure_catalog_from_schema
 from app.sql.service import SqlSafetyService
 
 
@@ -67,15 +70,18 @@ class OperatorApplication:
         self.engine = engine
         self.settings = settings
         self.catalog = catalog
-        self.resolver = SchemaContextResolver(
-            catalog,
-            top_k=settings.schema_top_k,
-            max_tables=settings.max_context_tables,
-            max_columns_per_table=settings.max_columns_per_table,
-            relationship_depth=settings.relationship_depth,
-            full_context_max_tables=settings.full_context_max_tables,
-        )
+        self.resolver = self._resolver(catalog)
         self.run_store: RunStore = run_store or InMemoryRunStore()
+
+    def _resolver(self, catalog: SchemaCatalog) -> SchemaContextResolver:
+        return SchemaContextResolver(
+            catalog,
+            top_k=self.settings.schema_top_k,
+            max_tables=self.settings.max_context_tables,
+            max_columns_per_table=self.settings.max_columns_per_table,
+            relationship_depth=self.settings.relationship_depth,
+            full_context_max_tables=self.settings.full_context_max_tables,
+        )
 
     @property
     def presets(self) -> tuple[DemoPreset, ...]:
@@ -117,18 +123,24 @@ class OperatorApplication:
         )
 
     async def run(
-        self, question: str, preset_id: str | None = None, actor: str = "anonymous"
+        self,
+        question: str,
+        preset_id: str | None = None,
+        actor: str = "anonymous",
+        source: QuestionSource | None = None,
     ) -> RunRecord:
         run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         collector = RunTraceCollector(run_id)
         collector.event("request.received", "Natural-language request received", "request")
         collector.record_stage("request", TraceStageStatus.PASS)
-        service, effective_question, source, replay = self._service_for(preset_id, question)
+        service, effective_question, proposal_source, replay = self._service_for(
+            preset_id, question, source
+        )
         service.safety_service.stage_recorder = collector
         result = await service.run(
             effective_question,
             collector,
-            proposal_source=source,
+            proposal_source=proposal_source,
             replay_decision=replay,
         )
         record = RunRecord(
@@ -160,8 +172,9 @@ class OperatorApplication:
             created_at=result.trace.started_at.isoformat(),
             trace=result.trace,
             actor=actor,
+            connection_id=source.connection_id if source is not None else GOVERNED_CONNECTION_ID,
         )
-        self.run_store.save(record)
+        await asyncio.to_thread(self.run_store.save, record)
         return record
 
     def list_runs(
@@ -226,12 +239,30 @@ class OperatorApplication:
         )
 
     def _service_for(
-        self, preset_id: str | None, question: str
+        self, preset_id: str | None, question: str, source: QuestionSource | None = None
     ) -> tuple[DecisionSqlApplication, str, ProposalSource, ProductionDecision | None]:
         preset = next((item for item in self.presets if item.id == preset_id), None)
         effective_question = preset.question if preset is not None else question
-        source = preset.mode if preset is not None else ProposalSource.LIVE_MODEL
+        mode = preset.mode if preset is not None else ProposalSource.LIVE_MODEL
         provider: LLMProvider = OpenAICompatibleProvider(self.settings)
+        if source is not None:
+            # A connected database: its live catalog is both the model context and the
+            # authority envelope; SQL runs read-only as the connection's own user.
+            resolver = self._resolver(source.catalog)
+            safety = SqlSafetyService(
+                source.engine,
+                settings=self.settings,
+                catalog=source.catalog,
+                reader_role=source.reader_role,
+                measure_catalog=measure_catalog_from_schema(source.catalog),
+                grain_normalization_enabled=True,
+            )
+            return (
+                DecisionSqlApplication(resolver, provider, safety, self.settings),
+                question,
+                ProposalSource.LIVE_MODEL,
+                None,
+            )
         resolver = self.resolver
         catalog = self.catalog
         replay: ProductionDecision | None = None
@@ -266,11 +297,13 @@ class OperatorApplication:
             settings=self.settings,
             catalog=catalog,
             stage_recorder=None,
+            measure_catalog=measure_catalog_from_schema(catalog),
+            grain_normalization_enabled=True,
         )
         return (
             DecisionSqlApplication(resolver, provider, safety, self.settings),
             effective_question,
-            source,
+            mode,
             replay,
         )
 

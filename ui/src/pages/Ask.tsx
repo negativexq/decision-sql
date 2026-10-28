@@ -37,8 +37,10 @@ export function Ask({
   const [presetId, setPresetId] = useState<string | undefined>();
   const input = useRef<HTMLTextAreaElement>(null);
   const source = connections.find((item) => item.id === sourceId) ?? connections.find((item) => item.governed);
-  // Only the governed source has the full policy, read-only and cost-gate path today.
-  const queryable = !source || source.governed;
+  // The server marks sources that have the full policy, read-only and cost-gate path.
+  const queryable = !source || source.queryable;
+  // Example questions are written for the governed demo schema.
+  const showStarters = !source || source.governed;
 
   useEffect(() => {
     setQuestion("");
@@ -94,7 +96,7 @@ export function Ask({
       {!queryable && source && (
         <div className="callout callout-warning" role="status">
           <strong>{source.name} is connected, but questions can't run on it yet.</strong> Its tables can be
-          browsed under Connections. Questions run on the governed source, where every query passes the
+          browsed under Connections. Questions run on PostgreSQL sources, where every query passes the
           policy, read-only and cost checks.
         </div>
       )}
@@ -107,7 +109,7 @@ export function Ask({
         <RunResult key={run.run_id} run={run} onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)} />
       )}
 
-      {!loading && !run && (
+      {!loading && !run && showStarters && (
         <section className="starters" aria-label="Example questions">
           <h2 className="section-title">Try a question</h2>
           <ul>

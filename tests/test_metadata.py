@@ -178,8 +178,8 @@ def test_saved_connection_never_returns_password() -> None:
     assert item.summary().has_password is True
 
 
-def test_questions_are_refused_on_connections_without_governed_execution(
-    client: TestClient,
+def test_questions_route_to_postgres_connections_and_refuse_other_kinds(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     unknown = client.post(
         "/api/playground/query", json={"question": "revenue", "connection_id": "nope"}
@@ -192,11 +192,35 @@ def test_questions_are_refused_on_connections_without_governed_execution(
     assert governed.status_code == 200
 
     service = app.dependency_overrides[get_connection_service]()
-    saved = service.store.create(
+    mysql = service.store.create(
+        ConnectionConfig.model_validate(_config(kind="mysql", name="Shop", port=3306)),
+        None,
+        "ayse@example.com",
+    )
+    postgres = service.store.create(
         ConnectionConfig.model_validate(_config(schema_name="public")), None, "ayse@example.com"
     )
+    queryable = {item["id"]: item["queryable"] for item in client.get("/api/connections").json()}
+    assert queryable == {"governed": True, mysql.id: False, postgres.id: True}
+
     refused = client.post(
-        "/api/playground/query", json={"question": "revenue", "connection_id": saved.id}
+        "/api/playground/query", json={"question": "revenue", "connection_id": mysql.id}
     )
     assert refused.status_code == 409
-    assert "governed source" in refused.json()["detail"]
+    assert "PostgreSQL connections" in refused.json()["detail"]
+
+    preset = client.post(
+        "/api/playground/query",
+        json={"question": "x", "preset_id": "policy_blocked", "connection_id": postgres.id},
+    )
+    assert preset.status_code == 400
+
+    def unreachable(connection_id: str) -> None:
+        raise OSError("connection refused")
+
+    monkeypatch.setattr(service, "question_source", unreachable)
+    failed = client.post(
+        "/api/playground/query", json={"question": "revenue", "connection_id": postgres.id}
+    )
+    assert failed.status_code == 502
+    assert "connection refused" not in failed.json()["detail"]

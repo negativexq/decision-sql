@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
+from threading import Lock
 
-from sqlalchemy import Engine
+from sqlalchemy import URL, Engine, create_engine
 
+from app.catalog.models import SchemaCatalog
 from app.metadata.connectors import (
+    QUESTION_KINDS,
     ConnectionConfig,
     ConnectionSummary,
     ConnectionTestResult,
@@ -20,6 +24,7 @@ from app.metadata.connectors import (
 )
 from app.metadata.drivers import load_connector
 from app.metadata.drivers.install import DriverInstallResult, install_driver
+from app.metadata.drivers.postgres import PostgresConnector
 from app.metadata.secrets import SecretBox
 from app.metadata.store import ConnectionStore
 
@@ -43,6 +48,16 @@ class DriverInstallDisabledError(PermissionError):
     pass
 
 
+@dataclass(frozen=True)
+class QuestionSource:
+    """A saved connection resolved for one question: its live catalog and a reader engine."""
+
+    connection_id: str
+    engine: Engine
+    catalog: SchemaCatalog
+    reader_role: str
+
+
 class ConnectionService:
     def __init__(
         self,
@@ -55,6 +70,8 @@ class ConnectionService:
         self.secrets = secrets
         self.governed_engine = governed_engine
         self.allow_driver_install = allow_driver_install
+        self._engines: dict[str, Engine] = {}
+        self._engines_lock = Lock()
 
     def connector_types(self) -> tuple[ConnectorType, ...]:
         return connector_types(self.allow_driver_install)
@@ -103,7 +120,62 @@ class ConnectionService:
         return saved.summary(), result
 
     def delete(self, connection_id: str) -> bool:
+        with self._engines_lock:
+            engine = self._engines.pop(connection_id, None)
+        if engine is not None:
+            engine.dispose()
         return self.store.delete(connection_id)
+
+    def question_source(self, connection_id: str) -> QuestionSource | None:
+        """Read the connection's schema now, so the question sees its current tables."""
+        item = self.store.get(connection_id)
+        if item is None:
+            return None
+        if item.kind not in QUESTION_KINDS:
+            raise ConnectorUnavailableError(
+                "Questions run on PostgreSQL connections for now. "
+                "This connection can be tested and its tables browsed."
+            )
+        connector = self._connector(item.kind)
+        if not isinstance(connector, PostgresConnector):
+            raise ConnectorUnavailableError("This connection does not support questions.")
+        config = item.config()
+        password = self._password(item.password_encrypted)
+        return QuestionSource(
+            connection_id=item.id,
+            engine=self._reader_engine(item.id, config, password),
+            catalog=connector.catalog(config, password),
+            reader_role=config.username,
+        )
+
+    def _reader_engine(
+        self, connection_id: str, config: ConnectionConfig, password: str | None
+    ) -> Engine:
+        with self._engines_lock:
+            engine = self._engines.get(connection_id)
+            if engine is None:
+                url = URL.create(
+                    "postgresql+psycopg",
+                    username=config.username,
+                    password=password,
+                    host=config.host,
+                    port=config.port or 5432,
+                    database=config.database,
+                )
+                # schema_name is validated as a plain identifier, so it is safe in options.
+                engine = create_engine(
+                    url,
+                    pool_pre_ping=True,
+                    pool_size=2,
+                    max_overflow=2,
+                    connect_args={
+                        "sslmode": config.ssl_mode,
+                        "connect_timeout": 5,
+                        "options": f"-c search_path={config.schema_name or 'public'}",
+                    },
+                )
+                self._engines[connection_id] = engine
+            return engine
 
     def introspect(self, connection_id: str) -> list[IntrospectedTable] | None:
         item = self.store.get(connection_id)
@@ -155,6 +227,7 @@ class ConnectionService:
             has_password=True,
             built_in=True,
             governed=True,
+            queryable=True,
             created_by="system",
             created_at=None,
         )

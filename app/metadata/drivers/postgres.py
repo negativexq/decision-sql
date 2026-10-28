@@ -4,6 +4,12 @@ from time import perf_counter
 
 import psycopg
 
+from app.catalog.models import (
+    ColumnMetadata,
+    RelationshipMetadata,
+    SchemaCatalog,
+    TableMetadata,
+)
 from app.metadata.connectors import (
     ConnectionConfig,
     ConnectionTestResult,
@@ -87,6 +93,86 @@ class PostgresConnector:
                 ).fetchall()
             )
         return group_columns(columns, estimates)
+
+    def catalog(self, config: ConnectionConfig, password: str | None) -> SchemaCatalog:
+        """Read tables, columns, keys and comments; the catalog is the question's authority."""
+        schema = config.schema_name or "public"
+        with self._connect(config, password) as connection:
+            columns = connection.execute(
+                "SELECT c.relname, a.attname, format_type(a.atttypid, a.atttypmod), "
+                "col_description(c.oid, a.attnum), obj_description(c.oid, 'pg_class') "
+                "FROM pg_attribute a JOIN pg_class c ON c.oid = a.attrelid "
+                "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                "WHERE n.nspname = %s AND c.relkind IN ('r', 'p', 'v', 'm') "
+                "AND NOT c.relispartition AND a.attnum > 0 AND NOT a.attisdropped "
+                "ORDER BY c.relname, a.attnum",
+                (schema,),
+            ).fetchall()
+            primary_keys = set(
+                connection.execute(
+                    "SELECT c.relname, a.attname FROM pg_index i "
+                    "JOIN pg_class c ON c.oid = i.indrelid "
+                    "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                    "JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = ANY(i.indkey) "
+                    "WHERE i.indisprimary AND n.nspname = %s",
+                    (schema,),
+                ).fetchall()
+            )
+            foreign_keys = connection.execute(
+                "SELECT src.relname, sa.attname, dst.relname, da.attname "
+                "FROM pg_constraint con "
+                "CROSS JOIN LATERAL unnest(con.conkey, con.confkey) AS k(src_col, dst_col) "
+                "JOIN pg_class src ON src.oid = con.conrelid "
+                "JOIN pg_attribute sa ON sa.attrelid = con.conrelid AND sa.attnum = k.src_col "
+                "JOIN pg_class dst ON dst.oid = con.confrelid "
+                "JOIN pg_attribute da ON da.attrelid = con.confrelid AND da.attnum = k.dst_col "
+                "JOIN pg_namespace n ON n.oid = con.connamespace "
+                "JOIN pg_namespace dn ON dn.oid = dst.relnamespace "
+                "WHERE con.contype = 'f' AND n.nspname = %s AND dn.nspname = %s "
+                "ORDER BY src.relname, con.conname, k.src_col",
+                (schema, schema),
+            ).fetchall()
+        return build_catalog(columns, primary_keys, foreign_keys)
+
+
+def build_catalog(
+    columns: list[tuple[str, str, str, str | None, str | None]],
+    primary_keys: set[tuple[str, str]],
+    foreign_keys: list[tuple[str, str, str, str]],
+) -> SchemaCatalog:
+    """Assemble a catalog from catalog rows; database comments become descriptions."""
+    tables: dict[str, list[ColumnMetadata]] = {}
+    table_comments: dict[str, str | None] = {}
+    for table, column, data_type, comment, table_comment in columns:
+        table_comments[table] = table_comment
+        tables.setdefault(table, []).append(
+            ColumnMetadata(
+                name=column,
+                type=data_type,
+                description=comment or f"{column} from {table}.",
+                primary_key=(table, column) in primary_keys,
+            )
+        )
+    relationships: dict[str, list[RelationshipMetadata]] = {}
+    for table, column, referenced_table, referenced_column in foreign_keys:
+        relationships.setdefault(table, []).append(
+            RelationshipMetadata(
+                column=column,
+                referenced_table=referenced_table,
+                referenced_column=referenced_column,
+            )
+        )
+    return SchemaCatalog(
+        tables=tuple(
+            TableMetadata(
+                name=table,
+                description=table_comments.get(table) or f"{table} table.",
+                columns=tuple(table_columns),
+                relationships=tuple(relationships.get(table, ())),
+            )
+            for table, table_columns in tables.items()
+        )
+    )
 
 
 CONNECTOR = PostgresConnector()

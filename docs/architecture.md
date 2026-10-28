@@ -66,7 +66,12 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
 - **Policy**: `SELECT` only, public schema only, no system catalogs, an
   analytical function allowlist, no wildcard over non-queryable columns.
 - **Authority**: every referenced relation must be in the request's context.
-- **Grain**: aggregates must not fan out across a parent-child join.
+- **Grain**: aggregates must not fan out across a parent-child join. Grain
+  facts come from the source catalog itself: tables with a primary key are
+  entities, foreign keys are many-to-one edges, and numeric non-key columns are
+  measures at their table's grain. Summing a parent's column across its child
+  rows is stopped at planning time. Tables without a primary key, and joins
+  that are not declared as foreign keys, are not checked.
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 

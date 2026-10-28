@@ -13,6 +13,23 @@ jobs:
   backend:
     name: backend
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: decision_sql
+          POSTGRES_USER: decision_admin
+          POSTGRES_PASSWORD: decision_admin_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U decision_admin -d decision_sql"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      ADMIN_DATABASE_URL: postgresql+psycopg://decision_admin:decision_admin_password@localhost:5432/decision_sql
+      DATABASE_URL: postgresql+psycopg://decision_reader:decision_reader_password@localhost:5432/decision_sql
+      # A skipped PostgreSQL suite fails the job instead of passing silently.
+      DECISION_SQL_REQUIRE_POSTGRES: "1"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -35,8 +52,15 @@ jobs:
       - name: Mypy
         run: mypy app
 
-      # Integration tests skip themselves when PostgreSQL or a connector
-      # database is not reachable; run them locally against Docker Compose.
+      - name: Prepare database
+        env:
+          PGPASSWORD: decision_admin_password
+        run: |
+          psql -h localhost -U decision_admin -d decision_sql -v ON_ERROR_STOP=1 -f docker-entrypoint-initdb.d/01-roles.sql
+          alembic upgrade head
+          python -m demo.seed
+
+      # MySQL and Trino connector tests still skip here; run them locally with Docker.
       - name: Tests
         run: pytest -q tests
 

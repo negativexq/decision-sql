@@ -79,8 +79,8 @@ export function SourcePicker({
                   {item.schema_name ? `.${item.schema_name}` : ""}
                 </span>
               </span>
-              <span className={`source-option-state ${item.governed ? "is-ready" : ""}`}>
-                {item.governed ? "Questions" : "Browse only"}
+              <span className={`source-option-state ${item.queryable ? "is-ready" : ""}`}>
+                {item.queryable ? "Questions" : "Browse only"}
               </span>
               {item.id === selected && <span className="source-check" aria-hidden="true" />}
             </button>

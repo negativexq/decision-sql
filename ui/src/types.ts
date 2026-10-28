@@ -197,6 +197,7 @@ export interface ConnectionSummary {
   has_password: boolean;
   built_in: boolean;
   governed: boolean;
+  queryable: boolean;
   created_by: string;
   created_at: string | null;
   last_tested_at: string | null;

@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -100,23 +101,27 @@ async def playground_query(
     connections: Connections,
     actor: Actor,
 ) -> RunRecord:
-    if payload.connection_id != GOVERNED_CONNECTION_ID:
-        known = {item.id for item in connections.connections()}
-        if payload.connection_id not in known:
-            raise HTTPException(status_code=404, detail="Unknown connection")
-        # Saved connections can be tested and browsed, but the governed
-        # execution path (policy, read-only session, EXPLAIN cost gate) is
-        # PostgreSQL-only today, so questions are refused rather than run ungoverned.
-        raise HTTPException(
-            status_code=409,
-            detail="Questions run only on the governed source for now. "
-            "This connection can be tested and its tables browsed.",
-        )
     if payload.preset_id is not None and payload.preset_id not in {
         preset.id for preset in application.presets
     }:
         raise HTTPException(status_code=404, detail="Unknown demo preset")
-    record = await application.run(payload.question, payload.preset_id, actor=actor)
+    source = None
+    if payload.connection_id != GOVERNED_CONNECTION_ID:
+        if payload.preset_id is not None:
+            raise HTTPException(
+                status_code=400, detail="Demo scenarios run on the governed source."
+            )
+        try:
+            source = await run_in_threadpool(connections.question_source, payload.connection_id)
+        except ConnectorUnavailableError as error:
+            raise HTTPException(status_code=409, detail=str(error)) from error
+        except Exception as error:
+            raise HTTPException(
+                status_code=502, detail="Could not read the schema of this connection."
+            ) from error
+        if source is None:
+            raise HTTPException(status_code=404, detail="Unknown connection")
+    record = await application.run(payload.question, payload.preset_id, actor=actor, source=source)
     return record
 
 

@@ -46,6 +46,13 @@ class ColumnStats:
     # pg_stats convention: a positive count, or a negative share of rows when it grows
     # with the table.  A mostly-null column can look covered while holding many values.
     n_distinct: float = 0.0
+    # The table's row estimate, which turns a negative n_distinct into a count.
+    rows: float = 0.0
+
+    def distinct_count(self) -> float:
+        if self.n_distinct >= 0:
+            return self.n_distinct
+        return -self.n_distinct * self.rows
 
 
 @dataclass(frozen=True)
@@ -88,7 +95,7 @@ def known_values(stats: ColumnStats) -> KnownValues | None:
         if (
             len(common) <= MAX_VALUES
             and coverage >= COMPLETE_COVERAGE
-            and 0 < stats.n_distinct <= len(common)
+            and 0 < round(stats.distinct_count()) <= len(common)
         ):
             return KnownValues(tuple(sorted(common)), complete=True)
     examples = [*common, *(stats.histogram_bounds or ())]

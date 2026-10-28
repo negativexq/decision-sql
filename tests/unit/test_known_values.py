@@ -62,6 +62,21 @@ def test_mostly_null_column_with_more_values_than_listed_is_not_a_domain() -> No
     assert known_values(_stats(["Junun Efreet"], [0.0002], null_frac=0.9989, distinct=24)) is None
 
 
+def test_distinct_share_of_a_small_table_counts_as_a_domain() -> None:
+    # pg_stats stores n_distinct as -share-of-rows when it expects growth: 3 values in 24 rows.
+    stats = ColumnStats(
+        "products",
+        "family",
+        0.0,
+        ["Hardware", "Software", "Service"],
+        [0.34, 0.33, 0.33],
+        None,
+        -0.125,
+        24,
+    )
+    assert known_values(stats) == KnownValues(("Hardware", "Service", "Software"), complete=True)
+
+
 def test_partial_coverage_of_words_gives_nothing() -> None:
     # The common values of a high-cardinality name column say nothing reliable.
     assert known_values(_stats(["Smith", "Jones"], [0.02, 0.01], ["Adams", "Zane"])) is None

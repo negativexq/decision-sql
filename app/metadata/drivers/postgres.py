@@ -217,17 +217,26 @@ class PostgresConnector:
         found: list[ColumnStats] = []
         with self._connect(config, password) as connection:
             rows = connection.execute(
-                "SELECT tablename, attname, null_frac, "
-                "most_common_vals::text::text[], most_common_freqs, "
-                "histogram_bounds::text::text[], n_distinct "
-                "FROM pg_stats WHERE schemaname = %s",
+                "SELECT s.tablename, s.attname, s.null_frac, "
+                "s.most_common_vals::text::text[], s.most_common_freqs, "
+                "s.histogram_bounds::text::text[], s.n_distinct, c.reltuples "
+                "FROM pg_stats s JOIN pg_namespace n ON n.nspname = s.schemaname "
+                "JOIN pg_class c ON c.relnamespace = n.oid AND c.relname = s.tablename "
+                "WHERE s.schemaname = %s",
                 (schema,),
             ).fetchall()
-            for table, column, null_frac, common, freqs, bounds, distinct in rows:
+            for table, column, null_frac, common, freqs, bounds, distinct, tuples in rows:
                 if (table, column) in columns:
                     found.append(
                         ColumnStats(
-                            table, column, null_frac or 0.0, common, freqs, bounds, distinct or 0.0
+                            table,
+                            column,
+                            null_frac or 0.0,
+                            common,
+                            freqs,
+                            bounds,
+                            distinct or 0.0,
+                            max(tuples or 0.0, 0.0),
                         )
                     )
             analyzed = {table for table, *_ in rows}

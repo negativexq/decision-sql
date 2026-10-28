@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from time import perf_counter
 
 from app.config import Settings
@@ -284,7 +285,8 @@ class DecisionSqlApplication:
             correlation_id=collector.run_id,
             execution_authority=ExecutionAuthority.from_governed_context(model_context),
         )
-        planned = self.safety_service.plan(candidate)
+        # Planning and execution use blocking database drivers; keep them off the event loop.
+        planned = await asyncio.to_thread(self.safety_service.plan, candidate)
         runtime_outcome, runtime_reason = _runtime_from_plan(planned)
         execution = None
         if isinstance(planned, SqlPlanFailure):
@@ -299,7 +301,7 @@ class DecisionSqlApplication:
                 "EARLIER_RUNTIME_REJECTION",
             )
         else:
-            execution = self.safety_service.execute(planned)
+            execution = await asyncio.to_thread(self.safety_service.execute, planned)
             if isinstance(execution, SqlExecutionError):
                 runtime_outcome, runtime_reason = "EXECUTION_ERROR", "EXECUTION_ERROR"
             else:

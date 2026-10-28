@@ -14,6 +14,9 @@ from app.metadata.store import SqlConnectionStore, SqlRunStore
 from app.metadata.tables import audit_runs, connections
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
+from app.sql.authority import ExecutionAuthority
+from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError
+from app.sql.service import SqlSafetyService
 
 ADMIN_URL = os.getenv(
     "ADMIN_DATABASE_URL",
@@ -93,4 +96,25 @@ def test_connection_round_trip_against_the_local_database(engine: Engine) -> Non
     assert b"decision_reader_password" not in bytes(stored)
     tables = service.introspect(summary.id)
     assert tables is not None and "orders" in {table.name for table in tables}
+
+    source = service.question_source(summary.id)
+    assert source is not None and source.reader_role == "decision_reader"
+    orders = source.catalog.get_table("orders")
+    assert orders is not None
+    assert orders.get_column("id").primary_key  # type: ignore[union-attr]
+    assert any(
+        relationship.referenced_table == "customers" for relationship in orders.relationships
+    )
+    safety = SqlSafetyService(source.engine, catalog=source.catalog, reader_role=source.reader_role)
+    plan = safety.plan(
+        SqlCandidate(
+            sql="SELECT status, COUNT(*) AS n FROM orders GROUP BY status",
+            source=CandidateSource.LLM,
+            correlation_id="it-connection",
+            execution_authority=ExecutionAuthority.from_table_names(["orders"]),
+        )
+    )
+    executed = safety.execute(plan)  # type: ignore[arg-type]
+    assert not isinstance(executed, SqlExecutionError)
+    assert executed.row_count > 0
     assert service.delete(summary.id)

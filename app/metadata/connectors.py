@@ -477,6 +477,10 @@ class IntrospectedTable(BaseModel):
     columns: list[IntrospectedColumn]
 
 
+# Kinds whose sessions support the full question path: read-only transaction, EXPLAIN cost gate.
+QUESTION_KINDS = frozenset({"postgresql"})
+
+
 class ConnectionSummary(BaseModel):
     id: str
     name: str
@@ -491,6 +495,7 @@ class ConnectionSummary(BaseModel):
     has_password: bool
     built_in: bool = False
     governed: bool = False
+    queryable: bool = False
     created_by: str
     created_at: datetime | None
     last_tested_at: datetime | None = None

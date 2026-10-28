@@ -73,6 +73,7 @@ class SqlSafetyService:
         provenance_sink: ProvenanceSink | None = None,
         measure_catalog: MeasureCatalog | None = None,
         grain_normalization_enabled: bool = False,
+        reader_role: str | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         self.reader_engine = reader_engine
@@ -88,7 +89,7 @@ class SqlSafetyService:
             reader_engine,
             statement_timeout_ms=self.settings.statement_timeout_ms,
             max_rows=self.settings.max_result_rows,
-            reader_role=self.settings.reader_role,
+            reader_role=reader_role or self.settings.reader_role,
         )
         self.tracer = tracer or get_tracer()
         self.stage_recorder = stage_recorder

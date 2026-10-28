@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -32,6 +33,7 @@ from app.operator.models import (
     SourceDatabase,
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
+from app.semantics.measures import measure_catalog_from_schema
 from app.sql.service import SqlSafetyService
 
 
@@ -172,7 +174,7 @@ class OperatorApplication:
             actor=actor,
             connection_id=source.connection_id if source is not None else GOVERNED_CONNECTION_ID,
         )
-        self.run_store.save(record)
+        await asyncio.to_thread(self.run_store.save, record)
         return record
 
     def list_runs(
@@ -252,6 +254,8 @@ class OperatorApplication:
                 settings=self.settings,
                 catalog=source.catalog,
                 reader_role=source.reader_role,
+                measure_catalog=measure_catalog_from_schema(source.catalog),
+                grain_normalization_enabled=True,
             )
             return (
                 DecisionSqlApplication(resolver, provider, safety, self.settings),
@@ -293,6 +297,8 @@ class OperatorApplication:
             settings=self.settings,
             catalog=catalog,
             stage_recorder=None,
+            measure_catalog=measure_catalog_from_schema(catalog),
+            grain_normalization_enabled=True,
         )
         return (
             DecisionSqlApplication(resolver, provider, safety, self.settings),

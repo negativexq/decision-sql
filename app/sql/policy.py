@@ -434,6 +434,13 @@ class SQLPolicy:
             if isinstance(alias, exp.TableAlias) and alias.alias_or_name:
                 return frozenset({self._identifier_name(alias.alias_or_name)})
             return frozenset({"unnest"})
+        if isinstance(scope.expression, (exp.Lateral, exp.Values)):
+            # LATERAL (VALUES ...) AS t(a, b) and (VALUES ...) AS t(a, b) name their columns
+            # in the alias; without this the policy reports them as unknown.
+            alias = scope.expression.args.get("alias")
+            explicit = alias.args.get("columns") if isinstance(alias, exp.TableAlias) else None
+            if explicit:
+                return frozenset(column.name.lower() for column in explicit)
         if isinstance(scope.expression, exp.Lateral):
             nested = scope.sources.get("")
             if isinstance(nested, Scope):

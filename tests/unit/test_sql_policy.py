@@ -227,3 +227,22 @@ def test_policy_rejection_does_not_reach_explain() -> None:
 
     assert result.status is SqlSafetyStatus.POLICY_REJECTION
     assert called is False
+
+
+def test_values_alias_columns_resolve() -> None:
+    sql_policy = policy()
+    queries = (
+        """SELECT pair.label, pair.amount FROM orders o
+           CROSS JOIN LATERAL (VALUES ('subtotal', o.subtotal), ('total', o.total_amount))
+           AS pair(label, amount)""",
+        "SELECT v.code FROM (VALUES ('a'), ('b')) AS v(code)",
+    )
+
+    assert all(sql_policy.validate(parsed(query)) is None for query in queries)
+    unknown = sql_policy.validate(
+        parsed(
+            """SELECT pair.missing FROM orders o
+               CROSS JOIN LATERAL (VALUES (o.subtotal)) AS pair(amount)"""
+        )
+    )
+    assert unknown is not None and unknown.code is PolicyCode.UNKNOWN_COLUMN

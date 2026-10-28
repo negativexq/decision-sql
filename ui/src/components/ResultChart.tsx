@@ -4,7 +4,8 @@ import { formatCell, formatNumber, toNumber } from "../format";
 type Row = Record<string, unknown>;
 
 interface ChartShape {
-  dimension: string | null;
+  /** Every non-numeric column; a bar's label joins all of them so no grouping is dropped. */
+  dimensions: string[];
   measures: string[];
   temporal: boolean;
 }
@@ -22,15 +23,25 @@ export function chartShape(columns: string[], rows: Row[]): ChartShape | null {
   const temporal = others.find((column) =>
     rows.every((row) => row[column] == null || (typeof row[column] === "string" && ISO_DATE.test(row[column] as string))),
   );
-  const dimension = temporal ?? others[0] ?? null;
+  // A line chart only makes sense over a single time axis; with more dimensions each row
+  // keeps its full label, and rows that would collapse onto one label are not charted at all.
+  const dimensions = temporal && others.length === 1 ? [temporal] : others;
+  if (dimensions.length > 1) {
+    const labels = new Set(rows.map((row) => rowLabel(row, dimensions)));
+    if (labels.size !== rows.length) return null;
+  }
   // Identifier-like numeric columns make poor measures when another measure exists.
   const candidates = numeric.length > 1 ? numeric.filter((column) => !/(^id$|_id$)/i.test(column)) : numeric;
   if (!candidates.length) return null;
   // Lead with the measure the rows are ordered by: "top 10 by revenue" should chart revenue.
   const sortedBy = candidates.find((column) => isOrderedBy(rows, column));
   const measures = sortedBy ? [sortedBy, ...candidates.filter((column) => column !== sortedBy)] : candidates;
-  if (!dimension && rows.length > 1) return null;
-  return { dimension, measures, temporal: Boolean(temporal) };
+  if (!dimensions.length && rows.length > 1) return null;
+  return { dimensions, measures, temporal: Boolean(temporal) && dimensions.length === 1 };
+}
+
+function rowLabel(row: Row, dimensions: string[]): string {
+  return dimensions.map((column) => formatCell(row[column])).join(" · ");
 }
 
 function isOrderedBy(rows: Row[], column: string): boolean {
@@ -55,7 +66,7 @@ export function ResultChart({ columns, rows }: { columns: string[]; rows: Row[] 
   }
   const active = measure && shape.measures.includes(measure) ? measure : shape.measures[0];
 
-  if (!shape.dimension) {
+  if (!shape.dimensions.length) {
     return (
       <div className="kpi-grid">
         {shape.measures.map((column) => (
@@ -69,7 +80,7 @@ export function ResultChart({ columns, rows }: { columns: string[]; rows: Row[] 
   }
 
   const points = rows.slice(0, 60).map((row) => ({
-    label: formatCell(row[shape.dimension as string]),
+    label: rowLabel(row, shape.dimensions),
     value: toNumber(row[active]) ?? 0,
   }));
 
@@ -77,7 +88,7 @@ export function ResultChart({ columns, rows }: { columns: string[]; rows: Row[] 
     <div className="chart">
       <div className="chart-toolbar">
         <span className="chart-caption">
-          {active} by {shape.dimension}
+          {active} by {shape.dimensions.join(" and ")}
           {rows.length > points.length && ` (first ${points.length} rows)`}
         </span>
         {shape.measures.length > 1 && (

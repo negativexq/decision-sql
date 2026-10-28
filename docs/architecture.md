@@ -1,151 +1,125 @@
-# DecisionSQL architecture
+# Architecture
 
-## North-star question
+Decision-SQL answers a natural-language question with one typed model decision
+and lets deterministic code decide whether any SQL runs. The model never holds
+credentials, authority, or an execution tool.
 
-DecisionSQL is designed to answer: how can we prove that a natural-language question used the correct business data, respected authorization, could not trigger dangerous or expensive SQL, produced an answer supported by the result, and can be measured by attributable pipeline stage?
-
-## Authority boundary
-
-The model is a proposal generator. It does not receive database credentials, authorization authority, or an execution tool. A future request coordinator will pass a server-owned `UserContext` through deterministic stages. SQL will be parsed with `sqlglot`, validated, policy-checked, cost-gated with `EXPLAIN`, and executed only through a restricted PostgreSQL reader.
-
-## Request paths
+## Request path
 
 ```text
-question -> server UserContext -> semantic resolution -> schema retrieval
- -> LLM proposal -> AST parse -> deterministic validation -> policy
- -> EXPLAIN cost gate -> read-only execution -> result validation
- -> answer synthesis -> answer, SQL, and provenance
+question
+  -> governed context        app/retrieval, app/governance, app/catalog
+  -> one model decision      app/generation (Candidate C contract)
+  -> decision admission      app/decision
+  -> SQL parse               app/sql/parser.py
+  -> global policy           app/sql/policy.py
+  -> execution authority     app/sql/authority.py
+  -> grain safety            app/semantics
+  -> EXPLAIN + cost gate     app/execution/cost.py
+  -> read-only execution     app/execution/reader.py
+  -> audit record            app/metadata/store.py
 ```
 
-M1 adds a deterministic `SqlSafetyService` for direct candidate SQL supplied by internal/test code. It performs parsing, AST policy validation, EXPLAIN cost gating, and reader-only execution. There is still deliberately no public Text-to-SQL endpoint.
+Every stage is recorded in a run trace (`app/observability/run_trace.py`). The
+UI shows the same ten stages as the check strip above each answer.
 
-For catalog-covered business metrics, the validated M3 path is:
+### 1. Governed context
 
-```text
-question -> public metric glossary -> metric/dimension grounding
- -> server-owned semantic catalog -> deterministic metric compiler
- -> SqlCandidate -> M1 -> EXPLAIN -> read-only execution
-```
+The catalog (`app/catalog/default.py`) lists queryable tables, columns,
+relationships, and the business meaning of key columns, for example which
+column is order revenue and which timestamp drives monthly trends.
 
-This governed route is explicit and default-off after M3.4 feature-flagged
-routing and observability validation. M3.5 adds stable semantic contract
-identity and execution provenance without changing route selection. Arbitrary
-analytics continue to use the direct SQL proposal path above.
+`SchemaContextResolver` decides what the model sees:
 
-## Trust lifecycle
+- Schemas with at most `DECISION_SQL_FULL_CONTEXT_MAX_TABLES` queryable tables
+  (default 12) are sent whole. Keyword retrieval only matches English tokens
+  and can drop the measure or dimension a question needs, so small schemas skip
+  it.
+- Larger schemas use bounded retrieval: top-k tables by keyword relevance,
+  relationship paths between them, and a per-table column cap.
 
-The M1 domain model keeps proposal, authorization evidence, and execution outcome distinct:
+Non-queryable tables and columns never enter the context. The context is also
+the request's authority envelope: only relations in it may be executed.
 
-```text
-SqlCandidate
-    |  untrusted SQL proposal; no authorization state
-    v
-QueryPlan
-    |  issued only after parse, AST/object/function policy, reader validation,
-    |  EXPLAIN, and cost acceptance; contains bounded planning evidence
-    v
-QueryExecution
-       bounded result from the restricted reader connection
-```
+### 2. One model decision
 
-The service API is `plan(candidate: SqlCandidate) -> QueryPlan | SqlPlanFailure` and `execute(plan: QueryPlan) -> QueryExecution | SqlExecutionError`. The service retains the accepted plan identity, so a raw string, a rejected plan, or a copied/foreign plan cannot enter execution. Planning is the M1 dry-plan/dry-run primitive: it returns no result rows.
+`OpenAICompatibleProvider` makes exactly one chat-completions call with a strict
+JSON schema. The model returns one of:
 
-## M2 context-aware baseline
+| Decision | Meaning | SQL runtime |
+| --- | --- | --- |
+| `ANSWER` | Read-only SQL is proposed | Entered |
+| `NEEDS_CLARIFICATION` | The question can be read more than one way | Bypassed |
+| `BLOCKED_AUTHORITY` | The data is outside the governed context | Bypassed |
+| `BLOCKED_POLICY` | The request would write or breach policy | Bypassed |
 
-M2 adds the first natural-language proposal path above the frozen M1 control plane:
+There is no retry, repair loop, judge, or second call. The system prompt is the
+frozen Candidate C contract; `production_decision_contract_hash()` pins it, so
+changing the prompt is a visible contract change.
 
-```text
-Natural-language question
-        -> SchemaContextResolver
-        -> bounded SchemaContext
-        -> OpenAICompatibleProvider
-        -> SqlProposal
-        -> SqlCandidate(source=LLM)
-        -> SqlSafetyService.plan()
-        -> QueryPlan
-        -> SqlSafetyService.execute()
-        -> QueryExecution
-```
+### 3. Deterministic gates
 
-`SchemaContextResolver` performs deterministic lexical matching over table names, aliases, descriptions, and columns. The default relationship depth is 2, which is justified by the commerce bridge pattern `products -> order_items -> orders`; expansion adds only shortest paths between selected seed tables, with bounded depth and table count. Retrieved mode preserves primary/foreign keys, then selects lexically relevant queryable columns within the per-table bound. Full ablation mode includes all queryable columns from the finite demo catalog. Context serialization includes metadata and relationships only: no sample values, business metrics, golden queries, or hidden columns. Retrieval scores are diagnostics, never authorization signals.
+An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
+`QueryPlan` only after:
 
-The M2 coordinator owns sequencing only. It does not contain SQL policy logic and cannot use a database engine. The provider has model/API configuration and returns structured `SqlProposal` data; it has no database credentials or execution interface. Every proposal is converted to `SqlCandidate(source=LLM)` before entering M1.
+- **Parse**: exactly one PostgreSQL statement, parsed with `sqlglot`.
+- **Policy**: `SELECT` only, public schema only, no system catalogs, an
+  analytical function allowlist, no wildcard over non-queryable columns.
+- **Authority**: every referenced relation must be in the request's context.
+- **Grain**: aggregates must not fan out across a parent-child join.
+- **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
+  must stay under the configured limits.
 
-The trust order is fixed in code:
+Execution runs only an accepted plan, on the `decision_reader` role, in a
+`READ ONLY` transaction with a statement timeout and a result row cap.
 
-```text
-parse -> AST validation -> object/function policy -> reader identity validation
--> EXPLAIN -> cost policy -> QueryPlan -> QueryExecution
-```
+## Workspace services
 
-Planning performs parse, validation, authorization, EXPLAIN, and cost evaluation without fetching result rows. Execution requires an accepted `QueryPlan` and only then returns a bounded `QueryExecution`.
+### Audit log
 
-M2 supports `execute=False` for an explicit plan-only request. This is not a second dry-run subsystem: it exposes the existing M1 planning/EXPLAIN primitive through the coordinator.
+Every run is stored in `decision_meta.audit_runs` with the actor, question,
+model decision, SQL, outcome, timing, model context, and trace. Result rows are
+not stored. The actor comes from the `X-Decision-Actor` header and is
+self-declared until SSO is added.
 
-## M2.5 schema grounding
+### Connections
 
-M2.5 uses two orthogonal dimensions: `FULL_COMPACT` versus
-`RETRIEVED_BOUNDED` schema context, and `ONE_SHOT` versus `GROUNDED` generation.
-The resulting four cells are:
+`app/metadata` manages saved database connections:
 
-```text
-                         ONE_SHOT                         GROUNDED
-FULL_COMPACT       SQL -> SqlCandidate -> M1       Intent -> SQL -> M1
-RETRIEVED_BOUNDED  SQL -> SqlCandidate -> M1       Intent -> SQL -> M1
-```
+- Connector specs for PostgreSQL, MySQL, SQL Server, Trino, Snowflake, and
+  BigQuery declare their fields and driver package.
+- A preflight connects with the given details, checks the schema, counts
+  tables, and warns when the user can write. Errors are classified to the field
+  to fix (host, port, username, password, database, schema, SSL).
+- A connection is saved only after a passing preflight. Passwords are encrypted
+  with Fernet (`DECISION_SQL_SECRET_KEY`) and never returned.
+- Drivers are optional extras. With `DECISION_SQL_ALLOW_DRIVER_INSTALL=true`
+  an operator can install one connector's allowlisted package from the UI.
 
-The primary comparison is the two full-context cells. The demo schema is small,
-and M2's measured full-schema result was higher than its retrieved result, so
-retrieval is kept out of the primary grounding comparison. Retrieved context is
-still evaluated as the scalability/cost secondary analysis.
+Questions run only on the governed PostgreSQL source. Saved connections can be
+tested and browsed; running questions on them needs dialect-aware policy,
+read-only enforcement, and cost gates for each engine.
 
-The generation cells are:
+### Metadata isolation
 
-```text
-FULL_COMPACT + ONE_SHOT:
-Question -> full compact SchemaContext -> SqlProposal -> SqlCandidate -> M1
+Audit records and connections live in the `decision_meta` schema, written with
+the admin role. `PUBLIC` has no grant on it, the reader role cannot read it, and
+SQL policy only admits `public` relations, so model SQL cannot reach audit data
+or stored secrets.
 
-FULL_COMPACT + GROUNDED:
-Question -> the same full compact SchemaContext -> QueryIntent -> SqlProposal
-          -> SqlCandidate -> M1
+## Code map
 
-RETRIEVED_BOUNDED + ONE_SHOT:
-Question -> retrieved bounded SchemaContext -> SqlProposal -> SqlCandidate -> M1
-
-RETRIEVED_BOUNDED + GROUNDED:
-Question -> the same retrieved bounded SchemaContext -> QueryIntent -> SqlProposal
-          -> SqlCandidate -> M1
-```
-
-`QueryIntent` is a compact, untrusted structural interpretation containing
-tables, fully-qualified columns where available, joins, filters, aggregations,
-grouping, ordering, limit, and window-operation hints. The server verifies that
-explicitly named tables, columns, and join endpoints are visible in the bounded
-context, but this is a context-validity check rather than authorization.
-Generated SQL is compared to the intent for table, column, join, aggregation,
-grouping, ordering, limit, and window diagnostics; disagreement does not bypass
-or replace M1.
-
-One-shot intentionally has one SQL-generation call. Grounded has one grounding
-call and one SQL-generation call. There is no repair or retry loop. The M2.5
-holdout is frozen before these generation changes and is separate from the
-development M2 dataset. Runtime generation modules do not load evaluation
-questions or gold SQL.
-
-The EXPLAIN and execution stages share a transaction configured with `READ ONLY` and the configured statement timeout. Queries without a LIMIT are not rewritten; the executor fetches at most `max_result_rows + 1`, returns at most `max_result_rows`, and marks the result as truncated. The cost gate is the protection against unbounded work, while the row cap bounds returned data.
-
-## Boundaries
-
-- `app/models`: typed contracts shared between stages.
-- `app/catalog` and `app/retrieval`: server-owned catalog and deterministic relevant-schema retrieval.
-- `app/semantics`: governed business metrics, relationship graph, and typed
-  deterministic metric compilation.
-- `app/generation`: provider-neutral proposal interface.
-- `app/sql/parser.py`: PostgreSQL parsing and one-statement enforcement.
-- `app/sql/policy.py`: deterministic statement, object, column, catalog, and function policy.
-- `app/sql/service.py`: explicit M1 trust-order coordinator.
-- `app/execution`: EXPLAIN cost gate and reader-only execution.
-- `app/synthesis`: future result-grounded answer generation.
-- `evaluation`: small M2 baseline, result-equivalence runner, and future frozen benchmark/security suites.
-
-The current demo schema is maintained in Alembic and mirrored by typed SQLAlchemy ORM models. Seed generation is deterministic and owned by `demo/seed`.
+| Path | Owns |
+| --- | --- |
+| `app/api` | HTTP routes |
+| `app/operator` | The workspace facade the UI calls |
+| `app/decision` | Admission of the model decision into the SQL runtime |
+| `app/generation` | The decision contract and the model provider |
+| `app/catalog`, `app/retrieval`, `app/governance` | Catalog, context selection, and the model-visible context |
+| `app/sql` | Parsing, policy, authority, and the plan/execute service |
+| `app/semantics` | Grain safety |
+| `app/execution` | `EXPLAIN` cost gate and the read-only reader |
+| `app/metadata` | Audit log, connections, connectors, and secrets |
+| `app/observability` | Run traces and OpenTelemetry |
+| `app/db`, `alembic`, `demo` | Demo schema, migrations, and deterministic seed |
+| `ui` | React workspace |

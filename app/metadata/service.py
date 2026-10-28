@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from threading import Lock
+from time import monotonic
 
 import psycopg
 from sqlalchemy import URL, Engine, create_engine
@@ -40,9 +41,17 @@ from app.metadata.relationships import (
 )
 from app.metadata.secrets import SecretBox
 from app.metadata.store import ConnectionStore, StoredConnection
+from app.metadata.values import (
+    KnownValues,
+    apply_known_values,
+    eligible_columns,
+    known_values,
+)
 
 GOVERNED_CONNECTION_ID = "governed"
 _MIN_MATCH_RATE = 0.5
+# Statistics change slowly; the schema itself is still read for every question.
+_VALUES_TTL_SECONDS = 600.0
 ANONYMOUS_ACTOR = "anonymous"
 _ACTOR = re.compile(r"^[A-Za-z0-9._@+-]{1,120}$")
 
@@ -80,8 +89,11 @@ class ConnectionService:
         governed_engine: Engine,
         allow_driver_install: bool = False,
         relationships: RelationshipStore | None = None,
+        value_examples: bool = True,
     ) -> None:
         self.store = store
+        self.value_examples = value_examples
+        self._values: dict[str, tuple[float, dict[tuple[str, str], KnownValues]]] = {}
         self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
         self.governed_engine = governed_engine
@@ -140,6 +152,7 @@ class ConnectionService:
             engine = self._engines.pop(connection_id, None)
         if engine is not None:
             engine.dispose()
+        self._values.pop(connection_id, None)
         # The SQL store cascades; the in-memory one needs the explicit cleanup.
         for relationship in self.relationship_store.list(connection_id):
             self.relationship_store.delete(connection_id, relationship.id)
@@ -155,12 +168,40 @@ class ConnectionService:
         catalog = merge_declared(
             connector.catalog(config, password), self.relationship_store.list(item.id)
         )
+        if self.value_examples:
+            catalog = apply_known_values(
+                catalog, self._known_values(item.id, connector, config, password, catalog)
+            )
         return QuestionSource(
             connection_id=item.id,
             engine=self._reader_engine(item.id, config, password),
             catalog=catalog,
             reader_role=config.username,
         )
+
+    def _known_values(
+        self,
+        connection_id: str,
+        connector: PostgresConnector,
+        config: ConnectionConfig,
+        password: str | None,
+        catalog: SchemaCatalog,
+    ) -> dict[tuple[str, str], KnownValues]:
+        cached = self._values.get(connection_id)
+        if cached is not None and cached[0] > monotonic():
+            return cached[1]
+        hints: dict[tuple[str, str], KnownValues] = {}
+        try:
+            stats = connector.column_stats(config, password, eligible_columns(catalog))
+        except psycopg.Error:
+            # Value hints help the model; a failure to read them never blocks a question.
+            stats = []
+        for item in stats:
+            hint = known_values(item)
+            if hint is not None:
+                hints[(item.table, item.column)] = hint
+        self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, hints)
+        return hints
 
     def relationships(self, connection_id: str) -> ConnectionRelationships | None:
         """Foreign keys, declared relationships, and checked suggestions for one source."""

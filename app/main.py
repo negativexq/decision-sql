@@ -56,6 +56,7 @@ connection_service = ConnectionService(
     reader_engine,
     allow_driver_install=settings.allow_driver_install,
     relationships=relationship_store,
+    value_examples=settings.value_examples,
 )
 app.add_middleware(
     CORSMiddleware,

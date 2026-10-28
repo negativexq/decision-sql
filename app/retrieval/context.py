@@ -256,6 +256,8 @@ class SchemaContextResolver:
                 description=column.description,
                 sensitivity=column.sensitivity,
                 primary_key=column.primary_key,
+                known_values=column.known_values,
+                known_values_complete=column.known_values_complete,
                 foreign_key_table=next(
                     (
                         relationship.referenced_table

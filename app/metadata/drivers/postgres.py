@@ -20,6 +20,7 @@ from app.metadata.connectors import (
     group_columns,
     missing_schema,
 )
+from app.metadata.values import ColumnStats, sample_stats
 
 
 class PostgresConnector:
@@ -196,6 +197,63 @@ class PostgresConnector:
                     continue
                 rates.append(round(row[1] / row[0], 4) if row and row[0] else None)
         return rates
+
+    def column_stats(
+        self,
+        config: ConnectionConfig,
+        password: str | None,
+        columns: set[tuple[str, str]],
+        small_table_pages: int = 128,
+        sample_limit: int = 200,
+    ) -> list[ColumnStats]:
+        """Planner statistics for the given columns.
+
+        A small table that was never analyzed has no statistics; its columns are
+        read directly, bounded by the table's size and the session's timeout.
+        """
+        if not columns:
+            return []
+        schema = config.schema_name or "public"
+        found: list[ColumnStats] = []
+        with self._connect(config, password) as connection:
+            rows = connection.execute(
+                "SELECT tablename, attname, null_frac, "
+                "most_common_vals::text::text[], most_common_freqs, "
+                "histogram_bounds::text::text[], n_distinct "
+                "FROM pg_stats WHERE schemaname = %s",
+                (schema,),
+            ).fetchall()
+            for table, column, null_frac, common, freqs, bounds, distinct in rows:
+                if (table, column) in columns:
+                    found.append(
+                        ColumnStats(
+                            table, column, null_frac or 0.0, common, freqs, bounds, distinct or 0.0
+                        )
+                    )
+            analyzed = {table for table, *_ in rows}
+            small = {
+                table
+                for table, pages in connection.execute(
+                    "SELECT c.relname, c.relpages FROM pg_class c "
+                    "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                    "WHERE n.nspname = %s AND c.relkind IN ('r', 'p', 'm')",
+                    (schema,),
+                ).fetchall()
+                if pages <= small_table_pages
+            }
+            for table, column in sorted(columns):
+                if table in analyzed or table not in small:
+                    continue
+                query = sql.SQL(
+                    "SELECT {column}::text, COUNT(*) FROM {table} "
+                    "GROUP BY 1 ORDER BY 2 DESC LIMIT %s"
+                ).format(table=sql.Identifier(schema, table), column=sql.Identifier(column))
+                try:
+                    counts = connection.execute(query, (sample_limit,)).fetchall()
+                except psycopg.Error:
+                    continue
+                found.append(sample_stats(table, column, counts))
+        return found
 
 
 def build_catalog(

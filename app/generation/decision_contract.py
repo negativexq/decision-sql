@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "9a9f9045ec301daf4cab59b0da2b40d1527d6faf0ebc13948325d7357e399638"
+    "676f23103a50f5585a9b84f5a93c64bf88513b6989cf3c0df569d2c14ded92a9"
 )
 
 
@@ -36,6 +36,12 @@ You are answering one question a user asked about their own database. Use only t
 - If more than one materially different interpretation remains consistent with the question and visible context, and visible business rules do not resolve it, return `NEEDS_CLARIFICATION` and no SQL. Do not guess.
 - If the requested operation violates the visible read-only policy, return `BLOCKED_POLICY` and no SQL. Do not rewrite a write request into a different SELECT.
 - Call only the SQL functions listed in `policy.allowed_functions`. Operators such as `||`, `LIKE`, `ILIKE`, arithmetic, comparisons, `CASE`, and `::` casts are not functions and are allowed. If a transformation has no listed function, build it from listed functions and operators.
+
+## Stored values
+
+- When an attribute lists `known_values`, the column stores values spelled exactly like those. Compare against those spellings, including case, spacing, and separators, rather than the wording of the question.
+- When `known_values_complete` is true, they are all the values the column holds. If the question names a value that matches none of them, decide whether it means one of them or is absent from the data; do not invent a spelling.
+- When `known_values_complete` is false, the values are examples of how the column formats codes or dates. Write filters and string operations that fit that format.
 
 ## Typed JSON scalar semantics
 

@@ -10,9 +10,15 @@ from __future__ import annotations
 import hashlib
 import json
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+)
 
 from app.catalog.models import RelevantRelationship, SchemaContext
 from app.sql.functions import model_visible_functions
@@ -43,6 +49,17 @@ class GovernedAttribute(BaseModel):
     primary_key: bool = False
     foreign_key_entity_id: str | None = None
     foreign_key_attribute_id: str | None = None
+    known_values: tuple[str, ...] = ()
+    known_values_complete: bool = False
+
+    @model_serializer(mode="wrap")
+    def _omit_absent_values(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        # Most attributes have no known values; leaving the keys out keeps the prompt small.
+        data: dict[str, Any] = handler(self)
+        if not self.known_values:
+            data.pop("known_values", None)
+            data.pop("known_values_complete", None)
+        return data
 
 
 class GovernedRelationship(BaseModel):
@@ -128,6 +145,8 @@ def governed_context_from_schema_context(
             description=column.description,
             queryable=True,
             primary_key=column.primary_key,
+            known_values=column.known_values,
+            known_values_complete=column.known_values_complete,
             foreign_key_entity_id=(
                 entity_ids.get(column.foreign_key_table)
                 if column.foreign_key_table is not None

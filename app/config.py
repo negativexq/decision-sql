@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     reader_role: str = Field(default="decision_reader", validation_alias="DECISION_SQL_READER_ROLE")
     # One more model call when the runtime rejects SQL for a reason the model can fix.
     repair_enabled: bool = Field(default=True, validation_alias="DECISION_SQL_REPAIR_ENABLED")
+    # Show the model how categorical text columns spell their values (from pg_stats).
+    value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     llm_model: str = Field(default="gpt-4o-mini", validation_alias="DECISION_SQL_LLM_MODEL")
     llm_base_url: str = Field(
         default="https://api.openai.com/v1", validation_alias="DECISION_SQL_LLM_BASE_URL"

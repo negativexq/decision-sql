@@ -2,8 +2,8 @@
 
 A query card holds a question and the SQL that answered it.  The SQL is pinned
 from an executed run in the audit log, never taken from the client, and every
-refresh sends it through the same checks as a new answer.  A text card holds a
-heading and notes.
+refresh sends it through the same checks as a new answer.  A heading card starts
+a section, and a text card holds notes.
 """
 
 from __future__ import annotations
@@ -63,7 +63,8 @@ class CardInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(pattern=r"^[A-Za-z0-9_-]{1,40}$")
-    kind: Literal["query", "text"]
+    # A heading starts a section; a text card holds notes; a query card a chart.
+    kind: Literal["query", "text", "heading"]
     title: str = Field(default="", max_length=200)
     note: str = Field(default="", max_length=4000)
     question: str = Field(default="", max_length=1000)

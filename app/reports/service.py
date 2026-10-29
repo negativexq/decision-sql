@@ -328,7 +328,7 @@ class ReportService:
         catalog: _Lazy,
     ) -> ReportCard:
         """Take the card's SQL from its run in the audit log, never from the client."""
-        if card.kind == "text" or card.run_id is None:
+        if card.kind != "query" or card.run_id is None:
             return ReportCard(**card.model_dump(), sql=None)
         if previous is not None and previous.run_id == card.run_id:
             return ReportCard(

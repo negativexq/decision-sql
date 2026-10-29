@@ -74,7 +74,7 @@ class FakeConnections:
 def _card(card_id: str, run_id: str | None = None, **values: object) -> CardInput:
     return CardInput(
         id=card_id,
-        kind="query" if run_id or values.get("kind") != "text" else "text",
+        kind=values.get("kind", "query"),
         run_id=run_id,
         layout=CardLayout(x=0, y=0, w=6, h=4),
         **{key: value for key, value in values.items() if key != "kind"},
@@ -105,12 +105,14 @@ def test_card_sql_comes_from_the_audit_log_never_from_the_client() -> None:
             cards=[
                 _card("c1", "run_a", question="DROP TABLE orders", chart="pie"),
                 _card("t1", kind="text", title="Notes", note="Revenue is net of refunds."),
+                _card("h1", kind="heading", title="Revenue"),
             ],
         ),
         "mehmet",
     )
     assert updated is not None
-    query, text = updated.cards
+    query, text, heading = updated.cards
+    assert heading.kind == "heading" and heading.sql is None
     assert (
         query.sql == "SELECT total FROM orders -- run_a" and query.question == "question of run_a"
     )

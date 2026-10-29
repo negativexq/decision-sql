@@ -185,7 +185,8 @@ model and all; the card then pins the SQL that run executed, read from the
 audit log by run id, never from the client. Opening or refreshing a report runs
 each pinned query again as a `SAVED_QUERY` run: no model call, every gate on
 the current schema, and an audit record. A query that no longer passes shows
-why on its card. Text cards hold headings and notes; chart cards carry a
+why on its card. Heading cards start a section; text cards hold notes in a
+small Markdown subset rendered as text, never HTML; chart cards carry a
 description, a chart type (number, bars, columns, line, area, pie, table), and
 optional category and value columns.
 

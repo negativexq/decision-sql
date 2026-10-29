@@ -445,7 +445,21 @@ code, kbd, pre { font-family: var(--mono); }
 .report-card-title { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .report-card-type select { height: 24px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 4px; font-size: 12px; background: var(--bg); }
 .report-card-body { flex: 1; min-height: 0; padding: 4px 12px 10px; display: flex; flex-direction: column; }
-.report-card-prose { white-space: pre-wrap; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; overflow: auto; }
+.report-card-prose { color: var(--ink-2); font-size: 13.5px; line-height: 1.6; overflow: auto; }
+.prose > * { margin: 0 0 .55em; }
+.prose > :last-child { margin-bottom: 0; }
+.prose p { white-space: pre-wrap; }
+.prose h4 { font-size: 14px; font-weight: 600; color: var(--ink); }
+.prose h5 { font-size: 13px; font-weight: 600; color: var(--ink); }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: .2em; }
+.prose strong { color: var(--ink); font-weight: 600; }
+.prose code { font-family: var(--mono); font-size: .9em; padding: 0 3px; border-radius: 3px; background: var(--hover); }
+.report-heading { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 2px 8px; border-bottom: 1px solid var(--line-strong); }
+.report-heading.selected { border-bottom-color: var(--accent); }
+.report-heading-row { display: flex; align-items: center; gap: 6px; }
+.report-heading h2 { flex: 1; min-width: 0; margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.report-heading p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .report-card-unfiltered { padding: 6px 12px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 11.5px; font-style: italic; }
 .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
 .filter-chip { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
@@ -471,7 +485,7 @@ code, kbd, pre { font-family: var(--mono); }
 .report-card-drift { display: flex; gap: 8px; align-items: baseline; padding: 6px 12px; background: var(--warning-soft); border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.45; }
 .report-card-drift p { flex: 1; margin: 0; }
 .report-card-drift .link { white-space: nowrap; }
-.report-card-note { padding: 8px 12px 10px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 12px; line-height: 1.5; max-height: 40%; overflow: auto; white-space: pre-wrap; }
+.report-card-note { padding: 8px 12px 10px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 12px; line-height: 1.5; max-height: 40%; overflow: auto; }
 
 .rc-frame { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px; }
 .rc-plot { flex: 1; min-height: 0; position: relative; overflow: hidden; }

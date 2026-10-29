@@ -295,7 +295,7 @@ export interface CardLayout {
 
 export interface ReportCard {
   id: string;
-  kind: "query" | "text";
+  kind: "query" | "text" | "heading";
   title: string;
   note: string;
   question: string;

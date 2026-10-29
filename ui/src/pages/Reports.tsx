@@ -5,6 +5,7 @@ import { ReportCanvas } from "../components/report/ReportCanvas";
 import { CHART_TYPES, ReportChart, splitColumns, suggestChart } from "../components/report/ReportChart";
 import { bottom } from "../components/report/layout";
 import { AddFilterPanel, FilterBar, isEmpty } from "../components/report/ReportFilters";
+import { Prose } from "../components/report/Prose";
 import { SqlViewer } from "../components/SqlViewer";
 import type {
   ChartType,
@@ -313,18 +314,18 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     if (!isEmpty(choicesRef.current[id])) choose(id, {});
   };
 
-  const addTextCard = () => {
+  const addTextCard = (kind: "text" | "heading") => {
     const card: ReportCard = {
-      id: newId("text"),
-      kind: "text",
-      title: "Notes",
+      id: newId(kind),
+      kind,
+      title: kind === "heading" ? "New section" : "Notes",
       note: "",
       question: "",
       run_id: null,
       chart: "table",
       dimension: null,
       measure: null,
-      layout: { x: 0, y: bottom(cards), w: 4, h: 4 },
+      layout: kind === "heading" ? { x: 0, y: bottom(cards), w: 12, h: 2 } : { x: 0, y: bottom(cards), w: 4, h: 4 },
     };
     updateCards([...cards, card]);
     setPanel({ kind: "card", id: card.id });
@@ -356,7 +357,8 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             {editing && (
               <>
                 <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "add" })}>Add chart</button>
-                <button type="button" className="button ghost small" onClick={addTextCard}>Add text</button>
+                <button type="button" className="button ghost small" onClick={() => addTextCard("heading")}>Add heading</button>
+                <button type="button" className="button ghost small" onClick={() => addTextCard("text")}>Add text</button>
               </>
             )}
             {!editing && (
@@ -516,6 +518,18 @@ function CardView({
 }) {
   const changed = state?.status === "done" ? state.changed : [];
   const skipped = state?.status === "done" ? state.skipped.map((id) => filterLabels[id] ?? id) : [];
+  if (card.kind === "heading") {
+    return (
+      <section className={selected ? "report-heading selected" : "report-heading"}>
+        <div className="report-heading-row">
+          {handle}
+          <h2>{card.title || "Untitled section"}</h2>
+          {editing && <button type="button" className="button ghost small" onClick={onSelect}>Edit</button>}
+        </div>
+        {card.note && <p>{card.note}</p>}
+      </section>
+    );
+  }
   const className = ["report-card", card.kind === "text" ? "report-card-text" : "", selected ? "selected" : ""].filter(Boolean).join(" ");
   return (
     <article className={className}>
@@ -545,7 +559,7 @@ function CardView({
       )}
       <div className="report-card-body">
         {card.kind === "text" ? (
-          card.note ? <p className="report-card-prose">{card.note}</p> : <p className="rc-empty">Write notes for this section in Edit.</p>
+          card.note ? <Prose className="report-card-prose" text={card.note} /> : <p className="rc-empty">Write notes for this section in Edit.</p>
         ) : (
           <CardBody card={card} state={state} onRefresh={onRefresh} />
         )}
@@ -553,7 +567,7 @@ function CardView({
       {skipped.length > 0 && (
         <p className="report-card-unfiltered">Not filtered by {skipped.join(", ")}: this chart's query does not read that table.</p>
       )}
-      {card.kind === "query" && card.note && <p className="report-card-note">{card.note}</p>}
+      {card.kind === "query" && card.note && <Prose className="report-card-note" text={card.note} />}
     </article>
   );
 }
@@ -808,7 +822,7 @@ function CardPanel({
   return (
     <aside className="report-panel" aria-label="Edit card">
       <div className="report-panel-head">
-        <h2>{card.kind === "text" ? "Text" : "Chart"}</h2>
+        <h2>{{ text: "Text", heading: "Heading", query: "Chart" }[card.kind]}</h2>
         <button type="button" className="button ghost small" onClick={onClose}>Close</button>
       </div>
       <div className="report-panel-body">
@@ -817,15 +831,27 @@ function CardPanel({
           <input value={card.title} maxLength={200} onChange={(event) => onChange({ title: event.target.value })} />
         </label>
         <label className="field">
-          <span className="field-label">{card.kind === "text" ? "Text" : "Description"}<span className="field-hint">shown {card.kind === "text" ? "in the card" : "under the chart"}</span></span>
+          <span className="field-label">
+            {{ text: "Text", heading: "Subtitle", query: "Description" }[card.kind]}
+            <span className="field-hint">{{ text: "shown in the card", heading: "one line under the heading", query: "shown under the chart" }[card.kind]}</span>
+          </span>
           <textarea
             className="report-note-input"
             value={card.note}
-            rows={card.kind === "text" ? 8 : 4}
-            maxLength={4000}
-            placeholder={card.kind === "text" ? "Context, definitions, or conclusions for this part of the report." : "What to notice in this chart, or how its numbers are defined."}
+            rows={{ text: 8, heading: 2, query: 4 }[card.kind]}
+            maxLength={card.kind === "heading" ? 300 : 4000}
+            placeholder={
+              {
+                text: "Context, definitions, or conclusions for this part of the report.",
+                heading: "What this section covers.",
+                query: "What to notice in this chart, or how its numbers are defined.",
+              }[card.kind]
+            }
             onChange={(event) => onChange({ note: event.target.value })}
           />
+          {card.kind !== "heading" && (
+            <span className="field-hint">Use # for a heading, - for a list, **bold**, *italic*, and `code`.</span>
+          )}
         </label>
         {card.kind === "query" && (
           <>

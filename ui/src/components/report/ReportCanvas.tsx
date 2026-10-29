@@ -110,7 +110,7 @@ export function ReportCanvas({
         {[...cards]
           .sort((a, b) => a.layout.y - b.layout.y || a.layout.x - b.layout.x)
           .map((card) => (
-            <div key={card.id} className="rc-cell" style={{ height: Math.max(4, card.layout.h) * (ROW + GAP) - GAP }}>
+            <div key={card.id} className="rc-cell" style={{ height: (card.kind === "heading" ? card.layout.h : Math.max(4, card.layout.h)) * (ROW + GAP) - GAP }}>
               {renderCard(card, null)}
             </div>
           ))}

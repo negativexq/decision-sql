@@ -63,6 +63,12 @@ export function ReportCanvas({
   };
 
   const preview = drag ? place(cards, drag.id, target(drag)) : cards;
+  // Position by transform so settling cards animate without layout work.
+  const style = (box: ReturnType<typeof toPx>) => ({
+    transform: `translate(${box.left}px, ${box.top}px)`,
+    width: box.width,
+    height: box.height,
+  });
 
   const start = (event: PointerEvent, card: ReportCard, mode: Drag["mode"]) => {
     if (!editing || event.button !== 0) return;
@@ -156,8 +162,8 @@ export function ReportCanvas({
           ) : null;
           return (
             <div key={card.id}>
-              {isDragged && <div className="rc-placeholder" style={settled} />}
-              <div className={isDragged ? "rc-cell dragging" : "rc-cell"} style={box}>
+              {isDragged && <div className="rc-placeholder" style={style(settled)} />}
+              <div className={isDragged ? "rc-cell dragging" : "rc-cell"} style={style(box)}>
                 {renderCard(card, handle)}
                 {editing && (
                   <span

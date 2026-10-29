@@ -423,12 +423,12 @@ code, kbd, pre { font-family: var(--mono); }
 .rc-canvas.editing { touch-action: none; }
 .rc-columns { position: absolute; inset: 0; display: flex; gap: 12px; pointer-events: none; }
 .rc-columns span { height: 100%; background: var(--accent-soft); opacity: .45; border-radius: 4px; }
-.rc-cell { position: absolute; transition: left .15s ease, top .15s ease, width .15s ease, height .15s ease; }
+.rc-cell { position: absolute; left: 0; top: 0; transition: transform .15s ease; }
 .rc-cell.dragging { transition: none; z-index: 5; }
 .rc-cell.dragging .report-card { box-shadow: 0 12px 28px rgba(22, 24, 29, .16); border-color: var(--accent); }
-.rc-placeholder { position: absolute; border: 2px dashed var(--accent); border-radius: 8px; background: var(--accent-soft); transition: left .15s ease, top .15s ease, width .15s ease, height .15s ease; }
+.rc-placeholder { position: absolute; border: 2px dashed var(--accent); border-radius: 8px; background: var(--accent-soft); left: 0; top: 0; transition: transform .15s ease; }
 .rc-stack { display: grid; gap: 12px; }
-.rc-stack .rc-cell { position: relative; }
+.rc-stack .rc-cell { position: relative; transform: none; }
 .rc-resize { position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; cursor: nwse-resize; touch-action: none; }
 .rc-resize::after { content: ""; position: absolute; right: 3px; bottom: 3px; width: 7px; height: 7px; border: solid var(--muted); border-width: 0 2px 2px 0; border-radius: 0 0 2px 0; }
 .rc-handle { display: grid; place-items: center; width: 20px; height: 22px; border-radius: 4px; color: var(--muted); cursor: grab; touch-action: none; flex: none; }

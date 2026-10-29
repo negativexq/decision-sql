@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from app.semantics.grain import (
     AggregationBehavior,
     DerivedMeasureSemantics,
@@ -12,6 +14,7 @@ from app.semantics.grain import (
     MeasureCatalog,
     MeasureSemantics,
 )
+from app.semantics.grain_runtime import GrainRuntimeStatus, RuntimeGrainSafetyCoordinator
 
 
 def _catalog() -> MeasureCatalog:
@@ -211,6 +214,59 @@ def test_governed_derived_measure_requires_the_declared_relationship_path() -> N
         "JOIN children c ON c.other_parent_id=p.parent_id GROUP BY p.group_id"
     )
     assert result.code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+
+
+_JOINED = "FROM parents p JOIN children c ON c.parent_id = p.parent_id"
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        f"WITH j AS (SELECT p.parent_id, p.amount {_JOINED}) SELECT SUM(amount) FROM j",
+        f"SELECT SUM(d.amount) FROM (SELECT p.amount AS amount {_JOINED}) d",
+        f"WITH j AS (SELECT p.* {_JOINED}) SELECT SUM(j.amount) FROM j",
+        f"WITH a AS (SELECT p.amount {_JOINED}), b AS (SELECT amount AS x FROM a) "
+        "SELECT SUM(x) FROM b",
+        "SELECT SUM(d.amount) FROM (SELECT parent_id, amount FROM parents) d "
+        "JOIN children c ON c.parent_id = d.parent_id",
+        "WITH t AS (SELECT parent_id, SUM(amount) AS total FROM parents GROUP BY parent_id) "
+        "SELECT SUM(t.total) FROM t JOIN children c ON c.parent_id = t.parent_id",
+    ],
+)
+def test_fanout_behind_a_cte_or_derived_table_is_detected(sql: str) -> None:
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+    assert result.evidence["child_table"] == "children"
+    # The normalizer cannot rewrite these, so the plan is refused and sent back for repair.
+    decision = RuntimeGrainSafetyCoordinator(_catalog()).inspect(sql)
+    assert decision.status is GrainRuntimeStatus.REJECTED
+
+
+def test_distinct_behind_a_cte_still_masks_the_fanout() -> None:
+    sql = f"WITH j AS (SELECT p.amount {_JOINED}) SELECT SUM(DISTINCT amount) FROM j"
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code is GrainDiagnosticCode.DISTINCT_VALUE_FANOUT_MASK
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        f"WITH j AS (SELECT p.parent_id, p.amount {_JOINED} GROUP BY p.parent_id, p.amount) "
+        "SELECT SUM(amount) FROM j",
+        f"WITH j AS (SELECT DISTINCT p.parent_id, p.amount {_JOINED}) SELECT SUM(amount) FROM j",
+        f"WITH j AS (SELECT DISTINCT c.parent_id, p.amount {_JOINED}) SELECT SUM(amount) FROM j",
+        f"WITH j AS (SELECT c.amount {_JOINED}) SELECT SUM(amount) FROM j",
+        "WITH j AS (SELECT amount FROM parents WHERE amount > 0) SELECT SUM(amount) FROM j",
+        "WITH j AS (SELECT p.amount FROM parents p WHERE EXISTS "
+        "(SELECT 1 FROM children c WHERE c.parent_id = p.parent_id)) SELECT SUM(amount) FROM j",
+        "WITH t AS (SELECT p.parent_id, SUM(p.amount) AS total FROM parents p "
+        "GROUP BY p.parent_id) SELECT SUM(t.total) FROM t JOIN (SELECT DISTINCT parent_id "
+        "FROM children) c ON c.parent_id = t.parent_id",
+    ],
+)
+def test_a_cte_at_the_parent_grain_is_safe(sql: str) -> None:
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code in {GrainDiagnosticCode.PASS, GrainDiagnosticCode.NOT_APPLICABLE}
 
 
 def test_existence_query_is_not_misclassified_as_measure_fanout() -> None:

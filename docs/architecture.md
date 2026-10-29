@@ -225,6 +225,10 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   measures at their table's grain. Summing a parent's column across its child
   rows is stopped at planning time, and so is `SUM(DISTINCT ...)` used to
   hide the repeated rows. Declared relationships count as foreign keys.
+  A column summed from a CTE or derived table is followed back through its
+  projections, including inner aggregates, to the table it is read from;
+  every table joined along the way counts, unless a scope in between groups
+  or de-duplicates on the parent's key (or a column its joins equate with it).
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
   statistics, a text literal compared with the column that differs from one
@@ -278,9 +282,13 @@ audit log keeps both the model's SQL and the text the database received
 
 ### Known gaps
 
-- Columns of CTEs and derived tables are not traced to their source tables.
-  A fan-out hidden inside a CTE, or a CTE column joined on a non-key, passes
-  the grain and join checks.
+- The grain check follows a measure only through the sources it is read
+  from. A child table joined through a CTE or derived table of its own
+  (`JOIN (SELECT ... FROM order_items) i`) is not seen as a fan-out.
+- Grouping by the parent's key in the aggregating scope counts as safe, as
+  it does for a direct join.
+- The join check does not trace CTE columns, so a CTE column joined on a
+  non-key passes it.
 - A table joined with itself is not checked against relationships, so two
   aliases of one table may be cross joined.
 - The value check covers `column = 'text'`, `<>`, and `IN` lists on bare

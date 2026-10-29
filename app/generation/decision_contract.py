@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "daed16a2517baa3db2d816625fb55ae2b80d8c095c50a3e6200b31e6c08eab50"
+    "4d33365497a1bc0292d87f37611020a7b01529e16f1d3e93a8a2bb019cac7738"
 )
 
 
@@ -111,6 +111,9 @@ The context details the tables selected for this question. Use the physical tabl
 - When the question asks whether something is true, return each judgement as the text `YES` or `NO`, not as 1/0 or true/false.
 - When the question states the form of the answer, such as one row, one line, a rounding, or an order, follow it exactly: several figures asked for as one answer are columns of one row, and text asked for as one line has its line breaks replaced by spaces.
 - When the question names several fields, such as a first and a last name, return each as its own column, in the order the question names them. Combine fields into one column only when the question asks for one combined value.
+- When the question asks for a figure for each value of a column, such as each sex, each type, or each of two named values of one column, return one row per value with the value in its own column before the figure, even when the question names the values. Keep every value the question asks about; one with nothing to count shows zero. Subsets the question defines itself by a condition, such as molecules with and without a property, are separate figures: columns of one row, unless the question asks for one row per subset.
+- Return a group or code as it is stored, for example `F` rather than `Female`, unless the question asks for other labels.
+- When the question asks how many people, items, or other things, count each one once: use `COUNT(DISTINCT key)` whenever a join or the rows themselves can repeat one, such as a member attending several events or a driver in several races. Count rows only when the question counts occurrences, such as attendances or visits.
 - When two visible tables hold the same kind of value, such as a county or a school type, and the question names where the value comes from (a program, a report, a record), take it from that table.
 - When the question asks for the item with the highest, lowest, earliest, or latest value, return every row that shares that value, for example by comparing with `(SELECT MAX(...))` or filtering `RANK() = 1`. Do not cut a tie with `LIMIT 1` or an arbitrary order; the runtime tells the user when rows tie. Use `LIMIT n` only when the question asks for a fixed number of items.
 

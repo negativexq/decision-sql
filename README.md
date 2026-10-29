@@ -14,7 +14,7 @@ The model makes one typed decision per question: `ANSWER` with read-only SQL,
 only a proposal. Parsing, policy, authority, grain safety, `EXPLAIN` cost limits,
 and read-only execution are deterministic code the model cannot bypass.
 
-![An answered question with its chart and the ten checks it passed](docs/screenshots/ask-answer.jpg)
+![An answered question with its chart and the checks it passed](docs/screenshots/ask-answer.jpg)
 
 ## What you can do
 
@@ -22,7 +22,7 @@ and read-only execution are deterministic code the model cannot bypass.
 | --- | --- |
 | **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. |
 | **See the query** | Open "Query that ran" above the answer to read or copy the SQL. |
-| **Follow the checks** | Ten stages from context to execution, each with its outcome and timing. |
+| **Follow the checks** | Eleven stages from context to execution, each with its outcome and timing. |
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |
 | **Declare joins** | When a database has no foreign keys, declare the joins questions may use; each one is checked against the data before it is saved. |
@@ -40,7 +40,7 @@ flowchart TD
     G["Clarify or decline<br/>No SQL runs"]
     P["Parse + policy"]
     A["Request authority"]
-    GS["Grain safety"]
+    GS["Grain safety + stored values"]
     E["EXPLAIN + cost gate"]
     RO["Read-only execution"]
     R["Answer + audit record"]
@@ -54,7 +54,8 @@ flowchart TD
 
 - **Governed context.** The model sees only queryable tables and columns, their
   relationships (foreign keys and joins an administrator declared), the stored
-  spellings of categorical text columns, and the SQL functions policy allows.
+  spellings of categorical text columns when an administrator shares them for
+  that connection, and the SQL functions policy allows.
   Small schemas are sent whole; large schemas are narrowed by retrieval, and the
   tables left out are listed by name.
 - **One decision, at most one more round.** One request with a strict JSON
@@ -166,6 +167,8 @@ Text-to-SQL accuracy claim.
 - Authority is relation-level; there are no tenant predicates or row-level
   security.
 - Questions run only on PostgreSQL.
+- Joins and grain are checked on physical tables; columns of CTEs and derived
+  tables are not traced to their sources yet.
 - The demo catalog is a synthetic commerce schema with hand-written business
   definitions.
 

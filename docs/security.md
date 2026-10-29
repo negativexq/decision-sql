@@ -33,7 +33,10 @@ tests.
 - Functions must be on an analytical allowlist.
 - Wildcards that would expose a non-queryable column are rejected.
 - Every referenced relation must be in the request's governed context.
-- Aggregates that would fan out across a parent-child join are rejected.
+- Equality between columns of two tables must follow a foreign key or a
+  declared relationship.
+- Aggregates that would fan out across a parent-child join are rejected,
+  including `SUM(DISTINCT ...)` over such a join.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under
   `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST`.
 - Only an accepted `QueryPlan` can execute. Raw SQL, rejected plans, and copied

@@ -22,7 +22,12 @@ from app.reports.models import (
     ReportRole,
     Visibility,
 )
-from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
+from app.reports.service import (
+    ReportConflictError,
+    ReportForbiddenError,
+    ReportRejectedError,
+    ReportService,
+)
 from app.reports.store import InMemoryReportStore, InMemorySnapshotStore
 
 
@@ -469,3 +474,43 @@ def test_only_an_editor_renames_a_report() -> None:
         service.rename(report.id, "   ", "ayse")
     with pytest.raises(ReportForbiddenError):
         service.rename(report.id, "Mine", "mehmet")
+
+
+def test_a_save_made_from_an_older_version_is_refused() -> None:
+    service, _ = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.share(report.id, ReportAccess(editors=["mehmet"]), "ayse")
+    opened = service.get(report.id, "ayse")
+    assert opened is not None and opened.version == 2
+
+    # Mehmet saves first, from the same version Ayse opened.
+    theirs = service.update(
+        report.id, ReportInput(title="Sales (Mehmet)", version=opened.version), "mehmet"
+    )
+    assert theirs is not None and theirs.version == 3
+    with pytest.raises(ReportConflictError, match="mehmet saved this report"):
+        service.update(report.id, ReportInput(title="Sales (Ayse)", version=opened.version), "ayse")
+    kept = service.get(report.id, "ayse")
+    assert kept is not None and kept.title == "Sales (Mehmet)"
+
+    # Saving from the version just read, and every targeted change, moves the version on.
+    mine = service.update(report.id, ReportInput(title="Sales", version=3), "ayse")
+    assert mine is not None and mine.version == 4
+    renamed = service.rename(report.id, "Sales overview", "ayse")
+    assert renamed is not None and renamed.version == 5
+    added = service.add_card(report.id, CardFromRun(run_id="run_a", chart="bar"), "ayse")
+    assert added is not None and added.version == 6
+
+
+def test_the_store_writes_a_report_only_over_the_version_it_was_read_at() -> None:
+    service, _ = _service()
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    stored = service.store.get(report.id)
+    assert stored is not None and stored.version == 1
+
+    first = stored.model_copy(update={"title": "A", "version": 2})
+    second = stored.model_copy(update={"title": "B", "version": 2})
+    assert service.store.save(first)
+    assert not service.store.save(second)
+    current = service.store.get(report.id)
+    assert current is not None and current.title == "A"

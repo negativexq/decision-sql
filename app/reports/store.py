@@ -15,7 +15,13 @@ class ReportStore(Protocol):
 
     def get(self, report_id: str) -> Report | None: ...
 
-    def save(self, report: Report) -> None: ...
+    def save(self, report: Report) -> bool:
+        """Write the report over the version before it, or as new at version 1.
+
+        False when the stored report is no longer at ``report.version - 1``: someone
+        saved in between, and this write would undo their change.
+        """
+        ...
 
     def delete(self, report_id: str) -> bool: ...
 
@@ -36,8 +42,12 @@ class InMemoryReportStore:
     def get(self, report_id: str) -> Report | None:
         return self._items.get(report_id)
 
-    def save(self, report: Report) -> None:
+    def save(self, report: Report) -> bool:
+        stored = self._items.get(report.id)
+        if (stored.version if stored is not None else 0) != report.version - 1:
+            return False
         self._items[report.id] = report
+        return True
 
     def delete(self, report_id: str) -> bool:
         return self._items.pop(report_id, None) is not None
@@ -73,19 +83,20 @@ class SqlReportStore:
             row = connection.execute(query).mappings().first()
         return Report.model_validate(dict(row)) if row is not None else None
 
-    def save(self, report: Report) -> None:
+    def save(self, report: Report) -> bool:
         values = report.model_dump(mode="json", exclude={"created_at", "updated_at"})
         values.update(created_at=report.created_at, updated_at=report.updated_at)
         with self.engine.begin() as connection:
-            exists = connection.execute(
-                select(reports.c.id).where(reports.c.id == report.id)
-            ).first()
-            if exists:
-                connection.execute(
-                    update(reports).where(reports.c.id == report.id).values(**values)
-                )
-            else:
+            if report.version == 1:
                 connection.execute(insert(reports).values(**values))
+                return True
+            # A conditional update: of two saves made from one version, one is written.
+            result = connection.execute(
+                update(reports)
+                .where(reports.c.id == report.id, reports.c.version == report.version - 1)
+                .values(**values)
+            )
+        return bool(result.rowcount)
 
     def delete(self, report_id: str) -> bool:
         with self.engine.begin() as connection:

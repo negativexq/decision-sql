@@ -353,6 +353,12 @@ def test_scheduled_reports_are_claimed_once_and_snapshots_are_bounded(engine: En
         assert not store.claim(report.id, due, following)  # a second worker loses
         assert report.id not in {item.id for item in store.due(due)}
 
+        # Of two saves made from one version, only the first is written.
+        assert store.save(report.model_copy(update={"title": "A", "version": 2}))
+        assert not store.save(report.model_copy(update={"title": "B", "version": 2}))
+        saved = store.get(report.id)
+        assert saved is not None and saved.title == "A" and saved.version == 2
+
         for index in range(4):
             snapshots.save(
                 Snapshot(

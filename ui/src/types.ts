@@ -444,6 +444,7 @@ export interface Report extends ReportAccess {
   created_at: string;
   updated_by: string;
   updated_at: string;
+  version: number;
 }
 
 export interface SnapshotCard {

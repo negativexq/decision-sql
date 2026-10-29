@@ -23,7 +23,12 @@ from app.reports.models import (
     Snapshot,
     SnapshotSummary,
 )
-from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
+from app.reports.service import (
+    ReportConflictError,
+    ReportForbiddenError,
+    ReportRejectedError,
+    ReportService,
+)
 
 router = APIRouter(prefix="/api/reports")
 
@@ -46,6 +51,8 @@ def _call[T](call: Callable[[], T | None]) -> T:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except ReportForbiddenError as error:
         raise HTTPException(status_code=403, detail=str(error)) from error
+    except ReportConflictError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
     if result is None:
         raise HTTPException(status_code=404, detail="Report not found")
     return result
@@ -105,6 +112,8 @@ async def _run[T](call: Awaitable[T | None]) -> T:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except ReportForbiddenError as error:
         raise HTTPException(status_code=403, detail=str(error)) from error
+    except ReportConflictError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
     except ConnectorUnavailableError as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
     except Exception as error:  # driver errors are reported, not leaked as 500s

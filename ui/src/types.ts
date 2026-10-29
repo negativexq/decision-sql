@@ -276,6 +276,18 @@ export interface ValueColumn {
   shared: boolean;
 }
 
+export interface ColumnNote {
+  table: string;
+  column: string;
+  description: string;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface ConnectionNotes {
+  notes: ColumnNote[];
+}
+
 export interface ConnectionValues {
   available: boolean;
   enabled: boolean;

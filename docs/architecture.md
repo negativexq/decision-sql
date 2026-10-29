@@ -50,6 +50,10 @@ column is order revenue and which timestamp drives monthly trends.
   not treated as complete); excluded columns, keys, long values,
   and columns whose names suggest personal data never do. Without sharing, code
   and date columns carry only their shape (`value_patterns`, digits as `9`).
+- Column descriptions come from the source's comments. An administrator who
+  cannot write comments to the source can describe a column on the connection
+  page instead (`column_notes`); the note replaces that column's description in
+  the context. It explains a column and grants nothing.
 - The policy section lists the SQL functions the runtime accepts, from the same
   allowlist the policy gate uses.
 
@@ -81,6 +85,11 @@ At most one more call follows, recorded as its own trace stage:
   limit, fan-out). The model gets the runtime's own rejection code and message,
   never database error text or rows. Authority, write, forbidden-relation, and
   catalog rejections are final.
+- **Execution error**: the query failed while running with a database error
+  class the author can fix (failed cast, division by zero, a scalar subquery
+  with several rows, a type or function mismatch, a timeout). The model gets a
+  fixed runtime sentence for that class, read from the SQLSTATE; the database's
+  message never goes back. Other failures are final.
 - **Empty result**: the query ran and returned no rows, or one row of only
   zeros and NULLs, and the run has not used its repair round. The model hears
   that the result was empty, which filters compare with a value the column

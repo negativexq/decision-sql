@@ -27,6 +27,14 @@ from app.metadata.connectors import (
 from app.metadata.drivers import load_connector
 from app.metadata.drivers.install import DriverInstallResult, install_driver
 from app.metadata.drivers.postgres import PostgresConnector
+from app.metadata.notes import (
+    ColumnNoteStore,
+    ColumnNotesUpdate,
+    ConnectionNotes,
+    InMemoryColumnNoteStore,
+    apply_notes,
+    check_notes,
+)
 from app.metadata.relationships import (
     ConnectionRelationships,
     DeclaredRelationship,
@@ -98,10 +106,12 @@ class ConnectionService:
         relationships: RelationshipStore | None = None,
         value_examples: bool = True,
         value_sharing: ValueSharingStore | None = None,
+        notes: ColumnNoteStore | None = None,
     ) -> None:
         self.store = store
         self.value_examples = value_examples
         self.value_sharing_store = value_sharing or InMemoryValueSharingStore()
+        self.note_store = notes or InMemoryColumnNoteStore()
         self._values: dict[str, tuple[float, dict[tuple[str, str], KnownValues]]] = {}
         self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
@@ -164,6 +174,7 @@ class ConnectionService:
         self._values.pop(connection_id, None)
         # The SQL stores cascade; the in-memory ones need the explicit cleanup.
         self.value_sharing_store.delete(connection_id)
+        self.note_store.delete(connection_id)
         for relationship in self.relationship_store.list(connection_id):
             self.relationship_store.delete(connection_id, relationship.id)
         return self.store.delete(connection_id)
@@ -175,8 +186,11 @@ class ConnectionService:
             return None
         item, connector, password = resolved
         config = item.config()
-        catalog = merge_declared(
-            connector.catalog(config, password), self.relationship_store.list(item.id)
+        catalog = apply_notes(
+            merge_declared(
+                connector.catalog(config, password), self.relationship_store.list(item.id)
+            ),
+            self.note_store.list(item.id),
         )
         if self.value_examples:
             # Sharing is read for every question, so turning it off takes effect at once.
@@ -269,6 +283,23 @@ class ConnectionService:
             item.id, update.enabled, tuple(sorted(set(update.excluded))), actor
         )
         return self.values(connection_id)
+
+    def notes(self, connection_id: str) -> ConnectionNotes | None:
+        if self.store.get(connection_id) is None:
+            return None
+        return ConnectionNotes(notes=self.note_store.list(connection_id))
+
+    def set_notes(
+        self, connection_id: str, update: ColumnNotesUpdate, actor: str
+    ) -> ConnectionNotes | None:
+        """Save descriptions for columns the source has; an empty one removes the note."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        checked = check_notes(connector.catalog(item.config(), password), update.notes)
+        self.note_store.apply(item.id, checked, actor)
+        return self.notes(item.id)
 
     def relationships(self, connection_id: str) -> ConnectionRelationships | None:
         """Foreign keys, declared relationships, and checked suggestions for one source."""

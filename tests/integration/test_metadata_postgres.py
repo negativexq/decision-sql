@@ -9,6 +9,7 @@ from sqlalchemy import Engine, create_engine, delete, text
 
 from app.generation.decision_contract import DecisionDetail, MissingRelationship
 from app.metadata.connectors import ConnectionConfig
+from app.metadata.notes import ColumnNoteEdit, ColumnNotesUpdate, SqlColumnNoteStore
 from app.metadata.relationships import (
     RelationshipDeclaration,
     RelationshipRejectedError,
@@ -416,3 +417,46 @@ def test_a_small_tables_values_are_counted_exactly_not_estimated(engine: Engine)
     finally:
         with engine.begin() as connection:
             connection.execute(text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))
+
+
+def test_column_notes_describe_the_source_to_the_model(engine: Engine) -> None:
+    box = SecretBox(Fernet.generate_key().decode())
+    notes = SqlColumnNoteStore(engine)
+    service = ConnectionService(SqlConnectionStore(engine), box, engine, notes=notes)
+    summary, result = service.create(
+        ConnectionConfig(
+            kind="postgresql",
+            name="it-notes",
+            host="localhost",
+            port=5432,
+            database="decision_sql",
+            username="decision_reader",
+            password="decision_reader_password",
+            ssl_mode="disable",
+        ),
+        "ayse@example.com",
+    )
+    assert result.ok, result.message
+
+    saved = service.set_notes(
+        summary.id,
+        ColumnNotesUpdate(
+            notes=[ColumnNoteEdit(table="orders", column="status", description="Order state.")]
+        ),
+        "admin",
+    )
+    assert saved is not None and [n.description for n in saved.notes] == ["Order state."]
+    source = service.question_source(summary.id)
+    assert source is not None
+    orders = source.catalog.get_table("orders")
+    assert orders is not None
+    status = orders.get_column("status")
+    assert status is not None and status.description == "Order state."
+
+    service.set_notes(
+        summary.id,
+        ColumnNotesUpdate(notes=[ColumnNoteEdit(table="orders", column="status")]),
+        "admin",
+    )
+    assert notes.list(summary.id) == []
+    assert service.delete(summary.id)

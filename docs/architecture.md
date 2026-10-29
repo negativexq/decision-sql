@@ -214,6 +214,10 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   correlated subquery, must match a foreign key or declared relationship:
   `orders.id = customers.id` is rejected even though both tables are
   authorized, and the rejection names the relationships that do link them.
+  Every table of a SELECT must also reach the others through such equalities
+  (ANDed, an `OR` of them between the same two tables, or `USING`), so a
+  `CROSS JOIN`, a comma list, `ON TRUE`, or a range join between two tables
+  is rejected the same way. A CTE or derived table needs no link of its own.
 - **Authority**: every referenced relation must be in the request's context.
 - **Grain**: aggregates must not fan out across a parent-child join. Grain
   facts come from the source catalog itself: tables with a primary key are
@@ -277,7 +281,8 @@ audit log keeps both the model's SQL and the text the database received
 - Columns of CTEs and derived tables are not traced to their source tables.
   A fan-out hidden inside a CTE, or a CTE column joined on a non-key, passes
   the grain and join checks.
-- A table joined with itself is not checked against relationships.
+- A table joined with itself is not checked against relationships, so two
+  aliases of one table may be cross joined.
 - The value check covers `column = 'text'`, `<>`, and `IN` lists on bare
   columns; `LIKE` and functions such as `LOWER(column)` are not checked.
   Columns whose values are not all known are looked up only after a query

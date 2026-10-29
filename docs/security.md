@@ -66,6 +66,11 @@ tests.
   between them ANDed into the same SELECT (such as `trans.date = loan.date`) only
   narrows the authorized pairs and is allowed; under `OR`, or with the link only
   in an enclosing SELECT, it is still rejected.
+- Every table in a SELECT's FROM list must be joined to the others along such
+  relationships: a `CROSS JOIN`, a comma list, `ON TRUE`, or a range
+  comparison between two tables is rejected. A CTE or derived table needs no
+  link, so a one-row aggregate can be cross joined, and aliases of one table
+  count as that table.
 - Aggregates that would fan out across a parent-child join are rejected,
   including `SUM(DISTINCT ...)` over such a join.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under

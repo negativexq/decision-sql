@@ -25,6 +25,13 @@ class ColumnMetadata(BaseModel):
     # Every value the column holds, for the runtime literal check only; never part of
     # the model context, whether or not the values are shared.
     value_domain: tuple[str, ...] = ()
+    # Shares of rows that are NULL, or an empty or blank string, from planner statistics.
+    null_share: float = 0.0
+    blank_share: float = 0.0
+    # A character joining several items in a share of the values, such as "," in
+    # "Artifact,Creature" or "Bangalore, India".
+    separator: str = ""
+    separated_share: float = 0.0
 
 
 class RelationshipMetadata(BaseModel):
@@ -93,6 +100,10 @@ class RelevantColumn(BaseModel):
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
     value_patterns: tuple[str, ...] = ()
+    null_share: float = 0.0
+    blank_share: float = 0.0
+    separator: str = ""
+    separated_share: float = 0.0
 
 
 class RelevantTable(BaseModel):

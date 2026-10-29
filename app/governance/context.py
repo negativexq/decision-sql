@@ -54,6 +54,10 @@ class GovernedAttribute(BaseModel):
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
     value_patterns: tuple[str, ...] = ()
+    null_share: float = 0.0
+    blank_share: float = 0.0
+    separator: str = ""
+    separated_share: float = 0.0
 
     @model_serializer(mode="wrap")
     def _omit_absent_values(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -62,8 +66,9 @@ class GovernedAttribute(BaseModel):
         if not self.known_values:
             data.pop("known_values", None)
             data.pop("known_values_complete", None)
-        if not self.value_patterns:
-            data.pop("value_patterns", None)
+        for key in ("value_patterns", "null_share", "blank_share", "separator", "separated_share"):
+            if not data.get(key):
+                data.pop(key, None)
         return data
 
 
@@ -163,6 +168,10 @@ def governed_context_from_schema_context(
             known_values=column.known_values,
             known_values_complete=column.known_values_complete,
             value_patterns=column.value_patterns,
+            null_share=column.null_share,
+            blank_share=column.blank_share,
+            separator=column.separator,
+            separated_share=column.separated_share,
             foreign_key_entity_id=(
                 entity_ids.get(column.foreign_key_table)
                 if column.foreign_key_table is not None
@@ -218,6 +227,89 @@ def serialize_governed_context(context: GovernedContext) -> str:
     """Serialize the exact model-visible context with canonical JSON bytes."""
     payload = context.model_dump(mode="json")
     return json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
+
+
+def render_governed_context(context: GovernedContext) -> str:
+    """The same context as compact text: one line per column, names instead of ids.
+
+    The JSON form repeats ids and empty fields on every column; this form keeps every
+    fact the model reads (types, keys, descriptions, stored values, relationships,
+    rules, policy) under the section names the decision contract refers to. The
+    canonical JSON stays the audited and hashed form.
+    """
+    tables = {entity.entity_id: entity.physical_table for entity in context.schema_catalog}
+    columns = {
+        attribute.attribute_id: (
+            tables.get(attribute.entity_id, ""),
+            attribute.physical_column_or_path,
+        )
+        for attribute in context.attributes
+    }
+
+    def column_name(attribute_id: str) -> str:
+        if attribute_id in columns:
+            table, column = columns[attribute_id]
+            return f"{table}.{column}"
+        # A key into a table this bounded context leaves out: its id still names it.
+        return ".".join(attribute_id.split(":")[-2:])
+
+    def values(items: tuple[str, ...]) -> str:
+        return ", ".join(json.dumps(item, ensure_ascii=False) for item in items)
+
+    policy = context.policy
+    lines = [
+        f"database: {context.database_id}",
+        f"policy: {policy.mode}; statements: {', '.join(policy.allowed_statement_types)}",
+        f"policy.allowed_functions: {', '.join(policy.allowed_functions)}",
+        "",
+        "schema_catalog:",
+    ]
+    for entity in context.schema_catalog:
+        flag = "" if entity.queryable else " (not queryable)"
+        lines.append(f"## {entity.physical_table}{flag} — {entity.description}")
+        for attribute in context.attributes:
+            if attribute.entity_id != entity.entity_id:
+                continue
+            line = f"- {attribute.physical_column_or_path} {attribute.semantic_type}"
+            if attribute.primary_key:
+                line += " PK"
+            if attribute.foreign_key_attribute_id:
+                line += f" FK → {column_name(attribute.foreign_key_attribute_id)}"
+            if not attribute.queryable:
+                line += " (not queryable)"
+            line += f" — {attribute.description}"
+            if attribute.known_values:
+                kind = "complete" if attribute.known_values_complete else "examples"
+                line += f" | known_values ({kind}): {values(attribute.known_values)}"
+            if attribute.value_patterns:
+                line += f" | value_patterns: {', '.join(attribute.value_patterns)}"
+            for name, share in (
+                ("null_share", attribute.null_share),
+                ("blank_share", attribute.blank_share),
+            ):
+                if share:
+                    line += f" | {name}: {share:.0%}"
+            if attribute.separator:
+                line += (
+                    f" | separated_by {json.dumps(attribute.separator)}: "
+                    f"{attribute.separated_share:.0%} of values"
+                )
+            lines.append(line)
+    lines += ["", "authorized_relationships:"]
+    lines += [
+        f"- {column_name(item.source_attribute_id)} = {column_name(item.target_attribute_id)}"
+        for item in context.authorized_relationships
+    ] or ["- none"]
+    for title, items in (
+        ("metrics", [f"- {item.name}: {item.description}" for item in context.metrics]),
+        ("business_rules", [f"- {item.description}" for item in context.business_rules]),
+        ("temporal_rules", [f"- {item.description}" for item in context.temporal_rules]),
+    ):
+        if items:
+            lines += ["", f"{title}:", *items]
+    if context.other_tables:
+        lines += ["", f"other_tables: {', '.join(context.other_tables)}"]
+    return "\n".join(lines) + "\n"
 
 
 def governed_context_hash(context: GovernedContext) -> str:

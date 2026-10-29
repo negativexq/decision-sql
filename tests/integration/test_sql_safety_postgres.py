@@ -366,3 +366,52 @@ def test_the_top_row_of_a_descending_order_is_a_value_not_a_missing_one(
     result = service.execute(planned)
     assert isinstance(result, QueryExecution)
     assert result.rows[0]["amount"] is not None
+
+
+def test_the_value_probe_finds_a_stored_spelling_in_the_database(
+    service: SqlSafetyService,
+) -> None:
+    probed = service.probe_values(
+        "SELECT COUNT(*) FROM products p "
+        "WHERE p.name = 'office item 03' AND p.category IN ('Office', 'stationery')"
+    )
+
+    assert probed is not None
+    assert "'Office Item 03'" in probed.expression.sql(dialect="postgres")
+    assert [(item.column, item.literal) for item in probed.unmatched] == [
+        ("category", "stationery")
+    ]
+    # A query on no probed column, or one that does not parse, has nothing to look up.
+    assert service.probe_values("SELECT COUNT(*) FROM products WHERE id = 1") is None
+    assert service.probe_values("SELECT FROM WHERE") is None
+
+
+def test_a_failed_cast_is_named_by_its_class_without_the_database_text(
+    service: SqlSafetyService,
+) -> None:
+    planned = service.plan(SqlCandidate(sql="SELECT name::numeric AS n FROM products LIMIT 5"))
+    assert isinstance(planned, QueryPlan)
+    result = service.execute(planned)
+
+    assert isinstance(result, SqlExecutionError)
+    assert result.error_class == "INVALID_TEXT_CONVERSION"
+    assert "numeric" not in result.error
+
+
+def test_a_probe_runs_through_the_gates_without_touching_the_trace(
+    service: SqlSafetyService,
+) -> None:
+    recorded: list[str] = []
+    service.stage_recorder = lambda name, *args, **kwargs: recorded.append(name)  # type: ignore[assignment]
+    try:
+        plan, execution = service.explore(
+            SqlCandidate(sql="SELECT category, COUNT(*) AS n FROM products GROUP BY category")
+        )
+        assert isinstance(plan, QueryPlan) and isinstance(execution, QueryExecution)
+        assert execution.rows
+
+        rejected, nothing = service.explore(SqlCandidate(sql="DELETE FROM products"))
+        assert isinstance(rejected, SqlPlanFailure) and nothing is None
+        assert recorded == []
+    finally:
+        service.stage_recorder = None

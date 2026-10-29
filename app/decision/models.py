@@ -28,6 +28,19 @@ class RuntimeOutcome(StrEnum):
     GENERATION_ERROR = "GENERATION_ERROR"
 
 
+class AlternativeReading(BaseModel):
+    """Another reading of an ambiguous question, with the result it gives."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    reading: str
+    sql: str
+    rows: list[dict[str, Any]] = Field(default_factory=list)
+    columns: list[str] = Field(default_factory=list)
+    row_count: int = 0
+    truncated: bool = False
+
+
 class DecisionApplicationResult(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -50,4 +63,7 @@ class DecisionApplicationResult(BaseModel):
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0
     truncated: bool = False
+    # The reading the answer assumed, when the question had several that differ.
+    assumption: str | None = None
+    alternatives: tuple[AlternativeReading, ...] = ()
     trace: RunTrace

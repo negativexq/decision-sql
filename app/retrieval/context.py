@@ -313,6 +313,10 @@ class SchemaContextResolver:
                 known_values=column.known_values,
                 known_values_complete=column.known_values_complete,
                 value_patterns=column.value_patterns,
+                null_share=column.null_share,
+                blank_share=column.blank_share,
+                separator=column.separator,
+                separated_share=column.separated_share,
                 foreign_key_table=next(
                     (
                         relationship.referenced_table

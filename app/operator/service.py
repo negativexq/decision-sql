@@ -233,6 +233,8 @@ class OperatorApplication:
             columns=result.columns,
             row_count=result.row_count,
             truncated=result.truncated,
+            assumption=result.assumption,
+            alternatives=list(result.alternatives),
             duration_ms=result.trace.duration_ms,
             created_at=result.trace.started_at.isoformat(),
             trace=result.trace,
@@ -342,7 +344,12 @@ class OperatorApplication:
                 )
             return (
                 DecisionSqlApplication(
-                    _with_earlier(resolver, earlier), provider, safety, self.settings, earlier
+                    _with_earlier(resolver, earlier),
+                    provider,
+                    safety,
+                    self.settings,
+                    earlier,
+                    value_access=source.sharing,
                 ),
                 question,
                 ProposalSource.LIVE_MODEL,

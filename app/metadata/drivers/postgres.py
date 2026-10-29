@@ -205,14 +205,17 @@ class PostgresConnector:
         columns: set[tuple[str, str]],
         small_table_pages: int = 128,
         sample_limit: int = 200,
+        counted: set[tuple[str, str]] | None = None,
     ) -> list[ColumnStats]:
         """Value statistics for the given columns.
 
-        A small table's columns are counted exactly, bounded by the table's size and
-        the session's timeout: planner statistics are an estimate that leaves out
-        values seen once, so a small domain with one rare value would look
-        incomplete.  Larger tables use the planner statistics.
+        A small table's columns in ``counted`` (all of ``columns`` by default) are
+        counted exactly, bounded by the table's size and the session's timeout:
+        planner statistics are an estimate that leaves out values seen once, so a
+        small domain with one rare value would look incomplete.  Larger tables, and
+        the other columns, use the planner statistics.
         """
+        counted = columns if counted is None else counted & columns
         if not columns:
             return []
         schema = config.schema_name or "public"
@@ -249,7 +252,7 @@ class PostgresConnector:
                 ).fetchall()
                 if pages <= small_table_pages
             }
-            for table, column in sorted(columns):
+            for table, column in sorted(counted):
                 if table not in small:
                     continue
                 query = sql.SQL(

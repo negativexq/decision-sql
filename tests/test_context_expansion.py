@@ -7,6 +7,7 @@ import pytest
 from app.catalog.default import build_default_catalog
 from app.config import Settings
 from app.db.models import Base
+from app.decision.exploration import Exploration
 from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
     PRODUCTION_DECISION_CASE_ID,
@@ -34,8 +35,9 @@ class SequenceProvider:
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
-        del question, repair, earlier
+        del question, repair, earlier, exploration
         self.contexts.append(schema_context)
         return ProductionDecisionProposal(
             decision=self.decisions.pop(0), provider="fake", model="fake-model", latency_ms=1.0
@@ -82,7 +84,18 @@ async def _run(provider: SequenceProvider, **settings: object):
         _resolver(),
         provider,  # type: ignore[arg-type]
         NoSafety(),  # type: ignore[arg-type]
-        Settings(_env_file=None, reader_role="reader", **settings),
+        # Exploration (and its send-back of an unexplored refusal) is covered elsewhere.
+        Settings(
+            _env_file=None,
+            reader_role="reader",
+            # These tests read the context the model saw as JSON.
+            **{
+                "exploration_enabled": False,
+                "reading_check_enabled": False,
+                "context_format": "json",
+                **settings,
+            },  # type: ignore[arg-type]
+        ),
     ).run("Which product names were refunded?", collector)
     return result, {stage.name: stage for stage in result.trace.stages}
 

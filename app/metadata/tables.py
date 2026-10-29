@@ -147,3 +147,21 @@ value_sharing = Table(
     Column("updated_by", String(120), nullable=False),
     Column("updated_at", DateTime(timezone=True), nullable=False),
 )
+
+# An administrator's description of one column, shown to the model in place of the
+# source's own comment.
+column_notes = Table(
+    "column_notes",
+    metadata,
+    Column(
+        "connection_id",
+        String(64),
+        ForeignKey(f"{METADATA_SCHEMA}.connections.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("table_name", String(255), primary_key=True),
+    Column("column_name", String(255), primary_key=True),
+    Column("description", Text, nullable=False),
+    Column("updated_by", String(120), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)

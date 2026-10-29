@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { api, type ConnectionInput } from "../api/client";
+import { ColumnNotes } from "../components/ColumnNotes";
 import { Relationships } from "../components/Relationships";
 import { ValueSharing } from "../components/ValueSharing";
 import { KIND_LABEL, formatCount, formatMs, relativeTime } from "../format";
@@ -214,6 +215,7 @@ function ConnectionDetail({
 
       {!connection.built_in && connection.queryable && <Relationships connectionId={connection.id} tables={tables} />}
       {!connection.built_in && connection.queryable && <ValueSharing connectionId={connection.id} />}
+      {!connection.built_in && connection.queryable && <ColumnNotes connectionId={connection.id} tables={tables} />}
 
       <h3 className="panel-title">Tables {tables && <span className="muted">{tables.length}</span>}</h3>
       {tables === null && !error && <p className="panel-note">Reading the schema…</p>}

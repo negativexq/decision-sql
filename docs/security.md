@@ -16,13 +16,33 @@ tests.
   keys and columns whose names suggest personal data. The model provider sees
   them with every question on that connection. Without sharing, the model sees
   only the shape of code and date columns (`9999-99-99`), which carries no
-  stored value. `DECISION_SQL_VALUE_EXAMPLES=false` turns both off server-wide.
+  stored value. The shares of NULL and blank rows of a column (when at least 1%),
+  and the separator a text column's values join items with, come from the same
+  statistics and are sent without sharing: they are counts and a punctuation
+  mark, not values. `DECISION_SQL_VALUE_EXAMPLES=false` turns all of this off
+  server-wide.
 - It returns one typed decision. Its SQL is untrusted input
   (`SqlCandidate`) with no authorization state.
-- It has no tool calls. At most two extra requests follow the first: one that
-  adds tables the model asked for from `other_tables`, and one repair round
-  after a policy rejection. Both go through every gate again, and repair
-  feedback never quotes database error text.
+- Before deciding it may run up to three read-only probes per round, for a
+  bounded number of rounds (two by default). A probe is untrusted SQL like an
+  answer and passes every gate. What comes back is counts only (row count,
+  distinct and NULL counts per column) unless the connection shares stored
+  values and every column the probe reads is public and shared; then it also
+  gets up to 20 rows with values cut to 80 characters, which the model provider
+  sees. Rejections and failures come back as the runtime's own code, never
+  database text. A probe that matched nothing is respelled like an empty answer;
+  the model learns that a spelling was applied, not which one. The trace keeps
+  each probe's SQL and row count, not its rows.
+- It has no other tool calls. Besides exploration, extra requests follow only
+  to add tables the model asked for from `other_tables`; to send back once a
+  clarification or refusal returned before any probe; to ask for one SQL per
+  reading of a clarification, whose results are compared on the server and
+  never shown to the model; and for one repair round after a policy rejection,
+  an empty result, or a percentage outside 0 to 100. Their SQL goes through every gate
+  again, and repair feedback never quotes database error text. After an empty
+  result the model learns only that the query matched no rows (or only zeros)
+  and which of its literals the column does not store, never rows or stored
+  values. After an out-of-range percentage it learns the column name only.
 - A follow-up from a report card also sends the earlier question and the SQL
   the model proposed for it, recorded as `follow_up_of` in the audit log. It
   never sends the SQL that ran, which can hold stored values the runtime wrote
@@ -39,11 +59,18 @@ tests.
 - Wildcards that would expose a non-queryable column are rejected.
 - Every referenced relation must be in the request's governed context.
 - Equality between columns of two tables must follow a foreign key or a
-  declared relationship.
+  declared relationship. Once two tables are joined that way, a further equality
+  between them ANDed into the same SELECT (such as `trans.date = loan.date`) only
+  narrows the authorized pairs and is allowed; under `OR`, or with the link only
+  in an enclosing SELECT, it is still rejected.
 - Aggregates that would fan out across a parent-child join are rejected,
   including `SUM(DISTINCT ...)` over such a join.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under
-  `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST`.
+  `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST` (10,000,000
+  each by default). The estimate is a coarse guess, so these limits refuse only
+  plans that are clearly out of scale; `DECISION_SQL_STATEMENT_TIMEOUT_MS` is
+  what bounds how long an accepted plan runs, and a plan that reaches it is
+  cancelled and returned to the model as `STATEMENT_TIMEOUT`.
 - Only an accepted `QueryPlan` can execute. Raw SQL, rejected plans, and copied
   plans are refused at the execution boundary.
 

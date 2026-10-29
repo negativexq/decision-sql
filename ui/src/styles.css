@@ -298,6 +298,12 @@ code, kbd, pre { font-family: var(--mono); }
 .button.danger { background: var(--danger); color: #fff; }
 .confirm-text { color: var(--ink-2); }
 .callout-neutral { background: var(--sidebar); border: 1px solid var(--line); }
+.readings p { margin: 0 0 8px; }
+.reading-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.reading-option { padding: 5px 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--bg); color: var(--ink-2); text-align: left; }
+.reading-option:hover { border-color: var(--ink-2); color: var(--ink); }
+.reading-option.active { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.reading-option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .callout-success { background: var(--success-soft); }
 .callout-success strong { color: var(--success); }
 .callout-danger strong { color: var(--danger); }
@@ -389,6 +395,12 @@ code, kbd, pre { font-family: var(--mono); }
 .value-list input { grid-row: 1 / span 2; }
 .value-list .rel-meta { grid-column: 2; overflow-wrap: anywhere; }
 .value-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.notes-table { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 13px; color: var(--ink-2); }
+.notes-table select { height: 30px; max-width: 100%; border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 6px; background: var(--bg); }
+.notes-list li { grid-template-columns: minmax(80px, 160px) minmax(0, 1fr); }
+.notes-list .rel-meta { grid-column: 1; }
+.notes-list input { grid-column: 2; grid-row: 1 / span 2; height: 30px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 8px; background: var(--bg); font: inherit; min-width: 0; }
+.notes-list input:focus { outline: none; border-color: var(--ink-2); }
 
 /* Reports */
 .report-new { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 12px; align-items: end; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--sidebar); }

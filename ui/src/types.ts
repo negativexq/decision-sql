@@ -51,6 +51,15 @@ export interface DecisionDetail {
   interpretations: string[];
 }
 
+export interface AlternativeReading {
+  reading: string;
+  sql: string;
+  rows: Record<string, unknown>[];
+  columns: string[];
+  row_count: number;
+  truncated: boolean;
+}
+
 export interface RunRecord {
   run_id: string;
   trace_id: string;
@@ -75,6 +84,9 @@ export interface RunRecord {
   columns: string[];
   row_count: number;
   truncated: boolean;
+  // The reading the answer assumed when the question had several that give different results.
+  assumption?: string | null;
+  alternatives?: AlternativeReading[];
   duration_ms: number | null;
   created_at: string;
   trace: RunTrace;
@@ -274,6 +286,18 @@ export interface ValueColumn {
   complete: boolean;
   patterns: string[];
   shared: boolean;
+}
+
+export interface ColumnNote {
+  table: string;
+  column: string;
+  description: string;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface ConnectionNotes {
+  notes: ColumnNote[];
 }
 
 export interface ConnectionValues {

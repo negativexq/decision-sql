@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from app.catalog.default import build_default_catalog
 from app.config import Settings
 from app.db.models import Base
+from app.decision.exploration import Exploration
 from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
     PRODUCTION_DECISION_CASE_ID,
@@ -35,6 +36,7 @@ class FakeDecisionProvider:
         self.last_schema_context: str | None = None
         self.feedback: list[RuntimeRejectionFeedback] = []
         self.earlier: list[EarlierAnswer | None] = []
+        self.explorations: list[Exploration | None] = []
 
     async def propose_decision(
         self,
@@ -42,15 +44,18 @@ class FakeDecisionProvider:
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
         del question
         self.calls += 1
         self.earlier.append(earlier)
+        self.explorations.append(exploration)
         self.last_schema_context = schema_context
         if repair is not None:
             self.feedback.append(repair)
+        # The first call answers the question; every later one takes the next scripted decision.
         return ProductionDecisionProposal(
-            decision=self.repairs.pop(0) if repair is not None else self.decision,
+            decision=self.decision if self.calls == 1 else self.repairs.pop(0),
             provider="fake",
             model="fake-model",
             latency_ms=1.0,
@@ -59,7 +64,7 @@ class FakeDecisionProvider:
 
 def test_decision_prompt_hash_is_pinned() -> None:
     assert production_decision_contract_hash() == (
-        "08187fa708fce12782f881c57fae994fe26dca889500aa96b425c7bca1e8d205"
+        "4d33365497a1bc0292d87f37611020a7b01529e16f1d3e93a8a2bb019cac7738"
     )
 
 
@@ -110,6 +115,7 @@ def test_production_decision_invariants_and_extra_fields() -> None:
         "missing_relationships",
         "clarification_question",
         "interpretations",
+        "probes",
     }
     assert set(schema["properties"]) == fields
     assert set(schema["required"]) == fields
@@ -119,6 +125,7 @@ def test_production_decision_invariants_and_extra_fields() -> None:
         "BLOCKED_AUTHORITY",
         "NEEDS_CLARIFICATION",
         "BLOCKED_POLICY",
+        "EXPLORE",
     }
     assert "NO_REASON" in schema["properties"]["reason_code"]["enum"]
 
@@ -207,7 +214,13 @@ async def test_openai_provider_admits_decision_and_sql_in_one_request(
 
 @pytest.mark.asyncio
 async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once() -> None:
-    settings = Settings(_env_file=None, reader_role="reader")
+    settings = Settings(
+        _env_file=None,
+        reader_role="reader",
+        exploration_enabled=False,
+        reading_check_enabled=False,
+        context_format="json",
+    )
     catalog = build_default_catalog(Base.metadata)
     provider = FakeDecisionProvider(
         ProductionDecision(

@@ -16,7 +16,7 @@ code and date columns (``9999-99-99``), which carries no stored value.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Protocol
@@ -60,6 +60,10 @@ class ColumnStats:
     n_distinct: float = 0.0
     # The table's row estimate, which turns a negative n_distinct into a count.
     rows: float = 0.0
+    # Exact share of empty or blank strings, when the column was counted in full.
+    blank_frac: float | None = None
+    # The counted non-NULL values and their row counts, when the column was counted.
+    sample: tuple[tuple[str, int], ...] | None = None
 
     def distinct_count(self) -> float:
         if self.n_distinct >= 0:
@@ -71,6 +75,118 @@ class ColumnStats:
 class KnownValues:
     values: tuple[str, ...]
     complete: bool
+
+
+@dataclass(frozen=True)
+class ColumnProfile:
+    """Shares of rows with no value, and of values joining several items.
+
+    Shares and a separator character, never a stored value.
+    """
+
+    null_share: float
+    blank_share: float
+    separator: str = ""
+    separated_share: float = 0.0
+
+
+# Shares below one percent are left out; they rarely change an answer and cost tokens.
+MIN_SHARE = 0.01
+# A separator in fewer values than this is punctuation, not a list.
+MIN_SEPARATED = 0.1
+_SEPARATORS = (",", ";", "|")
+
+
+def _value_share(stats: ColumnStats, test: Callable[[str], bool]) -> float:
+    """Estimated share of non-NULL rows whose value passes the test.
+
+    Exact for a counted column; otherwise the most common values by their
+    frequencies, and the histogram bounds standing for the remaining rows.
+    """
+    if stats.sample is not None:
+        total = sum(count for _, count in stats.sample)
+        return sum(count for value, count in stats.sample if test(value)) / total if total else 0.0
+    present = 1.0 - stats.null_frac
+    if present <= 0:
+        return 0.0
+    common = list(zip(stats.most_common_vals or (), stats.most_common_freqs or (), strict=False))
+    share = sum(frequency for value, frequency in common if test(value))
+    rest = max(present - sum(frequency for _, frequency in common), 0.0)
+    bounds = stats.histogram_bounds or ()
+    if bounds:
+        share += rest * sum(1 for value in bounds if test(value)) / len(bounds)
+    return min(share / present, 1.0)
+
+
+def _separated(stats: ColumnStats) -> tuple[str, float]:
+    """The separator most short values of a text column join items with, and its share."""
+    values = [*(stats.most_common_vals or ()), *(stats.histogram_bounds or ())]
+    if stats.sample is not None:
+        values = [value for value, _ in stats.sample]
+    lengths = sorted(len(value) for value in values)
+    if not lengths or lengths[len(lengths) // 2] > MAX_VALUE_LENGTH:
+        return "", 0.0  # free text uses commas as punctuation
+
+    def holds(mark: str) -> Callable[[str], bool]:
+        return lambda value: mark in value
+
+    found = max(
+        ((mark, _value_share(stats, holds(mark))) for mark in _SEPARATORS),
+        key=lambda item: item[1],
+    )
+    return found if found[1] >= MIN_SEPARATED else ("", 0.0)
+
+
+def column_profile(stats: ColumnStats, *, text: bool = False) -> ColumnProfile | None:
+    """How much of a column is NULL or an empty string, when that is at least 1%, and
+    for a text column, which separator joins several items in at least 10% of values."""
+    blank = stats.blank_frac
+    if blank is None:
+        blank = sum(
+            frequency
+            for value, frequency in zip(
+                stats.most_common_vals or (), stats.most_common_freqs or (), strict=False
+            )
+            if not value.strip()
+        )
+    null_share = round(stats.null_frac, 2) if stats.null_frac >= MIN_SHARE else 0.0
+    blank_share = round(blank, 2) if blank >= MIN_SHARE else 0.0
+    separator, separated = _separated(stats) if text else ("", 0.0)
+    if not null_share and not blank_share and not separator:
+        return None
+    return ColumnProfile(null_share, blank_share, separator, round(separated, 2))
+
+
+def apply_profiles(
+    catalog: SchemaCatalog, profiles: dict[tuple[str, str], ColumnProfile]
+) -> SchemaCatalog:
+    """Attach NULL and blank shares to the catalog's columns."""
+    if not profiles:
+        return catalog
+    return SchemaCatalog(
+        tables=tuple(
+            table.model_copy(
+                update={
+                    "columns": tuple(
+                        column.model_copy(
+                            update={
+                                "null_share": profiles[table.name, column.name].null_share,
+                                "blank_share": profiles[table.name, column.name].blank_share,
+                                "separator": profiles[table.name, column.name].separator,
+                                "separated_share": (
+                                    profiles[table.name, column.name].separated_share
+                                ),
+                            }
+                        )
+                        if (table.name, column.name) in profiles
+                        else column
+                        for column in table.columns
+                    )
+                }
+            )
+            for table in catalog.tables
+        )
+    )
 
 
 def eligible_columns(catalog: SchemaCatalog) -> set[tuple[str, str]]:
@@ -124,6 +240,7 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
     present = [(value, count) for value, count in pairs if value is not None]
     nulls = total - sum(count for _, count in present)
     present.sort(key=lambda item: -item[1])
+    blank = sum(count for value, count in present if not value.strip()) / total if total else 0.0
     if len(present) > MAX_VALUES:
         # Too many to be a domain; keep them only as format evidence.
         return ColumnStats(
@@ -134,6 +251,8 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
             None,
             [value for value, _ in present],
             n_distinct=len(present),
+            blank_frac=blank,
+            sample=tuple(present),
         )
     return ColumnStats(
         table=table,
@@ -143,6 +262,8 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
         most_common_freqs=[count / total for _, count in present] if total else [],
         histogram_bounds=None,
         n_distinct=len(present),
+        blank_frac=blank,
+        sample=tuple(present),
     )
 
 

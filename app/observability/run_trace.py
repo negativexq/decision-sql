@@ -76,6 +76,7 @@ _LABELS = {
     "decision_admission": "Production decision admission",
     "proposal_replay": "Frozen proposal replay",
     "context_expansion": "Context expansion",
+    "exploration": "Data exploration",
     "repair": "Repair round",
     "sql_parse": "SQL parse",
     "global_policy": "Global policy",
@@ -87,6 +88,7 @@ _LABELS = {
     "cost_gate": "Cost gate",
     "execution_connection": "Execution database connection",
     "execution": "Read-only execution",
+    "result_check": "Result check",
     "response": "Response",
 }
 
@@ -205,6 +207,8 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "proposal_replay",
     "decision_admission",
     "context_expansion",
+    "exploration",
+    "reading_check",
     "repair",
     "sql_parse",
     "global_policy",
@@ -216,5 +220,6 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "cost_gate",
     "execution_connection",
     "execution",
+    "result_check",
     "response",
 )

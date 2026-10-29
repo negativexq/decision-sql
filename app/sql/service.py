@@ -2,7 +2,7 @@ from time import perf_counter
 from uuid import UUID, uuid4
 
 from opentelemetry import trace
-from sqlalchemy import Engine
+from sqlalchemy import Connection, Engine
 from sqlglot import exp
 
 from app.catalog.default import build_default_catalog
@@ -51,7 +51,45 @@ from app.sql.ordering import CHANGE as NULLS_LAST_CHANGE
 from app.sql.ordering import nulls_last
 from app.sql.parser import ParsedSQL, SQLParseFailure, SQLParser
 from app.sql.policy import SQLPolicy
-from app.sql.values import ValueChecker
+from app.sql.precision import CHANGE as PRECISION_CHANGE
+from app.sql.precision import SinglePrecisionSums
+from app.sql.values import ValueCheck, ValueChecker, ValueProbe
+
+
+class _DatabaseLookup:
+    """The value probe's lookups, as parameterized queries on one reader connection."""
+
+    def __init__(self, connection: Connection) -> None:
+        self.connection = connection
+
+    @staticmethod
+    def _names(target: tuple[str, str]) -> tuple[str, str]:
+        # Both names come from the catalog, never from the model's SQL text.
+        return (
+            exp.to_identifier(target[0], quoted=True).sql(dialect="postgres"),
+            exp.to_identifier(target[1], quoted=True).sql(dialect="postgres"),
+        )
+
+    def stored(self, target: tuple[str, str], value: str) -> bool:
+        table, column = self._names(target)
+        found = self.connection.exec_driver_sql(
+            f"SELECT 1 FROM {table} WHERE {column} = %(value)s LIMIT 1", {"value": value}
+        ).first()
+        return found is not None
+
+    def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
+        table, column = self._names(target)
+        # The same form as values._key: no case, spacing, or punctuation, and a code of
+        # digits without its zero padding.
+        form = f"regexp_replace(lower({column}::text), '[^[:alnum:]]+', '', 'g')"
+        if key.isdigit():
+            unpadded = f"COALESCE(NULLIF(ltrim({form}, '0'), ''), '0')"
+            form = f"CASE WHEN {form} ~ '^[0-9]+$' THEN {unpadded} END"
+        rows = self.connection.exec_driver_sql(
+            f"SELECT DISTINCT {column}::text FROM {table} WHERE {form} = %(key)s LIMIT 2",
+            {"key": key},
+        ).all()
+        return tuple(str(row[0]) for row in rows)
 
 
 class _AbortedPlanning(Exception):
@@ -89,6 +127,8 @@ class SqlSafetyService:
         self.default_execution_authority = ExecutionAuthority.from_table_names(authority_tables)
         self.policy = SQLPolicy(self.catalog)
         self.value_checker = ValueChecker(self.catalog)
+        self.single_precision = SinglePrecisionSums(self.catalog)
+        self.value_probe = ValueProbe(self.catalog)
         self.cost_gate = QueryCostGate()
         self.executor = ReadOnlyExecutor(
             reader_engine,
@@ -301,6 +341,14 @@ class SqlSafetyService:
                 "value_check", TraceStageStatus.SKIPPED, reason="NO_KNOWN_VALUE_SETS"
             )
 
+        # Only a cast around a column the query already reads, so earlier checks still hold.
+        widened = self.single_precision.widen(parsed_for_plan.expression)
+        if widened.changed:
+            parsed_for_plan = ParsedSQL(
+                sql=widened.expression.sql(dialect="postgres"), expression=widened.expression
+            )
+            sql_changes.append(PRECISION_CHANGE)
+
         # Only the NULL placement of an ORDER BY changes, so earlier checks still hold.
         ordering = nulls_last(parsed_for_plan.expression, candidate.sql)
         if ordering.changed:
@@ -465,7 +513,16 @@ class SqlSafetyService:
                         )
                         return execution
         except _AbortedExecution as aborted:
-            self._record_stage("execution", TraceStageStatus.FAILED, reason="EXECUTION_ERROR")
+            self._record_stage(
+                "execution",
+                TraceStageStatus.FAILED,
+                reason="EXECUTION_ERROR",
+                metadata=(
+                    {"error_class": aborted.result.error_class}
+                    if aborted.result.error_class
+                    else None
+                ),
+            )
             return aborted.result
         except ReaderRoleError:
             if not connection_opened:
@@ -496,6 +553,46 @@ class SqlSafetyService:
                 correlation_id=plan.correlation_id,
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
+
+    def explore(
+        self, candidate: SqlCandidate
+    ) -> tuple[QueryPlan | SqlPlanFailure, QueryExecution | SqlExecutionError | None]:
+        """Plan and run one exploration probe through every gate, outside the run's trace.
+
+        The probe is the model's, not the answer: its gates must not overwrite the
+        answer's stages, so nothing is recorded while it runs.
+        """
+        recorder, self.stage_recorder = self.stage_recorder, None
+        try:
+            planned = self._plan(candidate)
+            if isinstance(planned, SqlPlanFailure):
+                return planned, None
+            return planned, self.execute(planned)
+        finally:
+            self.stage_recorder = recorder
+
+    def probe_values(self, sql: str) -> ValueCheck | None:
+        """Look up the literals of a query that came back empty; None when nothing was probed.
+
+        The lookups run as the reader role in a read-only transaction with a short
+        timeout, on columns the query already reads; a lookup that fails or times out
+        counts as no answer, never as an error of the run.
+        """
+        try:
+            expression = self.parser.parse(sql).expression
+        except SQLParseFailure:
+            return None
+        if not self.value_probe.targets(expression):
+            return None
+        try:
+            with self.reader_engine.connect() as connection, connection.begin():
+                self.executor.configure_transaction(connection)
+                connection.exec_driver_sql(
+                    f"SET LOCAL statement_timeout = {int(self.settings.value_probe_timeout_ms)}"
+                )
+                return self.value_probe.probe(expression, _DatabaseLookup(connection))
+        except Exception:
+            return None
 
     def _record_plan(self, candidate: SqlCandidate, result: QueryPlan | SqlPlanFailure) -> None:
         rejection = (

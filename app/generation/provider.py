@@ -7,6 +7,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict
 
 from app.config import Settings, get_settings
+from app.decision.exploration import Exploration
 from app.generation.decision_contract import (
     ProductionDecision,
     production_decision_prompt,
@@ -93,12 +94,15 @@ class LLMProvider(Protocol):
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
         """Return the canonical typed production decision in one call.
 
         With ``repair``, the same conversation continues with the runtime's
         rejection of the previous decision and asks for a replacement.  With
-        ``earlier``, the question follows up on an earlier answer.
+        ``earlier``, the question follows up on an earlier answer.  With
+        ``exploration``, the request says whether the model may still explore and
+        carries the results of the probes it ran.
         """
 
 
@@ -116,11 +120,14 @@ class OpenAICompatibleProvider:
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
         """Request one typed decision; SQL and decision always arrive in the same response."""
         if not self.settings.llm_api_key:
             raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
-        messages = _production_decision_messages(question, schema_context, repair, earlier)
+        messages = _production_decision_messages(
+            question, schema_context, repair, earlier, exploration
+        )
         response_format = {
             "type": "json_schema",
             "json_schema": {
@@ -194,11 +201,40 @@ class OpenAICompatibleProvider:
             raise MalformedProviderResponse("Provider returned invalid JSON") from error
 
 
+_LOOK_FIRST = {
+    "NEEDS_CLARIFICATION": (
+        "You returned NEEDS_CLARIFICATION without exploring. Before asking the user, "
+        "check with probes whether the data or the context settles it: whether the "
+        "readings give different results, what the columns involved store, and whether "
+        "a column or description in the context already answers it. Return "
+        "NEEDS_CLARIFICATION again only if no probe can settle the question."
+    ),
+    "BLOCKED_AUTHORITY": (
+        "You returned BLOCKED_AUTHORITY without exploring. Before refusing, check "
+        "whether the tables and relationships in the context already answer the "
+        "question, and use probes to confirm it. Return BLOCKED_AUTHORITY again only "
+        "if no authorized path can answer it."
+    ),
+}
+
+
+_READINGS = (
+    "You returned NEEDS_CLARIFICATION with these readings:\n{readings}\n"
+    "Return EXPLORE with exactly one probe per reading, in the same order: the complete "
+    "SQL that answers the question under that reading, as you would return it for "
+    "ANSWER. The runtime runs every probe; when all of them return the same result, the "
+    "question does not change the answer and the user is not asked. If a reading needs "
+    "something the data does not hold, such as a conversion rate or a mapping of codes, "
+    "do not stand in a value for it: return NEEDS_CLARIFICATION again."
+)
+
+
 def _production_decision_messages(
     question: str,
     schema_context: str,
     repair: RuntimeRejectionFeedback | None = None,
     earlier: EarlierAnswer | None = None,
+    exploration: Exploration | None = None,
 ) -> list[dict[str, str]]:
     user = "Case ID:\noperator\n\nQuestion:\n" + question
     if earlier is not None:
@@ -206,6 +242,22 @@ def _production_decision_messages(
             earlier.model_dump(), ensure_ascii=False, indent=2
         )
     user += "\n\nGoverned context:\n" + schema_context
+    if exploration is not None:
+        if exploration.results:
+            results = [item.model_dump(exclude_none=True) for item in exploration.results]
+            user += "\n\nExploration results:\n" + json.dumps(results, ensure_ascii=False, indent=2)
+        if exploration.returned_without_looking is not None:
+            user += "\n\n" + _LOOK_FIRST[exploration.returned_without_looking]
+        if exploration.readings:
+            listed = "\n".join(
+                f"{number}. {reading}" for number, reading in enumerate(exploration.readings, 1)
+            )
+            user += "\n\n" + _READINGS.format(readings=listed)
+        user += (
+            "\n\nExploration is open."
+            if exploration.open
+            else "\n\nExploration is closed: return a final decision."
+        )
     messages = [
         {"role": "system", "content": production_decision_prompt()},
         {"role": "user", "content": user},

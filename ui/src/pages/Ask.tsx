@@ -175,8 +175,24 @@ function RunResult({
   // When the runtime changed the logic, the query that ran is the runtime's text, not the model's.
   const changed = Boolean(run.executed_sql) && (run.sql_changes ?? []).length > 0;
   const shownSql = changed ? run.executed_sql : run.proposed_sql;
-  const valueCheck = run.trace?.stages.find((item) => item.name === "value_check");
-  const unmatched = valueCheck?.reason === "VALUE_NOT_STORED" ? String(valueCheck.metadata?.unmatched ?? "") : "";
+  // Either check may find a filter value the column does not store: before the run, or after an empty result.
+  const unmatched = (run.trace?.stages ?? [])
+    .filter((item) => (item.name === "value_check" || item.name === "result_check") && item.reason === "VALUE_NOT_STORED")
+    .map((item) => String(item.metadata?.unmatched ?? ""))
+    .filter(Boolean)
+    .join(", ");
+  const tied = (run.trace?.stages ?? []).some((item) => item.name === "result_check" && item.reason === "TIED_ROWS");
+  // An ambiguous question answers with one reading; the others' results are a click away.
+  const readings = run.assumption
+    ? [
+        { reading: run.assumption, sql: shownSql, columns: run.columns, rows: run.rows, truncated: run.truncated },
+        ...(run.alternatives ?? []),
+      ]
+    : [];
+  const [readingIndex, setReadingIndex] = useState(0);
+  const shown = readings[readingIndex] ?? { sql: shownSql, columns: run.columns, rows: run.rows, truncated: run.truncated };
+  // A column the model named as a percentage should lie between 0 and 100; say so when the shown rows do not.
+  const outOfRange = executed ? percentOutOfRange(shown.columns, shown.rows) : [];
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },
@@ -212,12 +228,35 @@ function RunResult({
           {run.proposed_sql && <span className={queryOpen ? "chevron open" : "chevron"} aria-hidden="true" />}
           {run.proposed_sql ? (run.runtime_outcome === "EXECUTED" ? "Query that ran" : "Proposed query") : "No query was written"}
         </button>
-        {queryOpen && shownSql && (
+        {queryOpen && shown.sql && (
           <div id={`query-${run.run_id}`}>
-            <SqlViewer sql={shownSql} />
+            <SqlViewer sql={shown.sql} />
           </div>
         )}
       </div>
+
+      {executed && readings.length > 1 && (
+        <div className="callout callout-neutral readings">
+          <p>
+            This question can be read more than one way, and the readings give different results. The answer below
+            assumes one of them; choose another to see its result.
+          </p>
+          <div className="reading-options" role="radiogroup" aria-label="Readings of the question">
+            {readings.map((item, index) => (
+              <button
+                type="button"
+                role="radio"
+                key={item.reading}
+                aria-checked={readingIndex === index}
+                className={readingIndex === index ? "reading-option active" : "reading-option"}
+                onClick={() => setReadingIndex(index)}
+              >
+                {withCode(item.reading)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {changed && (
         <details className="repaired">
@@ -237,6 +276,20 @@ function RunResult({
         <div className="callout callout-neutral">
           The query filters <code>{unmatched}</code> on a value the column does not store, so that filter matches no
           rows. If the result looks empty, the question may name a value that is spelled differently or is not in the data.
+        </div>
+      )}
+
+      {tied && executed && (
+        <div className="callout callout-neutral">
+          The question asks for a highest or lowest value, and the query keeps every row that has it: these{" "}
+          {formatCount(run.row_count)} rows share it rather than giving several different answers.
+        </div>
+      )}
+
+      {outOfRange.length > 0 && (
+        <div className="callout callout-neutral">
+          <code>{outOfRange.join(", ")}</code> is a percentage outside 0 to 100. A share of a whole cannot be, so check
+          the formula in the query before relying on it.
         </div>
       )}
 
@@ -273,12 +326,17 @@ function RunResult({
       </div>
 
       <div className="tab-panel" role="tabpanel">
-        {tab === "table" && <ResultTable columns={run.columns} rows={run.rows} truncated={run.truncated} />}
-        {tab === "chart" && <ResultChart columns={run.columns} rows={run.rows} />}
+        {tab === "table" && <ResultTable columns={shown.columns} rows={shown.rows} truncated={shown.truncated} />}
+        {tab === "chart" && <ResultChart columns={shown.columns} rows={shown.rows} />}
         {tab === "checks" && <GovernancePanel run={run} stage={stage} onSelect={setStage} />}
       </div>
     </section>
   );
+}
+
+// The model writes column names in backticks; show them as code rather than as raw marks.
+function withCode(text: string) {
+  return text.split("`").map((part, index) => (index % 2 === 1 ? <code key={index}>{part}</code> : part));
 }
 
 function Explanation({
@@ -355,5 +413,17 @@ function Explanation({
         </ul>
       )}
     </div>
+  );
+}
+
+function percentOutOfRange(columns: string[], rows: Record<string, unknown>[]): string[] {
+  return columns.filter(
+    (name) =>
+      /percent|pct/i.test(name) &&
+      rows.some((row) => {
+        const value = row[name];
+        const number = typeof value === "number" ? value : typeof value === "string" && value.trim() !== "" ? Number(value) : NaN;
+        return Number.isFinite(number) && (number < 0 || number > 100);
+      }),
   );
 }

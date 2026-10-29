@@ -50,6 +50,22 @@ column is order revenue and which timestamp drives monthly trends.
   not treated as complete); excluded columns, keys, long values,
   and columns whose names suggest personal data never do. Without sharing, code
   and date columns carry only their shape (`value_patterns`, digits as `9`).
+- Every queryable column whose rows are at least 1% NULL, or empty or blank
+  strings, carries those shares (`null_share`, `blank_share`), from the same
+  statistics. A share is a count, not a stored value, so it does not wait for
+  value sharing; a filter such as `<> 'x'` drops NULL rows but keeps blank ones,
+  and the model cannot see that from the column's type.
+- A short-valued text column whose values join several items with `,`, `;`, or
+  `|` in at least 10% of rows carries that separator and share (`separator`,
+  `separated_share`; `separated_by` in the compact form), such as a list of card
+  types or a place and its country: an equality then matches only a whole value.
+  The share is exact on a counted column and estimated from the most common
+  values and the histogram otherwise; free text, whose median value is longer
+  than 60 characters, is left out.
+- Column descriptions come from the source's comments. An administrator who
+  cannot write comments to the source can describe a column on the connection
+  page instead (`column_notes`); the note replaces that column's description in
+  the context. It explains a column and grants nothing.
 - The policy section lists the SQL functions the runtime accepts, from the same
   allowlist the policy gate uses.
 
@@ -64,6 +80,7 @@ JSON schema. The model returns one of:
 | Decision | Meaning | SQL runtime |
 | --- | --- | --- |
 | `ANSWER` | Read-only SQL is proposed | Entered |
+| `EXPLORE` | One to three read-only probes before deciding | Each probe entered |
 | `NEEDS_CLARIFICATION` | The question can be read more than one way | Bypassed |
 | `BLOCKED_AUTHORITY` | The data is outside the governed context | Bypassed |
 | `BLOCKED_POLICY` | The request would write or breach policy | Bypassed |
@@ -71,7 +88,55 @@ JSON schema. The model returns one of:
 A non-answer carries an explanation; a clarification also carries the question
 to ask and two to four readings, and a refusal names the missing joins.
 
-At most one more call follows, recorded as its own trace stage:
+**Context format**: the governed context reaches the model as compact text: one
+line per column, names instead of ids, under the section names the contract uses
+(`render_governed_context`). It carries the same facts as the canonical JSON in
+about a quarter of the text; the JSON stays the audited and hashed form, and
+`DECISION_SQL_CONTEXT_FORMAT=json` sends it to the model instead.
+
+**Exploration**: before it answers or asks, the model may return `EXPLORE` with
+one to three probes (`app/decision/exploration.py`), for example to see how a
+value is spelled or whether a tie it would ask about occurs. Each probe goes
+through every gate below under the run's authority and runs as the reader role;
+its gates are not recorded as the answer's stages. The model then hears, per
+probe, the row count and each column's distinct and NULL counts, and the rows
+(at most 20, values cut to 80 characters) only when the connection shares stored
+values and every column the probe reads is public and shared. A rejected probe
+reports the runtime's reason, a failed one its error class. A probe that matched
+no rows has its literals looked up like an empty answer (below): a literal
+stored in exactly one other spelling is respelled and the probe runs again, and
+the model hears `VALUE_RESPELLED` with the new counts (the rows only under the
+same sharing rule), never the spelling itself; a literal the column does not
+store is named as `VALUE_NOT_STORED`. Exploration has
+`DECISION_SQL_EXPLORATION_ROUNDS` rounds (default 2); the request says whether
+it is still open, and a model that still explores after the last round fails the
+run with `EXPLORATION_FAILURE`. A `NEEDS_CLARIFICATION` or `BLOCKED_AUTHORITY`
+returned before any probe ran goes back to the model once, asking it to check
+whether the data or the context settles it; the model may return the same
+decision, and if that call fails the original one stands. Repair rounds and
+replays never explore. The
+`exploration` trace stage records each probe's SQL, outcome, and row count.
+`DECISION_SQL_EXPLORATION_ENABLED=false` turns it off.
+
+**Reading check**: a final `NEEDS_CLARIFICATION` with two or three
+interpretations gets one more call, asking for one probe per reading: the SQL
+that answers the question under it. Each runs through every gate as a probe, and
+the full results are compared (column count and rows, order ignored; a
+truncated result counts as unchecked). When every reading returns the same rows,
+the question does not change the answer on this data: the first reading's SQL
+runs as the answer, and the `reading_check` trace stage records
+`READINGS_AGREE` with the readings and their SQL. When the readings differ,
+`DECISION_SQL_AMBIGUITY_MODE` decides: `assume` (the default) answers with the
+model's first reading, returns it as `assumption`, and returns the other
+readings with their SQL and rows as `alternatives`, which the result view offers
+as a switch (`READINGS_DIFFER_ASSUMED`); `ask` keeps the clarification
+(`READINGS_DIFFER`). A reading that could not be checked (`NO_SQL_PER_READING`,
+`READING_NOT_RUN`) keeps the clarification in either mode. The model never sees
+the rows; the audit log keeps the readings and their SQL in the trace, never the
+alternatives' rows. Replays skip it, and `DECISION_SQL_READING_CHECK_ENABLED=false`
+turns it off.
+
+After that, at most one more call follows, recorded as its own trace stage:
 
 - **Context expansion**: the model returned `BLOCKED_AUTHORITY` naming a table
   from `other_tables`. The runtime rebuilds the context from the catalog with
@@ -81,6 +146,27 @@ At most one more call follows, recorded as its own trace stage:
   limit, fan-out). The model gets the runtime's own rejection code and message,
   never database error text or rows. Authority, write, forbidden-relation, and
   catalog rejections are final.
+- **Execution error**: the query failed while running with a database error
+  class the author can fix (failed cast, division by zero, a scalar subquery
+  with several rows, a type or function mismatch, a timeout). The model gets a
+  fixed runtime sentence for that class, read from the SQLSTATE; the database's
+  message never goes back. For a failed cast the sentence says that a `WHERE`
+  filter does not protect a cast and shows a `CASE` guard built from allowed
+  functions. Other failures are final.
+- **Empty result**: the query ran and returned no rows, or one row of only
+  zeros and NULLs, and the run has not used its repair round. The model hears
+  that the result was empty, which filters compare with a value the column
+  does not store, and that it may keep the query. It never sees rows of any
+  query or the values a column stores.
+- **Percentage out of range**: a column the model named as a percentage holds
+  a value below 0 or above 100, and the run has not used its repair round. The
+  model hears the column and that it left the range, never the value, and may
+  keep the query when the question asks for a change that can exceed 100.
+
+The contract also fixes the shape of an answer: percentages on a 0 to 100
+scale with `percent` in the alias, yes/no as `YES` or `NO`, named fields in
+their own columns, and every row tied for a highest or lowest value rather
+than one picked by `LIMIT 1`.
 
 Replays of recorded decisions never get either round. The system prompt is
 pinned by `production_decision_contract_hash()`, so changing it is a visible
@@ -108,7 +194,8 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
   statistics, a text literal compared with the column that differs from one
-  stored value only in case, spacing, or punctuation takes the stored
+  stored value only in case, spacing, punctuation, or the zero padding of a
+  code of digits (`1611430131177` for `01611430131177`) takes the stored
   spelling. A literal that matches nothing is reported; when the model never
   saw the column's values it gets one repair round that names its guess, not
   the stored values, and the answer notes that the filter matches no rows.
@@ -119,8 +206,35 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   rows with no value first: the "greatest" player would be one with no rating.
   Such an order gets `NULLS LAST`. A query that writes `NULLS FIRST` anywhere
   is left as written, and so is an order by `COUNT`, which is never NULL.
+- **Single precision**: PostgreSQL's `SUM` over a `real` column adds in
+  single precision and keeps about six significant digits, so a total of
+  14009.34 comes back as 14009.3; a cast of a `real` column to `numeric`
+  rounds each value the same way (`12685.04::real::numeric` is `12685`).
+  Inside a `SUM`, a `real` column the author did not cast is read as
+  `double precision`, and a `real` column cast to `numeric` goes through
+  `double precision` first (`app/sql/precision.py`).
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
-  must stay under the configured limits.
+  must stay under the configured limits. A planner estimate does not predict run
+  time well: on the BIRD databases, gold queries estimated at cost 100,000 to
+  510,000 ran in 10 to 580 ms, and one estimated at 116,000 rows returned 3.
+  The limits therefore refuse only plans that are clearly out of scale
+  (10,000,000 by default), and the statement timeout bounds the real run time.
+  A missing index on a join key is a common reason for a high estimate; the
+  fix for that belongs to the database administrator, not to the query.
+
+After execution, an empty result (no rows, or one row of only zeros and
+NULLs) is checked once. For text columns whose values are not all known, the
+runtime looks each literal up in the database as the reader role, with a short
+timeout (`DECISION_SQL_VALUE_PROBE_TIMEOUT_MS`). A literal stored in exactly one
+other spelling (case, spacing, punctuation, zero padding) takes that spelling, and the query
+runs again through every gate without a model call. Otherwise the empty
+result goes to the repair round above. Confidential columns are not looked up.
+A result with rows is checked for a percentage outside 0 to 100, which gets the
+repair round and stays flagged in the UI if the model keeps it, and for rows that
+tie: when the query keeps every row equal to an overall `MAX` or `MIN`, or ranked
+first by an unpartitioned `RANK()`, and more than one comes back, the trace
+records `TIED_ROWS` and the UI says the rows share that value.
+`DECISION_SQL_RESULT_CHECK_ENABLED=false` turns these checks off.
 
 Execution runs only an accepted plan, on the `decision_reader` role, in a
 `READ ONLY` transaction with a statement timeout and a result row cap. The
@@ -135,8 +249,9 @@ audit log keeps both the model's SQL and the text the database received
   the grain and join checks.
 - A table joined with itself is not checked against relationships.
 - The value check covers `column = 'text'`, `<>`, and `IN` lists on bare
-  columns; `LIKE`, functions such as `LOWER(column)`, and columns whose
-  values are not all known are not checked.
+  columns; `LIKE` and functions such as `LOWER(column)` are not checked.
+  Columns whose values are not all known are looked up only after a query
+  comes back empty.
 - Repair is one round. A second rejection is final.
 - A report filter does not follow relationships: a filter on `regions.name`
   leaves a card that reads only `orders` unfiltered (the card says so). It

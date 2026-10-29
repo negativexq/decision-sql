@@ -14,6 +14,7 @@ from app.metadata.connectors import (
     IntrospectedTable,
 )
 from app.metadata.drivers.install import DriverInstallResult
+from app.metadata.notes import ColumnNotesRejectedError, ColumnNotesUpdate, ConnectionNotes
 from app.metadata.relationships import (
     ConnectionRelationships,
     DeclaredRelationship,
@@ -316,6 +317,33 @@ def set_connection_values(
     try:
         result = service.set_values(connection_id, update, actor)
     except ValueSharingRejectedError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except SecretsUnavailableError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:  # driver errors are reported, not leaked as 500s
+        raise HTTPException(status_code=502, detail="Could not read the source schema.") from error
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
+
+
+@router.get("/api/connections/{connection_id}/notes", response_model=ConnectionNotes)
+def connection_notes(connection_id: str, service: Connections) -> ConnectionNotes:
+    result = service.notes(connection_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
+
+
+@router.put("/api/connections/{connection_id}/notes", response_model=ConnectionNotes)
+def set_connection_notes(
+    connection_id: str, update: ColumnNotesUpdate, service: Connections, actor: Actor
+) -> ConnectionNotes:
+    try:
+        result = service.set_notes(connection_id, update, actor)
+    except ColumnNotesRejectedError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except ConnectorUnavailableError as error:
         raise HTTPException(status_code=409, detail=str(error)) from error

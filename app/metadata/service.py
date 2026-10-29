@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from threading import Lock
 from time import monotonic
 
@@ -27,6 +27,14 @@ from app.metadata.connectors import (
 from app.metadata.drivers import load_connector
 from app.metadata.drivers.install import DriverInstallResult, install_driver
 from app.metadata.drivers.postgres import PostgresConnector
+from app.metadata.notes import (
+    ColumnNoteStore,
+    ColumnNotesUpdate,
+    ConnectionNotes,
+    InMemoryColumnNoteStore,
+    apply_notes,
+    check_notes,
+)
 from app.metadata.relationships import (
     ConnectionRelationships,
     DeclaredRelationship,
@@ -42,14 +50,18 @@ from app.metadata.relationships import (
 from app.metadata.secrets import SecretBox
 from app.metadata.store import ConnectionStore, StoredConnection
 from app.metadata.values import (
+    ColumnProfile,
     ConnectionValues,
     InMemoryValueSharingStore,
     KnownValues,
     ValueColumn,
+    ValueSharing,
     ValueSharingRejectedError,
     ValueSharingStore,
     ValueSharingUpdate,
     apply_known_values,
+    apply_profiles,
+    column_profile,
     eligible_columns,
     known_values,
     value_patterns,
@@ -59,6 +71,14 @@ GOVERNED_CONNECTION_ID = "governed"
 _MIN_MATCH_RATE = 0.5
 # Statistics change slowly; the schema itself is still read for every question.
 _VALUES_TTL_SECONDS = 600.0
+
+
+@dataclass(frozen=True)
+class _Statistics:
+    hints: dict[tuple[str, str], KnownValues]
+    profiles: dict[tuple[str, str], ColumnProfile]
+
+
 ANONYMOUS_ACTOR = "anonymous"
 _ACTOR = re.compile(r"^[A-Za-z0-9._@+-]{1,120}$")
 
@@ -86,6 +106,8 @@ class QuestionSource:
     engine: Engine
     catalog: SchemaCatalog
     reader_role: str
+    # The administrator's value sharing choice; off unless value hints are on as well.
+    sharing: ValueSharing = field(default_factory=ValueSharing)
 
 
 class ConnectionService:
@@ -98,11 +120,13 @@ class ConnectionService:
         relationships: RelationshipStore | None = None,
         value_examples: bool = True,
         value_sharing: ValueSharingStore | None = None,
+        notes: ColumnNoteStore | None = None,
     ) -> None:
         self.store = store
         self.value_examples = value_examples
         self.value_sharing_store = value_sharing or InMemoryValueSharingStore()
-        self._values: dict[str, tuple[float, dict[tuple[str, str], KnownValues]]] = {}
+        self.note_store = notes or InMemoryColumnNoteStore()
+        self._values: dict[str, tuple[float, _Statistics]] = {}
         self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
         self.governed_engine = governed_engine
@@ -164,6 +188,7 @@ class ConnectionService:
         self._values.pop(connection_id, None)
         # The SQL stores cascade; the in-memory ones need the explicit cleanup.
         self.value_sharing_store.delete(connection_id)
+        self.note_store.delete(connection_id)
         for relationship in self.relationship_store.list(connection_id):
             self.relationship_store.delete(connection_id, relationship.id)
         return self.store.delete(connection_id)
@@ -175,22 +200,64 @@ class ConnectionService:
             return None
         item, connector, password = resolved
         config = item.config()
-        catalog = merge_declared(
-            connector.catalog(config, password), self.relationship_store.list(item.id)
+        catalog = apply_notes(
+            merge_declared(
+                connector.catalog(config, password), self.relationship_store.list(item.id)
+            ),
+            self.note_store.list(item.id),
         )
+        sharing = ValueSharing()
         if self.value_examples:
             # Sharing is read for every question, so turning it off takes effect at once.
-            catalog = apply_known_values(
-                catalog,
-                self._known_values(item.id, connector, config, password, catalog),
-                self.value_sharing_store.get(item.id),
+            sharing = self.value_sharing_store.get(item.id)
+            statistics = self._statistics(item.id, connector, config, password, catalog)
+            # A NULL or blank share is a count, not a stored value, so it does not wait
+            # for value sharing.
+            catalog = apply_profiles(
+                apply_known_values(catalog, statistics.hints, sharing), statistics.profiles
             )
         return QuestionSource(
             connection_id=item.id,
             engine=self._reader_engine(item.id, config, password),
             catalog=catalog,
             reader_role=config.username,
+            sharing=sharing,
         )
+
+    def _statistics(
+        self,
+        connection_id: str,
+        connector: PostgresConnector,
+        config: ConnectionConfig,
+        password: str | None,
+        catalog: SchemaCatalog,
+    ) -> _Statistics:
+        cached = self._values.get(connection_id)
+        if cached is not None and cached[0] > monotonic():
+            return cached[1]
+        eligible = eligible_columns(catalog)
+        queryable = {
+            (table.name, column.name)
+            for table in catalog.tables
+            for column in table.columns
+            if column.queryable
+        }
+        try:
+            stats = connector.column_stats(config, password, queryable, counted=eligible)
+        except psycopg.Error:
+            # Value hints help the model; a failure to read them never blocks a question.
+            stats = []
+        statistics = _Statistics({}, {})
+        for item in stats:
+            key = (item.table, item.column)
+            hint = known_values(item) if key in eligible else None
+            if hint is not None:
+                statistics.hints[key] = hint
+            profile = column_profile(item, text=key in eligible)
+            if profile is not None:
+                statistics.profiles[key] = profile
+        self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, statistics)
+        return statistics
 
     def _known_values(
         self,
@@ -200,21 +267,7 @@ class ConnectionService:
         password: str | None,
         catalog: SchemaCatalog,
     ) -> dict[tuple[str, str], KnownValues]:
-        cached = self._values.get(connection_id)
-        if cached is not None and cached[0] > monotonic():
-            return cached[1]
-        hints: dict[tuple[str, str], KnownValues] = {}
-        try:
-            stats = connector.column_stats(config, password, eligible_columns(catalog))
-        except psycopg.Error:
-            # Value hints help the model; a failure to read them never blocks a question.
-            stats = []
-        for item in stats:
-            hint = known_values(item)
-            if hint is not None:
-                hints[(item.table, item.column)] = hint
-        self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, hints)
-        return hints
+        return self._statistics(connection_id, connector, config, password, catalog).hints
 
     def values(self, connection_id: str) -> ConnectionValues | None:
         """The stored values each eligible column would share, and the current choice."""
@@ -269,6 +322,23 @@ class ConnectionService:
             item.id, update.enabled, tuple(sorted(set(update.excluded))), actor
         )
         return self.values(connection_id)
+
+    def notes(self, connection_id: str) -> ConnectionNotes | None:
+        if self.store.get(connection_id) is None:
+            return None
+        return ConnectionNotes(notes=self.note_store.list(connection_id))
+
+    def set_notes(
+        self, connection_id: str, update: ColumnNotesUpdate, actor: str
+    ) -> ConnectionNotes | None:
+        """Save descriptions for columns the source has; an empty one removes the note."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        checked = check_notes(connector.catalog(item.config(), password), update.notes)
+        self.note_store.apply(item.id, checked, actor)
+        return self.notes(item.id)
 
     def relationships(self, connection_id: str) -> ConnectionRelationships | None:
         """Foreign keys, declared relationships, and checked suggestions for one source."""

@@ -13,10 +13,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Protocol
 
 from sqlglot import exp
 
-from app.catalog.models import SchemaCatalog
+from app.catalog.models import SchemaCatalog, Sensitivity
 from app.sql.models import UnmatchedValue
 
 
@@ -36,7 +37,13 @@ class _Domain:
 
 
 def _key(value: str) -> str:
-    return re.sub(r"[\W_]+", "", value.casefold())
+    """The value without case, spacing, or punctuation; a code of digits without leading zeros.
+
+    ``01611430131177`` and ``1611430131177`` name the same code: a stored code
+    keeps its zero padding, and the person asking rarely types it.
+    """
+    key = re.sub(r"[\W_]+", "", value.casefold())
+    return (key.lstrip("0") or "0") if key.isdigit() else key
 
 
 def direct_tables(select: exp.Select, ctes: set[str]) -> dict[str, str]:
@@ -137,9 +144,95 @@ class ValueChecker:
         return found
 
     def _resolve(self, column: exp.Column, aliases: dict[str, str]) -> tuple[str, str] | None:
-        name = column.name.lower()
-        if column.table:
-            table = aliases.get(column.table.lower())
-            return (table, name) if table is not None else None
-        owners = {table for table in aliases.values() if name in self._columns.get(table, ())}
-        return (owners.pop(), name) if len(owners) == 1 else None
+        return _resolve(column, aliases, self._columns)
+
+
+def _resolve(
+    column: exp.Column, aliases: dict[str, str], columns: dict[str, set[str]]
+) -> tuple[str, str] | None:
+    name = column.name.lower()
+    if column.table:
+        table = aliases.get(column.table.lower())
+        return (table, name) if table is not None else None
+    owners = {table for table in aliases.values() if name in columns.get(table, ())}
+    return (owners.pop(), name) if len(owners) == 1 else None
+
+
+_TEXT_TYPES = ("char", "text", "string", "varchar", "citext")
+
+
+class ValueProbe:
+    """Look up, in the database itself, text literals compared with columns of unknown values.
+
+    The statistics behind ``ValueChecker`` hold only short categorical columns, so a
+    filter such as ``power_name = 'stealth'`` on a column of a few hundred names is not
+    checked before the query runs.  When such a query comes back empty, the probe asks
+    the database whether each literal is stored, and if not, whether exactly one stored
+    value differs from it only in case, spacing, punctuation, or the zero padding of a
+    code of digits.  Confidential columns
+    and columns ``ValueChecker`` already covers are left alone.
+    """
+
+    def __init__(self, catalog: SchemaCatalog) -> None:
+        self._columns: dict[str, set[str]] = {}
+        self._probed: set[tuple[str, str]] = set()
+        for table in catalog.tables:
+            self._columns[table.name.lower()] = {column.name.lower() for column in table.columns}
+            for column in table.columns:
+                if (
+                    column.value_domain
+                    or not column.queryable
+                    or column.sensitivity is Sensitivity.CONFIDENTIAL
+                    or not any(kind in column.type.lower() for kind in _TEXT_TYPES)
+                ):
+                    continue
+                self._probed.add((table.name.lower(), column.name.lower()))
+
+    def targets(self, expression: exp.Expression) -> list[tuple[tuple[str, str], exp.Literal]]:
+        """The probed columns this query compares with text literals, with each literal."""
+        ctes = cte_names(expression)
+        found: list[tuple[tuple[str, str], exp.Literal]] = []
+        for column, literals in ValueChecker._comparisons(expression):
+            select = column.find_ancestor(exp.Select)
+            if select is None:
+                continue
+            target = _resolve(column, direct_tables(select, ctes), self._columns)
+            if target is None or target not in self._probed:
+                continue
+            found.extend((target, literal) for literal in literals)
+        return found
+
+    def probe(self, expression: exp.Expression, lookup: ValueLookup) -> ValueCheck:
+        """Rewrite literals with one stored spelling; report those the column does not store."""
+        expression = expression.copy()
+        changes: list[str] = []
+        unmatched: list[UnmatchedValue] = []
+        targets = self.targets(expression)
+        for target, literal in targets:
+            value = literal.this
+            if lookup.stored(target, value):
+                continue
+            key = _key(value)
+            # A literal of only punctuation has no key; any punctuation-only value would match it.
+            matches = lookup.spellings(target, key) if key else ()
+            if len(matches) == 1:
+                literal.replace(exp.Literal.string(matches[0]))
+                changes.append(
+                    f"The filter on {target[0]}.{target[1]} compared it with '{value}'; "
+                    f"the column stores that value as '{matches[0]}'."
+                )
+            else:
+                unmatched.append(
+                    UnmatchedValue(table=target[0], column=target[1], literal=value, shared=False)
+                )
+        return ValueCheck(expression, tuple(changes), tuple(unmatched), len(targets))
+
+
+class ValueLookup(Protocol):
+    """Answers the probe's two questions about one column, from the database."""
+
+    def stored(self, target: tuple[str, str], value: str) -> bool: ...
+
+    def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
+        """Up to two stored values whose form under ``_key`` is ``key``."""
+        ...

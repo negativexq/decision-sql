@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -32,8 +33,13 @@ class Settings(BaseSettings):
     otel_exporter_otlp_endpoint: str | None = Field(
         default=None, validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT"
     )
-    max_plan_rows: int = Field(default=100_000, validation_alias="DECISION_SQL_MAX_PLAN_ROWS")
-    max_plan_cost: float = Field(default=100_000.0, validation_alias="DECISION_SQL_MAX_PLAN_COST")
+    # A planner estimate is a coarse guess (a plan estimated at cost 385,000 can run in
+    # 10 ms), so these limits only refuse plans that are clearly out of scale; the
+    # statement timeout bounds how long an accepted plan may actually run.
+    max_plan_rows: int = Field(default=10_000_000, validation_alias="DECISION_SQL_MAX_PLAN_ROWS")
+    max_plan_cost: float = Field(
+        default=10_000_000.0, validation_alias="DECISION_SQL_MAX_PLAN_COST"
+    )
     max_result_rows: int = Field(default=1000, validation_alias="DECISION_SQL_MAX_RESULT_ROWS")
     statement_timeout_ms: int = Field(
         default=5000, validation_alias="DECISION_SQL_STATEMENT_TIMEOUT_MS"
@@ -41,6 +47,29 @@ class Settings(BaseSettings):
     reader_role: str = Field(default="decision_reader", validation_alias="DECISION_SQL_READER_ROLE")
     # One more model call when the runtime rejects SQL for a reason the model can fix.
     repair_enabled: bool = Field(default=True, validation_alias="DECISION_SQL_REPAIR_ENABLED")
+    # When a query comes back empty, look up its text literals and tell the model so.
+    result_check_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_RESULT_CHECK_ENABLED"
+    )
+    value_probe_timeout_ms: int = Field(
+        default=2000, validation_alias="DECISION_SQL_VALUE_PROBE_TIMEOUT_MS"
+    )
+    # Let the model run a few read-only probes before it decides.
+    exploration_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_EXPLORATION_ENABLED"
+    )
+    exploration_rounds: int = Field(
+        default=2, ge=1, le=5, validation_alias="DECISION_SQL_EXPLORATION_ROUNDS"
+    )
+    # Before asking the user to choose a reading, run each one; answer when all agree.
+    reading_check_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_READING_CHECK_ENABLED"
+    )
+    # When the readings differ: "assume" answers with the model's first reading, says so,
+    # and returns the other readings' results; "ask" returns the clarification question.
+    ambiguity_mode: Literal["ask", "assume"] = Field(
+        default="assume", validation_alias="DECISION_SQL_AMBIGUITY_MODE"
+    )
     # Show the model how categorical text columns spell their values.
     value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     # Refresh reports on their schedule from this process; turn off on all but one worker.
@@ -78,6 +107,11 @@ class Settings(BaseSettings):
     # One more model call with a table the model named from the omitted list.
     context_expansion_enabled: bool = Field(
         default=True, validation_alias="DECISION_SQL_CONTEXT_EXPANSION_ENABLED"
+    )
+    # How the governed context reaches the model: canonical JSON, or the same facts as
+    # compact text (one line per column, names instead of ids).
+    context_format: Literal["json", "compact"] = Field(
+        default="compact", validation_alias="DECISION_SQL_CONTEXT_FORMAT"
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

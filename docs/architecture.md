@@ -241,6 +241,13 @@ audited as `scheduler`. Snapshot rows passed the checks of the day they were
 read, so each card also keeps its basis then: opening a snapshot whose tables
 are described differently now shows the card's outcome but holds back its rows.
 
+A reader can download a card's rows as CSV, exactly as the query returned them
+(the rows already on screen, so no new query and nothing beyond what the card
+shows); text that would start a spreadsheet formula is prefixed with `'`.
+Printing, or saving as PDF from the print dialog, lays the grid out in bands
+that keep the screen layout, so a page breaks between rows of cards, not
+through one, and stamps the time it was printed.
+
 ### Metadata isolation
 
 Audit records and connections live in the `decision_meta` schema, written with

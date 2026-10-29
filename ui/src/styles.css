@@ -537,9 +537,9 @@ code, kbd, pre { font-family: var(--mono); }
 .share-visibility input { margin-top: 3px; }
 .report-follow-context { gap: 4px; border-bottom: 1px solid var(--line); }
 .report-follow-context p { margin: 0; }
-.report-card-follow { opacity: 0; }
-.report-card:hover .report-card-follow, .report-card-follow:focus-visible { opacity: 1; }
-@media (hover: none) { .report-card-follow { opacity: 1; } }
+.report-card-action { opacity: 0; }
+.report-card:hover .report-card-action, .report-card-action:focus-visible { opacity: 1; }
+@media (hover: none) { .report-card-action { opacity: 1; } }
 .format-fields { display: grid; gap: 10px; border: 0; padding: 12px 0 0; margin: 0; border-top: 1px solid var(--line); }
 .check { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
 .rc-number > .rc-delta { font-size: 12px; font-weight: 600; }
@@ -569,3 +569,18 @@ code, kbd, pre { font-family: var(--mono); }
 .history-item:hover { background: var(--sidebar); }
 .history-item.current { background: var(--warning-soft); }
 .history-meta { color: var(--muted); font-size: 12px; }
+
+.rc-band { position: relative; break-inside: avoid; margin-bottom: 12px; }
+.print-only { display: none; }
+
+@page { size: landscape; margin: 12mm; }
+@media print {
+  body { background: #fff; }
+  .app, .report-shell, .report-shell.with-panel { display: block; min-height: 0; }
+  .sidebar, .report-bar, .report-panel, .rc-handle, .rc-resize, .report-card-action,
+  .report-snapshot-banner button, .filter-bar > .button, .filter-clear, .filter-remove, .filter-popover { display: none !important; }
+  .print-only { display: block; }
+  .report-card, .report-heading { box-shadow: none; }
+  .rc-stack .rc-cell { break-inside: avoid; }
+  .rc-cell { transition: none; }
+}

@@ -7,6 +7,7 @@ import { bottom } from "../components/report/layout";
 import { AddFilterPanel, FilterBar, isEmpty } from "../components/report/ReportFilters";
 import { Prose } from "../components/report/Prose";
 import { DEFAULT_DISPLAY } from "../components/report/display";
+import { downloadCsv } from "../components/report/csv";
 import { SqlViewer } from "../components/SqlViewer";
 import type {
   CardDisplay,
@@ -384,6 +385,9 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             {!editing && (
               <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "history" })}>History</button>
             )}
+            {!editing && (
+              <button type="button" className="button ghost small" onClick={() => window.print()}>Print or PDF</button>
+            )}
             {report.role === "owner" && (
               <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "share" })}>Share</button>
             )}
@@ -438,6 +442,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             {report.role === "viewer" ? ", view only" : ""} · edited by {report.updated_by}, {relativeTime(report.updated_at)}
             {report.schedule !== "off" && ` · refreshes ${report.schedule}`}
           </p>
+          <PrintStamp />
         </header>
 
         {viewing && (
@@ -571,6 +576,13 @@ function CardView({
   onChart: (chart: ChartType) => void;
 }) {
   const changed = state?.status === "done" ? state.changed : [];
+  // The rows on screen, unformatted, when there are rows to give.
+  const data =
+    state?.status === "done" && state.run.runtime_outcome === "EXECUTED"
+      ? state.run
+      : state?.status === "kept" && state.kept && !state.kept.withheld && state.kept.outcome === "EXECUTED"
+        ? state.kept
+        : null;
   const skipped = state?.status === "done" ? state.skipped.map((id) => filterLabels[id] ?? id) : [];
   if (card.kind === "heading") {
     return (
@@ -598,8 +610,18 @@ function CardView({
             </select>
           </label>
         )}
+        {!editing && data && (
+          <button
+            type="button"
+            className="button ghost small report-card-action"
+            title={data.truncated ? "The result was cut off; the file has the rows this card received." : "Download the rows as CSV"}
+            onClick={() => downloadCsv(card.title || card.question, data.columns, data.rows)}
+          >
+            CSV
+          </button>
+        )}
         {!editing && card.kind === "query" && card.run_id && state?.status !== "kept" && (
-          <button type="button" className="button ghost small report-card-follow" onClick={onFollowUp}>Follow up</button>
+          <button type="button" className="button ghost small report-card-action" onClick={onFollowUp}>Follow up</button>
         )}
         {editing && (
           <button type="button" className="button ghost small" onClick={onSelect}>Edit</button>
@@ -662,6 +684,17 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
       display={card.display ?? DEFAULT_DISPLAY}
     />
   );
+}
+
+/** When the page was printed, on paper only: a printed report has no live data. */
+function PrintStamp() {
+  const [at, setAt] = useState(() => new Date());
+  useEffect(() => {
+    const before = () => setAt(new Date());
+    window.addEventListener("beforeprint", before);
+    return () => window.removeEventListener("beforeprint", before);
+  }, []);
+  return <p className="print-only report-meta">Printed {at.toLocaleString()}.</p>;
 }
 
 function KeptBody({ card, kept }: { card: ReportCard; kept: SnapshotCard | undefined }) {

@@ -1,9 +1,27 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import type { CardLayout, ReportCard } from "../../types";
 import { COLUMNS, clamp, place } from "./layout";
 
 const ROW = 36;
 const GAP = 12;
+// About the printable width of a landscape page, in CSS pixels; wider layouts are scaled down.
+const PRINT_WIDTH = 960;
+
+/** Cards grouped into horizontal bands no card crosses, so a page can break between bands. */
+function bands(cards: ReportCard[]): { top: number; bottom: number; cards: ReportCard[] }[] {
+  const result: { top: number; bottom: number; cards: ReportCard[] }[] = [];
+  for (const card of [...cards].sort((a, b) => a.layout.y - b.layout.y)) {
+    const last = result[result.length - 1];
+    if (last && card.layout.y < last.bottom) {
+      last.cards.push(card);
+      last.bottom = Math.max(last.bottom, card.layout.y + card.layout.h);
+    } else {
+      result.push({ top: card.layout.y, bottom: card.layout.y + card.layout.h, cards: [card] });
+    }
+  }
+  return result;
+}
 
 interface Drag {
   id: string;
@@ -31,20 +49,40 @@ export function ReportCanvas({
   renderCard: (card: ReportCard, handle: ReactNode) => ReactNode;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  // The grid renders one of three roots (canvas, stack, print); observe whichever is mounted.
+  const [node, setNode] = useState<HTMLDivElement | null>(null);
+  const attach = useCallback((element: HTMLDivElement | null) => {
+    ref.current = element;
+    setNode(element);
+  }, []);
   const [width, setWidth] = useState(0);
   const [drag, setDrag] = useState<Drag | null>(null);
+  // While printing, the screen width is kept, so charts keep the size they were drawn at.
+  const [printWidth, setPrintWidth] = useState<number | null>(null);
 
   useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
+    if (!node) return;
     const observer = new ResizeObserver(([entry]) => setWidth(Math.floor(entry.contentRect.width)));
-    observer.observe(element);
+    observer.observe(node);
     return () => observer.disconnect();
+  }, [node]);
+
+  useEffect(() => {
+    // Synchronous, so the print layout is in place before the browser lays out the page.
+    const before = () => flushSync(() => setPrintWidth(ref.current?.clientWidth || null));
+    const after = () => setPrintWidth(null);
+    window.addEventListener("beforeprint", before);
+    window.addEventListener("afterprint", after);
+    return () => {
+      window.removeEventListener("beforeprint", before);
+      window.removeEventListener("afterprint", after);
+    };
   }, []);
 
+  const used = printWidth ?? width;
   // Narrow screens stack cards in one column; their layout is kept for wider ones.
-  const stacked = width > 0 && width < 640;
-  const column = (width - GAP * (COLUMNS - 1)) / COLUMNS;
+  const stacked = used > 0 && used < 640;
+  const column = (used - GAP * (COLUMNS - 1)) / COLUMNS;
   const toPx = (layout: CardLayout) => ({
     left: layout.x * (column + GAP),
     top: layout.y * (ROW + GAP),
@@ -104,9 +142,27 @@ export function ReportCanvas({
     onChange(place(cards, card.id, layout));
   };
 
+  if (printWidth && !stacked) {
+    return (
+      <div ref={attach} className="rc-root">
+        <div className="rc-print" style={{ width: printWidth, zoom: Math.min(1, PRINT_WIDTH / printWidth) }}>
+          {bands(cards).map((band) => (
+            <div key={band.top} className="rc-band" style={{ height: (band.bottom - band.top) * (ROW + GAP) - GAP }}>
+              {band.cards.map((card) => (
+                <div key={card.id} className="rc-cell" style={style(toPx({ ...card.layout, y: card.layout.y - band.top }))}>
+                  {renderCard(card, null)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (stacked) {
     return (
-      <div ref={ref} className="rc-stack">
+      <div ref={attach} className="rc-root rc-stack">
         {[...cards]
           .sort((a, b) => a.layout.y - b.layout.y || a.layout.x - b.layout.x)
           .map((card) => (
@@ -123,8 +179,8 @@ export function ReportCanvas({
 
   return (
     <div
-      ref={ref}
-      className={editing ? "rc-canvas editing" : "rc-canvas"}
+      ref={attach}
+      className={editing ? "rc-root rc-canvas editing" : "rc-root rc-canvas"}
       style={{ height: Math.max(height + (editing ? 4 : 0), 6) * (ROW + GAP) }}
       onPointerMove={move}
       onPointerUp={end}

@@ -126,11 +126,12 @@ def _separated(stats: ColumnStats) -> tuple[str, float]:
     lengths = sorted(len(value) for value in values)
     if not lengths or lengths[len(lengths) // 2] > MAX_VALUE_LENGTH:
         return "", 0.0  # free text uses commas as punctuation
+
+    def holds(mark: str) -> Callable[[str], bool]:
+        return lambda value: mark in value
+
     found = max(
-        (
-            (mark, _value_share(stats, lambda value, mark=mark: mark in value))
-            for mark in _SEPARATORS
-        ),
+        ((mark, _value_share(stats, holds(mark))) for mark in _SEPARATORS),
         key=lambda item: item[1],
     )
     return found if found[1] >= MIN_SEPARATED else ("", 0.0)

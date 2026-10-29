@@ -118,6 +118,18 @@ replays never explore. The
 `exploration` trace stage records each probe's SQL, outcome, and row count.
 `DECISION_SQL_EXPLORATION_ENABLED=false` turns it off.
 
+**Reading check**: a final `NEEDS_CLARIFICATION` with two or three
+interpretations gets one more call, asking for one probe per reading: the SQL
+that answers the question under it. Each runs through every gate as a probe, and
+the full results are compared (column count and rows, order ignored; a
+truncated result counts as unchecked). When every reading returns the same rows,
+the question does not change the answer on this data: the first reading's SQL
+runs as the answer, and the `reading_check` trace stage records
+`READINGS_AGREE` with the readings and their SQL. Otherwise
+(`READINGS_DIFFER`, `NO_SQL_PER_READING`, `READING_NOT_RUN`) the clarification
+stands. The model never sees the rows. Replays skip it, and
+`DECISION_SQL_READING_CHECK_ENABLED=false` turns it off.
+
 After that, at most one more call follows, recorded as its own trace stage:
 
 - **Context expansion**: the model returned `BLOCKED_AUTHORITY` naming a table

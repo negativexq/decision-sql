@@ -215,7 +215,11 @@ async def test_openai_provider_admits_decision_and_sql_in_one_request(
 @pytest.mark.asyncio
 async def test_non_answer_never_enters_sql_runtime_and_provider_is_called_once() -> None:
     settings = Settings(
-        _env_file=None, reader_role="reader", exploration_enabled=False, context_format="json"
+        _env_file=None,
+        reader_role="reader",
+        exploration_enabled=False,
+        reading_check_enabled=False,
+        context_format="json",
     )
     catalog = build_default_catalog(Base.metadata)
     provider = FakeDecisionProvider(

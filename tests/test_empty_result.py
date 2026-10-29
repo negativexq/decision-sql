@@ -395,7 +395,7 @@ async def test_a_question_asked_before_looking_goes_back_once_to_look_first() ->
 @pytest.mark.asyncio
 async def test_a_question_the_data_cannot_settle_is_asked_after_the_one_send_back() -> None:
     provider = FakeDecisionProvider(_clarify(), _clarify())
-    result = await _run(provider, ScriptedSafety({}))
+    result = await _run(provider, ScriptedSafety({}), reading_check_enabled=False)
 
     assert provider.calls == 2
     assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
@@ -453,3 +453,57 @@ async def test_an_empty_probe_names_a_literal_the_column_does_not_store() -> Non
     [report] = provider.explorations[1].results  # type: ignore[union-attr]
     assert report.row_count == 0 and report.reason == "VALUE_NOT_STORED"
     assert "products.category = 'office'" in (report.message or "")
+
+
+OFFICE = "SELECT COUNT(*) AS n FROM products WHERE category = 'Office'"
+SUPPLIES = "SELECT COUNT(*) AS n FROM products WHERE category = 'Office supplies'"
+
+
+def _readings(*sql: str) -> ProductionDecision:
+    return ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="EXPLORE",
+        explanation="One query per reading.",
+        probes=list(sql),
+    )
+
+
+async def _check(provider: FakeDecisionProvider, rows: dict[str, list[dict[str, object]]]):
+    safety = ExploringSafety(rows)
+    result = await _run(provider, safety, exploration_enabled=False)
+    return result, safety, {stage.name: stage for stage in result.trace.stages}["reading_check"]
+
+
+@pytest.mark.asyncio
+async def test_readings_that_return_the_same_rows_answer_instead_of_asking() -> None:
+    provider = FakeDecisionProvider(_clarify(), _readings(OFFICE, SUPPLIES))
+    result, safety, stage = await _check(provider, {OFFICE: [{"n": 4}], SUPPLIES: [{"n": 4}]})
+
+    assert provider.calls == 2
+    readings = provider.explorations[1]
+    assert readings is not None and readings.readings == ("Office", "Office supplies")
+    assert safety.explored == [OFFICE, SUPPLIES]
+    assert result.model_decision is DecisionType.ANSWER and result.rows == [{"n": 4}]
+    assert stage.reason == "READINGS_AGREE" and stage.metadata["row_counts"] == ["1", "1"]
+
+
+@pytest.mark.asyncio
+async def test_readings_that_differ_keep_the_question() -> None:
+    provider = FakeDecisionProvider(_clarify(), _readings(OFFICE, SUPPLIES))
+    result, _, stage = await _check(provider, {OFFICE: [{"n": 4}], SUPPLIES: [{"n": 9}]})
+
+    assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
+    assert result.runtime_outcome == "NOT_ENTERED" and stage.reason == "READINGS_DIFFER"
+
+
+@pytest.mark.asyncio
+async def test_a_reading_that_cannot_be_checked_keeps_the_question() -> None:
+    for answer, reason in (
+        (_readings(OFFICE), "NO_SQL_PER_READING"),
+        (_readings(OFFICE, "SELECT x FROM secret_table"), "READING_NOT_RUN"),
+        (_answer(OFFICE), "NO_SQL_PER_READING"),
+    ):
+        provider = FakeDecisionProvider(_clarify(), answer)
+        result, _, stage = await _check(provider, {OFFICE: [{"n": 4}]})
+        assert result.model_decision is DecisionType.NEEDS_CLARIFICATION, reason
+        assert stage.reason == reason

@@ -61,6 +61,10 @@ class Settings(BaseSettings):
     exploration_rounds: int = Field(
         default=2, ge=1, le=5, validation_alias="DECISION_SQL_EXPLORATION_ROUNDS"
     )
+    # Before asking the user to choose a reading, run each one; answer when all agree.
+    reading_check_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_READING_CHECK_ENABLED"
+    )
     # Show the model how categorical text columns spell their values.
     value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     # Refresh reports on their schedule from this process; turn off on all but one worker.

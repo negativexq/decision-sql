@@ -57,6 +57,8 @@ class Exploration(BaseModel):
 
     ``returned_without_looking`` names a question or refusal the model returned
     before it ran any probe; the request then asks it to check the data first.
+    ``readings`` are the interpretations of a question the model wants to ask; the
+    request then asks for one probe per reading, the SQL that answers under it.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -64,6 +66,7 @@ class Exploration(BaseModel):
     open: bool
     results: tuple[ProbeReport, ...] = ()
     returned_without_looking: Literal["NEEDS_CLARIFICATION", "BLOCKED_AUTHORITY"] | None = None
+    readings: tuple[str, ...] = ()
 
 
 class ValueAccess(Protocol):

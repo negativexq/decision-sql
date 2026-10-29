@@ -89,7 +89,12 @@ async def _run(provider: SequenceProvider, **settings: object):
             _env_file=None,
             reader_role="reader",
             # These tests read the context the model saw as JSON.
-            **{"exploration_enabled": False, "context_format": "json", **settings},  # type: ignore[arg-type]
+            **{
+                "exploration_enabled": False,
+                "reading_check_enabled": False,
+                "context_format": "json",
+                **settings,
+            },  # type: ignore[arg-type]
         ),
     ).run("Which product names were refunded?", collector)
     return result, {stage.name: stage for stage in result.trace.stages}

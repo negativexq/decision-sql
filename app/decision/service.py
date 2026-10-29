@@ -364,6 +364,16 @@ class DecisionSqlApplication:
         if self.exploration is not None:
             # Later calls (repair, empty result) still see the results, but may not explore.
             self.exploration = self.exploration.model_copy(update={"open": False})
+        if replay_decision is None:
+            agreed = await self._check_readings(
+                question, schema_text, model_context, decision, collector
+            )
+            if agreed is not None:
+                decision = agreed
+        else:
+            collector.record_stage(
+                "reading_check", TraceStageStatus.SKIPPED, reason=proposal_source.value
+            )
         if decision.decision is not DecisionType.ANSWER:
             return self._non_answer(
                 decision, proposal, proposal_source, model_context, model_context_hash, collector
@@ -842,6 +852,110 @@ class DecisionSqlApplication:
             "look_first_completion_tokens": proposal.completion_tokens,
         }
         return proposal
+
+    async def _check_readings(
+        self,
+        question: str,
+        schema_text: str,
+        model_context: GovernedContext,
+        decision: ProductionDecision,
+        collector: RunTraceCollector,
+    ) -> ProductionDecision | None:
+        """Run every reading of a clarification; answer when they all return the same rows.
+
+        A question whose readings give the same result on this data does not change the
+        answer, so asking it only costs the user a turn.  The model writes one SQL per
+        reading in one more call; each runs through every gate as a probe, and the
+        results are compared in full, never shown to the model.  None keeps the
+        clarification: the readings differ, or one could not be checked.
+        """
+        readings = tuple(decision.detail.interpretations if decision.detail else ())
+        if decision.decision is not DecisionType.NEEDS_CLARIFICATION:
+            collector.record_stage("reading_check", TraceStageStatus.SKIPPED, reason="NOT_ASKED")
+            return None
+        if not self.settings.reading_check_enabled:
+            collector.record_stage(
+                "reading_check", TraceStageStatus.SKIPPED, reason="READING_CHECK_NOT_ALLOWED"
+            )
+            return None
+        if not 2 <= len(readings) <= MAX_PROBES:
+            collector.record_stage(
+                "reading_check", TraceStageStatus.SKIPPED, reason="READINGS_NOT_COUNTABLE"
+            )
+            return None
+        started = perf_counter()
+        metadata: dict[str, object] = {"readings": list(readings)}
+
+        def finish(reason: str, status: TraceStageStatus = TraceStageStatus.PASS) -> None:
+            collector.record_stage(
+                "reading_check",
+                status,
+                reason=reason,
+                metadata=metadata,
+                duration_ms=(perf_counter() - started) * 1000,
+            )
+
+        try:
+            proposal = await self.provider.propose_decision(
+                question,
+                schema_text,
+                earlier=self.earlier,
+                exploration=Exploration(open=True, readings=readings),
+            )
+        except Exception:
+            finish("PROVIDER_FAILURE", TraceStageStatus.FAILED)
+            return None
+        metadata.update(
+            prompt_tokens=proposal.prompt_tokens,
+            completion_tokens=proposal.completion_tokens,
+            reasoning_tokens=proposal.reasoning_tokens,
+        )
+        probes = tuple(proposal.decision.probes or ())
+        if (
+            proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID
+            or proposal.decision.decision is not DecisionType.EXPLORE
+            or len(probes) != len(readings)
+        ):
+            finish("NO_SQL_PER_READING")
+            return None
+        metadata["reading_sql"] = list(probes)
+        authority = ExecutionAuthority.from_governed_context(model_context)
+        results = await asyncio.to_thread(self._run_readings, probes, authority, collector.run_id)
+        if results is None:
+            finish("READING_NOT_RUN")
+            return None
+        metadata["row_counts"] = [len(rows) for _, rows in results]
+        if any(result != results[0] for result in results[1:]):
+            finish("READINGS_DIFFER")
+            return None
+        finish("READINGS_AGREE")
+        return ProductionDecision(
+            case_id=PRODUCTION_DECISION_CASE_ID, decision=DecisionType.ANSWER, sql=probes[0]
+        )
+
+    def _run_readings(
+        self, probes: tuple[str, ...], authority: ExecutionAuthority, run_id: str
+    ) -> list[tuple[int, list[str]]] | None:
+        """Each reading's column count and rows, order ignored; None if one did not run."""
+        results: list[tuple[int, list[str]]] = []
+        for sql in probes:
+            planned, executed = self.safety_service.explore(
+                SqlCandidate(
+                    sql=sql,
+                    source=CandidateSource.LLM,
+                    correlation_id=run_id,
+                    execution_authority=authority,
+                )
+            )
+            if isinstance(planned, SqlPlanFailure) or not isinstance(executed, QueryExecution):
+                return None
+            if executed.truncated:
+                return None  # rows past the cap could still differ
+            rows = sorted(
+                repr(tuple(row.get(name) for name in executed.columns)) for row in executed.rows
+            )
+            results.append((len(executed.columns), rows))
+        return results
 
     async def _explore(
         self,

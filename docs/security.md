@@ -33,10 +33,12 @@ tests.
   database text. A probe that matched nothing is respelled like an empty answer;
   the model learns that a spelling was applied, not which one. The trace keeps
   each probe's SQL and row count, not its rows.
-- It has no other tool calls. At most two extra requests follow: one that
-  adds tables the model asked for from `other_tables`, and one repair round
-  after a policy rejection, an empty result, or a percentage outside 0 to
-  100. Both go through every gate
+- It has no other tool calls. Besides exploration, extra requests follow only
+  to add tables the model asked for from `other_tables`; to send back once a
+  clarification or refusal returned before any probe; to ask for one SQL per
+  reading of a clarification, whose results are compared on the server and
+  never shown to the model; and for one repair round after a policy rejection,
+  an empty result, or a percentage outside 0 to 100. Their SQL goes through every gate
   again, and repair feedback never quotes database error text. After an empty
   result the model learns only that the query matched no rows (or only zeros)
   and which of its literals the column does not store, never rows or stored

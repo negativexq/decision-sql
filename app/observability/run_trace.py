@@ -208,6 +208,7 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "decision_admission",
     "context_expansion",
     "exploration",
+    "reading_check",
     "repair",
     "sql_parse",
     "global_policy",

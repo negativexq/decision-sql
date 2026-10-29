@@ -218,6 +218,15 @@ _LOOK_FIRST = {
 }
 
 
+_READINGS = (
+    "You returned NEEDS_CLARIFICATION with these readings:\n{readings}\n"
+    "Return EXPLORE with exactly one probe per reading, in the same order: the complete "
+    "SQL that answers the question under that reading, as you would return it for "
+    "ANSWER. The runtime runs every probe; when all of them return the same result, the "
+    "question does not change the answer and the user is not asked."
+)
+
+
 def _production_decision_messages(
     question: str,
     schema_context: str,
@@ -237,6 +246,11 @@ def _production_decision_messages(
             user += "\n\nExploration results:\n" + json.dumps(results, ensure_ascii=False, indent=2)
         if exploration.returned_without_looking is not None:
             user += "\n\n" + _LOOK_FIRST[exploration.returned_without_looking]
+        if exploration.readings:
+            listed = "\n".join(
+                f"{number}. {reading}" for number, reading in enumerate(exploration.readings, 1)
+            )
+            user += "\n\n" + _READINGS.format(readings=listed)
         user += (
             "\n\nExploration is open."
             if exploration.open

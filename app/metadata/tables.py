@@ -106,6 +106,10 @@ reports = Table(
     Column("title", String(200), nullable=False),
     Column("description", Text, nullable=False),
     Column("cards", JSON, nullable=False),
+    # Who may open the report beyond its owner and editors: "private" or "workspace".
+    Column("visibility", String(16), nullable=False, server_default="private"),
+    Column("editors", JSON, nullable=False, server_default="[]"),
+    Column("viewers", JSON, nullable=False, server_default="[]"),
     Column("created_by", String(120), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
     Column("updated_by", String(120), nullable=False),

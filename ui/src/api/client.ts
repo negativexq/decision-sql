@@ -3,6 +3,7 @@ import type {
   ConnectionValues,
   CardRefresh,
   Report,
+  ReportAccess,
   ReportCard,
   ReportSummary,
   ConnectionSummary,
@@ -122,6 +123,8 @@ export const api = {
         cards: body.cards.map(({ sql: _sql, basis: _basis, ...card }) => card),
       }),
     }),
+  shareReport: (id: string, access: ReportAccess) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}/access`, { method: "PUT", body: JSON.stringify(access) }),
   deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
   askForCard: (id: string, question: string) =>
     request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),

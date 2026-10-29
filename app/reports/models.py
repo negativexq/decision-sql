@@ -8,16 +8,33 @@ heading and notes.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.operator.models import RunRecord
 
 GRID_COLUMNS = 12
 MAX_CARDS = 40
+MAX_PEOPLE = 50
+# The same shape app.metadata.service accepts in the actor header.
+ACTOR_PATTERN = r"^[A-Za-z0-9._@+-]{1,120}$"
+
+
+class Visibility(StrEnum):
+    # Only the owner, editors, and named viewers can open it.
+    PRIVATE = "private"
+    # Everyone in the workspace can open it; editing still needs the owner or an editor.
+    WORKSPACE = "workspace"
+
+
+class ReportRole(StrEnum):
+    OWNER = "owner"
+    EDITOR = "editor"
+    VIEWER = "viewer"
 
 
 class ChartType(StrEnum):
@@ -80,12 +97,34 @@ class ReportCreate(BaseModel):
     connection_id: str = Field(min_length=1, max_length=64)
 
 
+class ReportAccess(BaseModel):
+    """Who besides the owner may open or change a report."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    visibility: Visibility = Visibility.PRIVATE
+    editors: list[str] = Field(default_factory=list, max_length=MAX_PEOPLE)
+    viewers: list[str] = Field(default_factory=list, max_length=MAX_PEOPLE)
+
+    @field_validator("editors", "viewers")
+    @classmethod
+    def _people(cls, value: list[str]) -> list[str]:
+        people = sorted({item.strip().lower() for item in value if item.strip()})
+        for person in people:
+            if not re.match(ACTOR_PATTERN, person):
+                raise ValueError(f"{person!r} is not a valid name.")
+        return people
+
+
 class ReportSummary(BaseModel):
     id: str
     connection_id: str
     title: str
     description: str
     card_count: int
+    owner: str
+    visibility: Visibility
+    role: ReportRole
     updated_by: str
     updated_at: datetime
 
@@ -96,21 +135,42 @@ class Report(BaseModel):
     title: str
     description: str
     cards: list[ReportCard]
+    visibility: Visibility = Visibility.PRIVATE
+    editors: list[str] = Field(default_factory=list)
+    viewers: list[str] = Field(default_factory=list)
     created_by: str
     created_at: datetime
     updated_by: str
     updated_at: datetime
 
-    def summary(self) -> ReportSummary:
+    def role_of(self, actor: str) -> ReportRole | None:
+        if actor == self.created_by:
+            return ReportRole.OWNER
+        if actor in self.editors:
+            return ReportRole.EDITOR
+        if actor in self.viewers or self.visibility is Visibility.WORKSPACE:
+            return ReportRole.VIEWER
+        return None
+
+    def summary(self, role: ReportRole) -> ReportSummary:
         return ReportSummary(
             id=self.id,
             connection_id=self.connection_id,
             title=self.title,
             description=self.description,
             card_count=len(self.cards),
+            owner=self.created_by,
+            visibility=self.visibility,
+            role=role,
             updated_by=self.updated_by,
             updated_at=self.updated_at,
         )
+
+
+class ReportView(Report):
+    """A report as one reader sees it, with what that reader may do."""
+
+    role: ReportRole
 
 
 class CardRefresh(BaseModel):

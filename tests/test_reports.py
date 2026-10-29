@@ -9,8 +9,16 @@ from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, Table
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import _saved_query_tables
-from app.reports.models import CardInput, CardLayout, ReportCreate, ReportInput
-from app.reports.service import ReportRejectedError, ReportService
+from app.reports.models import (
+    CardInput,
+    CardLayout,
+    ReportAccess,
+    ReportCreate,
+    ReportInput,
+    ReportRole,
+    Visibility,
+)
+from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
 from app.reports.store import InMemoryReportStore
 
 
@@ -81,12 +89,13 @@ def test_reports_need_a_connection_that_answers_questions() -> None:
     with pytest.raises(ReportRejectedError):
         service.create(ReportCreate(title="Sales", connection_id="nope"), "ayse")
     report = service.create(ReportCreate(title=" Sales ", connection_id="governed"), "ayse")
-    assert report.title == "Sales" and service.list()[0].card_count == 0
+    assert report.title == "Sales" and service.list("ayse")[0].card_count == 0
 
 
 def test_card_sql_comes_from_the_audit_log_never_from_the_client() -> None:
     service, _ = _service(_record("run_a"), _record("run_b"))
     report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.share(report.id, ReportAccess(editors=["Mehmet"]), "ayse")
     updated = service.update(
         report.id,
         ReportInput(
@@ -117,12 +126,12 @@ def test_cards_reject_runs_that_did_not_execute_or_belong_elsewhere() -> None:
     report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
     for run_id in ("failed", "other", "missing"):
         with pytest.raises(ReportRejectedError):
-            service.update(report.id, ReportInput(title="S", cards=[_card("c", run_id)]), "a")
+            service.update(report.id, ReportInput(title="S", cards=[_card("c", run_id)]), "ayse")
     with pytest.raises(ReportRejectedError, match="share an id"):
         service.update(
             report.id,
             ReportInput(title="S", cards=[_card("c", kind="text"), _card("c", kind="text")]),
-            "a",
+            "ayse",
         )
 
 
@@ -143,7 +152,7 @@ async def test_refresh_names_tables_described_differently_since_the_card_was_pin
     service, operator = _service(_record("run_a"))
     report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
     service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
-    pinned = service.get(report.id)
+    pinned = service.get(report.id, "ayse")
     assert pinned is not None and set(pinned.cards[0].basis) == {"orders"}
 
     # Values and value hints change with the data; they do not change the meaning.
@@ -168,10 +177,61 @@ async def test_refresh_names_tables_described_differently_since_the_card_was_pin
     # A reader who checked the card takes the tables as they are now; moving the card
     # afterwards keeps that basis.
     operator.catalog = _orders(description="Order total in cents.")
-    assert await service.accept(report.id, "c1", "mehmet") is not None
+    assert await service.accept(report.id, "c1", "ayse") is not None
     service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
     refreshed = await service.refresh(report.id, "c1", "ayse")
     assert refreshed is not None and refreshed.changed_tables == []
+
+
+@pytest.mark.asyncio
+async def test_a_report_opens_only_for_its_owner_editors_and_viewers() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+
+    # Private by default: to anyone else the report does not exist.
+    assert service.list("mehmet") == [] and service.get(report.id, "mehmet") is None
+    assert await service.refresh(report.id, "c1", "mehmet") is None
+    assert service.update(report.id, ReportInput(title="Mine"), "mehmet") is None
+    assert not service.delete(report.id, "mehmet")
+
+    shared = service.share(
+        report.id, ReportAccess(editors=["Mehmet", "ayse"], viewers=["zeynep", "mehmet"]), "ayse"
+    )
+    assert shared is not None
+    # The owner is never listed, and an editor is not also a viewer.
+    assert shared.editors == ["mehmet"] and shared.viewers == ["zeynep"]
+    view = service.get(report.id, "zeynep")
+    assert view is not None and view.role is ReportRole.VIEWER
+
+    # A viewer reads and refreshes, and the audit record names the viewer.
+    assert await service.refresh(report.id, "c1", "zeynep") is not None
+    assert operator.calls[-1]["actor"] == "zeynep"
+    for change in (
+        lambda: service.update(report.id, ReportInput(title="Hers"), "zeynep"),
+        lambda: service.share(report.id, ReportAccess(), "zeynep"),
+        lambda: service.delete(report.id, "zeynep"),
+    ):
+        with pytest.raises(ReportForbiddenError):
+            change()
+    with pytest.raises(ReportForbiddenError):
+        await service.ask(report.id, "Revenue", "zeynep")
+    with pytest.raises(ReportForbiddenError):
+        await service.accept(report.id, "c1", "zeynep")
+
+    # An editor changes the report but not who may open it, and cannot delete it.
+    assert service.update(report.id, ReportInput(title="Sales 2"), "mehmet") is not None
+    with pytest.raises(ReportForbiddenError, match="owner"):
+        service.share(report.id, ReportAccess(), "mehmet")
+    with pytest.raises(ReportForbiddenError):
+        service.delete(report.id, "mehmet")
+
+    service.share(report.id, ReportAccess(visibility=Visibility.WORKSPACE), "ayse")
+    [summary] = service.list("someone")
+    assert summary.role is ReportRole.VIEWER and summary.owner == "ayse"
+    with pytest.raises(ValueError):
+        ReportAccess(viewers=["not a name"])
+    assert service.delete(report.id, "ayse") and service.list("ayse") == []
 
 
 def test_saved_query_tables_skip_cte_names() -> None:

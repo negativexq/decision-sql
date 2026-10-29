@@ -191,8 +191,15 @@ a basis: a fingerprint of each table its SQL reads, taken from the catalog when
 the card is pinned (descriptions, types, sensitivity, queryability, keys and
 relationships; stored values are left out because they change with the data).
 A refresh names the tables whose fingerprint differs, the card says so above
-its chart, and a reader who checked it takes the current tables as the new
+its chart, and an editor who checked it takes the current tables as the new
 basis.
+
+A report has an owner, editors, and viewers, and is either private to them or
+open to the whole workspace. Viewers open and refresh; editors also change
+cards; only the owner changes who may open it or deletes it. A report someone
+cannot open reads as missing. Every refresh runs as the connection's reader
+role and records the person who asked, so all readers see the same data:
+sharing a report shares what that connection can read.
 
 ### Metadata isolation
 

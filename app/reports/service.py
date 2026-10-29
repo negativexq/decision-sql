@@ -15,16 +15,26 @@ from app.reports.models import (
     CardInput,
     CardRefresh,
     Report,
+    ReportAccess,
     ReportCard,
     ReportCreate,
     ReportInput,
+    ReportRole,
     ReportSummary,
+    ReportView,
 )
 from app.reports.store import ReportStore
 
 
 class ReportRejectedError(ValueError):
     pass
+
+
+class ReportForbiddenError(PermissionError):
+    """The reader may open the report but not do this to it."""
+
+
+_EDIT = (ReportRole.OWNER, ReportRole.EDITOR)
 
 
 class _Lazy:
@@ -48,13 +58,40 @@ class ReportService:
         self.operator = operator
         self.connections = connections
 
-    def list(self) -> list[ReportSummary]:
-        return [report.summary() for report in self.store.list()]
+    def list(self, actor: str) -> list[ReportSummary]:
+        return [
+            report.summary(role)
+            for report in self.store.list()
+            if (role := report.role_of(actor)) is not None
+        ]
 
-    def get(self, report_id: str) -> Report | None:
-        return self.store.get(report_id)
+    def get(self, report_id: str, actor: str) -> ReportView | None:
+        found = self._open(report_id, actor)
+        if found is None:
+            return None
+        report, role = found
+        return ReportView(**report.model_dump(), role=role)
 
-    def create(self, payload: ReportCreate, actor: str) -> Report:
+    def _open(
+        self, report_id: str, actor: str, need: tuple[ReportRole, ...] = tuple(ReportRole)
+    ) -> tuple[Report, ReportRole] | None:
+        """The report and the actor's role in it; None when the actor cannot open it.
+
+        A report the actor cannot open reads as missing, so its existence is not told.
+        """
+        report = self.store.get(report_id)
+        role = report.role_of(actor) if report is not None else None
+        if report is None or role is None:
+            return None
+        if role not in need:
+            raise ReportForbiddenError(
+                "Only the owner can do this."
+                if need == (ReportRole.OWNER,)
+                else "Only the owner or an editor can change this report."
+            )
+        return report, role
+
+    def create(self, payload: ReportCreate, actor: str) -> ReportView:
         known = {item.id for item in self.connections.connections() if item.queryable}
         if payload.connection_id not in known:
             raise ReportRejectedError("Reports run on a connection that can answer questions.")
@@ -71,12 +108,13 @@ class ReportService:
             updated_at=now,
         )
         self.store.save(report)
-        return report
+        return ReportView(**report.model_dump(), role=ReportRole.OWNER)
 
-    def update(self, report_id: str, payload: ReportInput, actor: str) -> Report | None:
-        report = self.store.get(report_id)
-        if report is None:
+    def update(self, report_id: str, payload: ReportInput, actor: str) -> ReportView | None:
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
             return None
+        report, role = found
         if len({card.id for card in payload.cards}) != len(payload.cards):
             raise ReportRejectedError("Two cards share an id.")
         previous = {card.id: card for card in report.cards}
@@ -92,16 +130,40 @@ class ReportService:
             }
         )
         self.store.save(updated)
-        return updated
+        return ReportView(**updated.model_dump(), role=role)
 
-    def delete(self, report_id: str) -> bool:
+    def share(self, report_id: str, access: ReportAccess, actor: str) -> ReportView | None:
+        found = self._open(report_id, actor, (ReportRole.OWNER,))
+        if found is None:
+            return None
+        report, role = found
+        updated = report.model_copy(
+            update={
+                "visibility": access.visibility,
+                "editors": [person for person in access.editors if person != report.created_by],
+                "viewers": [
+                    person
+                    for person in access.viewers
+                    if person != report.created_by and person not in access.editors
+                ],
+                "updated_by": actor,
+                "updated_at": datetime.now(UTC),
+            }
+        )
+        self.store.save(updated)
+        return ReportView(**updated.model_dump(), role=role)
+
+    def delete(self, report_id: str, actor: str) -> bool:
+        if self._open(report_id, actor, (ReportRole.OWNER,)) is None:
+            return False
         return self.store.delete(report_id)
 
     async def ask(self, report_id: str, question: str, actor: str) -> RunRecord | None:
         """Answer a new card's question the way the Ask page does, with the model."""
-        report = self.store.get(report_id)
-        if report is None:
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
             return None
+        report, _ = found
         source = await self._source(report.connection_id)
         return await self.operator.run(question, actor=actor, source=source)
 
@@ -110,11 +172,13 @@ class ReportService:
 
         The checks say whether the query may still run; the basis says whether the
         tables it reads are still described the way they were when it was pinned.
+        Any reader may refresh: the query runs as the connection's reader role, and
+        the audit record names the reader.
         """
-        found = self._query_card(report_id, card_id)
+        found = self._query_card(report_id, card_id, actor)
         if found is None:
             return None
-        report, card = found
+        report, _, card = found
         source = await self._source(report.connection_id)
         catalog = source.catalog if source is not None else self.operator.catalog
         run = await self.operator.run(
@@ -125,12 +189,12 @@ class ReportService:
         )
         return CardRefresh(run=run, changed_tables=changed_tables(card.basis, catalog))
 
-    async def accept(self, report_id: str, card_id: str, actor: str) -> Report | None:
-        """Record that a reader checked the card against the tables as they are now."""
-        found = self._query_card(report_id, card_id)
+    async def accept(self, report_id: str, card_id: str, actor: str) -> ReportView | None:
+        """Record that an editor checked the card against the tables as they are now."""
+        found = self._query_card(report_id, card_id, actor, _EDIT)
         if found is None:
             return None
-        report, card = found
+        report, role, card = found
         source = await self._source(report.connection_id)
         catalog = source.catalog if source is not None else self.operator.catalog
         basis = table_basis(catalog, _saved_query_tables(card.sql or ""))
@@ -145,18 +209,25 @@ class ReportService:
             }
         )
         await run_in_threadpool(self.store.save, updated)
-        return updated
+        return ReportView(**updated.model_dump(), role=role)
 
-    def _query_card(self, report_id: str, card_id: str) -> tuple[Report, ReportCard] | None:
-        report = self.store.get(report_id)
-        if report is None:
+    def _query_card(
+        self,
+        report_id: str,
+        card_id: str,
+        actor: str,
+        need: tuple[ReportRole, ...] = tuple(ReportRole),
+    ) -> tuple[Report, ReportRole, ReportCard] | None:
+        found = self._open(report_id, actor, need)
+        if found is None:
             return None
+        report, role = found
         card = next((item for item in report.cards if item.id == card_id), None)
         if card is None:
             return None
         if card.kind != "query" or card.sql is None:
             raise ReportRejectedError("This card has no saved query to run.")
-        return report, card
+        return report, role, card
 
     def _pin(
         self,

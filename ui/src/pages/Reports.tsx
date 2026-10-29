@@ -5,7 +5,7 @@ import { ReportCanvas } from "../components/report/ReportCanvas";
 import { CHART_TYPES, ReportChart, splitColumns, suggestChart } from "../components/report/ReportChart";
 import { bottom } from "../components/report/layout";
 import { SqlViewer } from "../components/SqlViewer";
-import type { ChartType, ConnectionSummary, Report, ReportCard, ReportSummary, RunRecord } from "../types";
+import type { ChartType, ConnectionSummary, Report, ReportAccess, ReportCard, ReportSummary, RunRecord } from "../types";
 
 type CardState =
   | { status: "loading" }
@@ -111,6 +111,10 @@ function ReportList({ onOpen }: { onOpen: (id: string) => void }) {
                 <span className="report-list-meta">
                   {report.card_count} {report.card_count === 1 ? "card" : "cards"} on {names[report.connection_id] ?? report.connection_id}
                 </span>
+                <span className="report-list-meta">
+                  {report.role === "owner" ? "Yours" : `Owned by ${report.owner}`}, {report.visibility === "workspace" ? "open to everyone" : "shared with named people"}
+                  {report.role === "viewer" ? ", view only" : ""}
+                </span>
                 <span className="report-list-meta">Edited by {report.updated_by}, {relativeTime(report.updated_at)}</span>
               </button>
             </li>
@@ -128,7 +132,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   const [description, setDescription] = useState("");
   const [results, setResults] = useState<Record<string, CardState>>({});
   const [editing, setEditing] = useState(false);
-  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "card"; id: string } | null>(null);
+  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "share" } | { kind: "card"; id: string } | null>(null);
   const [save, setSave] = useState<"saved" | "pending" | "saving" | "error">("saved");
   const [error, setError] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState("");
@@ -182,7 +186,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         setCards(value.cards);
         setTitle(value.title);
         setDescription(value.description);
-        setEditing(value.cards.length === 0);
+        setEditing(value.cards.length === 0 && value.role !== "viewer");
         void refreshAll(value.cards);
         void api.connections().then((items) => setConnectionName(items.find((item) => item.id === value.connection_id)?.name ?? value.connection_id));
       })
@@ -273,6 +277,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   if (!report) return <div className="page"><p className="panel-note">Opening report…</p></div>;
 
   const selected = panel?.kind === "card" ? cards.find((card) => card.id === panel.id) : undefined;
+  const canEdit = report.role !== "viewer";
   const saveText = { saved: "Saved", pending: "Unsaved changes", saving: "Saving", error: "Not saved" }[save];
 
   return (
@@ -293,7 +298,10 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             {!editing && (
               <button type="button" className="button ghost small" onClick={() => void refreshAll(cards)}>Refresh data</button>
             )}
-            <button
+            {report.role === "owner" && (
+              <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "share" })}>Share</button>
+            )}
+            {canEdit && <button
               type="button"
               className={editing ? "button primary small" : "button ghost small"}
               onClick={() => {
@@ -303,7 +311,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
               }}
             >
               {editing ? "Done editing" : "Edit report"}
-            </button>
+            </button>}
           </div>
         </div>
 
@@ -340,7 +348,8 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             </>
           )}
           <p className="report-meta">
-            {connectionName} · edited by {report.updated_by}, {relativeTime(report.updated_at)}
+            {connectionName} · {report.role === "owner" ? "yours" : `owned by ${report.created_by}`}
+            {report.role === "viewer" ? ", view only" : ""} · edited by {report.updated_by}, {relativeTime(report.updated_at)}
           </p>
         </header>
 
@@ -349,8 +358,14 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         {cards.length === 0 ? (
           <div className="report-empty">
             <strong>Start with a question</strong>
-            <p>Ask something like “Revenue by month this year”. The answer becomes a chart you can resize, move, and describe.</p>
-            <button type="button" className="button primary" onClick={() => { setEditing(true); setPanel({ kind: "add" }); }}>Add chart</button>
+            {canEdit ? (
+              <>
+                <p>Ask something like “Revenue by month this year”. The answer becomes a chart you can resize, move, and describe.</p>
+                <button type="button" className="button primary" onClick={() => { setEditing(true); setPanel({ kind: "add" }); }}>Add chart</button>
+              </>
+            ) : (
+              <p>The owner has not added charts yet.</p>
+            )}
           </div>
         ) : (
           <ReportCanvas
@@ -366,7 +381,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 selected={selected?.id === card.id}
                 onSelect={() => setPanel({ kind: "card", id: card.id })}
                 onRefresh={() => void refresh(card)}
-                onAccept={() => void accept(card)}
+                onAccept={canEdit ? () => void accept(card) : undefined}
                 onChart={(chart) => updateCard(card.id, { chart })}
               />
             )}
@@ -374,6 +389,14 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         )}
       </div>
 
+      {panel?.kind === "share" && (
+        <SharePanel
+          report={report}
+          connectionName={connectionName}
+          onShared={(value) => setReport(value)}
+          onClose={() => setPanel(null)}
+        />
+      )}
       {panel?.kind === "add" && (
         <AddChartPanel reportId={reportId} onAdd={addQueryCard} onClose={() => setPanel(null)} />
       )}
@@ -408,7 +431,7 @@ function CardView({
   selected: boolean;
   onSelect: () => void;
   onRefresh: () => void;
-  onAccept: () => void;
+  onAccept?: () => void;
   onChart: (chart: ChartType) => void;
 }) {
   const changed = state?.status === "done" ? state.changed : [];
@@ -436,7 +459,7 @@ function CardView({
             {changed.length === 1 ? "Table" : "Tables"} {changed.join(", ")} changed since this card was saved. The query passed
             every check again; make sure the chart still shows what its title says.
           </p>
-          <button type="button" className="link" onClick={onAccept}>Mark as checked</button>
+          {onAccept && <button type="button" className="link" onClick={onAccept}>Mark as checked</button>}
         </div>
       )}
       <div className="report-card-body">
@@ -588,6 +611,90 @@ function AddChartPanel({
           <button type="button" className="button primary" onClick={() => onAdd(run, chart)}>Add to report</button>
         </div>
       )}
+    </aside>
+  );
+}
+
+function people(text: string): string[] {
+  return text.split(/[\s,;]+/).map((item) => item.trim()).filter(Boolean);
+}
+
+function SharePanel({
+  report,
+  connectionName,
+  onShared,
+  onClose,
+}: {
+  report: Report;
+  connectionName: string;
+  onShared: (report: Report) => void;
+  onClose: () => void;
+}) {
+  const [visibility, setVisibility] = useState(report.visibility);
+  const [editors, setEditors] = useState(report.editors.join(", "));
+  const [viewers, setViewers] = useState(report.viewers.join(", "));
+  const [state, setState] = useState<"idle" | "saving" | "saved">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = () => {
+    const access: ReportAccess = { visibility, editors: people(editors), viewers: people(viewers) };
+    setState("saving");
+    setError(null);
+    void api
+      .shareReport(report.id, access)
+      .then((value) => {
+        onShared(value);
+        setEditors(value.editors.join(", "));
+        setViewers(value.viewers.join(", "));
+        setState("saved");
+      })
+      .catch((cause: Error) => {
+        setError(cause.message);
+        setState("idle");
+      });
+  };
+
+  return (
+    <aside className="report-panel" aria-label="Share report">
+      <div className="report-panel-head">
+        <h2>Share</h2>
+        <button type="button" className="button ghost small" onClick={onClose}>Close</button>
+      </div>
+      <form
+        className="report-panel-body"
+        onSubmit={(event) => {
+          event.preventDefault();
+          submit();
+        }}
+      >
+        <fieldset className="share-visibility">
+          <legend className="field-label">Who can open it</legend>
+          <label>
+            <input type="radio" name="visibility" checked={visibility === "private"} onChange={() => setVisibility("private")} />
+            <span><strong>Named people</strong> You, the editors, and the viewers below.</span>
+          </label>
+          <label>
+            <input type="radio" name="visibility" checked={visibility === "workspace"} onChange={() => setVisibility("workspace")} />
+            <span><strong>Everyone</strong> Anyone using this workspace can open and refresh it.</span>
+          </label>
+        </fieldset>
+        <label className="field">
+          <span className="field-label">Editors<span className="field-hint">change charts and text</span></span>
+          <textarea rows={2} value={editors} placeholder="ayse.kaya@example.com, mehmet" onChange={(event) => { setEditors(event.target.value); setState("idle"); }} />
+        </label>
+        <label className="field">
+          <span className="field-label">Viewers<span className="field-hint">open and refresh</span></span>
+          <textarea rows={2} value={viewers} placeholder="Names, separated by commas" onChange={(event) => { setViewers(event.target.value); setState("idle"); }} />
+        </label>
+        <p className="panel-note">
+          Everyone who opens this report sees what the database user of {connectionName || "this connection"} can read; sharing a report shares
+          that reach. Names are the ones people set in this app, not verified sign-ins.
+        </p>
+        {error && <div className="callout callout-danger">{error}</div>}
+        <button type="submit" className="button primary" disabled={state === "saving"}>
+          {state === "saving" ? "Saving" : state === "saved" ? "Saved" : "Save sharing"}
+        </button>
+      </form>
     </aside>
   );
 }

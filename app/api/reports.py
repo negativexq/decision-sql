@@ -1,4 +1,4 @@
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -9,12 +9,13 @@ from app.operator.models import RunRecord
 from app.reports.models import (
     CardQuestion,
     CardRefresh,
-    Report,
+    ReportAccess,
     ReportCreate,
     ReportInput,
     ReportSummary,
+    ReportView,
 )
-from app.reports.service import ReportRejectedError, ReportService
+from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
 
 router = APIRouter(prefix="/api/reports")
 
@@ -29,42 +30,51 @@ def get_report_service() -> ReportService:
 Reports = Annotated[ReportService, Depends(get_report_service)]
 
 
-def _found(report: Report | None) -> Report:
-    if report is None:
+def _call[T](call: Callable[[], T | None]) -> T:
+    """Map the service's refusals to HTTP; a report the actor cannot open is missing."""
+    try:
+        result = call()
+    except ReportRejectedError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ReportForbiddenError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
+    if result is None:
         raise HTTPException(status_code=404, detail="Report not found")
-    return report
+    return result
 
 
 @router.get("", response_model=list[ReportSummary])
-def list_reports(service: Reports) -> list[ReportSummary]:
-    return service.list()
+def list_reports(service: Reports, actor: Actor) -> list[ReportSummary]:
+    return service.list(actor)
 
 
-@router.post("", response_model=Report, status_code=201)
-def create_report(payload: ReportCreate, service: Reports, actor: Actor) -> Report:
-    try:
-        return service.create(payload, actor)
-    except ReportRejectedError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
+@router.post("", response_model=ReportView, status_code=201)
+def create_report(payload: ReportCreate, service: Reports, actor: Actor) -> ReportView:
+    return _call(lambda: service.create(payload, actor))
 
 
-@router.get("/{report_id}", response_model=Report)
-def get_report(report_id: str, service: Reports) -> Report:
-    return _found(service.get(report_id))
+@router.get("/{report_id}", response_model=ReportView)
+def get_report(report_id: str, service: Reports, actor: Actor) -> ReportView:
+    return _call(lambda: service.get(report_id, actor))
 
 
-@router.put("/{report_id}", response_model=Report)
-def update_report(report_id: str, payload: ReportInput, service: Reports, actor: Actor) -> Report:
-    try:
-        return _found(service.update(report_id, payload, actor))
-    except ReportRejectedError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
+@router.put("/{report_id}", response_model=ReportView)
+def update_report(
+    report_id: str, payload: ReportInput, service: Reports, actor: Actor
+) -> ReportView:
+    return _call(lambda: service.update(report_id, payload, actor))
+
+
+@router.put("/{report_id}/access", response_model=ReportView)
+def share_report(
+    report_id: str, payload: ReportAccess, service: Reports, actor: Actor
+) -> ReportView:
+    return _call(lambda: service.share(report_id, payload, actor))
 
 
 @router.delete("/{report_id}", status_code=204)
-def delete_report(report_id: str, service: Reports) -> None:
-    if not service.delete(report_id):
-        raise HTTPException(status_code=404, detail="Report not found")
+def delete_report(report_id: str, service: Reports, actor: Actor) -> None:
+    _call(lambda: service.delete(report_id, actor) or None)
 
 
 async def _run[T](call: Awaitable[T | None]) -> T:
@@ -72,6 +82,8 @@ async def _run[T](call: Awaitable[T | None]) -> T:
         record = await call
     except ReportRejectedError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+    except ReportForbiddenError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
     except ConnectorUnavailableError as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
     except Exception as error:  # driver errors are reported, not leaked as 500s
@@ -95,7 +107,7 @@ async def refresh_card(report_id: str, card_id: str, service: Reports, actor: Ac
     return await _run(service.refresh(report_id, card_id, actor))
 
 
-@router.post("/{report_id}/cards/{card_id}/accept", response_model=Report)
-async def accept_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> Report:
+@router.post("/{report_id}/cards/{card_id}/accept", response_model=ReportView)
+async def accept_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> ReportView:
     """Take the tables as they are now as the card's new basis."""
     return await _run(service.accept(report_id, card_id, actor))

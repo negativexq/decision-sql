@@ -313,12 +313,22 @@ export interface CardRefresh {
   changed_tables: string[];
 }
 
-export interface Report {
+export type ReportVisibility = "private" | "workspace";
+export type ReportRole = "owner" | "editor" | "viewer";
+
+export interface ReportAccess {
+  visibility: ReportVisibility;
+  editors: string[];
+  viewers: string[];
+}
+
+export interface Report extends ReportAccess {
   id: string;
   connection_id: string;
   title: string;
   description: string;
   cards: ReportCard[];
+  role: ReportRole;
   created_by: string;
   created_at: string;
   updated_by: string;
@@ -331,6 +341,9 @@ export interface ReportSummary {
   title: string;
   description: string;
   card_count: number;
+  owner: string;
+  visibility: ReportVisibility;
+  role: ReportRole;
   updated_by: string;
   updated_at: string;
 }

@@ -71,7 +71,10 @@ tests.
 ## Known gaps
 
 - The actor in the audit log comes from the `X-Decision-Actor` header and is
-  self-declared. There is no authentication or SSO yet.
+  self-declared. There is no authentication or SSO yet, so report sharing
+  (owner, editors, viewers) organizes work but is not an access boundary.
+- A report refresh runs as the connection's reader role, not as the viewer:
+  every reader of a report sees what that connection can read.
 - There are no tenant predicates or PostgreSQL row-level security.
 - Authority is relation-level; column- and join-path-level authorization is not
   complete.

@@ -229,6 +229,10 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   projections, including inner aggregates, to the table it is read from;
   every table joined along the way counts, unless a scope in between groups
   or de-duplicates on the parent's key (or a column its joins equate with it).
+  A CTE or derived table of raw child rows joined beside the parent counts as
+  its child table; one that is grouped, `DISTINCT`, or a single aggregated row
+  does not. Grouping the aggregate itself by the parent's key makes an `AVG`
+  safe but not a `SUM`: each group is one parent repeated once per child.
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
   statistics, a text literal compared with the column that differs from one
@@ -282,11 +286,10 @@ audit log keeps both the model's SQL and the text the database received
 
 ### Known gaps
 
-- The grain check follows a measure only through the sources it is read
-  from. A child table joined through a CTE or derived table of its own
-  (`JOIN (SELECT ... FROM order_items) i`) is not seen as a fan-out.
-- Grouping by the parent's key in the aggregating scope counts as safe, as
-  it does for a direct join.
+- A CTE or derived table that is grouped or `DISTINCT` is trusted not to
+  repeat the parent, even when it groups on more than the joined key
+  (`DISTINCT gender, district_id` joined on `district_id`). Such queries
+  usually group by the extra column later, which the check does not follow.
 - The join check does not trace CTE columns, so a CTE column joined on a
   non-key passes it.
 - A table joined with itself is not checked against relationships, so two

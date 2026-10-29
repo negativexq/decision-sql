@@ -223,9 +223,9 @@ Text-to-SQL accuracy claim.
 - Authority is relation-level; there are no tenant predicates or row-level
   security.
 - Questions run only on PostgreSQL.
-- Grain follows a measure through CTEs and derived tables, but a child table
-  joined through a derived table of its own is not seen as a fan-out, and
-  the join check does not trace CTE columns.
+- Grain follows measures and child rows through CTEs and derived tables, but
+  trusts a grouped or `DISTINCT` one not to repeat the parent; the join check
+  does not trace CTE columns.
 - The demo catalog is a synthetic commerce schema with hand-written business
   definitions.
 

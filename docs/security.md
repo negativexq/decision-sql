@@ -16,9 +16,10 @@ tests.
   keys and columns whose names suggest personal data. The model provider sees
   them with every question on that connection. Without sharing, the model sees
   only the shape of code and date columns (`9999-99-99`), which carries no
-  stored value. The shares of NULL and blank rows of a column (when at least 1%)
-  come from the same statistics and are sent without sharing: they are counts,
-  not values. `DECISION_SQL_VALUE_EXAMPLES=false` turns all of this off
+  stored value. The shares of NULL and blank rows of a column (when at least 1%),
+  and the separator a text column's values join items with, come from the same
+  statistics and are sent without sharing: they are counts and a punctuation
+  mark, not values. `DECISION_SQL_VALUE_EXAMPLES=false` turns all of this off
   server-wide.
 - It returns one typed decision. Its SQL is untrusted input
   (`SqlCandidate`) with no authorization state.

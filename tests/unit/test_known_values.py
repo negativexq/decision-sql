@@ -200,3 +200,42 @@ def test_shares_reach_the_context_without_value_sharing() -> None:
     assert "- segment text — Segment. | null_share: 46% | blank_share: 5%" in (
         render_governed_context(context)
     )
+
+
+def test_a_text_column_of_lists_names_its_separator() -> None:
+    lists = _stats(["Creature", "Artifact,Creature", "Instant"], [0.5, 0.3, 0.2])
+    assert column_profile(lists, text=True) == ColumnProfile(0.0, 0.0, ",", 0.3)
+    # A separator in few values is punctuation; numbers are never profiled for it.
+    assert column_profile(_stats(["a", "b,c"], [0.95, 0.05]), text=True) is None
+    assert column_profile(lists) is None
+
+
+def test_the_separator_share_of_a_large_column_counts_its_histogram() -> None:
+    stats = ColumnStats(
+        "users",
+        "location",
+        0.5,
+        ["India"],
+        [0.1],
+        ["Bangalore, India", "Pune, India", "Kerala"],
+        n_distinct=100,
+    )
+    # 0.4 of rows are outside the common values; two of three bounds stand for them.
+    profile = column_profile(stats, text=True)
+    assert profile is not None and profile.separator == ","
+    assert profile.separated_share == round((0.4 * 2 / 3) / 0.5, 2)
+
+
+def test_free_text_commas_are_not_a_list() -> None:
+    sentence = "This is a long sentence, with commas, that reads like a comment on a post."
+    assert column_profile(_stats([sentence, sentence + "!"], [0.5, 0.5]), text=True) is None
+
+
+def test_a_counted_column_gives_an_exact_separator_share() -> None:
+    stats = sample_stats("cards", "types", [("Creature", 6), ("Artifact,Creature", 4), (None, 2)])
+    assert column_profile(stats, text=True) == ColumnProfile(0.17, 0.0, ",", 0.4)
+    catalog = apply_profiles(_catalog(), {("stations", "segment"): ColumnProfile(0, 0, ",", 0.4)})
+    context = governed_context_from_schema_context(
+        SchemaContextResolver(catalog).resolve("Which segment has the most stations?")
+    )
+    assert '| separated_by ",": 40% of values' in render_governed_context(context)

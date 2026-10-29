@@ -55,6 +55,13 @@ column is order revenue and which timestamp drives monthly trends.
   statistics. A share is a count, not a stored value, so it does not wait for
   value sharing; a filter such as `<> 'x'` drops NULL rows but keeps blank ones,
   and the model cannot see that from the column's type.
+- A short-valued text column whose values join several items with `,`, `;`, or
+  `|` in at least 10% of rows carries that separator and share (`separator`,
+  `separated_share`; `separated_by` in the compact form), such as a list of card
+  types or a place and its country: an equality then matches only a whole value.
+  The share is exact on a counted column and estimated from the most common
+  values and the histogram otherwise; free text, whose median value is longer
+  than 60 characters, is left out.
 - Column descriptions come from the source's comments. An administrator who
   cannot write comments to the source can describe a column on the connection
   page instead (`column_notes`); the note replaces that column's description in

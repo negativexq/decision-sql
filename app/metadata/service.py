@@ -253,7 +253,7 @@ class ConnectionService:
             hint = known_values(item) if key in eligible else None
             if hint is not None:
                 statistics.hints[key] = hint
-            profile = column_profile(item)
+            profile = column_profile(item, text=key in eligible)
             if profile is not None:
                 statistics.profiles[key] = profile
         self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, statistics)

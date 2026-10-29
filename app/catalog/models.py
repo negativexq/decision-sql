@@ -28,6 +28,10 @@ class ColumnMetadata(BaseModel):
     # Shares of rows that are NULL, or an empty or blank string, from planner statistics.
     null_share: float = 0.0
     blank_share: float = 0.0
+    # A character joining several items in a share of the values, such as "," in
+    # "Artifact,Creature" or "Bangalore, India".
+    separator: str = ""
+    separated_share: float = 0.0
 
 
 class RelationshipMetadata(BaseModel):
@@ -98,6 +102,8 @@ class RelevantColumn(BaseModel):
     value_patterns: tuple[str, ...] = ()
     null_share: float = 0.0
     blank_share: float = 0.0
+    separator: str = ""
+    separated_share: float = 0.0
 
 
 class RelevantTable(BaseModel):

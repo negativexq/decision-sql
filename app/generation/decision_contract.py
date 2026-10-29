@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "4feb9cf605db1c1002980146b6668f2a8155022bd8d6e87d68762be6c81a2a8b"
+    "daed16a2517baa3db2d816625fb55ae2b80d8c095c50a3e6200b31e6c08eab50"
 )
 
 
@@ -46,6 +46,7 @@ You are answering one question a user asked about their own database. Use only t
 - When an attribute lists `value_patterns` instead, those are the shapes of the stored codes or dates, with every digit written as 9: `9999-99-99` means values like `2012-01-15`. Write literals and string operations that fit one of those shapes.
 - Columns without `known_values` may still hold the value the question names; their spelling is simply not shown.
 - When an attribute lists `null_share` or `blank_share`, that share of its rows is NULL, or an empty or blank string. A comparison such as `=` or `<>` never matches a NULL row, while an empty string is a stored value that `<>`, `IS NOT NULL`, and `COUNT(column)` keep.
+- When an attribute lists `separator` (`separated_by` in compact form), that share of its values join several items with that character, such as a list of types or a place and its country. An equality or `IN` matches only a whole stored value, never one item of it.
 
 ## Typed JSON scalar semantics
 
@@ -109,7 +110,8 @@ The context details the tables selected for this question. Use the physical tabl
 - When the question asks for a percentage, return it on a 0 to 100 scale, multiplying the quotient by 100, and give that column an alias containing `percent`. A ratio, rate, or proportion the question does not call a percentage stays a quotient.
 - When the question asks whether something is true, return each judgement as the text `YES` or `NO`, not as 1/0 or true/false.
 - When the question states the form of the answer, such as one row, one line, a rounding, or an order, follow it exactly: several figures asked for as one answer are columns of one row, and text asked for as one line has its line breaks replaced by spaces.
-- When the question names several fields, such as a first and a last name, return each as its own column. Combine fields into one column only when the question asks for one combined value.
+- When the question names several fields, such as a first and a last name, return each as its own column, in the order the question names them. Combine fields into one column only when the question asks for one combined value.
+- When two visible tables hold the same kind of value, such as a county or a school type, and the question names where the value comes from (a program, a report, a record), take it from that table.
 - When the question asks for the item with the highest, lowest, earliest, or latest value, return every row that shares that value, for example by comparing with `(SELECT MAX(...))` or filtering `RANK() = 1`. Do not cut a tie with `LIMIT 1` or an arbitrary order; the runtime tells the user when rows tie. Use `LIMIT n` only when the question asks for a fixed number of items.
 
 ## Exploring the data

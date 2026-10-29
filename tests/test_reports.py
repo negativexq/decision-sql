@@ -11,6 +11,7 @@ from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import _saved_query_tables
 from app.reports.filters import FilterChoice, FilterKind, ReportFilter
 from app.reports.models import (
+    CardDisplay,
     CardInput,
     CardLayout,
     ReportAccess,
@@ -289,3 +290,16 @@ async def test_filters_narrow_the_pinned_sql_before_the_gates_see_it() -> None:
     )
     columns = await service.filter_columns(report.id, "ayse")
     assert columns is not None and [(c.table, c.column) for c in columns] == [("orders", "total")]
+
+
+def test_display_settings_are_checked_and_kept() -> None:
+    service, _ = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    shown = CardDisplay(format="currency", currency="EUR", sort="value_desc", limit=5)
+    updated = service.update(
+        report.id, ReportInput(title="S", cards=[_card("c1", "run_a", display=shown)]), "ayse"
+    )
+    assert updated is not None and updated.cards[0].display == shown
+    for bad in ({"currency": "euro"}, {"limit": 0}, {"decimals": 9}, {"format": "stars"}):
+        with pytest.raises(ValueError):
+            CardDisplay.model_validate(bad)

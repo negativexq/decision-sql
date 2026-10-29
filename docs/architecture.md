@@ -188,7 +188,10 @@ the current schema, and an audit record. A query that no longer passes shows
 why on its card. Heading cards start a section; text cards hold notes in a
 small Markdown subset rendered as text, never HTML; chart cards carry a
 description, a chart type (number, bars, columns, line, area, pie, table), and
-optional category and value columns.
+optional category and value columns, and display settings: number format
+(number, currency, percent, decimals), row order, how many rows to show, and
+for a number card a comparison with its second row or a target. Display
+settings change how rows look, never the query or which rows it returns.
 
 Passing the gates says a saved query may still run, not that it still means
 what it meant. A column redescribed, retyped, renamed, hidden, or marked

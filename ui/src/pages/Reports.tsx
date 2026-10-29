@@ -6,8 +6,10 @@ import { CHART_TYPES, ReportChart, splitColumns, suggestChart } from "../compone
 import { bottom } from "../components/report/layout";
 import { AddFilterPanel, FilterBar, isEmpty } from "../components/report/ReportFilters";
 import { Prose } from "../components/report/Prose";
+import { DEFAULT_DISPLAY } from "../components/report/display";
 import { SqlViewer } from "../components/SqlViewer";
 import type {
+  CardDisplay,
   ChartType,
   ConnectionSummary,
   FilterChoice,
@@ -598,6 +600,7 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
       dimension={card.dimension}
       measure={card.measure}
       emptyText={state.applied.length ? "No rows match the current filters." : undefined}
+      display={card.display ?? DEFAULT_DISPLAY}
     />
   );
 }
@@ -885,6 +888,11 @@ function CardPanel({
                 </label>
               </div>
             )}
+            <FormatFields
+              display={card.display ?? DEFAULT_DISPLAY}
+              number={card.chart === "number"}
+              onChange={(patch) => onChange({ display: { ...(card.display ?? DEFAULT_DISPLAY), ...patch } })}
+            />
             <div className="report-question-shown">
               <span className="field-label">Question</span>
               <p>{card.question}</p>
@@ -916,6 +924,126 @@ function CardPanel({
         <button type="button" className="button danger" onClick={onRemove}>Remove card</button>
       </div>
     </aside>
+  );
+}
+
+function optionalNumber(text: string): number | null {
+  if (!text.trim()) return null;
+  const value = Number(text);
+  return Number.isFinite(value) ? value : null;
+}
+
+/** How a chart shows its numbers and rows; the saved query is not changed. */
+function FormatFields({
+  display,
+  number,
+  onChange,
+}: {
+  display: CardDisplay;
+  number: boolean;
+  onChange: (patch: Partial<CardDisplay>) => void;
+}) {
+  return (
+    <fieldset className="format-fields">
+      <legend className="field-label">Format</legend>
+      <div className="report-axes">
+        <label className="field">
+          <span className="field-label">Numbers</span>
+          <select value={display.format} onChange={(event) => onChange({ format: event.target.value as CardDisplay["format"] })}>
+            <option value="auto">Automatic</option>
+            <option value="number">Number</option>
+            <option value="currency">Currency</option>
+            <option value="percent">Percent (0.25 is 25%)</option>
+          </select>
+        </label>
+        <label className="field">
+          <span className="field-label">Decimals</span>
+          <input
+            type="number"
+            min={0}
+            max={6}
+            placeholder="Auto"
+            disabled={display.format === "auto"}
+            value={display.decimals ?? ""}
+            onChange={(event) => {
+              const value = optionalNumber(event.target.value);
+              onChange({ decimals: value === null ? null : Math.min(6, Math.max(0, Math.round(value))) });
+            }}
+          />
+        </label>
+      </div>
+      {display.format === "currency" && (
+        <label className="field">
+          <span className="field-label">Currency<span className="field-hint">three-letter code</span></span>
+          <input
+            value={display.currency}
+            maxLength={3}
+            onChange={(event) => {
+              const code = event.target.value.toUpperCase().replace(/[^A-Z]/g, "");
+              if (code.length === 3) onChange({ currency: code });
+            }}
+          />
+        </label>
+      )}
+      {!number && (
+        <div className="report-axes">
+          <label className="field">
+            <span className="field-label">Order</span>
+            <select value={display.sort} onChange={(event) => onChange({ sort: event.target.value as CardDisplay["sort"] })}>
+              <option value="query">As the query returns</option>
+              <option value="value_desc">Largest first</option>
+              <option value="value_asc">Smallest first</option>
+              <option value="label">By category</option>
+            </select>
+          </label>
+          <label className="field">
+            <span className="field-label">Show first</span>
+            <input
+              type="number"
+              min={1}
+              max={200}
+              placeholder="All rows"
+              value={display.limit ?? ""}
+              onChange={(event) => {
+                const value = optionalNumber(event.target.value);
+                onChange({ limit: value === null ? null : Math.min(200, Math.max(1, Math.round(value))) });
+              }}
+            />
+          </label>
+        </div>
+      )}
+      {number && (
+        <>
+          <label className="field">
+            <span className="field-label">Compare with</span>
+            <select value={display.compare} onChange={(event) => onChange({ compare: event.target.value as CardDisplay["compare"] })}>
+              <option value="none">Nothing</option>
+              <option value="second_row">The second row</option>
+              <option value="target">A target</option>
+            </select>
+          </label>
+          {display.compare === "second_row" && (
+            <p className="panel-note">Ask for the current period first and the one before it second, for example “Revenue this month and last month”.</p>
+          )}
+          {display.compare === "target" && (
+            <label className="field">
+              <span className="field-label">Target</span>
+              <input
+                type="number"
+                value={display.target ?? ""}
+                onChange={(event) => onChange({ target: optionalNumber(event.target.value) })}
+              />
+            </label>
+          )}
+          {display.compare !== "none" && (
+            <label className="check">
+              <input type="checkbox" checked={display.higher_is_better} onChange={(event) => onChange({ higher_is_better: event.target.checked })} />
+              Higher is better
+            </label>
+          )}
+        </>
+      )}
+    </fieldset>
   );
 }
 

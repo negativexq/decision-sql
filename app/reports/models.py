@@ -57,6 +57,24 @@ class CardLayout(BaseModel):
     h: int = Field(ge=1, le=40)
 
 
+class CardDisplay(BaseModel):
+    """How a chart shows its numbers; it never changes the query or its rows."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    # "percent" reads values as ratios: 0.25 shows as 25%.
+    format: Literal["auto", "number", "currency", "percent"] = "auto"
+    decimals: int | None = Field(default=None, ge=0, le=6)
+    currency: str = Field(default="USD", pattern=r"^[A-Z]{3}$")
+    # "query" keeps the order the query returned.
+    sort: Literal["query", "value_desc", "value_asc", "label"] = "query"
+    limit: int | None = Field(default=None, ge=1, le=200)
+    # A number card can compare its first row with its second, or with a target.
+    compare: Literal["none", "second_row", "target"] = "none"
+    target: float | None = None
+    higher_is_better: bool = True
+
+
 class CardInput(BaseModel):
     """A card as the client sends it; the server fills in the pinned SQL."""
 
@@ -74,6 +92,7 @@ class CardInput(BaseModel):
     # Columns the viewer chose for the category axis and the value; None picks one.
     dimension: str | None = Field(default=None, max_length=200)
     measure: str | None = Field(default=None, max_length=200)
+    display: CardDisplay = Field(default_factory=CardDisplay)
     layout: CardLayout
 
 

@@ -293,6 +293,17 @@ export interface CardLayout {
   h: number;
 }
 
+export interface CardDisplay {
+  format: "auto" | "number" | "currency" | "percent";
+  decimals: number | null;
+  currency: string;
+  sort: "query" | "value_desc" | "value_asc" | "label";
+  limit: number | null;
+  compare: "none" | "second_row" | "target";
+  target: number | null;
+  higher_is_better: boolean;
+}
+
 export interface ReportCard {
   id: string;
   kind: "query" | "text" | "heading";
@@ -303,6 +314,7 @@ export interface ReportCard {
   chart: ChartType;
   dimension: string | null;
   measure: string | null;
+  display?: CardDisplay;
   layout: CardLayout;
   sql?: string | null;
   basis?: Record<string, string>;

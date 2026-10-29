@@ -41,6 +41,7 @@ _AUDIT_FIELDS = (
     "repaired_from_sql",
     "executed_sql",
     "sql_changes",
+    "follow_up_of",
     "columns",
     "row_count",
     "truncated",

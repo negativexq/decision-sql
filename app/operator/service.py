@@ -19,7 +19,7 @@ from app.generation.decision_contract import (
     DecisionType,
     ProductionDecision,
 )
-from app.generation.provider import LLMProvider, OpenAICompatibleProvider
+from app.generation.provider import EarlierAnswer, LLMProvider, OpenAICompatibleProvider
 from app.metadata.service import GOVERNED_CONNECTION_ID, QuestionSource
 from app.metadata.store import InMemoryRunStore, RunStore
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
@@ -183,13 +183,16 @@ class OperatorApplication:
         actor: str = "anonymous",
         source: QuestionSource | None = None,
         saved_sql: str | None = None,
+        follow_up: RunRecord | None = None,
     ) -> RunRecord:
+        """Answer a question; with ``follow_up``, as a follow-up to that earlier run."""
+        earlier = _earlier_answer(follow_up) if follow_up is not None else None
         run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         collector = RunTraceCollector(run_id)
         collector.event("request.received", "Natural-language request received", "request")
         collector.record_stage("request", TraceStageStatus.PASS)
         service, effective_question, proposal_source, replay = self._service_for(
-            preset_id, question, source, saved_sql
+            preset_id, question, source, saved_sql, earlier
         )
         service.safety_service.stage_recorder = collector
         result = await service.run(
@@ -235,6 +238,7 @@ class OperatorApplication:
             trace=result.trace,
             actor=actor,
             connection_id=source.connection_id if source is not None else GOVERNED_CONNECTION_ID,
+            follow_up_of=follow_up.run_id if earlier is not None and follow_up else None,
         )
         await asyncio.to_thread(self.run_store.save, record)
         return record
@@ -306,6 +310,7 @@ class OperatorApplication:
         question: str,
         source: QuestionSource | None = None,
         saved_sql: str | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> tuple[DecisionSqlApplication, str, ProposalSource, ProductionDecision | None]:
         preset = next((item for item in self.presets if item.id == preset_id), None)
         effective_question = preset.question if preset is not None else question
@@ -336,7 +341,9 @@ class OperatorApplication:
                     _saved_decision(saved_sql),
                 )
             return (
-                DecisionSqlApplication(resolver, provider, safety, self.settings),
+                DecisionSqlApplication(
+                    _with_earlier(resolver, earlier), provider, safety, self.settings, earlier
+                ),
                 question,
                 ProposalSource.LIVE_MODEL,
                 None,
@@ -382,12 +389,37 @@ class OperatorApplication:
             measure_catalog=measure_catalog_from_schema(catalog),
             grain_normalization_enabled=True,
         )
+        if replay is None:
+            resolver = _with_earlier(resolver, earlier)
         return (
-            DecisionSqlApplication(resolver, provider, safety, self.settings),
+            DecisionSqlApplication(
+                resolver, provider, safety, self.settings, earlier if replay is None else None
+            ),
             effective_question,
             mode,
             replay,
         )
+
+
+def _earlier_answer(record: RunRecord) -> EarlierAnswer | None:
+    """The earlier question and the SQL the model proposed for it, if it proposed one.
+
+    Only a live model's own proposal goes back to the model.  The SQL that ran may
+    hold stored values the runtime wrote in, and a replayed run's SQL never came
+    from the model, so neither is sent.
+    """
+    if record.proposal_source is not ProposalSource.LIVE_MODEL or not record.proposed_sql:
+        return None
+    return EarlierAnswer(question=record.question, sql=record.proposed_sql)
+
+
+def _with_earlier(
+    resolver: SchemaContextResolver, earlier: EarlierAnswer | None
+) -> SchemaContextResolver:
+    """Detail the earlier SQL's tables too; the gates still decide what may run."""
+    if earlier is None:
+        return resolver
+    return _SavedQueryResolver(resolver, _saved_query_tables(earlier.sql))
 
 
 def _saved_decision(sql: str) -> ProductionDecision:

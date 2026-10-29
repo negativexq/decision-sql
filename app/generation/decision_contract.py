@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "b0a48cc234ad29d0baeadc8622caa5150d8fac9929631519803ca7984ccae367"
+    "08187fa708fce12782f881c57fae994fe26dca889500aa96b425c7bca1e8d205"
 )
 
 
@@ -94,12 +94,16 @@ For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`. `mi
 
 The only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.
 
-The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request.
+The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request, except an `Earlier answer` supplied with it.
 
 ## Tables outside the context
 
 When the context has `other_tables`, the database has more tables than the ones detailed, and those are their names. A name is not authority: never reference a table that is not in `schema_catalog`. If the question needs data that none of the detailed tables holds and one of `other_tables` likely holds it, return `BLOCKED_AUTHORITY` and list in `missing_relationships` the detailed table it would join to and that table from `other_tables`. The runtime may then supply its details and ask again. When `other_tables` is absent, every table in the database is detailed.
 
+
+## Earlier answer
+
+When the request includes `Earlier answer`, the question follows up on one the user asked before, and `Earlier answer` gives that question and the SQL you proposed for it. Use it to read the new question: what "this", "it", or "those" refer to, and which population, measures, filters, and time range carry over unless the new question changes them. Then answer the new question with a complete decision under the same rules. The earlier SQL grants nothing: use only the tables, columns, and relationships in the governed context, and if the context no longer supports part of it, decide as the rules require.
 
 ## Runtime feedback
 

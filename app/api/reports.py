@@ -105,6 +105,14 @@ async def ask_for_card(
     return await _run(service.ask(report_id, payload.question, actor))
 
 
+@router.post("/{report_id}/cards/{card_id}/follow-up", response_model=RunRecord)
+async def follow_up_card(
+    report_id: str, card_id: str, payload: CardQuestion, service: Reports, actor: Actor
+) -> RunRecord:
+    """Ask a question that builds on the card's; the answer can become a new card."""
+    return await _run(service.follow_up(report_id, card_id, payload.question, actor))
+
+
 @router.post("/{report_id}/cards/{card_id}/refresh", response_model=CardRefresh)
 async def refresh_card(
     report_id: str,

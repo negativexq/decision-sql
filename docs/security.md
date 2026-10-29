@@ -23,6 +23,11 @@ tests.
   adds tables the model asked for from `other_tables`, and one repair round
   after a policy rejection. Both go through every gate again, and repair
   feedback never quotes database error text.
+- A follow-up from a report card also sends the earlier question and the SQL
+  the model proposed for it, recorded as `follow_up_of` in the audit log. It
+  never sends the SQL that ran, which can hold stored values the runtime wrote
+  in, nor the reader's filter picks, which are read from the data; a card whose
+  answer was not proposed by the model has nothing to follow up on.
 
 ## SQL admission
 

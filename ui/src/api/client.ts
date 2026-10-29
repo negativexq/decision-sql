@@ -132,6 +132,11 @@ export const api = {
   deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
   askForCard: (id: string, question: string) =>
     request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),
+  followUpCard: (id: string, cardId: string, question: string) =>
+    request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/follow-up`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    }),
   refreshCard: (id: string, cardId: string, filters: Record<string, FilterChoice> = {}) =>
     request<CardRefresh>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/refresh`, {
       method: "POST",

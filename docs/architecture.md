@@ -221,6 +221,12 @@ from the reader as quoted literals built by the parser, never as SQL text. The
 list of values to pick from is read by a gated, audited `SELECT DISTINCT`. A
 card whose SQL does not read the table is left as it is and says so.
 
+Any reader can follow up on a card ("Which region drove this?"). The model gets
+the new question with an `Earlier answer`: the card's question and the SQL the
+model proposed for it, and the context details the tables that SQL read. The
+earlier SQL grants nothing; the answer runs through every gate and an editor
+can add it as a new card.
+
 ### Metadata isolation
 
 Audit records and connections live in the `decision_meta` schema, written with

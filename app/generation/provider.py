@@ -44,6 +44,19 @@ class RuntimeRejectionFeedback(BaseModel):
     message: str
 
 
+class EarlierAnswer(BaseModel):
+    """The question a follow-up builds on, and the SQL the model proposed for it.
+
+    Only the model's own proposal is sent back: the SQL that ran may carry stored
+    values the runtime wrote in, which unshared columns never show the model.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    question: str
+    sql: str
+
+
 class ProviderErrorDetail(BaseModel):
     """Bounded, sanitized provider failure metadata."""
 
@@ -79,11 +92,13 @@ class LLMProvider(Protocol):
         question: str,
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> ProductionDecisionProposal:
         """Return the canonical typed production decision in one call.
 
         With ``repair``, the same conversation continues with the runtime's
-        rejection of the previous decision and asks for a replacement.
+        rejection of the previous decision and asks for a replacement.  With
+        ``earlier``, the question follows up on an earlier answer.
         """
 
 
@@ -100,11 +115,12 @@ class OpenAICompatibleProvider:
         question: str,
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> ProductionDecisionProposal:
         """Request one typed decision; SQL and decision always arrive in the same response."""
         if not self.settings.llm_api_key:
             raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
-        messages = _production_decision_messages(question, schema_context, repair)
+        messages = _production_decision_messages(question, schema_context, repair, earlier)
         response_format = {
             "type": "json_schema",
             "json_schema": {
@@ -179,11 +195,17 @@ class OpenAICompatibleProvider:
 
 
 def _production_decision_messages(
-    question: str, schema_context: str, repair: RuntimeRejectionFeedback | None = None
+    question: str,
+    schema_context: str,
+    repair: RuntimeRejectionFeedback | None = None,
+    earlier: EarlierAnswer | None = None,
 ) -> list[dict[str, str]]:
-    user = (
-        "Case ID:\noperator\n\nQuestion:\n" + question + "\n\nGoverned context:\n" + schema_context
-    )
+    user = "Case ID:\noperator\n\nQuestion:\n" + question
+    if earlier is not None:
+        user += "\n\nEarlier answer:\n" + json.dumps(
+            earlier.model_dump(), ensure_ascii=False, indent=2
+        )
+    user += "\n\nGoverned context:\n" + schema_context
     messages = [
         {"role": "system", "content": production_decision_prompt()},
         {"role": "user", "content": user},

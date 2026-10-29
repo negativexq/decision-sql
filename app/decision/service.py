@@ -11,6 +11,7 @@ from app.generation.decision_contract import (
     ProductionDecision,
 )
 from app.generation.provider import (
+    EarlierAnswer,
     LLMProvider,
     MalformedProviderResponse,
     ProductionDecisionProposal,
@@ -50,11 +51,14 @@ class DecisionSqlApplication:
         provider: LLMProvider,
         safety_service: SqlSafetyService,
         settings: Settings,
+        earlier: EarlierAnswer | None = None,
     ) -> None:
         self.resolver = resolver
         self.provider = provider
         self.safety_service = safety_service
         self.settings = settings
+        # A follow-up's earlier answer goes with every model call of this run.
+        self.earlier = earlier
 
     async def run(
         self,
@@ -130,7 +134,9 @@ class DecisionSqlApplication:
         else:
             started = perf_counter()
             try:
-                proposal = await self.provider.propose_decision(question, schema_text)
+                proposal = await self.provider.propose_decision(
+                    question, schema_text, earlier=self.earlier
+                )
             except MalformedProviderResponse:
                 collector.record_stage(
                     "generation", TraceStageStatus.PASS, reason="TRANSPORT_RESPONSE_RECEIVED"
@@ -414,7 +420,7 @@ class DecisionSqlApplication:
             )
             expanded = governed_context_from_schema_context(context)
             proposal = await self.provider.propose_decision(
-                question, serialize_governed_context(expanded)
+                question, serialize_governed_context(expanded), earlier=self.earlier
             )
         except Exception as error:
             collector.record_stage(
@@ -463,7 +469,9 @@ class DecisionSqlApplication:
         started = perf_counter()
         base = {"rejected_stage": feedback.stage, "rejected_code": feedback.code}
         try:
-            proposal = await self.provider.propose_decision(question, schema_text, repair=feedback)
+            proposal = await self.provider.propose_decision(
+                question, schema_text, repair=feedback, earlier=self.earlier
+            )
         except Exception as error:
             collector.record_stage(
                 "repair",

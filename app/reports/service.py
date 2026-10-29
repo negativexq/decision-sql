@@ -9,6 +9,7 @@ from fastapi.concurrency import run_in_threadpool
 from sqlglot import exp
 
 from app.catalog.models import SchemaCatalog
+from app.decision.models import ProposalSource
 from app.metadata.service import GOVERNED_CONNECTION_ID, ConnectionService, QuestionSource
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import OperatorApplication, _saved_query_tables
@@ -182,6 +183,31 @@ class ReportService:
         report, _ = found
         source = await self._source(report.connection_id)
         return await self.operator.run(question, actor=actor, source=source)
+
+    async def follow_up(
+        self, report_id: str, card_id: str, question: str, actor: str
+    ) -> RunRecord | None:
+        """Ask a new question that builds on a card's question, with the model.
+
+        The model gets the card's question and the SQL it proposed then, never the
+        SQL that ran or the reader's filter picks: both can hold stored values that
+        unshared columns keep from the model.
+        """
+        found = self._query_card(report_id, card_id, actor)
+        if found is None:
+            return None
+        report, _, card = found
+        record = self.operator.get_run(card.run_id) if card.run_id else None
+        if (
+            record is None
+            or record.proposal_source is not ProposalSource.LIVE_MODEL
+            or not record.proposed_sql
+        ):
+            raise ReportRejectedError(
+                "This card's answer was not written by the model, so there is nothing to build on."
+            )
+        source = await self._source(report.connection_id)
+        return await self.operator.run(question, actor=actor, source=source, follow_up=record)
 
     async def refresh(
         self,

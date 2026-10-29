@@ -8,7 +8,7 @@ import pytest
 from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, TableMetadata
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
-from app.operator.service import _saved_query_tables
+from app.operator.service import _earlier_answer, _saved_query_tables
 from app.reports.filters import FilterChoice, FilterKind, ReportFilter
 from app.reports.models import (
     CardDisplay,
@@ -303,3 +303,35 @@ def test_display_settings_are_checked_and_kept() -> None:
     for bad in ({"currency": "euro"}, {"limit": 0}, {"decimals": 9}, {"format": "stars"}):
         with pytest.raises(ValueError):
             CardDisplay.model_validate(bad)
+
+
+@pytest.mark.asyncio
+async def test_a_follow_up_builds_on_the_cards_own_run() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+    service.share(report.id, ReportAccess(viewers=["zeynep"]), "ayse")
+
+    # Any reader may follow up; it is a question like any other, under their name.
+    assert await service.follow_up(report.id, "c1", "And by region?", "zeynep") is not None
+    call = operator.calls[-1]
+    assert call["question"] == "And by region?" and call["actor"] == "zeynep"
+    assert call["follow_up"] is operator.records["run_a"]
+
+    operator.records["run_a"] = operator.records["run_a"].model_copy(
+        update={"proposal_source": "SAVED_QUERY"}
+    )
+    with pytest.raises(ReportRejectedError, match="not written by the model"):
+        await service.follow_up(report.id, "c1", "And by region?", "ayse")
+    assert await service.follow_up(report.id, "c1", "Why?", "stranger") is None
+
+
+def test_only_a_live_models_own_proposal_goes_back_to_the_model() -> None:
+    live = _record("run_a").model_copy(
+        update={"proposed_sql": "SELECT 1", "executed_sql": "SELECT 'stored'"}
+    )
+    earlier = _earlier_answer(live)
+    assert earlier is not None and earlier.sql == "SELECT 1"
+    assert earlier.question == "question of run_a"
+    assert _earlier_answer(live.model_copy(update={"proposal_source": "SAVED_QUERY"})) is None
+    assert _earlier_answer(live.model_copy(update={"proposed_sql": None})) is None

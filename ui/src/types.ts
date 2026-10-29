@@ -80,6 +80,7 @@ export interface RunRecord {
   trace: RunTrace;
   actor: string;
   connection_id: string;
+  follow_up_of?: string | null;
   results_retained: boolean;
 }
 

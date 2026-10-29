@@ -66,6 +66,8 @@ class RunRecord(BaseModel):
     trace: RunTrace
     actor: str = "anonymous"
     connection_id: str = "governed"
+    # The run this question followed up on; its question and proposed SQL went to the model.
+    follow_up_of: str | None = None
     # False when the record was read back from the audit log, which keeps no result rows.
     results_retained: bool = True
 

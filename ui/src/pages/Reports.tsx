@@ -172,7 +172,12 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   const [results, setResults] = useState<Record<string, CardState>>({});
   const [editing, setEditing] = useState(false);
   const [panel, setPanel] = useState<
-    { kind: "add" } | { kind: "share" } | { kind: "filter" } | { kind: "card"; id: string } | null
+    | { kind: "add" }
+    | { kind: "follow"; id: string }
+    | { kind: "share" }
+    | { kind: "filter" }
+    | { kind: "card"; id: string }
+    | null
   >(null);
   const [save, setSave] = useState<"saved" | "pending" | "saving" | "error">("saved");
   const [error, setError] = useState<string | null>(null);
@@ -460,6 +465,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 onSelect={() => setPanel({ kind: "card", id: card.id })}
                 onRefresh={() => void refresh(card)}
                 onAccept={canEdit ? () => void accept(card) : undefined}
+                onFollowUp={() => setPanel({ kind: "follow", id: card.id })}
                 filterLabels={Object.fromEntries(filters.map((item) => [item.id, item.label]))}
                 onChart={(chart) => updateCard(card.id, { chart })}
               />
@@ -480,7 +486,18 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         />
       )}
       {panel?.kind === "add" && (
-        <AddChartPanel reportId={reportId} onAdd={addQueryCard} onClose={() => setPanel(null)} />
+        <AddChartPanel reportId={reportId} canAdd onAdd={addQueryCard} onClose={() => setPanel(null)} />
+      )}
+      {panel?.kind === "follow" && cards.some((card) => card.id === panel.id) && (
+        <AddChartPanel
+          key={panel.id}
+          reportId={reportId}
+          followUp={cards.find((card) => card.id === panel.id)}
+          filtered={Object.keys(activeChoices(choices)).length > 0}
+          canAdd={canEdit}
+          onAdd={addQueryCard}
+          onClose={() => setPanel(null)}
+        />
       )}
       {selected && (
         <CardPanel
@@ -504,6 +521,7 @@ function CardView({
   onSelect,
   onRefresh,
   onAccept,
+  onFollowUp,
   filterLabels,
   onChart,
 }: {
@@ -515,6 +533,7 @@ function CardView({
   onSelect: () => void;
   onRefresh: () => void;
   onAccept?: () => void;
+  onFollowUp: () => void;
   filterLabels: Record<string, string>;
   onChart: (chart: ChartType) => void;
 }) {
@@ -545,6 +564,9 @@ function CardView({
               {CHART_TYPES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
             </select>
           </label>
+        )}
+        {!editing && card.kind === "query" && card.run_id && (
+          <button type="button" className="button ghost small report-card-follow" onClick={onFollowUp}>Follow up</button>
         )}
         {editing && (
           <button type="button" className="button ghost small" onClick={onSelect}>Edit</button>
@@ -607,10 +629,17 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
 
 function AddChartPanel({
   reportId,
+  followUp,
+  filtered = false,
+  canAdd,
   onAdd,
   onClose,
 }: {
   reportId: string;
+  // The card a follow-up question builds on; none for a new question.
+  followUp?: ReportCard;
+  filtered?: boolean;
+  canAdd: boolean;
   onAdd: (run: RunRecord, chart: ChartType) => void;
   onClose: () => void;
 }) {
@@ -626,8 +655,7 @@ function AddChartPanel({
     setBusy(true);
     setError(null);
     setRun(null);
-    void api
-      .askForCard(reportId, text.trim())
+    void (followUp ? api.followUpCard(reportId, followUp.id, text.trim()) : api.askForCard(reportId, text.trim()))
       .then((value) => {
         setRun(value);
         setChart(suggestChart(value.columns, value.rows));
@@ -637,11 +665,21 @@ function AddChartPanel({
   };
 
   return (
-    <aside className="report-panel" aria-label="Add chart">
+    <aside className="report-panel" aria-label={followUp ? "Follow up" : "Add chart"}>
       <div className="report-panel-head">
-        <h2>Add chart</h2>
+        <h2>{followUp ? "Follow up" : "Add chart"}</h2>
         <button type="button" className="button ghost small" onClick={onClose}>Close</button>
       </div>
+      {followUp && (
+        <div className="report-panel-body report-follow-context">
+          <span className="field-label">Building on</span>
+          <p>{followUp.question}</p>
+          <p className="panel-note">
+            The model sees this question and the query it wrote for it, not the data.
+            {filtered ? " Report filters are not applied: their values come from the database." : ""}
+          </p>
+        </div>
+      )}
       <form
         className="report-panel-body"
         onSubmit={(event) => {
@@ -656,7 +694,7 @@ function AddChartPanel({
             value={question}
             rows={3}
             maxLength={1000}
-            placeholder="Revenue by month this year"
+            placeholder={followUp ? "Which region drove the change?" : "Revenue by month this year"}
             onChange={(event) => setQuestion(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) ask();
@@ -716,7 +754,11 @@ function AddChartPanel({
               <SqlViewer sql={run.executed_sql} />
             </details>
           )}
-          <button type="button" className="button primary" onClick={() => onAdd(run, chart)}>Add to report</button>
+          {canAdd ? (
+            <button type="button" className="button primary" onClick={() => onAdd(run, chart)}>Add to report</button>
+          ) : (
+            <p className="panel-note">Only the owner or an editor can add this to the report.</p>
+          )}
         </div>
       )}
     </aside>

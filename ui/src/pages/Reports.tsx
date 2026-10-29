@@ -13,12 +13,16 @@ import type {
   ChartType,
   ConnectionSummary,
   FilterChoice,
+  RefreshSchedule,
   Report,
   ReportAccess,
   ReportCard,
   ReportFilter,
   ReportSummary,
   RunRecord,
+  Snapshot,
+  SnapshotCard,
+  SnapshotSummary,
 } from "../types";
 
 type CardState =
@@ -26,7 +30,9 @@ type CardState =
   // changed: tables described differently since the card was saved.
   // skipped: filters with a choice that this card's query does not read.
   | { status: "done"; run: RunRecord; changed: string[]; applied: string[]; skipped: string[] }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string }
+  // kept: the card as a snapshot recorded it; absent when the card is newer than the snapshot.
+  | { status: "kept"; kept: SnapshotCard | undefined };
 
 const DEFAULT_SIZE: Record<ChartType, { w: number; h: number }> = {
   number: { w: 3, h: 4 },
@@ -177,8 +183,10 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     | { kind: "share" }
     | { kind: "filter" }
     | { kind: "card"; id: string }
+    | { kind: "history" }
     | null
   >(null);
+  const [viewing, setViewing] = useState<Snapshot | null>(null);
   const [save, setSave] = useState<"saved" | "pending" | "saving" | "error">("saved");
   const [error, setError] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState("");
@@ -349,6 +357,8 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   if (!report) return <div className="page"><p className="panel-note">Opening report…</p></div>;
 
   const selected = panel?.kind === "card" ? cards.find((card) => card.id === panel.id) : undefined;
+  const stateOf = (card: ReportCard): CardState | undefined =>
+    viewing ? { status: "kept", kept: viewing.cards[card.id] } : results[card.id];
   const canEdit = report.role !== "viewer";
   const saveText = { saved: "Saved", pending: "Unsaved changes", saving: "Saving", error: "Not saved" }[save];
 
@@ -368,13 +378,16 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 <button type="button" className="button ghost small" onClick={() => addTextCard("text")}>Add text</button>
               </>
             )}
-            {!editing && (
+            {!editing && !viewing && (
               <button type="button" className="button ghost small" onClick={() => void refreshAll(cards)}>Refresh data</button>
+            )}
+            {!editing && (
+              <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "history" })}>History</button>
             )}
             {report.role === "owner" && (
               <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "share" })}>Share</button>
             )}
-            {canEdit && <button
+            {canEdit && !viewing && <button
               type="button"
               className={editing ? "button primary small" : "button ghost small"}
               onClick={() => {
@@ -423,10 +436,21 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
           <p className="report-meta">
             {connectionName} · {report.role === "owner" ? "yours" : `owned by ${report.created_by}`}
             {report.role === "viewer" ? ", view only" : ""} · edited by {report.updated_by}, {relativeTime(report.updated_at)}
+            {report.schedule !== "off" && ` · refreshes ${report.schedule}`}
           </p>
         </header>
 
-        <FilterBar
+        {viewing && (
+          <div className="report-snapshot-banner" role="status">
+            <p>
+              Data as of <strong>{new Date(viewing.taken_at).toLocaleString()}</strong>,{" "}
+              {viewing.scheduled ? "kept by the schedule" : `kept by ${viewing.taken_by}`}. Filters do not apply to a snapshot.
+            </p>
+            <button type="button" className="button ghost small" onClick={() => setViewing(null)}>Back to live data</button>
+          </div>
+        )}
+
+        {!viewing && <FilterBar
           reportId={reportId}
           filters={filters}
           choices={choices}
@@ -434,7 +458,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
           onChoose={choose}
           onRemove={removeFilter}
           onAdd={() => setPanel({ kind: "filter" })}
-        />
+        />}
 
         {error && report && <div className="callout callout-danger">{error}</div>}
 
@@ -458,7 +482,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
             renderCard={(card, handle) => (
               <CardView
                 card={card}
-                state={results[card.id]}
+                state={stateOf(card)}
                 editing={editing}
                 handle={handle}
                 selected={selected?.id === card.id}
@@ -476,6 +500,15 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
 
       {panel?.kind === "filter" && (
         <AddFilterPanel reportId={reportId} existing={filters} onAdd={addFilter} onClose={() => setPanel(null)} />
+      )}
+      {panel?.kind === "history" && (
+        <HistoryPanel
+          report={report}
+          viewing={viewing?.id ?? null}
+          onReport={setReport}
+          onView={setViewing}
+          onClose={() => setPanel(null)}
+        />
       )}
       {panel?.kind === "share" && (
         <SharePanel
@@ -565,7 +598,7 @@ function CardView({
             </select>
           </label>
         )}
-        {!editing && card.kind === "query" && card.run_id && (
+        {!editing && card.kind === "query" && card.run_id && state?.status !== "kept" && (
           <button type="button" className="button ghost small report-card-follow" onClick={onFollowUp}>Follow up</button>
         )}
         {editing && (
@@ -588,6 +621,9 @@ function CardView({
           <CardBody card={card} state={state} onRefresh={onRefresh} />
         )}
       </div>
+      {state?.status === "kept" && state.kept?.truncated && !state.kept.withheld && (
+        <p className="report-card-unfiltered">The snapshot kept the first {state.kept.rows.length} rows of this result.</p>
+      )}
       {skipped.length > 0 && (
         <p className="report-card-unfiltered">Not filtered by {skipped.join(", ")}: this chart's query does not read that table.</p>
       )}
@@ -598,6 +634,7 @@ function CardView({
 
 function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardState | undefined; onRefresh: () => void }) {
   if (!card.run_id) return <p className="rc-empty">This card has no query.</p>;
+  if (state?.status === "kept") return <KeptBody card={card} kept={state.kept} />;
   if (!state || state.status === "loading") return <div className="rc-loading" aria-label="Running the saved query" />;
   if (state.status === "error") {
     return (
@@ -624,6 +661,145 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
       emptyText={state.applied.length ? "No rows match the current filters." : undefined}
       display={card.display ?? DEFAULT_DISPLAY}
     />
+  );
+}
+
+function KeptBody({ card, kept }: { card: ReportCard; kept: SnapshotCard | undefined }) {
+  if (!kept) return <p className="rc-empty">This chart was added after the snapshot.</p>;
+  if (kept.withheld) {
+    return (
+      <p className="rc-empty">
+        The tables this chart reads are described differently since the snapshot, so its old rows are not shown. Back to live data shows them
+        under today's rules.
+      </p>
+    );
+  }
+  if (kept.outcome !== "EXECUTED") {
+    return <p className="rc-empty">The saved query did not run then{kept.reason ? ` (${kept.reason})` : ""}.</p>;
+  }
+  return (
+    <ReportChart
+      type={card.chart}
+      columns={kept.columns}
+      rows={kept.rows}
+      dimension={card.dimension}
+      measure={card.measure}
+      display={card.display ?? DEFAULT_DISPLAY}
+    />
+  );
+}
+
+const SCHEDULES: { id: RefreshSchedule; label: string }[] = [
+  { id: "off", label: "Only when someone refreshes" },
+  { id: "hourly", label: "Every hour" },
+  { id: "daily", label: "Every day" },
+  { id: "weekly", label: "Every week" },
+];
+
+function HistoryPanel({
+  report,
+  viewing,
+  onReport,
+  onView,
+  onClose,
+}: {
+  report: Report;
+  viewing: string | null;
+  onReport: (report: Report) => void;
+  onView: (snapshot: Snapshot | null) => void;
+  onClose: () => void;
+}) {
+  const [items, setItems] = useState<SnapshotSummary[] | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const canEdit = report.role !== "viewer";
+
+  const load = useCallback(
+    () =>
+      api
+        .snapshots(report.id)
+        .then(setItems)
+        .catch((cause: Error) => setError(cause.message)),
+    [report.id],
+  );
+  useEffect(() => void load(), [load]);
+
+  const take = () => {
+    setBusy("take");
+    setError(null);
+    void api
+      .takeSnapshot(report.id)
+      .then(load)
+      .catch((cause: Error) => setError(cause.message))
+      .finally(() => setBusy(null));
+  };
+
+  const open = (id: string) => {
+    setBusy(id);
+    setError(null);
+    void api
+      .snapshot(report.id, id)
+      .then(onView)
+      .catch((cause: Error) => setError(cause.message))
+      .finally(() => setBusy(null));
+  };
+
+  const reschedule = (schedule: RefreshSchedule) => {
+    setError(null);
+    void api
+      .setReportSchedule(report.id, schedule)
+      .then(onReport)
+      .catch((cause: Error) => setError(cause.message));
+  };
+
+  return (
+    <aside className="report-panel" aria-label="Report history">
+      <div className="report-panel-head">
+        <h2>History</h2>
+        <button type="button" className="button ghost small" onClick={onClose}>Close</button>
+      </div>
+      <div className="report-panel-body">
+        <label className="field">
+          <span className="field-label">Keep a snapshot</span>
+          <select value={report.schedule} disabled={!canEdit} onChange={(event) => reschedule(event.target.value as RefreshSchedule)}>
+            {SCHEDULES.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+          </select>
+        </label>
+        {report.next_refresh_at && (
+          <p className="panel-note">Next one {new Date(report.next_refresh_at).toLocaleString()}.</p>
+        )}
+        <button type="button" className="button ghost" disabled={busy === "take"} onClick={take}>
+          {busy === "take" ? "Saving snapshot" : "Save snapshot now"}
+        </button>
+        <p className="panel-note">
+          A snapshot runs every chart without filters and keeps up to 500 rows of each, so you can see later what the report showed. The 30 most
+          recent are kept.
+        </p>
+        {error && <div className="callout callout-danger">{error}</div>}
+        {items === null ? (
+          <p className="panel-note">Loading snapshots…</p>
+        ) : items.length === 0 ? (
+          <p className="panel-note">No snapshots yet.</p>
+        ) : (
+          <ul className="history-list">
+            {items.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={item.id === viewing ? "history-item current" : "history-item"}
+                  aria-current={item.id === viewing ? "true" : undefined}
+                  disabled={busy === item.id}
+                  onClick={() => (item.id === viewing ? onView(null) : open(item.id))}
+                >
+                  <span>{new Date(item.taken_at).toLocaleString()}</span>
+                  <span className="history-meta">{item.scheduled ? "On schedule" : item.taken_by}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </aside>
   );
 }
 

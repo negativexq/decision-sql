@@ -9,9 +9,9 @@ a section, and a text card holds notes.
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -30,6 +30,23 @@ class Visibility(StrEnum):
     PRIVATE = "private"
     # Everyone in the workspace can open it; editing still needs the owner or an editor.
     WORKSPACE = "workspace"
+
+
+class RefreshSchedule(StrEnum):
+    OFF = "off"
+    HOURLY = "hourly"
+    DAILY = "daily"
+    WEEKLY = "weekly"
+
+
+SCHEDULE_INTERVALS = {
+    RefreshSchedule.HOURLY: timedelta(hours=1),
+    RefreshSchedule.DAILY: timedelta(days=1),
+    RefreshSchedule.WEEKLY: timedelta(weeks=1),
+}
+# A snapshot keeps this many rows of each card, and a report this many snapshots.
+SNAPSHOT_ROWS = 500
+SNAPSHOTS_KEPT = 30
 
 
 class ReportRole(StrEnum):
@@ -161,6 +178,8 @@ class Report(BaseModel):
     visibility: Visibility = Visibility.PRIVATE
     editors: list[str] = Field(default_factory=list)
     viewers: list[str] = Field(default_factory=list)
+    schedule: RefreshSchedule = RefreshSchedule.OFF
+    next_refresh_at: datetime | None = None
     created_by: str
     created_at: datetime
     updated_by: str
@@ -228,6 +247,58 @@ class FilterOptions(BaseModel):
     # True when the column holds more distinct values than were read.
     truncated: bool
     run_id: str
+
+
+class ScheduleInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    schedule: RefreshSchedule
+
+
+class SnapshotCard(BaseModel):
+    """One card's result in a snapshot, as the refresh returned it."""
+
+    run_id: str
+    outcome: str
+    reason: str | None = None
+    columns: list[str] = Field(default_factory=list)
+    rows: list[dict[str, Any]] = Field(default_factory=list)
+    row_count: int = 0
+    # True when the query or the snapshot kept fewer rows than the result had.
+    truncated: bool = False
+    # The card's basis when the snapshot was taken.
+    basis: dict[str, str] = Field(default_factory=dict)
+    # Set when a reader opens the snapshot: its tables changed since, so the rows
+    # are held back rather than shown under rules that no longer apply.
+    withheld: bool = False
+
+
+class SnapshotSummary(BaseModel):
+    id: str
+    report_id: str
+    taken_at: datetime
+    taken_by: str
+    scheduled: bool
+    card_count: int
+
+
+class Snapshot(BaseModel):
+    id: str
+    report_id: str
+    taken_at: datetime
+    taken_by: str
+    scheduled: bool
+    cards: dict[str, SnapshotCard]
+
+    def summary(self) -> SnapshotSummary:
+        return SnapshotSummary(
+            id=self.id,
+            report_id=self.report_id,
+            taken_at=self.taken_at,
+            taken_by=self.taken_by,
+            scheduled=self.scheduled,
+            card_count=len(self.cards),
+        )
 
 
 class CardQuestion(BaseModel):

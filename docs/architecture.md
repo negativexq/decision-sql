@@ -227,6 +227,18 @@ model proposed for it, and the context details the tables that SQL read. The
 earlier SQL grants nothing; the answer runs through every gate and an editor
 can add it as a new card.
 
+A snapshot (`decision_meta.report_snapshots`) keeps what a report showed at one
+moment: every chart card refreshed without filters, with up to 500 rows each,
+and the 30 most recent per report. Any reader can take one; an editor can also
+set the report to take one every hour, day, or week. A scheduler loop in the
+API process (`DECISION_SQL_REPORT_SCHEDULER`, on by default; turn it off on all
+but one worker if you run several) claims a due report with a conditional
+update before refreshing it, so two workers never take the same one, and after
+downtime it moves on from now rather than catching up. Scheduled runs are
+audited as `scheduler`. Snapshot rows passed the checks of the day they were
+read, so each card also keeps its basis then: opening a snapshot whose tables
+are described differently now shows the card's outcome but holds back its rows.
+
 ### Metadata isolation
 
 Audit records and connections live in the `decision_meta` schema, written with

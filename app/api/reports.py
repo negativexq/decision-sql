@@ -17,6 +17,9 @@ from app.reports.models import (
     ReportInput,
     ReportSummary,
     ReportView,
+    ScheduleInput,
+    Snapshot,
+    SnapshotSummary,
 )
 from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
 
@@ -96,6 +99,31 @@ async def _run[T](call: Awaitable[T | None]) -> T:
     if record is None:
         raise HTTPException(status_code=404, detail="Report or card not found")
     return record
+
+
+@router.put("/{report_id}/schedule", response_model=ReportView)
+def set_schedule(
+    report_id: str, payload: ScheduleInput, service: Reports, actor: Actor
+) -> ReportView:
+    return _call(lambda: service.set_schedule(report_id, payload.schedule, actor))
+
+
+@router.get("/{report_id}/snapshots", response_model=list[SnapshotSummary])
+def list_snapshots(report_id: str, service: Reports, actor: Actor) -> list[SnapshotSummary]:
+    return _call(lambda: service.snapshots_of(report_id, actor))
+
+
+@router.post("/{report_id}/snapshots", response_model=SnapshotSummary, status_code=201)
+async def take_snapshot(report_id: str, service: Reports, actor: Actor) -> SnapshotSummary:
+    """Refresh every card now and keep the results in the report's history."""
+    return await _run(service.take_snapshot(report_id, actor))
+
+
+@router.get("/{report_id}/snapshots/{snapshot_id}", response_model=Snapshot)
+async def get_snapshot(
+    report_id: str, snapshot_id: str, service: Reports, actor: Actor
+) -> Snapshot:
+    return await _run(service.snapshot(report_id, snapshot_id, actor))
 
 
 @router.post("/{report_id}/ask", response_model=RunRecord)

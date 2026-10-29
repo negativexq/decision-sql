@@ -112,10 +112,25 @@ reports = Table(
     Column("visibility", String(16), nullable=False, server_default="private"),
     Column("editors", JSON, nullable=False, server_default="[]"),
     Column("viewers", JSON, nullable=False, server_default="[]"),
+    Column("schedule", String(16), nullable=False, server_default="off"),
+    Column("next_refresh_at", DateTime(timezone=True), index=True),
     Column("created_by", String(120), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False),
     Column("updated_by", String(120), nullable=False),
     Column("updated_at", DateTime(timezone=True), nullable=False),
+)
+
+# A report's results at one moment, kept so readers can look back; bounded per card
+# and per report, unlike the audit log, which keeps no result rows.
+report_snapshots = Table(
+    "report_snapshots",
+    metadata,
+    Column("id", String(64), primary_key=True),
+    Column("report_id", String(64), nullable=False, index=True),
+    Column("taken_at", DateTime(timezone=True), nullable=False),
+    Column("taken_by", String(120), nullable=False),
+    Column("scheduled", Boolean, nullable=False),
+    Column("cards", JSON, nullable=False),
 )
 
 value_sharing = Table(

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import builtins
+import logging
 from collections.abc import Callable
 from datetime import UTC, datetime
 from uuid import uuid4
@@ -16,10 +17,14 @@ from app.operator.service import OperatorApplication, _saved_query_tables
 from app.reports.basis import changed_tables, table_basis
 from app.reports.filters import FilterChoice, FilterKind, apply_filters, check_filters
 from app.reports.models import (
+    SCHEDULE_INTERVALS,
+    SNAPSHOT_ROWS,
+    SNAPSHOTS_KEPT,
     CardInput,
     CardRefresh,
     FilterColumn,
     FilterOptions,
+    RefreshSchedule,
     Report,
     ReportAccess,
     ReportCard,
@@ -28,8 +33,15 @@ from app.reports.models import (
     ReportRole,
     ReportSummary,
     ReportView,
+    Snapshot,
+    SnapshotCard,
+    SnapshotSummary,
 )
-from app.reports.store import ReportStore
+from app.reports.store import InMemorySnapshotStore, ReportStore, SnapshotStore
+
+logger = logging.getLogger(__name__)
+# The actor the audit log names for a refresh nobody asked for at the time.
+SCHEDULER_ACTOR = "scheduler"
 
 
 class ReportRejectedError(ValueError):
@@ -63,11 +75,16 @@ class _Lazy:
 
 class ReportService:
     def __init__(
-        self, store: ReportStore, operator: OperatorApplication, connections: ConnectionService
+        self,
+        store: ReportStore,
+        operator: OperatorApplication,
+        connections: ConnectionService,
+        snapshots: SnapshotStore | None = None,
     ) -> None:
         self.store = store
         self.operator = operator
         self.connections = connections
+        self.snapshots = snapshots if snapshots is not None else InMemorySnapshotStore()
 
     def list(self, actor: str) -> list[ReportSummary]:
         return [
@@ -174,6 +191,128 @@ class ReportService:
         if self._open(report_id, actor, (ReportRole.OWNER,)) is None:
             return False
         return self.store.delete(report_id)
+
+    def set_schedule(
+        self, report_id: str, schedule: RefreshSchedule, actor: str
+    ) -> ReportView | None:
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
+            return None
+        report, role = found
+        now = datetime.now(UTC)
+        interval = SCHEDULE_INTERVALS.get(schedule)
+        updated = report.model_copy(
+            update={
+                "schedule": schedule,
+                "next_refresh_at": now + interval if interval is not None else None,
+                "updated_by": actor,
+                "updated_at": now,
+            }
+        )
+        self.store.save(updated)
+        return ReportView(**updated.model_dump(), role=role)
+
+    async def take_snapshot(self, report_id: str, actor: str) -> SnapshotSummary | None:
+        """Refresh every query card and keep the results, for any reader of the report."""
+        found = self._open(report_id, actor)
+        if found is None:
+            return None
+        report, _ = found
+        snapshot = await self._snapshot(report, actor, scheduled=False)
+        return snapshot.summary()
+
+    def snapshots_of(self, report_id: str, actor: str) -> builtins.list[SnapshotSummary] | None:
+        if self._open(report_id, actor) is None:
+            return None
+        return self.snapshots.list(report_id)
+
+    async def snapshot(self, report_id: str, snapshot_id: str, actor: str) -> Snapshot | None:
+        """A kept snapshot, with the rows of any card whose tables changed since held back.
+
+        The rows passed the checks of the day they were read.  A column made sensitive or
+        unreadable since then would still show in them, so a card whose tables are no
+        longer described the same way shows its outcome but not its rows.
+        """
+        found = self._open(report_id, actor)
+        if found is None:
+            return None
+        report, _ = found
+        snapshot = self.snapshots.get(snapshot_id)
+        if snapshot is None or snapshot.report_id != report.id:
+            return None
+        source = await self._source(report.connection_id)
+        catalog = source.catalog if source is not None else self.operator.catalog
+        cards = {
+            card_id: (
+                card.model_copy(update={"rows": [], "withheld": True})
+                if card.rows and changed_tables(card.basis, catalog)
+                else card
+            )
+            for card_id, card in snapshot.cards.items()
+        }
+        return snapshot.model_copy(update={"cards": cards})
+
+    async def run_due(self, now: datetime | None = None) -> int:
+        """Take a snapshot of every report whose scheduled refresh is due; the count taken.
+
+        Claiming a report moves its next refresh on first, so two workers never take
+        the same one.  A refresh that fails is logged and waits for its next turn.
+        """
+        now = now or datetime.now(UTC)
+        taken = 0
+        for report in await run_in_threadpool(self.store.due, now):
+            interval = SCHEDULE_INTERVALS.get(report.schedule)
+            expected = report.next_refresh_at
+            if expected is None:
+                continue
+            following = None
+            if interval is not None:
+                following = expected + interval
+                if following <= now:  # the server was down; do not catch up run by run
+                    following = now + interval
+            if not await run_in_threadpool(self.store.claim, report.id, expected, following):
+                continue
+            try:
+                await self._snapshot(report, SCHEDULER_ACTOR, scheduled=True)
+                taken += 1
+            except Exception:
+                logger.exception("Scheduled refresh of report %s failed", report.id)
+        return taken
+
+    async def _snapshot(self, report: Report, actor: str, *, scheduled: bool) -> Snapshot:
+        # Unfiltered: a reader's filter picks live in their browser, not on the report.
+        source = await self._source(report.connection_id)
+        catalog = source.catalog if source is not None else self.operator.catalog
+        cards: dict[str, SnapshotCard] = {}
+        for card in report.cards:
+            if card.kind != "query" or card.sql is None:
+                continue
+            run = await self.operator.run(
+                card.question or card.title or "Saved report query",
+                actor=actor,
+                source=source,
+                saved_sql=card.sql,
+            )
+            cards[card.id] = SnapshotCard(
+                run_id=run.run_id,
+                outcome=run.runtime_outcome.value,
+                reason=run.runtime_reason,
+                columns=run.columns,
+                rows=run.rows[:SNAPSHOT_ROWS],
+                row_count=run.row_count,
+                truncated=run.truncated or len(run.rows) > SNAPSHOT_ROWS,
+                basis=table_basis(catalog, _saved_query_tables(card.sql)),
+            )
+        snapshot = Snapshot(
+            id=f"snap_{uuid4().hex[:12]}",
+            report_id=report.id,
+            taken_at=datetime.now(UTC),
+            taken_by=actor,
+            scheduled=scheduled,
+            cards=cards,
+        )
+        await run_in_threadpool(self.snapshots.save, snapshot, SNAPSHOTS_KEPT)
+        return snapshot
 
     async def ask(self, report_id: str, question: str, actor: str) -> RunRecord | None:
         """Answer a new card's question the way the Ask page does, with the model."""

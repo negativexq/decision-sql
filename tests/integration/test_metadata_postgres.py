@@ -319,3 +319,61 @@ def test_stored_values_reach_the_model_only_after_an_admin_shares_them(engine: E
 
     assert service.delete(summary.id)
     assert sharing.get(summary.id).enabled is False
+
+
+def test_scheduled_reports_are_claimed_once_and_snapshots_are_bounded(engine: Engine) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    from app.metadata.tables import report_snapshots, reports
+    from app.reports.models import RefreshSchedule, Report, Snapshot
+    from app.reports.store import SqlReportStore, SqlSnapshotStore
+
+    due = datetime(2026, 1, 1, tzinfo=UTC)
+    report = Report(
+        id="rep_schedtest",
+        connection_id="governed",
+        title="Scheduled",
+        description="",
+        cards=[],
+        schedule=RefreshSchedule.HOURLY,
+        next_refresh_at=due,
+        created_by="ayse",
+        created_at=due,
+        updated_by="ayse",
+        updated_at=due,
+    )
+    store, snapshots = SqlReportStore(engine), SqlSnapshotStore(engine)
+    try:
+        store.save(report)
+        assert report.id in {item.id for item in store.due(due)}
+        assert report.id not in {item.id for item in store.due(due - timedelta(seconds=1))}
+        following = due + timedelta(hours=1)
+        assert store.claim(report.id, due, following)
+        assert not store.claim(report.id, due, following)  # a second worker loses
+        assert report.id not in {item.id for item in store.due(due)}
+
+        for index in range(4):
+            snapshots.save(
+                Snapshot(
+                    id=f"snap_schedtest{index}",
+                    report_id=report.id,
+                    taken_at=due + timedelta(minutes=index),
+                    taken_by="scheduler",
+                    scheduled=True,
+                    cards={},
+                ),
+                keep=2,
+            )
+        assert [item.id for item in snapshots.list(report.id)] == [
+            "snap_schedtest3",
+            "snap_schedtest2",
+        ]
+        kept = snapshots.get("snap_schedtest3")
+        assert kept is not None and kept.scheduled
+        assert store.delete(report.id) and snapshots.list(report.id) == []
+    finally:
+        with engine.begin() as connection:
+            connection.execute(
+                delete(report_snapshots).where(report_snapshots.c.report_id == report.id)
+            )
+            connection.execute(delete(reports).where(reports.c.id == report.id))

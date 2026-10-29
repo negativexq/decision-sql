@@ -367,6 +367,8 @@ export interface ReportAccess {
   viewers: string[];
 }
 
+export type RefreshSchedule = "off" | "hourly" | "daily" | "weekly";
+
 export interface Report extends ReportAccess {
   id: string;
   connection_id: string;
@@ -375,10 +377,37 @@ export interface Report extends ReportAccess {
   cards: ReportCard[];
   filters: ReportFilter[];
   role: ReportRole;
+  schedule: RefreshSchedule;
+  next_refresh_at: string | null;
   created_by: string;
   created_at: string;
   updated_by: string;
   updated_at: string;
+}
+
+export interface SnapshotCard {
+  run_id: string;
+  outcome: RuntimeOutcome;
+  reason: string | null;
+  columns: string[];
+  rows: Record<string, unknown>[];
+  row_count: number;
+  truncated: boolean;
+  /** The tables this card reads changed since: the rows are held back. */
+  withheld: boolean;
+}
+
+export interface SnapshotSummary {
+  id: string;
+  report_id: string;
+  taken_at: string;
+  taken_by: string;
+  scheduled: boolean;
+  card_count: number;
+}
+
+export interface Snapshot extends Omit<SnapshotSummary, "card_count"> {
+  cards: Record<string, SnapshotCard>;
 }
 
 export interface ReportSummary {

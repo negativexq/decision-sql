@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 
 import pytest
@@ -14,6 +14,7 @@ from app.reports.models import (
     CardDisplay,
     CardInput,
     CardLayout,
+    RefreshSchedule,
     ReportAccess,
     ReportCreate,
     ReportInput,
@@ -21,7 +22,7 @@ from app.reports.models import (
     Visibility,
 )
 from app.reports.service import ReportForbiddenError, ReportRejectedError, ReportService
-from app.reports.store import InMemoryReportStore
+from app.reports.store import InMemoryReportStore, InMemorySnapshotStore
 
 
 def _record(run_id: str, *, connection: str = "governed", executed: bool = True) -> RunRecord:
@@ -335,3 +336,81 @@ def test_only_a_live_models_own_proposal_goes_back_to_the_model() -> None:
     assert earlier.question == "question of run_a"
     assert _earlier_answer(live.model_copy(update={"proposal_source": "SAVED_QUERY"})) is None
     assert _earlier_answer(live.model_copy(update={"proposed_sql": None})) is None
+
+
+@pytest.mark.asyncio
+async def test_a_snapshot_keeps_bounded_rows_and_withholds_them_once_tables_change() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    cards = [_card("c1", "run_a"), _card("t1", kind="text", note="Notes")]
+    service.update(report.id, ReportInput(title="S", cards=cards), "ayse")
+    service.share(report.id, ReportAccess(viewers=["mehmet"]), "ayse")
+    operator.rows = [{"total": index} for index in range(600)]
+
+    # Any reader may take one; it runs the pinned SQL, unfiltered, like a refresh.
+    summary = await service.take_snapshot(report.id, "mehmet")
+    assert summary is not None and summary.card_count == 1 and not summary.scheduled
+    assert operator.calls[-1]["saved_sql"] == "SELECT total FROM orders -- run_a"
+    assert await service.take_snapshot(report.id, "zeynep") is None
+
+    kept = await service.snapshot(report.id, summary.id, "mehmet")
+    assert kept is not None
+    card = kept.cards["c1"]
+    assert len(card.rows) == 500 and card.truncated and not card.withheld
+
+    # A column made confidential since: the old rows must not show it.
+    operator.catalog = _orders(sensitivity=Sensitivity.CONFIDENTIAL)
+    kept = await service.snapshot(report.id, summary.id, "mehmet")
+    assert kept is not None and kept.cards["c1"].withheld and kept.cards["c1"].rows == []
+    assert await service.snapshot("rep_other", summary.id, "mehmet") is None
+
+
+def test_a_report_keeps_only_its_latest_snapshots() -> None:
+    from app.reports.models import Snapshot
+
+    store = InMemorySnapshotStore()
+    start = datetime(2026, 1, 1, tzinfo=UTC)
+    for index in range(5):
+        store.save(
+            Snapshot(
+                id=f"s{index}",
+                report_id="r",
+                taken_at=start + timedelta(hours=index),
+                taken_by="ayse",
+                scheduled=False,
+                cards={},
+            ),
+            keep=3,
+        )
+    assert [item.id for item in store.list("r")] == ["s4", "s3", "s2"]
+
+
+@pytest.mark.asyncio
+async def test_scheduled_reports_refresh_once_when_due() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+    service.share(report.id, ReportAccess(viewers=["mehmet"]), "ayse")
+    with pytest.raises(ReportForbiddenError):
+        service.set_schedule(report.id, RefreshSchedule.DAILY, "mehmet")
+    scheduled = service.set_schedule(report.id, RefreshSchedule.DAILY, "ayse")
+    assert scheduled is not None and scheduled.next_refresh_at is not None
+    due = scheduled.next_refresh_at
+
+    assert await service.run_due(due - timedelta(minutes=1)) == 0
+    assert await service.run_due(due) == 1
+    assert await service.run_due(due) == 0  # claimed: the next one is a day on
+    assert operator.calls[-1]["actor"] == "scheduler"
+    [summary] = service.snapshots_of(report.id, "mehmet") or []
+    assert summary.scheduled and summary.taken_by == "scheduler"
+    again = service.get(report.id, "ayse")
+    assert again is not None and again.next_refresh_at == due + timedelta(days=1)
+
+    # After downtime the schedule moves on from now rather than catching up.
+    late = due + timedelta(days=5)
+    assert await service.run_due(late) == 1
+    again = service.get(report.id, "ayse")
+    assert again is not None and again.next_refresh_at == late + timedelta(days=1)
+
+    off = service.set_schedule(report.id, RefreshSchedule.OFF, "ayse")
+    assert off is not None and off.next_refresh_at is None

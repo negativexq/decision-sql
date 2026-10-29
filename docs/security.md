@@ -63,6 +63,10 @@ tests.
   cannot read it.
 - Audit records keep the question, decision, SQL, outcome, timing, context, and
   trace, but not result rows.
+- Report snapshots are the one place result rows are stored: up to 500 rows
+  per card and 30 snapshots per report, in `decision_meta`, deleted with the
+  report. A snapshot card whose tables were redescribed since (a column marked
+  sensitive, say) is shown without its rows.
 - Connection passwords are encrypted with Fernet using
   `DECISION_SQL_SECRET_KEY` and are never returned by the API. Without a key,
   saving a connection with a password fails instead of storing plaintext.

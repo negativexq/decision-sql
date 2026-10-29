@@ -9,7 +9,10 @@ import type {
   ReportAccess,
   ReportCard,
   ReportFilter,
+  RefreshSchedule,
   ReportSummary,
+  Snapshot,
+  SnapshotSummary,
   ConnectionSummary,
   ConnectionTestResult,
   ConnectorType,
@@ -129,6 +132,13 @@ export const api = {
     }),
   shareReport: (id: string, access: ReportAccess) =>
     request<Report>(`/api/reports/${encodeURIComponent(id)}/access`, { method: "PUT", body: JSON.stringify(access) }),
+  setReportSchedule: (id: string, schedule: RefreshSchedule) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}/schedule`, { method: "PUT", body: JSON.stringify({ schedule }) }),
+  snapshots: (id: string) => request<SnapshotSummary[]>(`/api/reports/${encodeURIComponent(id)}/snapshots`),
+  takeSnapshot: (id: string) =>
+    request<SnapshotSummary>(`/api/reports/${encodeURIComponent(id)}/snapshots`, { method: "POST" }),
+  snapshot: (id: string, snapshotId: string) =>
+    request<Snapshot>(`/api/reports/${encodeURIComponent(id)}/snapshots/${encodeURIComponent(snapshotId)}`),
   deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
   askForCard: (id: string, question: string) =>
     request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),

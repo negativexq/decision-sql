@@ -130,7 +130,7 @@ code, kbd, pre { font-family: var(--mono); }
 .result-meta { display: flex; gap: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* Gate path: the one distinctive element */
-.gates { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+.gates { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; }
 .gate button { width: 100%; display: grid; gap: 5px; padding: 2px 0; }
 .gate-bar { height: 4px; border-radius: 2px; background: var(--line); }
 .gate-label { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -250,7 +250,7 @@ code, kbd, pre { font-family: var(--mono); }
   .governance, .sources { grid-template-columns: 1fr; }
   .source-list { position: static; display: flex; flex-wrap: wrap; gap: 4px; }
   .source-row { width: auto; }
-  .gates { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 8px; }
+  .gates { grid-auto-flow: row; grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 8px; }
   .list-row { grid-template-columns: 8px minmax(0, 1fr) auto; }
   .list-outcome, .list-num { display: none; }
   .hint { display: none; }

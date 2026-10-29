@@ -106,8 +106,8 @@ def test_stable_temporal_functions_are_consistent_within_one_statement(
 def test_ambiguous_unqualified_column_fails_closed_like_postgres(
     service: SqlSafetyService,
 ) -> None:
-    ambiguous = "SELECT id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
-    qualified = "SELECT p.id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
+    ambiguous = "SELECT id FROM customers c JOIN orders o ON o.customer_id = c.id LIMIT 1"
+    qualified = "SELECT c.id FROM customers c JOIN orders o ON o.customer_id = c.id LIMIT 1"
 
     planned = service.plan(SqlCandidate(sql=ambiguous))
     assert isinstance(planned, SqlPlanFailure)

@@ -569,6 +569,7 @@ _REPAIRABLE_POLICY_CODES = frozenset(
         PolicyCode.UNKNOWN_TABLE,
         PolicyCode.UNKNOWN_COLUMN,
         PolicyCode.FORBIDDEN_FUNCTION,
+        PolicyCode.UNAUTHORIZED_JOIN,
     }
 )
 

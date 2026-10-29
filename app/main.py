@@ -21,6 +21,11 @@ from app.metadata.store import (
     SqlConnectionStore,
     SqlRunStore,
 )
+from app.metadata.values import (
+    InMemoryValueSharingStore,
+    SqlValueSharingStore,
+    ValueSharingStore,
+)
 from app.observability.tracing import configure_tracing
 from app.operator.service import OperatorApplication, build_operator_application
 
@@ -32,11 +37,13 @@ reader_engine = build_reader_engine(settings)
 run_store: RunStore
 connection_store: ConnectionStore
 relationship_store: RelationshipStore
+value_sharing_store: ValueSharingStore
 if settings.metadata_database_url:
     metadata_engine = build_engine(settings.metadata_database_url)
     run_store = SqlRunStore(metadata_engine)
     connection_store = SqlConnectionStore(metadata_engine)
     relationship_store = SqlRelationshipStore(metadata_engine)
+    value_sharing_store = SqlValueSharingStore(metadata_engine)
 else:
     logger.warning(
         "DECISION_SQL_METADATA_DATABASE_URL is not set: audit log and connections are "
@@ -45,6 +52,7 @@ else:
     run_store = InMemoryRunStore()
     connection_store = InMemoryConnectionStore()
     relationship_store = InMemoryRelationshipStore()
+    value_sharing_store = InMemoryValueSharingStore()
 
 app = FastAPI(title="DecisionSQL", version="0.1.0")
 operator_application: OperatorApplication = build_operator_application(
@@ -57,6 +65,7 @@ connection_service = ConnectionService(
     allow_driver_install=settings.allow_driver_install,
     relationships=relationship_store,
     value_examples=settings.value_examples,
+    value_sharing=value_sharing_store,
 )
 app.add_middleware(
     CORSMiddleware,
@@ -67,7 +76,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
     ],
     allow_credentials=False,
-    allow_methods=["GET", "POST", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "X-Decision-Actor"],
 )
 app.include_router(router)

@@ -18,6 +18,11 @@ from app.metadata.secrets import SecretBox
 from app.metadata.service import ConnectionService
 from app.metadata.store import SqlConnectionStore, SqlRunStore
 from app.metadata.tables import audit_runs, connections
+from app.metadata.values import (
+    SqlValueSharingStore,
+    ValueSharingRejectedError,
+    ValueSharingUpdate,
+)
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.sql.authority import ExecutionAuthority
@@ -239,3 +244,53 @@ def test_declared_relationship_is_checked_against_the_live_source(engine: Engine
 
     assert service.remove_relationship(summary.id, item.id)  # type: ignore[attr-defined]
     assert service.delete(summary.id)
+
+
+def test_stored_values_reach_the_model_only_after_an_admin_shares_them(engine: Engine) -> None:
+    box = SecretBox(Fernet.generate_key().decode())
+    sharing = SqlValueSharingStore(engine)
+    service = ConnectionService(SqlConnectionStore(engine), box, engine, value_sharing=sharing)
+    summary, result = service.create(
+        ConnectionConfig(
+            kind="postgresql",
+            name="it-values",
+            host="localhost",
+            port=5432,
+            database="decision_sql",
+            username="decision_reader",
+            password="decision_reader_password",
+            ssl_mode="disable",
+        ),
+        "ayse@example.com",
+    )
+    assert result.ok, result.message
+
+    def shared_columns() -> set[str]:
+        source = service.question_source(summary.id)
+        assert source is not None
+        return {
+            f"{table.name}.{column.name}"
+            for table in source.catalog.tables
+            for column in table.columns
+            if column.known_values
+        }
+
+    listed = service.values(summary.id)
+    assert listed is not None and listed.available and not listed.enabled
+    assert listed.columns and not any(column.shared for column in listed.columns)
+    assert shared_columns() == set()
+
+    first = f"{listed.columns[0].table}.{listed.columns[0].column}"
+    with pytest.raises(ValueSharingRejectedError, match="not in the connection"):
+        service.set_values(
+            summary.id, ValueSharingUpdate(enabled=True, excluded=["nope.nothing"]), "admin"
+        )
+    updated = service.set_values(
+        summary.id, ValueSharingUpdate(enabled=True, excluded=[first]), "admin"
+    )
+    assert updated is not None and updated.enabled and updated.updated_by == "admin"
+    names = {f"{column.table}.{column.column}" for column in listed.columns}
+    assert shared_columns() == names - {first}
+
+    assert service.delete(summary.id)
+    assert sharing.get(summary.id).enabled is False

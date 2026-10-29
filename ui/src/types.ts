@@ -265,3 +265,21 @@ export interface ConnectionRelationships {
   declared: DeclaredRelationship[];
   suggestions: RelationshipSuggestion[];
 }
+
+export interface ValueColumn {
+  table: string;
+  column: string;
+  values: string[];
+  complete: boolean;
+  patterns: string[];
+  shared: boolean;
+}
+
+export interface ConnectionValues {
+  available: boolean;
+  enabled: boolean;
+  excluded: string[];
+  updated_by: string | null;
+  updated_at: string | null;
+  columns: ValueColumn[];
+}

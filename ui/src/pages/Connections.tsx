@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { api, type ConnectionInput } from "../api/client";
 import { Relationships } from "../components/Relationships";
+import { ValueSharing } from "../components/ValueSharing";
 import { KIND_LABEL, formatCount, formatMs, relativeTime } from "../format";
 import type { ConnectionSummary, ConnectionTestResult, ConnectorType, DriverInstallResult, IntrospectedTable } from "../types";
 
@@ -212,6 +213,7 @@ function ConnectionDetail({
       )}
 
       {!connection.built_in && connection.queryable && <Relationships connectionId={connection.id} tables={tables} />}
+      {!connection.built_in && connection.queryable && <ValueSharing connectionId={connection.id} />}
 
       <h3 className="panel-title">Tables {tables && <span className="muted">{tables.length}</span>}</h3>
       {tables === null && !error && <p className="panel-note">Reading the schema…</p>}

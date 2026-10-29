@@ -312,6 +312,7 @@ class SchemaContextResolver:
                 primary_key=column.primary_key,
                 known_values=column.known_values,
                 known_values_complete=column.known_values_complete,
+                value_patterns=column.value_patterns,
                 foreign_key_table=next(
                     (
                         relationship.referenced_table

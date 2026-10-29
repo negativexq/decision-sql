@@ -97,3 +97,18 @@ declared_relationships = Table(
     Column("created_at", DateTime(timezone=True), nullable=False),
     UniqueConstraint("connection_id", "from_table", "from_column", "to_table", "to_column"),
 )
+
+value_sharing = Table(
+    "value_sharing",
+    metadata,
+    Column(
+        "connection_id",
+        String(64),
+        ForeignKey(f"{METADATA_SCHEMA}.connections.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column("enabled", Boolean, nullable=False),
+    Column("excluded", JSON, nullable=False),
+    Column("updated_by", String(120), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)

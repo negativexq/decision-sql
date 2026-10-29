@@ -1,5 +1,6 @@
 import type {
   ConnectionRelationships,
+  ConnectionValues,
   ConnectionSummary,
   ConnectionTestResult,
   ConnectorType,
@@ -104,4 +105,10 @@ export const api = {
       `/api/connections/${encodeURIComponent(id)}/relationships/${encodeURIComponent(relationshipId)}`,
       { method: "DELETE" },
     ),
+  values: (id: string) => request<ConnectionValues>(`/api/connections/${encodeURIComponent(id)}/values`),
+  setValues: (id: string, enabled: boolean, excluded: string[]) =>
+    request<ConnectionValues>(`/api/connections/${encodeURIComponent(id)}/values`, {
+      method: "PUT",
+      body: JSON.stringify({ enabled, excluded }),
+    }),
 };

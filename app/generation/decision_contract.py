@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "c11ac62ebf58c31e94895a6b9a49877bb8bc4f7eaafbfdd1d52eb1950ebcf98a"
+    "a7f6e6dc5d4b860fa8cdf670e3afeb83aeb0634fc0e43111388ee664b1fc997a"
 )
 
 
@@ -42,6 +42,8 @@ You are answering one question a user asked about their own database. Use only t
 - When an attribute lists `known_values`, the column stores values spelled exactly like those. Compare against those spellings, including case, spacing, and separators, rather than the wording of the question.
 - When `known_values_complete` is true, they are all the values the column holds. If the question names a value that matches none of them, decide whether it means one of them or is absent from the data; do not invent a spelling.
 - When `known_values_complete` is false, the values are examples of how the column formats codes or dates. Write filters and string operations that fit that format.
+- When an attribute lists `value_patterns` instead, those are the shapes of the stored codes or dates, with every digit written as 9: `9999-99-99` means values like `2012-01-15`. Write literals and string operations that fit one of those shapes.
+- Columns without `known_values` may still hold the value the question names; their spelling is simply not shown.
 
 ## Typed JSON scalar semantics
 

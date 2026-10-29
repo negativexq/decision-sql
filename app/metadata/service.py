@@ -42,10 +42,17 @@ from app.metadata.relationships import (
 from app.metadata.secrets import SecretBox
 from app.metadata.store import ConnectionStore, StoredConnection
 from app.metadata.values import (
+    ConnectionValues,
+    InMemoryValueSharingStore,
     KnownValues,
+    ValueColumn,
+    ValueSharingRejectedError,
+    ValueSharingStore,
+    ValueSharingUpdate,
     apply_known_values,
     eligible_columns,
     known_values,
+    value_patterns,
 )
 
 GOVERNED_CONNECTION_ID = "governed"
@@ -90,9 +97,11 @@ class ConnectionService:
         allow_driver_install: bool = False,
         relationships: RelationshipStore | None = None,
         value_examples: bool = True,
+        value_sharing: ValueSharingStore | None = None,
     ) -> None:
         self.store = store
         self.value_examples = value_examples
+        self.value_sharing_store = value_sharing or InMemoryValueSharingStore()
         self._values: dict[str, tuple[float, dict[tuple[str, str], KnownValues]]] = {}
         self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
@@ -153,7 +162,8 @@ class ConnectionService:
         if engine is not None:
             engine.dispose()
         self._values.pop(connection_id, None)
-        # The SQL store cascades; the in-memory one needs the explicit cleanup.
+        # The SQL stores cascade; the in-memory ones need the explicit cleanup.
+        self.value_sharing_store.delete(connection_id)
         for relationship in self.relationship_store.list(connection_id):
             self.relationship_store.delete(connection_id, relationship.id)
         return self.store.delete(connection_id)
@@ -169,8 +179,11 @@ class ConnectionService:
             connector.catalog(config, password), self.relationship_store.list(item.id)
         )
         if self.value_examples:
+            # Sharing is read for every question, so turning it off takes effect at once.
             catalog = apply_known_values(
-                catalog, self._known_values(item.id, connector, config, password, catalog)
+                catalog,
+                self._known_values(item.id, connector, config, password, catalog),
+                self.value_sharing_store.get(item.id),
             )
         return QuestionSource(
             connection_id=item.id,
@@ -202,6 +215,60 @@ class ConnectionService:
                 hints[(item.table, item.column)] = hint
         self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, hints)
         return hints
+
+    def values(self, connection_id: str) -> ConnectionValues | None:
+        """The stored values each eligible column would share, and the current choice."""
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        config = item.config()
+        sharing = self.value_sharing_store.get(item.id)
+        hints: dict[tuple[str, str], KnownValues] = {}
+        if self.value_examples:
+            catalog = connector.catalog(config, password)
+            hints = self._known_values(item.id, connector, config, password, catalog)
+        columns = [
+            ValueColumn(
+                table=table,
+                column=column,
+                values=hint.values,
+                complete=hint.complete,
+                patterns=value_patterns(hint.values),
+                shared=self.value_examples and sharing.shares(table, column),
+            )
+            for (table, column), hint in sorted(hints.items())
+        ]
+        return ConnectionValues(
+            available=self.value_examples,
+            enabled=sharing.enabled,
+            excluded=sharing.excluded,
+            updated_by=sharing.updated_by,
+            updated_at=sharing.updated_at,
+            columns=columns,
+        )
+
+    def set_values(
+        self, connection_id: str, update: ValueSharingUpdate, actor: str
+    ) -> ConnectionValues | None:
+        resolved = self._postgres(connection_id)
+        if resolved is None:
+            return None
+        item, connector, password = resolved
+        known = {
+            f"{table.name}.{column.name}"
+            for table in connector.catalog(item.config(), password).tables
+            for column in table.columns
+        }
+        unknown = sorted(set(update.excluded) - known)
+        if unknown:
+            raise ValueSharingRejectedError(
+                f"These columns are not in the connection's schema: {', '.join(unknown[:5])}."
+            )
+        self.value_sharing_store.set(
+            item.id, update.enabled, tuple(sorted(set(update.excluded))), actor
+        )
+        return self.values(connection_id)
 
     def relationships(self, connection_id: str) -> ConnectionRelationships | None:
         """Foreign keys, declared relationships, and checked suggestions for one source."""

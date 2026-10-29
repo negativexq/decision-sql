@@ -7,11 +7,22 @@ tests.
 ## What the model can and cannot do
 
 - The model receives the question and a governed context built from queryable
-  catalog metadata. It never receives credentials, sample values, non-queryable
+  catalog metadata. It never receives credentials, result rows, non-queryable
   columns (such as `customers.external_key`), audit records, or secrets.
+- Stored values of a saved connection reach the model only after an
+  administrator turns on value sharing for that connection, and never for the
+  columns they exclude. The values come from `pg_stats` (or a bounded sample of
+  a small, unanalyzed table), are limited to short categorical text, and skip
+  keys and columns whose names suggest personal data. The model provider sees
+  them with every question on that connection. Without sharing, the model sees
+  only the shape of code and date columns (`9999-99-99`), which carries no
+  stored value. `DECISION_SQL_VALUE_EXAMPLES=false` turns both off server-wide.
 - It returns one typed decision. Its SQL is untrusted input
   (`SqlCandidate`) with no authorization state.
-- It has no tool calls, no retries, and no second request.
+- It has no tool calls. At most two extra requests follow the first: one that
+  adds tables the model asked for from `other_tables`, and one repair round
+  after a policy rejection. Both go through every gate again, and repair
+  feedback never quotes database error text.
 
 ## SQL admission
 

@@ -2,7 +2,9 @@
 
 The context is request-bounded: it contains the exact server-selected schema
 envelope exposed to a model for one request.  It contains structure and
-governance metadata only; it never contains rows, SQL, or evaluator truth.
+governance metadata, plus stored spellings of categorical columns when an
+administrator shares them; it never contains result rows, SQL, or evaluator
+truth.
 """
 
 from __future__ import annotations
@@ -51,6 +53,7 @@ class GovernedAttribute(BaseModel):
     foreign_key_attribute_id: str | None = None
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
+    value_patterns: tuple[str, ...] = ()
 
     @model_serializer(mode="wrap")
     def _omit_absent_values(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -59,6 +62,8 @@ class GovernedAttribute(BaseModel):
         if not self.known_values:
             data.pop("known_values", None)
             data.pop("known_values_complete", None)
+        if not self.value_patterns:
+            data.pop("value_patterns", None)
         return data
 
 
@@ -157,6 +162,7 @@ def governed_context_from_schema_context(
             primary_key=column.primary_key,
             known_values=column.known_values,
             known_values_complete=column.known_values_complete,
+            value_patterns=column.value_patterns,
             foreign_key_entity_id=(
                 entity_ids.get(column.foreign_key_table)
                 if column.foreign_key_table is not None

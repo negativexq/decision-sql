@@ -113,6 +113,12 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   saw the column's values it gets one repair round that names its guess, not
   the stored values, and the answer notes that the filter matches no rows.
   This works whether or not values are shared with the model.
+- **NULL ordering**: PostgreSQL sorts NULL above every value, so a
+  descending order that decides which rows come back (with `LIMIT`, `OFFSET`,
+  `FETCH`, `DISTINCT ON`, or in a ranking window such as `RANK()`) would put
+  rows with no value first: the "greatest" player would be one with no rating.
+  Such an order gets `NULLS LAST`. A query that writes `NULLS FIRST` anywhere
+  is left as written, and so is an order by `COUNT`, which is never NULL.
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 

@@ -47,6 +47,8 @@ from app.sql.models import (
     SqlSafetyStatus,
     UnmatchedValue,
 )
+from app.sql.ordering import CHANGE as NULLS_LAST_CHANGE
+from app.sql.ordering import nulls_last
 from app.sql.parser import ParsedSQL, SQLParseFailure, SQLParser
 from app.sql.policy import SQLPolicy
 from app.sql.values import ValueChecker
@@ -298,6 +300,19 @@ class SqlSafetyService:
             self._record_stage(
                 "value_check", TraceStageStatus.SKIPPED, reason="NO_KNOWN_VALUE_SETS"
             )
+
+        # Only the NULL placement of an ORDER BY changes, so earlier checks still hold.
+        ordering = nulls_last(parsed_for_plan.expression, candidate.sql)
+        if ordering.changed:
+            parsed_for_plan = ParsedSQL(
+                sql=ordering.expression.sql(dialect="postgres"), expression=ordering.expression
+            )
+            sql_changes.append(NULLS_LAST_CHANGE)
+        self._record_stage(
+            "null_ordering",
+            TraceStageStatus.PASS,
+            reason="NULLS_LAST" if ordering.changed else None,
+        )
 
         connection_started = perf_counter()
         connection_opened = False

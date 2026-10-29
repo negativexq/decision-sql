@@ -97,7 +97,7 @@ class Settings(BaseSettings):
     # How the governed context reaches the model: canonical JSON, or the same facts as
     # compact text (one line per column, names instead of ids).
     context_format: Literal["json", "compact"] = Field(
-        default="json", validation_alias="DECISION_SQL_CONTEXT_FORMAT"
+        default="compact", validation_alias="DECISION_SQL_CONTEXT_FORMAT"
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

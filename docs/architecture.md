@@ -76,10 +76,11 @@ JSON schema. The model returns one of:
 A non-answer carries an explanation; a clarification also carries the question
 to ask and two to four readings, and a refusal names the missing joins.
 
-**Context format**: the governed context reaches the model as canonical JSON or,
-with `DECISION_SQL_CONTEXT_FORMAT=compact`, as the same facts in compact text: one
+**Context format**: the governed context reaches the model as compact text: one
 line per column, names instead of ids, under the section names the contract uses
-(`render_governed_context`). The canonical JSON stays the audited and hashed form.
+(`render_governed_context`). It carries the same facts as the canonical JSON in
+about a quarter of the text; the JSON stays the audited and hashed form, and
+`DECISION_SQL_CONTEXT_FORMAT=json` sends it to the model instead.
 
 **Exploration**: before it answers or asks, the model may return `EXPLORE` with
 one to three probes (`app/decision/exploration.py`), for example to see how a

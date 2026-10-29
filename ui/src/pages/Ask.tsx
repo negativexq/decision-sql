@@ -1,97 +1,109 @@
 import { useEffect, useRef, useState } from "react";
 import { GatePath } from "../components/GatePath";
 import { GovernancePanel } from "../components/GovernancePanel";
+import { HowComputed } from "../components/HowComputed";
 import { SourcePicker } from "../components/SourcePicker";
 import { ResultChart, chartShape } from "../components/ResultChart";
 import { ResultTable } from "../components/ResultTable";
 import { SqlViewer } from "../components/SqlViewer";
 import { formatCount, formatMs, humanize, runOutcome } from "../format";
-import type { ConnectionSummary, Preset, RunRecord, TraceStage } from "../types";
+import type { ConditionEdit, ConnectionSummary, Preset, ProgressEvent, RunRecord, RunTrace, TraceStage } from "../types";
 
 type Tab = "table" | "chart" | "checks";
 
+/** What a running question has reached, from the server's progress events. */
+export interface Progress {
+  question: string;
+  startedAt: number;
+  stages: TraceStage[];
+  // The stage that has started and not finished, if the server said so.
+  working: string | null;
+  modelCalls: number;
+}
+
+export function nextProgress(progress: Progress, event: ProgressEvent): Progress {
+  if (event.type === "working") {
+    return {
+      ...progress,
+      working: event.name,
+      modelCalls: progress.modelCalls + (event.name === "generation" ? 1 : 0),
+    };
+  }
+  const stage: TraceStage = {
+    name: event.name,
+    label: event.label,
+    status: event.status,
+    duration_ms: event.duration_ms,
+    reason: event.reason,
+    metadata: {},
+  };
+  return {
+    ...progress,
+    stages: [...progress.stages.filter((item) => item.name !== event.name), stage],
+    working: progress.working === event.name ? null : progress.working,
+  };
+}
+
+/** A run whose question and query a follow-up can build on. */
+function canFollow(run: RunRecord | undefined): run is RunRecord {
+  return Boolean(run?.proposed_sql) && (run?.proposal_source === "LIVE_MODEL" || run?.proposal_source === "EDITED_QUERY");
+}
+
 export function Ask({
-  run,
+  thread,
   presets,
-  loading,
+  progress,
   error,
   onSubmit,
+  onEdit,
+  editing,
   focusKey,
   connections,
   sourceId,
   onSourceChange,
   onManageConnections,
 }: {
-  run: RunRecord | null;
+  thread: RunRecord[];
   presets: Preset[];
-  loading: boolean;
+  progress: Progress | null;
   error: string | null;
-  onSubmit: (question: string, presetId?: string) => void;
+  onSubmit: (question: string, presetId?: string, followUpOf?: string) => void;
+  onEdit: (run: RunRecord, edits: ConditionEdit[]) => void;
+  editing: string | null;
   focusKey: number;
   connections: ConnectionSummary[];
   sourceId: string;
   onSourceChange: (id: string) => void;
   onManageConnections: () => void;
 }) {
-  const [question, setQuestion] = useState("");
-  const [presetId, setPresetId] = useState<string | undefined>();
-  const input = useRef<HTMLTextAreaElement>(null);
+  const loading = progress !== null || editing !== null;
   const source = connections.find((item) => item.id === sourceId) ?? connections.find((item) => item.governed);
   // The server marks sources that have the full policy, read-only and cost-gate path.
   const queryable = !source || source.queryable;
   // Example questions are written for the governed demo schema.
   const showStarters = !source || source.governed;
+  const last = thread[thread.length - 1];
+  const end = useRef<HTMLDivElement>(null);
 
+  // Keep the newest turn in view as the thread grows.
   useEffect(() => {
-    setQuestion("");
-    setPresetId(undefined);
-    input.current?.focus();
-  }, [focusKey]);
-
-  const submit = () => {
-    if (question.trim() && !loading && queryable) onSubmit(question.trim(), presetId);
-  };
+    if (thread.length > 1 || progress) end.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [thread.length, progress?.question]);
 
   return (
     <div className="ask">
-      <form
-        className="composer"
-        onSubmit={(event) => {
-          event.preventDefault();
-          submit();
-        }}
-      >
-        <label className="visually-hidden" htmlFor="question">Question</label>
-        <textarea
-          id="question"
-          ref={input}
-          rows={2}
-          value={question}
-          placeholder="Ask a question about your data, e.g. total order revenue by status"
-          onChange={(event) => {
-            setQuestion(event.target.value);
-            setPresetId(undefined);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              event.preventDefault();
-              submit();
-            }
-          }}
+      {thread.length === 0 && !progress && (
+        <Composer
+          key={focusKey}
+          disabled={loading || !queryable}
+          loading={loading}
+          connections={connections}
+          source={source}
+          onSourceChange={onSourceChange}
+          onManageConnections={onManageConnections}
+          onSubmit={(question) => onSubmit(question)}
         />
-        <div className="composer-bar">
-          <SourcePicker
-            connections={connections}
-            selected={source?.id ?? "governed"}
-            onSelect={onSourceChange}
-            onManage={onManageConnections}
-          />
-          <span className="hint">Enter to run, Shift + Enter for a new line</span>
-          <button type="submit" className="button primary" disabled={!question.trim() || loading || !queryable}>
-            {loading ? "Running" : "Run question"}
-          </button>
-        </div>
-      </form>
+      )}
 
       {!queryable && source && (
         <div className="callout callout-warning" role="status">
@@ -101,35 +113,47 @@ export function Ask({
         </div>
       )}
 
+      {thread.map((run, index) =>
+        index < thread.length - 1 ? (
+          <EarlierTurn key={run.run_id} run={run} />
+        ) : (
+          <RunResult
+            key={run.run_id}
+            run={run}
+            editing={editing === run.run_id}
+            onEdit={loading ? undefined : (edits) => onEdit(run, edits)}
+            onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)}
+            onAsk={(text) => onSubmit(text)}
+            onManageConnections={onManageConnections}
+          />
+        ),
+      )}
+
+      {progress && <Pending progress={progress} />}
+
       {error && <div className="callout callout-danger" role="alert"><strong>The request did not complete.</strong> {error}</div>}
 
-      {loading && <Pending question={question} />}
-
-      {!loading && run && (
-        <RunResult
-          key={run.run_id}
-          run={run}
-          onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)}
-          onAsk={(text) => onSubmit(text)}
+      {thread.length > 0 && !progress && (
+        <Composer
+          key={`follow-${last?.run_id}-${focusKey}`}
+          disabled={loading || !queryable}
+          loading={loading}
+          connections={connections}
+          source={source}
+          onSourceChange={onSourceChange}
           onManageConnections={onManageConnections}
+          followUp={canFollow(last) ? last : undefined}
+          onSubmit={(question, followUpOf) => onSubmit(question, undefined, followUpOf)}
         />
       )}
 
-      {!loading && !run && showStarters && (
+      {thread.length === 0 && !progress && showStarters && (
         <section className="starters" aria-label="Example questions">
           <h2 className="section-title">Try a question</h2>
           <ul>
             {presets.map((preset) => (
               <li key={preset.id}>
-                <button
-                  type="button"
-                  disabled={!queryable}
-                  onClick={() => {
-                    setQuestion(preset.question);
-                    setPresetId(preset.id);
-                    onSubmit(preset.question, preset.id);
-                  }}
-                >
+                <button type="button" disabled={!queryable} onClick={() => onSubmit(preset.question, preset.id)}>
                   <span className="starter-question">{preset.question}</span>
                   <span className="starter-note">{preset.description}</span>
                   {preset.mode !== "LIVE_MODEL" && <span className="tag">Replay</span>}
@@ -139,19 +163,152 @@ export function Ask({
           </ul>
         </section>
       )}
+      <div ref={end} />
     </div>
   );
 }
 
-function Pending({ question }: { question: string }) {
+function Composer({
+  disabled,
+  loading,
+  connections,
+  source,
+  onSourceChange,
+  onManageConnections,
+  followUp,
+  onSubmit,
+}: {
+  disabled: boolean;
+  loading: boolean;
+  connections: ConnectionSummary[];
+  source: ConnectionSummary | undefined;
+  onSourceChange: (id: string) => void;
+  onManageConnections: () => void;
+  // The answer a question here builds on, unless the user lets go of it.
+  followUp?: RunRecord;
+  onSubmit: (question: string, followUpOf?: string) => void;
+}) {
+  const [question, setQuestion] = useState("");
+  const [building, setBuilding] = useState(Boolean(followUp));
+  const input = useRef<HTMLTextAreaElement>(null);
+  const following = building && followUp !== undefined;
+
+  useEffect(() => {
+    // A follow-up box under an answer waits for the reader instead of taking focus.
+    if (!followUp) input.current?.focus();
+  }, [followUp]);
+
+  const submit = () => {
+    if (question.trim() && !disabled) onSubmit(question.trim(), following ? followUp.run_id : undefined);
+  };
+
+  return (
+    <form
+      className={followUp ? "composer composer-follow" : "composer"}
+      onSubmit={(event) => {
+        event.preventDefault();
+        submit();
+      }}
+    >
+      {following && (
+        <div className="follow-chip">
+          <span>
+            Builds on <q>{followUp.question}</q>
+          </span>
+          <button type="button" className="link" onClick={() => setBuilding(false)}>
+            Ask a new question instead
+          </button>
+        </div>
+      )}
+      <label className="visually-hidden" htmlFor={followUp ? "follow-up" : "question"}>
+        {following ? "Follow-up question" : "Question"}
+      </label>
+      <textarea
+        id={followUp ? "follow-up" : "question"}
+        ref={input}
+        rows={2}
+        value={question}
+        placeholder={
+          following
+            ? "Ask a follow-up, e.g. split it by month"
+            : "Ask a question about your data, e.g. total order revenue by status"
+        }
+        onChange={(event) => setQuestion(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            submit();
+          }
+        }}
+      />
+      <div className="composer-bar">
+        {following ? (
+          <span className="composer-source">{source?.name}</span>
+        ) : (
+          <SourcePicker
+            connections={connections}
+            selected={source?.id ?? "governed"}
+            onSelect={onSourceChange}
+            onManage={onManageConnections}
+          />
+        )}
+        <span className="hint">Enter to run, Shift + Enter for a new line</span>
+        <button type="submit" className="button primary" disabled={!question.trim() || disabled}>
+          {loading ? "Running" : following ? "Ask follow-up" : "Run question"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function Pending({ progress }: { progress: Progress }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(timer);
+  }, []);
+  const seconds = Math.max(0, Math.floor((now - progress.startedAt) / 1000));
+  const trace = { stages: progress.stages } as RunTrace;
+  const latest = progress.stages[progress.stages.length - 1];
+  let status: string;
+  if (progress.working === "generation") {
+    status = progress.modelCalls > 1 ? `The model is working, call ${progress.modelCalls}` : "The model is writing the query";
+  } else if (!latest) {
+    status = "Reading the catalog";
+  } else if (latest.name === "context") {
+    status = "Building the governed context";
+  } else if (["execution_connection", "explain", "cost_gate"].includes(latest.name)) {
+    status = "Running the query read-only";
+  } else {
+    status = `${latest.label} ${latest.status === "PASS" ? "passed" : latest.status.toLowerCase()}`;
+  }
   return (
     <section className="result" aria-busy="true">
       <header className="result-head">
-        <h1 className="result-question">{question}</h1>
-        <p className="result-meta">Reading the catalog, asking the model, then checking the query</p>
+        <h1 className="result-question">{progress.question}</h1>
+        <p className="result-meta progress-line" role="status" aria-live="polite">
+          <span className="progress-dot" aria-hidden="true" />
+          <span>{status}</span>
+          <span className="progress-time">{seconds} s</span>
+        </p>
       </header>
-      <GatePath trace={null} />
+      <GatePath trace={trace} live />
     </section>
+  );
+}
+
+/** An earlier question in the thread: its line of explanation, with the answer one click away. */
+function EarlierTurn({ run }: { run: RunRecord }) {
+  const outcome = runOutcome(run);
+  return (
+    <details className="turn">
+      <summary>
+        <span className="turn-question">{run.question}</span>
+        {run.edited_from && <span className="tag">Edited</span>}
+        <span className={`pill pill-${outcome.tone}`}>{outcome.label}</span>
+      </summary>
+      <RunResult run={run} onRerun={() => undefined} onAsk={() => undefined} onManageConnections={() => undefined} readOnly />
+    </details>
   );
 }
 
@@ -160,11 +317,19 @@ function RunResult({
   onRerun,
   onAsk,
   onManageConnections,
+  onEdit,
+  editing = false,
+  readOnly = false,
 }: {
   run: RunRecord;
   onRerun: () => void;
   onAsk: (question: string) => void;
   onManageConnections: () => void;
+  // Change a condition of the query and run it again without the model.
+  onEdit?: (edits: ConditionEdit[]) => void;
+  editing?: boolean;
+  // An earlier turn of a thread: shown as it was, with nothing to act on.
+  readOnly?: boolean;
 }) {
   const outcome = runOutcome(run);
   const executed = run.runtime_outcome === "EXECUTED" && run.results_retained;
@@ -212,8 +377,19 @@ function RunResult({
           <span>{formatMs(run.duration_ms)}</span>
           <span>{run.actor}</span>
           <span>{new Date(run.created_at).toLocaleString()}</span>
-          <span>{run.proposal_source === "LIVE_MODEL" ? run.model ?? "Model" : "Replayed scenario"}</span>
+          <span>
+            {run.proposal_source === "LIVE_MODEL"
+              ? run.model ?? "Model"
+              : run.proposal_source === "EDITED_QUERY"
+                ? "Edited query, no model call"
+                : "Replayed scenario"}
+          </span>
         </p>
+        {run.edited_from && (
+          <p className="edited-note">
+            The conditions were changed by hand; the question is the original wording, and the line below says what ran.
+          </p>
+        )}
       </header>
 
       <div className="query-disclosure">
@@ -293,6 +469,10 @@ function RunResult({
         </div>
       )}
 
+      {run.explanation && run.runtime_outcome === "EXECUTED" && readingIndex === 0 && (
+        <HowComputed explanation={run.explanation} onEdit={readOnly ? undefined : onEdit} busy={editing} />
+      )}
+
       <GatePath
         trace={run.trace}
         onSelect={(selected) => {
@@ -301,14 +481,16 @@ function RunResult({
         }}
       />
 
-      {!run.results_retained && run.runtime_outcome === "EXECUTED" && (
+      {!run.results_retained && run.runtime_outcome === "EXECUTED" && !readOnly && (
         <div className="callout callout-neutral">
           <strong>Result rows are not kept in the audit log.</strong> The question, query and checks are shown as recorded.{" "}
           <button type="button" className="link" onClick={onRerun}>Run it again</button> to see current data.
         </div>
       )}
 
-      {run.runtime_outcome !== "EXECUTED" && <Explanation run={run} onAsk={onAsk} onManageConnections={onManageConnections} />}
+      {run.runtime_outcome !== "EXECUTED" && (
+        <Explanation run={run} onAsk={readOnly ? undefined : onAsk} onManageConnections={onManageConnections} />
+      )}
 
       <div className="tabs" role="tablist" aria-label="Result views" hidden={!executed}>
         {tabs.filter((item) => !item.hidden).map((item) => (
@@ -345,7 +527,7 @@ function Explanation({
   onManageConnections,
 }: {
   run: RunRecord;
-  onAsk: (question: string) => void;
+  onAsk?: (question: string) => void;
   onManageConnections: () => void;
 }) {
   const decision = run.model_decision;
@@ -401,7 +583,7 @@ function Explanation({
           Open relationships
         </button>
       )}
-      {decision === "NEEDS_CLARIFICATION" && detail && detail.interpretations.length > 0 && (
+      {decision === "NEEDS_CLARIFICATION" && onAsk && detail && detail.interpretations.length > 0 && (
         <ul className="interpretations">
           {detail.interpretations.map((reading) => (
             <li key={reading}>

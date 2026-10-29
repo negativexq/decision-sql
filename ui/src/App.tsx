@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, getActor, setActor as storeActor } from "./api/client";
 import { Sidebar, type View } from "./components/Sidebar";
-import { Ask } from "./pages/Ask";
+import { Ask, nextProgress, type Progress } from "./pages/Ask";
 import { Audit } from "./pages/Audit";
 import { Connections } from "./pages/Connections";
 import { Reports } from "./pages/Reports";
 import { Sources } from "./pages/Sources";
-import type { ConnectionSummary, Preset, RunRecord, RunSummary, SchemaResponse } from "./types";
+import type { ConditionEdit, ConnectionSummary, Preset, RunRecord, RunSummary, SchemaResponse } from "./types";
 
 const SOURCE_KEY = "decision-sql.source";
 
@@ -22,10 +22,13 @@ export default function App() {
   const [view, setView] = useState<View>("ask");
   const [actor, setActorState] = useState(getActor);
   const [auditKey, setAuditKey] = useState(0);
-  const [run, setRun] = useState<RunRecord | null>(null);
+  // The questions of one conversation, oldest first; a follow-up builds on the last.
+  const [thread, setThread] = useState<RunRecord[]>([]);
+  const [progress, setProgress] = useState<Progress | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [recent, setRecent] = useState<RunSummary[]>([]);
   const [schema, setSchema] = useState<SchemaResponse | null>(null);
   const [presets, setPresets] = useState<Preset[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState(0);
   const [connections, setConnections] = useState<ConnectionSummary[]>([]);
@@ -51,8 +54,16 @@ export default function App() {
     void api.presets().then(setPresets).catch(() => setPresets([]));
   }, []);
 
+  // The user's own recent questions, for the sidebar; refreshed after each run.
+  useEffect(() => {
+    void api
+      .runs({ actor: actor.trim().toLowerCase() || "anonymous", limit: 60 })
+      .then((result) => setRecent(result.runs))
+      .catch(() => setRecent([]));
+  }, [actor, auditKey]);
+
   const newQuestion = useCallback(() => {
-    setRun(null);
+    setThread([]);
     setError(null);
     setView("ask");
     setFocusKey((key) => key + 1);
@@ -71,25 +82,52 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [newQuestion]);
 
-  const submit = async (question: string, presetId?: string) => {
-    setLoading(true);
+  const submit = async (question: string, presetId?: string, followUpOf?: string) => {
+    if (progress || editing) return;
     setError(null);
+    setProgress({ question, startedAt: Date.now(), stages: [], working: null, modelCalls: 0 });
     try {
-      const result = await api.query(question, presetId, sourceId);
-      setRun(result);
+      const result = await api.ask(
+        {
+          question,
+          connection_id: sourceId,
+          ...(presetId ? { preset_id: presetId } : {}),
+          ...(followUpOf ? { follow_up_of: followUpOf } : {}),
+        },
+        (event) => setProgress((current) => (current ? nextProgress(current, event) : current)),
+      );
+      setThread((current) => (followUpOf ? [...current, result] : [result]));
       setAuditKey((key) => key + 1);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Check that the API is running.");
     } finally {
-      setLoading(false);
+      setProgress(null);
     }
   };
 
-  const open = (summary: RunSummary) => {
-    void api.run(summary.run_id).then((record) => {
+  const edit = async (run: RunRecord, edits: ConditionEdit[]) => {
+    if (progress || editing) return;
+    setEditing(run.run_id);
+    setError(null);
+    try {
+      const result = await api.editRun(run.run_id, edits);
+      setThread((current) => [...current, result]);
+      setAuditKey((key) => key + 1);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Check that the API is running.");
+    } finally {
+      setEditing(null);
+    }
+  };
+
+  const open = (summary: Pick<RunSummary, "run_id">) => {
+    void api.thread(summary.run_id).then((records) => {
+      const last = records[records.length - 1];
+      if (!last) return;
       // Follow-ups from this run (rerun, picking an interpretation) must ask the same source.
-      chooseSource(record.connection_id);
-      setRun(record);
+      chooseSource(last.connection_id);
+      setThread(records);
+      setError(null);
       setView("ask");
     });
   };
@@ -101,6 +139,9 @@ export default function App() {
         view={view}
         onNavigate={setView}
         onNewQuestion={newQuestion}
+        recent={recent}
+        current={thread[thread.length - 1]?.run_id ?? null}
+        onOpenRecent={open}
         schema={schema}
         actor={actor}
         onActorChange={(value) => {
@@ -111,11 +152,13 @@ export default function App() {
       <main id="main" className="main" tabIndex={-1}>
         {view === "ask" && (
           <Ask
-            run={run}
+            thread={thread}
             presets={presets}
-            loading={loading}
+            progress={progress}
             error={error}
-            onSubmit={(q, p) => void submit(q, p)}
+            onSubmit={(q, p, f) => void submit(q, p, f)}
+            onEdit={(run, edits) => void edit(run, edits)}
+            editing={editing}
             focusKey={focusKey}
             connections={connections}
             sourceId={sourceId}

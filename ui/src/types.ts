@@ -4,7 +4,7 @@ export type Decision =
   | "BLOCKED_AUTHORITY"
   | "BLOCKED_POLICY";
 
-export type ProposalSource = "LIVE_MODEL" | "SAFETY_REPLAY" | "RUNTIME_POLICY_REPLAY";
+export type ProposalSource = "LIVE_MODEL" | "SAFETY_REPLAY" | "RUNTIME_POLICY_REPLAY" | "SAVED_QUERY" | "EDITED_QUERY";
 
 export type RuntimeOutcome =
   | "EXECUTED"
@@ -93,10 +93,45 @@ export interface RunRecord {
   actor: string;
   connection_id: string;
   follow_up_of?: string | null;
+  // The run whose query this one reran with conditions the user changed.
+  edited_from?: string | null;
+  explanation?: SqlExplanation | null;
   results_retained: boolean;
 }
 
-export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "proposal_source" | "model_decision" | "runtime_outcome" | "runtime_reason" | "row_count" | "duration_ms" | "created_at" | "actor">;
+/** A comparison between a column and literals in the query, which the user can change. */
+export interface Condition {
+  index: number;
+  column: string;
+  operator: string;
+  values: string[];
+  kind: "text" | "number" | "date";
+  removable: boolean;
+}
+
+/** What a query reads, computes and keeps, read from its SQL rather than asked of the model. */
+export interface SqlExplanation {
+  tables: string[];
+  measures: { function: "count" | "sum" | "average" | "min" | "max"; column: string | null; distinct: boolean }[];
+  conditions: Condition[];
+  groups: string[];
+  order: { column: string; descending: boolean }[];
+  limit: number | null;
+  distinct: boolean;
+}
+
+export interface ConditionEdit {
+  index: number;
+  values?: string[];
+  remove?: boolean;
+}
+
+/** Live progress of a question: a stage that started, or one that was recorded. */
+export type ProgressEvent =
+  | { type: "working"; name: string; label: string }
+  | { type: "stage"; name: string; label: string; status: StageStatus; reason: string | null; duration_ms: number | null };
+
+export type RunSummary = Pick<RunRecord, "run_id" | "trace_id" | "question" | "preset_id" | "proposal_source" | "model_decision" | "runtime_outcome" | "runtime_reason" | "row_count" | "duration_ms" | "created_at" | "actor" | "connection_id" | "follow_up_of" | "edited_from">;
 
 export interface Preset {
   id: string;

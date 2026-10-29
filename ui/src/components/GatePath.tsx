@@ -27,15 +27,30 @@ const statusText: Record<StageStatus, string> = {
   SKIPPED: "skipped",
 };
 
-export function GatePath({ trace, onSelect }: { trace: RunTrace | null; onSelect?: (stage: TraceStage) => void }) {
+/** The gate a running question is at: the first one with no recorded stage. */
+export function activeGate(stages: TraceStage[]): string | undefined {
+  return GATES.find((gate) => !pick(stages, gate.names))?.label;
+}
+
+export function GatePath({
+  trace,
+  onSelect,
+  live = false,
+}: {
+  trace: RunTrace | null;
+  onSelect?: (stage: TraceStage) => void;
+  // While a question runs, the trace holds the stages so far and the rest are pending.
+  live?: boolean;
+}) {
+  const active = live ? activeGate(trace?.stages ?? []) : undefined;
   return (
     <ol className="gates" aria-label="Checks this question went through">
       {GATES.map((gate) => {
         const stage = trace ? pick(trace.stages, gate.names) : undefined;
         // A finished trace without this stage means the run never reached it.
-        const status = stage?.status.toLowerCase() ?? (trace ? "skipped" : "pending");
+        const status = stage?.status.toLowerCase() ?? (trace && !live ? "skipped" : "pending");
         return (
-          <li key={gate.label} className={`gate gate-${status}`}>
+          <li key={gate.label} className={`gate gate-${status}${gate.label === active ? " gate-active" : ""}`}>
             <button
               type="button"
               disabled={!stage || !onSelect}

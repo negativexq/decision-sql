@@ -43,8 +43,11 @@ tests.
   result the model learns only that the query matched no rows (or only zeros)
   and which of its literals the column does not store, never rows or stored
   values. After an out-of-range percentage it learns the column name only.
-- A follow-up from a report card also sends the earlier question and the SQL
-  the model proposed for it, recorded as `follow_up_of` in the audit log. It
+- A follow-up, on Ask or from a report card, also sends the earlier question and
+  the SQL the model proposed for it, recorded as `follow_up_of` in the audit log.
+  After the user changed an answer's conditions by hand, that edited SQL is sent
+  instead, with a note that it was edited: its values are the model's or the
+  user's own, typed rather than picked from the data. It
   never sends the SQL that ran, which can hold stored values the runtime wrote
   in, nor the reader's filter picks, which are read from the data; a card whose
   answer was not proposed by the model has nothing to follow up on.
@@ -71,6 +74,9 @@ tests.
   plans that are clearly out of scale; `DECISION_SQL_STATEMENT_TIMEOUT_MS` is
   what bounds how long an accepted plan runs, and a plan that reaches it is
   cancelled and returned to the model as `STATEMENT_TIMEOUT`.
+- Editing an answer's conditions sends a condition number and values, never
+  SQL. The server rewrites the stored run's proposed SQL with parser-built
+  literals and runs it through every gate as untrusted SQL.
 - Only an accepted `QueryPlan` can execute. Raw SQL, rejected plans, and copied
   plans are refused at the execution boundary.
 

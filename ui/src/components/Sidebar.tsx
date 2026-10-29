@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { formatCount } from "../format";
-import type { SchemaResponse } from "../types";
+import type { RunSummary, SchemaResponse } from "../types";
 
 export type View = "ask" | "reports" | "audit" | "sources" | "connections";
 
@@ -27,11 +27,17 @@ export function Sidebar({
   schema,
   actor,
   onActorChange,
+  recent,
+  current,
+  onOpenRecent,
 }: {
   view: View;
   onNavigate: (view: View) => void;
   onNewQuestion: () => void;
   schema: SchemaResponse | null;
+  recent: RunSummary[];
+  current: string | null;
+  onOpenRecent: (run: RunSummary) => void;
   actor: string;
   onActorChange: (actor: string) => void;
 }) {
@@ -62,6 +68,8 @@ export function Sidebar({
           </button>
         ))}
       </nav>
+
+      <Recent runs={recent} current={current} onOpen={onOpenRecent} />
 
       <div className="source">
         <div className="source-head">
@@ -112,6 +120,58 @@ export function Sidebar({
 
       <Identity actor={actor} onChange={onActorChange} />
     </aside>
+  );
+}
+
+interface Conversation {
+  // The newest run, which opens the whole thread.
+  last: RunSummary;
+  title: string;
+  turns: number;
+}
+
+/** Group runs into conversations: a follow-up or an edit continues the run it came from. */
+export function conversations(runs: RunSummary[], limit = 8): Conversation[] {
+  const byId = new Map(runs.map((run) => [run.run_id, run]));
+  const continued = new Set(runs.flatMap((run) => [run.follow_up_of, run.edited_from]).filter(Boolean) as string[]);
+  const found: Conversation[] = [];
+  for (const run of runs) {
+    if (continued.has(run.run_id)) continue;
+    let root = run;
+    let turns = 1;
+    for (let parent = byId.get(root.follow_up_of ?? root.edited_from ?? ""); parent && turns < 50; turns += 1) {
+      root = parent;
+      parent = byId.get(root.follow_up_of ?? root.edited_from ?? "");
+    }
+    found.push({ last: run, title: root.question, turns });
+    if (found.length >= limit) break;
+  }
+  return found;
+}
+
+function Recent({ runs, current, onOpen }: { runs: RunSummary[]; current: string | null; onOpen: (run: RunSummary) => void }) {
+  const items = conversations(runs);
+  if (items.length === 0) return null;
+  return (
+    <section className="recent" aria-labelledby="recent-title">
+      <h2 id="recent-title" className="recent-title">Recent questions</h2>
+      <ul>
+        {items.map((item) => (
+          <li key={item.last.run_id}>
+            <button
+              type="button"
+              className={item.last.run_id === current ? "recent-item active" : "recent-item"}
+              aria-current={item.last.run_id === current ? "true" : undefined}
+              onClick={() => onOpen(item.last)}
+              title={item.title}
+            >
+              <span className="recent-question">{item.title}</span>
+              {item.turns > 1 && <span className="recent-turns">{item.turns}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

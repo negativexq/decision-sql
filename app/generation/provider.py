@@ -56,6 +56,8 @@ class EarlierAnswer(BaseModel):
 
     question: str
     sql: str
+    # Set when the user changed the SQL's conditions by hand after it answered.
+    note: str | None = None
 
 
 class ProviderErrorDetail(BaseModel):
@@ -239,7 +241,7 @@ def _production_decision_messages(
     user = "Case ID:\noperator\n\nQuestion:\n" + question
     if earlier is not None:
         user += "\n\nEarlier answer:\n" + json.dumps(
-            earlier.model_dump(), ensure_ascii=False, indent=2
+            earlier.model_dump(exclude_none=True), ensure_ascii=False, indent=2
         )
     user += "\n\nGoverned context:\n" + schema_context
     if exploration is not None:

@@ -342,3 +342,28 @@ def test_joins_must_follow_an_authorized_relationship() -> None:
         parsed("SELECT c.name FROM orders o JOIN customers c ON o.id = c.id")
     ).message  # type: ignore[union-attr]
     assert "orders.customer_id = customers.id" in message
+
+
+def test_an_equality_between_tables_already_joined_is_a_filter() -> None:
+    sql_policy = policy()
+    allowed = (
+        "SELECT c.name FROM orders o JOIN customers c ON o.customer_id = c.id AND o.id = c.id",
+        "SELECT c.name FROM orders o, customers c WHERE o.customer_id = c.id AND (o.id = c.id)",
+        "SELECT c.name FROM customers c LEFT JOIN LATERAL (SELECT o.id FROM orders o "
+        "WHERE o.customer_id = c.id AND o.id = c.id LIMIT 1) AS x ON TRUE",
+    )
+    for query in allowed:
+        assert sql_policy.validate(parsed(query)) is None, query
+
+    rejected = (
+        # OR can widen the authorized pairs; it is not a filter.
+        "SELECT c.name FROM orders o JOIN customers c ON o.customer_id = c.id OR o.id = c.id",
+        # A link in the enclosing SELECT does not make the subquery's equality a filter.
+        "SELECT c.name FROM orders o JOIN customers c ON o.customer_id = c.id "
+        "WHERE EXISTS (SELECT 1 FROM orders o2 WHERE o2.id = c.id)",
+        "WITH x AS (SELECT o.id FROM orders o, customers c WHERE o.id = c.id) "
+        "SELECT c.name FROM orders o JOIN customers c ON o.customer_id = c.id JOIN x ON TRUE",
+    )
+    for query in rejected:
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None and rejection.code is PolicyCode.UNAUTHORIZED_JOIN, query

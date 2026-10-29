@@ -56,7 +56,10 @@ tests.
 - Wildcards that would expose a non-queryable column are rejected.
 - Every referenced relation must be in the request's governed context.
 - Equality between columns of two tables must follow a foreign key or a
-  declared relationship.
+  declared relationship. Once two tables are joined that way, a further equality
+  between them ANDed into the same SELECT (such as `trans.date = loan.date`) only
+  narrows the authorized pairs and is allowed; under `OR`, or with the link only
+  in an enclosing SELECT, it is still rejected.
 - Aggregates that would fan out across a parent-child join are rejected,
   including `SUM(DISTINCT ...)` over such a join.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under

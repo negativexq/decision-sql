@@ -241,11 +241,18 @@ class SQLPolicy:
         not: ``orders.id = customers.id`` matches unrelated rows that happen to share
         a number.  Columns of CTEs and derived tables are not traced to their source
         tables, and a table compared with itself is left alone.
+
+        Once two tables are joined by authorized relationships ANDed into the same
+        SELECT, a further equality between them, such as ``trans.date = loan.date``,
+        only narrows rows the authorized join already paired; it is a filter, not a
+        new relationship.  A link in an enclosing SELECT does not count: inside the
+        subquery the equality alone would pair the rows.
         """
         for scope in traverse_scope(expression):
             if not isinstance(scope.expression, exp.Select):
                 continue
             relations = self._scope_relations(scope)
+            pairs: list[tuple[exp.EQ, tuple[str, str], tuple[str, str]]] = []
             for equality in scope.expression.find_all(exp.EQ):
                 if equality.find_ancestor(exp.Select) is not scope.expression:
                     continue
@@ -253,7 +260,16 @@ class SQLPolicy:
                 right = self._join_column(scope, relations, equality.right)
                 if left is None or right is None or left[0] == right[0]:
                     continue
+                pairs.append((equality, left, right))
+            links = {
+                frozenset((left[0], right[0]))
+                for equality, left, right in pairs
+                if _conjunct(equality) and self._related(left, right)
+            }
+            for equality, left, right in pairs:
                 if self._related(left, right):
+                    continue
+                if _conjunct(equality) and _connected(left[0], right[0], links):
                     continue
                 return self._reject(
                     PolicyCode.UNAUTHORIZED_JOIN,
@@ -543,3 +559,26 @@ class SQLPolicy:
     @staticmethod
     def _reject(code: PolicyCode, message: str, object_name: str | None = None) -> PolicyRejection:
         return PolicyRejection(code=code, message=message, object=object_name)
+
+
+def _conjunct(equality: exp.EQ) -> bool:
+    """Whether the equality is ANDed into a WHERE or a JOIN ... ON of its SELECT."""
+    node: exp.Expression = equality
+    while isinstance(node.parent, exp.And | exp.Paren):
+        node = node.parent
+    parent = node.parent
+    return isinstance(parent, exp.Where) or (isinstance(parent, exp.Join) and node.arg_key == "on")
+
+
+def _connected(a: str, b: str, edges: set[frozenset[str]]) -> bool:
+    """Whether a path of authorized equalities links two tables."""
+    reached, frontier = {a}, [a]
+    while frontier:
+        table = frontier.pop()
+        for edge in edges:
+            if table in edge:
+                for other in edge - {table}:
+                    if other not in reached:
+                        reached.add(other)
+                        frontier.append(other)
+    return b in reached

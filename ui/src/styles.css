@@ -401,8 +401,9 @@ code, kbd, pre { font-family: var(--mono); }
 .report-shell { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100vh; }
 .report-shell.with-panel { grid-template-columns: minmax(0, 1fr) 360px; }
 .report-main { min-width: 0; padding: 16px 28px 80px; display: grid; gap: 16px; align-content: start; }
-.report-bar { display: flex; align-items: center; gap: 12px; }
-.report-actions { margin-left: auto; display: flex; gap: 8px; }
+.report-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.report-bar .button { white-space: nowrap; }
+.report-actions { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .report-save { font-size: 12px; color: var(--muted); }
 .report-save-pending, .report-save-saving { color: var(--warning); }
 .report-save-error { color: var(--danger); }
@@ -445,6 +446,28 @@ code, kbd, pre { font-family: var(--mono); }
 .report-card-type select { height: 24px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 0 4px; font-size: 12px; background: var(--bg); }
 .report-card-body { flex: 1; min-height: 0; padding: 4px 12px 10px; display: flex; flex-direction: column; }
 .report-card-prose { white-space: pre-wrap; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; overflow: auto; }
+.report-card-unfiltered { padding: 6px 12px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 11.5px; font-style: italic; }
+.filter-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+.filter-chip { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.filter-chip.active { border-color: var(--accent); }
+.filter-trigger { display: flex; gap: 6px; align-items: baseline; padding: 6px 10px; background: none; border: 0; font: inherit; cursor: pointer; color: var(--ink); }
+.filter-label { font-size: 12px; color: var(--ink-2); }
+.filter-summary { font-size: 13px; font-weight: 600; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filter-chip.active .filter-summary { color: var(--accent); }
+.filter-values { position: relative; }
+.filter-popover { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; width: 260px; padding: 10px; display: grid; gap: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 28px rgba(22, 24, 29, .14); }
+.filter-search { width: 100%; }
+.filter-options { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow: auto; display: grid; gap: 2px; }
+.filter-options label { display: flex; gap: 8px; align-items: center; padding: 4px 4px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.filter-options label:hover { background: var(--accent-soft); }
+.filter-note, .filter-error { margin: 0; font-size: 12px; color: var(--ink-2); }
+.filter-error { color: var(--danger); }
+.filter-actions { display: flex; justify-content: flex-end; gap: 6px; }
+.filter-dates { display: flex; gap: 6px; align-items: center; padding: 4px 8px; font-size: 12px; color: var(--ink-2); }
+.filter-dates input { font: inherit; font-size: 12.5px; padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; }
+.filter-remove { border: 0; background: none; padding: 4px 8px 4px 2px; color: var(--ink-2); font-size: 15px; cursor: pointer; }
+.filter-remove:hover { color: var(--ink); }
+.filter-clear { font-size: 12px; }
 .report-card-drift { display: flex; gap: 8px; align-items: baseline; padding: 6px 12px; background: var(--warning-soft); border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.45; }
 .report-card-drift p { flex: 1; margin: 0; }
 .report-card-drift .link { white-space: nowrap; }
@@ -499,7 +522,7 @@ code, kbd, pre { font-family: var(--mono); }
 .share-visibility strong { display: block; color: var(--ink); font-weight: 600; }
 .share-visibility input { margin-top: 3px; }
 .report-provenance { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 12px; color: var(--ink-2); }
-.report-provenance dt { color: var(--ink); }
+.report-provenance dt { color: var(--muted); }
 .report-provenance dd { margin: 0; overflow-wrap: anywhere; }
 .report-sql summary { cursor: pointer; color: var(--ink-2); font-size: 12px; }
 

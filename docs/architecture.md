@@ -130,6 +130,11 @@ audit log keeps both the model's SQL and the text the database received
   columns; `LIKE`, functions such as `LOWER(column)`, and columns whose
   values are not all known are not checked.
 - Repair is one round. A second rejection is final.
+- A report filter does not follow relationships: a filter on `regions.name`
+  leaves a card that reads only `orders` unfiltered (the card says so). It
+  narrows every SELECT that reads its table, including a subquery that
+  computes a total to compare against.
+- A query with a RIGHT or FULL JOIN is not filtered.
 
 ## Workspace services
 
@@ -200,6 +205,17 @@ cards; only the owner changes who may open it or deletes it. A report someone
 cannot open reads as missing. Every refresh runs as the connection's reader
 role and records the person who asked, so all readers see the same data:
 sharing a report shares what that connection can read.
+
+Filters narrow a whole report. An editor makes a filter of a catalog column,
+either a list of values or a date range; a reader's picks stay in their
+browser and travel with each refresh. The server adds the predicate to every
+SELECT of a card's pinned SQL that reads the column's table directly (in the
+join condition when the table is LEFT JOINed, so unmatched rows stay), and the
+narrowed SQL goes through every gate: the value check gives each picked value
+its stored spelling, and the audit log records the SQL that ran. Values come
+from the reader as quoted literals built by the parser, never as SQL text. The
+list of values to pick from is read by a gated, audited `SELECT DISTINCT`. A
+card whose SQL does not read the table is left as it is and says so.
 
 ### Metadata isolation
 

@@ -2,9 +2,13 @@ import type {
   ConnectionRelationships,
   ConnectionValues,
   CardRefresh,
+  FilterChoice,
+  FilterColumn,
+  FilterOptions,
   Report,
   ReportAccess,
   ReportCard,
+  ReportFilter,
   ReportSummary,
   ConnectionSummary,
   ConnectionTestResult,
@@ -114,7 +118,7 @@ export const api = {
   report: (id: string) => request<Report>(`/api/reports/${encodeURIComponent(id)}`),
   createReport: (title: string, connection_id: string) =>
     request<Report>("/api/reports", { method: "POST", body: JSON.stringify({ title, connection_id }) }),
-  saveReport: (id: string, body: { title: string; description: string; cards: ReportCard[] }) =>
+  saveReport: (id: string, body: { title: string; description: string; cards: ReportCard[]; filters: ReportFilter[] }) =>
     request<Report>(`/api/reports/${encodeURIComponent(id)}`, {
       method: "PUT",
       body: JSON.stringify({
@@ -128,8 +132,14 @@ export const api = {
   deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
   askForCard: (id: string, question: string) =>
     request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),
-  refreshCard: (id: string, cardId: string) =>
+  refreshCard: (id: string, cardId: string, filters: Record<string, FilterChoice> = {}) =>
     request<CardRefresh>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/refresh`, {
+      method: "POST",
+      body: JSON.stringify({ filters }),
+    }),
+  filterColumns: (id: string) => request<FilterColumn[]>(`/api/reports/${encodeURIComponent(id)}/filter-columns`),
+  filterOptions: (id: string, filterId: string) =>
+    request<FilterOptions>(`/api/reports/${encodeURIComponent(id)}/filters/${encodeURIComponent(filterId)}/options`, {
       method: "POST",
     }),
   acceptCard: (id: string, cardId: string) =>

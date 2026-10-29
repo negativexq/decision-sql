@@ -16,6 +16,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.operator.models import RunRecord
+from app.reports.filters import MAX_FILTERS, FilterChoice, FilterKind, ReportFilter
 
 GRID_COLUMNS = 12
 MAX_CARDS = 40
@@ -88,6 +89,7 @@ class ReportInput(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(default="", max_length=4000)
     cards: list[CardInput] = Field(default_factory=list, max_length=MAX_CARDS)
+    filters: list[ReportFilter] = Field(default_factory=list, max_length=MAX_FILTERS)
 
 
 class ReportCreate(BaseModel):
@@ -135,6 +137,7 @@ class Report(BaseModel):
     title: str
     description: str
     cards: list[ReportCard]
+    filters: list[ReportFilter] = Field(default_factory=list)
     visibility: Visibility = Visibility.PRIVATE
     editors: list[str] = Field(default_factory=list)
     viewers: list[str] = Field(default_factory=list)
@@ -173,11 +176,38 @@ class ReportView(Report):
     role: ReportRole
 
 
+class CardRefreshRequest(BaseModel):
+    """The reader's filter choices, by filter id; they are not saved with the report."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    filters: dict[str, FilterChoice] = Field(default_factory=dict, max_length=MAX_FILTERS)
+
+
 class CardRefresh(BaseModel):
     """A card's run, and the tables whose description changed since it was pinned."""
 
     run: RunRecord
     changed_tables: list[str] = Field(default_factory=list)
+    # Filters with a choice that narrowed this card, and those its SQL could not take.
+    applied_filters: list[str] = Field(default_factory=list)
+    skipped_filters: list[str] = Field(default_factory=list)
+
+
+class FilterColumn(BaseModel):
+    """A column a filter can name, with the kinds of filter it supports."""
+
+    table: str
+    column: str
+    type: str
+    kinds: list[FilterKind]
+
+
+class FilterOptions(BaseModel):
+    values: list[str]
+    # True when the column holds more distinct values than were read.
+    truncated: bool
+    run_id: str
 
 
 class CardQuestion(BaseModel):

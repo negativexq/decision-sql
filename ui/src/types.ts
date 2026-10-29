@@ -311,6 +311,38 @@ export interface ReportCard {
 export interface CardRefresh {
   run: RunRecord;
   changed_tables: string[];
+  applied_filters: string[];
+  skipped_filters: string[];
+}
+
+export type FilterKind = "values" | "date_range";
+
+export interface ReportFilter {
+  id: string;
+  label: string;
+  table: string;
+  column: string;
+  kind: FilterKind;
+}
+
+/** One reader's pick for one filter; dates are YYYY-MM-DD. */
+export interface FilterChoice {
+  values?: string[];
+  start?: string | null;
+  end?: string | null;
+}
+
+export interface FilterColumn {
+  table: string;
+  column: string;
+  type: string;
+  kinds: FilterKind[];
+}
+
+export interface FilterOptions {
+  values: string[];
+  truncated: boolean;
+  run_id: string;
 }
 
 export type ReportVisibility = "private" | "workspace";
@@ -328,6 +360,7 @@ export interface Report extends ReportAccess {
   title: string;
   description: string;
   cards: ReportCard[];
+  filters: ReportFilter[];
   role: ReportRole;
   created_by: string;
   created_at: string;

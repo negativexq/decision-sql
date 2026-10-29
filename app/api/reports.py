@@ -9,6 +9,9 @@ from app.operator.models import RunRecord
 from app.reports.models import (
     CardQuestion,
     CardRefresh,
+    CardRefreshRequest,
+    FilterColumn,
+    FilterOptions,
     ReportAccess,
     ReportCreate,
     ReportInput,
@@ -103,8 +106,28 @@ async def ask_for_card(
 
 
 @router.post("/{report_id}/cards/{card_id}/refresh", response_model=CardRefresh)
-async def refresh_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> CardRefresh:
-    return await _run(service.refresh(report_id, card_id, actor))
+async def refresh_card(
+    report_id: str,
+    card_id: str,
+    service: Reports,
+    actor: Actor,
+    payload: CardRefreshRequest | None = None,
+) -> CardRefresh:
+    choices = payload.filters if payload is not None else {}
+    return await _run(service.refresh(report_id, card_id, actor, choices))
+
+
+@router.get("/{report_id}/filter-columns", response_model=list[FilterColumn])
+async def filter_columns(report_id: str, service: Reports, actor: Actor) -> list[FilterColumn]:
+    return await _run(service.filter_columns(report_id, actor))
+
+
+@router.post("/{report_id}/filters/{filter_id}/options", response_model=FilterOptions)
+async def filter_options(
+    report_id: str, filter_id: str, service: Reports, actor: Actor
+) -> FilterOptions:
+    """Read the values a reader can pick; the read is a gated, audited query."""
+    return await _run(service.filter_options(report_id, filter_id, actor))
 
 
 @router.post("/{report_id}/cards/{card_id}/accept", response_model=ReportView)

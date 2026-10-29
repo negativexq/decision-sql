@@ -9,6 +9,7 @@ from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, Table
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import _saved_query_tables
+from app.reports.filters import FilterChoice, FilterKind, ReportFilter
 from app.reports.models import (
     CardInput,
     CardLayout,
@@ -55,13 +56,14 @@ class FakeOperator:
         self.records = {record.run_id: record for record in records}
         self.calls: list[dict[str, object]] = []
         self.catalog = _orders()
+        self.rows: list[dict[str, object]] = []
 
     def get_run(self, run_id: str) -> RunRecord | None:
         return self.records.get(run_id)
 
     async def run(self, question: str, **kwargs: object) -> RunRecord:
         self.calls.append({"question": question, **kwargs})
-        return _record("refreshed")
+        return _record("refreshed").model_copy(update={"rows": self.rows})
 
 
 class FakeConnections:
@@ -238,3 +240,50 @@ def test_saved_query_tables_skip_cte_names() -> None:
     sql = "WITH t AS (SELECT id FROM orders) SELECT c.name FROM customers c JOIN t ON t.id = c.id"
     assert _saved_query_tables(sql) == ("customers", "orders")
     assert _saved_query_tables("not sql at all (") == ()
+
+
+@pytest.mark.asyncio
+async def test_filters_narrow_the_pinned_sql_before_the_gates_see_it() -> None:
+    service, operator = _service(_record("run_a"))
+    operator.catalog = _orders()
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    total = ReportFilter(id="total", label="Total", table="orders", column="total", kind="values")
+    with pytest.raises(ReportRejectedError, match="not a column"):
+        service.update(
+            report.id,
+            ReportInput(title="S", filters=[total.model_copy(update={"column": "nope"})]),
+            "ayse",
+        )
+    with pytest.raises(ReportRejectedError, match="not dates"):
+        service.update(
+            report.id,
+            ReportInput(
+                title="S", filters=[total.model_copy(update={"kind": FilterKind.DATE_RANGE})]
+            ),
+            "ayse",
+        )
+    service.update(
+        report.id, ReportInput(title="S", cards=[_card("c1", "run_a")], filters=[total]), "ayse"
+    )
+
+    refreshed = await service.refresh(
+        report.id, "c1", "ayse", {"total": FilterChoice(values=["10"]), "gone": FilterChoice()}
+    )
+    assert refreshed is not None and refreshed.applied_filters == ["total"]
+    assert (
+        operator.calls[-1]["saved_sql"]
+        == "SELECT total FROM orders /* run_a */ WHERE orders.total IN ('10')"
+    )
+    # The saved card keeps its own SQL; the choice lasts for this refresh only.
+    stored = service.get(report.id, "ayse")
+    assert stored is not None and stored.cards[0].sql == "SELECT total FROM orders -- run_a"
+
+    operator.rows = [{"value": "10"}, {"value": "20"}]
+    options = await service.filter_options(report.id, "total", "ayse")
+    assert options is not None and options.values == ["10", "20"] and not options.truncated
+    assert operator.calls[-1]["saved_sql"] == (
+        "SELECT DISTINCT orders.total AS value FROM orders "
+        "WHERE NOT orders.total IS NULL ORDER BY 1 LIMIT 201"
+    )
+    columns = await service.filter_columns(report.id, "ayse")
+    assert columns is not None and [(c.table, c.column) for c in columns] == [("orders", "total")]

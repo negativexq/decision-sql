@@ -1,19 +1,24 @@
 from __future__ import annotations
 
+import builtins
 from collections.abc import Callable
 from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi.concurrency import run_in_threadpool
+from sqlglot import exp
 
 from app.catalog.models import SchemaCatalog
 from app.metadata.service import GOVERNED_CONNECTION_ID, ConnectionService, QuestionSource
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import OperatorApplication, _saved_query_tables
 from app.reports.basis import changed_tables, table_basis
+from app.reports.filters import FilterChoice, FilterKind, apply_filters, check_filters
 from app.reports.models import (
     CardInput,
     CardRefresh,
+    FilterColumn,
+    FilterOptions,
     Report,
     ReportAccess,
     ReportCard,
@@ -35,6 +40,11 @@ class ReportForbiddenError(PermissionError):
 
 
 _EDIT = (ReportRole.OWNER, ReportRole.EDITOR)
+_OPTION_LIMIT = 200
+
+
+def _is_date(type_name: str) -> bool:
+    return any(word in type_name.lower() for word in ("date", "time"))
 
 
 class _Lazy:
@@ -120,11 +130,17 @@ class ReportService:
         previous = {card.id: card for card in report.cards}
         catalog = _Lazy(lambda: self._catalog(report.connection_id))
         cards = [self._pin(report, card, previous.get(card.id), catalog) for card in payload.cards]
+        if payload.filters != report.filters:
+            try:
+                check_filters(payload.filters, catalog.get())
+            except ValueError as error:
+                raise ReportRejectedError(str(error)) from error
         updated = report.model_copy(
             update={
                 "title": payload.title.strip(),
                 "description": payload.description,
                 "cards": cards,
+                "filters": payload.filters,
                 "updated_by": actor,
                 "updated_at": datetime.now(UTC),
             }
@@ -167,13 +183,20 @@ class ReportService:
         source = await self._source(report.connection_id)
         return await self.operator.run(question, actor=actor, source=source)
 
-    async def refresh(self, report_id: str, card_id: str, actor: str) -> CardRefresh | None:
+    async def refresh(
+        self,
+        report_id: str,
+        card_id: str,
+        actor: str,
+        choices: dict[str, FilterChoice] | None = None,
+    ) -> CardRefresh | None:
         """Run a card's pinned SQL again, through every check, without a model call.
 
         The checks say whether the query may still run; the basis says whether the
         tables it reads are still described the way they were when it was pinned.
         Any reader may refresh: the query runs as the connection's reader role, and
-        the audit record names the reader.
+        the audit record names the reader.  The reader's filter choices narrow the
+        pinned SQL first; the narrowed SQL is what the gates check and what runs.
         """
         found = self._query_card(report_id, card_id, actor)
         if found is None:
@@ -181,13 +204,81 @@ class ReportService:
         report, _, card = found
         source = await self._source(report.connection_id)
         catalog = source.catalog if source is not None else self.operator.catalog
+        filtered = apply_filters(card.sql or "", report.filters, choices or {})
         run = await self.operator.run(
             card.question or card.title or "Saved report query",
             actor=actor,
             source=source,
-            saved_sql=card.sql,
+            saved_sql=filtered.sql,
         )
-        return CardRefresh(run=run, changed_tables=changed_tables(card.basis, catalog))
+        return CardRefresh(
+            run=run,
+            changed_tables=changed_tables(card.basis, catalog),
+            applied_filters=list(filtered.applied),
+            skipped_filters=list(filtered.skipped),
+        )
+
+    async def filter_columns(
+        self, report_id: str, actor: str
+    ) -> builtins.list[FilterColumn] | None:
+        """The columns an editor can make a filter of: every readable column."""
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
+            return None
+        report, _ = found
+        source = await self._source(report.connection_id)
+        catalog = source.catalog if source is not None else self.operator.catalog
+        return [
+            FilterColumn(
+                table=table.name,
+                column=column.name,
+                type=column.type,
+                kinds=[FilterKind.VALUES]
+                + ([FilterKind.DATE_RANGE] if _is_date(column.type) else []),
+            )
+            for table in catalog.tables
+            if table.queryable
+            for column in table.columns
+            if column.queryable
+        ]
+
+    async def filter_options(
+        self, report_id: str, filter_id: str, actor: str
+    ) -> FilterOptions | None:
+        """The values a reader can pick, read by a query that passes every gate."""
+        found = self._open(report_id, actor)
+        if found is None:
+            return None
+        report, _ = found
+        item = next((entry for entry in report.filters if entry.id == filter_id), None)
+        if item is None:
+            return None
+        if item.kind is not FilterKind.VALUES:
+            raise ReportRejectedError("A date filter has no list of values.")
+        column = exp.column(item.column, table=item.table)
+        sql = (
+            exp.select(column.as_("value"))
+            .distinct()
+            .from_(exp.to_table(item.table))
+            .where(exp.Not(this=exp.Is(this=column.copy(), expression=exp.Null())))
+            .order_by(exp.Ordered(this=exp.Literal.number(1)))
+            .limit(_OPTION_LIMIT + 1)
+            .sql(dialect="postgres")
+        )
+        source = await self._source(report.connection_id)
+        run = await self.operator.run(
+            f"Values of the report filter {item.label}", actor=actor, source=source, saved_sql=sql
+        )
+        if run.runtime_outcome is not RuntimeOutcome.EXECUTED:
+            raise ReportRejectedError(
+                f"The values of {item.label} could not be read ({run.runtime_reason})."
+            )
+        values = [str(row["value"]) for row in run.rows if row.get("value") is not None]
+        return FilterOptions(
+            values=values[:_OPTION_LIMIT],
+            truncated=len(values) > _OPTION_LIMIT,
+            run_id=run.run_id,
+        )
 
     async def accept(self, report_id: str, card_id: str, actor: str) -> ReportView | None:
         """Record that an editor checked the card against the tables as they are now."""

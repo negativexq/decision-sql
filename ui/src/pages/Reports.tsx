@@ -4,13 +4,25 @@ import { relativeTime, runOutcome } from "../format";
 import { ReportCanvas } from "../components/report/ReportCanvas";
 import { CHART_TYPES, ReportChart, splitColumns, suggestChart } from "../components/report/ReportChart";
 import { bottom } from "../components/report/layout";
+import { AddFilterPanel, FilterBar, isEmpty } from "../components/report/ReportFilters";
 import { SqlViewer } from "../components/SqlViewer";
-import type { ChartType, ConnectionSummary, Report, ReportAccess, ReportCard, ReportSummary, RunRecord } from "../types";
+import type {
+  ChartType,
+  ConnectionSummary,
+  FilterChoice,
+  Report,
+  ReportAccess,
+  ReportCard,
+  ReportFilter,
+  ReportSummary,
+  RunRecord,
+} from "../types";
 
 type CardState =
   | { status: "loading" }
   // changed: tables described differently since the card was saved.
-  | { status: "done"; run: RunRecord; changed: string[] }
+  // skipped: filters with a choice that this card's query does not read.
+  | { status: "done"; run: RunRecord; changed: string[]; applied: string[]; skipped: string[] }
   | { status: "error"; message: string };
 
 const DEFAULT_SIZE: Record<ChartType, { w: number; h: number }> = {
@@ -23,6 +35,23 @@ const DEFAULT_SIZE: Record<ChartType, { w: number; h: number }> = {
   table: { w: 6, h: 8 },
 };
 
+// A reader's filter choices are a per-viewer convenience: kept in this browser only.
+function loadChoices(reportId: string): Record<string, FilterChoice> {
+  try {
+    return JSON.parse(localStorage.getItem(`decision-sql.report-filters.${reportId}`) ?? "{}") as Record<string, FilterChoice>;
+  } catch {
+    return {};
+  }
+}
+
+function storeChoices(reportId: string, choices: Record<string, FilterChoice>) {
+  try {
+    localStorage.setItem(`decision-sql.report-filters.${reportId}`, JSON.stringify(choices));
+  } catch {
+    // Without storage the choices last until the page closes.
+  }
+}
+
 function newId(prefix: string) {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -34,6 +63,10 @@ function runProblem(run: RunRecord): string | null {
   if (detail?.clarification_question) return `The question needs one more detail: ${detail.clarification_question}`;
   if (detail?.explanation) return detail.explanation;
   return `${runOutcome(run).label}${run.runtime_reason ? ` (${run.runtime_reason})` : ""}.`;
+}
+
+function activeChoices(choices: Record<string, FilterChoice>): Record<string, FilterChoice> {
+  return Object.fromEntries(Object.entries(choices).filter(([, choice]) => !isEmpty(choice)));
 }
 
 export function Reports() {
@@ -130,23 +163,31 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   const [cards, setCards] = useState<ReportCard[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [filters, setFilters] = useState<ReportFilter[]>([]);
+  const [choices, setChoices] = useState<Record<string, FilterChoice>>(() => loadChoices(reportId));
+  const choicesRef = useRef(choices);
   const [results, setResults] = useState<Record<string, CardState>>({});
   const [editing, setEditing] = useState(false);
-  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "share" } | { kind: "card"; id: string } | null>(null);
+  const [panel, setPanel] = useState<
+    { kind: "add" } | { kind: "share" } | { kind: "filter" } | { kind: "card"; id: string } | null
+  >(null);
   const [save, setSave] = useState<"saved" | "pending" | "saving" | "error">("saved");
   const [error, setError] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState("");
   const timer = useRef<number | null>(null);
-  const latest = useRef({ title, description, cards });
-  latest.current = { title, description, cards };
+  const latest = useRef({ title, description, cards, filters });
+  latest.current = { title, description, cards, filters };
 
   const refresh = useCallback(
     (card: ReportCard) => {
       setResults((current) => ({ ...current, [card.id]: { status: "loading" } }));
       return api
-        .refreshCard(reportId, card.id)
-        .then(({ run, changed_tables }) =>
-          setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: changed_tables } })),
+        .refreshCard(reportId, card.id, activeChoices(choicesRef.current))
+        .then(({ run, changed_tables, applied_filters, skipped_filters }) =>
+          setResults((current) => ({
+            ...current,
+            [card.id]: { status: "done", run, changed: changed_tables, applied: applied_filters, skipped: skipped_filters },
+          })),
         )
         .catch((cause: Error) => setResults((current) => ({ ...current, [card.id]: { status: "error", message: cause.message } })));
     },
@@ -186,6 +227,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         setCards(value.cards);
         setTitle(value.title);
         setDescription(value.description);
+        setFilters(value.filters);
         setEditing(value.cards.length === 0 && value.role !== "viewer");
         void refreshAll(value.cards);
         void api.connections().then((items) => setConnectionName(items.find((item) => item.id === value.connection_id)?.name ?? value.connection_id));
@@ -244,9 +286,31 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
       measure: null,
       layout: { x: 0, y: bottom(cards), ...size },
     };
-    setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: [] } }));
+    setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: [], applied: [], skipped: [] } }));
+    // The new card shows the answer to its question; refresh it if filters are set.
+    if (Object.keys(activeChoices(choicesRef.current)).length) void refresh(card);
     updateCards([...cards, card]);
     setPanel(null);
+  };
+
+  const choose = (id: string, choice: FilterChoice) => {
+    const next = { ...choicesRef.current, [id]: choice };
+    choicesRef.current = next;
+    setChoices(next);
+    storeChoices(reportId, next);
+    void refreshAll(cards);
+  };
+
+  const addFilter = (filter: ReportFilter) => {
+    setFilters([...filters, filter]);
+    schedule();
+    setPanel(null);
+  };
+
+  const removeFilter = (id: string) => {
+    setFilters(filters.filter((item) => item.id !== id));
+    schedule();
+    if (!isEmpty(choicesRef.current[id])) choose(id, {});
   };
 
   const addTextCard = () => {
@@ -353,6 +417,16 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
           </p>
         </header>
 
+        <FilterBar
+          reportId={reportId}
+          filters={filters}
+          choices={choices}
+          editing={editing}
+          onChoose={choose}
+          onRemove={removeFilter}
+          onAdd={() => setPanel({ kind: "filter" })}
+        />
+
         {error && report && <div className="callout callout-danger">{error}</div>}
 
         {cards.length === 0 ? (
@@ -382,6 +456,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 onSelect={() => setPanel({ kind: "card", id: card.id })}
                 onRefresh={() => void refresh(card)}
                 onAccept={canEdit ? () => void accept(card) : undefined}
+                filterLabels={Object.fromEntries(filters.map((item) => [item.id, item.label]))}
                 onChart={(chart) => updateCard(card.id, { chart })}
               />
             )}
@@ -389,6 +464,9 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         )}
       </div>
 
+      {panel?.kind === "filter" && (
+        <AddFilterPanel reportId={reportId} existing={filters} onAdd={addFilter} onClose={() => setPanel(null)} />
+      )}
       {panel?.kind === "share" && (
         <SharePanel
           report={report}
@@ -422,6 +500,7 @@ function CardView({
   onSelect,
   onRefresh,
   onAccept,
+  filterLabels,
   onChart,
 }: {
   card: ReportCard;
@@ -432,9 +511,11 @@ function CardView({
   onSelect: () => void;
   onRefresh: () => void;
   onAccept?: () => void;
+  filterLabels: Record<string, string>;
   onChart: (chart: ChartType) => void;
 }) {
   const changed = state?.status === "done" ? state.changed : [];
+  const skipped = state?.status === "done" ? state.skipped.map((id) => filterLabels[id] ?? id) : [];
   const className = ["report-card", card.kind === "text" ? "report-card-text" : "", selected ? "selected" : ""].filter(Boolean).join(" ");
   return (
     <article className={className}>
@@ -469,6 +550,9 @@ function CardView({
           <CardBody card={card} state={state} onRefresh={onRefresh} />
         )}
       </div>
+      {skipped.length > 0 && (
+        <p className="report-card-unfiltered">Not filtered by {skipped.join(", ")}: this chart's query does not read that table.</p>
+      )}
       {card.kind === "query" && card.note && <p className="report-card-note">{card.note}</p>}
     </article>
   );
@@ -493,7 +577,14 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
     );
   }
   return (
-    <ReportChart type={card.chart} columns={state.run.columns} rows={state.run.rows} dimension={card.dimension} measure={card.measure} />
+    <ReportChart
+      type={card.chart}
+      columns={state.run.columns}
+      rows={state.run.rows}
+      dimension={card.dimension}
+      measure={card.measure}
+      emptyText={state.applied.length ? "No rows match the current filters." : undefined}
+    />
   );
 }
 

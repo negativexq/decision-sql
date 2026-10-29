@@ -87,22 +87,36 @@ export function ReportChart({
   rows,
   dimension,
   measure,
+  emptyText = "The query returned no rows.",
 }: {
   type: ChartType;
   columns: string[];
   rows: Row[];
   dimension: string | null;
   measure: string | null;
+  emptyText?: string;
 }) {
   const [ref, size] = useSize<HTMLDivElement>();
   const { numeric, other } = splitColumns(columns, rows);
 
   if (!rows.length) {
-    return <div className="rc-empty">The query returned no rows.</div>;
+    return <div className="rc-empty">{emptyText}</div>;
   }
   if (type === "table") return <MiniTable columns={columns} rows={rows} />;
 
   const value = measure && numeric.includes(measure) ? measure : numeric[0];
+  if (type === "number" && !value && rows.length === 1) {
+    // An aggregate over no rows comes back as one empty value, as SUM does.
+    const column = measure ?? columns[0];
+    if (rows[0][column] === null || rows[0][column] === undefined) {
+      return (
+        <div className="rc-number">
+          <strong>—</strong>
+          <span>{column}, no value</span>
+        </div>
+      );
+    }
+  }
   if (!value) {
     return <div className="rc-empty">This result has no numeric column to chart. Choose Table instead.</div>;
   }

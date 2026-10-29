@@ -539,6 +539,23 @@ class SqlSafetyService:
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
 
+    def explore(
+        self, candidate: SqlCandidate
+    ) -> tuple[QueryPlan | SqlPlanFailure, QueryExecution | SqlExecutionError | None]:
+        """Plan and run one exploration probe through every gate, outside the run's trace.
+
+        The probe is the model's, not the answer: its gates must not overwrite the
+        answer's stages, so nothing is recorded while it runs.
+        """
+        recorder, self.stage_recorder = self.stage_recorder, None
+        try:
+            planned = self._plan(candidate)
+            if isinstance(planned, SqlPlanFailure):
+                return planned, None
+            return planned, self.execute(planned)
+        finally:
+            self.stage_recorder = recorder
+
     def probe_values(self, sql: str) -> ValueCheck | None:
         """Look up the literals of a query that came back empty; None when nothing was probed.
 

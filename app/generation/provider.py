@@ -7,6 +7,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict
 
 from app.config import Settings, get_settings
+from app.decision.exploration import Exploration
 from app.generation.decision_contract import (
     ProductionDecision,
     production_decision_prompt,
@@ -93,12 +94,15 @@ class LLMProvider(Protocol):
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
         """Return the canonical typed production decision in one call.
 
         With ``repair``, the same conversation continues with the runtime's
         rejection of the previous decision and asks for a replacement.  With
-        ``earlier``, the question follows up on an earlier answer.
+        ``earlier``, the question follows up on an earlier answer.  With
+        ``exploration``, the request says whether the model may still explore and
+        carries the results of the probes it ran.
         """
 
 
@@ -116,11 +120,14 @@ class OpenAICompatibleProvider:
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
         """Request one typed decision; SQL and decision always arrive in the same response."""
         if not self.settings.llm_api_key:
             raise ProviderConfigurationError("DECISION_SQL_LLM_API_KEY is not configured")
-        messages = _production_decision_messages(question, schema_context, repair, earlier)
+        messages = _production_decision_messages(
+            question, schema_context, repair, earlier, exploration
+        )
         response_format = {
             "type": "json_schema",
             "json_schema": {
@@ -199,6 +206,7 @@ def _production_decision_messages(
     schema_context: str,
     repair: RuntimeRejectionFeedback | None = None,
     earlier: EarlierAnswer | None = None,
+    exploration: Exploration | None = None,
 ) -> list[dict[str, str]]:
     user = "Case ID:\noperator\n\nQuestion:\n" + question
     if earlier is not None:
@@ -206,6 +214,15 @@ def _production_decision_messages(
             earlier.model_dump(), ensure_ascii=False, indent=2
         )
     user += "\n\nGoverned context:\n" + schema_context
+    if exploration is not None:
+        if exploration.results:
+            results = [item.model_dump(exclude_none=True) for item in exploration.results]
+            user += "\n\nExploration results:\n" + json.dumps(results, ensure_ascii=False, indent=2)
+        user += (
+            "\n\nExploration is open."
+            if exploration.open
+            else "\n\nExploration is closed: return a final decision."
+        )
     messages = [
         {"role": "system", "content": production_decision_prompt()},
         {"role": "user", "content": user},

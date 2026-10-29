@@ -48,6 +48,13 @@ class Settings(BaseSettings):
     value_probe_timeout_ms: int = Field(
         default=2000, validation_alias="DECISION_SQL_VALUE_PROBE_TIMEOUT_MS"
     )
+    # Let the model run a few read-only probes before it decides.
+    exploration_enabled: bool = Field(
+        default=True, validation_alias="DECISION_SQL_EXPLORATION_ENABLED"
+    )
+    exploration_rounds: int = Field(
+        default=2, ge=1, le=5, validation_alias="DECISION_SQL_EXPLORATION_ROUNDS"
+    )
     # Show the model how categorical text columns spell their values.
     value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     # Refresh reports on their schedule from this process; turn off on all but one worker.

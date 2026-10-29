@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from threading import Lock
 from time import monotonic
 
@@ -54,6 +54,7 @@ from app.metadata.values import (
     InMemoryValueSharingStore,
     KnownValues,
     ValueColumn,
+    ValueSharing,
     ValueSharingRejectedError,
     ValueSharingStore,
     ValueSharingUpdate,
@@ -94,6 +95,8 @@ class QuestionSource:
     engine: Engine
     catalog: SchemaCatalog
     reader_role: str
+    # The administrator's value sharing choice; off unless value hints are on as well.
+    sharing: ValueSharing = field(default_factory=ValueSharing)
 
 
 class ConnectionService:
@@ -192,18 +195,21 @@ class ConnectionService:
             ),
             self.note_store.list(item.id),
         )
+        sharing = ValueSharing()
         if self.value_examples:
             # Sharing is read for every question, so turning it off takes effect at once.
+            sharing = self.value_sharing_store.get(item.id)
             catalog = apply_known_values(
                 catalog,
                 self._known_values(item.id, connector, config, password, catalog),
-                self.value_sharing_store.get(item.id),
+                sharing,
             )
         return QuestionSource(
             connection_id=item.id,
             engine=self._reader_engine(item.id, config, password),
             catalog=catalog,
             reader_role=config.username,
+            sharing=sharing,
         )
 
     def _known_values(

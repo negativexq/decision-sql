@@ -68,6 +68,7 @@ JSON schema. The model returns one of:
 | Decision | Meaning | SQL runtime |
 | --- | --- | --- |
 | `ANSWER` | Read-only SQL is proposed | Entered |
+| `EXPLORE` | One to three read-only probes before deciding | Each probe entered |
 | `NEEDS_CLARIFICATION` | The question can be read more than one way | Bypassed |
 | `BLOCKED_AUTHORITY` | The data is outside the governed context | Bypassed |
 | `BLOCKED_POLICY` | The request would write or breach policy | Bypassed |
@@ -75,7 +76,22 @@ JSON schema. The model returns one of:
 A non-answer carries an explanation; a clarification also carries the question
 to ask and two to four readings, and a refusal names the missing joins.
 
-At most one more call follows, recorded as its own trace stage:
+**Exploration**: before it answers or asks, the model may return `EXPLORE` with
+one to three probes (`app/decision/exploration.py`), for example to see how a
+value is spelled or whether a tie it would ask about occurs. Each probe goes
+through every gate below under the run's authority and runs as the reader role;
+its gates are not recorded as the answer's stages. The model then hears, per
+probe, the row count and each column's distinct and NULL counts, and the rows
+(at most 20, values cut to 80 characters) only when the connection shares stored
+values and every column the probe reads is public and shared. A rejected probe
+reports the runtime's reason, a failed one its error class. Exploration has
+`DECISION_SQL_EXPLORATION_ROUNDS` rounds (default 2); the request says whether
+it is still open, and a model that still explores after the last round fails the
+run with `EXPLORATION_FAILURE`. Repair rounds and replays never explore. The
+`exploration` trace stage records each probe's SQL, outcome, and row count.
+`DECISION_SQL_EXPLORATION_ENABLED=false` turns it off.
+
+After that, at most one more call follows, recorded as its own trace stage:
 
 - **Context expansion**: the model returned `BLOCKED_AUTHORITY` naming a table
   from `other_tables`. The runtime rebuilds the context from the catalog with

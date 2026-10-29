@@ -6,8 +6,17 @@ from decimal import Decimal
 from time import perf_counter
 
 from app.config import Settings
+from app.decision.exploration import (
+    Exploration,
+    NoValueAccess,
+    ProbeReport,
+    ValueAccess,
+    report_rows,
+    rows_may_be_shared,
+)
 from app.decision.models import DecisionApplicationResult, ProposalSource, RuntimeOutcome
 from app.generation.decision_contract import (
+    MAX_PROBES,
     PRODUCTION_DECISION_CASE_ID,
     DecisionType,
     ProductionDecision,
@@ -57,6 +66,7 @@ class DecisionSqlApplication:
         safety_service: SqlSafetyService,
         settings: Settings,
         earlier: EarlierAnswer | None = None,
+        value_access: ValueAccess | None = None,
     ) -> None:
         self.resolver = resolver
         self.provider = provider
@@ -64,6 +74,10 @@ class DecisionSqlApplication:
         self.settings = settings
         # A follow-up's earlier answer goes with every model call of this run.
         self.earlier = earlier
+        # Whether probe results may show stored values: the connection's value sharing.
+        self.value_access: ValueAccess = value_access or NoValueAccess()
+        # What the model learned from its probes; goes with every later model call.
+        self.exploration: Exploration | None = None
 
     async def run(
         self,
@@ -137,10 +151,12 @@ class DecisionSqlApplication:
                 model="frozen-scenario",
             )
         else:
+            if self.settings.exploration_enabled:
+                self.exploration = Exploration(open=True)
             started = perf_counter()
             try:
                 proposal = await self.provider.propose_decision(
-                    question, schema_text, earlier=self.earlier
+                    question, schema_text, earlier=self.earlier, exploration=self.exploration
                 )
             except MalformedProviderResponse:
                 collector.record_stage(
@@ -289,6 +305,49 @@ class DecisionSqlApplication:
             model_context_hash = governed_context_hash(model_context)
             schema_text = serialize_governed_context(model_context)
             decision = proposal.decision
+        if decision.decision is DecisionType.EXPLORE:
+            explored = await self._explore(
+                question, schema_text, model_context, decision, collector
+            )
+            if explored is None:
+                collector.skip_unrecorded(
+                    tuple(
+                        name
+                        for name in TRACE_STAGE_ORDER
+                        if name not in {"request", "context", "response"}
+                    ),
+                    "EXPLORATION_FAILURE",
+                )
+                collector.record_stage(
+                    "response", TraceStageStatus.FAILED, reason="EXPLORATION_FAILURE"
+                )
+                return DecisionApplicationResult(
+                    proposal_source=proposal_source,
+                    provider=proposal.provider,
+                    model=proposal.model,
+                    model_context=model_context,
+                    model_context_hash=model_context_hash,
+                    runtime_outcome=RuntimeOutcome.GENERATION_ERROR,
+                    runtime_reason="EXPLORATION_FAILURE",
+                    trace=collector.finish("GENERATION_ERROR"),
+                )
+            proposal = explored
+            decision = proposal.decision
+        else:
+            collector.record_stage(
+                "exploration",
+                TraceStageStatus.SKIPPED,
+                reason=(
+                    proposal_source.value
+                    if replay_decision is not None
+                    else "NOT_REQUESTED"
+                    if self.exploration is not None
+                    else "EXPLORATION_NOT_ALLOWED"
+                ),
+            )
+        if self.exploration is not None:
+            # Later calls (repair, empty result) still see the results, but may not explore.
+            self.exploration = self.exploration.model_copy(update={"open": False})
         if decision.decision is not DecisionType.ANSWER:
             return self._non_answer(
                 decision, proposal, proposal_source, model_context, model_context_hash, collector
@@ -636,7 +695,10 @@ class DecisionSqlApplication:
             )
             expanded = governed_context_from_schema_context(context)
             proposal = await self.provider.propose_decision(
-                question, serialize_governed_context(expanded), earlier=self.earlier
+                question,
+                serialize_governed_context(expanded),
+                earlier=self.earlier,
+                exploration=self.exploration,
             )
         except Exception as error:
             collector.record_stage(
@@ -686,7 +748,11 @@ class DecisionSqlApplication:
         base = {"rejected_stage": feedback.stage, "rejected_code": feedback.code}
         try:
             proposal = await self.provider.propose_decision(
-                question, schema_text, repair=feedback, earlier=self.earlier
+                question,
+                schema_text,
+                repair=feedback,
+                earlier=self.earlier,
+                exploration=self.exploration,
             )
         except Exception as error:
             collector.record_stage(
@@ -697,7 +763,10 @@ class DecisionSqlApplication:
                 duration_ms=(perf_counter() - started) * 1000,
             )
             return None
-        if proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID:
+        if (
+            proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID
+            or proposal.decision.decision is DecisionType.EXPLORE
+        ):
             collector.record_stage(
                 "repair",
                 TraceStageStatus.FAILED,
@@ -721,6 +790,124 @@ class DecisionSqlApplication:
             duration_ms=proposal.latency_ms,
         )
         return proposal.decision
+
+    async def _explore(
+        self,
+        question: str,
+        schema_text: str,
+        model_context: GovernedContext,
+        decision: ProductionDecision,
+        collector: RunTraceCollector,
+    ) -> ProductionDecisionProposal | None:
+        """Run the model's probes and ask again, for a bounded number of rounds.
+
+        None means the run cannot continue: the provider failed, or the model was
+        still exploring when exploration closed.
+        """
+        started = perf_counter()
+        authority = ExecutionAuthority.from_governed_context(model_context)
+        rounds = 0
+        reports: list[ProbeReport] = []
+        tokens = {"prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0}
+        proposal: ProductionDecisionProposal | None = None
+
+        def finish(status: TraceStageStatus, reason: str | None) -> None:
+            collector.record_stage(
+                "exploration",
+                status,
+                reason=reason,
+                metadata={
+                    "rounds": rounds,
+                    # Trace metadata holds flat values only: one list per field, by probe.
+                    "probe_sql": [item.sql for item in reports],
+                    "probe_status": [item.status for item in reports],
+                    "probe_reason": [item.reason or "" for item in reports],
+                    "probe_row_count": [
+                        "" if item.row_count is None else item.row_count for item in reports
+                    ],
+                    "probe_rows_shared": [item.rows is not None for item in reports],
+                    **tokens,
+                },
+                duration_ms=(perf_counter() - started) * 1000,
+            )
+
+        while (
+            decision.decision is DecisionType.EXPLORE
+            and self.exploration is not None
+            and self.exploration.open
+        ):
+            rounds += 1
+            found = await asyncio.to_thread(self._run_probes, decision, authority, collector.run_id)
+            reports.extend(found)
+            self.exploration = Exploration(
+                open=rounds < self.settings.exploration_rounds,
+                results=(*self.exploration.results, *found),
+            )
+            try:
+                proposal = await self.provider.propose_decision(
+                    question, schema_text, earlier=self.earlier, exploration=self.exploration
+                )
+            except Exception:
+                finish(TraceStageStatus.FAILED, "PROVIDER_FAILURE")
+                return None
+            for key in tokens:
+                tokens[key] += getattr(proposal, key) or 0
+            if proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID:
+                finish(TraceStageStatus.FAILED, "CASE_ID_MISMATCH")
+                return None
+            decision = proposal.decision
+        if proposal is None or decision.decision is DecisionType.EXPLORE:
+            finish(TraceStageStatus.FAILED, "EXPLORATION_NOT_CLOSED")
+            return None
+        finish(TraceStageStatus.PASS, decision.decision.value)
+        return proposal
+
+    def _run_probes(
+        self, decision: ProductionDecision, authority: ExecutionAuthority, run_id: str
+    ) -> list[ProbeReport]:
+        reports: list[ProbeReport] = []
+        for sql in (decision.probes or ())[:MAX_PROBES]:
+            planned, executed = self.safety_service.explore(
+                SqlCandidate(
+                    sql=sql,
+                    source=CandidateSource.LLM,
+                    correlation_id=run_id,
+                    execution_authority=authority,
+                )
+            )
+            if isinstance(planned, SqlPlanFailure):
+                feedback = _repair_feedback(planned, decision, self.settings)
+                reports.append(
+                    ProbeReport(
+                        sql=sql,
+                        status="REJECTED",
+                        reason=feedback.code if feedback else _failure_code(planned),
+                        message=feedback.message if feedback else None,
+                    )
+                )
+            elif isinstance(executed, QueryExecution):
+                reports.append(
+                    report_rows(
+                        sql,
+                        executed.columns,
+                        executed.rows,
+                        truncated=executed.truncated,
+                        shared=rows_may_be_shared(
+                            planned.normalized_sql, self.safety_service.catalog, self.value_access
+                        ),
+                    )
+                )
+            else:
+                error_class = executed.error_class if executed is not None else None
+                reports.append(
+                    ProbeReport(
+                        sql=sql,
+                        status="FAILED",
+                        reason=error_class or "EXECUTION_ERROR",
+                        message=_EXECUTION_MESSAGES.get(error_class or ""),
+                    )
+                )
+        return reports
 
     @staticmethod
     def _non_answer(
@@ -924,6 +1111,12 @@ _GRAIN_MESSAGES = {
         "each at its own grain before combining them."
     ),
 }
+
+
+def _failure_code(planned: SqlPlanFailure) -> str:
+    if planned.rejection is not None:
+        return planned.rejection.code.value
+    return planned.semantic_reason or planned.status.value
 
 
 def _repair_feedback(

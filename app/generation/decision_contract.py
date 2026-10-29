@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "185d3c846e28b13e3d9ec823986feff03d7d82f0e245d00b31517fbd851c44a7"
+    "60f7a4941430dc07fb2a23787d4fb781d272ea7b13d95d0fe5850eb488750089"
 )
 
 
@@ -61,19 +61,21 @@ Allowed decisions are exactly:
 - `BLOCKED_AUTHORITY`: the intent is clear, but an authority or relationship required by the request is absent from the authorized context.
 - `NEEDS_CLARIFICATION`: materially different interpretations remain unresolved.
 - `BLOCKED_POLICY`: the requested operation violates the visible read-only policy.
+- `EXPLORE`: the decision depends on something about the stored data that the context does not show, and one to three small read-only queries would settle it (see Exploring the data). Allowed only while the request says exploration is open.
 
-Return one JSON object with exactly these eight fields:
+Return one JSON object with exactly these nine fields:
 
 ```json
 {
   "case_id": "the supplied case identifier",
-  "decision": "ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY",
+  "decision": "ANSWER | BLOCKED_AUTHORITY | NEEDS_CLARIFICATION | BLOCKED_POLICY | EXPLORE",
   "sql": "one PostgreSQL SELECT statement or null",
   "reason_code": null,
   "explanation": null,
   "missing_relationships": null,
   "clarification_question": null,
-  "interpretations": null
+  "interpretations": null,
+  "probes": null
 }
 ```
 
@@ -83,7 +85,7 @@ For `ANSWER`, `sql` must be one non-empty read-only PostgreSQL 16 `SELECT` state
 
 The final SQL projection is part of the answer. Return only the fields requested by the question and visible task semantics. Do not add descriptive, diagnostic, intermediate, helper, grouping, ordering, or qualification columns unless the question explicitly requests them. Fields used only to filter, join, group, order, qualify, or calculate an intermediate value must not appear automatically. When the question names output fields in order, return them in that order. SQL aliases do not change semantic identity, and row ordering is separate from column ordering.
 
-For `ANSWER`, `explanation`, `missing_relationships`, `clarification_question`, and `interpretations` must all be `null`.
+For `ANSWER`, `explanation`, `missing_relationships`, `clarification_question`, `interpretations`, and `probes` must all be `null`.
 
 For every other decision, `explanation` is one or two plain sentences, in the language of the question, that say exactly what prevents an answer. Name the tables, columns, or wording involved.
 
@@ -92,6 +94,10 @@ For `BLOCKED_AUTHORITY`, use `sql: null` and `reason_code: "MISSING_AUTHORIZED_R
 For `NEEDS_CLARIFICATION`, use `sql: null` and `reason_code: "AMBIGUOUS_SEMANTICS"`. `clarification_question` is the single question the user can answer to resolve the ambiguity. `interpretations` lists two to four materially different readings, each one sentence specific enough to answer without further questions. `missing_relationships` must be `null`.
 
 For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`. `missing_relationships`, `clarification_question`, and `interpretations` must be `null`.
+
+For `EXPLORE`, use `sql: null`, `reason_code: null`, and list one to three PostgreSQL `SELECT` statements in `probes`. `explanation` says in one sentence what the probes check. Every other field must be `null`.
+
+For every decision other than `EXPLORE`, `probes` must be `null`.
 
 The only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.
 
@@ -104,6 +110,20 @@ The context details the tables selected for this question. Use the physical tabl
 - When the question states the form of the answer, such as one row, one line, a rounding, or an order, follow it exactly: several figures asked for as one answer are columns of one row, and text asked for as one line has its line breaks replaced by spaces.
 - When the question names several fields, such as a first and a last name, return each as its own column. Combine fields into one column only when the question asks for one combined value.
 - When the question asks for the item with the highest, lowest, earliest, or latest value, return every row that shares that value, for example by comparing with `(SELECT MAX(...))` or filtering `RANK() = 1`. Do not cut a tie with `LIMIT 1` or an arbitrary order; the runtime tells the user when rows tie. Use `LIMIT n` only when the question asks for a fixed number of items.
+
+## Exploring the data
+
+The context shows the schema, descriptions, and sometimes example values, but not the data itself. When the right query depends on what the data holds, look before you answer or ask:
+
+- whether a value the question names is stored, and how it is spelled or formatted;
+- what a column's values look like, for example whether a text column holds numbers or a code;
+- whether the edge case you would otherwise ask about occurs at all, for example whether records tie on the value that picks one, or whether a key repeats.
+
+Return `EXPLORE` with up to three probes. Each probe is one read-only `SELECT` under the same rules as an answer: only tables and relationships in the context, only listed functions. The runtime runs them and asks again with `Exploration results`. Prefer exploring to asking the user: ask only about meaning the data cannot settle, and do not ask about an edge case a probe showed does not occur.
+
+Each result reports the probe's row count and, per column, how many distinct and NULL values it returned. Rows are included only when the source shares stored values; then at most 20 rows, each value shortened. Write probes whose counts answer the question when rows may be withheld, for example `SELECT COUNT(*) ... GROUP BY ... HAVING COUNT(*) > 1`. A rejected or failed probe reports why.
+
+When the request says exploration is closed, return a final decision.
 
 ## Tables outside the context
 
@@ -134,6 +154,8 @@ class DecisionType(StrEnum):
     BLOCKED_AUTHORITY = "BLOCKED_AUTHORITY"
     NEEDS_CLARIFICATION = "NEEDS_CLARIFICATION"
     BLOCKED_POLICY = "BLOCKED_POLICY"
+    # A request to look at the data first; never a run's final decision.
+    EXPLORE = "EXPLORE"
 
 
 class DecisionReasonCode(StrEnum):
@@ -149,6 +171,7 @@ _EXPLANATION_LIMIT = 600
 _INTERPRETATION_LIMIT = 300
 _MAX_INTERPRETATIONS = 4
 _MAX_MISSING_RELATIONSHIPS = 6
+MAX_PROBES = 3
 
 
 class MissingRelationship(BaseModel):
@@ -184,6 +207,7 @@ class ProductionDecision(BaseModel):
     missing_relationships: tuple[MissingRelationship, ...] | None = None
     clarification_question: str | None = None
     interpretations: tuple[str, ...] | None = None
+    probes: tuple[str, ...] | None = None
 
     @field_validator("explanation", "clarification_question", mode="before")
     @classmethod
@@ -198,6 +222,11 @@ class ProductionDecision(BaseModel):
         items = [_bounded(item, _INTERPRETATION_LIMIT) for item in value]
         return [item for item in items if item][:_MAX_INTERPRETATIONS]
 
+    @field_validator("probes", mode="before")
+    @classmethod
+    def _bound_probes(cls, value: Any) -> Any:
+        return value[:MAX_PROBES] if isinstance(value, list | tuple) else value
+
     @field_validator("missing_relationships", mode="before")
     @classmethod
     def _bound_relationships(cls, value: Any) -> Any:
@@ -207,6 +236,7 @@ class ProductionDecision(BaseModel):
     def validate_contract(self) -> ProductionDecision:
         expected: dict[DecisionType, DecisionReasonCode | None] = {
             DecisionType.ANSWER: None,
+            DecisionType.EXPLORE: None,
             DecisionType.BLOCKED_AUTHORITY: DecisionReasonCode.MISSING_AUTHORIZED_RELATIONSHIP,
             DecisionType.NEEDS_CLARIFICATION: DecisionReasonCode.AMBIGUOUS_SEMANTICS,
             DecisionType.BLOCKED_POLICY: DecisionReasonCode.READ_ONLY_POLICY,
@@ -214,6 +244,10 @@ class ProductionDecision(BaseModel):
         if self.decision is DecisionType.ANSWER:
             if not self.sql or not self.sql.strip() or self.reason_code is not None:
                 raise ValueError("ANSWER requires non-empty sql and no reason_code")
+        elif self.decision is DecisionType.EXPLORE:
+            probes = [probe for probe in self.probes or () if probe.strip()]
+            if not probes or self.sql is not None or self.reason_code is not None:
+                raise ValueError("EXPLORE requires one to three probes and no sql")
         elif self.sql is not None or self.reason_code is not expected[self.decision]:
             raise ValueError(f"{self.decision.value} requires its canonical reason_code and no sql")
         return self
@@ -226,7 +260,7 @@ class ProductionDecision(BaseModel):
         rejected: they are display text, and a misplaced one is no reason to
         discard an otherwise valid decision.
         """
-        if self.decision is DecisionType.ANSWER:
+        if self.decision in (DecisionType.ANSWER, DecisionType.EXPLORE):
             return None
         clarifying = self.decision is DecisionType.NEEDS_CLARIFICATION
         return DecisionDetail(
@@ -272,6 +306,7 @@ def production_decision_schema() -> dict[str, Any]:
             "missing_relationships",
             "clarification_question",
             "interpretations",
+            "probes",
         ],
         "additionalProperties": False,
         "properties": {
@@ -300,6 +335,7 @@ def production_decision_schema() -> dict[str, Any]:
             },
             "clarification_question": {"type": ["string", "null"]},
             "interpretations": {"type": ["array", "null"], "items": {"type": "string"}},
+            "probes": {"type": ["array", "null"], "items": {"type": "string"}},
         },
     }
 

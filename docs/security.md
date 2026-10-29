@@ -19,7 +19,15 @@ tests.
   stored value. `DECISION_SQL_VALUE_EXAMPLES=false` turns both off server-wide.
 - It returns one typed decision. Its SQL is untrusted input
   (`SqlCandidate`) with no authorization state.
-- It has no tool calls. At most two extra requests follow the first: one that
+- Before deciding it may run up to three read-only probes per round, for a
+  bounded number of rounds (two by default). A probe is untrusted SQL like an
+  answer and passes every gate. What comes back is counts only (row count,
+  distinct and NULL counts per column) unless the connection shares stored
+  values and every column the probe reads is public and shared; then it also
+  gets up to 20 rows with values cut to 80 characters, which the model provider
+  sees. Rejections and failures come back as the runtime's own code, never
+  database text. The trace keeps each probe's SQL and row count, not its rows.
+- It has no other tool calls. At most two extra requests follow: one that
   adds tables the model asked for from `other_tables`, and one repair round
   after a policy rejection, an empty result, or a percentage outside 0 to
   100. Both go through every gate

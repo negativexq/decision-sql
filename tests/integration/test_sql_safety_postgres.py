@@ -396,3 +396,22 @@ def test_a_failed_cast_is_named_by_its_class_without_the_database_text(
     assert isinstance(result, SqlExecutionError)
     assert result.error_class == "INVALID_TEXT_CONVERSION"
     assert "numeric" not in result.error
+
+
+def test_a_probe_runs_through_the_gates_without_touching_the_trace(
+    service: SqlSafetyService,
+) -> None:
+    recorded: list[str] = []
+    service.stage_recorder = lambda name, *args, **kwargs: recorded.append(name)  # type: ignore[assignment]
+    try:
+        plan, execution = service.explore(
+            SqlCandidate(sql="SELECT category, COUNT(*) AS n FROM products GROUP BY category")
+        )
+        assert isinstance(plan, QueryPlan) and isinstance(execution, QueryExecution)
+        assert execution.rows
+
+        rejected, nothing = service.explore(SqlCandidate(sql="DELETE FROM products"))
+        assert isinstance(rejected, SqlPlanFailure) and nothing is None
+        assert recorded == []
+    finally:
+        service.stage_recorder = None

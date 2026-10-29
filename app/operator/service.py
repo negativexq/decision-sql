@@ -342,7 +342,12 @@ class OperatorApplication:
                 )
             return (
                 DecisionSqlApplication(
-                    _with_earlier(resolver, earlier), provider, safety, self.settings, earlier
+                    _with_earlier(resolver, earlier),
+                    provider,
+                    safety,
+                    self.settings,
+                    earlier,
+                    value_access=source.sharing,
                 ),
                 question,
                 ProposalSource.LIVE_MODEL,

@@ -7,6 +7,7 @@ import pytest
 from app.catalog.default import build_default_catalog
 from app.config import Settings
 from app.db.models import Base
+from app.decision.exploration import Exploration
 from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
     PRODUCTION_DECISION_CASE_ID,
@@ -34,8 +35,9 @@ class SequenceProvider:
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
         earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
     ) -> ProductionDecisionProposal:
-        del question, repair, earlier
+        del question, repair, earlier, exploration
         self.contexts.append(schema_context)
         return ProductionDecisionProposal(
             decision=self.decisions.pop(0), provider="fake", model="fake-model", latency_ms=1.0

@@ -279,3 +279,87 @@ async def test_a_fixable_execution_error_gets_the_repair_round() -> None:
     provider = FakeDecisionProvider(_answer(cast))
     result = await _run(provider, FailHard({}))
     assert provider.calls == 1 and result.runtime_outcome == "EXECUTION_ERROR"
+
+
+def _explore(*probes: str) -> ProductionDecision:
+    return ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="EXPLORE",
+        explanation="Check how categories are spelled.",
+        probes=list(probes),
+    )
+
+
+class ExploringSafety(ScriptedSafety):
+    def __init__(self, rows: dict[str, list[dict[str, object]]]) -> None:
+        super().__init__(rows)
+        self.explored: list[str] = []
+        self.catalog = build_default_catalog(Base.metadata)
+
+    def explore(self, candidate: SqlCandidate):  # type: ignore[no-untyped-def]
+        self.explored.append(candidate.sql)
+        if "secret_table" in candidate.sql:
+            return (
+                SqlPlanFailure(
+                    status=SqlSafetyStatus.POLICY_REJECTION,
+                    failure_stage=FailureStage.POLICY_REJECTION,
+                    rejection=PolicyRejection(code=PolicyCode.UNKNOWN_TABLE, message="Unknown."),
+                ),
+                None,
+            )
+        plan = ScriptedSafety.plan(self, candidate)
+        self.planned.remove(candidate.sql)
+        return plan, ScriptedSafety.execute(self, plan)
+
+
+PROBE = "SELECT category, COUNT(*) AS n FROM products GROUP BY category"
+
+
+@pytest.mark.asyncio
+async def test_the_model_looks_at_the_data_before_it_answers() -> None:
+    provider = FakeDecisionProvider(_explore(PROBE, "SELECT x FROM secret_table"), _answer(FIXED))
+    safety = ExploringSafety({PROBE: [{"category": "Office", "n": 4}], FIXED: [{"n": 4}]})
+    result = await _run(provider, safety)
+
+    assert safety.explored == [PROBE, "SELECT x FROM secret_table"]
+    assert safety.planned == [FIXED] and result.rows == [{"n": 4}]
+    first, second = provider.explorations
+    assert first is not None and first.open and not first.results
+    assert second is not None and second.open  # two rounds by default: it may look once more
+    ok, rejected = second.results
+    # The connection shares no values, so the model hears counts only.
+    assert ok.row_count == 1 and ok.rows is None
+    assert rejected.status == "REJECTED" and rejected.reason == "UNKNOWN_TABLE"
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.status is TraceStageStatus.PASS and stage.metadata["rounds"] == 1
+    assert stage.metadata["probe_status"] == ["ROWS", "REJECTED"]
+    assert stage.metadata["probe_rows_shared"] == ["False", "False"]
+
+
+async def _run_rounds(provider: FakeDecisionProvider, safety: ScriptedSafety, rounds: int):
+    return await _run(provider, safety, exploration_rounds=rounds)
+
+
+@pytest.mark.asyncio
+async def test_exploration_is_bounded_and_a_model_still_exploring_fails_the_run() -> None:
+    provider = FakeDecisionProvider(_explore(PROBE), _explore(PROBE), _explore(PROBE))
+    safety = ExploringSafety({PROBE: [{"category": "Office", "n": 4}]})
+    result = await _run_rounds(provider, safety, 2)
+
+    assert provider.calls == 3 and len(safety.explored) == 2
+    assert result.runtime_outcome == "GENERATION_ERROR"
+    assert result.runtime_reason == "EXPLORATION_FAILURE"
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.reason == "EXPLORATION_NOT_CLOSED"
+
+
+@pytest.mark.asyncio
+async def test_a_question_answered_directly_skips_exploration_and_off_means_closed() -> None:
+    provider = FakeDecisionProvider(_answer(FIXED))
+    result = await _run(provider, ScriptedSafety({FIXED: [{"n": 4}]}))
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.status is TraceStageStatus.SKIPPED and stage.reason == "NOT_REQUESTED"
+
+    provider = FakeDecisionProvider(_answer(FIXED))
+    await _run(provider, ScriptedSafety({FIXED: [{"n": 4}]}), exploration_enabled=False)
+    assert provider.explorations == [None]

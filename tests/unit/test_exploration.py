@@ -86,3 +86,13 @@ def test_the_request_says_whether_exploration_is_open_and_carries_results() -> N
     assert first["content"].endswith("Exploration is open.")
     [_, none] = _production_decision_messages("q", "{}")
     assert "Exploration" not in none["content"]
+
+
+def test_a_send_back_tells_the_model_what_it_returned_without_looking() -> None:
+    [_, user] = _production_decision_messages(
+        "q",
+        "{}",
+        exploration=Exploration(open=True, returned_without_looking="BLOCKED_AUTHORITY"),
+    )
+    assert "You returned BLOCKED_AUTHORITY without exploring" in user["content"]
+    assert user["content"].endswith("Exploration is open.")

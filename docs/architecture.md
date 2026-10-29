@@ -87,7 +87,11 @@ values and every column the probe reads is public and shared. A rejected probe
 reports the runtime's reason, a failed one its error class. Exploration has
 `DECISION_SQL_EXPLORATION_ROUNDS` rounds (default 2); the request says whether
 it is still open, and a model that still explores after the last round fails the
-run with `EXPLORATION_FAILURE`. Repair rounds and replays never explore. The
+run with `EXPLORATION_FAILURE`. A `NEEDS_CLARIFICATION` or `BLOCKED_AUTHORITY`
+returned before any probe ran goes back to the model once, asking it to check
+whether the data or the context settles it; the model may return the same
+decision, and if that call fails the original one stands. Repair rounds and
+replays never explore. The
 `exploration` trace stage records each probe's SQL, outcome, and row count.
 `DECISION_SQL_EXPLORATION_ENABLED=false` turns it off.
 

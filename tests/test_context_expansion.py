@@ -84,7 +84,12 @@ async def _run(provider: SequenceProvider, **settings: object):
         _resolver(),
         provider,  # type: ignore[arg-type]
         NoSafety(),  # type: ignore[arg-type]
-        Settings(_env_file=None, reader_role="reader", **settings),
+        # Exploration (and its send-back of an unexplored refusal) is covered elsewhere.
+        Settings(
+            _env_file=None,
+            reader_role="reader",
+            **{"exploration_enabled": False, **settings},  # type: ignore[arg-type]
+        ),
     ).run("Which product names were refunded?", collector)
     return result, {stage.name: stage for stage in result.trace.stages}
 

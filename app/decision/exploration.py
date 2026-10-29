@@ -53,12 +53,17 @@ class ProbeReport(BaseModel):
 
 
 class Exploration(BaseModel):
-    """What the model has learned so far, and whether it may look again."""
+    """What the model has learned so far, and whether it may look again.
+
+    ``returned_without_looking`` names a question or refusal the model returned
+    before it ran any probe; the request then asks it to check the data first.
+    """
 
     model_config = ConfigDict(frozen=True)
 
     open: bool
     results: tuple[ProbeReport, ...] = ()
+    returned_without_looking: Literal["NEEDS_CLARIFICATION", "BLOCKED_AUTHORITY"] | None = None
 
 
 class ValueAccess(Protocol):

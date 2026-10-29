@@ -201,6 +201,23 @@ class OpenAICompatibleProvider:
             raise MalformedProviderResponse("Provider returned invalid JSON") from error
 
 
+_LOOK_FIRST = {
+    "NEEDS_CLARIFICATION": (
+        "You returned NEEDS_CLARIFICATION without exploring. Before asking the user, "
+        "check with probes whether the data or the context settles it: whether the "
+        "readings give different results, what the columns involved store, and whether "
+        "a column or description in the context already answers it. Return "
+        "NEEDS_CLARIFICATION again only if no probe can settle the question."
+    ),
+    "BLOCKED_AUTHORITY": (
+        "You returned BLOCKED_AUTHORITY without exploring. Before refusing, check "
+        "whether the tables and relationships in the context already answer the "
+        "question, and use probes to confirm it. Return BLOCKED_AUTHORITY again only "
+        "if no authorized path can answer it."
+    ),
+}
+
+
 def _production_decision_messages(
     question: str,
     schema_context: str,
@@ -218,6 +235,8 @@ def _production_decision_messages(
         if exploration.results:
             results = [item.model_dump(exclude_none=True) for item in exploration.results]
             user += "\n\nExploration results:\n" + json.dumps(results, ensure_ascii=False, indent=2)
+        if exploration.returned_without_looking is not None:
+            user += "\n\n" + _LOOK_FIRST[exploration.returned_without_looking]
         user += (
             "\n\nExploration is open."
             if exploration.open

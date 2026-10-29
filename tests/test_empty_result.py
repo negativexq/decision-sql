@@ -363,3 +363,59 @@ async def test_a_question_answered_directly_skips_exploration_and_off_means_clos
     provider = FakeDecisionProvider(_answer(FIXED))
     await _run(provider, ScriptedSafety({FIXED: [{"n": 4}]}), exploration_enabled=False)
     assert provider.explorations == [None]
+
+
+def _clarify() -> ProductionDecision:
+    return ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID,
+        decision="NEEDS_CLARIFICATION",
+        reason_code="AMBIGUOUS_SEMANTICS",
+        explanation="The category's spelling is unclear.",
+        clarification_question="Office or office supplies?",
+        interpretations=["Office", "Office supplies"],
+    )
+
+
+@pytest.mark.asyncio
+async def test_a_question_asked_before_looking_goes_back_once_to_look_first() -> None:
+    provider = FakeDecisionProvider(_clarify(), _explore(PROBE), _answer(FIXED))
+    safety = ExploringSafety({PROBE: [{"category": "Office", "n": 4}], FIXED: [{"n": 4}]})
+    result = await _run(provider, safety)
+
+    assert provider.calls == 3 and result.rows == [{"n": 4}]
+    sent_back = provider.explorations[1]
+    assert sent_back is not None and sent_back.open
+    assert sent_back.returned_without_looking == "NEEDS_CLARIFICATION"
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.status is TraceStageStatus.PASS
+    assert stage.metadata["looked_first"] == "NEEDS_CLARIFICATION"
+    assert stage.metadata["look_first_decision"] == "EXPLORE"
+
+
+@pytest.mark.asyncio
+async def test_a_question_the_data_cannot_settle_is_asked_after_the_one_send_back() -> None:
+    provider = FakeDecisionProvider(_clarify(), _clarify())
+    result = await _run(provider, ScriptedSafety({}))
+
+    assert provider.calls == 2
+    assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
+    assert result.runtime_outcome == "NOT_ENTERED"
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.status is TraceStageStatus.SKIPPED and stage.reason == "DECLINED_TO_LOOK"
+
+
+class FailingAfterFirst(FakeDecisionProvider):
+    async def propose_decision(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if self.calls >= 1:
+            self.calls += 1
+            raise RuntimeError("provider down")
+        return await super().propose_decision(*args, **kwargs)
+
+
+@pytest.mark.asyncio
+async def test_a_failed_send_back_keeps_the_original_question() -> None:
+    provider = FailingAfterFirst(_clarify())
+    result = await _run(provider, ScriptedSafety({}))
+    assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
+    stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
+    assert stage.metadata["look_first_error"] == "RuntimeError"

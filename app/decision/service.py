@@ -78,6 +78,8 @@ class DecisionSqlApplication:
         self.value_access: ValueAccess = value_access or NoValueAccess()
         # What the model learned from its probes; goes with every later model call.
         self.exploration: Exploration | None = None
+        # Set when a question or refusal returned without probes was sent back once.
+        self.looked_first: dict[str, object] = {}
 
     async def run(
         self,
@@ -305,6 +307,16 @@ class DecisionSqlApplication:
             model_context_hash = governed_context_hash(model_context)
             schema_text = serialize_governed_context(model_context)
             decision = proposal.decision
+        if (
+            self.exploration is not None
+            and self.exploration.open
+            and not self.exploration.results
+            and decision.decision in _LOOK_FIRST
+        ):
+            looked = await self._look_first(question, schema_text, decision)
+            if looked is not None:
+                proposal = looked
+                decision = proposal.decision
         if decision.decision is DecisionType.EXPLORE:
             explored = await self._explore(
                 question, schema_text, model_context, decision, collector
@@ -340,10 +352,13 @@ class DecisionSqlApplication:
                 reason=(
                     proposal_source.value
                     if replay_decision is not None
+                    else "DECLINED_TO_LOOK"
+                    if self.looked_first
                     else "NOT_REQUESTED"
                     if self.exploration is not None
                     else "EXPLORATION_NOT_ALLOWED"
                 ),
+                metadata=self.looked_first,
             )
         if self.exploration is not None:
             # Later calls (repair, empty result) still see the results, but may not explore.
@@ -791,6 +806,37 @@ class DecisionSqlApplication:
         )
         return proposal.decision
 
+    async def _look_first(
+        self, question: str, schema_text: str, decision: ProductionDecision
+    ) -> ProductionDecisionProposal | None:
+        """Send a question or refusal returned before any probe back once, to look first.
+
+        A clarification the data could settle, or a refusal an authorized path in
+        the context could answer, costs the user a turn. The model may still return
+        the same decision; None keeps the original one (the provider failed).
+        """
+        returned = decision.decision.value
+        try:
+            proposal = await self.provider.propose_decision(
+                question,
+                schema_text,
+                earlier=self.earlier,
+                exploration=Exploration(open=True, returned_without_looking=returned),
+            )
+        except Exception as error:
+            self.looked_first = {"looked_first": returned, "look_first_error": type(error).__name__}
+            return None
+        if proposal.decision.case_id != PRODUCTION_DECISION_CASE_ID:
+            self.looked_first = {"looked_first": returned, "look_first_error": "CASE_ID_MISMATCH"}
+            return None
+        self.looked_first = {
+            "looked_first": returned,
+            "look_first_decision": proposal.decision.decision.value,
+            "look_first_prompt_tokens": proposal.prompt_tokens,
+            "look_first_completion_tokens": proposal.completion_tokens,
+        }
+        return proposal
+
     async def _explore(
         self,
         question: str,
@@ -827,6 +873,7 @@ class DecisionSqlApplication:
                     ],
                     "probe_rows_shared": [item.rows is not None for item in reports],
                     **tokens,
+                    **self.looked_first,
                 },
                 duration_ms=(perf_counter() - started) * 1000,
             )
@@ -966,6 +1013,10 @@ class _SecondAttempt:
     planned: QueryPlan | SqlPlanFailure | None
     execution: QueryExecution | SqlExecutionError | None
     sql_changes: tuple[str, ...]
+
+
+# Decisions sent back once when returned before any probe ran.
+_LOOK_FIRST = {DecisionType.NEEDS_CLARIFICATION, DecisionType.BLOCKED_AUTHORITY}
 
 
 def _looks_empty(execution: QueryExecution) -> bool:

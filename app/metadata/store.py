@@ -39,6 +39,8 @@ _AUDIT_FIELDS = (
     "model",
     "proposed_sql",
     "repaired_from_sql",
+    "executed_sql",
+    "sql_changes",
     "columns",
     "row_count",
     "truncated",
@@ -126,6 +128,8 @@ class SqlRunStore:
             return None
         data = dict(row)
         data["created_at"] = data["created_at"].isoformat()
+        # Runs recorded before 0005 have no change list.
+        data["sql_changes"] = data.get("sql_changes") or []
         data["trace"] = RunTrace.model_validate(data["trace"])
         data["trace_id"] = data["trace"].trace_id
         return RunRecord.model_validate({**data, "rows": [], "results_retained": False})

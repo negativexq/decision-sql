@@ -54,6 +54,9 @@ class RunRecord(BaseModel):
     model_context_hash: str | None = None
     proposed_sql: str | None = None
     repaired_from_sql: str | None = None
+    # The exact text the database received, and why its logic differs from proposed_sql.
+    executed_sql: str | None = None
+    sql_changes: list[str] = Field(default_factory=list)
     rows: list[dict[str, Any]] = Field(default_factory=list)
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0

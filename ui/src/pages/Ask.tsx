@@ -172,6 +172,9 @@ function RunResult({
   const [tab, setTab] = useState<Tab>(executed ? (chartable && run.rows.length > 1 ? "chart" : "table") : "checks");
   const [stage, setStage] = useState<TraceStage | null>(null);
   const [queryOpen, setQueryOpen] = useState(run.runtime_outcome !== "EXECUTED" && Boolean(run.proposed_sql));
+  // When the runtime changed the logic, the query that ran is the runtime's text, not the model's.
+  const changed = Boolean(run.executed_sql) && (run.sql_changes ?? []).length > 0;
+  const shownSql = changed ? run.executed_sql : run.proposed_sql;
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },
@@ -207,12 +210,19 @@ function RunResult({
           {run.proposed_sql && <span className={queryOpen ? "chevron open" : "chevron"} aria-hidden="true" />}
           {run.proposed_sql ? (run.runtime_outcome === "EXECUTED" ? "Query that ran" : "Proposed query") : "No query was written"}
         </button>
-        {queryOpen && run.proposed_sql && (
+        {queryOpen && shownSql && (
           <div id={`query-${run.run_id}`}>
-            <SqlViewer sql={run.proposed_sql} />
+            <SqlViewer sql={shownSql} />
           </div>
         )}
       </div>
+
+      {changed && (
+        <details className="repaired">
+          <summary>The checks changed the model's query before it ran: {run.sql_changes.join(" ")}</summary>
+          <SqlViewer sql={run.proposed_sql} />
+        </details>
+      )}
 
       {run.repaired_from_sql && (
         <details className="repaired">

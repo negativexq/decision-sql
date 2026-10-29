@@ -207,6 +207,7 @@ class SqlSafetyService:
             )
 
         parsed_for_plan = parsed
+        sql_changes: list[str] = []
         if self.grain_normalization_enabled:
             assert self.grain_coordinator is not None
             with self.tracer.start_as_current_span("decision_sql.semantic_grain") as span:
@@ -225,6 +226,10 @@ class SqlSafetyService:
                 reason=decision.runtime_reason.value,
             )
             if decision.status is GrainRuntimeStatus.NORMALIZED:
+                sql_changes.append(
+                    "Grain safety totals the child rows first, so a parent measure "
+                    "is counted once per parent row."
+                )
                 try:
                     parsed_for_plan = self.parser.parse(decision.selected_sql)
                 except SQLParseFailure:
@@ -334,6 +339,7 @@ class SqlSafetyService:
                         correlation_id=candidate.correlation_id,
                         candidate_source=candidate.source,
                         normalized_sql=normalized_sql,
+                        sql_changes=tuple(sql_changes),
                         statement_type=type(parsed_for_plan.expression).__name__,
                         referenced_tables=self._referenced_tables(parsed_for_plan.expression),
                         referenced_columns=self._referenced_columns(parsed_for_plan.expression),

@@ -73,7 +73,11 @@ class QueryPlan(BaseModel):
     plan_id: UUID
     correlation_id: str | None = None
     candidate_source: CandidateSource = CandidateSource.INTERNAL
+    # The exact text sent to the database.
     normalized_sql: str
+    # Why its logic differs from the candidate, one plain sentence each; empty when only
+    # the formatting differs.
+    sql_changes: tuple[str, ...] = ()
     statement_type: str
     referenced_tables: tuple[str, ...] = ()
     referenced_columns: tuple[str, ...] = ()

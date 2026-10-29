@@ -32,6 +32,7 @@ from app.sql.authority import ExecutionAuthority
 from app.sql.models import (
     CandidateSource,
     PolicyCode,
+    QueryPlan,
     SqlCandidate,
     SqlExecutionError,
     SqlPlanFailure,
@@ -341,6 +342,8 @@ class DecisionSqlApplication:
             model_reason_code=None,
             proposed_sql=decision.sql,
             repaired_from_sql=repaired_from_sql,
+            executed_sql=planned.normalized_sql if isinstance(planned, QueryPlan) else None,
+            sql_changes=planned.sql_changes if isinstance(planned, QueryPlan) else (),
             proposal_source=proposal_source,
             provider=proposal.provider,
             model=proposal.model,

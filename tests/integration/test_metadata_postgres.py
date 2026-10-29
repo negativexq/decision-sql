@@ -106,6 +106,32 @@ def test_audit_log_keeps_the_explanation_of_a_non_answer(engine: Engine) -> None
     restored = store.get("run_it_detail")
     assert restored is not None
     assert restored.model_detail == detail
+    assert restored.sql_changes == []
+
+
+def test_executed_sql_and_its_changes_survive_the_audit_store(engine: Engine) -> None:
+    store = SqlRunStore(engine)
+    trace = RunTraceCollector("run_it_executed").finish("EXECUTED")
+    store.save(
+        RunRecord(
+            run_id="run_it_executed",
+            trace_id=trace.trace_id,
+            question="Revenue by category",
+            proposal_source="LIVE_MODEL",
+            model_decision="ANSWER",
+            proposed_sql="SELECT 1",
+            executed_sql="SELECT 2",
+            sql_changes=["Grain safety totals the child rows first."],
+            runtime_outcome=RuntimeOutcome.EXECUTED,
+            created_at=trace.started_at.isoformat(),
+            trace=trace,
+        )
+    )
+
+    restored = store.get("run_it_executed")
+    assert restored is not None
+    assert (restored.proposed_sql, restored.executed_sql) == ("SELECT 1", "SELECT 2")
+    assert restored.sql_changes == ["Grain safety totals the child rows first."]
 
 
 def test_connection_round_trip_against_the_local_database(engine: Engine) -> None:

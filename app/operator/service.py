@@ -172,6 +172,8 @@ class OperatorApplication:
             model_context_hash=result.model_context_hash,
             proposed_sql=result.proposed_sql,
             repaired_from_sql=result.repaired_from_sql,
+            executed_sql=result.executed_sql,
+            sql_changes=list(result.sql_changes),
             rows=result.rows,
             columns=result.columns,
             row_count=result.row_count,

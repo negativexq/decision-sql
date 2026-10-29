@@ -69,6 +69,8 @@ export interface RunRecord {
   model_context_hash: string | null;
   proposed_sql: string | null;
   repaired_from_sql: string | null;
+  executed_sql: string | null;
+  sql_changes: string[];
   rows: Record<string, unknown>[];
   columns: string[];
   row_count: number;

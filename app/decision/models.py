@@ -35,6 +35,8 @@ class DecisionApplicationResult(BaseModel):
     proposed_sql: str | None = None
     # SQL the runtime rejected before the repair round replaced it.
     repaired_from_sql: str | None = None
+    executed_sql: str | None = None
+    sql_changes: tuple[str, ...] = ()
     proposal_source: ProposalSource
     provider: str | None = None
     model: str | None = None

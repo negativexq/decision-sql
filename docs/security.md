@@ -11,8 +11,8 @@ tests.
   columns (such as `customers.external_key`), audit records, or secrets.
 - Stored values of a saved connection reach the model only after an
   administrator turns on value sharing for that connection, and never for the
-  columns they exclude. The values come from `pg_stats` (or a bounded sample of
-  a small, unanalyzed table), are limited to short categorical text, and skip
+  columns they exclude. The values come from an exact, bounded count on a small
+  table or from `pg_stats` on a larger one, are limited to short categorical text, and skip
   keys and columns whose names suggest personal data. The model provider sees
   them with every question on that connection. Without sharing, the model sees
   only the shape of code and date columns (`9999-99-99`), which carries no

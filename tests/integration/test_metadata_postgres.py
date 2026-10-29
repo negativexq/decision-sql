@@ -377,3 +377,42 @@ def test_scheduled_reports_are_claimed_once_and_snapshots_are_bounded(engine: En
                 delete(report_snapshots).where(report_snapshots.c.report_id == report.id)
             )
             connection.execute(delete(reports).where(reports.c.id == report.id))
+
+
+def test_a_small_tables_values_are_counted_exactly_not_estimated(engine: Engine) -> None:
+    """Planner statistics leave out a value seen once; an exact count keeps it."""
+    from app.metadata.drivers.postgres import PostgresConnector
+    from app.metadata.values import known_values
+
+    schema = "it_value_stats"
+    with engine.begin() as connection:
+        connection.execute(text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))
+        connection.execute(text(f"CREATE SCHEMA {schema}"))
+        connection.execute(text(f"CREATE TABLE {schema}.district (region text)"))
+        connection.execute(
+            text(
+                f"INSERT INTO {schema}.district SELECT r FROM unnest("
+                "array['east', 'west', 'north', 'south']) r, generate_series(1, 20)"
+            )
+        )
+        connection.execute(text(f"INSERT INTO {schema}.district VALUES ('capital')"))
+        connection.execute(text(f"ANALYZE {schema}.district"))
+    try:
+        url = engine.url
+        config = ConnectionConfig(
+            kind="postgresql",
+            name="it-values",
+            host=url.host or "localhost",
+            port=url.port or 5432,
+            database=url.database or "decision_sql",
+            username=url.username or "",
+            schema_name=schema,
+            ssl_mode="disable",
+        )
+        [stats] = PostgresConnector().column_stats(config, url.password, {("district", "region")})
+        hint = known_values(stats)
+        assert hint is not None and hint.complete
+        assert hint.values == ("capital", "east", "north", "south", "west")
+    finally:
+        with engine.begin() as connection:
+            connection.execute(text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))

@@ -45,7 +45,9 @@ column is order revenue and which timestamp drives monthly trends.
 - For saved PostgreSQL connections, relationships an administrator declared are
   merged in like foreign keys. When an administrator turns on value sharing for
   the connection, categorical text columns carry their stored values
-  (`known_values`), read from `pg_stats`; excluded columns, keys, long values,
+  (`known_values`), counted exactly on small tables and read from `pg_stats`
+  on larger ones (whose estimates can miss a rare value, so the list is then
+  not treated as complete); excluded columns, keys, long values,
   and columns whose names suggest personal data never do. Without sharing, code
   and date columns carry only their shape (`value_patterns`, digits as `9`).
 - The policy section lists the SQL functions the runtime accepts, from the same

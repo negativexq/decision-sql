@@ -17,10 +17,14 @@ from app.operator.service import OperatorApplication, _saved_query_tables
 from app.reports.basis import changed_tables, table_basis
 from app.reports.filters import FilterChoice, FilterKind, apply_filters, check_filters
 from app.reports.models import (
+    CARD_SIZES,
+    MAX_CARDS,
     SCHEDULE_INTERVALS,
     SNAPSHOT_ROWS,
     SNAPSHOTS_KEPT,
+    CardFromRun,
     CardInput,
+    CardLayout,
     CardRefresh,
     FilterColumn,
     FilterOptions,
@@ -176,6 +180,60 @@ class ReportService:
         )
         self.store.save(updated)
         return ReportView(**updated.model_dump(), role=role)
+
+    def rename(self, report_id: str, title: str, actor: str) -> ReportView | None:
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
+            return None
+        report, role = found
+        if not title.strip():
+            raise ReportRejectedError("A report needs a name.")
+        updated = report.model_copy(
+            update={"title": title.strip(), "updated_by": actor, "updated_at": datetime.now(UTC)}
+        )
+        self.store.save(updated)
+        return ReportView(**updated.model_dump(), role=role)
+
+    def add_card(self, report_id: str, payload: CardFromRun, actor: str) -> ReportView | None:
+        """Add an answer from Ask as a chart under the report's other cards.
+
+        The card pins the run's executed SQL like any card the editor adds: the run
+        must be on the report's connection and must have run.
+        """
+        found = self._open(report_id, actor, _EDIT)
+        if found is None:
+            return None
+        report, _ = found
+        if len(report.cards) >= MAX_CARDS:
+            raise ReportRejectedError(f"A report holds at most {MAX_CARDS} cards.")
+        run = self.operator.get_run(payload.run_id)
+        if run is None:
+            raise ReportRejectedError(f"Run {payload.run_id} is not in the audit log.")
+        width, height = CARD_SIZES[payload.chart]
+        bottom = max((card.layout.y + card.layout.h for card in report.cards), default=0)
+        card = CardInput(
+            id=f"card-{uuid4().hex[:12]}",
+            kind="query",
+            title=payload.title.strip() or run.question[:200],
+            question=run.question[:1000],
+            run_id=run.run_id,
+            chart=payload.chart,
+            layout=CardLayout(x=0, y=min(bottom, 1000), w=width, h=height),
+        )
+        kept = [
+            CardInput(**item.model_dump(include=set(CardInput.model_fields)))
+            for item in report.cards
+        ]
+        return self.update(
+            report_id,
+            ReportInput(
+                title=report.title,
+                description=report.description,
+                cards=[*kept, card],
+                filters=report.filters,
+            ),
+            actor,
+        )
 
     def share(self, report_id: str, access: ReportAccess, actor: str) -> ReportView | None:
         found = self._open(report_id, actor, (ReportRole.OWNER,))

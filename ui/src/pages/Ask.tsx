@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { GatePath } from "../components/GatePath";
 import { GovernancePanel } from "../components/GovernancePanel";
 import { HowComputed } from "../components/HowComputed";
@@ -7,7 +7,19 @@ import { ResultChart, chartShape } from "../components/ResultChart";
 import { ResultTable } from "../components/ResultTable";
 import { SqlViewer } from "../components/SqlViewer";
 import { formatCount, formatMs, humanize, runOutcome } from "../format";
-import type { ConditionEdit, ConnectionSummary, Preset, ProgressEvent, RunRecord, RunTrace, TraceStage } from "../types";
+import { AddToReport, type AddTarget } from "../components/AddToReport";
+import type {
+  ChartType,
+  ConditionEdit,
+  ConnectionSummary,
+  Preset,
+  ProgressEvent,
+  Report,
+  ReportSummary,
+  RunRecord,
+  RunTrace,
+  TraceStage,
+} from "../types";
 
 type Tab = "table" | "chart" | "checks";
 
@@ -62,7 +74,13 @@ export function Ask({
   sourceId,
   onSourceChange,
   onManageConnections,
+  reports,
+  onAddToReport,
+  onOpenReport,
 }: {
+  reports: ReportSummary[];
+  onAddToReport: (run: RunRecord, target: AddTarget, chart: ChartType) => Promise<Report>;
+  onOpenReport: (id: string) => void;
   thread: RunRecord[];
   presets: Preset[];
   progress: Progress | null;
@@ -125,6 +143,14 @@ export function Ask({
             onRerun={() => onSubmit(run.question, run.preset_id ?? undefined)}
             onAsk={(text) => onSubmit(text)}
             onManageConnections={onManageConnections}
+            addToReport={
+              <AddToReport
+                run={run}
+                reports={reports}
+                onAdd={(target, chart) => onAddToReport(run, target, chart)}
+                onOpenReport={onOpenReport}
+              />
+            }
           />
         ),
       )}
@@ -320,7 +346,10 @@ function RunResult({
   onEdit,
   editing = false,
   readOnly = false,
+  addToReport,
 }: {
+  // The control that pins this answer to a report, for the newest answer only.
+  addToReport?: ReactNode;
   run: RunRecord;
   onRerun: () => void;
   onAsk: (question: string) => void;
@@ -371,6 +400,7 @@ function RunResult({
         <div className="result-title">
           <h1 className="result-question">{run.question}</h1>
           <span className={`pill pill-${outcome.tone}`}>{outcome.label}</span>
+          {run.runtime_outcome === "EXECUTED" && addToReport}
         </div>
         <p className="result-meta">
           {run.runtime_outcome === "EXECUTED" && <span>{formatCount(run.row_count)} {run.row_count === 1 ? "row" : "rows"}</span>}

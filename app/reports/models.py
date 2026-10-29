@@ -70,6 +70,21 @@ class ChartType(StrEnum):
     SCATTER = "scatter"
 
 
+# The size a new chart card takes, in grid columns and rows.
+CARD_SIZES: dict[ChartType, tuple[int, int]] = {
+    ChartType.NUMBER: (3, 4),
+    ChartType.BAR: (6, 8),
+    ChartType.COLUMN: (6, 8),
+    ChartType.LINE: (8, 7),
+    ChartType.AREA: (8, 7),
+    ChartType.PIE: (4, 7),
+    ChartType.TABLE: (6, 8),
+    ChartType.STACKED: (8, 8),
+    ChartType.LINES: (8, 8),
+    ChartType.SCATTER: (6, 8),
+}
+
+
 class CardLayout(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -312,3 +327,19 @@ class CardQuestion(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     question: str = Field(min_length=1, max_length=1000)
+
+
+class ReportRename(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=1, max_length=200)
+
+
+class CardFromRun(BaseModel):
+    """An answered question to add to a report as a new card at the bottom."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    run_id: str = Field(min_length=1, max_length=80)
+    chart: ChartType = ChartType.TABLE
+    title: str = Field(default="", max_length=200)

@@ -10,6 +10,7 @@ from app.api.reports import router as reports_router
 from app.api.routes import router
 from app.config import get_settings
 from app.db.session import build_engine, build_reader_engine
+from app.metadata.marks import InMemoryMarkStore, MarkStore, SqlMarkStore
 from app.metadata.notes import ColumnNoteStore, InMemoryColumnNoteStore, SqlColumnNoteStore
 from app.metadata.relationships import (
     InMemoryRelationshipStore,
@@ -53,6 +54,7 @@ connection_store: ConnectionStore
 relationship_store: RelationshipStore
 value_sharing_store: ValueSharingStore
 note_store: ColumnNoteStore
+mark_store: MarkStore
 report_store: ReportStore
 snapshot_store: SnapshotStore
 if settings.metadata_database_url:
@@ -62,6 +64,7 @@ if settings.metadata_database_url:
     relationship_store = SqlRelationshipStore(metadata_engine)
     value_sharing_store = SqlValueSharingStore(metadata_engine)
     note_store = SqlColumnNoteStore(metadata_engine)
+    mark_store = SqlMarkStore(metadata_engine)
     report_store = SqlReportStore(metadata_engine)
     snapshot_store = SqlSnapshotStore(metadata_engine)
 else:
@@ -74,6 +77,7 @@ else:
     relationship_store = InMemoryRelationshipStore()
     value_sharing_store = InMemoryValueSharingStore()
     note_store = InMemoryColumnNoteStore()
+    mark_store = InMemoryMarkStore()
     report_store = InMemoryReportStore()
     snapshot_store = InMemorySnapshotStore()
 

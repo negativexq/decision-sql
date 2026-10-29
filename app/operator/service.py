@@ -303,18 +303,34 @@ class OperatorApplication:
         return record.model_copy(update={"explanation": explain(record.proposed_sql)})
 
     def thread(self, run_id: str, limit: int = 20) -> list[RunRecord]:
-        """The run and the runs it followed up on or was edited from, oldest first."""
-        chain: list[RunRecord] = []
-        seen: set[str] = set()
-        current: str | None = run_id
-        while current is not None and current not in seen and len(chain) < limit:
-            seen.add(current)
-            record = self.get_run(current)
-            if record is None:
+        """The conversation a run belongs to, oldest first.
+
+        Back from the run along what each run followed up on or was edited from,
+        then forward along the newest run that continued it, so a conversation
+        opens whole from its first run as well as from its last.
+        """
+        record = self.get_run(run_id)
+        if record is None:
+            return []
+        chain = [record]
+        seen = {run_id}
+        earlier = record.follow_up_of or record.edited_from
+        while earlier is not None and earlier not in seen and len(chain) < limit:
+            seen.add(earlier)
+            found = self.get_run(earlier)
+            if found is None:
                 break
-            chain.append(record)
-            current = record.follow_up_of or record.edited_from
-        return list(reversed(chain))
+            chain.insert(0, found)
+            earlier = found.follow_up_of or found.edited_from
+        later = self.run_store.latest_child(run_id)
+        while later is not None and later not in seen and len(chain) < limit:
+            seen.add(later)
+            found = self.get_run(later)
+            if found is None:
+                break
+            chain.append(found)
+            later = self.run_store.latest_child(later)
+        return chain
 
     def schema(self) -> GovernedSchemaResponse:
         database, row_estimates = self._source_summary()

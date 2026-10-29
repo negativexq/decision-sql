@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from typing import Any, Protocol
 from uuid import uuid4
 
-from sqlalchemy import Engine, delete, func, insert, select, update
+from sqlalchemy import Engine, delete, func, insert, or_, select, update
 
 from app.metadata.connectors import (
     QUESTION_KINDS,
@@ -62,6 +62,10 @@ class RunStore(Protocol):
         self, *, actor: str | None = None, outcome: str | None = None, limit: int = 200
     ) -> list[RunSummary]: ...
 
+    def latest_child(self, run_id: str) -> str | None:
+        """The newest run that followed up on this one or was edited from it."""
+        ...
+
 
 def summarize(record: RunRecord) -> RunSummary:
     return RunSummary.model_validate(record.model_dump(include=set(RunSummary.model_fields)))
@@ -96,6 +100,16 @@ class InMemoryRunStore:
     ) -> list[RunSummary]:
         records = [run for run in reversed(self._runs.values()) if _matches(run, actor, outcome)]
         return [summarize(run) for run in records[:limit]]
+
+    def latest_child(self, run_id: str) -> str | None:
+        return next(
+            (
+                run.run_id
+                for run in reversed(self._runs.values())
+                if run_id in (run.follow_up_of, run.edited_from)
+            ),
+            None,
+        )
 
 
 class SqlRunStore:
@@ -135,6 +149,17 @@ class SqlRunStore:
         data["trace"] = RunTrace.model_validate(data["trace"])
         data["trace_id"] = data["trace"].trace_id
         return RunRecord.model_validate({**data, "rows": [], "results_retained": False})
+
+    def latest_child(self, run_id: str) -> str | None:
+        query = (
+            select(audit_runs.c.run_id)
+            .where(or_(audit_runs.c.follow_up_of == run_id, audit_runs.c.edited_from == run_id))
+            .order_by(audit_runs.c.created_at.desc())
+            .limit(1)
+        )
+        with self.engine.connect() as connection:
+            found = connection.execute(query).scalar()
+        return str(found) if found is not None else None
 
     def list(
         self, *, actor: str | None = None, outcome: str | None = None, limit: int = 200

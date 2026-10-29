@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { formatCount } from "../format";
 import type { RunSummary, SchemaResponse } from "../types";
 
@@ -27,17 +27,14 @@ export function Sidebar({
   schema,
   actor,
   onActorChange,
-  recent,
-  current,
-  onOpenRecent,
+  library,
 }: {
   view: View;
   onNavigate: (view: View) => void;
   onNewQuestion: () => void;
   schema: SchemaResponse | null;
-  recent: RunSummary[];
-  current: string | null;
-  onOpenRecent: (run: RunSummary) => void;
+  // The pinned, recent and report lists, already built by the app.
+  library: ReactNode;
   actor: string;
   onActorChange: (actor: string) => void;
 }) {
@@ -69,7 +66,7 @@ export function Sidebar({
         ))}
       </nav>
 
-      <Recent runs={recent} current={current} onOpen={onOpenRecent} />
+      {library}
 
       <div className="source">
         <div className="source-head">
@@ -124,14 +121,17 @@ export function Sidebar({
 }
 
 interface Conversation {
-  // The newest run, which opens the whole thread.
+  // The first run names the conversation; the newest one shows where it stands.
+  root: string;
   last: RunSummary;
-  title: string;
+  question: string;
   turns: number;
 }
 
 /** Group runs into conversations: a follow-up or an edit continues the run it came from. */
-export function conversations(runs: RunSummary[], limit = 8): Conversation[] {
+export function conversations(all: RunSummary[]): Conversation[] {
+  // A report reruns its cards' saved queries; those are not questions anyone asked here.
+  const runs = all.filter((run) => run.proposal_source !== "SAVED_QUERY");
   const byId = new Map(runs.map((run) => [run.run_id, run]));
   const continued = new Set(runs.flatMap((run) => [run.follow_up_of, run.edited_from]).filter(Boolean) as string[]);
   const found: Conversation[] = [];
@@ -143,35 +143,180 @@ export function conversations(runs: RunSummary[], limit = 8): Conversation[] {
       root = parent;
       parent = byId.get(root.follow_up_of ?? root.edited_from ?? "");
     }
-    found.push({ last: run, title: root.question, turns });
-    if (found.length >= limit) break;
+    // A chain whose start fell out of the recent window is named by its oldest run here.
+    found.push({ root: root.follow_up_of ?? root.edited_from ?? root.run_id, last: run, question: root.question, turns });
   }
   return found;
 }
 
-function Recent({ runs, current, onOpen }: { runs: RunSummary[]; current: string | null; onOpen: (run: RunSummary) => void }) {
-  const items = conversations(runs);
-  if (items.length === 0) return null;
+export interface LibraryItem {
+  kind: "conversation" | "report";
+  id: string;
+  title: string;
+  pinned: boolean;
+  meta?: string;
+  // Reports a viewer cannot rename for everyone keep a name of the viewer's own.
+  canRename: boolean;
+}
+
+/** Pinned items first, then recent conversations, then reports; each can be pinned and renamed. */
+export function Library({
+  pinned,
+  recent,
+  reports,
+  current,
+  onOpen,
+  onPin,
+  onRename,
+  onAllReports,
+}: {
+  pinned: LibraryItem[];
+  recent: LibraryItem[];
+  reports: LibraryItem[];
+  current: string | null;
+  onOpen: (item: LibraryItem) => void;
+  onPin: (item: LibraryItem, pinned: boolean) => void;
+  onRename: (item: LibraryItem, title: string) => void;
+  onAllReports: () => void;
+}) {
+  // Show a few of each; "Show more" opens the next ones, and the count stays per section.
+  const [shown, setShown] = useState({ recent: RECENT_SHOWN, reports: REPORTS_SHOWN });
+  const more = (key: keyof typeof shown, items: LibraryItem[], step: number) =>
+    items.length > shown[key] ? (
+      <button
+        type="button"
+        className="recent-more"
+        onClick={() => setShown((current) => ({ ...current, [key]: current[key] + step }))}
+      >
+        <Icon path="M6 9l6 6 6-6" size={12} />
+        Show more
+      </button>
+    ) : null;
+  const section = (id: string, title: string, items: LibraryItem[], footer?: ReactNode) =>
+    items.length > 0 || footer ? (
+      <section className="recent" aria-labelledby={id}>
+        <h2 id={id} className="recent-title">{title}</h2>
+        <ul>
+          {items.map((item) => (
+            <LibraryRow
+              key={`${item.kind}-${item.id}`}
+              item={item}
+              active={item.id === current}
+              onOpen={() => onOpen(item)}
+              onPin={() => onPin(item, !item.pinned)}
+              onRename={(title) => onRename(item, title)}
+            />
+          ))}
+        </ul>
+        {footer}
+      </section>
+    ) : null;
   return (
-    <section className="recent" aria-labelledby="recent-title">
-      <h2 id="recent-title" className="recent-title">Recent questions</h2>
-      <ul>
-        {items.map((item) => (
-          <li key={item.last.run_id}>
-            <button
-              type="button"
-              className={item.last.run_id === current ? "recent-item active" : "recent-item"}
-              aria-current={item.last.run_id === current ? "true" : undefined}
-              onClick={() => onOpen(item.last)}
-              title={item.title}
-            >
-              <span className="recent-question">{item.title}</span>
-              {item.turns > 1 && <span className="recent-turns">{item.turns}</span>}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <>
+      {section("pinned-title", "Pinned", pinned)}
+      {section("recent-title", "Recent questions", recent.slice(0, shown.recent), more("recent", recent, 10))}
+      {section(
+        "reports-title",
+        "Reports",
+        reports.slice(0, shown.reports),
+        more("reports", reports, 10) ?? (
+          <button type="button" className="recent-more" onClick={onAllReports}>
+            {reports.length ? "All reports" : "Create a report"}
+          </button>
+        ),
+      )}
+    </>
+  );
+}
+
+const RECENT_SHOWN = 5;
+const REPORTS_SHOWN = 3;
+const PIN = "M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6Z";
+const PEN = "M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4";
+const CHAT = "M4 5h16v11H9l-5 4V5Z";
+const PAGE = "M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z";
+
+function LibraryRow({
+  item,
+  active,
+  onOpen,
+  onPin,
+  onRename,
+}: {
+  item: LibraryItem;
+  active: boolean;
+  onOpen: () => void;
+  onPin: () => void;
+  onRename: (title: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(item.title);
+  if (editing) {
+    const finish = (save: boolean) => {
+      // Enter closes the field, and its blur then fires too: save once.
+      if (!editing) return;
+      setEditing(false);
+      if (save && draft.trim() !== item.title) onRename(draft.trim());
+    };
+    return (
+      <li className="recent-row editing">
+        <input
+          className="recent-input"
+          aria-label={`New name for ${item.title}`}
+          value={draft}
+          maxLength={200}
+          autoFocus
+          onFocus={(event) => event.currentTarget.select()}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={() => finish(true)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") finish(true);
+            if (event.key === "Escape") finish(false);
+          }}
+        />
+      </li>
+    );
+  }
+  return (
+    <li className={active ? "recent-row active" : "recent-row"}>
+      <button
+        type="button"
+        className="recent-item"
+        aria-current={active ? "true" : undefined}
+        onClick={onOpen}
+        title={item.title}
+      >
+        <Icon path={item.kind === "report" ? PAGE : CHAT} size={13} />
+        <span className="recent-question">{item.title}</span>
+        {item.meta && <span className="recent-turns">{item.meta}</span>}
+      </button>
+      <span className="recent-actions">
+        {item.canRename && (
+          <button
+            type="button"
+            className="recent-action"
+            aria-label={`Rename ${item.title}`}
+            title="Rename"
+            onClick={() => {
+              setDraft(item.title);
+              setEditing(true);
+            }}
+          >
+            <Icon path={PEN} size={13} />
+          </button>
+        )}
+        <button
+          type="button"
+          className={item.pinned ? "recent-action pinned" : "recent-action"}
+          aria-label={item.pinned ? `Unpin ${item.title}` : `Pin ${item.title}`}
+          aria-pressed={item.pinned}
+          title={item.pinned ? "Unpin" : "Pin to the top"}
+          onClick={onPin}
+        >
+          <Icon path={PIN} size={13} />
+        </button>
+      </span>
+    </li>
   );
 }
 

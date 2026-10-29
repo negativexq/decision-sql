@@ -7,7 +7,11 @@ import { bottom } from "../components/report/layout";
 import { SqlViewer } from "../components/SqlViewer";
 import type { ChartType, ConnectionSummary, Report, ReportCard, ReportSummary, RunRecord } from "../types";
 
-type CardState = { status: "loading" } | { status: "done"; run: RunRecord } | { status: "error"; message: string };
+type CardState =
+  | { status: "loading" }
+  // changed: tables described differently since the card was saved.
+  | { status: "done"; run: RunRecord; changed: string[] }
+  | { status: "error"; message: string };
 
 const DEFAULT_SIZE: Record<ChartType, { w: number; h: number }> = {
   number: { w: 3, h: 4 },
@@ -137,11 +141,26 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
       setResults((current) => ({ ...current, [card.id]: { status: "loading" } }));
       return api
         .refreshCard(reportId, card.id)
-        .then((run) => setResults((current) => ({ ...current, [card.id]: { status: "done", run } })))
+        .then(({ run, changed_tables }) =>
+          setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: changed_tables } })),
+        )
         .catch((cause: Error) => setResults((current) => ({ ...current, [card.id]: { status: "error", message: cause.message } })));
     },
     [reportId],
   );
+
+  const accept = (card: ReportCard) =>
+    api
+      .acceptCard(reportId, card.id)
+      .then((value) => {
+        const basis = value.cards.find((item) => item.id === card.id)?.basis;
+        setCards((current) => current.map((item) => (item.id === card.id ? { ...item, basis } : item)));
+        setResults((current) => {
+          const state = current[card.id];
+          return state?.status === "done" ? { ...current, [card.id]: { ...state, changed: [] } } : current;
+        });
+      })
+      .catch((cause: Error) => setError(cause.message));
 
   const refreshAll = useCallback(
     async (items: ReportCard[]) => {
@@ -221,7 +240,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
       measure: null,
       layout: { x: 0, y: bottom(cards), ...size },
     };
-    setResults((current) => ({ ...current, [card.id]: { status: "done", run } }));
+    setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: [] } }));
     updateCards([...cards, card]);
     setPanel(null);
   };
@@ -347,6 +366,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 selected={selected?.id === card.id}
                 onSelect={() => setPanel({ kind: "card", id: card.id })}
                 onRefresh={() => void refresh(card)}
+                onAccept={() => void accept(card)}
                 onChart={(chart) => updateCard(card.id, { chart })}
               />
             )}
@@ -378,6 +398,7 @@ function CardView({
   selected,
   onSelect,
   onRefresh,
+  onAccept,
   onChart,
 }: {
   card: ReportCard;
@@ -387,8 +408,10 @@ function CardView({
   selected: boolean;
   onSelect: () => void;
   onRefresh: () => void;
+  onAccept: () => void;
   onChart: (chart: ChartType) => void;
 }) {
+  const changed = state?.status === "done" ? state.changed : [];
   const className = ["report-card", card.kind === "text" ? "report-card-text" : "", selected ? "selected" : ""].filter(Boolean).join(" ");
   return (
     <article className={className}>
@@ -407,6 +430,15 @@ function CardView({
           <button type="button" className="button ghost small" onClick={onSelect}>Edit</button>
         )}
       </header>
+      {changed.length > 0 && (
+        <div className="report-card-drift" role="status">
+          <p>
+            {changed.length === 1 ? "Table" : "Tables"} {changed.join(", ")} changed since this card was saved. The query passed
+            every check again; make sure the chart still shows what its title says.
+          </p>
+          <button type="button" className="link" onClick={onAccept}>Mark as checked</button>
+        </div>
+      )}
       <div className="report-card-body">
         {card.kind === "text" ? (
           card.note ? <p className="report-card-prose">{card.note}</p> : <p className="rc-empty">Write notes for this section in Edit.</p>
@@ -633,6 +665,22 @@ function CardPanel({
               <span className="field-label">Question</span>
               <p>{card.question}</p>
             </div>
+            <dl className="report-provenance">
+              <dt>Saved from run</dt>
+              <dd><code>{card.run_id}</code></dd>
+              {run && (
+                <>
+                  <dt>Last run</dt>
+                  <dd><code>{run.run_id}</code>, {relativeTime(run.created_at)}</dd>
+                </>
+              )}
+              {state?.status === "done" && state.changed.length > 0 && (
+                <>
+                  <dt>Changed since saved</dt>
+                  <dd>{state.changed.join(", ")}</dd>
+                </>
+              )}
+            </dl>
             {run?.executed_sql && (
               <details className="report-sql">
                 <summary>Saved query</summary>

@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, TableMetadata
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.operator.service import _saved_query_tables
@@ -21,10 +22,23 @@ def _record(run_id: str, *, connection: str = "governed", executed: bool = True)
         proposal_source="LIVE_MODEL",
         runtime_outcome=RuntimeOutcome.EXECUTED if executed else RuntimeOutcome.POLICY_REJECTED,
         proposed_sql="SELECT 1",
-        executed_sql=f"SELECT {run_id}" if executed else None,
+        executed_sql=f"SELECT total FROM orders -- {run_id}" if executed else None,
         created_at=datetime.now(UTC).isoformat(),
         trace=RunTraceCollector(run_id).finish("EXECUTED"),
         connection_id=connection,
+    )
+
+
+def _orders(**column: object) -> SchemaCatalog:
+    total = ColumnMetadata(name="total", type="numeric", description="Order total.")
+    return SchemaCatalog(
+        tables=(
+            TableMetadata(
+                name="orders",
+                description="Orders.",
+                columns=(total.model_copy(update=column),),
+            ),
+        )
     )
 
 
@@ -32,6 +46,7 @@ class FakeOperator:
     def __init__(self, *records: RunRecord) -> None:
         self.records = {record.run_id: record for record in records}
         self.calls: list[dict[str, object]] = []
+        self.catalog = _orders()
 
     def get_run(self, run_id: str) -> RunRecord | None:
         return self.records.get(run_id)
@@ -85,13 +100,15 @@ def test_card_sql_comes_from_the_audit_log_never_from_the_client() -> None:
     )
     assert updated is not None
     query, text = updated.cards
-    assert query.sql == "SELECT run_a" and query.question == "question of run_a"
+    assert (
+        query.sql == "SELECT total FROM orders -- run_a" and query.question == "question of run_a"
+    )
     assert query.chart == "pie" and text.sql is None and text.note.startswith("Revenue")
     assert updated.updated_by == "mehmet"
 
     moved = _card("c1", "run_a").model_copy(update={"layout": CardLayout(x=6, y=2, w=6, h=5)})
     again = service.update(report.id, ReportInput(title="Sales", cards=[moved]), "ayse")
-    assert again is not None and again.cards[0].sql == "SELECT run_a"
+    assert again is not None and again.cards[0].sql == "SELECT total FROM orders -- run_a"
     assert again.cards[0].layout.x == 6
 
 
@@ -114,11 +131,47 @@ async def test_refresh_runs_the_pinned_sql_through_the_runtime() -> None:
     service, operator = _service(_record("run_a"))
     report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
     service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
-    record = await service.refresh(report.id, "c1", "ayse")
-    assert record is not None
+    refreshed = await service.refresh(report.id, "c1", "ayse")
+    assert refreshed is not None and refreshed.changed_tables == []
     [call] = operator.calls
-    assert call["saved_sql"] == "SELECT run_a" and call["source"] is None
+    assert call["saved_sql"] == "SELECT total FROM orders -- run_a" and call["source"] is None
     assert await service.refresh(report.id, "missing", "ayse") is None
+
+
+@pytest.mark.asyncio
+async def test_refresh_names_tables_described_differently_since_the_card_was_pinned() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+    pinned = service.get(report.id)
+    assert pinned is not None and set(pinned.cards[0].basis) == {"orders"}
+
+    # Values and value hints change with the data; they do not change the meaning.
+    operator.catalog = _orders(value_domain=("1", "2"), known_values=("1",))
+    refreshed = await service.refresh(report.id, "c1", "ayse")
+    assert refreshed is not None and refreshed.changed_tables == []
+
+    for change in (
+        {"description": "Order total in cents."},
+        {"type": "integer"},
+        {"sensitivity": Sensitivity.CONFIDENTIAL},
+        {"name": "amount"},
+    ):
+        operator.catalog = _orders(**change)
+        refreshed = await service.refresh(report.id, "c1", "ayse")
+        assert refreshed is not None and refreshed.changed_tables == ["orders"], change
+
+    operator.catalog = SchemaCatalog()
+    refreshed = await service.refresh(report.id, "c1", "ayse")
+    assert refreshed is not None and refreshed.changed_tables == ["orders"]
+
+    # A reader who checked the card takes the tables as they are now; moving the card
+    # afterwards keeps that basis.
+    operator.catalog = _orders(description="Order total in cents.")
+    assert await service.accept(report.id, "c1", "mehmet") is not None
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+    refreshed = await service.refresh(report.id, "c1", "ayse")
+    assert refreshed is not None and refreshed.changed_tables == []
 
 
 def test_saved_query_tables_skip_cte_names() -> None:

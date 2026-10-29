@@ -1,15 +1,19 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi.concurrency import run_in_threadpool
 
+from app.catalog.models import SchemaCatalog
 from app.metadata.service import GOVERNED_CONNECTION_ID, ConnectionService, QuestionSource
 from app.operator.models import RunRecord, RuntimeOutcome
-from app.operator.service import OperatorApplication
+from app.operator.service import OperatorApplication, _saved_query_tables
+from app.reports.basis import changed_tables, table_basis
 from app.reports.models import (
     CardInput,
+    CardRefresh,
     Report,
     ReportCard,
     ReportCreate,
@@ -21,6 +25,19 @@ from app.reports.store import ReportStore
 
 class ReportRejectedError(ValueError):
     pass
+
+
+class _Lazy:
+    """Read a connection's catalog once, and only when a new card is pinned."""
+
+    def __init__(self, load: Callable[[], SchemaCatalog]) -> None:
+        self._load = load
+        self._value: SchemaCatalog | None = None
+
+    def get(self) -> SchemaCatalog:
+        if self._value is None:
+            self._value = self._load()
+        return self._value
 
 
 class ReportService:
@@ -63,7 +80,8 @@ class ReportService:
         if len({card.id for card in payload.cards}) != len(payload.cards):
             raise ReportRejectedError("Two cards share an id.")
         previous = {card.id: card for card in report.cards}
-        cards = [self._pin(report, card, previous.get(card.id)) for card in payload.cards]
+        catalog = _Lazy(lambda: self._catalog(report.connection_id))
+        cards = [self._pin(report, card, previous.get(card.id), catalog) for card in payload.cards]
         updated = report.model_copy(
             update={
                 "title": payload.title.strip(),
@@ -87,8 +105,49 @@ class ReportService:
         source = await self._source(report.connection_id)
         return await self.operator.run(question, actor=actor, source=source)
 
-    async def refresh(self, report_id: str, card_id: str, actor: str) -> RunRecord | None:
-        """Run a card's pinned SQL again, through every check, without a model call."""
+    async def refresh(self, report_id: str, card_id: str, actor: str) -> CardRefresh | None:
+        """Run a card's pinned SQL again, through every check, without a model call.
+
+        The checks say whether the query may still run; the basis says whether the
+        tables it reads are still described the way they were when it was pinned.
+        """
+        found = self._query_card(report_id, card_id)
+        if found is None:
+            return None
+        report, card = found
+        source = await self._source(report.connection_id)
+        catalog = source.catalog if source is not None else self.operator.catalog
+        run = await self.operator.run(
+            card.question or card.title or "Saved report query",
+            actor=actor,
+            source=source,
+            saved_sql=card.sql,
+        )
+        return CardRefresh(run=run, changed_tables=changed_tables(card.basis, catalog))
+
+    async def accept(self, report_id: str, card_id: str, actor: str) -> Report | None:
+        """Record that a reader checked the card against the tables as they are now."""
+        found = self._query_card(report_id, card_id)
+        if found is None:
+            return None
+        report, card = found
+        source = await self._source(report.connection_id)
+        catalog = source.catalog if source is not None else self.operator.catalog
+        basis = table_basis(catalog, _saved_query_tables(card.sql or ""))
+        updated = report.model_copy(
+            update={
+                "cards": [
+                    item.model_copy(update={"basis": basis}) if item.id == card.id else item
+                    for item in report.cards
+                ],
+                "updated_by": actor,
+                "updated_at": datetime.now(UTC),
+            }
+        )
+        await run_in_threadpool(self.store.save, updated)
+        return updated
+
+    def _query_card(self, report_id: str, card_id: str) -> tuple[Report, ReportCard] | None:
         report = self.store.get(report_id)
         if report is None:
             return None
@@ -97,15 +156,15 @@ class ReportService:
             return None
         if card.kind != "query" or card.sql is None:
             raise ReportRejectedError("This card has no saved query to run.")
-        source = await self._source(report.connection_id)
-        return await self.operator.run(
-            card.question or card.title or "Saved report query",
-            actor=actor,
-            source=source,
-            saved_sql=card.sql,
-        )
+        return report, card
 
-    def _pin(self, report: Report, card: CardInput, previous: ReportCard | None) -> ReportCard:
+    def _pin(
+        self,
+        report: Report,
+        card: CardInput,
+        previous: ReportCard | None,
+        catalog: _Lazy,
+    ) -> ReportCard:
         """Take the card's SQL from its run in the audit log, never from the client."""
         if card.kind == "text" or card.run_id is None:
             return ReportCard(**card.model_dump(), sql=None)
@@ -114,6 +173,7 @@ class ReportService:
                 **card.model_dump(exclude={"question"}),
                 question=previous.question,
                 sql=previous.sql,
+                basis=previous.basis,
             )
         run = self.operator.get_run(card.run_id)
         if run is None:
@@ -126,7 +186,16 @@ class ReportService:
             **card.model_dump(exclude={"question"}),
             question=run.question,
             sql=run.executed_sql,
+            basis=table_basis(catalog.get(), _saved_query_tables(run.executed_sql)),
         )
+
+    def _catalog(self, connection_id: str) -> SchemaCatalog:
+        if connection_id == GOVERNED_CONNECTION_ID:
+            return self.operator.catalog
+        source = self.connections.question_source(connection_id)
+        if source is None:
+            raise ReportRejectedError("The report's connection no longer exists.")
+        return source.catalog
 
     async def _source(self, connection_id: str) -> QuestionSource | None:
         if connection_id == GOVERNED_CONNECTION_ID:

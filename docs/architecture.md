@@ -184,6 +184,16 @@ why on its card. Text cards hold headings and notes; chart cards carry a
 description, a chart type (number, bars, columns, line, area, pie, table), and
 optional category and value columns.
 
+Passing the gates says a saved query may still run, not that it still means
+what it meant. A column redescribed, retyped, renamed, hidden, or marked
+sensitive can leave the SQL valid and the chart misleading. So a card also keeps
+a basis: a fingerprint of each table its SQL reads, taken from the catalog when
+the card is pinned (descriptions, types, sensitivity, queryability, keys and
+relationships; stored values are left out because they change with the data).
+A refresh names the tables whose fingerprint differs, the card says so above
+its chart, and a reader who checked it takes the current tables as the new
+basis.
+
 ### Metadata isolation
 
 Audit records and connections live in the `decision_meta` schema, written with

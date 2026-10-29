@@ -14,6 +14,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.operator.models import RunRecord
+
 GRID_COLUMNS = 12
 MAX_CARDS = 40
 
@@ -58,6 +60,9 @@ class CardInput(BaseModel):
 
 class ReportCard(CardInput):
     sql: str | None = None
+    # A fingerprint of each table the SQL reads, as the catalog described it when the
+    # card was pinned; a refresh compares it with the catalog of the moment.
+    basis: dict[str, str] = Field(default_factory=dict)
 
 
 class ReportInput(BaseModel):
@@ -106,6 +111,13 @@ class Report(BaseModel):
             updated_by=self.updated_by,
             updated_at=self.updated_at,
         )
+
+
+class CardRefresh(BaseModel):
+    """A card's run, and the tables whose description changed since it was pinned."""
+
+    run: RunRecord
+    changed_tables: list[str] = Field(default_factory=list)
 
 
 class CardQuestion(BaseModel):

@@ -6,7 +6,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.routes import Actor
 from app.metadata.service import ConnectorUnavailableError
 from app.operator.models import RunRecord
-from app.reports.models import CardQuestion, Report, ReportCreate, ReportInput, ReportSummary
+from app.reports.models import (
+    CardQuestion,
+    CardRefresh,
+    Report,
+    ReportCreate,
+    ReportInput,
+    ReportSummary,
+)
 from app.reports.service import ReportRejectedError, ReportService
 
 router = APIRouter(prefix="/api/reports")
@@ -60,7 +67,7 @@ def delete_report(report_id: str, service: Reports) -> None:
         raise HTTPException(status_code=404, detail="Report not found")
 
 
-async def _run(call: Awaitable[RunRecord | None]) -> RunRecord:
+async def _run[T](call: Awaitable[T | None]) -> T:
     try:
         record = await call
     except ReportRejectedError as error:
@@ -83,6 +90,12 @@ async def ask_for_card(
     return await _run(service.ask(report_id, payload.question, actor))
 
 
-@router.post("/{report_id}/cards/{card_id}/refresh", response_model=RunRecord)
-async def refresh_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> RunRecord:
+@router.post("/{report_id}/cards/{card_id}/refresh", response_model=CardRefresh)
+async def refresh_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> CardRefresh:
     return await _run(service.refresh(report_id, card_id, actor))
+
+
+@router.post("/{report_id}/cards/{card_id}/accept", response_model=Report)
+async def accept_card(report_id: str, card_id: str, service: Reports, actor: Actor) -> Report:
+    """Take the tables as they are now as the card's new basis."""
+    return await _run(service.accept(report_id, card_id, actor))

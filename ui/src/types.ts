@@ -305,6 +305,12 @@ export interface ReportCard {
   measure: string | null;
   layout: CardLayout;
   sql?: string | null;
+  basis?: Record<string, string>;
+}
+
+export interface CardRefresh {
+  run: RunRecord;
+  changed_tables: string[];
 }
 
 export interface Report {

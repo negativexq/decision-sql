@@ -1,6 +1,7 @@
 import type {
   ConnectionRelationships,
   ConnectionValues,
+  CardRefresh,
   Report,
   ReportCard,
   ReportSummary,
@@ -117,15 +118,19 @@ export const api = {
       method: "PUT",
       body: JSON.stringify({
         ...body,
-        // The server pins each card's SQL from its run; it does not accept SQL from here.
-        cards: body.cards.map(({ sql: _sql, ...card }) => card),
+        // The server pins each card's SQL and basis from its run; it does not accept them from here.
+        cards: body.cards.map(({ sql: _sql, basis: _basis, ...card }) => card),
       }),
     }),
   deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
   askForCard: (id: string, question: string) =>
     request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),
   refreshCard: (id: string, cardId: string) =>
-    request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/refresh`, {
+    request<CardRefresh>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/refresh`, {
+      method: "POST",
+    }),
+  acceptCard: (id: string, cardId: string) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/accept`, {
       method: "POST",
     }),
   values: (id: string) => request<ConnectionValues>(`/api/connections/${encodeURIComponent(id)}/values`),

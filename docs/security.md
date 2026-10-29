@@ -21,8 +21,11 @@ tests.
   (`SqlCandidate`) with no authorization state.
 - It has no tool calls. At most two extra requests follow the first: one that
   adds tables the model asked for from `other_tables`, and one repair round
-  after a policy rejection. Both go through every gate again, and repair
-  feedback never quotes database error text.
+  after a policy rejection or an empty result. Both go through every gate
+  again, and repair feedback never quotes database error text. After an empty
+  result the model learns only that the query matched no rows (or only zeros)
+  and which of its literals the column does not store, never rows or stored
+  values.
 - A follow-up from a report card also sends the earlier question and the SQL
   the model proposed for it, recorded as `follow_up_of` in the audit log. It
   never sends the SQL that ran, which can hold stored values the runtime wrote

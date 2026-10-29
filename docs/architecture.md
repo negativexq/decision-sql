@@ -81,6 +81,11 @@ At most one more call follows, recorded as its own trace stage:
   limit, fan-out). The model gets the runtime's own rejection code and message,
   never database error text or rows. Authority, write, forbidden-relation, and
   catalog rejections are final.
+- **Empty result**: the query ran and returned no rows, or one row of only
+  zeros and NULLs, and the run has not used its repair round. The model hears
+  that the result was empty, which filters compare with a value the column
+  does not store, and that it may keep the query. It never sees rows of any
+  query or the values a column stores.
 
 Replays of recorded decisions never get either round. The system prompt is
 pinned by `production_decision_contract_hash()`, so changing it is a visible
@@ -122,6 +127,15 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 
+After execution, an empty result (no rows, or one row of only zeros and
+NULLs) is checked once. For text columns whose values are not all known, the
+runtime looks each literal up in the database as the reader role, with a short
+timeout (`DECISION_SQL_VALUE_PROBE_TIMEOUT_MS`). A literal stored in exactly one
+other spelling (case, spacing, punctuation) takes that spelling, and the query
+runs again through every gate without a model call. Otherwise the empty
+result goes to the repair round above. Confidential columns are not looked up.
+`DECISION_SQL_RESULT_CHECK_ENABLED=false` turns the check off.
+
 Execution runs only an accepted plan, on the `decision_reader` role, in a
 `READ ONLY` transaction with a statement timeout and a result row cap. The
 audit log keeps both the model's SQL and the text the database received
@@ -135,8 +149,9 @@ audit log keeps both the model's SQL and the text the database received
   the grain and join checks.
 - A table joined with itself is not checked against relationships.
 - The value check covers `column = 'text'`, `<>`, and `IN` lists on bare
-  columns; `LIKE`, functions such as `LOWER(column)`, and columns whose
-  values are not all known are not checked.
+  columns; `LIKE` and functions such as `LOWER(column)` are not checked.
+  Columns whose values are not all known are looked up only after a query
+  comes back empty.
 - Repair is one round. A second rejection is final.
 - A report filter does not follow relationships: a filter on `regions.name`
   leaves a card that reads only `orders` unfiltered (the card says so). It

@@ -366,3 +366,21 @@ def test_the_top_row_of_a_descending_order_is_a_value_not_a_missing_one(
     result = service.execute(planned)
     assert isinstance(result, QueryExecution)
     assert result.rows[0]["amount"] is not None
+
+
+def test_the_value_probe_finds_a_stored_spelling_in_the_database(
+    service: SqlSafetyService,
+) -> None:
+    probed = service.probe_values(
+        "SELECT COUNT(*) FROM products p "
+        "WHERE p.name = 'office item 03' AND p.category IN ('Office', 'stationery')"
+    )
+
+    assert probed is not None
+    assert "'Office Item 03'" in probed.expression.sql(dialect="postgres")
+    assert [(item.column, item.literal) for item in probed.unmatched] == [
+        ("category", "stationery")
+    ]
+    # A query on no probed column, or one that does not parse, has nothing to look up.
+    assert service.probe_values("SELECT COUNT(*) FROM products WHERE id = 1") is None
+    assert service.probe_values("SELECT FROM WHERE") is None

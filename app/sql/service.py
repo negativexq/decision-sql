@@ -2,7 +2,7 @@ from time import perf_counter
 from uuid import UUID, uuid4
 
 from opentelemetry import trace
-from sqlalchemy import Engine
+from sqlalchemy import Connection, Engine
 from sqlglot import exp
 
 from app.catalog.default import build_default_catalog
@@ -51,7 +51,39 @@ from app.sql.ordering import CHANGE as NULLS_LAST_CHANGE
 from app.sql.ordering import nulls_last
 from app.sql.parser import ParsedSQL, SQLParseFailure, SQLParser
 from app.sql.policy import SQLPolicy
-from app.sql.values import ValueChecker
+from app.sql.values import ValueCheck, ValueChecker, ValueProbe
+
+
+class _DatabaseLookup:
+    """The value probe's lookups, as parameterized queries on one reader connection."""
+
+    def __init__(self, connection: Connection) -> None:
+        self.connection = connection
+
+    @staticmethod
+    def _names(target: tuple[str, str]) -> tuple[str, str]:
+        # Both names come from the catalog, never from the model's SQL text.
+        return (
+            exp.to_identifier(target[0], quoted=True).sql(dialect="postgres"),
+            exp.to_identifier(target[1], quoted=True).sql(dialect="postgres"),
+        )
+
+    def stored(self, target: tuple[str, str], value: str) -> bool:
+        table, column = self._names(target)
+        found = self.connection.exec_driver_sql(
+            f"SELECT 1 FROM {table} WHERE {column} = %(value)s LIMIT 1", {"value": value}
+        ).first()
+        return found is not None
+
+    def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
+        table, column = self._names(target)
+        rows = self.connection.exec_driver_sql(
+            f"SELECT DISTINCT {column}::text FROM {table} "
+            f"WHERE regexp_replace(lower({column}::text), '[^[:alnum:]]+', '', 'g') = %(key)s "
+            "LIMIT 2",
+            {"key": key},
+        ).all()
+        return tuple(str(row[0]) for row in rows)
 
 
 class _AbortedPlanning(Exception):
@@ -89,6 +121,7 @@ class SqlSafetyService:
         self.default_execution_authority = ExecutionAuthority.from_table_names(authority_tables)
         self.policy = SQLPolicy(self.catalog)
         self.value_checker = ValueChecker(self.catalog)
+        self.value_probe = ValueProbe(self.catalog)
         self.cost_gate = QueryCostGate()
         self.executor = ReadOnlyExecutor(
             reader_engine,
@@ -496,6 +529,29 @@ class SqlSafetyService:
                 correlation_id=plan.correlation_id,
                 error="Candidate SQL could not be executed by the restricted reader.",
             )
+
+    def probe_values(self, sql: str) -> ValueCheck | None:
+        """Look up the literals of a query that came back empty; None when nothing was probed.
+
+        The lookups run as the reader role in a read-only transaction with a short
+        timeout, on columns the query already reads; a lookup that fails or times out
+        counts as no answer, never as an error of the run.
+        """
+        try:
+            expression = self.parser.parse(sql).expression
+        except SQLParseFailure:
+            return None
+        if not self.value_probe.targets(expression):
+            return None
+        try:
+            with self.reader_engine.connect() as connection, connection.begin():
+                self.executor.configure_transaction(connection)
+                connection.exec_driver_sql(
+                    f"SET LOCAL statement_timeout = {int(self.settings.value_probe_timeout_ms)}"
+                )
+                return self.value_probe.probe(expression, _DatabaseLookup(connection))
+        except Exception:
+            return None
 
     def _record_plan(self, candidate: SqlCandidate, result: QueryPlan | SqlPlanFailure) -> None:
         rejection = (

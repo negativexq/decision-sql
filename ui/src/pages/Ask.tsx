@@ -175,8 +175,12 @@ function RunResult({
   // When the runtime changed the logic, the query that ran is the runtime's text, not the model's.
   const changed = Boolean(run.executed_sql) && (run.sql_changes ?? []).length > 0;
   const shownSql = changed ? run.executed_sql : run.proposed_sql;
-  const valueCheck = run.trace?.stages.find((item) => item.name === "value_check");
-  const unmatched = valueCheck?.reason === "VALUE_NOT_STORED" ? String(valueCheck.metadata?.unmatched ?? "") : "";
+  // Either check may find a filter value the column does not store: before the run, or after an empty result.
+  const unmatched = (run.trace?.stages ?? [])
+    .filter((item) => (item.name === "value_check" || item.name === "result_check") && item.reason === "VALUE_NOT_STORED")
+    .map((item) => String(item.metadata?.unmatched ?? ""))
+    .filter(Boolean)
+    .join(", ");
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },

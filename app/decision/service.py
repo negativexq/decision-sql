@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass
+from decimal import Decimal
 from time import perf_counter
 
 from app.config import Settings
@@ -33,11 +35,13 @@ from app.sql.authority import ExecutionAuthority
 from app.sql.models import (
     CandidateSource,
     PolicyCode,
+    QueryExecution,
     QueryPlan,
     SqlCandidate,
     SqlExecutionError,
     SqlPlanFailure,
     SqlSafetyStatus,
+    UnmatchedValue,
 )
 from app.sql.service import SqlSafetyService
 
@@ -322,8 +326,158 @@ class DecisionSqlApplication:
             collector.record_stage(
                 "repair", TraceStageStatus.SKIPPED, reason=_repair_skip_reason(planned, repairable)
             )
+        execution: QueryExecution | SqlExecutionError | None = None
+        sql_changes: tuple[str, ...] = ()
+        if isinstance(planned, SqlPlanFailure):
+            collector.skip_unrecorded(
+                (
+                    "planning_connection",
+                    "explain",
+                    "cost_gate",
+                    "execution_connection",
+                    "execution",
+                    "result_check",
+                ),
+                "EARLIER_RUNTIME_REJECTION",
+            )
+        else:
+            execution = await asyncio.to_thread(self.safety_service.execute, planned)
+            sql_changes = planned.sql_changes
+            if (
+                replay_decision is None
+                and self.settings.result_check_enabled
+                and isinstance(execution, QueryExecution)
+                and _looks_empty(execution)
+            ):
+                second = await self._check_empty_result(
+                    question,
+                    schema_text,
+                    decision,
+                    authority,
+                    collector,
+                    repairable=repairable and repaired_from_sql is None,
+                )
+                if second is not None and second.decision is not decision:
+                    repaired_from_sql = decision.sql
+                    decision = second.decision
+                    if decision.decision is not DecisionType.ANSWER:
+                        return self._non_answer(
+                            decision,
+                            proposal,
+                            proposal_source,
+                            model_context,
+                            model_context_hash,
+                            collector,
+                            repaired_from_sql=repaired_from_sql,
+                        )
+                if second is not None and second.planned is not None:
+                    planned, execution = second.planned, second.execution
+                    sql_changes = second.sql_changes
+            else:
+                collector.record_stage(
+                    "result_check", TraceStageStatus.SKIPPED, reason="NOT_NEEDED"
+                )
         runtime_outcome, runtime_reason = _runtime_from_plan(planned)
-        execution = None
+        if isinstance(execution, SqlExecutionError):
+            runtime_outcome, runtime_reason = "EXECUTION_ERROR", "EXECUTION_ERROR"
+        elif isinstance(execution, QueryExecution):
+            runtime_outcome, runtime_reason = "EXECUTED", None
+        collector.record_stage("response", TraceStageStatus.PASS, reason=runtime_reason)
+        trace = collector.finish(runtime_outcome)
+        return DecisionApplicationResult(
+            model_decision=decision.decision,
+            model_reason_code=None,
+            proposed_sql=decision.sql,
+            repaired_from_sql=repaired_from_sql,
+            executed_sql=planned.normalized_sql if isinstance(planned, QueryPlan) else None,
+            sql_changes=sql_changes if isinstance(planned, QueryPlan) else (),
+            proposal_source=proposal_source,
+            provider=proposal.provider,
+            model=proposal.model,
+            model_context=model_context,
+            model_context_hash=model_context_hash,
+            runtime_outcome=RuntimeOutcome(runtime_outcome),
+            runtime_reason=runtime_reason,
+            rows=execution.rows if isinstance(execution, QueryExecution) else [],
+            columns=execution.columns if isinstance(execution, QueryExecution) else [],
+            row_count=execution.row_count if isinstance(execution, QueryExecution) else 0,
+            truncated=execution.truncated if isinstance(execution, QueryExecution) else False,
+            trace=trace,
+        )
+
+    async def _check_empty_result(
+        self,
+        question: str,
+        schema_text: str,
+        decision: ProductionDecision,
+        authority: ExecutionAuthority,
+        collector: RunTraceCollector,
+        *,
+        repairable: bool,
+    ) -> _SecondAttempt | None:
+        """Run once more when an empty result has a cause the runtime can name.
+
+        A text literal the column stores in exactly one other spelling is rewritten
+        and the query runs again through every check, with no model call.  Otherwise,
+        if the run has not used its repair round, the model hears that the query
+        returned no rows (never the rows of any query, nor the values a column
+        stores) and may rewrite it or keep it.  None keeps the empty result.
+        """
+        started = perf_counter()
+        probed = await asyncio.to_thread(self.safety_service.probe_values, decision.sql or "")
+        unmatched = probed.unmatched if probed is not None else ()
+        metadata: dict[str, object] = {
+            "checked": probed.checked if probed is not None else 0,
+            "rewritten": len(probed.changes) if probed is not None else 0,
+            "unmatched": ", ".join(sorted({f"{item.table}.{item.column}" for item in unmatched})),
+        }
+        if probed is not None and probed.changes:
+            collector.record_stage(
+                "result_check",
+                TraceStageStatus.PASS,
+                reason="VALUE_REWRITTEN",
+                metadata=metadata,
+                duration_ms=(perf_counter() - started) * 1000,
+            )
+            collector.forget(_RUNTIME_STAGES)
+            candidate = SqlCandidate(
+                sql=probed.expression.sql(dialect="postgres"),
+                source=CandidateSource.LLM,
+                correlation_id=collector.run_id,
+                execution_authority=authority,
+            )
+            planned = await asyncio.to_thread(self.safety_service.plan, candidate)
+            return await self._second_attempt(decision, planned, probed.changes, collector)
+        feedback = _empty_result_feedback(decision, unmatched) if repairable else None
+        collector.record_stage(
+            "result_check",
+            TraceStageStatus.PASS,
+            reason="VALUE_NOT_STORED" if unmatched else "EMPTY_RESULT",
+            metadata=metadata,
+            duration_ms=(perf_counter() - started) * 1000,
+        )
+        if feedback is None:
+            return None
+        collector.forget(("repair",))
+        repaired = await self._repair(question, schema_text, feedback, collector)
+        if repaired is None:
+            return None
+        if repaired.decision is not DecisionType.ANSWER:
+            collector.forget(_RUNTIME_STAGES)
+            return _SecondAttempt(repaired, None, None, ())
+        collector.forget(_RUNTIME_STAGES)
+        planned = await asyncio.to_thread(
+            self.safety_service.plan, self._candidate(repaired, authority, collector)
+        )
+        return await self._second_attempt(repaired, planned, (), collector)
+
+    async def _second_attempt(
+        self,
+        decision: ProductionDecision,
+        planned: QueryPlan | SqlPlanFailure,
+        changes: tuple[str, ...],
+        collector: RunTraceCollector,
+    ) -> _SecondAttempt:
         if isinstance(planned, SqlPlanFailure):
             collector.skip_unrecorded(
                 (
@@ -335,42 +489,9 @@ class DecisionSqlApplication:
                 ),
                 "EARLIER_RUNTIME_REJECTION",
             )
-        else:
-            execution = await asyncio.to_thread(self.safety_service.execute, planned)
-            if isinstance(execution, SqlExecutionError):
-                runtime_outcome, runtime_reason = "EXECUTION_ERROR", "EXECUTION_ERROR"
-            else:
-                runtime_outcome, runtime_reason = "EXECUTED", None
-        collector.record_stage("response", TraceStageStatus.PASS, reason=runtime_reason)
-        trace = collector.finish(runtime_outcome)
-        return DecisionApplicationResult(
-            model_decision=decision.decision,
-            model_reason_code=None,
-            proposed_sql=decision.sql,
-            repaired_from_sql=repaired_from_sql,
-            executed_sql=planned.normalized_sql if isinstance(planned, QueryPlan) else None,
-            sql_changes=planned.sql_changes if isinstance(planned, QueryPlan) else (),
-            proposal_source=proposal_source,
-            provider=proposal.provider,
-            model=proposal.model,
-            model_context=model_context,
-            model_context_hash=model_context_hash,
-            runtime_outcome=RuntimeOutcome(runtime_outcome),
-            runtime_reason=runtime_reason,
-            rows=execution.rows
-            if execution is not None and not isinstance(execution, SqlExecutionError)
-            else [],
-            columns=execution.columns
-            if execution is not None and not isinstance(execution, SqlExecutionError)
-            else [],
-            row_count=execution.row_count
-            if execution is not None and not isinstance(execution, SqlExecutionError)
-            else 0,
-            truncated=execution.truncated
-            if execution is not None and not isinstance(execution, SqlExecutionError)
-            else False,
-            trace=trace,
-        )
+            return _SecondAttempt(decision, planned, None, ())
+        execution = await asyncio.to_thread(self.safety_service.execute, planned)
+        return _SecondAttempt(decision, planned, execution, (*changes, *planned.sql_changes))
 
     def _candidate(
         self,
@@ -555,12 +676,57 @@ class DecisionSqlApplication:
         )
 
 
+@dataclass(frozen=True)
+class _SecondAttempt:
+    """What ran after an empty result: the decision, its plan, and its execution."""
+
+    decision: ProductionDecision
+    planned: QueryPlan | SqlPlanFailure | None
+    execution: QueryExecution | SqlExecutionError | None
+    sql_changes: tuple[str, ...]
+
+
+def _looks_empty(execution: QueryExecution) -> bool:
+    """No rows, or one row of only zeros and NULLs: what a filter matching nothing returns."""
+    if execution.row_count == 0:
+        return True
+    if execution.row_count != 1 or not execution.rows:
+        return False
+    return all(
+        value is None or (isinstance(value, int | float | Decimal) and value == 0)
+        for value in execution.rows[0].values()
+    )
+
+
+def _empty_result_feedback(
+    previous: ProductionDecision, unmatched: tuple[UnmatchedValue, ...]
+) -> RuntimeRejectionFeedback:
+    named = "; ".join(f"{item.table}.{item.column} = '{item.literal}'" for item in unmatched[:3])
+    missing = (
+        f" The column stores no such value for {named}, even ignoring case, spacing, and "
+        "punctuation."
+        if named
+        else ""
+    )
+    message = (
+        "The query ran and matched no rows (or only zeros and NULLs)."
+        f"{missing} Check each filter against the question: a condition the question asks "
+        "you to report, rather than to require, belongs in the selected columns, and a "
+        "literal should be spelled as the column stores it. If the empty result is the "
+        "answer, keep the query."
+    )
+    return RuntimeRejectionFeedback(
+        previous=previous, stage="result_check", code="EMPTY_RESULT", message=message[:600]
+    )
+
+
 _RUNTIME_STAGES = (
     "sql_parse",
     "global_policy",
     "execution_authority",
     "grain_safety",
     "value_check",
+    "null_ordering",
     "planning_connection",
     "explain",
     "cost_gate",

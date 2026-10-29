@@ -87,6 +87,7 @@ _LABELS = {
     "cost_gate": "Cost gate",
     "execution_connection": "Execution database connection",
     "execution": "Read-only execution",
+    "result_check": "Empty result check",
     "response": "Response",
 }
 
@@ -216,5 +217,6 @@ TRACE_STAGE_ORDER: tuple[str, ...] = (
     "cost_gate",
     "execution_connection",
     "execution",
+    "result_check",
     "response",
 )

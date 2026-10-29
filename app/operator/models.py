@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.decision.models import ProposalSource
+from app.decision.models import AlternativeReading, ProposalSource
 from app.decision.models import RuntimeOutcome as ProductRuntimeOutcome
 from app.generation.decision_contract import DecisionDetail, DecisionReasonCode, DecisionType
 from app.governance.context import GovernedContext
@@ -61,6 +61,10 @@ class RunRecord(BaseModel):
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0
     truncated: bool = False
+    # The reading the answer assumed, and the others with their results; not audited
+    # as fields (the trace keeps the readings and their SQL, never rows).
+    assumption: str | None = None
+    alternatives: list[AlternativeReading] = Field(default_factory=list)
     duration_ms: float | None = None
     created_at: str
     trace: RunTrace

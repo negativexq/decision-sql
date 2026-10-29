@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     reading_check_enabled: bool = Field(
         default=True, validation_alias="DECISION_SQL_READING_CHECK_ENABLED"
     )
+    # When the readings differ: "assume" answers with the model's first reading, says so,
+    # and returns the other readings' results; "ask" returns the clarification question.
+    ambiguity_mode: Literal["ask", "assume"] = Field(
+        default="assume", validation_alias="DECISION_SQL_AMBIGUITY_MODE"
+    )
     # Show the model how categorical text columns spell their values.
     value_examples: bool = Field(default=True, validation_alias="DECISION_SQL_VALUE_EXAMPLES")
     # Refresh reports on their schedule from this process; turn off on all but one worker.

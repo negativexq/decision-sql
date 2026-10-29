@@ -125,10 +125,16 @@ the full results are compared (column count and rows, order ignored; a
 truncated result counts as unchecked). When every reading returns the same rows,
 the question does not change the answer on this data: the first reading's SQL
 runs as the answer, and the `reading_check` trace stage records
-`READINGS_AGREE` with the readings and their SQL. Otherwise
-(`READINGS_DIFFER`, `NO_SQL_PER_READING`, `READING_NOT_RUN`) the clarification
-stands. The model never sees the rows. Replays skip it, and
-`DECISION_SQL_READING_CHECK_ENABLED=false` turns it off.
+`READINGS_AGREE` with the readings and their SQL. When the readings differ,
+`DECISION_SQL_AMBIGUITY_MODE` decides: `assume` (the default) answers with the
+model's first reading, returns it as `assumption`, and returns the other
+readings with their SQL and rows as `alternatives`, which the result view offers
+as a switch (`READINGS_DIFFER_ASSUMED`); `ask` keeps the clarification
+(`READINGS_DIFFER`). A reading that could not be checked (`NO_SQL_PER_READING`,
+`READING_NOT_RUN`) keeps the clarification in either mode. The model never sees
+the rows; the audit log keeps the readings and their SQL in the trace, never the
+alternatives' rows. Replays skip it, and `DECISION_SQL_READING_CHECK_ENABLED=false`
+turns it off.
 
 After that, at most one more call follows, recorded as its own trace stage:
 

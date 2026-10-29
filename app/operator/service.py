@@ -233,6 +233,8 @@ class OperatorApplication:
             columns=result.columns,
             row_count=result.row_count,
             truncated=result.truncated,
+            assumption=result.assumption,
+            alternatives=list(result.alternatives),
             duration_ms=result.trace.duration_ms,
             created_at=result.trace.started_at.isoformat(),
             trace=result.trace,

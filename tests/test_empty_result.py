@@ -468,9 +468,11 @@ def _readings(*sql: str) -> ProductionDecision:
     )
 
 
-async def _check(provider: FakeDecisionProvider, rows: dict[str, list[dict[str, object]]]):
+async def _check(
+    provider: FakeDecisionProvider, rows: dict[str, list[dict[str, object]]], **settings: object
+):
     safety = ExploringSafety(rows)
-    result = await _run(provider, safety, exploration_enabled=False)
+    result = await _run(provider, safety, exploration_enabled=False, **settings)
     return result, safety, {stage.name: stage for stage in result.trace.stages}["reading_check"]
 
 
@@ -488,12 +490,27 @@ async def test_readings_that_return_the_same_rows_answer_instead_of_asking() -> 
 
 
 @pytest.mark.asyncio
-async def test_readings_that_differ_keep_the_question() -> None:
+async def test_readings_that_differ_answer_the_first_and_offer_the_others() -> None:
     provider = FakeDecisionProvider(_clarify(), _readings(OFFICE, SUPPLIES))
     result, _, stage = await _check(provider, {OFFICE: [{"n": 4}], SUPPLIES: [{"n": 9}]})
 
+    assert result.model_decision is DecisionType.ANSWER and result.rows == [{"n": 4}]
+    assert result.assumption == "Office"
+    [other] = result.alternatives
+    assert (other.reading, other.sql, other.rows) == ("Office supplies", SUPPLIES, [{"n": 9}])
+    assert stage.reason == "READINGS_DIFFER_ASSUMED" and stage.metadata["assumed"] == "Office"
+
+
+@pytest.mark.asyncio
+async def test_readings_that_differ_keep_the_question_when_the_mode_is_ask() -> None:
+    provider = FakeDecisionProvider(_clarify(), _readings(OFFICE, SUPPLIES))
+    result, _, stage = await _check(
+        provider, {OFFICE: [{"n": 4}], SUPPLIES: [{"n": 9}]}, ambiguity_mode="ask"
+    )
+
     assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
     assert result.runtime_outcome == "NOT_ENTERED" and stage.reason == "READINGS_DIFFER"
+    assert result.assumption is None and not result.alternatives
 
 
 @pytest.mark.asyncio

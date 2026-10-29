@@ -182,8 +182,17 @@ function RunResult({
     .filter(Boolean)
     .join(", ");
   const tied = (run.trace?.stages ?? []).some((item) => item.name === "result_check" && item.reason === "TIED_ROWS");
+  // An ambiguous question answers with one reading; the others' results are a click away.
+  const readings = run.assumption
+    ? [
+        { reading: run.assumption, sql: shownSql, columns: run.columns, rows: run.rows, truncated: run.truncated },
+        ...(run.alternatives ?? []),
+      ]
+    : [];
+  const [readingIndex, setReadingIndex] = useState(0);
+  const shown = readings[readingIndex] ?? { sql: shownSql, columns: run.columns, rows: run.rows, truncated: run.truncated };
   // A column the model named as a percentage should lie between 0 and 100; say so when the shown rows do not.
-  const outOfRange = executed ? percentOutOfRange(run.columns, run.rows) : [];
+  const outOfRange = executed ? percentOutOfRange(shown.columns, shown.rows) : [];
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },
@@ -219,12 +228,35 @@ function RunResult({
           {run.proposed_sql && <span className={queryOpen ? "chevron open" : "chevron"} aria-hidden="true" />}
           {run.proposed_sql ? (run.runtime_outcome === "EXECUTED" ? "Query that ran" : "Proposed query") : "No query was written"}
         </button>
-        {queryOpen && shownSql && (
+        {queryOpen && shown.sql && (
           <div id={`query-${run.run_id}`}>
-            <SqlViewer sql={shownSql} />
+            <SqlViewer sql={shown.sql} />
           </div>
         )}
       </div>
+
+      {executed && readings.length > 1 && (
+        <div className="callout callout-neutral readings">
+          <p>
+            This question can be read more than one way, and the readings give different results. The answer below
+            assumes one of them; choose another to see its result.
+          </p>
+          <div className="reading-options" role="radiogroup" aria-label="Readings of the question">
+            {readings.map((item, index) => (
+              <button
+                type="button"
+                role="radio"
+                key={item.reading}
+                aria-checked={readingIndex === index}
+                className={readingIndex === index ? "reading-option active" : "reading-option"}
+                onClick={() => setReadingIndex(index)}
+              >
+                {withCode(item.reading)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {changed && (
         <details className="repaired">
@@ -294,12 +326,17 @@ function RunResult({
       </div>
 
       <div className="tab-panel" role="tabpanel">
-        {tab === "table" && <ResultTable columns={run.columns} rows={run.rows} truncated={run.truncated} />}
-        {tab === "chart" && <ResultChart columns={run.columns} rows={run.rows} />}
+        {tab === "table" && <ResultTable columns={shown.columns} rows={shown.rows} truncated={shown.truncated} />}
+        {tab === "chart" && <ResultChart columns={shown.columns} rows={shown.rows} />}
         {tab === "checks" && <GovernancePanel run={run} stage={stage} onSelect={setStage} />}
       </div>
     </section>
   );
+}
+
+// The model writes column names in backticks; show them as code rather than as raw marks.
+function withCode(text: string) {
+  return text.split("`").map((part, index) => (index % 2 === 1 ? <code key={index}>{part}</code> : part));
 }
 
 function Explanation({

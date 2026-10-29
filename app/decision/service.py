@@ -14,7 +14,12 @@ from app.decision.exploration import (
     report_rows,
     rows_may_be_shared,
 )
-from app.decision.models import DecisionApplicationResult, ProposalSource, RuntimeOutcome
+from app.decision.models import (
+    AlternativeReading,
+    DecisionApplicationResult,
+    ProposalSource,
+    RuntimeOutcome,
+)
 from app.generation.decision_contract import (
     MAX_PROBES,
     PRODUCTION_DECISION_CASE_ID,
@@ -81,6 +86,9 @@ class DecisionSqlApplication:
         self.exploration: Exploration | None = None
         # Set when a question or refusal returned without probes was sent back once.
         self.looked_first: dict[str, object] = {}
+        # Set when the answer assumed one of several readings that give different results.
+        self.assumption: str | None = None
+        self.alternatives: tuple[AlternativeReading, ...] = ()
 
     async def run(
         self,
@@ -547,6 +555,8 @@ class DecisionSqlApplication:
             columns=execution.columns if isinstance(execution, QueryExecution) else [],
             row_count=execution.row_count if isinstance(execution, QueryExecution) else 0,
             truncated=execution.truncated if isinstance(execution, QueryExecution) else False,
+            assumption=self.assumption,
+            alternatives=self.alternatives,
             trace=trace,
         )
 
@@ -861,13 +871,16 @@ class DecisionSqlApplication:
         decision: ProductionDecision,
         collector: RunTraceCollector,
     ) -> ProductionDecision | None:
-        """Run every reading of a clarification; answer when they all return the same rows.
+        """Run every reading of a clarification, and answer instead of asking when possible.
 
         A question whose readings give the same result on this data does not change the
         answer, so asking it only costs the user a turn.  The model writes one SQL per
         reading in one more call; each runs through every gate as a probe, and the
-        results are compared in full, never shown to the model.  None keeps the
-        clarification: the readings differ, or one could not be checked.
+        results are compared in full, never shown to the model.  When they differ and
+        ``ambiguity_mode`` is ``assume``, the answer takes the model's first reading,
+        says so, and carries the other readings with their results for the user to
+        switch to.  None keeps the clarification: the mode is ``ask`` and the readings
+        differ, or one could not be checked.
         """
         readings = tuple(decision.detail.interpretations if decision.detail else ())
         if decision.decision is not DecisionType.NEEDS_CLARIFICATION:
@@ -920,24 +933,46 @@ class DecisionSqlApplication:
             return None
         metadata["reading_sql"] = list(probes)
         authority = ExecutionAuthority.from_governed_context(model_context)
-        results = await asyncio.to_thread(self._run_readings, probes, authority, collector.run_id)
-        if results is None:
+        executions = await asyncio.to_thread(
+            self._run_readings, probes, authority, collector.run_id
+        )
+        if executions is None:
             finish("READING_NOT_RUN")
             return None
-        metadata["row_counts"] = [len(rows) for _, rows in results]
-        if any(result != results[0] for result in results[1:]):
-            finish("READINGS_DIFFER")
-            return None
-        finish("READINGS_AGREE")
-        return ProductionDecision(
+        metadata["row_counts"] = [execution.row_count for execution in executions]
+        answer = ProductionDecision(
             case_id=PRODUCTION_DECISION_CASE_ID, decision=DecisionType.ANSWER, sql=probes[0]
         )
+        compared = [_comparable(execution) for execution in executions]
+        if all(result == compared[0] for result in compared[1:]):
+            finish("READINGS_AGREE")
+            return answer
+        if self.settings.ambiguity_mode == "ask":
+            finish("READINGS_DIFFER")
+            return None
+        metadata["assumed"] = readings[0]
+        finish("READINGS_DIFFER_ASSUMED")
+        self.assumption = readings[0]
+        self.alternatives = tuple(
+            AlternativeReading(
+                reading=reading,
+                sql=sql,
+                rows=execution.rows,
+                columns=execution.columns,
+                row_count=execution.row_count,
+                truncated=execution.truncated,
+            )
+            for reading, sql, execution in zip(
+                readings[1:], probes[1:], executions[1:], strict=True
+            )
+        )
+        return answer
 
     def _run_readings(
         self, probes: tuple[str, ...], authority: ExecutionAuthority, run_id: str
-    ) -> list[tuple[int, list[str]]] | None:
-        """Each reading's column count and rows, order ignored; None if one did not run."""
-        results: list[tuple[int, list[str]]] = []
+    ) -> list[QueryExecution] | None:
+        """Each reading's full result; None if one did not run or was cut off."""
+        results: list[QueryExecution] = []
         for sql in probes:
             planned, executed = self.safety_service.explore(
                 SqlCandidate(
@@ -951,10 +986,7 @@ class DecisionSqlApplication:
                 return None
             if executed.truncated:
                 return None  # rows past the cap could still differ
-            rows = sorted(
-                repr(tuple(row.get(name) for name in executed.columns)) for row in executed.rows
-            )
-            results.append((len(executed.columns), rows))
+            results.append(executed)
         return results
 
     async def _explore(
@@ -1429,3 +1461,11 @@ def _runtime_from_plan(result: object) -> tuple[str, str | None]:
             return "POLICY_REJECTED", result.rejection.code.value
         return "RUNTIME_REJECTED", result.rejection.code.value
     return "RUNTIME_REJECTED", result.semantic_reason or result.status.value
+
+
+def _comparable(execution: QueryExecution) -> tuple[int, list[str]]:
+    """A result's column count and rows, row order ignored, for comparing readings."""
+    rows = sorted(
+        repr(tuple(row.get(name) for name in execution.columns)) for row in execution.rows
+    )
+    return len(execution.columns), rows

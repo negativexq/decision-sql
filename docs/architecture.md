@@ -179,7 +179,13 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   `double precision`, and a `real` column cast to `numeric` goes through
   `double precision` first (`app/sql/precision.py`).
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
-  must stay under the configured limits.
+  must stay under the configured limits. A planner estimate does not predict run
+  time well: on the BIRD databases, gold queries estimated at cost 100,000 to
+  510,000 ran in 10 to 580 ms, and one estimated at 116,000 rows returned 3.
+  The limits therefore refuse only plans that are clearly out of scale
+  (10,000,000 by default), and the statement timeout bounds the real run time.
+  A missing index on a join key is a common reason for a high estimate; the
+  fix for that belongs to the database administrator, not to the query.
 
 After execution, an empty result (no rows, or one row of only zeros and
 NULLs) is checked once. For text columns whose values are not all known, the

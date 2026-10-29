@@ -33,8 +33,13 @@ class Settings(BaseSettings):
     otel_exporter_otlp_endpoint: str | None = Field(
         default=None, validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT"
     )
-    max_plan_rows: int = Field(default=100_000, validation_alias="DECISION_SQL_MAX_PLAN_ROWS")
-    max_plan_cost: float = Field(default=100_000.0, validation_alias="DECISION_SQL_MAX_PLAN_COST")
+    # A planner estimate is a coarse guess (a plan estimated at cost 385,000 can run in
+    # 10 ms), so these limits only refuse plans that are clearly out of scale; the
+    # statement timeout bounds how long an accepted plan may actually run.
+    max_plan_rows: int = Field(default=10_000_000, validation_alias="DECISION_SQL_MAX_PLAN_ROWS")
+    max_plan_cost: float = Field(
+        default=10_000_000.0, validation_alias="DECISION_SQL_MAX_PLAN_COST"
+    )
     max_result_rows: int = Field(default=1000, validation_alias="DECISION_SQL_MAX_RESULT_ROWS")
     statement_timeout_ms: int = Field(
         default=5000, validation_alias="DECISION_SQL_STATEMENT_TIMEOUT_MS"

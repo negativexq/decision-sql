@@ -55,7 +55,11 @@ tests.
 - Aggregates that would fan out across a parent-child join are rejected,
   including `SUM(DISTINCT ...)` over such a join.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under
-  `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST`.
+  `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST` (10,000,000
+  each by default). The estimate is a coarse guess, so these limits refuse only
+  plans that are clearly out of scale; `DECISION_SQL_STATEMENT_TIMEOUT_MS` is
+  what bounds how long an accepted plan runs, and a plan that reaches it is
+  cancelled and returned to the model as `STATEMENT_TIMEOUT`.
 - Only an accepted `QueryPlan` can execute. Raw SQL, rejected plans, and copied
   plans are refused at the execution boundary.
 

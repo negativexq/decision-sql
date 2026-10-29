@@ -223,7 +223,9 @@ _READINGS = (
     "Return EXPLORE with exactly one probe per reading, in the same order: the complete "
     "SQL that answers the question under that reading, as you would return it for "
     "ANSWER. The runtime runs every probe; when all of them return the same result, the "
-    "question does not change the answer and the user is not asked."
+    "question does not change the answer and the user is not asked. If a reading needs "
+    "something the data does not hold, such as a conversion rate or a mapping of codes, "
+    "do not stand in a value for it: return NEEDS_CLARIFICATION again."
 )
 
 

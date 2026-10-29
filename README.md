@@ -14,6 +14,32 @@ The model makes one typed decision per question: `ANSWER` with read-only SQL,
 only a proposal. Parsing, policy, authority, grain safety, `EXPLAIN` cost limits,
 and read-only execution are deterministic code the model cannot bypass.
 
+## Features
+
+- **Answers you can check.** Every answer shows the SQL that ran, a line read
+  from that SQL on what it counts and which rows it keeps, and the eleven
+  checks it passed, filled in live while the question runs.
+- **Conversations.** Follow up on an answer ("split it by month") and pick up
+  recent conversations from the sidebar.
+- **Change an answer without the model.** Edit a condition, such as a date
+  range or a status, or drop it; the query runs again through every check with
+  no model call.
+- **Ambiguity handled, not guessed.** When a question can be read two ways,
+  each reading runs; the same result is answered, different results come with
+  the other readings one click away, or a clarifying question.
+- **Governed by code.** Only read-only `SELECT` on tables in scope, joins only
+  along foreign keys or joins an administrator declared, no fan-out
+  aggregates, and a cost limit before anything executes.
+- **Looks before it answers.** The model may run a few gated probes to see how
+  values are stored; a filter on a value the column does not hold is caught
+  and respelled or reported.
+- **Reports.** Pin answers as charts on a shared page with filters, scheduled
+  refresh, snapshots, CSV, and PDF.
+- **Audit log.** Who asked what, which decision and SQL, and what each check
+  decided, for every question.
+- **Measured.** 74/100 on a fixed sample of BIRD Mini-Dev 2026 (PostgreSQL)
+  with `gpt-6-luna`; see [Measurement](#measurement).
+
 ![An answered question with its chart and the checks it passed](docs/screenshots/ask-answer.png)
 
 ## What you can do

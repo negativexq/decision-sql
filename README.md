@@ -14,7 +14,7 @@ The model makes one typed decision per question: `ANSWER` with read-only SQL,
 only a proposal. Parsing, policy, authority, grain safety, `EXPLAIN` cost limits,
 and read-only execution are deterministic code the model cannot bypass.
 
-![An answered question with its chart and the checks it passed](docs/screenshots/ask-answer.jpg)
+![An answered question with its chart and the checks it passed](docs/screenshots/ask-answer.png)
 
 ## What you can do
 
@@ -23,12 +23,12 @@ and read-only execution are deterministic code the model cannot bypass.
 | **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. |
 | **See the query** | Open "Query that ran" above the answer to read or copy the SQL. |
 | **Follow the checks** | Eleven stages from context to execution, each with its outcome and timing. |
-| **Reports** | Build a page of charts from questions: pick number, bar, column, line, area, pie, or table; drag and resize cards on a grid; add descriptions and text sections. Each chart reruns its saved query through the checks when the report opens. |
+| **Reports** | Build a page of charts from questions: number, bars, columns, line, area, pie, stacked columns, lines by series, scatter, or table. Drag and resize cards, add text sections, filters, and follow-up questions; share with editors and viewers, refresh on a schedule, keep snapshots, download rows as CSV, print or save as PDF. |
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |
 | **Declare joins** | When a database has no foreign keys, declare the joins questions may use; each one is checked against the data before it is saved. |
 
-![Executed SQL above the answer](docs/screenshots/query-that-ran.jpg)
+![Executed SQL above the answer](docs/screenshots/query-that-ran.png)
 
 ## How a question is answered
 
@@ -67,15 +67,36 @@ flowchart TD
   in the trace.
 - **A reason for every non-answer.** A clarification comes with the question to
   answer and the readings to choose from; a refusal names the missing join.
+
+  ![A question that could mean two things gets a clarification, not a guess](docs/screenshots/clarification.png)
 - **Deterministic gates.** One `SELECT` statement, allowlisted functions,
   only relations in the request's context, no fan-out aggregates, and plan cost
   under the configured limit before anything executes.
 
 Details: [architecture](docs/architecture.md) and [security posture](docs/security.md).
 
+## Reports
+
+![A report with a number, a text card, line, pie, and bar charts](docs/screenshots/report.png)
+
+A report is a page of cards built from answered questions. Each chart keeps the
+SQL that passed the checks when it was saved and reruns it through the same
+gates whenever the report opens or refreshes. A chart whose tables were
+redescribed since it was saved says which ones changed. Filters narrow every
+card at once using values read from the data, and a follow-up from a card asks a
+new question with that card's question as context.
+
+![Editing a stacked column chart: chart type, series, number format, and the run it came from](docs/screenshots/report-edit.png)
+
+In edit mode cards move and resize on a grid, and the side panel sets the chart
+type, which columns are the category, series, and value, the number format, and
+the order. Undo and redo cover every change. A report can refresh on a schedule
+and keep snapshots of its rows; print bands stamp each page with when its data
+was read.
+
 ## Connections and audit
 
-![A failed preflight points at the field to fix](docs/screenshots/connection-preflight.jpg)
+![A failed preflight points at the field to fix](docs/screenshots/connection-preflight.png)
 
 A connection is saved only after its preflight passes. Errors say what is wrong
 and mark the field: wrong username or password, unreachable host or port,
@@ -88,7 +109,7 @@ using the connection's own read-only role. Saved connections to other engines
 can be tested and their tables browsed; running questions on them needs
 per-engine policy, read-only enforcement, and cost gates.
 
-![Audit log of every question and its outcome](docs/screenshots/audit-log.jpg)
+![Audit log of every question and its outcome](docs/screenshots/audit-log.png)
 
 ## Run it
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -12,6 +12,7 @@ from app.catalog.default import build_default_catalog
 from app.catalog.models import ColumnMetadata, SchemaCatalog, SchemaContext, TableMetadata
 from app.config import Settings
 from app.db.models import Base
+from app.decision.exploration import Exploration
 from app.decision.models import ProposalSource
 from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
@@ -19,7 +20,13 @@ from app.generation.decision_contract import (
     DecisionType,
     ProductionDecision,
 )
-from app.generation.provider import EarlierAnswer, LLMProvider, OpenAICompatibleProvider
+from app.generation.provider import (
+    EarlierAnswer,
+    LLMProvider,
+    OpenAICompatibleProvider,
+    ProductionDecisionProposal,
+    RuntimeRejectionFeedback,
+)
 from app.metadata.service import GOVERNED_CONNECTION_ID, QuestionSource
 from app.metadata.store import InMemoryRunStore, RunStore
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
@@ -36,6 +43,7 @@ from app.operator.models import (
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
 from app.semantics.measures import measure_catalog_from_schema
+from app.sql.explain import explain
 from app.sql.parser import SQLParseFailure, SQLParser
 from app.sql.service import SqlSafetyService
 
@@ -91,6 +99,27 @@ class _SavedQueryResolver(SchemaContextResolver):
         include: Iterable[str] = (),
     ) -> SchemaContext:
         return super().resolve(question, mode, (*include, *self._tables))
+
+
+class _AnnouncingProvider:
+    """Say that a model call has started before it returns, for live progress."""
+
+    def __init__(self, provider: LLMProvider, collector: RunTraceCollector) -> None:
+        self._provider = provider
+        self._collector = collector
+
+    async def propose_decision(
+        self,
+        question: str,
+        schema_context: str,
+        repair: RuntimeRejectionFeedback | None = None,
+        earlier: EarlierAnswer | None = None,
+        exploration: Exploration | None = None,
+    ) -> ProductionDecisionProposal:
+        self._collector.working("generation")
+        return await self._provider.propose_decision(
+            question, schema_context, repair, earlier, exploration
+        )
 
 
 def _saved_query_tables(sql: str) -> tuple[str, ...]:
@@ -184,16 +213,28 @@ class OperatorApplication:
         source: QuestionSource | None = None,
         saved_sql: str | None = None,
         follow_up: RunRecord | None = None,
+        edited_from: RunRecord | None = None,
+        listener: Callable[[dict[str, object]], None] | None = None,
     ) -> RunRecord:
-        """Answer a question; with ``follow_up``, as a follow-up to that earlier run."""
+        """Answer a question; with ``follow_up``, as a follow-up to that earlier run.
+
+        With ``edited_from``, ``saved_sql`` is that run's query with conditions the
+        user changed, and runs without a model call.  ``listener`` hears each stage
+        as it is recorded.
+        """
         earlier = _earlier_answer(follow_up) if follow_up is not None else None
         run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         collector = RunTraceCollector(run_id)
+        collector.listener = listener
         collector.event("request.received", "Natural-language request received", "request")
         collector.record_stage("request", TraceStageStatus.PASS)
         service, effective_question, proposal_source, replay = self._service_for(
             preset_id, question, source, saved_sql, earlier
         )
+        if edited_from is not None:
+            proposal_source = ProposalSource.EDITED_QUERY
+        if listener is not None:
+            service.provider = _AnnouncingProvider(service.provider, collector)
         service.safety_service.stage_recorder = collector
         result = await service.run(
             effective_question,
@@ -208,7 +249,10 @@ class OperatorApplication:
             preset_id=preset_id,
             proposal_source=result.proposal_source,
             replay_notice=(
-                "A report ran its saved query again without a model call; every check "
+                "You changed a condition of the earlier query, so it ran again without a "
+                "model call; every check ran again."
+                if result.proposal_source is ProposalSource.EDITED_QUERY
+                else "A report ran its saved query again without a model call; every check "
                 "ran again on the current schema."
                 if result.proposal_source is ProposalSource.SAVED_QUERY
                 else "No provider call was made for this scenario. The frozen proposal was "
@@ -241,6 +285,8 @@ class OperatorApplication:
             actor=actor,
             connection_id=source.connection_id if source is not None else GOVERNED_CONNECTION_ID,
             follow_up_of=follow_up.run_id if earlier is not None and follow_up else None,
+            edited_from=edited_from.run_id if edited_from is not None else None,
+            explanation=explain(result.proposed_sql) if result.proposed_sql else None,
         )
         await asyncio.to_thread(self.run_store.save, record)
         return record
@@ -251,7 +297,24 @@ class OperatorApplication:
         return self.run_store.list(actor=actor, outcome=outcome, limit=limit)
 
     def get_run(self, run_id: str) -> RunRecord | None:
-        return self.run_store.get(run_id)
+        record = self.run_store.get(run_id)
+        if record is None or record.explanation is not None or not record.proposed_sql:
+            return record
+        return record.model_copy(update={"explanation": explain(record.proposed_sql)})
+
+    def thread(self, run_id: str, limit: int = 20) -> list[RunRecord]:
+        """The run and the runs it followed up on or was edited from, oldest first."""
+        chain: list[RunRecord] = []
+        seen: set[str] = set()
+        current: str | None = run_id
+        while current is not None and current not in seen and len(chain) < limit:
+            seen.add(current)
+            record = self.get_run(current)
+            if record is None:
+                break
+            chain.append(record)
+            current = record.follow_up_of or record.edited_from
+        return list(reversed(chain))
 
     def schema(self) -> GovernedSchemaResponse:
         database, row_estimates = self._source_summary()
@@ -411,13 +474,27 @@ class OperatorApplication:
 def _earlier_answer(record: RunRecord) -> EarlierAnswer | None:
     """The earlier question and the SQL the model proposed for it, if it proposed one.
 
-    Only a live model's own proposal goes back to the model.  The SQL that ran may
-    hold stored values the runtime wrote in, and a replayed run's SQL never came
-    from the model, so neither is sent.
+    Only a live model's own proposal goes back to the model, or that proposal with
+    values the user typed in place of its literals.  The SQL that ran may hold
+    stored values the runtime wrote in, and a replayed run's SQL never came from
+    the model, so neither is sent.
     """
-    if record.proposal_source is not ProposalSource.LIVE_MODEL or not record.proposed_sql:
+    if (
+        record.proposal_source not in {ProposalSource.LIVE_MODEL, ProposalSource.EDITED_QUERY}
+        or not record.proposed_sql
+    ):
         return None
-    return EarlierAnswer(question=record.question, sql=record.proposed_sql)
+    return EarlierAnswer(
+        question=record.question,
+        sql=record.proposed_sql,
+        note=_EDITED_NOTE if record.proposal_source is ProposalSource.EDITED_QUERY else None,
+    )
+
+
+_EDITED_NOTE = (
+    "The user changed this SQL's conditions by hand after it answered the question. "
+    "Where the question and the SQL disagree, the SQL is what they kept."
+)
 
 
 def _with_earlier(

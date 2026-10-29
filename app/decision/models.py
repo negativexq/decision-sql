@@ -16,6 +16,9 @@ class ProposalSource(StrEnum):
     RUNTIME_POLICY_REPLAY = "RUNTIME_POLICY_REPLAY"
     # A report card's pinned SQL, run again without a model call.
     SAVED_QUERY = "SAVED_QUERY"
+    # The model's query from an earlier run with conditions the user changed, run
+    # again without a model call.
+    EDITED_QUERY = "EDITED_QUERY"
 
 
 class RuntimeOutcome(StrEnum):

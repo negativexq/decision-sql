@@ -9,6 +9,7 @@ from app.decision.models import RuntimeOutcome as ProductRuntimeOutcome
 from app.generation.decision_contract import DecisionDetail, DecisionReasonCode, DecisionType
 from app.governance.context import GovernedContext
 from app.observability.run_trace import RunTrace
+from app.sql.explain import MAX_CONDITIONS, ConditionEdit, SqlExplanation
 
 
 class DemoPreset(BaseModel):
@@ -26,6 +27,14 @@ class PlaygroundQueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     preset_id: str | None = Field(default=None, max_length=80)
     connection_id: str = Field(default="governed", min_length=1, max_length=64)
+    # A run on the same connection this question follows up on.
+    follow_up_of: str | None = Field(default=None, max_length=80)
+
+
+class EditConditionsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    edits: list[ConditionEdit] = Field(min_length=1, max_length=MAX_CONDITIONS)
 
 
 DecisionValue = DecisionType
@@ -72,6 +81,10 @@ class RunRecord(BaseModel):
     connection_id: str = "governed"
     # The run this question followed up on; its question and proposed SQL went to the model.
     follow_up_of: str | None = None
+    # The run whose query this one reran with conditions the user changed.
+    edited_from: str | None = None
+    # What the proposed query reads, computes, and keeps; derived from the SQL, not audited.
+    explanation: SqlExplanation | None = None
     # False when the record was read back from the audit log, which keeps no result rows.
     results_retained: bool = True
 
@@ -89,6 +102,9 @@ class RunSummary(BaseModel):
     duration_ms: float | None = None
     created_at: str
     actor: str = "anonymous"
+    connection_id: str = "governed"
+    follow_up_of: str | None = None
+    edited_from: str | None = None
 
 
 class SchemaColumn(BaseModel):

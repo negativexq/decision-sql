@@ -6,6 +6,7 @@ from the existing application and never decides whether a query may execute.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime
 from enum import StrEnum
 from threading import Lock
@@ -104,6 +105,14 @@ class RunTraceCollector:
         self._stages: list[TraceStage] = []
         self._events: list[TraceEvent] = []
         self._lock = Lock()
+        # Told of each stage as it is recorded, and of work that has started, so a
+        # client can show progress; it may be called from worker threads.
+        self.listener: Callable[[dict[str, Any]], None] | None = None
+
+    def working(self, name: str) -> None:
+        """Say that a stage has started; nothing is recorded until it finishes."""
+        if self.listener is not None:
+            self.listener({"type": "working", "name": name, "label": _label(name)})
 
     def event(self, event_type: str, message: str, stage: str | None = None) -> None:
         with self._lock:
@@ -128,7 +137,7 @@ class RunTraceCollector:
     ) -> None:
         stage = TraceStage(
             name=name,
-            label=_LABELS.get(name, name.replace("_", " ").title()),
+            label=_label(name),
             status=status,
             duration_ms=duration_ms,
             reason=reason,
@@ -145,6 +154,17 @@ class RunTraceCollector:
                     message=reason or f"{stage.label}: {status.value}",
                     stage=name,
                 )
+            )
+        if self.listener is not None:
+            self.listener(
+                {
+                    "type": "stage",
+                    "name": name,
+                    "label": stage.label,
+                    "status": status.value,
+                    "reason": reason,
+                    "duration_ms": duration_ms,
+                }
             )
 
     def forget(self, names: tuple[str, ...]) -> None:
@@ -182,6 +202,10 @@ class RunTraceCollector:
                 stages=ordered_stages,
                 events=tuple(self._events),
             )
+
+
+def _label(name: str) -> str:
+    return _LABELS.get(name, name.replace("_", " ").title())
 
 
 def _safe_metadata(value: dict[str, Any]) -> dict[str, Any]:

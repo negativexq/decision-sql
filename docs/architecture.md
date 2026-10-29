@@ -261,6 +261,32 @@ audit log keeps both the model's SQL and the text the database received
 
 ## Workspace services
 
+### Conversations
+
+A question on Ask can follow up on the one before it: the request names the
+earlier run (`follow_up_of`), which must be on the same connection, and the
+model gets the new question with the same `Earlier answer` a report follow-up
+sends. The audit log links each run to the one it built on, and the sidebar
+lists the user's recent conversations from it; opening one loads the chain of
+runs (`GET /api/runs/{id}/thread`). Runs read back from the log have no rows.
+
+`POST /api/playground/query/stream` answers like `/api/playground/query` but
+sends server-sent events as the run goes: `working` when a model call starts,
+`stage` when the trace records a stage (name, status, reason code; no SQL or
+rows), then the run record. The UI draws the gate path from them.
+
+Each executed answer carries an explanation read from the proposed SQL by
+`app/sql/explain.py`, not asked of the model: the tables it reads, its
+aggregates, its conditions (a column compared with literals), grouping,
+ordering, and limit. A condition can be changed or, when it is ANDed into a
+WHERE or JOIN ON, removed (`POST /api/runs/{id}/edit`). The server takes the SQL
+from the stored run, never from the client; the client names a condition by
+number and sends values, which become literals of the kind the condition had
+(a number is checked, a date is parsed, text is quoted by the parser). The
+edited SQL runs as `EDITED_QUERY` without a model call, through every gate, and
+the audit log records which run it came from (`edited_from`). A follow-up on an
+edited run tells the model that its conditions were changed by hand.
+
 ### Audit log
 
 Every run is stored in `decision_meta.audit_runs` with the actor, question,
@@ -391,7 +417,7 @@ or stored secrets.
 | `app/decision` | Admission of the model decision into the SQL runtime |
 | `app/generation` | The decision contract and the model provider |
 | `app/catalog`, `app/retrieval`, `app/governance` | Catalog, context selection, and the model-visible context |
-| `app/sql` | Parsing, policy, authority, and the plan/execute service |
+| `app/sql` | Parsing, policy, authority, the plan/execute service, and the plain-language explanation of a query |
 | `app/semantics` | Grain safety |
 | `app/execution` | `EXPLAIN` cost gate and the read-only reader |
 | `app/metadata` | Audit log, connections, connectors, and secrets |

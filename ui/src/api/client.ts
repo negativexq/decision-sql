@@ -5,6 +5,7 @@ import type {
   ConnectionSummary,
   ConnectionTestResult,
   ConnectionValues,
+  ConditionEdit,
   ConnectorType,
   DeclaredRelationship,
   DriverInstallResult,
@@ -13,6 +14,7 @@ import type {
   FilterOptions,
   IntrospectedTable,
   Preset,
+  ProgressEvent,
   RefreshSchedule,
   RelationshipDeclaration,
   Report,
@@ -85,8 +87,55 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ question, connection_id, ...(preset_id ? { preset_id } : {}) }),
     }),
-  runs: (filters: { actor?: string; outcome?: string } = {}) => {
-    const params = new URLSearchParams(Object.entries(filters).filter(([, value]) => value) as [string, string][]);
+  /** Ask with live progress: each stage reaches onProgress as the server records it. */
+  ask: async (
+    body: { question: string; connection_id: string; preset_id?: string; follow_up_of?: string },
+    onProgress: (event: ProgressEvent) => void,
+  ): Promise<RunRecord> => {
+    const actor = getActor();
+    const response = await fetch(`${base}/api/playground/query/stream`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(actor ? { "X-Decision-Actor": actor } : {}) },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok || !response.body) {
+      const text = await response.text();
+      let detail = text;
+      try {
+        const parsed = JSON.parse(text) as { detail?: unknown };
+        if (typeof parsed.detail === "string") detail = parsed.detail;
+      } catch {
+        // Non-JSON error bodies are shown as returned.
+      }
+      throw new Error(detail || `Request failed (${response.status})`);
+    }
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value;
+      let end: number;
+      while ((end = buffer.indexOf("\n\n")) >= 0) {
+        const block = buffer.slice(0, end);
+        buffer = buffer.slice(end + 2);
+        const data = block.split("\n").find((line) => line.startsWith("data: "));
+        if (!data) continue;
+        const event = JSON.parse(data.slice(6)) as ProgressEvent | { type: "run"; run: RunRecord } | { type: "error"; detail: string };
+        if (event.type === "run") return event.run;
+        if (event.type === "error") throw new Error(event.detail);
+        onProgress(event);
+      }
+    }
+    throw new Error("The connection closed before the answer arrived.");
+  },
+  thread: (id: string) => request<RunRecord[]>(`/api/runs/${encodeURIComponent(id)}/thread`),
+  editRun: (id: string, edits: ConditionEdit[]) =>
+    request<RunRecord>(`/api/runs/${encodeURIComponent(id)}/edit`, { method: "POST", body: JSON.stringify({ edits }) }),
+  runs: (filters: { actor?: string; outcome?: string; limit?: number } = {}) => {
+    const params = new URLSearchParams(
+      Object.entries(filters).filter(([, value]) => value).map(([key, value]) => [key, String(value)]),
+    );
     return request<{ runs: RunSummary[]; durable: boolean }>(`/api/runs${params.size ? `?${params}` : ""}`);
   },
   run: (id: string) => request<RunRecord>(`/api/runs/${encodeURIComponent(id)}`),

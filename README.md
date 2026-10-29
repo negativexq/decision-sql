@@ -20,9 +20,10 @@ and read-only execution are deterministic code the model cannot bypass.
 
 | | |
 | --- | --- |
-| **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. |
+| **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. Follow up on an answer in the same conversation; recent conversations stay in the sidebar. |
+| **See how it was computed** | One line read from the query says what it counts, which rows it keeps, and how it groups and sorts. Change a condition, such as a date or a status, and it runs again through every check without asking the model. |
 | **See the query** | Open "Query that ran" above the answer to read or copy the SQL. |
-| **Follow the checks** | Eleven stages from context to execution, each with its outcome and timing. |
+| **Follow the checks** | Eleven stages from context to execution, shown live while the question runs, each with its outcome and timing. |
 | **Reports** | Build a page of charts from questions: number, bars, columns, line, area, pie, stacked columns, lines by series, scatter, or table. Drag and resize cards, add text sections, filters, and follow-up questions; share with editors and viewers, refresh on a schedule, keep snapshots, download rows as CSV, print or save as PDF. |
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |

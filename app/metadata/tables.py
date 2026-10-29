@@ -48,6 +48,7 @@ audit_runs = Table(
     Column("executed_sql", Text),
     Column("sql_changes", JSON),
     Column("follow_up_of", String(80)),
+    Column("edited_from", String(80)),
     Column("columns", JSON, nullable=False),
     Column("row_count", Integer, nullable=False),
     Column("truncated", Boolean, nullable=False),

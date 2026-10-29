@@ -599,3 +599,63 @@ code, kbd, pre { font-family: var(--mono); }
 
 .rc-legend-row { display: flex; flex-wrap: wrap; gap: 4px 12px; overflow: hidden; max-height: 36px; }
 .rc-legend-row li { display: inline-flex; gap: 6px; max-width: 160px; }
+
+/* Conversation: earlier turns fold away, the follow-up box sits under the answer */
+.turn { border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+.turn > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; padding: 4px 0; }
+.turn > summary::-webkit-details-marker { display: none; }
+.turn > summary::before { content: ""; width: 6px; height: 6px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; flex: none; }
+.turn[open] > summary::before { transform: rotate(45deg); }
+.turn > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.turn-question { font-size: 15px; font-weight: 500; color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.turn > summary .pill { margin-left: auto; }
+.turn[open] > .result { margin-top: 12px; }
+.composer-follow { margin-top: 4px; }
+.follow-chip { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 10px 16px 0; color: var(--muted); font-size: 12.5px; }
+.follow-chip q { color: var(--ink-2); }
+.follow-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.composer-source { color: var(--muted); font-size: 12.5px; }
+
+/* Live progress while a question runs */
+.progress-line { align-items: center; color: var(--ink-2); }
+.progress-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+.progress-time { color: var(--muted); }
+.gate-active .gate-bar { background: linear-gradient(90deg, var(--accent) 0 40%, var(--accent-soft) 40%); background-size: 250% 100%; animation: sweep 1.1s linear infinite; }
+.gate-active .gate-label { color: var(--ink); font-weight: 500; }
+@keyframes pulse { 50% { opacity: .35; } }
+@keyframes sweep { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .progress-dot, .gate-active .gate-bar { animation: none; }
+  .gate-active .gate-bar { background: var(--accent); }
+}
+
+/* How it was computed: one line read from the query, conditions as editable chips */
+.how { display: grid; gap: 4px; }
+.how-label { font-size: 12px; font-weight: 500; color: var(--muted); }
+.how-line { margin: 0; color: var(--ink-2); line-height: 1.9; }
+.how-line code { font-size: 12.5px; }
+.how-busy { margin: 0; color: var(--muted); font-size: 12.5px; }
+.condition { position: relative; display: inline; }
+.condition + .condition::before { content: " and "; }
+.condition-chip { display: inline; padding: 2px 7px; border: 1px dashed var(--line-strong); border-radius: 5px; background: var(--bg); color: var(--ink-2); line-height: 1.6; }
+.condition-chip strong { color: var(--ink); font-weight: 500; }
+.condition-chip:not(:disabled):hover, .condition-chip.open { border-style: solid; border-color: var(--accent); background: var(--accent-soft); }
+.condition-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.condition-chip:disabled { cursor: default; }
+.condition-editor { position: absolute; z-index: 10; top: calc(100% + 6px); left: 0; width: min(340px, calc(100vw - 32px)); display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg); box-shadow: 0 6px 24px rgba(22, 24, 29, .12); line-height: 1.4; }
+.condition-field { display: grid; gap: 4px; color: var(--muted); font-size: 12.5px; }
+.condition-field input { height: 32px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 14px; color: var(--ink); background: var(--bg); }
+.condition-field input:focus { outline: none; border-color: var(--accent); }
+.condition-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Recent questions in the sidebar */
+.recent { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.recent-title { font-size: 12px; font-weight: 500; color: var(--muted); padding: 0 8px; }
+.recent ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; }
+.recent-item { width: 100%; display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px; border-radius: 6px; color: var(--ink-2); text-align: left; }
+.recent-item:hover { background: var(--hover); color: var(--ink); }
+.recent-item.active { background: var(--hover); color: var(--ink); font-weight: 500; }
+.recent-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.recent-question { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-turns { flex: none; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.edited-note { margin: 0; color: var(--ink-2); font-size: 12.5px; }

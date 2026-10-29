@@ -1,11 +1,16 @@
-from typing import Annotated
+import asyncio
+import json
+from collections.abc import AsyncIterator
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db.session import check_reader_connection, get_db
+from app.decision.models import ProposalSource
 from app.metadata.connectors import (
     ConnectionConfig,
     ConnectionSummary,
@@ -27,6 +32,7 @@ from app.metadata.service import (
     ConnectionService,
     ConnectorUnavailableError,
     DriverInstallDisabledError,
+    QuestionSource,
     normalize_actor,
 )
 from app.metadata.store import DuplicateConnectionError
@@ -35,12 +41,14 @@ from app.observability.run_trace import RunTrace
 from app.operator.models import (
     ApiHealthResponse,
     DemoPreset,
+    EditConditionsRequest,
     GovernedSchemaResponse,
     PlaygroundQueryRequest,
     RunListResponse,
     RunRecord,
 )
 from app.operator.service import OperatorApplication
+from app.sql.explain import ConditionEditError, edit_conditions
 
 router = APIRouter()
 
@@ -102,6 +110,46 @@ def playground_presets(
     return list(application.presets)
 
 
+async def _source(connections: ConnectionService, connection_id: str) -> QuestionSource | None:
+    """The saved connection to question, or None for the governed source."""
+    if connection_id == GOVERNED_CONNECTION_ID:
+        return None
+    try:
+        source = await run_in_threadpool(connections.question_source, connection_id)
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except Exception as error:
+        raise HTTPException(
+            status_code=502, detail="Could not read the schema of this connection."
+        ) from error
+    if source is None:
+        raise HTTPException(status_code=404, detail="Unknown connection")
+    return source
+
+
+async def _prepare(
+    payload: PlaygroundQueryRequest,
+    application: OperatorApplication,
+    connections: ConnectionService,
+) -> tuple[QuestionSource | None, RunRecord | None]:
+    if payload.preset_id is not None and payload.preset_id not in {
+        preset.id for preset in application.presets
+    }:
+        raise HTTPException(status_code=404, detail="Unknown demo preset")
+    if payload.connection_id != GOVERNED_CONNECTION_ID and payload.preset_id is not None:
+        raise HTTPException(status_code=400, detail="Demo scenarios run on the governed source.")
+    earlier = None
+    if payload.follow_up_of is not None:
+        earlier = await run_in_threadpool(application.get_run, payload.follow_up_of)
+        if earlier is None:
+            raise HTTPException(status_code=404, detail="The earlier question was not found.")
+        if earlier.connection_id != payload.connection_id:
+            raise HTTPException(
+                status_code=400, detail="A follow-up asks the same source as the earlier question."
+            )
+    return await _source(connections, payload.connection_id), earlier
+
+
 @router.post("/api/playground/query", response_model=RunRecord)
 async def playground_query(
     payload: PlaygroundQueryRequest,
@@ -109,28 +157,61 @@ async def playground_query(
     connections: Connections,
     actor: Actor,
 ) -> RunRecord:
-    if payload.preset_id is not None and payload.preset_id not in {
-        preset.id for preset in application.presets
-    }:
-        raise HTTPException(status_code=404, detail="Unknown demo preset")
-    source = None
-    if payload.connection_id != GOVERNED_CONNECTION_ID:
-        if payload.preset_id is not None:
-            raise HTTPException(
-                status_code=400, detail="Demo scenarios run on the governed source."
-            )
+    source, earlier = await _prepare(payload, application, connections)
+    return await application.run(
+        payload.question, payload.preset_id, actor=actor, source=source, follow_up=earlier
+    )
+
+
+@router.post("/api/playground/query/stream")
+async def playground_query_stream(
+    payload: PlaygroundQueryRequest,
+    application: Operator,
+    connections: Connections,
+    actor: Actor,
+) -> StreamingResponse:
+    """The same run as ``/api/playground/query``, with each stage sent as it happens.
+
+    Server-sent events: ``working`` when a stage starts, ``stage`` when one is
+    recorded, then one ``run`` with the record, or ``error``.  Stages carry their
+    name, status, and reason code, never rows or SQL.
+    """
+    source, earlier = await _prepare(payload, application, connections)
+    loop = asyncio.get_running_loop()
+    queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
+
+    def listen(event: dict[str, object]) -> None:
+        loop.call_soon_threadsafe(queue.put_nowait, dict(event))
+
+    async def work() -> None:
         try:
-            source = await run_in_threadpool(connections.question_source, payload.connection_id)
-        except ConnectorUnavailableError as error:
-            raise HTTPException(status_code=409, detail=str(error)) from error
-        except Exception as error:
-            raise HTTPException(
-                status_code=502, detail="Could not read the schema of this connection."
-            ) from error
-        if source is None:
-            raise HTTPException(status_code=404, detail="Unknown connection")
-    record = await application.run(payload.question, payload.preset_id, actor=actor, source=source)
-    return record
+            record = await application.run(
+                payload.question,
+                payload.preset_id,
+                actor=actor,
+                source=source,
+                follow_up=earlier,
+                listener=listen,
+            )
+            queue.put_nowait({"type": "run", "run": record.model_dump(mode="json")})
+        except Exception:
+            queue.put_nowait({"type": "error", "detail": "The question could not be answered."})
+
+    async def events() -> AsyncIterator[str]:
+        task = asyncio.create_task(work())
+        try:
+            while True:
+                event = await queue.get()
+                yield f"event: {event['type']}\ndata: {json.dumps(event, default=str)}\n\n"
+                if event["type"] in {"run", "error"}:
+                    break
+        finally:
+            # A client that leaves early does not stop the run; it is still audited.
+            await asyncio.shield(task)
+
+    return StreamingResponse(
+        events(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"}
+    )
 
 
 @router.get("/api/runs", response_model=RunListResponse)
@@ -155,6 +236,45 @@ def get_run(
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
     return record
+
+
+@router.get("/api/runs/{run_id}/thread", response_model=list[RunRecord])
+def get_thread(run_id: str, application: Operator) -> list[RunRecord]:
+    """The run with the earlier runs it followed up on or was edited from."""
+    chain = application.thread(run_id)
+    if not chain:
+        raise HTTPException(status_code=404, detail="Run not found")
+    return chain
+
+
+@router.post("/api/runs/{run_id}/edit", response_model=RunRecord)
+async def edit_run(
+    run_id: str,
+    payload: EditConditionsRequest,
+    application: Operator,
+    connections: Connections,
+    actor: Actor,
+) -> RunRecord:
+    """Run a run's query again with conditions changed; no model call is made.
+
+    The SQL comes from the stored run, never from the client: the client names a
+    condition by number and sends values, which become quoted or checked literals.
+    """
+    record = await run_in_threadpool(application.get_run, run_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Run not found")
+    if record.proposal_source not in {ProposalSource.LIVE_MODEL, ProposalSource.EDITED_QUERY}:
+        raise HTTPException(status_code=409, detail="Only a query the model wrote can be edited.")
+    if not record.proposed_sql:
+        raise HTTPException(status_code=409, detail="This run has no query to edit.")
+    try:
+        sql = edit_conditions(record.proposed_sql, payload.edits)
+    except ConditionEditError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    source = await _source(connections, record.connection_id)
+    return await application.run(
+        record.question, actor=actor, source=source, saved_sql=sql, edited_from=record
+    )
 
 
 @router.get("/api/runs/{run_id}/trace", response_model=RunTrace)

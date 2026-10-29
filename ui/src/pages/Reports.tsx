@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { api } from "../api/client";
 import { relativeTime, runOutcome } from "../format";
 import { ReportCanvas } from "../components/report/ReportCanvas";
-import { CHART_TYPES, ReportChart, splitColumns, suggestChart } from "../components/report/ReportChart";
+import { CHART_TYPES, ReportChart, SERIES_CHARTS, splitColumns, suggestChart } from "../components/report/ReportChart";
 import { bottom } from "../components/report/layout";
 import { AddFilterPanel, FilterBar, isEmpty } from "../components/report/ReportFilters";
 import { Prose } from "../components/report/Prose";
@@ -43,7 +43,13 @@ const DEFAULT_SIZE: Record<ChartType, { w: number; h: number }> = {
   area: { w: 8, h: 7 },
   pie: { w: 4, h: 7 },
   table: { w: 6, h: 8 },
+  stacked: { w: 8, h: 8 },
+  lines: { w: 8, h: 8 },
+  scatter: { w: 6, h: 8 },
 };
+
+type Draft = { title: string; description: string; cards: ReportCard[]; filters: ReportFilter[] };
+const UNDO_LIMIT = 50;
 
 // A reader's filter choices are a per-viewer convenience: kept in this browser only.
 function loadChoices(reportId: string): Record<string, FilterChoice> {
@@ -192,8 +198,11 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   const [error, setError] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState("");
   const timer = useRef<number | null>(null);
-  const latest = useRef({ title, description, cards, filters });
+  const latest = useRef<Draft>({ title, description, cards, filters });
   latest.current = { title, description, cards, filters };
+  // Edits this session can undo; typing into one field within a second is one step.
+  const history = useRef({ past: [] as Draft[], future: [] as Draft[], key: "", at: 0 });
+  const [, setHistoryVersion] = useState(0);
 
   const refresh = useCallback(
     (card: ReportCard) => {
@@ -278,12 +287,91 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     if (timer.current) window.clearTimeout(timer.current);
   }, []);
 
-  const updateCards = (next: ReportCard[]) => {
+  const remember = (key: string) => {
+    const state = history.current;
+    const now = Date.now();
+    if (!(key && key === state.key && now - state.at < 1000)) {
+      state.past = [...state.past, latest.current].slice(-UNDO_LIMIT);
+      state.future = [];
+      setHistoryVersion((version) => version + 1);
+    }
+    state.key = key;
+    state.at = now;
+  };
+
+  const restore = (draft: Draft) => {
+    setTitle(draft.title);
+    setDescription(draft.description);
+    setCards(draft.cards);
+    setFilters(draft.filters);
+    setPanel((current) => (current?.kind === "card" && !draft.cards.some((card) => card.id === current.id) ? null : current));
+    schedule();
+  };
+  const undo = () => {
+    const state = history.current;
+    const draft = state.past.at(-1);
+    if (!draft) return;
+    state.past = state.past.slice(0, -1);
+    state.future = [latest.current, ...state.future];
+    state.key = "";
+    setHistoryVersion((version) => version + 1);
+    restore(draft);
+  };
+  const redo = () => {
+    const state = history.current;
+    const draft = state.future[0];
+    if (!draft) return;
+    state.future = state.future.slice(1);
+    state.past = [...state.past, latest.current];
+    state.key = "";
+    setHistoryVersion((version) => version + 1);
+    restore(draft);
+  };
+  const undoRef = useRef({ undo, redo });
+  undoRef.current = { undo, redo };
+
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      // Fields keep their own undo for the text being typed.
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      const key = event.key.toLowerCase();
+      if (key === "z" || key === "y") {
+        event.preventDefault();
+        if (key === "y" || event.shiftKey) undoRef.current.redo();
+        else undoRef.current.undo();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editing]);
+
+  const updateCards = (next: ReportCard[], key = "") => {
+    remember(key);
     setCards(next);
     schedule();
   };
   const updateCard = (id: string, patch: Partial<ReportCard>) =>
-    updateCards(cards.map((card) => (card.id === id ? { ...card, ...patch } : card)));
+    updateCards(
+      cards.map((card) => (card.id === id ? { ...card, ...patch } : card)),
+      `card:${id}:${Object.keys(patch).join(",")}`,
+    );
+  const duplicateCard = (id: string) => {
+    const card = cards.find((item) => item.id === id);
+    if (!card) return;
+    const copy: ReportCard = {
+      ...card,
+      id: newId(card.kind === "query" ? "card" : card.kind),
+      title: card.title ? `${card.title} (copy)` : card.title,
+      layout: { ...card.layout, x: 0, y: bottom(cards) },
+    };
+    // The copy shares its original's run, so it shows the same rows until refreshed.
+    setResults((current) => (current[card.id] ? { ...current, [copy.id]: current[card.id] } : current));
+    updateCards([...cards, copy]);
+    setPanel({ kind: "card", id: copy.id });
+  };
   const removeCard = (id: string) => {
     updateCards(cards.filter((card) => card.id !== id));
     setPanel(null);
@@ -301,6 +389,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
       chart,
       dimension: null,
       measure: null,
+      series: null,
       layout: { x: 0, y: bottom(cards), ...size },
     };
     setResults((current) => ({ ...current, [card.id]: { status: "done", run, changed: [], applied: [], skipped: [] } }));
@@ -319,12 +408,14 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   };
 
   const addFilter = (filter: ReportFilter) => {
+    remember("");
     setFilters([...filters, filter]);
     schedule();
     setPanel(null);
   };
 
   const removeFilter = (id: string) => {
+    remember("");
     setFilters(filters.filter((item) => item.id !== id));
     schedule();
     if (!isEmpty(choicesRef.current[id])) choose(id, {});
@@ -377,6 +468,12 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 <button type="button" className="button ghost small" onClick={() => setPanel({ kind: "add" })}>Add chart</button>
                 <button type="button" className="button ghost small" onClick={() => addTextCard("heading")}>Add heading</button>
                 <button type="button" className="button ghost small" onClick={() => addTextCard("text")}>Add text</button>
+                <button type="button" className="button ghost small" disabled={!history.current.past.length} onClick={undo} title="Undo (Ctrl or ⌘ Z)">
+                  Undo
+                </button>
+                <button type="button" className="button ghost small" disabled={!history.current.future.length} onClick={redo} title="Redo (Ctrl or ⌘ Shift Z)">
+                  Redo
+                </button>
               </>
             )}
             {!editing && !viewing && (
@@ -414,6 +511,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 value={title}
                 maxLength={200}
                 onChange={(event) => {
+                  remember("title");
                   setTitle(event.target.value);
                   schedule();
                 }}
@@ -426,6 +524,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
                 maxLength={4000}
                 rows={2}
                 onChange={(event) => {
+                  remember("description");
                   setDescription(event.target.value);
                   schedule();
                 }}
@@ -543,6 +642,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
           state={results[selected.id]}
           onChange={(patch) => updateCard(selected.id, patch)}
           onRemove={() => removeCard(selected.id)}
+          onDuplicate={() => duplicateCard(selected.id)}
           onClose={() => setPanel(null)}
         />
       )}
@@ -680,6 +780,7 @@ function CardBody({ card, state, onRefresh }: { card: ReportCard; state: CardSta
       rows={state.run.rows}
       dimension={card.dimension}
       measure={card.measure}
+      series={card.series}
       emptyText={state.applied.length ? "No rows match the current filters." : undefined}
       display={card.display ?? DEFAULT_DISPLAY}
     />
@@ -717,6 +818,7 @@ function KeptBody({ card, kept }: { card: ReportCard; kept: SnapshotCard | undef
       rows={kept.rows}
       dimension={card.dimension}
       measure={card.measure}
+      series={card.series}
       display={card.display ?? DEFAULT_DISPLAY}
     />
   );
@@ -1063,12 +1165,14 @@ function CardPanel({
   state,
   onChange,
   onRemove,
+  onDuplicate,
   onClose,
 }: {
   card: ReportCard;
   state: CardState | undefined;
   onChange: (patch: Partial<ReportCard>) => void;
   onRemove: () => void;
+  onDuplicate: () => void;
   onClose: () => void;
 }) {
   const run = state?.status === "done" ? state.run : null;
@@ -1124,12 +1228,21 @@ function CardPanel({
             {run && (
               <div className="report-axes">
                 <label className="field">
-                  <span className="field-label">Category</span>
+                  <span className="field-label">{card.chart === "scatter" ? "Across" : "Category"}</span>
                   <select value={card.dimension ?? ""} onChange={(event) => onChange({ dimension: event.target.value || null })}>
                     <option value="">Automatic</option>
-                    {[...other, ...numeric].map((column) => <option key={column} value={column}>{column}</option>)}
+                    {(card.chart === "scatter" ? numeric : [...other, ...numeric]).map((column) => <option key={column} value={column}>{column}</option>)}
                   </select>
                 </label>
+                {SERIES_CHARTS.includes(card.chart) && (
+                  <label className="field">
+                    <span className="field-label">Series</span>
+                    <select value={card.series ?? ""} onChange={(event) => onChange({ series: event.target.value || null })}>
+                      <option value="">Automatic</option>
+                      {other.map((column) => <option key={column} value={column}>{column}</option>)}
+                    </select>
+                  </label>
+                )}
                 <label className="field">
                   <span className="field-label">Value</span>
                   <select value={card.measure ?? ""} onChange={(event) => onChange({ measure: event.target.value || null })}>
@@ -1172,7 +1285,10 @@ function CardPanel({
             )}
           </>
         )}
-        <button type="button" className="button danger" onClick={onRemove}>Remove card</button>
+        <div className="row-actions">
+          <button type="button" className="button ghost" onClick={onDuplicate}>Duplicate</button>
+          <button type="button" className="button danger" onClick={onRemove}>Remove card</button>
+        </div>
       </div>
     </aside>
   );
@@ -1308,6 +1424,24 @@ function ChartGlyph({ type }: { type: ChartType }) {
     area: <path d="M3 19V15l5-5 4 3 9-8v14z" fill="currentColor" opacity=".35" strokeWidth="1.4" />,
     pie: <path d="M12 3a9 9 0 1 0 9 9h-9z M14 2.5V10h7.5A8 8 0 0 0 14 2.5z" fill="currentColor" opacity=".55" strokeWidth="0" />,
     table: <path d="M3 5h18v14H3zM3 10h18M3 15h18M10 5v14" strokeWidth="1.4" />,
+    stacked: (
+      <>
+        <path d="M6 20v-5M12 20v-8M18 20v-6" strokeWidth="3" />
+        <path d="M6 15v-4M12 12V5M18 14v-3" strokeWidth="3" opacity=".45" />
+      </>
+    ),
+    lines: (
+      <>
+        <path d="M3 17l5-6 4 3 8-9" strokeWidth="1.8" />
+        <path d="M3 20l6-3 5 1 7-5" strokeWidth="1.8" opacity=".5" />
+      </>
+    ),
+    scatter: (
+      <g fill="currentColor" stroke="none">
+        <circle cx="6" cy="17" r="1.8" /><circle cx="10" cy="12" r="1.8" /><circle cx="14" cy="14" r="1.8" />
+        <circle cx="17" cy="8" r="1.8" /><circle cx="20" cy="5" r="1.8" />
+      </g>
+    ),
   };
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="chart-glyph" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">

@@ -63,6 +63,11 @@ class ChartType(StrEnum):
     AREA = "area"
     PIE = "pie"
     TABLE = "table"
+    # One series per value of the card's series column.
+    STACKED = "stacked"
+    LINES = "lines"
+    # One numeric column against another.
+    SCATTER = "scatter"
 
 
 class CardLayout(BaseModel):
@@ -109,6 +114,8 @@ class CardInput(BaseModel):
     # Columns the viewer chose for the category axis and the value; None picks one.
     dimension: str | None = Field(default=None, max_length=200)
     measure: str | None = Field(default=None, max_length=200)
+    # The column whose values split stacked columns and lines into series.
+    series: str | None = Field(default=None, max_length=200)
     display: CardDisplay = Field(default_factory=CardDisplay)
     layout: CardLayout
 

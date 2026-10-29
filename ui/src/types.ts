@@ -285,7 +285,7 @@ export interface ConnectionValues {
   columns: ValueColumn[];
 }
 
-export type ChartType = "number" | "bar" | "column" | "line" | "area" | "pie" | "table";
+export type ChartType = "number" | "bar" | "column" | "line" | "area" | "pie" | "table" | "stacked" | "lines" | "scatter";
 
 export interface CardLayout {
   x: number;
@@ -315,6 +315,8 @@ export interface ReportCard {
   chart: ChartType;
   dimension: string | null;
   measure: string | null;
+  /** Splits stacked columns and lines into one series per value. */
+  series?: string | null;
   display?: CardDisplay;
   layout: CardLayout;
   sql?: string | null;

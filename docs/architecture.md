@@ -189,8 +189,9 @@ each pinned query again as a `SAVED_QUERY` run: no model call, every gate on
 the current schema, and an audit record. A query that no longer passes shows
 why on its card. Heading cards start a section; text cards hold notes in a
 small Markdown subset rendered as text, never HTML; chart cards carry a
-description, a chart type (number, bars, columns, line, area, pie, table), and
-optional category and value columns, and display settings: number format
+description, a chart type (number, bars, columns, line, area, pie, stacked
+columns, lines by series, scatter, table), optional category, value, and
+series columns, and display settings: number format
 (number, currency, percent, decimals), row order, how many rows to show, and
 for a number card a comparison with its second row or a target. Display
 settings change how rows look, never the query or which rows it returns.
@@ -247,6 +248,11 @@ shows); text that would start a spreadsheet formula is prefixed with `'`.
 Printing, or saving as PDF from the print dialog, lays the grid out in bands
 that keep the screen layout, so a page breaks between rows of cards, not
 through one, and stamps the time it was printed.
+
+Editors can undo and redo their changes during a session, and duplicate a
+card. A copy shares its original's run, so the server gives it the original's
+pinned SQL and basis rather than reading the tables afresh: copying a card
+does not quietly accept tables that changed since.
 
 ### Metadata isolation
 

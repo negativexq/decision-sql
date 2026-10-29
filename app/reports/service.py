@@ -146,8 +146,19 @@ class ReportService:
         if len({card.id for card in payload.cards}) != len(payload.cards):
             raise ReportRejectedError("Two cards share an id.")
         previous = {card.id: card for card in report.cards}
+        # A copy of a card shares its run: it keeps that card's SQL and basis, so copying
+        # does not quietly accept tables that changed since.
+        by_run = {card.run_id: card for card in report.cards if card.run_id}
         catalog = _Lazy(lambda: self._catalog(report.connection_id))
-        cards = [self._pin(report, card, previous.get(card.id), catalog) for card in payload.cards]
+        cards = [
+            self._pin(
+                report,
+                card,
+                previous.get(card.id) or (by_run.get(card.run_id) if card.run_id else None),
+                catalog,
+            )
+            for card in payload.cards
+        ]
         if payload.filters != report.filters:
             try:
                 check_filters(payload.filters, catalog.get())

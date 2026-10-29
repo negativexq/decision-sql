@@ -414,3 +414,23 @@ async def test_scheduled_reports_refresh_once_when_due() -> None:
 
     off = service.set_schedule(report.id, RefreshSchedule.OFF, "ayse")
     assert off is not None and off.next_refresh_at is None
+
+
+def test_a_copied_card_keeps_the_sql_and_basis_of_its_original() -> None:
+    service, operator = _service(_record("run_a"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="S", cards=[_card("c1", "run_a")]), "ayse")
+    # The tables change; a copy made now must still say so, like its original.
+    operator.catalog = _orders(description="Order total in cents.")
+    copied = service.update(
+        report.id,
+        ReportInput(
+            title="S",
+            cards=[_card("c1", "run_a"), _card("c2", "run_a", chart="stacked", series="region")],
+        ),
+        "ayse",
+    )
+    assert copied is not None
+    original, copy = copied.cards
+    assert copy.sql == original.sql and copy.basis == original.basis
+    assert copy.chart == "stacked" and copy.series == "region"

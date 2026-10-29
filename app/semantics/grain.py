@@ -16,6 +16,7 @@ from typing import Any
 import sqlglot
 from pydantic import BaseModel, ConfigDict, Field
 from sqlglot import exp
+from sqlglot.optimizer.scope import Scope, traverse_scope
 
 
 class GrainContractError(ValueError):
@@ -267,6 +268,7 @@ class GrainSafetyValidator:
                 evidence={"error": str(exc)},
             )
         diagnostics = [self._validate_select(select) for select in tree.find_all(exp.Select)]
+        diagnostics.extend(self._traced_fanout(scope) for scope in _scopes(tree))
         actionable = [
             item
             for item in diagnostics
@@ -394,6 +396,169 @@ class GrainSafetyValidator:
             native_grains=tuple(item[0].native_grain for item in parent_measures),
             grouping_columns=group_columns,
         )
+
+    def _traced_fanout(self, scope: Scope) -> GrainDiagnostic:
+        """Fan-out of a measure that reaches this scope through a CTE or derived table.
+
+        ``_validate_select`` sees only columns read straight from a table, so a parent
+        measure joined to its children inside a CTE and summed outside it would pass.
+        Each column of a SUM or AVG is followed back through the sources' projections to
+        the table it is read from, and every table joined along the way counts as joined.
+        """
+        select = scope.expression
+        not_applicable = GrainDiagnostic(
+            code=GrainDiagnosticCode.NOT_APPLICABLE,
+            message="No measure reaches this scope through a CTE or derived table.",
+        )
+        if not isinstance(select, exp.Select):
+            return not_applicable
+        for aggregate in select.find_all(exp.Sum, exp.Avg):
+            if aggregate.find_ancestor(exp.Select) is not select:
+                continue
+            for column in aggregate.this.find_all(exp.Column):
+                for table, name, path in self._lineage(scope, column, (), through_derived=True):
+                    for measure in self.catalog.measures_for_physical(table, name):
+                        if measure.aggregation_behavior is not AggregationBehavior.ADDITIVE:
+                            continue
+                        diagnostic = self._exposed_measure(measure, path, aggregate, column)
+                        if diagnostic is not None:
+                            return diagnostic
+        return not_applicable
+
+    def _exposed_measure(
+        self,
+        measure: MeasureSemantics,
+        path: tuple[Scope, ...],
+        aggregate: exp.Expression,
+        column: exp.Column,
+    ) -> GrainDiagnostic | None:
+        """The fan-out a traced measure meets on its way from its table to the aggregate.
+
+        ``path`` runs from the aggregating scope inward. Tables are collected from the
+        innermost scope outward; a scope that groups or de-duplicates on the measure's own
+        key leaves one row per parent, so the children joined below it no longer repeat it.
+        """
+        joined: set[str] = set()
+        for depth, scope in enumerate(reversed(path)):
+            joined |= _physical_tables(scope)
+            if self._keeps_native_grain(scope, measure, aggregating=depth == len(path) - 1):
+                joined = set()
+        child_grains = {
+            edge.relationship_id: GrainKey(
+                entity_id=edge.from_entity_id,
+                key_attribute_ids=self.graph.entity(edge.from_entity_id).key_attribute_ids,
+            )
+            for edge in self.graph.fanout_edges_from(measure.entity_id)
+        }
+        for edge in self.graph.fanout_edges_from(measure.entity_id):
+            child_table = self.graph.entity(edge.from_entity_id).physical_table.lower()
+            if child_table not in joined:
+                continue
+            if child_grains[edge.relationship_id] in measure.allowed_rollup_grains:
+                continue
+            masked = isinstance(aggregate.this, exp.Distinct)
+            return GrainDiagnostic(
+                code=(
+                    GrainDiagnosticCode.DISTINCT_VALUE_FANOUT_MASK
+                    if masked
+                    else GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+                ),
+                message=(
+                    "Value-level DISTINCT masks a parent measure across a fanout edge."
+                    if masked
+                    else "Parent additive measure is aggregated after a one-to-many fanout "
+                    "inside a CTE or derived table."
+                ),
+                measure_ids=(measure.measure_id,),
+                native_grains=(measure.native_grain,),
+                fanout_edges=(edge,),
+                aggregate_expressions=(aggregate.sql(dialect="postgres"),),
+                evidence={
+                    "column": column.sql(dialect="postgres"),
+                    "child_table": child_table,
+                    "traced": True,
+                },
+            )
+        return None
+
+    def _keeps_native_grain(
+        self, scope: Scope, measure: MeasureSemantics, *, aggregating: bool
+    ) -> bool:
+        """Whether the scope leaves one row per parent: grouped by its key, or DISTINCT
+        over a row that carries the key. The aggregating scope counts only its GROUP BY."""
+        select = scope.expression
+        if not isinstance(select, exp.Select):
+            return False
+        group = select.args.get("group")
+        columns: list[exp.Column] = []
+        if isinstance(group, exp.Group):
+            columns = [c for item in group.expressions for c in item.find_all(exp.Column)]
+        elif select.args.get("distinct") is not None and not aggregating:
+            columns = [
+                c for projection in select.expressions for c in projection.find_all(exp.Column)
+            ]
+        native = {
+            self._physical_column(attribute_id).lower()
+            for attribute_id in measure.native_grain.key_attribute_ids
+        }
+        grouped = {
+            (table, name)
+            for column in columns
+            for table, name, _ in self._lineage(scope, column, (), through_derived=False)
+        }
+        # A column the joins equate with the key stands for it: DISTINCT a.district_id
+        # keeps one row per district when the scope joins d.district_id = a.district_id.
+        for equality in select.find_all(exp.EQ):
+            if equality.find_ancestor(exp.Select) is not select:
+                continue
+            sides = [
+                {(t, n) for t, n, _ in self._lineage(scope, side, (), through_derived=False)}
+                for side in (equality.left, equality.right)
+                if isinstance(side, exp.Column)
+            ]
+            if len(sides) == 2 and (sides[0] & grouped or sides[1] & grouped):
+                grouped |= sides[0] | sides[1]
+        table = measure.physical_table.lower()
+        return bool(columns) and native.issubset({n for t, n in grouped if t == table})
+
+    def _lineage(
+        self,
+        scope: Scope,
+        column: exp.Column,
+        path: tuple[Scope, ...],
+        *,
+        through_derived: bool,
+    ) -> list[tuple[str, str, tuple[Scope, ...]]]:
+        """The physical (table, column) pairs a column of ``scope`` is read from.
+
+        With ``through_derived`` only columns that pass through a CTE or derived table
+        are returned: a column read straight from a table is ``_validate_select``'s.
+        A projection aggregated in the inner scope is traced too: a parent total grouped by
+        the parent's key is still one value per parent, and repeats when joined to children.
+        A window function ends the trace.
+        """
+        path = (*path, scope)
+        found: list[tuple[str, str, tuple[Scope, ...]]] = []
+        for source in _column_sources(scope, column, self.catalog):
+            if isinstance(source, exp.Table):
+                if not through_derived:
+                    found.append((source.name.lower(), column.name.lower(), path))
+                continue
+            inner = source.expression
+            if not isinstance(inner, exp.Select):
+                continue
+            projection = _projection(inner, column.name)
+            if projection is None:
+                # SELECT * or t.*: the name is whichever source of the inner scope has it.
+                if _has_star(inner):
+                    star = exp.column(column.name)
+                    found.extend(self._lineage(source, star, path, through_derived=False))
+                continue
+            if projection.find(exp.Window) is not None:
+                continue
+            for inner_column in projection.find_all(exp.Column):
+                found.extend(self._lineage(source, inner_column, path, through_derived=False))
+        return found
 
     def _authorized_derived_expression(
         self, select: exp.Select, expression: exp.Expression, aliases: dict[str, str]
@@ -552,3 +717,63 @@ class GrainSafetyValidator:
         if ":" in attribute_id:
             return attribute_id.rsplit(":", 1)[-1]
         raise GrainContractError(f"unknown native-grain attribute: {attribute_id}")
+
+
+def _scopes(tree: exp.Expression) -> list[Scope]:
+    try:
+        return traverse_scope(tree)
+    except Exception:
+        return []
+
+
+def _physical_tables(scope: Scope) -> set[str]:
+    return {
+        source.name.lower()
+        for _, source in scope.selected_sources.values()
+        if isinstance(source, exp.Table)
+    }
+
+
+def _column_sources(
+    scope: Scope, column: exp.Column, catalog: MeasureCatalog
+) -> list[exp.Table | Scope]:
+    """The sources of ``scope`` a column can be read from.
+
+    An unqualified name belongs to the only source, or to the sources that have it:
+    a derived source that projects it, or a table where it is a modeled measure.
+    PostgreSQL rejects a name two sources share, so more than one is never a guess.
+    """
+    sources = {name.lower(): source for name, (_, source) in scope.selected_sources.items()}
+    if column.table:
+        source = sources.get(column.table.lower())
+        return [] if source is None else [source]
+    if len(sources) == 1:
+        return list(sources.values())
+    found: list[exp.Table | Scope] = []
+    for source in sources.values():
+        if isinstance(source, exp.Table):
+            if catalog.measures_for_physical(source.name, column.name):
+                found.append(source)
+        elif isinstance(source.expression, exp.Select) and (
+            _projection(source.expression, column.name) is not None or _has_star(source.expression)
+        ):
+            found.append(source)
+    return found
+
+
+def _projection(select: exp.Select, name: str) -> exp.Expression | None:
+    for projection in select.expressions:
+        if projection.alias_or_name.lower() == name.lower() and not isinstance(
+            projection, exp.Star
+        ):
+            inner: exp.Expression = projection.unalias()
+            return inner
+    return None
+
+
+def _has_star(select: exp.Select) -> bool:
+    return any(
+        isinstance(projection, exp.Star)
+        or (isinstance(projection, exp.Column) and isinstance(projection.this, exp.Star))
+        for projection in select.expressions
+    )

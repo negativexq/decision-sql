@@ -119,6 +119,7 @@ reports = Table(
     Column("created_at", DateTime(timezone=True), nullable=False),
     Column("updated_by", String(120), nullable=False),
     Column("updated_at", DateTime(timezone=True), nullable=False),
+    Column("version", Integer, nullable=False, server_default="1"),
 )
 
 # A report's results at one moment, kept so readers can look back; bounded per card

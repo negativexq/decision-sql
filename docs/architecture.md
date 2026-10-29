@@ -419,6 +419,14 @@ cannot open reads as missing. Every refresh runs as the connection's reader
 role and records the person who asked, so all readers see the same data:
 sharing a report shares what that connection can read.
 
+Every save moves a report to its next version, and the store writes it only
+over the version it was made from. The editor sends the version it opened
+with each save; if someone saved in between (another editor, another tab, or
+an answer added from Ask), the save is refused with `409` and the editor stops
+autosaving until it is reloaded, so neither change silently replaces the
+other. The editor sends one save at a time, each from the version the last
+one returned.
+
 Filters narrow a whole report. An editor makes a filter of a catalog column,
 either a list of values or a date range; a reader's picks stay in their
 browser and travel with each refresh. The server adds the predicate to every

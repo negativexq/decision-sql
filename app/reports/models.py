@@ -149,6 +149,8 @@ class ReportInput(BaseModel):
     description: str = Field(default="", max_length=4000)
     cards: list[CardInput] = Field(default_factory=list, max_length=MAX_CARDS)
     filters: list[ReportFilter] = Field(default_factory=list, max_length=MAX_FILTERS)
+    # The version the editor started from; a save made on top of a newer one is refused.
+    version: int | None = Field(default=None, ge=1)
 
 
 class ReportCreate(BaseModel):
@@ -206,6 +208,8 @@ class Report(BaseModel):
     created_at: datetime
     updated_by: str
     updated_at: datetime
+    # Counts saves; a save is written only over the version it was made from.
+    version: int = 1
 
     def role_of(self, actor: str) -> ReportRole | None:
         if actor == self.created_by:

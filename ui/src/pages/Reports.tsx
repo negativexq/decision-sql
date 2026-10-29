@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { api } from "../api/client";
+import { api, ApiError } from "../api/client";
 import { relativeTime, runOutcome } from "../format";
 import { ReportCanvas } from "../components/report/ReportCanvas";
 import { CHART_TYPES, ReportChart, SERIES_CHARTS, splitColumns, suggestChart } from "../components/report/ReportChart";
@@ -193,10 +193,16 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     | null
   >(null);
   const [viewing, setViewing] = useState<Snapshot | null>(null);
-  const [save, setSave] = useState<"saved" | "pending" | "saving" | "error">("saved");
+  const [save, setSave] = useState<"saved" | "pending" | "saving" | "error" | "conflict">("saved");
   const [error, setError] = useState<string | null>(null);
   const [connectionName, setConnectionName] = useState("");
   const timer = useRef<number | null>(null);
+  // The version this editor last read or wrote; every save is made from it.
+  const version = useRef(0);
+  const saving = useRef<Promise<void> | null>(null);
+  const saveAgain = useRef(false);
+  // Someone else saved since this editor read the report: autosave stops until a reload.
+  const conflicted = useRef(false);
   const latest = useRef<Draft>({ title, description, cards, filters });
   latest.current = { title, description, cards, filters };
   // Edits this session can undo; typing into one field within a second is one step.
@@ -219,10 +225,16 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     [reportId],
   );
 
+  const adopt = useCallback((value: Report) => {
+    version.current = value.version;
+    setReport(value);
+  }, []);
+
   const accept = (card: ReportCard) =>
     api
       .acceptCard(reportId, card.id)
       .then((value) => {
+        version.current = value.version;
         const basis = value.cards.find((item) => item.id === card.id)?.basis;
         setCards((current) => current.map((item) => (item.id === card.id ? { ...item, basis } : item)));
         setResults((current) => {
@@ -244,11 +256,11 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
     [refresh],
   );
 
-  useEffect(() => {
+  const load = useCallback(() => {
     void api
       .report(reportId)
       .then((value) => {
-        setReport(value);
+        adopt(value);
         setCards(value.cards);
         setTitle(value.title);
         setDescription(value.description);
@@ -258,25 +270,54 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         void api.connections().then((items) => setConnectionName(items.find((item) => item.id === value.connection_id)?.name ?? value.connection_id));
       })
       .catch((cause: Error) => setError(cause.message));
-  }, [reportId, refreshAll]);
+  }, [reportId, refreshAll, adopt]);
 
-  const persist = useCallback(() => {
+  useEffect(load, [load]);
+
+  const persist = useCallback((): Promise<void> => {
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = null;
+    if (conflicted.current) return Promise.resolve();
+    // One save at a time: a second one sent before the first returns would be made from
+    // the version the first replaces, and be refused as a conflict with this editor.
+    if (saving.current) {
+      saveAgain.current = true;
+      return saving.current;
+    }
     setSave("saving");
-    return api
-      .saveReport(reportId, latest.current)
-      .then((value) => {
-        setReport(value);
-        setSave("saved");
-      })
+    const run = (async () => {
+      do {
+        saveAgain.current = false;
+        adopt(await api.saveReport(reportId, { ...latest.current, version: version.current }));
+      } while (saveAgain.current);
+      setSave(timer.current ? "pending" : "saved");
+    })()
       .catch((cause: Error) => {
-        setSave("error");
+        if (cause instanceof ApiError && cause.status === 409) {
+          conflicted.current = true;
+          setSave("conflict");
+        } else {
+          setSave("error");
+        }
         setError(cause.message);
+      })
+      .finally(() => {
+        saving.current = null;
       });
-  }, [reportId]);
+    saving.current = run;
+    return run;
+  }, [reportId, adopt]);
+
+  const reload = () => {
+    conflicted.current = false;
+    history.current = { past: [], future: [], key: "", at: 0 };
+    setError(null);
+    setSave("saved");
+    load();
+  };
 
   const schedule = useCallback(() => {
+    if (conflicted.current) return;
     setSave("pending");
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => void persist(), 700);
@@ -451,7 +492,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
   const stateOf = (card: ReportCard): CardState | undefined =>
     viewing ? { status: "kept", kept: viewing.cards[card.id] } : results[card.id];
   const canEdit = report.role !== "viewer";
-  const saveText = { saved: "Saved", pending: "Unsaved changes", saving: "Saving", error: "Not saved" }[save];
+  const saveText = { saved: "Saved", pending: "Unsaved changes", saving: "Saving", error: "Not saved", conflict: "Changed elsewhere" }[save];
 
   return (
     <div className={panel ? "report-shell with-panel" : "report-shell"}>
@@ -563,7 +604,17 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
           onAdd={() => setPanel({ kind: "filter" })}
         />}
 
-        {error && report && <div className="callout callout-danger">{error}</div>}
+        {error && report && (
+          <div className="callout callout-danger">
+            {error}
+            {save === "conflict" && (
+              <>
+                {" "}Your edits since then are not saved.{" "}
+                <button type="button" className="button ghost small" onClick={reload}>Reload report</button>
+              </>
+            )}
+          </div>
+        )}
 
         {cards.length === 0 ? (
           <div className="report-empty">
@@ -608,7 +659,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         <HistoryPanel
           report={report}
           viewing={viewing?.id ?? null}
-          onReport={setReport}
+          onReport={adopt}
           onView={setViewing}
           onClose={() => setPanel(null)}
         />
@@ -617,7 +668,7 @@ function ReportEditor({ reportId, onClose }: { reportId: string; onClose: () => 
         <SharePanel
           report={report}
           connectionName={connectionName}
-          onShared={(value) => setReport(value)}
+          onShared={adopt}
           onClose={() => setPanel(null)}
         />
       )}

@@ -56,6 +56,10 @@ class ReportForbiddenError(PermissionError):
     """The reader may open the report but not do this to it."""
 
 
+class ReportConflictError(RuntimeError):
+    """Someone saved the report after this change was started from it."""
+
+
 _EDIT = (ReportRole.OWNER, ReportRole.EDITOR)
 _OPTION_LIMIT = 200
 
@@ -139,7 +143,7 @@ class ReportService:
             updated_by=actor,
             updated_at=now,
         )
-        self.store.save(report)
+        self._commit(report, new=True)
         return ReportView(**report.model_dump(), role=ReportRole.OWNER)
 
     def update(self, report_id: str, payload: ReportInput, actor: str) -> ReportView | None:
@@ -147,6 +151,11 @@ class ReportService:
         if found is None:
             return None
         report, role = found
+        if payload.version is not None and payload.version != report.version:
+            raise ReportConflictError(
+                f"{report.updated_by} saved this report after you opened it. "
+                "Reload it to see their changes."
+            )
         if len({card.id for card in payload.cards}) != len(payload.cards):
             raise ReportRejectedError("Two cards share an id.")
         previous = {card.id: card for card in report.cards}
@@ -178,7 +187,7 @@ class ReportService:
                 "updated_at": datetime.now(UTC),
             }
         )
-        self.store.save(updated)
+        updated = self._commit(updated)
         return ReportView(**updated.model_dump(), role=role)
 
     def rename(self, report_id: str, title: str, actor: str) -> ReportView | None:
@@ -191,7 +200,7 @@ class ReportService:
         updated = report.model_copy(
             update={"title": title.strip(), "updated_by": actor, "updated_at": datetime.now(UTC)}
         )
-        self.store.save(updated)
+        updated = self._commit(updated)
         return ReportView(**updated.model_dump(), role=role)
 
     def add_card(self, report_id: str, payload: CardFromRun, actor: str) -> ReportView | None:
@@ -231,6 +240,7 @@ class ReportService:
                 description=report.description,
                 cards=[*kept, card],
                 filters=report.filters,
+                version=report.version,
             ),
             actor,
         )
@@ -253,7 +263,7 @@ class ReportService:
                 "updated_at": datetime.now(UTC),
             }
         )
-        self.store.save(updated)
+        updated = self._commit(updated)
         return ReportView(**updated.model_dump(), role=role)
 
     def delete(self, report_id: str, actor: str) -> bool:
@@ -278,7 +288,7 @@ class ReportService:
                 "updated_at": now,
             }
         )
-        self.store.save(updated)
+        updated = self._commit(updated)
         return ReportView(**updated.model_dump(), role=role)
 
     async def take_snapshot(self, report_id: str, actor: str) -> SnapshotSummary | None:
@@ -533,8 +543,21 @@ class ReportService:
                 "updated_at": datetime.now(UTC),
             }
         )
-        await run_in_threadpool(self.store.save, updated)
+        updated = await run_in_threadpool(self._commit, updated)
         return ReportView(**updated.model_dump(), role=role)
+
+    def _commit(self, report: Report, *, new: bool = False) -> Report:
+        """Save a change made from the report as read, as its next version.
+
+        The store writes it only over the version it was read at, so of two changes
+        made from one version the second is refused instead of undoing the first.
+        """
+        saved = report if new else report.model_copy(update={"version": report.version + 1})
+        if not self.store.save(saved):
+            raise ReportConflictError(
+                "Someone else saved this report at the same moment. Reload it and try again."
+            )
+        return saved
 
     def _query_card(
         self,

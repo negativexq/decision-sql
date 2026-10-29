@@ -51,6 +51,13 @@ export function setActor(value: string): void {
   }
 }
 
+/** A refused request, with its HTTP status so callers can tell a conflict from a failure. */
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const actor = getActor();
   const response = await fetch(`${base}${path}`, {
@@ -73,7 +80,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     } catch {
       // Non-JSON error bodies are shown as returned.
     }
-    throw new Error(detail || `Request failed (${response.status})`);
+    throw new ApiError(detail || `Request failed (${response.status})`, response.status);
   }
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
@@ -180,7 +187,8 @@ export const api = {
   report: (id: string) => request<Report>(`/api/reports/${encodeURIComponent(id)}`),
   createReport: (title: string, connection_id: string) =>
     request<Report>("/api/reports", { method: "POST", body: JSON.stringify({ title, connection_id }) }),
-  saveReport: (id: string, body: { title: string; description: string; cards: ReportCard[]; filters: ReportFilter[] }) =>
+  // `version` is the one the editor started from; a save over a newer one is refused with 409.
+  saveReport: (id: string, body: { title: string; description: string; cards: ReportCard[]; filters: ReportFilter[]; version: number }) =>
     request<Report>(`/api/reports/${encodeURIComponent(id)}`, {
       method: "PUT",
       body: JSON.stringify({

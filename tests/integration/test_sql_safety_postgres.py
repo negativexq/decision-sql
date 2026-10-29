@@ -305,11 +305,12 @@ def test_statement_timeout_is_enforced(service: SqlSafetyService) -> None:
 
     result = run_candidate(
         timed,
+        # Aliases of one table are not checked for a join, so this stays admissible.
         """SELECT COUNT(*)
            FROM orders a
-           CROSS JOIN order_items b
+           CROSS JOIN orders b
            CROSS JOIN orders c
-           CROSS JOIN order_items d""",
+           CROSS JOIN orders d""",
     )
 
     assert result.status is SqlSafetyStatus.EXECUTION_ERROR

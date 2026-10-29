@@ -367,3 +367,44 @@ def test_an_equality_between_tables_already_joined_is_a_filter() -> None:
     for query in rejected:
         rejection = sql_policy.validate(parsed(query))
         assert rejection is not None and rejection.code is PolicyCode.UNAUTHORIZED_JOIN, query
+
+
+def test_every_table_of_a_select_must_be_joined_by_a_relationship() -> None:
+    sql_policy = policy()
+    allowed = (
+        "SELECT 1 FROM order_items oi JOIN orders o ON oi.order_id = o.id "
+        "JOIN customers c ON c.id = o.customer_id",
+        "SELECT 1 FROM customers c LEFT JOIN orders o ON o.customer_id = c.id",
+        "SELECT 1 FROM orders o, customers c WHERE c.id = o.customer_id",
+        # An OR of authorized equalities between the same two tables still joins them.
+        "SELECT 1 FROM orders o JOIN customers c ON (o.customer_id = c.id OR c.id = o.customer_id)",
+        # A one-row aggregate may be cross joined, and a CTE can carry the link.
+        "SELECT o.id FROM orders o CROSS JOIN (SELECT AVG(total_amount) AS a FROM orders) x "
+        "WHERE o.total_amount > x.a",
+        "WITH s AS (SELECT order_id FROM order_items) "
+        "SELECT 1 FROM orders o JOIN s ON s.order_id = o.id",
+        # Aliases of one table count as that table.
+        "SELECT 1 FROM orders a JOIN customers ca ON ca.id = a.customer_id "
+        "CROSS JOIN orders b JOIN customers cb ON cb.id = b.customer_id",
+        "SELECT 1 FROM orders a JOIN orders b USING (customer_id)",
+    )
+    for query in allowed:
+        assert sql_policy.validate(parsed(query)) is None, query
+
+    rejected = (
+        "SELECT o.id, oi.id FROM orders o CROSS JOIN order_items oi LIMIT 10",
+        "SELECT o.id FROM orders o, customers c",
+        "SELECT o.id FROM orders o JOIN customers c ON TRUE",
+        "SELECT o.id FROM orders o JOIN customers c ON o.id < c.id",
+        "SELECT o.id FROM orders o JOIN customers c ON o.customer_id = c.id OR TRUE",
+        "SELECT 1 FROM orders o JOIN customers c ON o.customer_id = c.id CROSS JOIN products p",
+        "SELECT 1 FROM orders o JOIN customers c USING (id)",
+    )
+    for query in rejected:
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None and rejection.code is PolicyCode.UNAUTHORIZED_JOIN, query
+
+    message = sql_policy.validate(parsed("SELECT o.id FROM orders o, customers c")).message  # type: ignore[union-attr]
+    assert "Join them on orders.customer_id = customers.id" in message
+    unrelated = sql_policy.validate(parsed("SELECT 1 FROM products p CROSS JOIN customers c"))
+    assert unrelated is not None and "no authorized relationship" in unrelated.message

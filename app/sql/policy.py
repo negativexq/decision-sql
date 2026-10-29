@@ -276,7 +276,130 @@ class SQLPolicy:
                     self._join_message(left, right),
                     f"{left[0]}.{left[1]} = {right[0]}.{right[1]}",
                 )
+            unlinked = self._unlinked_tables(scope.expression, relations)
+            if unlinked is not None:
+                return self._reject(
+                    PolicyCode.UNAUTHORIZED_JOIN,
+                    self._unlinked_message(*unlinked),
+                    f"{unlinked[0]} x {unlinked[1]}",
+                )
         return None
+
+    def _unlinked_tables(
+        self, select: exp.Select, relations: dict[str, _Relation]
+    ) -> tuple[str, str] | None:
+        """Two tables of one SELECT that no authorized relationship joins, if any.
+
+        A CROSS JOIN, a comma list, ``ON TRUE``, or a range comparison pairs every
+        row of one table with rows of the other that no relationship relates. Each
+        table in the FROM list must therefore reach every other through equalities
+        ANDed into a WHERE or JOIN ... ON, an OR of such equalities between the same
+        two relations, or a ``USING`` column. Between two tables an equality must
+        follow an authorized relationship; one with a CTE or derived table counts,
+        because its columns are not traced. A CTE or derived table needs no link of
+        its own, so a one-row aggregate can still be cross joined, and aliases of
+        one table count as that table, as a table compared with itself is not
+        checked.
+        """
+        nodes = {
+            key: f"table:{relation.table.name.lower()}" if relation.table else f"derived:{key}"
+            for key, relation in relations.items()
+        }
+        tables = sorted({node for node in nodes.values() if node.startswith("table:")})
+        if len(tables) < 2:
+            return None
+        links: set[frozenset[str]] = set()
+        for condition in select.find_all(exp.EQ, exp.Or):
+            if condition.find_ancestor(exp.Select) is not select or not _conjunct(condition):
+                continue
+            pairs = [self._equality_link(relations, part) for part in _disjuncts(condition)]
+            if pairs and pairs[0] is not None and all(pair == pairs[0] for pair in pairs):
+                links.add(frozenset(nodes[key] for key in pairs[0]))
+        seen: list[str] = []
+        for node in self._from_nodes(select):
+            key = node.alias_or_name.lower()
+            if key not in relations:
+                continue
+            join = node.parent
+            using = (join.args.get("using") or ()) if isinstance(join, exp.Join) else ()
+            for column in using:
+                name = self._identifier_name(column.name)
+                for other in seen:
+                    if relations[other].has_column(name) and self._links(
+                        relations, (other, name), (key, name)
+                    ):
+                        links.add(frozenset((nodes[other], nodes[key])))
+            seen.append(key)
+        for table in tables[1:]:
+            if not _connected(tables[0], table, links):
+                return tables[0].removeprefix("table:"), table.removeprefix("table:")
+        return None
+
+    def _equality_link(
+        self, relations: dict[str, _Relation], node: exp.Expression
+    ) -> frozenset[str] | None:
+        """The two relations an equality joins, when it may join them."""
+        if not isinstance(node, exp.EQ):
+            return None
+        left = self._local_source(relations, node.left)
+        right = self._local_source(relations, node.right)
+        if left is None or right is None or left[0] == right[0]:
+            return None
+        if not self._links(relations, left, right):
+            return None
+        return frozenset((left[0], right[0]))
+
+    def _local_source(
+        self, relations: dict[str, _Relation], node: exp.Expression
+    ) -> tuple[str, str] | None:
+        """The FROM-list relation of this SELECT that a column belongs to, and the column."""
+        while isinstance(node, (exp.Cast, exp.Paren)):
+            node = node.this
+        if not isinstance(node, exp.Column):
+            return None
+        name = self._identifier_name(node.name)
+        qualifier = node.table.lower()
+        if qualifier:
+            return (qualifier, name) if qualifier in relations else None
+        owners = [key for key, relation in relations.items() if relation.has_column(name)]
+        return (owners[0], name) if len(owners) == 1 else None
+
+    def _links(
+        self, relations: dict[str, _Relation], left: tuple[str, str], right: tuple[str, str]
+    ) -> bool:
+        """Whether an equality between two relations' columns joins them."""
+        a, b = relations[left[0]].table, relations[right[0]].table
+        if a is None or b is None:
+            return True
+        if a.name.lower() == b.name.lower():
+            return True
+        return self._related((a.name.lower(), left[1]), (b.name.lower(), right[1]))
+
+    @staticmethod
+    def _from_nodes(select: exp.Select) -> list[exp.Expression]:
+        nodes: list[exp.Expression] = []
+        from_clause = select.args.get("from_")
+        if isinstance(from_clause, exp.From) and from_clause.this is not None:
+            nodes.append(from_clause.this)
+        nodes.extend(join.this for join in select.args.get("joins", ()) if join.this is not None)
+        return nodes
+
+    def _unlinked_message(self, a: str, b: str) -> str:
+        known = self._relationships(a, b)
+        if not known:
+            return (
+                f"The query reads {a} and {b} in the same SELECT with no authorized "
+                f"relationship joining them, so rows of {a} are paired with rows of {b} "
+                "that nothing relates. If the question needs them joined, report the "
+                "missing relationship; a value computed from one table belongs in a "
+                "subquery or CTE."
+            )
+        listed = "; ".join(f"{s}.{c} = {t}.{r}" for s, c, t, r in known)
+        return (
+            f"The query reads {a} and {b} in the same SELECT without joining them on "
+            f"their relationship, so rows are paired that nothing relates. Join them on "
+            f"{listed}."
+        )
 
     def _join_column(
         self, scope: Scope, relations: dict[str, _Relation], node: exp.Expression
@@ -561,8 +684,17 @@ class SQLPolicy:
         return PolicyRejection(code=code, message=message, object=object_name)
 
 
-def _conjunct(equality: exp.EQ) -> bool:
-    """Whether the equality is ANDed into a WHERE or a JOIN ... ON of its SELECT."""
+def _disjuncts(node: exp.Expression) -> list[exp.Expression]:
+    """The branches of an OR, with parentheses removed; a single condition otherwise."""
+    while isinstance(node, exp.Paren):
+        node = node.this
+    if isinstance(node, exp.Or):
+        return [*_disjuncts(node.left), *_disjuncts(node.right)]
+    return [node]
+
+
+def _conjunct(equality: exp.Expression) -> bool:
+    """Whether the condition is ANDed into a WHERE or a JOIN ... ON of its SELECT."""
     node: exp.Expression = equality
     while isinstance(node.parent, exp.And | exp.Paren):
         node = node.parent

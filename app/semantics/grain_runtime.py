@@ -35,6 +35,18 @@ class GrainRuntimeReason(StrEnum):
     ABSTAIN_UNSUPPORTED = "ABSTAIN_UNSUPPORTED"
     NORMALIZER_ERROR = "NORMALIZER_ERROR"
     POST_NORMALIZATION_UNSAFE = "POST_NORMALIZATION_UNSAFE"
+    DISTINCT_VALUE_FANOUT_MASK = "DISTINCT_VALUE_FANOUT_MASK"
+    INCOMPATIBLE_MEASURE_GRAINS = "INCOMPATIBLE_MEASURE_GRAINS"
+    UNSAFE_ROLLUP = "UNSAFE_ROLLUP"
+
+
+# Diagnostics that prove the aggregate is wrong.  The UNRESOLVED_* codes only say
+# the validator could not follow the query; rejecting those would refuse sound SQL.
+_DEFINITE_VIOLATIONS = {
+    GrainDiagnosticCode.DISTINCT_VALUE_FANOUT_MASK: GrainRuntimeReason.DISTINCT_VALUE_FANOUT_MASK,
+    GrainDiagnosticCode.INCOMPATIBLE_MEASURE_GRAINS: GrainRuntimeReason.INCOMPATIBLE_MEASURE_GRAINS,
+    GrainDiagnosticCode.UNSAFE_ROLLUP: GrainRuntimeReason.UNSAFE_ROLLUP,
+}
 
 
 class GrainNormalizer(Protocol):
@@ -82,6 +94,16 @@ class RuntimeGrainSafetyCoordinator:
 
     def inspect(self, sql: str) -> GrainRuntimeDecision:
         input_diagnostic = self.validator.validate(sql)
+        violation = _DEFINITE_VIOLATIONS.get(input_diagnostic.code)
+        if violation is not None:
+            return self._decision(
+                input_sql=sql,
+                status=GrainRuntimeStatus.REJECTED,
+                selected_sql=sql,
+                input_diagnostic=input_diagnostic,
+                output_diagnostic=input_diagnostic,
+                runtime_reason=violation,
+            )
         if input_diagnostic.code is not GrainDiagnosticCode.PARENT_MEASURE_FANOUT:
             reason = (
                 GrainRuntimeReason.ALREADY_SAFE

@@ -575,6 +575,23 @@ _FANOUT_MESSAGE = (
 )
 
 
+_GRAIN_MESSAGES = {
+    "DISTINCT_VALUE_FANOUT_MASK": (
+        "DISTINCT inside an aggregate hides the rows a join repeats, but it also merges "
+        "equal values from different rows, so the result is still wrong. Aggregate the "
+        "measure at its own table's grain, or test the child rows with EXISTS."
+    ),
+    "UNSAFE_ROLLUP": (
+        "A measure that cannot be added up (a ratio, balance, or derived value) is summed. "
+        "Use the aggregation its definition allows."
+    ),
+    "INCOMPATIBLE_MEASURE_GRAINS": (
+        "Measures from tables at different grains are combined in one aggregate. Aggregate "
+        "each at its own grain before combining them."
+    ),
+}
+
+
 def _repair_feedback(
     planned: object, previous: ProductionDecision, settings: Settings
 ) -> RuntimeRejectionFeedback | None:
@@ -606,7 +623,7 @@ def _repair_feedback(
         )
     elif planned.status is SqlSafetyStatus.SEMANTIC_REJECTION:
         stage, code = "grain_safety", planned.semantic_reason or planned.status.value
-        message = _FANOUT_MESSAGE
+        message = _GRAIN_MESSAGES.get(code, _FANOUT_MESSAGE)
     else:
         return None
     return RuntimeRejectionFeedback(

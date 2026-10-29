@@ -301,7 +301,7 @@ class GrainSafetyValidator:
                 authorized_derived = True
                 continue
             for column in expression.find_all(exp.Column):
-                table = aliases.get(column.table.lower())
+                table = self._column_table(column, aliases)
                 if table is None:
                     continue
                 measures = self.catalog.measures_for_physical(table, column.name)
@@ -362,7 +362,7 @@ class GrainSafetyValidator:
                 grouped_native = {
                     column.name.lower()
                     for column in self._group_columns(select)
-                    if aliases.get(column.table.lower()) == measure.physical_table.lower()
+                    if self._column_table(column, aliases) == measure.physical_table.lower()
                 }
                 if native_columns.issubset(grouped_native):
                     continue
@@ -505,6 +505,21 @@ class GrainSafetyValidator:
                 return None
             column.set("table", exp.to_identifier(table))
         return normalized.sql(dialect="postgres", pretty=False).lower()
+
+    def _column_table(self, column: exp.Column, aliases: dict[str, str]) -> str | None:
+        """The physical table a column reads, including an unqualified measure column.
+
+        PostgreSQL rejects an unqualified name that two joined tables share, so a name
+        that is a measure of exactly one joined table can only mean that table.
+        """
+        if column.table:
+            return aliases.get(column.table.lower())
+        owners = {
+            table
+            for table in set(aliases.values())
+            if self.catalog.measures_for_physical(table, column.name)
+        }
+        return owners.pop() if len(owners) == 1 else None
 
     @staticmethod
     def _direct_table_aliases(select: exp.Select) -> dict[str, str]:

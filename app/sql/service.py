@@ -507,7 +507,11 @@ class SqlSafetyService:
         return SqlPlanFailure(
             status=SqlSafetyStatus.SEMANTIC_REJECTION,
             failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
-            error="Candidate SQL failed the semantic grain-safety boundary.",
+            error=(
+                decision.input_diagnostic.message
+                if decision.runtime_reason.value == decision.input_diagnostic.code.value
+                else "Candidate SQL failed the semantic grain-safety boundary."
+            ),
             semantic_reason=decision.runtime_reason.value,
         )
 

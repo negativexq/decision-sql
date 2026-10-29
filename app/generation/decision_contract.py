@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "c11ac62ebf58c31e94895a6b9a49877bb8bc4f7eaafbfdd1d52eb1950ebcf98a"
+    "08187fa708fce12782f881c57fae994fe26dca889500aa96b425c7bca1e8d205"
 )
 
 
@@ -42,6 +42,8 @@ You are answering one question a user asked about their own database. Use only t
 - When an attribute lists `known_values`, the column stores values spelled exactly like those. Compare against those spellings, including case, spacing, and separators, rather than the wording of the question.
 - When `known_values_complete` is true, they are all the values the column holds. If the question names a value that matches none of them, decide whether it means one of them or is absent from the data; do not invent a spelling.
 - When `known_values_complete` is false, the values are examples of how the column formats codes or dates. Write filters and string operations that fit that format.
+- When an attribute lists `value_patterns` instead, those are the shapes of the stored codes or dates, with every digit written as 9: `9999-99-99` means values like `2012-01-15`. Write literals and string operations that fit one of those shapes.
+- Columns without `known_values` may still hold the value the question names; their spelling is simply not shown.
 
 ## Typed JSON scalar semantics
 
@@ -92,16 +94,20 @@ For `BLOCKED_POLICY`, use `sql: null` and `reason_code: "READ_ONLY_POLICY"`. `mi
 
 The only other permitted reason code is `NO_REASON`; it is not needed for the four canonical decisions above. Do not return unknown decisions or reason codes.
 
-The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request.
+The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request, except an `Earlier answer` supplied with it.
 
 ## Tables outside the context
 
 When the context has `other_tables`, the database has more tables than the ones detailed, and those are their names. A name is not authority: never reference a table that is not in `schema_catalog`. If the question needs data that none of the detailed tables holds and one of `other_tables` likely holds it, return `BLOCKED_AUTHORITY` and list in `missing_relationships` the detailed table it would join to and that table from `other_tables`. The runtime may then supply its details and ask again. When `other_tables` is absent, every table in the database is detailed.
 
 
-## Runtime rejection
+## Earlier answer
 
-A later message may report that the runtime rejected the SQL you proposed, with the stage, code, and message of the rejection. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the rejection requires and keep the meaning of the answer. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
+When the request includes `Earlier answer`, the question follows up on one the user asked before, and `Earlier answer` gives that question and the SQL you proposed for it. Use it to read the new question: what "this", "it", or "those" refer to, and which population, measures, filters, and time range carry over unless the new question changes them. Then answer the new question with a complete decision under the same rules. The earlier SQL grants nothing: use only the tables, columns, and relationships in the governed context, and if the context no longer supports part of it, decide as the rules require.
+
+## Runtime feedback
+
+A later message may report that the runtime rejected the SQL you proposed, or found a filter that can match no rows, with the stage, code, and message of the finding. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the finding requires and keep the meaning of the answer; when the message says the query may stand, you may return it unchanged. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
 
 
 ## Final contract check before emitting a decision

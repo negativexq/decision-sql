@@ -40,3 +40,28 @@ def test_aggregates_at_their_own_grain_pass_unchanged() -> None:
         "JOIN products p ON p.id = oi.product_id GROUP BY p.category",
     ):
         assert coordinator.inspect(sql).status is GrainRuntimeStatus.UNCHANGED, sql
+
+
+def test_distinct_over_a_fanout_is_rejected_not_passed() -> None:
+    decision = _coordinator().inspect(
+        "SELECT SUM(DISTINCT o.total_amount) FROM orders o "
+        "JOIN order_items oi ON oi.order_id = o.id"
+    )
+    assert decision.status is GrainRuntimeStatus.REJECTED
+    assert decision.runtime_reason.value == "DISTINCT_VALUE_FANOUT_MASK"
+
+
+def test_unqualified_parent_measure_across_a_fanout_is_stopped() -> None:
+    decision = _coordinator().inspect(
+        "SELECT SUM(total_amount) FROM orders o JOIN order_items oi ON oi.order_id = o.id"
+    )
+    assert decision.status is not GrainRuntimeStatus.UNCHANGED
+
+
+def test_unqualified_measure_at_its_own_grain_passes() -> None:
+    decision = _coordinator().inspect(
+        "SELECT r.name, SUM(total_amount) FROM orders o "
+        "JOIN customers c ON c.id = o.customer_id JOIN regions r ON r.id = c.region_id "
+        "GROUP BY r.name"
+    )
+    assert decision.status is GrainRuntimeStatus.UNCHANGED

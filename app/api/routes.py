@@ -29,6 +29,7 @@ from app.metadata.service import (
     normalize_actor,
 )
 from app.metadata.store import DuplicateConnectionError
+from app.metadata.values import ConnectionValues, ValueSharingRejectedError, ValueSharingUpdate
 from app.observability.run_trace import RunTrace
 from app.operator.models import (
     ApiHealthResponse,
@@ -291,6 +292,40 @@ def declare_relationship(
 def remove_relationship(connection_id: str, relationship_id: str, service: Connections) -> None:
     if not service.remove_relationship(connection_id, relationship_id):
         raise HTTPException(status_code=404, detail="Relationship not found")
+
+
+@router.get("/api/connections/{connection_id}/values", response_model=ConnectionValues)
+def connection_values(connection_id: str, service: Connections) -> ConnectionValues:
+    try:
+        result = service.values(connection_id)
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except SecretsUnavailableError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:  # driver errors are reported, not leaked as 500s
+        raise HTTPException(status_code=502, detail="Could not read the source schema.") from error
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
+
+
+@router.put("/api/connections/{connection_id}/values", response_model=ConnectionValues)
+def set_connection_values(
+    connection_id: str, update: ValueSharingUpdate, service: Connections, actor: Actor
+) -> ConnectionValues:
+    try:
+        result = service.set_values(connection_id, update, actor)
+    except ValueSharingRejectedError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except ConnectorUnavailableError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except SecretsUnavailableError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:  # driver errors are reported, not leaked as 500s
+        raise HTTPException(status_code=502, detail="Could not read the source schema.") from error
+    if result is None:
+        raise HTTPException(status_code=404, detail="Connection not found")
+    return result
 
 
 @router.delete("/api/connections/{connection_id}", status_code=204)

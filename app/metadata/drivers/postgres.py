@@ -206,15 +206,17 @@ class PostgresConnector:
         small_table_pages: int = 128,
         sample_limit: int = 200,
     ) -> list[ColumnStats]:
-        """Planner statistics for the given columns.
+        """Value statistics for the given columns.
 
-        A small table that was never analyzed has no statistics; its columns are
-        read directly, bounded by the table's size and the session's timeout.
+        A small table's columns are counted exactly, bounded by the table's size and
+        the session's timeout: planner statistics are an estimate that leaves out
+        values seen once, so a small domain with one rare value would look
+        incomplete.  Larger tables use the planner statistics.
         """
         if not columns:
             return []
         schema = config.schema_name or "public"
-        found: list[ColumnStats] = []
+        found: dict[tuple[str, str], ColumnStats] = {}
         with self._connect(config, password) as connection:
             rows = connection.execute(
                 "SELECT s.tablename, s.attname, s.null_frac, "
@@ -227,19 +229,16 @@ class PostgresConnector:
             ).fetchall()
             for table, column, null_frac, common, freqs, bounds, distinct, tuples in rows:
                 if (table, column) in columns:
-                    found.append(
-                        ColumnStats(
-                            table,
-                            column,
-                            null_frac or 0.0,
-                            common,
-                            freqs,
-                            bounds,
-                            distinct or 0.0,
-                            max(tuples or 0.0, 0.0),
-                        )
+                    found[table, column] = ColumnStats(
+                        table,
+                        column,
+                        null_frac or 0.0,
+                        common,
+                        freqs,
+                        bounds,
+                        distinct or 0.0,
+                        max(tuples or 0.0, 0.0),
                     )
-            analyzed = {table for table, *_ in rows}
             small = {
                 table
                 for table, pages in connection.execute(
@@ -251,7 +250,7 @@ class PostgresConnector:
                 if pages <= small_table_pages
             }
             for table, column in sorted(columns):
-                if table in analyzed or table not in small:
+                if table not in small:
                     continue
                 query = sql.SQL(
                     "SELECT {column}::text, COUNT(*) FROM {table} "
@@ -260,9 +259,9 @@ class PostgresConnector:
                 try:
                     counts = connection.execute(query, (sample_limit,)).fetchall()
                 except psycopg.Error:
-                    continue
-                found.append(sample_stats(table, column, counts))
-        return found
+                    continue  # keep the planner's estimate, if there is one
+                found[table, column] = sample_stats(table, column, counts)
+        return list(found.values())
 
 
 def build_catalog(

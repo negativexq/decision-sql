@@ -213,8 +213,8 @@ def test_scope_validation_rejects_invalid_derived_and_physical_columns() -> None
 def test_scope_validation_rejects_ambiguous_unqualified_columns() -> None:
     sql_policy = policy()
     valid = (
-        "SELECT unit_price FROM products p JOIN orders o ON o.id = p.id",
-        "SELECT p.id, o.id FROM products p JOIN orders o ON o.id = p.id",
+        "SELECT total_amount FROM customers c JOIN orders o ON o.customer_id = c.id",
+        "SELECT c.id, o.id FROM customers c JOIN orders o ON o.customer_id = c.id",
         "SELECT derived_col FROM (SELECT name AS derived_col FROM products) q",
         "SELECT p.id FROM products p WHERE EXISTS "
         "(SELECT 1 FROM order_items oi WHERE oi.product_id = p.id)",
@@ -222,7 +222,7 @@ def test_scope_validation_rejects_ambiguous_unqualified_columns() -> None:
         "SELECT ROW_TO_JSON(p) FROM products p LIMIT 1",
     )
     invalid = (
-        "SELECT id FROM products p JOIN orders o ON o.id = p.id",
+        "SELECT id FROM customers c JOIN orders o ON o.customer_id = c.id",
         "SELECT metric FROM (SELECT unit_price AS metric FROM products) a "
         "JOIN (SELECT total_amount AS metric FROM orders) b ON 1 = 1",
     )
@@ -308,3 +308,37 @@ def test_values_alias_columns_resolve() -> None:
         )
     )
     assert unknown is not None and unknown.code is PolicyCode.UNKNOWN_COLUMN
+
+
+def test_joins_must_follow_an_authorized_relationship() -> None:
+    sql_policy = policy()
+    allowed = (
+        "SELECT c.name, o.total_amount FROM orders o JOIN customers c ON o.customer_id = c.id",
+        "SELECT c.name FROM customers c JOIN orders o ON c.id = o.customer_id::int",
+        "SELECT o.id FROM orders o, customers c WHERE c.id = o.customer_id AND c.name = 'x'",
+        "SELECT c.name FROM customers c WHERE EXISTS "
+        "(SELECT 1 FROM orders o WHERE o.customer_id = c.id)",
+        # A table compared with itself, and CTE columns, are not traced.
+        "SELECT a.id FROM orders a JOIN orders b ON a.customer_id = b.customer_id",
+        "WITH t AS (SELECT id AS key FROM customers) "
+        "SELECT o.id FROM orders o JOIN t ON t.key = o.id",
+    )
+    for query in allowed:
+        assert sql_policy.validate(parsed(query)) is None, query
+
+    rejected = {
+        "SELECT c.name FROM orders o JOIN customers c ON o.id = c.id": "linked only by",
+        "SELECT c.name FROM orders o, customers c WHERE o.id = c.id": "linked only by",
+        "SELECT c.name FROM customers c WHERE EXISTS "
+        "(SELECT 1 FROM orders o WHERE o.id = c.id)": "linked only by",
+        "SELECT p.name FROM products p JOIN customers c ON c.id = p.id": "no authorized",
+    }
+    for query, wording in rejected.items():
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None, query
+        assert rejection.code is PolicyCode.UNAUTHORIZED_JOIN
+        assert wording in rejection.message
+    message = sql_policy.validate(
+        parsed("SELECT c.name FROM orders o JOIN customers c ON o.id = c.id")
+    ).message  # type: ignore[union-attr]
+    assert "orders.customer_id = customers.id" in message

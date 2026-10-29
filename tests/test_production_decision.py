@@ -17,6 +17,7 @@ from app.generation.decision_contract import (
     production_decision_schema,
 )
 from app.generation.provider import (
+    EarlierAnswer,
     OpenAICompatibleProvider,
     ProductionDecisionProposal,
     RuntimeRejectionFeedback,
@@ -33,15 +34,18 @@ class FakeDecisionProvider:
         self.calls = 0
         self.last_schema_context: str | None = None
         self.feedback: list[RuntimeRejectionFeedback] = []
+        self.earlier: list[EarlierAnswer | None] = []
 
     async def propose_decision(
         self,
         question: str,
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> ProductionDecisionProposal:
         del question
         self.calls += 1
+        self.earlier.append(earlier)
         self.last_schema_context = schema_context
         if repair is not None:
             self.feedback.append(repair)
@@ -55,7 +59,7 @@ class FakeDecisionProvider:
 
 def test_decision_prompt_hash_is_pinned() -> None:
     assert production_decision_contract_hash() == (
-        "c11ac62ebf58c31e94895a6b9a49877bb8bc4f7eaafbfdd1d52eb1950ebcf98a"
+        "08187fa708fce12782f881c57fae994fe26dca889500aa96b425c7bca1e8d205"
     )
 
 
@@ -314,7 +318,11 @@ def _answer(sql: str) -> ProductionDecision:
     return ProductionDecision(case_id=PRODUCTION_DECISION_CASE_ID, decision="ANSWER", sql=sql)
 
 
-async def _run_with(provider: FakeDecisionProvider, question: str = "List product names"):
+async def _run_with(
+    provider: FakeDecisionProvider,
+    question: str = "List product names",
+    earlier: EarlierAnswer | None = None,
+):
     settings = Settings(_env_file=None, reader_role="reader")
     catalog = build_default_catalog(Base.metadata)
     safety = SqlSafetyService(create_engine("sqlite://"), settings=settings, catalog=catalog)
@@ -327,6 +335,7 @@ async def _run_with(provider: FakeDecisionProvider, question: str = "List produc
         provider,  # type: ignore[arg-type]
         safety,
         settings,
+        earlier,
     ).run(question, collector)
 
 
@@ -414,3 +423,27 @@ def test_repair_conversation_carries_the_rejection_without_rows() -> None:
     assert [message["role"] for message in messages] == ["system", "user", "assistant", "user"]
     assert '"sql":"SELECT 1"' in messages[2]["content"]
     assert '"code": "SQL_PARSE_ERROR"' in messages[3]["content"]
+
+
+def test_a_follow_up_sends_the_earlier_question_and_proposed_sql() -> None:
+    from app.generation.provider import _production_decision_messages
+
+    earlier = EarlierAnswer(question="Revenue by month", sql="SELECT 1")
+    [_, user] = _production_decision_messages("And by region?", "{}", None, earlier)
+    question, rest = user["content"].split("Earlier answer:", 1)
+    assert "And by region?" in question
+    assert '"question": "Revenue by month"' in rest and '"sql": "SELECT 1"' in rest
+    assert rest.index('"sql"') < rest.index("Governed context:")
+    [_, plain] = _production_decision_messages("Q", "{}")
+    assert "Earlier answer" not in plain["content"]
+
+
+@pytest.mark.asyncio
+async def test_every_model_call_of_a_follow_up_carries_the_earlier_answer() -> None:
+    provider = FakeDecisionProvider(
+        _answer("SELECT name FROM external_directory"), _answer("SELECT name FROM products")
+    )
+    earlier = EarlierAnswer(question="List products", sql="SELECT name FROM products")
+    result = await _run_with(provider, "Only the first ten", earlier)
+    assert provider.calls == 2 and provider.earlier == [earlier, earlier]
+    assert result.proposed_sql == "SELECT name FROM products"

@@ -4,6 +4,7 @@ import { Sidebar, type View } from "./components/Sidebar";
 import { Ask } from "./pages/Ask";
 import { Audit } from "./pages/Audit";
 import { Connections } from "./pages/Connections";
+import { Reports } from "./pages/Reports";
 import { Sources } from "./pages/Sources";
 import type { ConnectionSummary, Preset, RunRecord, RunSummary, SchemaResponse } from "./types";
 
@@ -122,6 +123,7 @@ export default function App() {
             onManageConnections={() => setView("connections")}
           />
         )}
+        {view === "reports" && <Reports />}
         {view === "audit" && <Audit actor={actor} refreshKey={auditKey} onOpen={open} />}
         {view === "connections" && <Connections />}
         {view === "sources" && <Sources schema={schema} />}

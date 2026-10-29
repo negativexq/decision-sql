@@ -14,6 +14,8 @@ class ProposalSource(StrEnum):
     LIVE_MODEL = "LIVE_MODEL"
     SAFETY_REPLAY = "SAFETY_REPLAY"
     RUNTIME_POLICY_REPLAY = "RUNTIME_POLICY_REPLAY"
+    # A report card's pinned SQL, run again without a model call.
+    SAVED_QUERY = "SAVED_QUERY"
 
 
 class RuntimeOutcome(StrEnum):
@@ -35,6 +37,8 @@ class DecisionApplicationResult(BaseModel):
     proposed_sql: str | None = None
     # SQL the runtime rejected before the repair round replaced it.
     repaired_from_sql: str | None = None
+    executed_sql: str | None = None
+    sql_changes: tuple[str, ...] = ()
     proposal_source: ProposalSource
     provider: str | None = None
     model: str | None = None

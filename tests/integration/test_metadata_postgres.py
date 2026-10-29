@@ -18,10 +18,15 @@ from app.metadata.secrets import SecretBox
 from app.metadata.service import ConnectionService
 from app.metadata.store import SqlConnectionStore, SqlRunStore
 from app.metadata.tables import audit_runs, connections
+from app.metadata.values import (
+    SqlValueSharingStore,
+    ValueSharingRejectedError,
+    ValueSharingUpdate,
+)
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.sql.authority import ExecutionAuthority
-from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError
+from app.sql.models import CandidateSource, QueryPlan, SqlCandidate, SqlExecutionError
 from app.sql.service import SqlSafetyService
 from tests.integration.conftest import postgres_unavailable
 
@@ -106,6 +111,32 @@ def test_audit_log_keeps_the_explanation_of_a_non_answer(engine: Engine) -> None
     restored = store.get("run_it_detail")
     assert restored is not None
     assert restored.model_detail == detail
+    assert restored.sql_changes == []
+
+
+def test_executed_sql_and_its_changes_survive_the_audit_store(engine: Engine) -> None:
+    store = SqlRunStore(engine)
+    trace = RunTraceCollector("run_it_executed").finish("EXECUTED")
+    store.save(
+        RunRecord(
+            run_id="run_it_executed",
+            trace_id=trace.trace_id,
+            question="Revenue by category",
+            proposal_source="LIVE_MODEL",
+            model_decision="ANSWER",
+            proposed_sql="SELECT 1",
+            executed_sql="SELECT 2",
+            sql_changes=["Grain safety totals the child rows first."],
+            runtime_outcome=RuntimeOutcome.EXECUTED,
+            created_at=trace.started_at.isoformat(),
+            trace=trace,
+        )
+    )
+
+    restored = store.get("run_it_executed")
+    assert restored is not None
+    assert (restored.proposed_sql, restored.executed_sql) == ("SELECT 1", "SELECT 2")
+    assert restored.sql_changes == ["Grain safety totals the child rows first."]
 
 
 def test_connection_round_trip_against_the_local_database(engine: Engine) -> None:
@@ -213,3 +244,175 @@ def test_declared_relationship_is_checked_against_the_live_source(engine: Engine
 
     assert service.remove_relationship(summary.id, item.id)  # type: ignore[attr-defined]
     assert service.delete(summary.id)
+
+
+def test_stored_values_reach_the_model_only_after_an_admin_shares_them(engine: Engine) -> None:
+    box = SecretBox(Fernet.generate_key().decode())
+    sharing = SqlValueSharingStore(engine)
+    service = ConnectionService(SqlConnectionStore(engine), box, engine, value_sharing=sharing)
+    summary, result = service.create(
+        ConnectionConfig(
+            kind="postgresql",
+            name="it-values",
+            host="localhost",
+            port=5432,
+            database="decision_sql",
+            username="decision_reader",
+            password="decision_reader_password",
+            ssl_mode="disable",
+        ),
+        "ayse@example.com",
+    )
+    assert result.ok, result.message
+
+    def shared_columns() -> set[str]:
+        source = service.question_source(summary.id)
+        assert source is not None
+        return {
+            f"{table.name}.{column.name}"
+            for table in source.catalog.tables
+            for column in table.columns
+            if column.known_values
+        }
+
+    listed = service.values(summary.id)
+    assert listed is not None and listed.available and not listed.enabled
+    assert listed.columns and not any(column.shared for column in listed.columns)
+    assert shared_columns() == set()
+
+    # Unshared values still check the query's literals on the server.
+    source = service.question_source(summary.id)
+    assert source is not None
+    safety = SqlSafetyService(source.engine, catalog=source.catalog, reader_role=source.reader_role)
+
+    def plan(sql: str) -> QueryPlan:
+        result = safety.plan(
+            SqlCandidate(
+                sql=sql,
+                source=CandidateSource.LLM,
+                correlation_id="it-values",
+                execution_authority=ExecutionAuthority.from_table_names(["orders"]),
+            )
+        )
+        assert isinstance(result, QueryPlan), result
+        return result
+
+    fixed = plan("SELECT COUNT(*) FROM orders o WHERE o.status = 'Completed'")
+    assert "'completed'" in fixed.normalized_sql
+    assert fixed.sql_changes and not fixed.unmatched_values
+    missing = plan("SELECT COUNT(*) FROM orders WHERE status IN ('completed', 'shipped')")
+    assert [(item.column, item.literal, item.shared) for item in missing.unmatched_values] == [
+        ("status", "shipped", False)
+    ]
+
+    first = f"{listed.columns[0].table}.{listed.columns[0].column}"
+    with pytest.raises(ValueSharingRejectedError, match="not in the connection"):
+        service.set_values(
+            summary.id, ValueSharingUpdate(enabled=True, excluded=["nope.nothing"]), "admin"
+        )
+    updated = service.set_values(
+        summary.id, ValueSharingUpdate(enabled=True, excluded=[first]), "admin"
+    )
+    assert updated is not None and updated.enabled and updated.updated_by == "admin"
+    names = {f"{column.table}.{column.column}" for column in listed.columns}
+    assert shared_columns() == names - {first}
+
+    assert service.delete(summary.id)
+    assert sharing.get(summary.id).enabled is False
+
+
+def test_scheduled_reports_are_claimed_once_and_snapshots_are_bounded(engine: Engine) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    from app.metadata.tables import report_snapshots, reports
+    from app.reports.models import RefreshSchedule, Report, Snapshot
+    from app.reports.store import SqlReportStore, SqlSnapshotStore
+
+    due = datetime(2026, 1, 1, tzinfo=UTC)
+    report = Report(
+        id="rep_schedtest",
+        connection_id="governed",
+        title="Scheduled",
+        description="",
+        cards=[],
+        schedule=RefreshSchedule.HOURLY,
+        next_refresh_at=due,
+        created_by="ayse",
+        created_at=due,
+        updated_by="ayse",
+        updated_at=due,
+    )
+    store, snapshots = SqlReportStore(engine), SqlSnapshotStore(engine)
+    try:
+        store.save(report)
+        assert report.id in {item.id for item in store.due(due)}
+        assert report.id not in {item.id for item in store.due(due - timedelta(seconds=1))}
+        following = due + timedelta(hours=1)
+        assert store.claim(report.id, due, following)
+        assert not store.claim(report.id, due, following)  # a second worker loses
+        assert report.id not in {item.id for item in store.due(due)}
+
+        for index in range(4):
+            snapshots.save(
+                Snapshot(
+                    id=f"snap_schedtest{index}",
+                    report_id=report.id,
+                    taken_at=due + timedelta(minutes=index),
+                    taken_by="scheduler",
+                    scheduled=True,
+                    cards={},
+                ),
+                keep=2,
+            )
+        assert [item.id for item in snapshots.list(report.id)] == [
+            "snap_schedtest3",
+            "snap_schedtest2",
+        ]
+        kept = snapshots.get("snap_schedtest3")
+        assert kept is not None and kept.scheduled
+        assert store.delete(report.id) and snapshots.list(report.id) == []
+    finally:
+        with engine.begin() as connection:
+            connection.execute(
+                delete(report_snapshots).where(report_snapshots.c.report_id == report.id)
+            )
+            connection.execute(delete(reports).where(reports.c.id == report.id))
+
+
+def test_a_small_tables_values_are_counted_exactly_not_estimated(engine: Engine) -> None:
+    """Planner statistics leave out a value seen once; an exact count keeps it."""
+    from app.metadata.drivers.postgres import PostgresConnector
+    from app.metadata.values import known_values
+
+    schema = "it_value_stats"
+    with engine.begin() as connection:
+        connection.execute(text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))
+        connection.execute(text(f"CREATE SCHEMA {schema}"))
+        connection.execute(text(f"CREATE TABLE {schema}.district (region text)"))
+        connection.execute(
+            text(
+                f"INSERT INTO {schema}.district SELECT r FROM unnest("
+                "array['east', 'west', 'north', 'south']) r, generate_series(1, 20)"
+            )
+        )
+        connection.execute(text(f"INSERT INTO {schema}.district VALUES ('capital')"))
+        connection.execute(text(f"ANALYZE {schema}.district"))
+    try:
+        url = engine.url
+        config = ConnectionConfig(
+            kind="postgresql",
+            name="it-values",
+            host=url.host or "localhost",
+            port=url.port or 5432,
+            database=url.database or "decision_sql",
+            username=url.username or "",
+            schema_name=schema,
+            ssl_mode="disable",
+        )
+        [stats] = PostgresConnector().column_stats(config, url.password, {("district", "region")})
+        hint = known_values(stats)
+        assert hint is not None and hint.complete
+        assert hint.values == ("capital", "east", "north", "south", "west")
+    finally:
+        with engine.begin() as connection:
+            connection.execute(text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))

@@ -11,6 +11,7 @@ from app.generation.decision_contract import (
     ProductionDecision,
 )
 from app.generation.provider import (
+    EarlierAnswer,
     LLMProvider,
     MalformedProviderResponse,
     ProductionDecisionProposal,
@@ -32,6 +33,7 @@ from app.sql.authority import ExecutionAuthority
 from app.sql.models import (
     CandidateSource,
     PolicyCode,
+    QueryPlan,
     SqlCandidate,
     SqlExecutionError,
     SqlPlanFailure,
@@ -49,11 +51,14 @@ class DecisionSqlApplication:
         provider: LLMProvider,
         safety_service: SqlSafetyService,
         settings: Settings,
+        earlier: EarlierAnswer | None = None,
     ) -> None:
         self.resolver = resolver
         self.provider = provider
         self.safety_service = safety_service
         self.settings = settings
+        # A follow-up's earlier answer goes with every model call of this run.
+        self.earlier = earlier
 
     async def run(
         self,
@@ -129,7 +134,9 @@ class DecisionSqlApplication:
         else:
             started = perf_counter()
             try:
-                proposal = await self.provider.propose_decision(question, schema_text)
+                proposal = await self.provider.propose_decision(
+                    question, schema_text, earlier=self.earlier
+                )
             except MalformedProviderResponse:
                 collector.record_stage(
                     "generation", TraceStageStatus.PASS, reason="TRANSPORT_RESPONSE_RECEIVED"
@@ -341,6 +348,8 @@ class DecisionSqlApplication:
             model_reason_code=None,
             proposed_sql=decision.sql,
             repaired_from_sql=repaired_from_sql,
+            executed_sql=planned.normalized_sql if isinstance(planned, QueryPlan) else None,
+            sql_changes=planned.sql_changes if isinstance(planned, QueryPlan) else (),
             proposal_source=proposal_source,
             provider=proposal.provider,
             model=proposal.model,
@@ -411,7 +420,7 @@ class DecisionSqlApplication:
             )
             expanded = governed_context_from_schema_context(context)
             proposal = await self.provider.propose_decision(
-                question, serialize_governed_context(expanded)
+                question, serialize_governed_context(expanded), earlier=self.earlier
             )
         except Exception as error:
             collector.record_stage(
@@ -460,7 +469,9 @@ class DecisionSqlApplication:
         started = perf_counter()
         base = {"rejected_stage": feedback.stage, "rejected_code": feedback.code}
         try:
-            proposal = await self.provider.propose_decision(question, schema_text, repair=feedback)
+            proposal = await self.provider.propose_decision(
+                question, schema_text, repair=feedback, earlier=self.earlier
+            )
         except Exception as error:
             collector.record_stage(
                 "repair",
@@ -549,6 +560,7 @@ _RUNTIME_STAGES = (
     "global_policy",
     "execution_authority",
     "grain_safety",
+    "value_check",
     "planning_connection",
     "explain",
     "cost_gate",
@@ -565,6 +577,7 @@ _REPAIRABLE_POLICY_CODES = frozenset(
         PolicyCode.UNKNOWN_TABLE,
         PolicyCode.UNKNOWN_COLUMN,
         PolicyCode.FORBIDDEN_FUNCTION,
+        PolicyCode.UNAUTHORIZED_JOIN,
     }
 )
 
@@ -575,6 +588,23 @@ _FANOUT_MESSAGE = (
 )
 
 
+_GRAIN_MESSAGES = {
+    "DISTINCT_VALUE_FANOUT_MASK": (
+        "DISTINCT inside an aggregate hides the rows a join repeats, but it also merges "
+        "equal values from different rows, so the result is still wrong. Aggregate the "
+        "measure at its own table's grain, or test the child rows with EXISTS."
+    ),
+    "UNSAFE_ROLLUP": (
+        "A measure that cannot be added up (a ratio, balance, or derived value) is summed. "
+        "Use the aggregation its definition allows."
+    ),
+    "INCOMPATIBLE_MEASURE_GRAINS": (
+        "Measures from tables at different grains are combined in one aggregate. Aggregate "
+        "each at its own grain before combining them."
+    ),
+}
+
+
 def _repair_feedback(
     planned: object, previous: ProductionDecision, settings: Settings
 ) -> RuntimeRejectionFeedback | None:
@@ -582,6 +612,8 @@ def _repair_feedback(
 
     Execution errors are never sent back: database error text can quote stored values.
     """
+    if isinstance(planned, QueryPlan):
+        return _value_feedback(planned, previous)
     if not isinstance(planned, SqlPlanFailure):
         return None
     if planned.status is SqlSafetyStatus.SQL_PARSE_ERROR:
@@ -606,11 +638,34 @@ def _repair_feedback(
         )
     elif planned.status is SqlSafetyStatus.SEMANTIC_REJECTION:
         stage, code = "grain_safety", planned.semantic_reason or planned.status.value
-        message = _FANOUT_MESSAGE
+        message = _GRAIN_MESSAGES.get(code, _FANOUT_MESSAGE)
     else:
         return None
     return RuntimeRejectionFeedback(
         previous=previous, stage=stage, code=code, message=" ".join(message.split())[:600]
+    )
+
+
+def _value_feedback(
+    plan: QueryPlan, previous: ProductionDecision
+) -> RuntimeRejectionFeedback | None:
+    """Tell the model a text it guessed is not stored, without naming the values that are.
+
+    A model that saw the column's values chose the text knowingly (the value may be
+    absent from the data), so only guesses at unshared columns are sent back.
+    """
+    blind = [item for item in plan.unmatched_values if not item.shared]
+    if not blind:
+        return None
+    named = "; ".join(f"{item.table}.{item.column} = '{item.literal}'" for item in blind[:3])
+    message = (
+        f"The query filters on {named}, but the column stores no such value, even ignoring "
+        "case, spacing, and punctuation, so the filter matches no rows. If the question "
+        "refers to a value the column spells differently, write a filter that finds it; "
+        "if the value is absent from the data, keep the query."
+    )
+    return RuntimeRejectionFeedback(
+        previous=previous, stage="value_check", code="VALUE_NOT_STORED", message=message[:600]
     )
 
 

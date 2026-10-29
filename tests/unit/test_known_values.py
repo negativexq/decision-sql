@@ -7,11 +7,14 @@ from app.catalog.models import (
 from app.governance.context import governed_context_from_schema_context
 from app.metadata.values import (
     ColumnStats,
+    InMemoryValueSharingStore,
     KnownValues,
+    ValueSharing,
     apply_known_values,
     eligible_columns,
     known_values,
     sample_stats,
+    value_patterns,
 )
 from app.retrieval.context import SchemaContextResolver
 
@@ -111,7 +114,9 @@ def test_sample_with_many_values_is_only_format_evidence() -> None:
 
 def test_values_reach_the_governed_context_only_where_known() -> None:
     catalog = apply_known_values(
-        _catalog(), {("stations", "segment"): KnownValues(("Other", "Premium"), True)}
+        _catalog(),
+        {("stations", "segment"): KnownValues(("Other", "Premium"), True)},
+        ValueSharing(enabled=True),
     )
     context = SchemaContextResolver(catalog).resolve("Which segment has the most premium stations?")
     governed = governed_context_from_schema_context(context)
@@ -119,3 +124,43 @@ def test_values_reach_the_governed_context_only_where_known() -> None:
     assert dumped["segment"]["known_values"] == ("Other", "Premium")
     assert dumped["segment"]["known_values_complete"] is True
     assert "known_values" not in dumped["id"]
+
+
+def test_values_stay_out_of_the_context_until_sharing_is_turned_on() -> None:
+    hints = {("stations", "segment"): KnownValues(("Other", "Premium"), True)}
+    for sharing in (None, ValueSharing(enabled=True, excluded=("stations.segment",))):
+        catalog = apply_known_values(_catalog(), hints, sharing)
+        segment = next(c for c in catalog.tables[0].columns if c.name == "segment")
+        assert segment.known_values == ()
+        assert segment.value_patterns == ()
+
+
+def test_unshared_code_columns_show_only_their_shape() -> None:
+    hints = {("stations", "segment"): KnownValues(("2012-01-15", "2013-12-31"), False)}
+    catalog = apply_known_values(_catalog(), hints)
+    segment = next(c for c in catalog.tables[0].columns if c.name == "segment")
+    assert segment.known_values == ()
+    assert segment.value_patterns == ("9999-99-99",)
+    context = SchemaContextResolver(catalog).resolve("Which segment has the most stations?")
+    dumped = {
+        item["physical_column_or_path"]: item
+        for item in governed_context_from_schema_context(context).model_dump()["attributes"]
+    }
+    assert dumped["segment"]["value_patterns"] == ("9999-99-99",)
+    assert "value_patterns" not in dumped["id"]
+
+
+def test_words_have_no_pattern() -> None:
+    assert value_patterns(["Premium", "2012-01-15"]) == ()
+    assert value_patterns(["12:30", "9:05"]) == ("99:99", "9:99")
+
+
+def test_sharing_choice_is_recorded_per_connection() -> None:
+    store = InMemoryValueSharingStore()
+    assert store.get("conn_a").enabled is False
+    saved = store.set("conn_a", True, ("stations.segment",), "admin")
+    assert saved.updated_by == "admin"
+    assert saved.shares("stations", "name") and not saved.shares("stations", "segment")
+    assert store.get("conn_b").enabled is False
+    store.delete("conn_a")
+    assert store.get("conn_a").enabled is False

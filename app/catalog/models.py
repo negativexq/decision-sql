@@ -20,6 +20,11 @@ class ColumnMetadata(BaseModel):
     # column.  Complete means these are all the values the column holds.
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
+    # Shapes of code or date values with digits shown as 9; no stored value.
+    value_patterns: tuple[str, ...] = ()
+    # Every value the column holds, for the runtime literal check only; never part of
+    # the model context, whether or not the values are shared.
+    value_domain: tuple[str, ...] = ()
 
 
 class RelationshipMetadata(BaseModel):
@@ -87,6 +92,7 @@ class RelevantColumn(BaseModel):
     foreign_key_column: str | None = None
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
+    value_patterns: tuple[str, ...] = ()
 
 
 class RelevantTable(BaseModel):

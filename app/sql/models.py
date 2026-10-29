@@ -50,6 +50,7 @@ class PolicyCode(StrEnum):
     UNKNOWN_COLUMN = "UNKNOWN_COLUMN"
     FORBIDDEN_FUNCTION = "FORBIDDEN_FUNCTION"
     FORBIDDEN_CATALOG = "FORBIDDEN_CATALOG"
+    UNAUTHORIZED_JOIN = "UNAUTHORIZED_JOIN"
     QUERY_TOO_EXPENSIVE = "QUERY_TOO_EXPENSIVE"
 
 
@@ -65,6 +66,16 @@ class ExplainEstimate(BaseModel):
     top_level_node_type: str
 
 
+class UnmatchedValue(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    table: str
+    column: str
+    literal: str
+    # Whether the model saw the column's values; if so it chose the literal knowingly.
+    shared: bool
+
+
 class QueryPlan(BaseModel):
     """Evidence-backed, executable plan produced only by SqlSafetyService.plan."""
 
@@ -73,7 +84,13 @@ class QueryPlan(BaseModel):
     plan_id: UUID
     correlation_id: str | None = None
     candidate_source: CandidateSource = CandidateSource.INTERNAL
+    # The exact text sent to the database.
     normalized_sql: str
+    # Why its logic differs from the candidate, one plain sentence each; empty when only
+    # the formatting differs.
+    sql_changes: tuple[str, ...] = ()
+    # Texts the query compares with a column that stores none of them.
+    unmatched_values: tuple[UnmatchedValue, ...] = ()
     statement_type: str
     referenced_tables: tuple[str, ...] = ()
     referenced_columns: tuple[str, ...] = ()

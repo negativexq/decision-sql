@@ -69,6 +69,8 @@ export interface RunRecord {
   model_context_hash: string | null;
   proposed_sql: string | null;
   repaired_from_sql: string | null;
+  executed_sql: string | null;
+  sql_changes: string[];
   rows: Record<string, unknown>[];
   columns: string[];
   row_count: number;
@@ -78,6 +80,7 @@ export interface RunRecord {
   trace: RunTrace;
   actor: string;
   connection_id: string;
+  follow_up_of?: string | null;
   results_retained: boolean;
 }
 
@@ -262,4 +265,162 @@ export interface ConnectionRelationships {
   foreign_keys: RelationshipDeclaration[];
   declared: DeclaredRelationship[];
   suggestions: RelationshipSuggestion[];
+}
+
+export interface ValueColumn {
+  table: string;
+  column: string;
+  values: string[];
+  complete: boolean;
+  patterns: string[];
+  shared: boolean;
+}
+
+export interface ConnectionValues {
+  available: boolean;
+  enabled: boolean;
+  excluded: string[];
+  updated_by: string | null;
+  updated_at: string | null;
+  columns: ValueColumn[];
+}
+
+export type ChartType = "number" | "bar" | "column" | "line" | "area" | "pie" | "table" | "stacked" | "lines" | "scatter";
+
+export interface CardLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface CardDisplay {
+  format: "auto" | "number" | "currency" | "percent";
+  decimals: number | null;
+  currency: string;
+  sort: "query" | "value_desc" | "value_asc" | "label";
+  limit: number | null;
+  compare: "none" | "second_row" | "target";
+  target: number | null;
+  higher_is_better: boolean;
+}
+
+export interface ReportCard {
+  id: string;
+  kind: "query" | "text" | "heading";
+  title: string;
+  note: string;
+  question: string;
+  run_id: string | null;
+  chart: ChartType;
+  dimension: string | null;
+  measure: string | null;
+  /** Splits stacked columns and lines into one series per value. */
+  series?: string | null;
+  display?: CardDisplay;
+  layout: CardLayout;
+  sql?: string | null;
+  basis?: Record<string, string>;
+}
+
+export interface CardRefresh {
+  run: RunRecord;
+  changed_tables: string[];
+  applied_filters: string[];
+  skipped_filters: string[];
+}
+
+export type FilterKind = "values" | "date_range";
+
+export interface ReportFilter {
+  id: string;
+  label: string;
+  table: string;
+  column: string;
+  kind: FilterKind;
+}
+
+/** One reader's pick for one filter; dates are YYYY-MM-DD. */
+export interface FilterChoice {
+  values?: string[];
+  start?: string | null;
+  end?: string | null;
+}
+
+export interface FilterColumn {
+  table: string;
+  column: string;
+  type: string;
+  kinds: FilterKind[];
+}
+
+export interface FilterOptions {
+  values: string[];
+  truncated: boolean;
+  run_id: string;
+}
+
+export type ReportVisibility = "private" | "workspace";
+export type ReportRole = "owner" | "editor" | "viewer";
+
+export interface ReportAccess {
+  visibility: ReportVisibility;
+  editors: string[];
+  viewers: string[];
+}
+
+export type RefreshSchedule = "off" | "hourly" | "daily" | "weekly";
+
+export interface Report extends ReportAccess {
+  id: string;
+  connection_id: string;
+  title: string;
+  description: string;
+  cards: ReportCard[];
+  filters: ReportFilter[];
+  role: ReportRole;
+  schedule: RefreshSchedule;
+  next_refresh_at: string | null;
+  created_by: string;
+  created_at: string;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface SnapshotCard {
+  run_id: string;
+  outcome: RuntimeOutcome;
+  reason: string | null;
+  columns: string[];
+  rows: Record<string, unknown>[];
+  row_count: number;
+  truncated: boolean;
+  /** The tables this card reads changed since: the rows are held back. */
+  withheld: boolean;
+}
+
+export interface SnapshotSummary {
+  id: string;
+  report_id: string;
+  taken_at: string;
+  taken_by: string;
+  scheduled: boolean;
+  card_count: number;
+}
+
+export interface Snapshot extends Omit<SnapshotSummary, "card_count"> {
+  cards: Record<string, SnapshotCard>;
+}
+
+export interface ReportSummary {
+  id: string;
+  connection_id: string;
+  title: string;
+  description: string;
+  card_count: number;
+  owner: string;
+  visibility: ReportVisibility;
+  role: ReportRole;
+  updated_by: string;
+  updated_at: string;
 }

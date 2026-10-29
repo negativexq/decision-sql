@@ -106,8 +106,8 @@ def test_stable_temporal_functions_are_consistent_within_one_statement(
 def test_ambiguous_unqualified_column_fails_closed_like_postgres(
     service: SqlSafetyService,
 ) -> None:
-    ambiguous = "SELECT id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
-    qualified = "SELECT p.id FROM products p JOIN orders o ON o.id = p.id LIMIT 1"
+    ambiguous = "SELECT id FROM customers c JOIN orders o ON o.customer_id = c.id LIMIT 1"
+    qualified = "SELECT c.id FROM customers c JOIN orders o ON o.customer_id = c.id LIMIT 1"
 
     planned = service.plan(SqlCandidate(sql=ambiguous))
     assert isinstance(planned, SqlPlanFailure)
@@ -349,3 +349,20 @@ def test_grain_safety_stops_parent_measure_fanout_before_execution(
     )
     assert isinstance(safe, QueryPlan)
     assert not isinstance(guarded.execute(safe), SqlExecutionError)
+
+
+def test_the_top_row_of_a_descending_order_is_a_value_not_a_missing_one(
+    service: SqlSafetyService,
+) -> None:
+    # Half the amounts are NULL; PostgreSQL alone would return one of those first.
+    planned = service.plan(
+        SqlCandidate(
+            sql="SELECT id, CASE WHEN id % 2 = 0 THEN total_amount END AS amount "
+            "FROM orders ORDER BY amount DESC LIMIT 1"
+        )
+    )
+    assert isinstance(planned, QueryPlan)
+    assert "NULLS LAST" in planned.normalized_sql and planned.sql_changes
+    result = service.execute(planned)
+    assert isinstance(result, QueryExecution)
+    assert result.rows[0]["amount"] is not None

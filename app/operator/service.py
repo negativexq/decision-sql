@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 from sqlalchemy import Engine, text
+from sqlglot import exp
 
 from app.catalog.default import build_default_catalog
 from app.catalog.models import ColumnMetadata, SchemaCatalog, SchemaContext, TableMetadata
@@ -18,7 +19,7 @@ from app.generation.decision_contract import (
     DecisionType,
     ProductionDecision,
 )
-from app.generation.provider import LLMProvider, OpenAICompatibleProvider
+from app.generation.provider import EarlierAnswer, LLMProvider, OpenAICompatibleProvider
 from app.metadata.service import GOVERNED_CONNECTION_ID, QuestionSource
 from app.metadata.store import InMemoryRunStore, RunStore
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
@@ -35,6 +36,7 @@ from app.operator.models import (
 )
 from app.retrieval.context import SchemaContextMode, SchemaContextResolver
 from app.semantics.measures import measure_catalog_from_schema
+from app.sql.parser import SQLParseFailure, SQLParser
 from app.sql.service import SqlSafetyService
 
 
@@ -60,6 +62,52 @@ class _ContextOnlyResolver(SchemaContextResolver):
         include: Iterable[str] = (),
     ) -> SchemaContext:
         return super().resolve(self._question, mode, include)
+
+
+class _SavedQueryResolver(SchemaContextResolver):
+    """Select the saved query's tables along with the question's.
+
+    The query may use tables the model asked for in an expansion round, which a
+    replay does not repeat.  Including them grants nothing the catalog does not:
+    every gate still checks the SQL against the catalog.
+    """
+
+    def __init__(self, base: SchemaContextResolver, tables: Iterable[str]) -> None:
+        super().__init__(
+            base.catalog,
+            top_k=base.top_k,
+            max_tables=base.max_tables,
+            max_columns_per_table=base.max_columns_per_table,
+            relationship_depth=base.relationship_depth,
+            full_context_max_tables=base.full_context_max_tables,
+            neighbor_limit=base.neighbor_limit,
+        )
+        self._tables = tuple(tables)
+
+    def resolve(
+        self,
+        question: str,
+        mode: SchemaContextMode = SchemaContextMode.RETRIEVED_BOUNDED,
+        include: Iterable[str] = (),
+    ) -> SchemaContext:
+        return super().resolve(question, mode, (*include, *self._tables))
+
+
+def _saved_query_tables(sql: str) -> tuple[str, ...]:
+    try:
+        expression = SQLParser().parse(sql).expression
+    except SQLParseFailure:
+        return ()
+    ctes = {cte.alias_or_name.lower() for cte in expression.find_all(exp.CTE)}
+    return tuple(
+        sorted(
+            {
+                table.name.lower()
+                for table in expression.find_all(exp.Table)
+                if table.name.lower() not in ctes
+            }
+        )
+    )
 
 
 class OperatorApplication:
@@ -134,13 +182,17 @@ class OperatorApplication:
         preset_id: str | None = None,
         actor: str = "anonymous",
         source: QuestionSource | None = None,
+        saved_sql: str | None = None,
+        follow_up: RunRecord | None = None,
     ) -> RunRecord:
+        """Answer a question; with ``follow_up``, as a follow-up to that earlier run."""
+        earlier = _earlier_answer(follow_up) if follow_up is not None else None
         run_id = f"run_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}_{uuid4().hex[:8]}"
         collector = RunTraceCollector(run_id)
         collector.event("request.received", "Natural-language request received", "request")
         collector.record_stage("request", TraceStageStatus.PASS)
         service, effective_question, proposal_source, replay = self._service_for(
-            preset_id, question, source
+            preset_id, question, source, saved_sql, earlier
         )
         service.safety_service.stage_recorder = collector
         result = await service.run(
@@ -156,7 +208,10 @@ class OperatorApplication:
             preset_id=preset_id,
             proposal_source=result.proposal_source,
             replay_notice=(
-                "No provider call was made for this scenario. The frozen proposal was "
+                "A report ran its saved query again without a model call; every check "
+                "ran again on the current schema."
+                if result.proposal_source is ProposalSource.SAVED_QUERY
+                else "No provider call was made for this scenario. The frozen proposal was "
                 "evaluated by the current deterministic runtime."
                 if result.proposal_source is not ProposalSource.LIVE_MODEL
                 else None
@@ -172,6 +227,8 @@ class OperatorApplication:
             model_context_hash=result.model_context_hash,
             proposed_sql=result.proposed_sql,
             repaired_from_sql=result.repaired_from_sql,
+            executed_sql=result.executed_sql,
+            sql_changes=list(result.sql_changes),
             rows=result.rows,
             columns=result.columns,
             row_count=result.row_count,
@@ -181,6 +238,7 @@ class OperatorApplication:
             trace=result.trace,
             actor=actor,
             connection_id=source.connection_id if source is not None else GOVERNED_CONNECTION_ID,
+            follow_up_of=follow_up.run_id if earlier is not None and follow_up else None,
         )
         await asyncio.to_thread(self.run_store.save, record)
         return record
@@ -247,7 +305,12 @@ class OperatorApplication:
         )
 
     def _service_for(
-        self, preset_id: str | None, question: str, source: QuestionSource | None = None
+        self,
+        preset_id: str | None,
+        question: str,
+        source: QuestionSource | None = None,
+        saved_sql: str | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> tuple[DecisionSqlApplication, str, ProposalSource, ProductionDecision | None]:
         preset = next((item for item in self.presets if item.id == preset_id), None)
         effective_question = preset.question if preset is not None else question
@@ -265,8 +328,22 @@ class OperatorApplication:
                 measure_catalog=measure_catalog_from_schema(source.catalog),
                 grain_normalization_enabled=True,
             )
+            if saved_sql is not None:
+                return (
+                    DecisionSqlApplication(
+                        _SavedQueryResolver(resolver, _saved_query_tables(saved_sql)),
+                        provider,
+                        safety,
+                        self.settings,
+                    ),
+                    question,
+                    ProposalSource.SAVED_QUERY,
+                    _saved_decision(saved_sql),
+                )
             return (
-                DecisionSqlApplication(resolver, provider, safety, self.settings),
+                DecisionSqlApplication(
+                    _with_earlier(resolver, earlier), provider, safety, self.settings, earlier
+                ),
                 question,
                 ProposalSource.LIVE_MODEL,
                 None,
@@ -294,6 +371,10 @@ class OperatorApplication:
             )
             catalog = catalog.model_copy(update={"tables": (*catalog.tables, external)})
             resolver = _ContextOnlyResolver(self.resolver, "show customers")
+        elif saved_sql is not None:
+            mode = ProposalSource.SAVED_QUERY
+            replay = _saved_decision(saved_sql)
+            resolver = _SavedQueryResolver(self.resolver, _saved_query_tables(saved_sql))
         elif preset_id == "policy_blocked":
             replay = ProductionDecision(
                 case_id=PRODUCTION_DECISION_CASE_ID,
@@ -308,12 +389,43 @@ class OperatorApplication:
             measure_catalog=measure_catalog_from_schema(catalog),
             grain_normalization_enabled=True,
         )
+        if replay is None:
+            resolver = _with_earlier(resolver, earlier)
         return (
-            DecisionSqlApplication(resolver, provider, safety, self.settings),
+            DecisionSqlApplication(
+                resolver, provider, safety, self.settings, earlier if replay is None else None
+            ),
             effective_question,
             mode,
             replay,
         )
+
+
+def _earlier_answer(record: RunRecord) -> EarlierAnswer | None:
+    """The earlier question and the SQL the model proposed for it, if it proposed one.
+
+    Only a live model's own proposal goes back to the model.  The SQL that ran may
+    hold stored values the runtime wrote in, and a replayed run's SQL never came
+    from the model, so neither is sent.
+    """
+    if record.proposal_source is not ProposalSource.LIVE_MODEL or not record.proposed_sql:
+        return None
+    return EarlierAnswer(question=record.question, sql=record.proposed_sql)
+
+
+def _with_earlier(
+    resolver: SchemaContextResolver, earlier: EarlierAnswer | None
+) -> SchemaContextResolver:
+    """Detail the earlier SQL's tables too; the gates still decide what may run."""
+    if earlier is None:
+        return resolver
+    return _SavedQueryResolver(resolver, _saved_query_tables(earlier.sql))
+
+
+def _saved_decision(sql: str) -> ProductionDecision:
+    return ProductionDecision(
+        case_id=PRODUCTION_DECISION_CASE_ID, decision=DecisionType.ANSWER, sql=sql
+    )
 
 
 def build_operator_application(

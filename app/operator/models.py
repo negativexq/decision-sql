@@ -54,6 +54,9 @@ class RunRecord(BaseModel):
     model_context_hash: str | None = None
     proposed_sql: str | None = None
     repaired_from_sql: str | None = None
+    # The exact text the database received, and why its logic differs from proposed_sql.
+    executed_sql: str | None = None
+    sql_changes: list[str] = Field(default_factory=list)
     rows: list[dict[str, Any]] = Field(default_factory=list)
     columns: list[str] = Field(default_factory=list)
     row_count: int = 0
@@ -63,6 +66,8 @@ class RunRecord(BaseModel):
     trace: RunTrace
     actor: str = "anonymous"
     connection_id: str = "governed"
+    # The run this question followed up on; its question and proposed SQL went to the model.
+    follow_up_of: str | None = None
     # False when the record was read back from the audit log, which keeps no result rows.
     results_retained: bool = True
 

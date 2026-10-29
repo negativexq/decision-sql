@@ -6,6 +6,11 @@ The model can only spell values the way the data does if it sees them.  These
 hints come from ``pg_stats`` (or a bounded sample of a small table nobody has
 analyzed), never from rows a question returned, and leave out columns whose
 names suggest personal data.
+
+Values are real data and the model may run at an outside provider, so they are
+shared only when an administrator turns sharing on for the connection, and never
+for the columns they exclude.  Without that, the model sees only the shape of
+code and date columns (``9999-99-99``), which carries no stored value.
 """
 
 from __future__ import annotations
@@ -13,9 +18,16 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Protocol
+
+from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy import Engine, delete, select
+from sqlalchemy.dialects.postgresql import insert
 
 from app.catalog.models import SchemaCatalog
 from app.metadata.relationships import type_family
+from app.metadata.tables import value_sharing
 
 MAX_VALUES = 30
 MAX_VALUE_LENGTH = 60
@@ -134,23 +146,160 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
     )
 
 
+def value_patterns(values: Iterable[str]) -> tuple[str, ...]:
+    """The shapes of code or date values, with every digit shown as 9."""
+    items = list(values)
+    if not items or not all(_FORMAT_LIKE.match(value) for value in items):
+        return ()
+    return tuple(sorted({re.sub(r"[0-9]", "9", value) for value in items})[:MAX_FORMAT_EXAMPLES])
+
+
+class ValueSharing(BaseModel):
+    """An administrator's choice to share stored values of one connection with the model."""
+
+    model_config = ConfigDict(frozen=True)
+
+    enabled: bool = False
+    # "table.column" names whose values are never shared.
+    excluded: tuple[str, ...] = ()
+    updated_by: str | None = None
+    updated_at: datetime | None = None
+
+    def shares(self, table: str, column: str) -> bool:
+        return self.enabled and f"{table}.{column}" not in self.excluded
+
+
+class ValueSharingUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    enabled: bool
+    excluded: list[str] = Field(default_factory=list, max_length=2000)
+
+
+class ValueColumn(BaseModel):
+    """What the model would see for one column, so an administrator can decide."""
+
+    table: str
+    column: str
+    values: tuple[str, ...]
+    complete: bool
+    patterns: tuple[str, ...]
+    shared: bool
+
+
+class ConnectionValues(BaseModel):
+    # False when the server turned value hints off for every connection.
+    available: bool
+    enabled: bool
+    excluded: tuple[str, ...]
+    updated_by: str | None = None
+    updated_at: datetime | None = None
+    columns: list[ValueColumn]
+
+
+class ValueSharingRejectedError(ValueError):
+    pass
+
+
+class ValueSharingStore(Protocol):
+    def get(self, connection_id: str) -> ValueSharing: ...
+
+    def set(
+        self, connection_id: str, enabled: bool, excluded: tuple[str, ...], actor: str
+    ) -> ValueSharing: ...
+
+    def delete(self, connection_id: str) -> None: ...
+
+
+class InMemoryValueSharingStore:
+    def __init__(self) -> None:
+        self._items: dict[str, ValueSharing] = {}
+
+    def get(self, connection_id: str) -> ValueSharing:
+        return self._items.get(connection_id, ValueSharing())
+
+    def set(
+        self, connection_id: str, enabled: bool, excluded: tuple[str, ...], actor: str
+    ) -> ValueSharing:
+        item = ValueSharing(
+            enabled=enabled, excluded=excluded, updated_by=actor, updated_at=datetime.now(UTC)
+        )
+        self._items[connection_id] = item
+        return item
+
+    def delete(self, connection_id: str) -> None:
+        self._items.pop(connection_id, None)
+
+
+class SqlValueSharingStore:
+    def __init__(self, engine: Engine) -> None:
+        self.engine = engine
+
+    def get(self, connection_id: str) -> ValueSharing:
+        query = select(value_sharing).where(value_sharing.c.connection_id == connection_id)
+        with self.engine.connect() as connection:
+            row = connection.execute(query).mappings().first()
+        if row is None:
+            return ValueSharing()
+        return ValueSharing(
+            enabled=row["enabled"],
+            excluded=tuple(row["excluded"] or ()),
+            updated_by=row["updated_by"],
+            updated_at=row["updated_at"],
+        )
+
+    def set(
+        self, connection_id: str, enabled: bool, excluded: tuple[str, ...], actor: str
+    ) -> ValueSharing:
+        values = {
+            "enabled": enabled,
+            "excluded": list(excluded),
+            "updated_by": actor,
+            "updated_at": datetime.now(UTC),
+        }
+        statement = insert(value_sharing).values(connection_id=connection_id, **values)
+        with self.engine.begin() as connection:
+            connection.execute(
+                statement.on_conflict_do_update(index_elements=["connection_id"], set_=values)
+            )
+        return self.get(connection_id)
+
+    def delete(self, connection_id: str) -> None:
+        with self.engine.begin() as connection:
+            connection.execute(
+                delete(value_sharing).where(value_sharing.c.connection_id == connection_id)
+            )
+
+
 def apply_known_values(
-    catalog: SchemaCatalog, hints: dict[tuple[str, str], KnownValues]
+    catalog: SchemaCatalog,
+    hints: dict[tuple[str, str], KnownValues],
+    sharing: ValueSharing | None = None,
 ) -> SchemaCatalog:
-    if not hints:
+    """Attach shared values, or only the value shapes, to the catalog's columns.
+
+    Complete value sets are always attached as ``value_domain`` for the runtime
+    literal check, which never leaves the server.
+    """
+    sharing = sharing or ValueSharing()
+    updates: dict[tuple[str, str], dict[str, object]] = {}
+    for (table, column), hint in hints.items():
+        update: dict[str, object] = {"value_patterns": value_patterns(hint.values)}
+        if hint.complete:
+            update["value_domain"] = hint.values
+        if sharing.shares(table, column):
+            update.update(known_values=hint.values, known_values_complete=hint.complete)
+        if update["value_patterns"] or len(update) > 1:
+            updates[(table, column)] = update
+    if not updates:
         return catalog
     return SchemaCatalog(
         tables=tuple(
             table.model_copy(
                 update={
                     "columns": tuple(
-                        column.model_copy(
-                            update={
-                                "known_values": hint.values,
-                                "known_values_complete": hint.complete,
-                            }
-                        )
-                        if (hint := hints.get((table.name, column.name))) is not None
+                        column.model_copy(update=change)
+                        if (change := updates.get((table.name, column.name))) is not None
                         else column
                         for column in table.columns
                     )

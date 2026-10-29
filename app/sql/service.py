@@ -45,9 +45,13 @@ from app.sql.models import (
     SqlExecutionError,
     SqlPlanFailure,
     SqlSafetyStatus,
+    UnmatchedValue,
 )
-from app.sql.parser import SQLParseFailure, SQLParser
+from app.sql.ordering import CHANGE as NULLS_LAST_CHANGE
+from app.sql.ordering import nulls_last
+from app.sql.parser import ParsedSQL, SQLParseFailure, SQLParser
 from app.sql.policy import SQLPolicy
+from app.sql.values import ValueChecker
 
 
 class _AbortedPlanning(Exception):
@@ -84,6 +88,7 @@ class SqlSafetyService:
             authority_tables.extend(entity.physical_table for entity in measure_catalog.entities)
         self.default_execution_authority = ExecutionAuthority.from_table_names(authority_tables)
         self.policy = SQLPolicy(self.catalog)
+        self.value_checker = ValueChecker(self.catalog)
         self.cost_gate = QueryCostGate()
         self.executor = ReadOnlyExecutor(
             reader_engine,
@@ -207,6 +212,7 @@ class SqlSafetyService:
             )
 
         parsed_for_plan = parsed
+        sql_changes: list[str] = []
         if self.grain_normalization_enabled:
             assert self.grain_coordinator is not None
             with self.tracer.start_as_current_span("decision_sql.semantic_grain") as span:
@@ -225,6 +231,10 @@ class SqlSafetyService:
                 reason=decision.runtime_reason.value,
             )
             if decision.status is GrainRuntimeStatus.NORMALIZED:
+                sql_changes.append(
+                    "Grain safety totals the child rows first, so a parent measure "
+                    "is counted once per parent row."
+                )
                 try:
                     parsed_for_plan = self.parser.parse(decision.selected_sql)
                 except SQLParseFailure:
@@ -263,6 +273,46 @@ class SqlSafetyService:
                 TraceStageStatus.SKIPPED,
                 reason="Normalization disabled",
             )
+
+        unmatched_values: tuple[UnmatchedValue, ...] = ()
+        if self.value_checker.active:
+            checked = self.value_checker.check(parsed_for_plan.expression)
+            unmatched_values = checked.unmatched
+            if checked.changes:
+                # Only string literals change, so the policy and authority results still hold.
+                parsed_for_plan = ParsedSQL(
+                    sql=checked.expression.sql(dialect="postgres"), expression=checked.expression
+                )
+                sql_changes.extend(checked.changes)
+            self._record_stage(
+                "value_check",
+                TraceStageStatus.PASS,
+                reason="VALUE_NOT_STORED" if checked.unmatched else None,
+                metadata={
+                    "checked": checked.checked,
+                    "rewritten": len(checked.changes),
+                    "unmatched": ", ".join(
+                        sorted({f"{item.table}.{item.column}" for item in checked.unmatched})
+                    ),
+                },
+            )
+        else:
+            self._record_stage(
+                "value_check", TraceStageStatus.SKIPPED, reason="NO_KNOWN_VALUE_SETS"
+            )
+
+        # Only the NULL placement of an ORDER BY changes, so earlier checks still hold.
+        ordering = nulls_last(parsed_for_plan.expression, candidate.sql)
+        if ordering.changed:
+            parsed_for_plan = ParsedSQL(
+                sql=ordering.expression.sql(dialect="postgres"), expression=ordering.expression
+            )
+            sql_changes.append(NULLS_LAST_CHANGE)
+        self._record_stage(
+            "null_ordering",
+            TraceStageStatus.PASS,
+            reason="NULLS_LAST" if ordering.changed else None,
+        )
 
         connection_started = perf_counter()
         connection_opened = False
@@ -334,6 +384,8 @@ class SqlSafetyService:
                         correlation_id=candidate.correlation_id,
                         candidate_source=candidate.source,
                         normalized_sql=normalized_sql,
+                        sql_changes=tuple(sql_changes),
+                        unmatched_values=unmatched_values,
                         statement_type=type(parsed_for_plan.expression).__name__,
                         referenced_tables=self._referenced_tables(parsed_for_plan.expression),
                         referenced_columns=self._referenced_columns(parsed_for_plan.expression),
@@ -507,7 +559,11 @@ class SqlSafetyService:
         return SqlPlanFailure(
             status=SqlSafetyStatus.SEMANTIC_REJECTION,
             failure_stage=FailureStage.SEMANTIC_SAFETY_REJECTION,
-            error="Candidate SQL failed the semantic grain-safety boundary.",
+            error=(
+                decision.input_diagnostic.message
+                if decision.runtime_reason.value == decision.input_diagnostic.code.value
+                else "Candidate SQL failed the semantic grain-safety boundary."
+            ),
             semantic_reason=decision.runtime_reason.value,
         )
 

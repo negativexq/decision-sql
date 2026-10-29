@@ -13,7 +13,11 @@ from app.generation.decision_contract import (
     DecisionType,
     ProductionDecision,
 )
-from app.generation.provider import ProductionDecisionProposal, RuntimeRejectionFeedback
+from app.generation.provider import (
+    EarlierAnswer,
+    ProductionDecisionProposal,
+    RuntimeRejectionFeedback,
+)
 from app.governance.context import governed_context_from_schema_context
 from app.observability.run_trace import RunTraceCollector, TraceStageStatus
 from app.retrieval.context import SchemaContextResolver
@@ -29,8 +33,9 @@ class SequenceProvider:
         question: str,
         schema_context: str,
         repair: RuntimeRejectionFeedback | None = None,
+        earlier: EarlierAnswer | None = None,
     ) -> ProductionDecisionProposal:
-        del question, repair
+        del question, repair, earlier
         self.contexts.append(schema_context)
         return ProductionDecisionProposal(
             decision=self.decisions.pop(0), provider="fake", model="fake-model", latency_ms=1.0

@@ -77,7 +77,7 @@ class SQLPolicy:
         function_rejection = self._validate_functions(expression)
         if function_rejection:
             return function_rejection
-        return self._validate_columns(expression)
+        return self._validate_columns(expression) or self._validate_joins(expression)
 
     def _validate_tables(self, expression: exp.Expression) -> PolicyRejection | None:
         """Validate physical tables while leaving CTE names to scope resolution."""
@@ -233,6 +233,79 @@ class SQLPolicy:
                         f"{relation.table.name}.{denied.name}",
                     )
         return None
+
+    def _validate_joins(self, expression: exp.Expression) -> PolicyRejection | None:
+        """Equality between columns of two tables must follow an authorized relationship.
+
+        The tables themselves may be authorized while the columns joining them are
+        not: ``orders.id = customers.id`` matches unrelated rows that happen to share
+        a number.  Columns of CTEs and derived tables are not traced to their source
+        tables, and a table compared with itself is left alone.
+        """
+        for scope in traverse_scope(expression):
+            if not isinstance(scope.expression, exp.Select):
+                continue
+            relations = self._scope_relations(scope)
+            for equality in scope.expression.find_all(exp.EQ):
+                if equality.find_ancestor(exp.Select) is not scope.expression:
+                    continue
+                left = self._join_column(scope, relations, equality.left)
+                right = self._join_column(scope, relations, equality.right)
+                if left is None or right is None or left[0] == right[0]:
+                    continue
+                if self._related(left, right):
+                    continue
+                return self._reject(
+                    PolicyCode.UNAUTHORIZED_JOIN,
+                    self._join_message(left, right),
+                    f"{left[0]}.{left[1]} = {right[0]}.{right[1]}",
+                )
+        return None
+
+    def _join_column(
+        self, scope: Scope, relations: dict[str, _Relation], node: exp.Expression
+    ) -> tuple[str, str] | None:
+        while isinstance(node, (exp.Cast, exp.Paren)):
+            node = node.this
+        if not isinstance(node, exp.Column):
+            return None
+        name = self._identifier_name(node.name)
+        relation = self._resolve_relation(scope, relations, node.table.lower(), name)
+        if relation is None or relation.table is None or relation.table.get_column(name) is None:
+            return None
+        return relation.table.name.lower(), name
+
+    def _relationships(self, a: str, b: str) -> list[tuple[str, str, str, str]]:
+        found: list[tuple[str, str, str, str]] = []
+        for source, target in ((a, b), (b, a)):
+            table = self.catalog.get_table(source)
+            for item in table.relationships if table is not None else ():
+                if item.referenced_table.lower() == target:
+                    found.append(
+                        (source, item.column.lower(), target, item.referenced_column.lower())
+                    )
+        return found
+
+    def _related(self, left: tuple[str, str], right: tuple[str, str]) -> bool:
+        return any(
+            {(source, column), (target, referenced)} == {left, right}
+            for source, column, target, referenced in self._relationships(left[0], right[0])
+        )
+
+    def _join_message(self, left: tuple[str, str], right: tuple[str, str]) -> str:
+        known = self._relationships(left[0], right[0])
+        compared = f"{left[0]}.{left[1]} = {right[0]}.{right[1]}"
+        if not known:
+            return (
+                f"The query compares {compared}, but no authorized relationship links "
+                f"{left[0]} and {right[0]}. If the question needs them joined, report the "
+                "missing relationship instead of joining on matching columns."
+            )
+        listed = "; ".join(f"{s}.{c} = {t}.{r}" for s, c, t, r in known)
+        return (
+            f"The query compares {compared}, which is not an authorized relationship. "
+            f"{left[0]} and {right[0]} are linked only by {listed}."
+        )
 
     def _scope_relations(self, scope: Scope) -> dict[str, _Relation]:
         relations: dict[str, _Relation] = {}

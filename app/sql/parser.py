@@ -3,7 +3,7 @@ from typing import cast
 
 import sqlglot
 from sqlglot import exp
-from sqlglot.errors import ParseError
+from sqlglot.errors import SqlglotError
 
 
 @dataclass(frozen=True)
@@ -24,7 +24,7 @@ class SQLParser:
             raise SQLParseFailure("SQL is empty")
         try:
             statements = sqlglot.parse(sql, read=self.dialect)
-        except ParseError as error:
+        except SqlglotError as error:  # TokenError (an unclosed quote) is not a ParseError
             raise SQLParseFailure("SQL could not be parsed as PostgreSQL") from error
         if not statements:
             raise SQLParseFailure("SQL is empty")

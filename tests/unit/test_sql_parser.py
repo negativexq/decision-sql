@@ -23,3 +23,8 @@ def test_parser_normalization_preserves_keyword_temporal_forms() -> None:
     assert parser.normalize(parser.parse("SELECT CURRENT_TIME")) == "SELECT CURRENT_TIME"
     assert parser.normalize(parser.parse("SELECT LOCALTIME")) == "SELECT LOCALTIME"
     assert parser.normalize(parser.parse("SELECT LOCALTIMESTAMP")) == "SELECT LOCALTIMESTAMP"
+
+
+def test_an_unclosed_quote_is_a_parse_failure_not_a_crash() -> None:
+    with pytest.raises(SQLParseFailure):
+        SQLParser().parse("SELECT * FROM club WHERE name = 'Women's Soccer' AND size = 'Medium'")

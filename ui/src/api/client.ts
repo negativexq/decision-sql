@@ -1,6 +1,9 @@
 import type {
   ConnectionRelationships,
   ConnectionValues,
+  Report,
+  ReportCard,
+  ReportSummary,
   ConnectionSummary,
   ConnectionTestResult,
   ConnectorType,
@@ -105,6 +108,26 @@ export const api = {
       `/api/connections/${encodeURIComponent(id)}/relationships/${encodeURIComponent(relationshipId)}`,
       { method: "DELETE" },
     ),
+  reports: () => request<ReportSummary[]>("/api/reports"),
+  report: (id: string) => request<Report>(`/api/reports/${encodeURIComponent(id)}`),
+  createReport: (title: string, connection_id: string) =>
+    request<Report>("/api/reports", { method: "POST", body: JSON.stringify({ title, connection_id }) }),
+  saveReport: (id: string, body: { title: string; description: string; cards: ReportCard[] }) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        ...body,
+        // The server pins each card's SQL from its run; it does not accept SQL from here.
+        cards: body.cards.map(({ sql: _sql, ...card }) => card),
+      }),
+    }),
+  deleteReport: (id: string) => request<void>(`/api/reports/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  askForCard: (id: string, question: string) =>
+    request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/ask`, { method: "POST", body: JSON.stringify({ question }) }),
+  refreshCard: (id: string, cardId: string) =>
+    request<RunRecord>(`/api/reports/${encodeURIComponent(id)}/cards/${encodeURIComponent(cardId)}/refresh`, {
+      method: "POST",
+    }),
   values: (id: string) => request<ConnectionValues>(`/api/connections/${encodeURIComponent(id)}/values`),
   setValues: (id: string, enabled: boolean, excluded: string[]) =>
     request<ConnectionValues>(`/api/connections/${encodeURIComponent(id)}/values`, {

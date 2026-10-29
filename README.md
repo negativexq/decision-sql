@@ -23,6 +23,7 @@ and read-only execution are deterministic code the model cannot bypass.
 | **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. |
 | **See the query** | Open "Query that ran" above the answer to read or copy the SQL. |
 | **Follow the checks** | Eleven stages from context to execution, each with its outcome and timing. |
+| **Reports** | Build a page of charts from questions: pick number, bar, column, line, area, pie, or table; drag and resize cards on a grid; add descriptions and text sections. Each chart reruns its saved query through the checks when the report opens. |
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |
 | **Declare joins** | When a database has no foreign keys, declare the joins questions may use; each one is checked against the data before it is saved. |

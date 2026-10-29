@@ -2,10 +2,11 @@ import { useState } from "react";
 import { formatCount } from "../format";
 import type { SchemaResponse } from "../types";
 
-export type View = "ask" | "audit" | "sources" | "connections";
+export type View = "ask" | "reports" | "audit" | "sources" | "connections";
 
 const nav: { id: View; label: string; icon: string }[] = [
   { id: "ask", label: "Ask", icon: "M4 6h16M4 12h10M4 18h7" },
+  { id: "reports", label: "Reports", icon: "M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z" },
   { id: "audit", label: "Audit log", icon: "M12 7v5l3 2M4 12a8 8 0 1 0 2.3-5.6M4 4v3h3" },
   { id: "sources", label: "Tables", icon: "M4 5h16v14H4zM4 10h16M10 10v9" },
   { id: "connections", label: "Connections", icon: "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" },

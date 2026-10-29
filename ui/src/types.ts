@@ -283,3 +283,48 @@ export interface ConnectionValues {
   updated_at: string | null;
   columns: ValueColumn[];
 }
+
+export type ChartType = "number" | "bar" | "column" | "line" | "area" | "pie" | "table";
+
+export interface CardLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface ReportCard {
+  id: string;
+  kind: "query" | "text";
+  title: string;
+  note: string;
+  question: string;
+  run_id: string | null;
+  chart: ChartType;
+  dimension: string | null;
+  measure: string | null;
+  layout: CardLayout;
+  sql?: string | null;
+}
+
+export interface Report {
+  id: string;
+  connection_id: string;
+  title: string;
+  description: string;
+  cards: ReportCard[];
+  created_by: string;
+  created_at: string;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface ReportSummary {
+  id: string;
+  connection_id: string;
+  title: string;
+  description: string;
+  card_count: number;
+  updated_by: string;
+  updated_at: string;
+}

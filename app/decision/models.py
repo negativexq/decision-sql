@@ -14,6 +14,8 @@ class ProposalSource(StrEnum):
     LIVE_MODEL = "LIVE_MODEL"
     SAFETY_REPLAY = "SAFETY_REPLAY"
     RUNTIME_POLICY_REPLAY = "RUNTIME_POLICY_REPLAY"
+    # A report card's pinned SQL, run again without a model call.
+    SAVED_QUERY = "SAVED_QUERY"
 
 
 class RuntimeOutcome(StrEnum):

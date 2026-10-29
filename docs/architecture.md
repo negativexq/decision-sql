@@ -172,6 +172,18 @@ columns an administrator excludes. The connection page shows what each column
 would share. The server-wide `DECISION_SQL_VALUE_EXAMPLES=false` turns all
 value hints off.
 
+### Reports
+
+A report (`decision_meta.reports`) is a page of cards on a twelve-column grid
+for one connection. A chart card starts as a question answered the usual way,
+model and all; the card then pins the SQL that run executed, read from the
+audit log by run id, never from the client. Opening or refreshing a report runs
+each pinned query again as a `SAVED_QUERY` run: no model call, every gate on
+the current schema, and an audit record. A query that no longer passes shows
+why on its card. Text cards hold headings and notes; chart cards carry a
+description, a chart type (number, bars, columns, line, area, pie, table), and
+optional category and value columns.
+
 ### Metadata isolation
 
 Audit records and connections live in the `decision_meta` schema, written with

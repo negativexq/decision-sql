@@ -98,6 +98,20 @@ declared_relationships = Table(
     UniqueConstraint("connection_id", "from_table", "from_column", "to_table", "to_column"),
 )
 
+reports = Table(
+    "reports",
+    metadata,
+    Column("id", String(64), primary_key=True),
+    Column("connection_id", String(64), nullable=False, index=True),
+    Column("title", String(200), nullable=False),
+    Column("description", Text, nullable=False),
+    Column("cards", JSON, nullable=False),
+    Column("created_by", String(120), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_by", String(120), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)
+
 value_sharing = Table(
     "value_sharing",
     metadata,

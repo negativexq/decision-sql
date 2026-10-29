@@ -1,6 +1,6 @@
 from app.catalog.models import ColumnMetadata, SchemaCatalog, TableMetadata
 from app.config import Settings
-from app.decision.service import _repair_feedback
+from app.decision.feedback import repair_feedback
 from app.generation.decision_contract import PRODUCTION_DECISION_CASE_ID, ProductionDecision
 from app.sql.models import ExplainEstimate, QueryPlan, UnmatchedValue
 from app.sql.parser import SQLParser
@@ -102,11 +102,11 @@ def test_only_blind_guesses_go_back_to_the_model() -> None:
     )
     settings = Settings(_env_file=None, reader_role="reader")
     guessed = UnmatchedValue(table="stations", column="segment", literal="Luxury", shared=False)
-    feedback = _repair_feedback(_plan(guessed), previous, settings)
+    feedback = repair_feedback(_plan(guessed), previous, settings)
     assert feedback is not None and feedback.code == "VALUE_NOT_STORED"
     assert "stations.segment = 'Luxury'" in feedback.message
     # The feedback never names the values the column does store.
     assert "Premium" not in feedback.message
     seen = guessed.model_copy(update={"shared": True})
-    assert _repair_feedback(_plan(seen), previous, settings) is None
-    assert _repair_feedback(_plan(), previous, settings) is None
+    assert repair_feedback(_plan(seen), previous, settings) is None
+    assert repair_feedback(_plan(), previous, settings) is None

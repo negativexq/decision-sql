@@ -90,12 +90,14 @@ flowchart TD
   that connection, and the SQL functions policy allows.
   Small schemas are sent whole; large schemas are narrowed by retrieval, and the
   tables left out are listed by name.
-- **One decision, at most one more round.** One request with a strict JSON
+- **One decision, a fixed budget of calls.** One request with a strict JSON
   schema. If the checks reject SQL for a reason the model can fix (a parse
   error, an unknown column, a function outside the allowlist, the cost limit, a
-  fan-out), or the model names a table that was left out of the context, it gets
-  one more call. Authority and write rejections are final, and both rounds are
-  in the trace.
+  fan-out), it gets one repair round; if it names a table that was left out of
+  the context, the context is widened once. Probes and checking a question's
+  readings have their own allowances, so a question makes at most 7 model calls
+  with the default settings, and most make one. Authority and write rejections
+  are final, and every call is in the trace.
 - **A reason for every non-answer.** A clarification comes with the question to
   answer and the readings to choose from; a refusal names the missing join.
 

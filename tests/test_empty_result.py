@@ -8,7 +8,8 @@ from sqlglot import exp
 from app.catalog.default import build_default_catalog
 from app.config import Settings
 from app.db.models import Base
-from app.decision.service import DecisionSqlApplication, _looks_empty
+from app.decision.feedback import looks_empty
+from app.decision.service import DecisionSqlApplication
 from app.generation.decision_contract import (
     PRODUCTION_DECISION_CASE_ID,
     DecisionType,
@@ -217,7 +218,7 @@ async def test_no_second_repair_and_no_check_when_turned_off() -> None:
 )
 def test_what_counts_as_empty(rows: list[dict[str, object]], empty: bool) -> None:
     execution = QueryExecution(plan_id=uuid4(), rows=rows, row_count=len(rows), latency_ms=1.0)
-    assert _looks_empty(execution) is empty
+    assert looks_empty(execution) is empty
 
 
 SHARE = "SELECT 100.0 * SUM(id) / COUNT(*) AS share_percent FROM products"

@@ -136,7 +136,9 @@ the rows; the audit log keeps the readings and their SQL in the trace, never the
 alternatives' rows. Replays skip it, and `DECISION_SQL_READING_CHECK_ENABLED=false`
 turns it off.
 
-After that, at most one more call follows, recorded as its own trace stage:
+After that, these calls may follow, each recorded as its own trace stage. The
+expansion has its own call; the repair round, execution error, empty result,
+and percentage out of range share one:
 
 - **Context expansion**: the model returned `BLOCKED_AUTHORITY` naming a table
   from `other_tables`. The runtime rebuilds the context from the catalog with
@@ -162,6 +164,34 @@ After that, at most one more call follows, recorded as its own trace stage:
   a value below 0 or above 100, and the run has not used its repair round. The
   model hears the column and that it left the range, never the value, and may
   keep the query when the question asks for a change that can exceed 100.
+
+### Model-call budget
+
+Every model call of a run is taken from an `AttemptBudget`
+(`app/decision/budget.py`) before the provider is asked. Each step has its own
+allowance, and a step with none left is refused rather than called:
+
+| Step | Calls |
+| --- | ---: |
+| First decision | 1 |
+| Context expansion | 1 |
+| Look first (a question back or refusal before any probe) | 1 |
+| Probe rounds | `DECISION_SQL_EXPLORATION_ROUNDS` (default 2) |
+| Reading check | 1 |
+| Repair round | 1 |
+
+A step turned off in settings has no allowance, and a replay has none at all.
+With the defaults a question makes at most 7 calls; most make one. A failed
+call still counts, so a repair call that fails uses the repair round. The
+response stage records `model_calls` and `model_call_limit` for every run.
+
+`DecisionSqlApplication.run` (`app/decision/service.py`) opens the run with
+the context and the first decision, then hands a `DecisionState`
+(`app/decision/state.py`) through the stages in order: admission, context
+expansion, look first, exploration, reading check, then the query (plan,
+repair, execute, result check, response). Each stage either moves the state on
+or returns the finished result. The runtime's feedback to the model and the
+result checks live in `app/decision/feedback.py`.
 
 The contract also fixes the shape of an answer: percentages on a 0 to 100
 scale with `percent` in the alias, yes/no as `YES` or `NO`, named fields in
@@ -252,7 +282,8 @@ audit log keeps both the model's SQL and the text the database received
   columns; `LIKE` and functions such as `LOWER(column)` are not checked.
   Columns whose values are not all known are looked up only after a query
   comes back empty.
-- Repair is one round. A second rejection is final.
+- Repair is one round, used whether or not the call succeeds. A second
+  rejection is final.
 - A report filter does not follow relationships: a filter on `regions.name`
   leaves a card that reads only `orders` unfiltered (the card says so). It
   narrows every SELECT that reads its table, including a subquery that
@@ -426,7 +457,7 @@ or stored secrets.
 | --- | --- |
 | `app/api` | HTTP routes |
 | `app/operator` | The workspace facade the UI calls |
-| `app/decision` | Admission of the model decision into the SQL runtime |
+| `app/decision` | The stages of a run, its model-call budget, and the runtime's feedback to the model |
 | `app/generation` | The decision contract and the model provider |
 | `app/catalog`, `app/retrieval`, `app/governance` | Catalog, context selection, and the model-visible context |
 | `app/sql` | Parsing, policy, authority, the plan/execute service, and the plain-language explanation of a query |

@@ -76,6 +76,11 @@ JSON schema. The model returns one of:
 A non-answer carries an explanation; a clarification also carries the question
 to ask and two to four readings, and a refusal names the missing joins.
 
+**Context format**: the governed context reaches the model as canonical JSON or,
+with `DECISION_SQL_CONTEXT_FORMAT=compact`, as the same facts in compact text: one
+line per column, names instead of ids, under the section names the contract uses
+(`render_governed_context`). The canonical JSON stays the audited and hashed form.
+
 **Exploration**: before it answers or asks, the model may return `EXPLORE` with
 one to three probes (`app/decision/exploration.py`), for example to see how a
 value is spelled or whether a tie it would ask about occurs. Each probe goes
@@ -167,8 +172,11 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   is left as written, and so is an order by `COUNT`, which is never NULL.
 - **Single precision**: PostgreSQL's `SUM` over a `real` column adds in
   single precision and keeps about six significant digits, so a total of
-  14009.34 comes back as 14009.3. Inside a `SUM`, a `real` column the author
-  did not cast is cast to `double precision` (`app/sql/precision.py`).
+  14009.34 comes back as 14009.3; a cast of a `real` column to `numeric`
+  rounds each value the same way (`12685.04::real::numeric` is `12685`).
+  Inside a `SUM`, a `real` column the author did not cast is read as
+  `double precision`, and a `real` column cast to `numeric` goes through
+  `double precision` first (`app/sql/precision.py`).
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 

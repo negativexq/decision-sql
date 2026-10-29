@@ -32,6 +32,7 @@ from app.governance.context import (
     GovernedContext,
     governed_context_from_schema_context,
     governed_context_hash,
+    render_governed_context,
     serialize_governed_context,
 )
 from app.observability.run_trace import TRACE_STAGE_ORDER, RunTraceCollector, TraceStageStatus
@@ -135,7 +136,7 @@ class DecisionSqlApplication:
             },
             duration_ms=(perf_counter() - context_started) * 1000,
         )
-        schema_text = serialize_governed_context(model_context)
+        schema_text = self._model_view(model_context)
 
         if replay_decision is not None:
             collector.record_stage(
@@ -305,7 +306,7 @@ class DecisionSqlApplication:
         if expanded is not None:
             model_context, proposal = expanded
             model_context_hash = governed_context_hash(model_context)
-            schema_text = serialize_governed_context(model_context)
+            schema_text = self._model_view(model_context)
             decision = proposal.decision
         if (
             self.exploration is not None
@@ -711,7 +712,7 @@ class DecisionSqlApplication:
             expanded = governed_context_from_schema_context(context)
             proposal = await self.provider.propose_decision(
                 question,
-                serialize_governed_context(expanded),
+                self._model_view(expanded),
                 earlier=self.earlier,
                 exploration=self.exploration,
             )
@@ -805,6 +806,11 @@ class DecisionSqlApplication:
             duration_ms=proposal.latency_ms,
         )
         return proposal.decision
+
+    def _model_view(self, context: GovernedContext) -> str:
+        if self.settings.context_format == "compact":
+            return render_governed_context(context)
+        return serialize_governed_context(context)
 
     async def _look_first(
         self, question: str, schema_text: str, decision: ProductionDecision

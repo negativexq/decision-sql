@@ -32,5 +32,16 @@ def test_a_sum_of_a_real_column_adds_in_double_precision() -> None:
 
 def test_other_aggregates_and_cast_columns_are_left_as_written() -> None:
     assert _widen("SELECT AVG(consumption) FROM yearmonth")[0] is False
-    assert _widen("SELECT SUM(consumption::numeric) FROM yearmonth")[0] is False
+    assert _widen("SELECT SUM(consumption::double precision) FROM yearmonth")[0] is False
     assert _widen("SELECT SUM(customerid) FROM yearmonth")[0] is False
+
+
+def test_a_numeric_cast_of_a_real_column_goes_through_double_precision() -> None:
+    # PostgreSQL turns 12685.04::real into the numeric 12685: six significant digits.
+    changed, sql = _widen("SELECT SUM(consumption::numeric) FROM yearmonth")
+    assert changed and "CAST(CAST(consumption AS DOUBLE PRECISION) AS DECIMAL)" in sql
+    changed, sql = _widen(
+        "SELECT ROUND(AVG(CAST(consumption AS DECIMAL(10, 2))), 2) FROM yearmonth"
+    )
+    assert changed and "CAST(CAST(consumption AS DOUBLE PRECISION) AS DECIMAL(10, 2))" in sql
+    assert _widen("SELECT customerid::numeric FROM yearmonth")[0] is False

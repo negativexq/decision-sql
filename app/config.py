@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -92,6 +93,11 @@ class Settings(BaseSettings):
     # One more model call with a table the model named from the omitted list.
     context_expansion_enabled: bool = Field(
         default=True, validation_alias="DECISION_SQL_CONTEXT_EXPANSION_ENABLED"
+    )
+    # How the governed context reaches the model: canonical JSON, or the same facts as
+    # compact text (one line per column, names instead of ids).
+    context_format: Literal["json", "compact"] = Field(
+        default="json", validation_alias="DECISION_SQL_CONTEXT_FORMAT"
     )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)

@@ -22,6 +22,9 @@ class ColumnMetadata(BaseModel):
     known_values_complete: bool = False
     # Shapes of code or date values with digits shown as 9; no stored value.
     value_patterns: tuple[str, ...] = ()
+    # Every value the column holds, for the runtime literal check only; never part of
+    # the model context, whether or not the values are shared.
+    value_domain: tuple[str, ...] = ()
 
 
 class RelationshipMetadata(BaseModel):

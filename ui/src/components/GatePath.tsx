@@ -9,6 +9,7 @@ const GATES: { names: string[]; label: string }[] = [
   { names: ["global_policy"], label: "Policy" },
   { names: ["execution_authority"], label: "Access" },
   { names: ["grain_safety"], label: "Grain" },
+  { names: ["value_check"], label: "Values" },
   { names: ["explain"], label: "Plan" },
   { names: ["cost_gate"], label: "Cost" },
   { names: ["execution"], label: "Run" },

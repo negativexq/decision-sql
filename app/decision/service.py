@@ -552,6 +552,7 @@ _RUNTIME_STAGES = (
     "global_policy",
     "execution_authority",
     "grain_safety",
+    "value_check",
     "planning_connection",
     "explain",
     "cost_gate",
@@ -602,6 +603,8 @@ def _repair_feedback(
 
     Execution errors are never sent back: database error text can quote stored values.
     """
+    if isinstance(planned, QueryPlan):
+        return _value_feedback(planned, previous)
     if not isinstance(planned, SqlPlanFailure):
         return None
     if planned.status is SqlSafetyStatus.SQL_PARSE_ERROR:
@@ -631,6 +634,29 @@ def _repair_feedback(
         return None
     return RuntimeRejectionFeedback(
         previous=previous, stage=stage, code=code, message=" ".join(message.split())[:600]
+    )
+
+
+def _value_feedback(
+    plan: QueryPlan, previous: ProductionDecision
+) -> RuntimeRejectionFeedback | None:
+    """Tell the model a text it guessed is not stored, without naming the values that are.
+
+    A model that saw the column's values chose the text knowingly (the value may be
+    absent from the data), so only guesses at unshared columns are sent back.
+    """
+    blind = [item for item in plan.unmatched_values if not item.shared]
+    if not blind:
+        return None
+    named = "; ".join(f"{item.table}.{item.column} = '{item.literal}'" for item in blind[:3])
+    message = (
+        f"The query filters on {named}, but the column stores no such value, even ignoring "
+        "case, spacing, and punctuation, so the filter matches no rows. If the question "
+        "refers to a value the column spells differently, write a filter that finds it; "
+        "if the value is absent from the data, keep the query."
+    )
+    return RuntimeRejectionFeedback(
+        previous=previous, stage="value_check", code="VALUE_NOT_STORED", message=message[:600]
     )
 
 

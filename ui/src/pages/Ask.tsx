@@ -175,6 +175,8 @@ function RunResult({
   // When the runtime changed the logic, the query that ran is the runtime's text, not the model's.
   const changed = Boolean(run.executed_sql) && (run.sql_changes ?? []).length > 0;
   const shownSql = changed ? run.executed_sql : run.proposed_sql;
+  const valueCheck = run.trace?.stages.find((item) => item.name === "value_check");
+  const unmatched = valueCheck?.reason === "VALUE_NOT_STORED" ? String(valueCheck.metadata?.unmatched ?? "") : "";
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },
@@ -226,9 +228,16 @@ function RunResult({
 
       {run.repaired_from_sql && (
         <details className="repaired">
-          <summary>The checks rejected the first query, so the model rewrote it once.</summary>
+          <summary>The checks sent the first query back, so the model rewrote it once.</summary>
           <SqlViewer sql={run.repaired_from_sql} />
         </details>
+      )}
+
+      {unmatched && run.runtime_outcome === "EXECUTED" && (
+        <div className="callout callout-neutral">
+          The query filters <code>{unmatched}</code> on a value the column does not store, so that filter matches no
+          rows. If the result looks empty, the question may name a value that is spelled differently or is not in the data.
+        </div>
       )}
 
       <GatePath

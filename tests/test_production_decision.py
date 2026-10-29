@@ -55,7 +55,7 @@ class FakeDecisionProvider:
 
 def test_decision_prompt_hash_is_pinned() -> None:
     assert production_decision_contract_hash() == (
-        "a7f6e6dc5d4b860fa8cdf670e3afeb83aeb0634fc0e43111388ee664b1fc997a"
+        "b0a48cc234ad29d0baeadc8622caa5150d8fac9929631519803ca7984ccae367"
     )
 
 

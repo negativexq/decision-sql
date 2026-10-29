@@ -26,7 +26,7 @@ from app.metadata.values import (
 from app.observability.run_trace import RunTraceCollector
 from app.operator.models import RunRecord, RuntimeOutcome
 from app.sql.authority import ExecutionAuthority
-from app.sql.models import CandidateSource, SqlCandidate, SqlExecutionError
+from app.sql.models import CandidateSource, QueryPlan, SqlCandidate, SqlExecutionError
 from app.sql.service import SqlSafetyService
 from tests.integration.conftest import postgres_unavailable
 
@@ -279,6 +279,31 @@ def test_stored_values_reach_the_model_only_after_an_admin_shares_them(engine: E
     assert listed is not None and listed.available and not listed.enabled
     assert listed.columns and not any(column.shared for column in listed.columns)
     assert shared_columns() == set()
+
+    # Unshared values still check the query's literals on the server.
+    source = service.question_source(summary.id)
+    assert source is not None
+    safety = SqlSafetyService(source.engine, catalog=source.catalog, reader_role=source.reader_role)
+
+    def plan(sql: str) -> QueryPlan:
+        result = safety.plan(
+            SqlCandidate(
+                sql=sql,
+                source=CandidateSource.LLM,
+                correlation_id="it-values",
+                execution_authority=ExecutionAuthority.from_table_names(["orders"]),
+            )
+        )
+        assert isinstance(result, QueryPlan), result
+        return result
+
+    fixed = plan("SELECT COUNT(*) FROM orders o WHERE o.status = 'Completed'")
+    assert "'completed'" in fixed.normalized_sql
+    assert fixed.sql_changes and not fixed.unmatched_values
+    missing = plan("SELECT COUNT(*) FROM orders WHERE status IN ('completed', 'shipped')")
+    assert [(item.column, item.literal, item.shared) for item in missing.unmatched_values] == [
+        ("status", "shipped", False)
+    ]
 
     first = f"{listed.columns[0].table}.{listed.columns[0].column}"
     with pytest.raises(ValueSharingRejectedError, match="not in the connection"):

@@ -276,14 +276,20 @@ def apply_known_values(
     hints: dict[tuple[str, str], KnownValues],
     sharing: ValueSharing | None = None,
 ) -> SchemaCatalog:
-    """Attach shared values, or only the value shapes, to the catalog's columns."""
+    """Attach shared values, or only the value shapes, to the catalog's columns.
+
+    Complete value sets are always attached as ``value_domain`` for the runtime
+    literal check, which never leaves the server.
+    """
     sharing = sharing or ValueSharing()
     updates: dict[tuple[str, str], dict[str, object]] = {}
     for (table, column), hint in hints.items():
         update: dict[str, object] = {"value_patterns": value_patterns(hint.values)}
+        if hint.complete:
+            update["value_domain"] = hint.values
         if sharing.shares(table, column):
             update.update(known_values=hint.values, known_values_complete=hint.complete)
-        if update["value_patterns"] or "known_values" in update:
+        if update["value_patterns"] or len(update) > 1:
             updates[(table, column)] = update
     if not updates:
         return catalog

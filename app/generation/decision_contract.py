@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "a7f6e6dc5d4b860fa8cdf670e3afeb83aeb0634fc0e43111388ee664b1fc997a"
+    "b0a48cc234ad29d0baeadc8622caa5150d8fac9929631519803ca7984ccae367"
 )
 
 
@@ -101,9 +101,9 @@ The context details the tables selected for this question. Use the physical tabl
 When the context has `other_tables`, the database has more tables than the ones detailed, and those are their names. A name is not authority: never reference a table that is not in `schema_catalog`. If the question needs data that none of the detailed tables holds and one of `other_tables` likely holds it, return `BLOCKED_AUTHORITY` and list in `missing_relationships` the detailed table it would join to and that table from `other_tables`. The runtime may then supply its details and ask again. When `other_tables` is absent, every table in the database is detailed.
 
 
-## Runtime rejection
+## Runtime feedback
 
-A later message may report that the runtime rejected the SQL you proposed, with the stage, code, and message of the rejection. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the rejection requires and keep the meaning of the answer. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
+A later message may report that the runtime rejected the SQL you proposed, or found a filter that can match no rows, with the stage, code, and message of the finding. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the finding requires and keep the meaning of the answer; when the message says the query may stand, you may return it unchanged. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
 
 
 ## Final contract check before emitting a decision

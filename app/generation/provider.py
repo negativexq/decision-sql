@@ -194,7 +194,7 @@ def _production_decision_messages(
             {"role": "assistant", "content": repair.previous.model_dump_json()},
             {
                 "role": "user",
-                "content": "Runtime rejection:\n"
+                "content": "Runtime feedback:\n"
                 + json.dumps(rejection, ensure_ascii=False, indent=2),
             },
         ]

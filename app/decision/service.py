@@ -1071,8 +1071,11 @@ def _range_feedback(
 _EXECUTION_MESSAGES = {
     "INVALID_TEXT_CONVERSION": (
         "A cast or comparison met a stored text value that is not in the target type's "
-        "format, such as a letter in a column cast to a number. Convert only the values "
-        "that fit, or compare as text."
+        "format, such as a letter in a column cast to a number. A WHERE filter does not "
+        "protect a cast: PostgreSQL may evaluate the cast first. Guard the cast itself, "
+        "for example CASE WHEN col <> '' AND TRANSLATE(col, '0123456789', '') = '' "
+        "THEN col::numeric END, or compare as text. Regular expressions (~, SIMILAR TO) "
+        "are not allowed."
     ),
     "NUMERIC_OUT_OF_RANGE": "A number grew beyond its type's range. Use a wider type.",
     "DIVISION_BY_ZERO": "A division met a zero divisor. Guard the divisor with NULLIF.",

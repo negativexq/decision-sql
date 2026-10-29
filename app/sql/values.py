@@ -37,7 +37,13 @@ class _Domain:
 
 
 def _key(value: str) -> str:
-    return re.sub(r"[\W_]+", "", value.casefold())
+    """The value without case, spacing, or punctuation; a code of digits without leading zeros.
+
+    ``01611430131177`` and ``1611430131177`` name the same code: a stored code
+    keeps its zero padding, and the person asking rarely types it.
+    """
+    key = re.sub(r"[\W_]+", "", value.casefold())
+    return (key.lstrip("0") or "0") if key.isdigit() else key
 
 
 def direct_tables(select: exp.Select, ctes: set[str]) -> dict[str, str]:
@@ -162,7 +168,8 @@ class ValueProbe:
     filter such as ``power_name = 'stealth'`` on a column of a few hundred names is not
     checked before the query runs.  When such a query comes back empty, the probe asks
     the database whether each literal is stored, and if not, whether exactly one stored
-    value differs from it only in case, spacing, or punctuation.  Confidential columns
+    value differs from it only in case, spacing, punctuation, or the zero padding of a
+    code of digits.  Confidential columns
     and columns ``ValueChecker`` already covers are left alone.
     """
 
@@ -227,5 +234,5 @@ class ValueLookup(Protocol):
     def stored(self, target: tuple[str, str], value: str) -> bool: ...
 
     def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
-        """Up to two stored values whose case-, space-, and punctuation-free form is ``key``."""
+        """Up to two stored values whose form under ``_key`` is ``key``."""
         ...

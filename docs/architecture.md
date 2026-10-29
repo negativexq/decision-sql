@@ -109,7 +109,9 @@ After that, at most one more call follows, recorded as its own trace stage:
   class the author can fix (failed cast, division by zero, a scalar subquery
   with several rows, a type or function mismatch, a timeout). The model gets a
   fixed runtime sentence for that class, read from the SQLSTATE; the database's
-  message never goes back. Other failures are final.
+  message never goes back. For a failed cast the sentence says that a `WHERE`
+  filter does not protect a cast and shows a `CASE` guard built from allowed
+  functions. Other failures are final.
 - **Empty result**: the query ran and returned no rows, or one row of only
   zeros and NULLs, and the run has not used its repair round. The model hears
   that the result was empty, which filters compare with a value the column
@@ -151,7 +153,8 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
   statistics, a text literal compared with the column that differs from one
-  stored value only in case, spacing, or punctuation takes the stored
+  stored value only in case, spacing, punctuation, or the zero padding of a
+  code of digits (`1611430131177` for `01611430131177`) takes the stored
   spelling. A literal that matches nothing is reported; when the model never
   saw the column's values it gets one repair round that names its guess, not
   the stored values, and the answer notes that the filter matches no rows.
@@ -162,6 +165,10 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   rows with no value first: the "greatest" player would be one with no rating.
   Such an order gets `NULLS LAST`. A query that writes `NULLS FIRST` anywhere
   is left as written, and so is an order by `COUNT`, which is never NULL.
+- **Single precision**: PostgreSQL's `SUM` over a `real` column adds in
+  single precision and keeps about six significant digits, so a total of
+  14009.34 comes back as 14009.3. Inside a `SUM`, a `real` column the author
+  did not cast is cast to `double precision` (`app/sql/precision.py`).
 - **Plan and cost**: `EXPLAIN` in a read-only transaction; plan rows and cost
   must stay under the configured limits.
 
@@ -169,7 +176,7 @@ After execution, an empty result (no rows, or one row of only zeros and
 NULLs) is checked once. For text columns whose values are not all known, the
 runtime looks each literal up in the database as the reader role, with a short
 timeout (`DECISION_SQL_VALUE_PROBE_TIMEOUT_MS`). A literal stored in exactly one
-other spelling (case, spacing, punctuation) takes that spelling, and the query
+other spelling (case, spacing, punctuation, zero padding) takes that spelling, and the query
 runs again through every gate without a model call. Otherwise the empty
 result goes to the repair round above. Confidential columns are not looked up.
 A result with rows is checked for a percentage outside 0 to 100, which gets the

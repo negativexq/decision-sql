@@ -51,6 +51,8 @@ from app.sql.ordering import CHANGE as NULLS_LAST_CHANGE
 from app.sql.ordering import nulls_last
 from app.sql.parser import ParsedSQL, SQLParseFailure, SQLParser
 from app.sql.policy import SQLPolicy
+from app.sql.precision import CHANGE as PRECISION_CHANGE
+from app.sql.precision import SinglePrecisionSums
 from app.sql.values import ValueCheck, ValueChecker, ValueProbe
 
 
@@ -77,10 +79,14 @@ class _DatabaseLookup:
 
     def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
         table, column = self._names(target)
+        # The same form as values._key: no case, spacing, or punctuation, and a code of
+        # digits without its zero padding.
+        form = f"regexp_replace(lower({column}::text), '[^[:alnum:]]+', '', 'g')"
+        if key.isdigit():
+            unpadded = f"COALESCE(NULLIF(ltrim({form}, '0'), ''), '0')"
+            form = f"CASE WHEN {form} ~ '^[0-9]+$' THEN {unpadded} END"
         rows = self.connection.exec_driver_sql(
-            f"SELECT DISTINCT {column}::text FROM {table} "
-            f"WHERE regexp_replace(lower({column}::text), '[^[:alnum:]]+', '', 'g') = %(key)s "
-            "LIMIT 2",
+            f"SELECT DISTINCT {column}::text FROM {table} WHERE {form} = %(key)s LIMIT 2",
             {"key": key},
         ).all()
         return tuple(str(row[0]) for row in rows)
@@ -121,6 +127,7 @@ class SqlSafetyService:
         self.default_execution_authority = ExecutionAuthority.from_table_names(authority_tables)
         self.policy = SQLPolicy(self.catalog)
         self.value_checker = ValueChecker(self.catalog)
+        self.single_precision = SinglePrecisionSums(self.catalog)
         self.value_probe = ValueProbe(self.catalog)
         self.cost_gate = QueryCostGate()
         self.executor = ReadOnlyExecutor(
@@ -333,6 +340,14 @@ class SqlSafetyService:
             self._record_stage(
                 "value_check", TraceStageStatus.SKIPPED, reason="NO_KNOWN_VALUE_SETS"
             )
+
+        # Only a cast around a column the query already reads, so earlier checks still hold.
+        widened = self.single_precision.widen(parsed_for_plan.expression)
+        if widened.changed:
+            parsed_for_plan = ParsedSQL(
+                sql=widened.expression.sql(dialect="postgres"), expression=widened.expression
+            )
+            sql_changes.append(PRECISION_CHANGE)
 
         # Only the NULL placement of an ORDER BY changes, so earlier checks still hold.
         ordering = nulls_last(parsed_for_plan.expression, candidate.sql)

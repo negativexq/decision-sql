@@ -1,7 +1,7 @@
 from app.catalog.models import ColumnMetadata, SchemaCatalog, Sensitivity, TableMetadata
 from app.sql.models import UnmatchedValue
 from app.sql.parser import SQLParser
-from app.sql.values import ValueProbe
+from app.sql.values import ValueProbe, _key
 
 
 def _catalog() -> SchemaCatalog:
@@ -42,11 +42,7 @@ class FakeLookup:
 
     def spellings(self, target: tuple[str, str], key: str) -> tuple[str, ...]:
         self.spelling_calls.append(key)
-        return tuple(
-            value
-            for value in self.values.get(target, ())
-            if "".join(ch for ch in value.lower() if ch.isalnum()) == key
-        )[:2]
+        return tuple(value for value in self.values.get(target, ()) if _key(value) == key)[:2]
 
 
 def _probe(sql: str, lookup: FakeLookup):
@@ -94,3 +90,11 @@ def test_known_confidential_and_non_text_columns_are_not_probed() -> None:
         "SELECT id FROM powers WHERE code = '7'",
     ):
         assert probe.targets(SQLParser().parse(sql).expression) == [], sql
+
+
+def test_a_code_of_digits_matches_its_zero_padded_spelling() -> None:
+    assert _key("01611430131177") == _key("1611430131177") == "1611430131177"
+    assert _key("000") == "0" and _key("Item 03") == "item03"
+    lookup = FakeLookup({("powers", "power_name"): ("01611430131177",)})
+    result = _probe("SELECT id FROM powers WHERE power_name = '1611430131177'", lookup)
+    assert "'01611430131177'" in result.expression.sql(dialect="postgres")

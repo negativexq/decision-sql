@@ -60,6 +60,8 @@ class ColumnStats:
     n_distinct: float = 0.0
     # The table's row estimate, which turns a negative n_distinct into a count.
     rows: float = 0.0
+    # Exact share of empty or blank strings, when the column was counted in full.
+    blank_frac: float | None = None
 
     def distinct_count(self) -> float:
         if self.n_distinct >= 0:
@@ -71,6 +73,64 @@ class ColumnStats:
 class KnownValues:
     values: tuple[str, ...]
     complete: bool
+
+
+@dataclass(frozen=True)
+class ColumnProfile:
+    """Shares of rows with no value. A share, never a stored value."""
+
+    null_share: float
+    blank_share: float
+
+
+# Shares below one percent are left out; they rarely change an answer and cost tokens.
+MIN_SHARE = 0.01
+
+
+def column_profile(stats: ColumnStats) -> ColumnProfile | None:
+    """How much of a column is NULL or an empty string, when that is at least 1%."""
+    blank = stats.blank_frac
+    if blank is None:
+        blank = sum(
+            frequency
+            for value, frequency in zip(
+                stats.most_common_vals or (), stats.most_common_freqs or (), strict=False
+            )
+            if not value.strip()
+        )
+    null_share = round(stats.null_frac, 2) if stats.null_frac >= MIN_SHARE else 0.0
+    blank_share = round(blank, 2) if blank >= MIN_SHARE else 0.0
+    if not null_share and not blank_share:
+        return None
+    return ColumnProfile(null_share, blank_share)
+
+
+def apply_profiles(
+    catalog: SchemaCatalog, profiles: dict[tuple[str, str], ColumnProfile]
+) -> SchemaCatalog:
+    """Attach NULL and blank shares to the catalog's columns."""
+    if not profiles:
+        return catalog
+    return SchemaCatalog(
+        tables=tuple(
+            table.model_copy(
+                update={
+                    "columns": tuple(
+                        column.model_copy(
+                            update={
+                                "null_share": profiles[table.name, column.name].null_share,
+                                "blank_share": profiles[table.name, column.name].blank_share,
+                            }
+                        )
+                        if (table.name, column.name) in profiles
+                        else column
+                        for column in table.columns
+                    )
+                }
+            )
+            for table in catalog.tables
+        )
+    )
 
 
 def eligible_columns(catalog: SchemaCatalog) -> set[tuple[str, str]]:
@@ -124,6 +184,7 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
     present = [(value, count) for value, count in pairs if value is not None]
     nulls = total - sum(count for _, count in present)
     present.sort(key=lambda item: -item[1])
+    blank = sum(count for value, count in present if not value.strip()) / total if total else 0.0
     if len(present) > MAX_VALUES:
         # Too many to be a domain; keep them only as format evidence.
         return ColumnStats(
@@ -134,6 +195,7 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
             None,
             [value for value, _ in present],
             n_distinct=len(present),
+            blank_frac=blank,
         )
     return ColumnStats(
         table=table,
@@ -143,6 +205,7 @@ def sample_stats(table: str, column: str, counts: Iterable[tuple[str | None, int
         most_common_freqs=[count / total for _, count in present] if total else [],
         histogram_bounds=None,
         n_distinct=len(present),
+        blank_frac=blank,
     )
 
 

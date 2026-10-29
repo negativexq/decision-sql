@@ -16,7 +16,10 @@ tests.
   keys and columns whose names suggest personal data. The model provider sees
   them with every question on that connection. Without sharing, the model sees
   only the shape of code and date columns (`9999-99-99`), which carries no
-  stored value. `DECISION_SQL_VALUE_EXAMPLES=false` turns both off server-wide.
+  stored value. The shares of NULL and blank rows of a column (when at least 1%)
+  come from the same statistics and are sent without sharing: they are counts,
+  not values. `DECISION_SQL_VALUE_EXAMPLES=false` turns all of this off
+  server-wide.
 - It returns one typed decision. Its SQL is untrusted input
   (`SqlCandidate`) with no authorization state.
 - Before deciding it may run up to three read-only probes per round, for a
@@ -26,7 +29,9 @@ tests.
   values and every column the probe reads is public and shared; then it also
   gets up to 20 rows with values cut to 80 characters, which the model provider
   sees. Rejections and failures come back as the runtime's own code, never
-  database text. The trace keeps each probe's SQL and row count, not its rows.
+  database text. A probe that matched nothing is respelled like an empty answer;
+  the model learns that a spelling was applied, not which one. The trace keeps
+  each probe's SQL and row count, not its rows.
 - It has no other tool calls. At most two extra requests follow: one that
   adds tables the model asked for from `other_tables`, and one repair round
   after a policy rejection, an empty result, or a percentage outside 0 to

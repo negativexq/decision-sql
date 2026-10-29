@@ -419,3 +419,37 @@ async def test_a_failed_send_back_keeps_the_original_question() -> None:
     assert result.model_decision is DecisionType.NEEDS_CLARIFICATION
     stage = {stage.name: stage for stage in result.trace.stages}["exploration"]
     assert stage.metadata["look_first_error"] == "RuntimeError"
+
+
+@pytest.mark.asyncio
+async def test_an_empty_probe_is_respelled_like_the_final_query() -> None:
+    provider = FakeDecisionProvider(_explore(FIRST), _answer(FIXED))
+    safety = ExploringSafety({FIXED: [{"n": 4}]})
+    safety.probe = _rewritten()
+    await _run(provider, safety)
+
+    assert safety.probed[0] == FIRST and safety.explored[:2] == [FIRST, FIXED]
+    second = provider.explorations[1]
+    assert second is not None
+    [report] = second.results
+    # The model keeps its own SQL and hears that a spelling was applied, not which one.
+    assert report.sql == FIRST and report.reason == "VALUE_RESPELLED"
+    assert report.row_count == 1 and report.rows is None
+    assert "Office" not in (report.message or "")
+
+
+@pytest.mark.asyncio
+async def test_an_empty_probe_names_a_literal_the_column_does_not_store() -> None:
+    provider = FakeDecisionProvider(_explore(FIRST), _answer(FIXED))
+    safety = ExploringSafety({FIXED: [{"n": 4}]})
+    safety.probe = ValueCheck(
+        SQLParser().parse(FIRST).expression,
+        (),
+        (UnmatchedValue(table="products", column="category", literal="office", shared=False),),
+        1,
+    )
+    await _run(provider, safety)
+
+    [report] = provider.explorations[1].results  # type: ignore[union-attr]
+    assert report.row_count == 0 and report.reason == "VALUE_NOT_STORED"
+    assert "products.category = 'office'" in (report.message or "")

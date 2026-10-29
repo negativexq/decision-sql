@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "60f7a4941430dc07fb2a23787d4fb781d272ea7b13d95d0fe5850eb488750089"
+    "4feb9cf605db1c1002980146b6668f2a8155022bd8d6e87d68762be6c81a2a8b"
 )
 
 
@@ -45,6 +45,7 @@ You are answering one question a user asked about their own database. Use only t
 - When `known_values_complete` is false, the values are examples of how the column formats codes or dates. Write filters and string operations that fit that format.
 - When an attribute lists `value_patterns` instead, those are the shapes of the stored codes or dates, with every digit written as 9: `9999-99-99` means values like `2012-01-15`. Write literals and string operations that fit one of those shapes.
 - Columns without `known_values` may still hold the value the question names; their spelling is simply not shown.
+- When an attribute lists `null_share` or `blank_share`, that share of its rows is NULL, or an empty or blank string. A comparison such as `=` or `<>` never matches a NULL row, while an empty string is a stored value that `<>`, `IS NOT NULL`, and `COUNT(column)` keep.
 
 ## Typed JSON scalar semantics
 

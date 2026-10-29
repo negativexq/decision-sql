@@ -54,6 +54,8 @@ class GovernedAttribute(BaseModel):
     known_values: tuple[str, ...] = ()
     known_values_complete: bool = False
     value_patterns: tuple[str, ...] = ()
+    null_share: float = 0.0
+    blank_share: float = 0.0
 
     @model_serializer(mode="wrap")
     def _omit_absent_values(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -62,8 +64,9 @@ class GovernedAttribute(BaseModel):
         if not self.known_values:
             data.pop("known_values", None)
             data.pop("known_values_complete", None)
-        if not self.value_patterns:
-            data.pop("value_patterns", None)
+        for key in ("value_patterns", "null_share", "blank_share"):
+            if not data.get(key):
+                data.pop(key, None)
         return data
 
 
@@ -163,6 +166,8 @@ def governed_context_from_schema_context(
             known_values=column.known_values,
             known_values_complete=column.known_values_complete,
             value_patterns=column.value_patterns,
+            null_share=column.null_share,
+            blank_share=column.blank_share,
             foreign_key_entity_id=(
                 entity_ids.get(column.foreign_key_table)
                 if column.foreign_key_table is not None
@@ -274,6 +279,12 @@ def render_governed_context(context: GovernedContext) -> str:
                 line += f" | known_values ({kind}): {values(attribute.known_values)}"
             if attribute.value_patterns:
                 line += f" | value_patterns: {', '.join(attribute.value_patterns)}"
+            for name, share in (
+                ("null_share", attribute.null_share),
+                ("blank_share", attribute.blank_share),
+            ):
+                if share:
+                    line += f" | {name}: {share:.0%}"
             lines.append(line)
     lines += ["", "authorized_relationships:"]
     lines += [

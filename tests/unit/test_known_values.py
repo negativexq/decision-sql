@@ -4,13 +4,20 @@ from app.catalog.models import (
     SchemaCatalog,
     TableMetadata,
 )
-from app.governance.context import governed_context_from_schema_context
+from app.governance.context import (
+    governed_context_from_schema_context,
+    render_governed_context,
+    serialize_governed_context,
+)
 from app.metadata.values import (
+    ColumnProfile,
     ColumnStats,
     InMemoryValueSharingStore,
     KnownValues,
     ValueSharing,
     apply_known_values,
+    apply_profiles,
+    column_profile,
     eligible_columns,
     known_values,
     sample_stats,
@@ -164,3 +171,32 @@ def test_sharing_choice_is_recorded_per_connection() -> None:
     assert store.get("conn_b").enabled is False
     store.delete("conn_a")
     assert store.get("conn_a").enabled is False
+
+
+def test_null_and_blank_shares_come_from_statistics_and_small_ones_are_left_out() -> None:
+    stats = _stats(["", "Premium", " "], [0.04, 0.4, 0.01], null_frac=0.457)
+    assert column_profile(stats) == ColumnProfile(null_share=0.46, blank_share=0.05)
+    assert column_profile(_stats(["Premium"], [0.99], null_frac=0.004)) is None
+
+
+def test_a_counted_column_gives_an_exact_blank_share() -> None:
+    counts = [("", 3), (None, 2), *((f"code {index}", 1) for index in range(40))]
+    stats = sample_stats("stations", "segment", counts)
+    assert column_profile(stats) == ColumnProfile(null_share=0.04, blank_share=0.07)
+
+
+def test_shares_reach_the_context_without_value_sharing() -> None:
+    catalog = apply_profiles(
+        apply_known_values(_catalog(), {}),
+        {("stations", "segment"): ColumnProfile(null_share=0.46, blank_share=0.05)},
+    )
+    context = governed_context_from_schema_context(
+        SchemaContextResolver(catalog).resolve("Which segment has the most stations?")
+    )
+    dumped = {item["physical_column_or_path"]: item for item in context.model_dump()["attributes"]}
+    assert (dumped["segment"]["null_share"], dumped["segment"]["blank_share"]) == (0.46, 0.05)
+    assert "null_share" not in dumped["id"] and "blank_share" not in dumped["id"]
+    assert serialize_governed_context(context).count("null_share") == 1
+    assert "- segment text — Segment. | null_share: 46% | blank_share: 5%" in (
+        render_governed_context(context)
+    )

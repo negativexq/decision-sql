@@ -50,6 +50,7 @@ from app.metadata.relationships import (
 from app.metadata.secrets import SecretBox
 from app.metadata.store import ConnectionStore, StoredConnection
 from app.metadata.values import (
+    ColumnProfile,
     ConnectionValues,
     InMemoryValueSharingStore,
     KnownValues,
@@ -59,6 +60,8 @@ from app.metadata.values import (
     ValueSharingStore,
     ValueSharingUpdate,
     apply_known_values,
+    apply_profiles,
+    column_profile,
     eligible_columns,
     known_values,
     value_patterns,
@@ -68,6 +71,14 @@ GOVERNED_CONNECTION_ID = "governed"
 _MIN_MATCH_RATE = 0.5
 # Statistics change slowly; the schema itself is still read for every question.
 _VALUES_TTL_SECONDS = 600.0
+
+
+@dataclass(frozen=True)
+class _Statistics:
+    hints: dict[tuple[str, str], KnownValues]
+    profiles: dict[tuple[str, str], ColumnProfile]
+
+
 ANONYMOUS_ACTOR = "anonymous"
 _ACTOR = re.compile(r"^[A-Za-z0-9._@+-]{1,120}$")
 
@@ -115,7 +126,7 @@ class ConnectionService:
         self.value_examples = value_examples
         self.value_sharing_store = value_sharing or InMemoryValueSharingStore()
         self.note_store = notes or InMemoryColumnNoteStore()
-        self._values: dict[str, tuple[float, dict[tuple[str, str], KnownValues]]] = {}
+        self._values: dict[str, tuple[float, _Statistics]] = {}
         self.relationship_store = relationships or InMemoryRelationshipStore()
         self.secrets = secrets
         self.governed_engine = governed_engine
@@ -199,10 +210,11 @@ class ConnectionService:
         if self.value_examples:
             # Sharing is read for every question, so turning it off takes effect at once.
             sharing = self.value_sharing_store.get(item.id)
-            catalog = apply_known_values(
-                catalog,
-                self._known_values(item.id, connector, config, password, catalog),
-                sharing,
+            statistics = self._statistics(item.id, connector, config, password, catalog)
+            # A NULL or blank share is a count, not a stored value, so it does not wait
+            # for value sharing.
+            catalog = apply_profiles(
+                apply_known_values(catalog, statistics.hints, sharing), statistics.profiles
             )
         return QuestionSource(
             connection_id=item.id,
@@ -212,6 +224,41 @@ class ConnectionService:
             sharing=sharing,
         )
 
+    def _statistics(
+        self,
+        connection_id: str,
+        connector: PostgresConnector,
+        config: ConnectionConfig,
+        password: str | None,
+        catalog: SchemaCatalog,
+    ) -> _Statistics:
+        cached = self._values.get(connection_id)
+        if cached is not None and cached[0] > monotonic():
+            return cached[1]
+        eligible = eligible_columns(catalog)
+        queryable = {
+            (table.name, column.name)
+            for table in catalog.tables
+            for column in table.columns
+            if column.queryable
+        }
+        try:
+            stats = connector.column_stats(config, password, queryable, counted=eligible)
+        except psycopg.Error:
+            # Value hints help the model; a failure to read them never blocks a question.
+            stats = []
+        statistics = _Statistics({}, {})
+        for item in stats:
+            key = (item.table, item.column)
+            hint = known_values(item) if key in eligible else None
+            if hint is not None:
+                statistics.hints[key] = hint
+            profile = column_profile(item)
+            if profile is not None:
+                statistics.profiles[key] = profile
+        self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, statistics)
+        return statistics
+
     def _known_values(
         self,
         connection_id: str,
@@ -220,21 +267,7 @@ class ConnectionService:
         password: str | None,
         catalog: SchemaCatalog,
     ) -> dict[tuple[str, str], KnownValues]:
-        cached = self._values.get(connection_id)
-        if cached is not None and cached[0] > monotonic():
-            return cached[1]
-        hints: dict[tuple[str, str], KnownValues] = {}
-        try:
-            stats = connector.column_stats(config, password, eligible_columns(catalog))
-        except psycopg.Error:
-            # Value hints help the model; a failure to read them never blocks a question.
-            stats = []
-        for item in stats:
-            hint = known_values(item)
-            if hint is not None:
-                hints[(item.table, item.column)] = hint
-        self._values[connection_id] = (monotonic() + _VALUES_TTL_SECONDS, hints)
-        return hints
+        return self._statistics(connection_id, connector, config, password, catalog).hints
 
     def values(self, connection_id: str) -> ConnectionValues | None:
         """The stored values each eligible column would share, and the current choice."""

@@ -939,17 +939,18 @@ class DecisionSqlApplication:
                     )
                 )
             elif isinstance(executed, QueryExecution):
-                reports.append(
-                    report_rows(
-                        sql,
-                        executed.columns,
-                        executed.rows,
-                        truncated=executed.truncated,
-                        shared=rows_may_be_shared(
-                            planned.normalized_sql, self.safety_service.catalog, self.value_access
-                        ),
-                    )
+                report = report_rows(
+                    sql,
+                    executed.columns,
+                    executed.rows,
+                    truncated=executed.truncated,
+                    shared=rows_may_be_shared(
+                        planned.normalized_sql, self.safety_service.catalog, self.value_access
+                    ),
                 )
+                if not executed.rows:
+                    report = self._respell_probe(report, authority, run_id)
+                reports.append(report)
             else:
                 error_class = executed.error_class if executed is not None else None
                 reports.append(
@@ -961,6 +962,61 @@ class DecisionSqlApplication:
                     )
                 )
         return reports
+
+    def _respell_probe(
+        self, report: ProbeReport, authority: ExecutionAuthority, run_id: str
+    ) -> ProbeReport:
+        """Check the literals of a probe that matched nothing, as the final query is checked.
+
+        A literal the column stores in exactly one other spelling is rewritten and the
+        probe runs again; the model hears that it was respelled, and sees the rows only
+        where value sharing allows.  A literal the column does not store is named.
+        """
+        probed = self.safety_service.probe_values(report.sql)
+        if probed is None:
+            return report
+        if not probed.changes:
+            if not probed.unmatched:
+                return report
+            named = "; ".join(
+                f"{item.table}.{item.column} = '{item.literal}'" for item in probed.unmatched[:3]
+            )
+            return report.model_copy(
+                update={
+                    "reason": "VALUE_NOT_STORED",
+                    "message": f"The column stores no such value for {named}, even ignoring "
+                    "case, spacing, punctuation, and zero padding.",
+                }
+            )
+        respelled = probed.expression.sql(dialect="postgres")
+        planned, executed = self.safety_service.explore(
+            SqlCandidate(
+                sql=respelled,
+                source=CandidateSource.LLM,
+                correlation_id=run_id,
+                execution_authority=authority,
+            )
+        )
+        if isinstance(planned, SqlPlanFailure) or not isinstance(executed, QueryExecution):
+            return report
+        rerun = report_rows(
+            report.sql,
+            executed.columns,
+            executed.rows,
+            truncated=executed.truncated,
+            shared=rows_may_be_shared(
+                planned.normalized_sql, self.safety_service.catalog, self.value_access
+            ),
+        )
+        return rerun.model_copy(
+            update={
+                "reason": "VALUE_RESPELLED",
+                "message": "A literal matched nothing as written; the column stores it in "
+                "another spelling (case, spacing, punctuation, or zero padding), and these "
+                "are the results with that spelling. The runtime applies the same spelling "
+                "when the final query runs.",
+            }
+        )
 
     @staticmethod
     def _non_answer(

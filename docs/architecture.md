@@ -50,6 +50,11 @@ column is order revenue and which timestamp drives monthly trends.
   not treated as complete); excluded columns, keys, long values,
   and columns whose names suggest personal data never do. Without sharing, code
   and date columns carry only their shape (`value_patterns`, digits as `9`).
+- Every queryable column whose rows are at least 1% NULL, or empty or blank
+  strings, carries those shares (`null_share`, `blank_share`), from the same
+  statistics. A share is a count, not a stored value, so it does not wait for
+  value sharing; a filter such as `<> 'x'` drops NULL rows but keeps blank ones,
+  and the model cannot see that from the column's type.
 - Column descriptions come from the source's comments. An administrator who
   cannot write comments to the source can describe a column on the connection
   page instead (`column_notes`); the note replaces that column's description in
@@ -90,7 +95,12 @@ its gates are not recorded as the answer's stages. The model then hears, per
 probe, the row count and each column's distinct and NULL counts, and the rows
 (at most 20, values cut to 80 characters) only when the connection shares stored
 values and every column the probe reads is public and shared. A rejected probe
-reports the runtime's reason, a failed one its error class. Exploration has
+reports the runtime's reason, a failed one its error class. A probe that matched
+no rows has its literals looked up like an empty answer (below): a literal
+stored in exactly one other spelling is respelled and the probe runs again, and
+the model hears `VALUE_RESPELLED` with the new counts (the rows only under the
+same sharing rule), never the spelling itself; a literal the column does not
+store is named as `VALUE_NOT_STORED`. Exploration has
 `DECISION_SQL_EXPLORATION_ROUNDS` rounds (default 2); the request says whether
 it is still open, and a model that still explores after the last round fails the
 run with `EXPLORATION_FAILURE`. A `NEEDS_CLARIFICATION` or `BLOCKED_AUTHORITY`

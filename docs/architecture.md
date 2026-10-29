@@ -86,6 +86,15 @@ At most one more call follows, recorded as its own trace stage:
   that the result was empty, which filters compare with a value the column
   does not store, and that it may keep the query. It never sees rows of any
   query or the values a column stores.
+- **Percentage out of range**: a column the model named as a percentage holds
+  a value below 0 or above 100, and the run has not used its repair round. The
+  model hears the column and that it left the range, never the value, and may
+  keep the query when the question asks for a change that can exceed 100.
+
+The contract also fixes the shape of an answer: percentages on a 0 to 100
+scale with `percent` in the alias, yes/no as `YES` or `NO`, named fields in
+their own columns, and every row tied for a highest or lowest value rather
+than one picked by `LIMIT 1`.
 
 Replays of recorded decisions never get either round. The system prompt is
 pinned by `production_decision_contract_hash()`, so changing it is a visible
@@ -134,7 +143,12 @@ timeout (`DECISION_SQL_VALUE_PROBE_TIMEOUT_MS`). A literal stored in exactly one
 other spelling (case, spacing, punctuation) takes that spelling, and the query
 runs again through every gate without a model call. Otherwise the empty
 result goes to the repair round above. Confidential columns are not looked up.
-`DECISION_SQL_RESULT_CHECK_ENABLED=false` turns the check off.
+A result with rows is checked for a percentage outside 0 to 100, which gets the
+repair round and stays flagged in the UI if the model keeps it, and for rows that
+tie: when the query keeps every row equal to an overall `MAX` or `MIN`, or ranked
+first by an unpartitioned `RANK()`, and more than one comes back, the trace
+records `TIED_ROWS` and the UI says the rows share that value.
+`DECISION_SQL_RESULT_CHECK_ENABLED=false` turns these checks off.
 
 Execution runs only an accepted plan, on the `decision_reader` role, in a
 `READ ONLY` transaction with a statement timeout and a result row cap. The

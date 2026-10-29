@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 PRODUCTION_DECISION_CONTRACT_VERSION = "DECISION_CONTRACT_V2"
 PRODUCTION_DECISION_CASE_ID = "operator"
 PRODUCTION_DECISION_CONTRACT_HASH = (
-    "08187fa708fce12782f881c57fae994fe26dca889500aa96b425c7bca1e8d205"
+    "0355aef607e6c26f09abd5db8358bbb4406f652290b29cdb52256255a5097c8a"
 )
 
 
@@ -96,6 +96,13 @@ The only other permitted reason code is `NO_REASON`; it is not needed for the fo
 
 The context details the tables selected for this question. Use the physical table names, physical columns or JSON paths, data types, semantic descriptions, and authorized joins exactly as supplied. Each request is independent: do not use memory from another request, except an `Earlier answer` supplied with it.
 
+## Answer shape
+
+- When the question asks for a percentage, return it on a 0 to 100 scale, multiplying the quotient by 100, and give that column an alias containing `percent`. A ratio, rate, or proportion the question does not call a percentage stays a quotient.
+- When the question asks whether something is true, return each judgement as the text `YES` or `NO`, not as 1/0 or true/false.
+- When the question names several fields, such as a first and a last name, return each as its own column. Combine fields into one column only when the question asks for one combined value.
+- When the question asks for the item with the highest, lowest, earliest, or latest value, return every row that shares that value, for example by comparing with `(SELECT MAX(...))` or filtering `RANK() = 1`. Do not cut a tie with `LIMIT 1` or an arbitrary order; the runtime tells the user when rows tie. Use `LIMIT n` only when the question asks for a fixed number of items.
+
 ## Tables outside the context
 
 When the context has `other_tables`, the database has more tables than the ones detailed, and those are their names. A name is not authority: never reference a table that is not in `schema_catalog`. If the question needs data that none of the detailed tables holds and one of `other_tables` likely holds it, return `BLOCKED_AUTHORITY` and list in `missing_relationships` the detailed table it would join to and that table from `other_tables`. The runtime may then supply its details and ask again. When `other_tables` is absent, every table in the database is detailed.
@@ -107,7 +114,7 @@ When the request includes `Earlier answer`, the question follows up on one the u
 
 ## Runtime feedback
 
-A later message may report that the runtime rejected the SQL you proposed, or found a filter that can match no rows, with the stage, code, and message of the finding. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the finding requires and keep the meaning of the answer; when the message says the query may stand, you may return it unchanged. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
+A later message may report that the runtime rejected the SQL you proposed, found a filter that can match no rows, or found a result that cannot be right, with the stage, code, and message of the finding. Return a new complete decision for the same question, in the same format and under the same rules. Change only what the finding requires and keep the meaning of the answer; when the message says the query may stand, you may return it unchanged. If the question cannot be answered within the reported limits, return the decision that applies instead of SQL that would be rejected again.
 
 
 ## Final contract check before emitting a decision

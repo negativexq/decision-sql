@@ -181,6 +181,9 @@ function RunResult({
     .map((item) => String(item.metadata?.unmatched ?? ""))
     .filter(Boolean)
     .join(", ");
+  const tied = (run.trace?.stages ?? []).some((item) => item.name === "result_check" && item.reason === "TIED_ROWS");
+  // A column the model named as a percentage should lie between 0 and 100; say so when the shown rows do not.
+  const outOfRange = executed ? percentOutOfRange(run.columns, run.rows) : [];
 
   const tabs: { id: Tab; label: string; hidden?: boolean }[] = [
     { id: "table", label: "Table", hidden: !executed },
@@ -241,6 +244,20 @@ function RunResult({
         <div className="callout callout-neutral">
           The query filters <code>{unmatched}</code> on a value the column does not store, so that filter matches no
           rows. If the result looks empty, the question may name a value that is spelled differently or is not in the data.
+        </div>
+      )}
+
+      {tied && executed && (
+        <div className="callout callout-neutral">
+          The question asks for a highest or lowest value, and the query keeps every row that has it: these{" "}
+          {formatCount(run.row_count)} rows share it rather than giving several different answers.
+        </div>
+      )}
+
+      {outOfRange.length > 0 && (
+        <div className="callout callout-neutral">
+          <code>{outOfRange.join(", ")}</code> is a percentage outside 0 to 100. A share of a whole cannot be, so check
+          the formula in the query before relying on it.
         </div>
       )}
 
@@ -359,5 +376,17 @@ function Explanation({
         </ul>
       )}
     </div>
+  );
+}
+
+function percentOutOfRange(columns: string[], rows: Record<string, unknown>[]): string[] {
+  return columns.filter(
+    (name) =>
+      /percent|pct/i.test(name) &&
+      rows.some((row) => {
+        const value = row[name];
+        const number = typeof value === "number" ? value : typeof value === "string" && value.trim() !== "" ? Number(value) : NaN;
+        return Number.isFinite(number) && (number < 0 || number > 100);
+      }),
   );
 }

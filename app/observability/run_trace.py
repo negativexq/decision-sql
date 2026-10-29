@@ -87,7 +87,7 @@ _LABELS = {
     "cost_gate": "Cost gate",
     "execution_connection": "Execution database connection",
     "execution": "Read-only execution",
-    "result_check": "Empty result check",
+    "result_check": "Result check",
     "response": "Response",
 }
 

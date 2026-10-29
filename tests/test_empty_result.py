@@ -217,3 +217,32 @@ async def test_no_second_repair_and_no_check_when_turned_off() -> None:
 def test_what_counts_as_empty(rows: list[dict[str, object]], empty: bool) -> None:
     execution = QueryExecution(plan_id=uuid4(), rows=rows, row_count=len(rows), latency_ms=1.0)
     assert _looks_empty(execution) is empty
+
+
+SHARE = "SELECT 100.0 * SUM(id) / COUNT(*) AS share_percent FROM products"
+
+
+@pytest.mark.asyncio
+async def test_a_percentage_outside_0_to_100_gets_the_repair_round() -> None:
+    second = "SELECT 100.0 * COUNT(*) / COUNT(*) AS share_percent FROM products"
+    provider = FakeDecisionProvider(_answer(SHARE), _answer(second))
+    safety = ScriptedSafety({SHARE: [{"share_percent": 988.4}], second: [{"share_percent": 94.0}]})
+    result = await _run(provider, safety)
+
+    [feedback] = provider.feedback
+    assert feedback.code == "OUT_OF_RANGE" and "share_percent" in feedback.message
+    assert "988" not in feedback.message
+    assert result.repaired_from_sql == SHARE and result.rows == [{"share_percent": 94.0}]
+    stages = {stage.name: stage for stage in result.trace.stages}
+    assert stages["result_check"].reason == "OUT_OF_RANGE"
+    assert safety.probed == []
+
+
+@pytest.mark.asyncio
+async def test_rows_that_tie_for_the_extreme_are_flagged() -> None:
+    tied = "SELECT name FROM products WHERE price = (SELECT MAX(price) FROM products)"
+    safety = ScriptedSafety({tied: [{"name": "a"}, {"name": "b"}]})
+    result = await _run(FakeDecisionProvider(_answer(tied)), safety)
+
+    stage = {stage.name: stage for stage in result.trace.stages}["result_check"]
+    assert stage.reason == "TIED_ROWS" and stage.metadata["tied"] == 2

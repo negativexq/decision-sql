@@ -43,6 +43,7 @@ from app.sql.models import (
     SqlSafetyStatus,
     UnmatchedValue,
 )
+from app.sql.results import keeps_ties, percent_out_of_range
 from app.sql.service import SqlSafetyService
 
 
@@ -343,20 +344,40 @@ class DecisionSqlApplication:
         else:
             execution = await asyncio.to_thread(self.safety_service.execute, planned)
             sql_changes = planned.sql_changes
-            if (
+            checking = (
                 replay_decision is None
                 and self.settings.result_check_enabled
                 and isinstance(execution, QueryExecution)
-                and _looks_empty(execution)
+            )
+            out_of_range = (
+                percent_out_of_range(execution.columns, execution.rows)
+                if checking and isinstance(execution, QueryExecution)
+                else ()
+            )
+            if (
+                checking
+                and isinstance(execution, QueryExecution)
+                and (_looks_empty(execution) or out_of_range)
             ):
-                second = await self._check_empty_result(
-                    question,
-                    schema_text,
-                    decision,
-                    authority,
-                    collector,
-                    repairable=repairable and repaired_from_sql is None,
-                )
+                if out_of_range and not _looks_empty(execution):
+                    second = await self._check_range(
+                        question,
+                        schema_text,
+                        out_of_range,
+                        decision,
+                        authority,
+                        collector,
+                        repairable=repairable and repaired_from_sql is None,
+                    )
+                else:
+                    second = await self._check_empty_result(
+                        question,
+                        schema_text,
+                        decision,
+                        authority,
+                        collector,
+                        repairable=repairable and repaired_from_sql is None,
+                    )
                 if second is not None and second.decision is not decision:
                     repaired_from_sql = decision.sql
                     decision = second.decision
@@ -373,6 +394,13 @@ class DecisionSqlApplication:
                 if second is not None and second.planned is not None:
                     planned, execution = second.planned, second.execution
                     sql_changes = second.sql_changes
+            elif checking and isinstance(execution, QueryExecution) and _tied(execution, planned):
+                collector.record_stage(
+                    "result_check",
+                    TraceStageStatus.PASS,
+                    reason="TIED_ROWS",
+                    metadata={"tied": execution.row_count},
+                )
             else:
                 collector.record_stage(
                     "result_check", TraceStageStatus.SKIPPED, reason="NOT_NEEDED"
@@ -456,6 +484,41 @@ class DecisionSqlApplication:
             metadata=metadata,
             duration_ms=(perf_counter() - started) * 1000,
         )
+        return await self._repair_result(question, schema_text, feedback, authority, collector)
+
+    async def _check_range(
+        self,
+        question: str,
+        schema_text: str,
+        columns: tuple[str, ...],
+        decision: ProductionDecision,
+        authority: ExecutionAuthority,
+        collector: RunTraceCollector,
+        *,
+        repairable: bool,
+    ) -> _SecondAttempt | None:
+        """Give the model its repair round when a percentage falls outside 0 to 100.
+
+        The model hears which columns are out of range and in which direction, never
+        the values themselves.  None keeps the result, which the user sees flagged.
+        """
+        collector.record_stage(
+            "result_check",
+            TraceStageStatus.PASS,
+            reason="OUT_OF_RANGE",
+            metadata={"columns": ", ".join(columns)},
+        )
+        feedback = _range_feedback(decision, columns) if repairable else None
+        return await self._repair_result(question, schema_text, feedback, authority, collector)
+
+    async def _repair_result(
+        self,
+        question: str,
+        schema_text: str,
+        feedback: RuntimeRejectionFeedback | None,
+        authority: ExecutionAuthority,
+        collector: RunTraceCollector,
+    ) -> _SecondAttempt | None:
         if feedback is None:
             return None
         collector.forget(("repair",))
@@ -717,6 +780,30 @@ def _empty_result_feedback(
     )
     return RuntimeRejectionFeedback(
         previous=previous, stage="result_check", code="EMPTY_RESULT", message=message[:600]
+    )
+
+
+def _range_feedback(
+    previous: ProductionDecision, columns: tuple[str, ...]
+) -> RuntimeRejectionFeedback:
+    named = ", ".join(columns[:3])
+    message = (
+        f"The query ran, and the percentage column {named} holds a value below 0 or above "
+        "100. A share of a whole lies between 0 and 100: check the numerator, the "
+        "denominator, and the factor of 100 against the question. If the question asks for "
+        "a change or a formula that can leave that range, keep the query."
+    )
+    return RuntimeRejectionFeedback(
+        previous=previous, stage="result_check", code="OUT_OF_RANGE", message=message[:600]
+    )
+
+
+def _tied(execution: QueryExecution, planned: QueryPlan | SqlPlanFailure) -> bool:
+    """Several rows that all share the extreme value the query keeps."""
+    return (
+        execution.row_count > 1
+        and isinstance(planned, QueryPlan)
+        and keeps_ties(planned.normalized_sql)
     )
 
 

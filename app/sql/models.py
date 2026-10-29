@@ -135,3 +135,5 @@ class SqlExecutionError(BaseModel):
     status: Literal[SqlSafetyStatus.EXECUTION_ERROR] = SqlSafetyStatus.EXECUTION_ERROR
     failure_stage: Literal[FailureStage.EXECUTION_ERROR] = FailureStage.EXECUTION_ERROR
     error: str
+    # A fixed name for the kind of failure, from the database's error class; never its text.
+    error_class: str | None = None

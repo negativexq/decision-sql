@@ -384,3 +384,15 @@ def test_the_value_probe_finds_a_stored_spelling_in_the_database(
     # A query on no probed column, or one that does not parse, has nothing to look up.
     assert service.probe_values("SELECT COUNT(*) FROM products WHERE id = 1") is None
     assert service.probe_values("SELECT FROM WHERE") is None
+
+
+def test_a_failed_cast_is_named_by_its_class_without_the_database_text(
+    service: SqlSafetyService,
+) -> None:
+    planned = service.plan(SqlCandidate(sql="SELECT name::numeric AS n FROM products LIMIT 5"))
+    assert isinstance(planned, QueryPlan)
+    result = service.execute(planned)
+
+    assert isinstance(result, SqlExecutionError)
+    assert result.error_class == "INVALID_TEXT_CONVERSION"
+    assert "numeric" not in result.error

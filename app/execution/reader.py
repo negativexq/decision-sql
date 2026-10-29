@@ -9,6 +9,27 @@ class ReaderRoleError(RuntimeError):
     pass
 
 
+# SQLSTATE codes of failures the query's author can fix, by the fixed name the model
+# hears.  Every other failure, and every database message, stays unnamed.
+_ERROR_CLASSES = {
+    "22P02": "INVALID_TEXT_CONVERSION",
+    "22003": "NUMERIC_OUT_OF_RANGE",
+    "22012": "DIVISION_BY_ZERO",
+    "22007": "INVALID_DATETIME_FORMAT",
+    "22008": "DATETIME_OUT_OF_RANGE",
+    "21000": "SUBQUERY_RETURNED_SEVERAL_ROWS",
+    "42804": "TYPE_MISMATCH",
+    "42883": "NO_SUCH_FUNCTION_FOR_TYPES",
+    "57014": "STATEMENT_TIMEOUT",
+}
+
+
+def error_class(error: BaseException) -> str | None:
+    """The fixed name of a fixable database failure, from its SQLSTATE only."""
+    code = getattr(getattr(error, "orig", error), "sqlstate", None)
+    return _ERROR_CLASSES.get(code) if isinstance(code, str) else None
+
+
 class ReadOnlyExecutor:
     def __init__(
         self, engine: Engine, statement_timeout_ms: int, max_rows: int, reader_role: str
@@ -46,11 +67,12 @@ class ReadOnlyExecutor:
                 executed_at_utc=executed_at_utc,
                 session_timezone=session_timezone,
             )
-        except Exception:
+        except Exception as error:
             return SqlExecutionError(
                 plan_id=plan.plan_id,
                 correlation_id=plan.correlation_id,
                 error="Candidate SQL could not be executed by the restricted reader.",
+                error_class=error_class(error),
             )
 
     def configure_transaction(self, connection: Connection) -> None:

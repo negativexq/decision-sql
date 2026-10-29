@@ -24,6 +24,7 @@ from app.sql.models import (
     QueryExecution,
     QueryPlan,
     SqlCandidate,
+    SqlExecutionError,
     SqlPlanFailure,
     SqlSafetyStatus,
     UnmatchedValue,
@@ -246,3 +247,35 @@ async def test_rows_that_tie_for_the_extreme_are_flagged() -> None:
 
     stage = {stage.name: stage for stage in result.trace.stages}["result_check"]
     assert stage.reason == "TIED_ROWS" and stage.metadata["tied"] == 2
+
+
+@pytest.mark.asyncio
+async def test_a_fixable_execution_error_gets_the_repair_round() -> None:
+    cast = "SELECT MAX(number::numeric) AS n FROM products"
+    fixed = "SELECT MAX(number) AS n FROM products"
+
+    class FailCast(ScriptedSafety):
+        def execute(self, plan: QueryPlan):  # type: ignore[override]
+            if plan.normalized_sql == cast:
+                return SqlExecutionError(
+                    plan_id=plan.plan_id, error="hidden", error_class="INVALID_TEXT_CONVERSION"
+                )
+            return super().execute(plan)
+
+    provider = FakeDecisionProvider(_answer(cast), _answer(fixed))
+    result = await _run(provider, FailCast({fixed: [{"n": 7}]}))
+
+    [feedback] = provider.feedback
+    assert feedback.stage == "execution" and feedback.code == "INVALID_TEXT_CONVERSION"
+    assert "hidden" not in feedback.message
+    assert result.repaired_from_sql == cast and result.rows == [{"n": 7}]
+    assert result.runtime_outcome == "EXECUTED"
+
+    # An unnamed failure is final.
+    class FailHard(ScriptedSafety):
+        def execute(self, plan: QueryPlan):  # type: ignore[override]
+            return SqlExecutionError(plan_id=plan.plan_id, error="hidden")
+
+    provider = FakeDecisionProvider(_answer(cast))
+    result = await _run(provider, FailHard({}))
+    assert provider.calls == 1 and result.runtime_outcome == "EXECUTION_ERROR"

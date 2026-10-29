@@ -498,7 +498,16 @@ class SqlSafetyService:
                         )
                         return execution
         except _AbortedExecution as aborted:
-            self._record_stage("execution", TraceStageStatus.FAILED, reason="EXECUTION_ERROR")
+            self._record_stage(
+                "execution",
+                TraceStageStatus.FAILED,
+                reason="EXECUTION_ERROR",
+                metadata=(
+                    {"error_class": aborted.result.error_class}
+                    if aborted.result.error_class
+                    else None
+                ),
+            )
             return aborted.result
         except ReaderRoleError:
             if not connection_opened:

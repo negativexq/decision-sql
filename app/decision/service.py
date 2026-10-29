@@ -394,6 +394,38 @@ class DecisionSqlApplication:
                 if second is not None and second.planned is not None:
                     planned, execution = second.planned, second.execution
                     sql_changes = second.sql_changes
+            elif (
+                isinstance(execution, SqlExecutionError)
+                and execution.error_class in _EXECUTION_MESSAGES
+                and repairable
+                and repaired_from_sql is None
+            ):
+                collector.record_stage(
+                    "result_check", TraceStageStatus.SKIPPED, reason="EXECUTION_ERROR"
+                )
+                second = await self._repair_result(
+                    question,
+                    schema_text,
+                    _execution_feedback(decision, execution.error_class or ""),
+                    authority,
+                    collector,
+                )
+                if second is not None and second.decision is not decision:
+                    repaired_from_sql = decision.sql
+                    decision = second.decision
+                    if decision.decision is not DecisionType.ANSWER:
+                        return self._non_answer(
+                            decision,
+                            proposal,
+                            proposal_source,
+                            model_context,
+                            model_context_hash,
+                            collector,
+                            repaired_from_sql=repaired_from_sql,
+                        )
+                if second is not None and second.planned is not None:
+                    planned, execution = second.planned, second.execution
+                    sql_changes = second.sql_changes
             elif checking and isinstance(execution, QueryExecution) and _tied(execution, planned):
                 collector.record_stage(
                     "result_check",
@@ -795,6 +827,42 @@ def _range_feedback(
     )
     return RuntimeRejectionFeedback(
         previous=previous, stage="result_check", code="OUT_OF_RANGE", message=message[:600]
+    )
+
+
+_EXECUTION_MESSAGES = {
+    "INVALID_TEXT_CONVERSION": (
+        "A cast or comparison met a stored text value that is not in the target type's "
+        "format, such as a letter in a column cast to a number. Convert only the values "
+        "that fit, or compare as text."
+    ),
+    "NUMERIC_OUT_OF_RANGE": "A number grew beyond its type's range. Use a wider type.",
+    "DIVISION_BY_ZERO": "A division met a zero divisor. Guard the divisor with NULLIF.",
+    "INVALID_DATETIME_FORMAT": (
+        "A text value did not fit the date or time format it was cast to. Match the "
+        "stored format, or convert only the values that fit."
+    ),
+    "DATETIME_OUT_OF_RANGE": "A date or time value fell outside its valid range.",
+    "SUBQUERY_RETURNED_SEVERAL_ROWS": (
+        "A subquery used as a single value returned more than one row. Make it return "
+        "one row, or compare with IN or EXISTS."
+    ),
+    "TYPE_MISMATCH": "An expression has a different data type than its context requires.",
+    "NO_SUCH_FUNCTION_FOR_TYPES": (
+        "A function or operator was applied to argument types it does not accept. Cast the "
+        "arguments to the types it takes."
+    ),
+    "STATEMENT_TIMEOUT": (
+        "The query ran past the time limit. Read fewer rows, or filter before joining."
+    ),
+}
+
+
+def _execution_feedback(previous: ProductionDecision, error_class: str) -> RuntimeRejectionFeedback:
+    """The runtime's own words for a database failure; the database's text never goes back."""
+    message = f"The query failed while running: {_EXECUTION_MESSAGES[error_class]}"
+    return RuntimeRejectionFeedback(
+        previous=previous, stage="execution", code=error_class, message=message[:600]
     )
 
 

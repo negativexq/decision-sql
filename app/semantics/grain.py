@@ -267,8 +267,13 @@ class GrainSafetyValidator:
                 message="SQL could not be parsed for grain analysis.",
                 evidence={"error": str(exc)},
             )
-        diagnostics = [self._validate_select(select) for select in tree.find_all(exp.Select)]
-        diagnostics.extend(self._traced_fanout(scope) for scope in _scopes(tree))
+        scopes = _scopes(tree)
+        scope_of = {id(scope.expression): scope for scope in scopes}
+        diagnostics = [
+            self._validate_select(select, scope_of.get(id(select)))
+            for select in tree.find_all(exp.Select)
+        ]
+        diagnostics.extend(self._traced_fanout(scope) for scope in scopes)
         actionable = [
             item
             for item in diagnostics
@@ -283,7 +288,7 @@ class GrainSafetyValidator:
             message="No additive parent measure was aggregated across a modeled fanout edge.",
         )
 
-    def _validate_select(self, select: exp.Select) -> GrainDiagnostic:
+    def _validate_select(self, select: exp.Select, scope: Scope | None = None) -> GrainDiagnostic:
         aliases = self._direct_table_aliases(select)
         if not aliases:
             return GrainDiagnostic(
@@ -344,6 +349,8 @@ class GrainSafetyValidator:
                 grouping_columns=group_columns,
             )
         direct_tables = set(aliases.values())
+        if scope is not None:
+            direct_tables |= self._derived_child_tables(scope)
         for measure, aggregate, column_sql in parent_measures:
             parent_edges = self.graph.fanout_edges_from(measure.entity_id)
             for edge in parent_edges:
@@ -366,7 +373,9 @@ class GrainSafetyValidator:
                     for column in self._group_columns(select)
                     if self._column_table(column, aliases) == measure.physical_table.lower()
                 }
-                if native_columns.issubset(grouped_native):
+                # Grouped by the parent's key, a group is one parent repeated once per
+                # child: its average is right, but its sum counts the parent per child.
+                if isinstance(aggregate, exp.Avg) and native_columns.issubset(grouped_native):
                     continue
                 if isinstance(aggregate, exp.Sum) and isinstance(aggregate.this, exp.Distinct):
                     return GrainDiagnostic(
@@ -437,11 +446,18 @@ class GrainSafetyValidator:
         ``path`` runs from the aggregating scope inward. Tables are collected from the
         innermost scope outward; a scope that groups or de-duplicates on the measure's own
         key leaves one row per parent, so the children joined below it no longer repeat it.
+        The aggregating scope's own GROUP BY makes only an average safe: a sum still adds
+        the parent once per child row in its group.
         """
         joined: set[str] = set()
+        last = len(path) - 1
         for depth, scope in enumerate(reversed(path)):
-            joined |= _physical_tables(scope)
-            if self._keeps_native_grain(scope, measure, aggregating=depth == len(path) - 1):
+            # The source the measure arrives through is traced, not a sibling child.
+            arrived_through = path[last - depth + 1] if depth > 0 else None
+            joined |= _physical_tables(scope) | self._derived_child_tables(scope, arrived_through)
+            if depth == last and not isinstance(aggregate, exp.Avg):
+                continue
+            if self._keeps_native_grain(scope, measure, aggregating=depth == last):
                 joined = set()
         child_grains = {
             edge.relationship_id: GrainKey(
@@ -480,6 +496,19 @@ class GrainSafetyValidator:
                 },
             )
         return None
+
+    def _derived_child_tables(self, scope: Scope, skip: Scope | None = None) -> set[str]:
+        """Tables behind the CTEs and derived tables of raw rows joined in this scope;
+        they repeat whatever they are joined to once per row.
+
+        ``JOIN (SELECT order_id FROM order_items) i ON i.order_id = o.id`` repeats each
+        order once per item; grouped or DISTINCT on ``order_id`` it gives one row per order.
+        """
+        found: set[str] = set()
+        for _, source in scope.selected_sources.values():
+            if isinstance(source, Scope) and source is not skip:
+                found |= _repeated_tables(source)
+        return found
 
     def _keeps_native_grain(
         self, scope: Scope, measure: MeasureSemantics, *, aggregating: bool
@@ -776,4 +805,31 @@ def _has_star(select: exp.Select) -> bool:
         isinstance(projection, exp.Star)
         or (isinstance(projection, exp.Column) and isinstance(projection.this, exp.Star))
         for projection in select.expressions
+    )
+
+
+def _repeated_tables(scope: Scope) -> set[str]:
+    """The physical tables a derived source of raw rows reads, through raw inner sources.
+
+    Only raw rows are taken as repeating. A source grouped or de-duplicated on more
+    than the joined key, such as DISTINCT (gender, district_id) joined on district_id,
+    repeats each district once per gender, but the query usually groups by gender
+    later; telling the two apart needs the outer grouping, so such a source is trusted.
+    """
+    select = scope.expression
+    if not isinstance(select, exp.Select) or _collapses_rows(select):
+        return set()
+    found = _physical_tables(scope)
+    for _, source in scope.selected_sources.values():
+        if isinstance(source, Scope):
+            found |= _repeated_tables(source)
+    return found
+
+
+def _collapses_rows(select: exp.Select) -> bool:
+    """Grouped, DISTINCT, or a single aggregated row."""
+    if isinstance(select.args.get("group"), exp.Group) or select.args.get("distinct"):
+        return True
+    return any(
+        p.find(exp.AggFunc) is not None and p.find(exp.Window) is None for p in select.expressions
     )

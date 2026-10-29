@@ -269,6 +269,59 @@ def test_a_cte_at_the_parent_grain_is_safe(sql: str) -> None:
     assert result.code in {GrainDiagnosticCode.PASS, GrainDiagnosticCode.NOT_APPLICABLE}
 
 
+def test_grouping_by_the_parent_key_does_not_make_a_sum_safe() -> None:
+    # Each group is one parent repeated once per child: its sum counts the parent per child.
+    summed = f"SELECT p.parent_id, SUM(p.amount) {_JOINED} GROUP BY p.parent_id"
+    traced = (
+        f"SELECT d.parent_id, SUM(d.amount) FROM (SELECT p.parent_id, p.amount {_JOINED}) d "
+        "GROUP BY d.parent_id"
+    )
+    validator = GrainSafetyValidator(_catalog())
+
+    assert validator.validate(summed).code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+    assert validator.validate(traced).code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+    # The repeated values are equal within a group, so their average is right.
+    averaged = f"SELECT p.parent_id, AVG(p.amount) {_JOINED} GROUP BY p.parent_id"
+    assert validator.validate(averaged).code is GrainDiagnosticCode.PASS
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "WITH items AS (SELECT parent_id FROM children) "
+        "SELECT SUM(p.amount) FROM parents p JOIN items i ON i.parent_id = p.parent_id",
+        "SELECT SUM(p.amount) FROM parents p "
+        "JOIN (SELECT parent_id FROM children) i ON i.parent_id = p.parent_id",
+        "WITH a AS (SELECT parent_id FROM children), b AS (SELECT parent_id FROM a) "
+        "SELECT SUM(p.amount) FROM parents p JOIN b ON b.parent_id = p.parent_id",
+    ],
+)
+def test_child_rows_behind_a_cte_or_derived_table_are_a_fanout(sql: str) -> None:
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code is GrainDiagnosticCode.PARENT_MEASURE_FANOUT
+    assert result.evidence["child_table"] == "children"
+
+
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT SUM(p.amount) FROM parents p JOIN (SELECT parent_id, COUNT(*) AS n "
+        "FROM children GROUP BY parent_id) i ON i.parent_id = p.parent_id",
+        "WITH k AS (SELECT DISTINCT parent_id FROM children) "
+        "SELECT SUM(p.amount) FROM parents p JOIN k ON k.parent_id = p.parent_id",
+        "WITH t AS (SELECT parent_id, COUNT(*) AS n FROM children GROUP BY parent_id), "
+        "u AS (SELECT parent_id, n FROM t) "
+        "SELECT SUM(p.amount) FROM parents p JOIN u ON u.parent_id = p.parent_id",
+        "WITH items AS (SELECT parent_id, amount FROM children) SELECT p.parent_id, "
+        "SUM(i.amount) FROM parents p JOIN items i ON i.parent_id = p.parent_id "
+        "GROUP BY p.parent_id",
+    ],
+)
+def test_child_rows_collapsed_before_the_join_are_safe(sql: str) -> None:
+    result = GrainSafetyValidator(_catalog()).validate(sql)
+    assert result.code in {GrainDiagnosticCode.PASS, GrainDiagnosticCode.NOT_APPLICABLE}
+
+
 def test_existence_query_is_not_misclassified_as_measure_fanout() -> None:
     sql = """
         SELECT COUNT(*) FILTER (

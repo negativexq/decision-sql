@@ -72,8 +72,9 @@ tests.
   link, so a one-row aggregate can be cross joined, and aliases of one table
   count as that table.
 - Aggregates that would fan out across a parent-child join are rejected,
-  including `SUM(DISTINCT ...)` over such a join and a join made inside a CTE
-  or derived table whose column is summed outside it.
+  including `SUM(DISTINCT ...)` over such a join, a join made inside a CTE or
+  derived table whose column is summed outside it, child rows joined through a
+  CTE or derived table, and a `SUM` grouped by the parent's own key.
 - `EXPLAIN` runs before execution; plan rows and plan cost must stay under
   `DECISION_SQL_MAX_PLAN_ROWS` and `DECISION_SQL_MAX_PLAN_COST` (10,000,000
   each by default). The estimate is a coarse guess, so these limits refuse only

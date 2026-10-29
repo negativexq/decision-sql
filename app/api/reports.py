@@ -7,6 +7,7 @@ from app.api.routes import Actor
 from app.metadata.service import ConnectorUnavailableError
 from app.operator.models import RunRecord
 from app.reports.models import (
+    CardFromRun,
     CardQuestion,
     CardRefresh,
     CardRefreshRequest,
@@ -15,6 +16,7 @@ from app.reports.models import (
     ReportAccess,
     ReportCreate,
     ReportInput,
+    ReportRename,
     ReportSummary,
     ReportView,
     ScheduleInput,
@@ -69,6 +71,19 @@ def update_report(
     report_id: str, payload: ReportInput, service: Reports, actor: Actor
 ) -> ReportView:
     return _call(lambda: service.update(report_id, payload, actor))
+
+
+@router.put("/{report_id}/title", response_model=ReportView)
+def rename_report(
+    report_id: str, payload: ReportRename, service: Reports, actor: Actor
+) -> ReportView:
+    return _call(lambda: service.rename(report_id, payload.title, actor))
+
+
+@router.post("/{report_id}/cards", response_model=ReportView)
+def add_card(report_id: str, payload: CardFromRun, service: Reports, actor: Actor) -> ReportView:
+    """Add an answered question as a card; its SQL is pinned from the audit log."""
+    return _call(lambda: service.add_card(report_id, payload, actor))
 
 
 @router.put("/{report_id}/access", response_model=ReportView)

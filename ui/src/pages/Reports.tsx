@@ -85,9 +85,8 @@ function activeChoices(choices: Record<string, FilterChoice>): Record<string, Fi
   return Object.fromEntries(Object.entries(choices).filter(([, choice]) => !isEmpty(choice)));
 }
 
-export function Reports() {
-  const [openId, setOpenId] = useState<string | null>(null);
-  return openId ? <ReportEditor reportId={openId} onClose={() => setOpenId(null)} /> : <ReportList onOpen={setOpenId} />;
+export function Reports({ openId, onOpen }: { openId: string | null; onOpen: (id: string | null) => void }) {
+  return openId ? <ReportEditor key={openId} reportId={openId} onClose={() => onOpen(null)} /> : <ReportList onOpen={onOpen} />;
 }
 
 function ReportList({ onOpen }: { onOpen: (id: string) => void }) {

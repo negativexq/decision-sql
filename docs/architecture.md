@@ -287,6 +287,18 @@ edited SQL runs as `EDITED_QUERY` without a model call, through every gate, and
 the audit log records which run it came from (`edited_from`). A follow-up on an
 edited run tells the model that its conditions were changed by hand.
 
+An executed answer can be added to a report the user may edit on the same
+connection, or to a new one (`POST /api/reports/{id}/cards`). The client sends
+only the run id, chart type, and title; the card is placed under the report's
+other cards and pins the run's executed SQL from the audit log, as any card
+does. `PUT /api/reports/{id}/title` renames a report for everyone who can open
+it.
+
+The sidebar's names and pins are the user's own (`decision_meta.marks`, at most
+500 per person): `PUT /api/marks/{kind}/{id}` renames a conversation or pins a
+conversation or report to the top for that person only. A mark grants nothing
+and no gate reads it.
+
 ### Audit log
 
 Every run is stored in `decision_meta.audit_runs` with the actor, question,

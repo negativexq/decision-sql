@@ -12,6 +12,7 @@ from app.operator.service import _earlier_answer, _saved_query_tables
 from app.reports.filters import FilterChoice, FilterKind, ReportFilter
 from app.reports.models import (
     CardDisplay,
+    CardFromRun,
     CardInput,
     CardLayout,
     RefreshSchedule,
@@ -434,3 +435,37 @@ def test_a_copied_card_keeps_the_sql_and_basis_of_its_original() -> None:
     original, copy = copied.cards
     assert copy.sql == original.sql and copy.basis == original.basis
     assert copy.chart == "stacked" and copy.series == "region"
+
+
+def test_an_answer_is_added_under_the_other_cards_with_the_sql_that_ran() -> None:
+    service, _ = _service(_record("run_a"), _record("run_b"), _record("other", connection="x"))
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.update(report.id, ReportInput(title="Sales", cards=[_card("c1", "run_a")]), "ayse")
+
+    added = service.add_card(report.id, CardFromRun(run_id="run_b", chart="line"), "ayse")
+
+    assert added is not None
+    first, second = added.cards
+    assert first.id == "c1" and first.sql == "SELECT total FROM orders -- run_a"
+    assert second.sql == "SELECT total FROM orders -- run_b"
+    assert second.title == "question of run_b" and second.chart == "line"
+    assert (second.layout.x, second.layout.y) == (0, first.layout.y + first.layout.h)
+    for run_id in ("other", "missing"):
+        with pytest.raises(ReportRejectedError):
+            service.add_card(report.id, CardFromRun(run_id=run_id), "ayse")
+    # Someone the report is not shared with cannot see it, so it is missing to them.
+    assert service.add_card(report.id, CardFromRun(run_id="run_b"), "mehmet") is None
+
+
+def test_only_an_editor_renames_a_report() -> None:
+    service, _ = _service()
+    report = service.create(ReportCreate(title="Sales", connection_id="governed"), "ayse")
+    service.share(report.id, ReportAccess(viewers=["mehmet"]), "ayse")
+
+    renamed = service.rename(report.id, "  Revenue  ", "ayse")
+
+    assert renamed is not None and renamed.title == "Revenue"
+    with pytest.raises(ReportRejectedError):
+        service.rename(report.id, "   ", "ayse")
+    with pytest.raises(ReportForbiddenError):
+        service.rename(report.id, "Mine", "mehmet")

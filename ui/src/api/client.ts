@@ -1,5 +1,6 @@
 import type {
   CardRefresh,
+  ChartType,
   ConnectionNotes,
   ConnectionRelationships,
   ConnectionSummary,
@@ -13,6 +14,7 @@ import type {
   FilterColumn,
   FilterOptions,
   IntrospectedTable,
+  Mark,
   Preset,
   ProgressEvent,
   RefreshSchedule,
@@ -168,6 +170,13 @@ export const api = {
       { method: "DELETE" },
     ),
   reports: () => request<ReportSummary[]>("/api/reports"),
+  renameReport: (id: string, title: string) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}/title`, { method: "PUT", body: JSON.stringify({ title }) }),
+  addCard: (id: string, body: { run_id: string; chart: ChartType; title?: string }) =>
+    request<Report>(`/api/reports/${encodeURIComponent(id)}/cards`, { method: "POST", body: JSON.stringify(body) }),
+  marks: () => request<Mark[]>("/api/marks"),
+  setMark: (kind: Mark["kind"], id: string, body: { title: string | null; pinned: boolean }) =>
+    request<Mark | null>(`/api/marks/${kind}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
   report: (id: string) => request<Report>(`/api/reports/${encodeURIComponent(id)}`),
   createReport: (title: string, connection_id: string) =>
     request<Report>("/api/reports", { method: "POST", body: JSON.stringify({ title, connection_id }) }),

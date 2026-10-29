@@ -483,3 +483,12 @@ export interface ReportSummary {
   updated_by: string;
   updated_at: string;
 }
+
+/** One person's own name for, and pin on, a conversation (named by its first run) or a report. */
+export interface Mark {
+  kind: "conversation" | "report";
+  item_id: string;
+  title: string | null;
+  pinned_at: string | null;
+  updated_at: string;
+}

@@ -178,6 +178,8 @@ def test_an_edit_reruns_the_stored_query_without_the_model(
         # The client names a condition and values; it cannot send SQL.
         raw = client.post("/api/runs/run_a/edit", json={"edits": [], "sql": "SELECT 1"})
         thread = client.get(f"/api/runs/{edited.json()['run_id']}/thread")
+        # Opened from its first run, a conversation walks forward to the newest turn.
+        opened = client.get("/api/runs/run_a/thread")
     finally:
         app.dependency_overrides.clear()
 
@@ -195,6 +197,7 @@ def test_an_edit_reruns_the_stored_query_without_the_model(
     assert bad.status_code == 422 and "not a date" in bad.json()["detail"]
     assert raw.status_code == 422
     assert [record["run_id"] for record in thread.json()] == ["run_a", body["run_id"]]
+    assert [record["run_id"] for record in opened.json()] == ["run_a", body["run_id"]]
 
 
 def test_a_follow_up_on_an_edited_query_says_it_was_edited() -> None:

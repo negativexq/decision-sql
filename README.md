@@ -20,7 +20,8 @@ and read-only execution are deterministic code the model cannot bypass.
   from that SQL on what it counts and which rows it keeps, and the eleven
   checks it passed, filled in live while the question runs.
 - **Conversations.** Follow up on an answer ("split it by month") and pick up
-  recent conversations from the sidebar.
+  recent conversations from the sidebar; rename them and pin the ones you
+  return to.
 - **Change an answer without the model.** Edit a condition, such as a date
   range or a status, or drop it; the query runs again through every check with
   no model call.
@@ -33,8 +34,9 @@ and read-only execution are deterministic code the model cannot bypass.
 - **Looks before it answers.** The model may run a few gated probes to see how
   values are stored; a filter on a value the column does not hold is caught
   and respelled or reported.
-- **Reports.** Pin answers as charts on a shared page with filters, scheduled
-  refresh, snapshots, CSV, and PDF.
+- **Reports.** Add any answer to a report, or start a new one from it, as a
+  chart on a shared page with filters, scheduled refresh, snapshots, CSV, and
+  PDF. Reports sit in the sidebar next to your conversations.
 - **Audit log.** Who asked what, which decision and SQL, and what each check
   decided, for every question.
 - **Measured.** 74/100 on a fixed sample of BIRD Mini-Dev 2026 (PostgreSQL)
@@ -46,7 +48,7 @@ and read-only execution are deterministic code the model cannot bypass.
 
 | | |
 | --- | --- |
-| **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. Follow up on an answer in the same conversation; recent conversations stay in the sidebar. |
+| **Ask** | Choose a database in the composer, ask in any language, read the answer as a table or chart. Follow up on an answer in the same conversation; recent conversations and reports stay in the sidebar, where you can rename them and pin them to the top. Add an answer to a report, or to a new one, as a chart. |
 | **See how it was computed** | One line read from the query says what it counts, which rows it keeps, and how it groups and sorts. Change a condition, such as a date or a status, and it runs again through every check without asking the model. |
 | **See the query** | Open "Query that ran" above the answer to read or copy the SQL. |
 | **Follow the checks** | Eleven stages from context to execution, shown live while the question runs, each with its outcome and timing. |
@@ -54,6 +56,8 @@ and read-only execution are deterministic code the model cannot bypass.
 | **Audit** | Every run with user, question, outcome, rows, and time; filter by user or outcome. |
 | **Connect databases** | PostgreSQL, MySQL, SQL Server, Trino, Snowflake, BigQuery: enter the details, run a preflight, save once it passes. |
 | **Declare joins** | When a database has no foreign keys, declare the joins questions may use; each one is checked against the data before it is saved. |
+
+![A follow-up in the same conversation, being added to a report](docs/screenshots/conversation.png)
 
 ![Executed SQL above the answer](docs/screenshots/query-that-ran.png)
 
@@ -95,7 +99,7 @@ flowchart TD
 - **A reason for every non-answer.** A clarification comes with the question to
   answer and the readings to choose from; a refusal names the missing join.
 
-  ![A question that could mean two things gets a clarification, not a guess](docs/screenshots/clarification.png)
+  ![A question that can be read two ways runs each reading; the answer says which it assumed and offers the other](docs/screenshots/ambiguity.png)
 - **Deterministic gates.** One `SELECT` statement, allowlisted functions,
   only relations in the request's context, no fan-out aggregates, and plan cost
   under the configured limit before anything executes.

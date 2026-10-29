@@ -166,3 +166,17 @@ column_notes = Table(
     Column("updated_by", String(120), nullable=False),
     Column("updated_at", DateTime(timezone=True), nullable=False),
 )
+
+
+# One person's own name for, and pin on, a conversation or a report. A
+# conversation is named by its first run; nothing here changes what anyone else sees.
+marks = Table(
+    "marks",
+    metadata,
+    Column("actor", String(120), primary_key=True),
+    Column("kind", String(20), primary_key=True),
+    Column("item_id", String(80), primary_key=True),
+    Column("title", String(200)),
+    Column("pinned_at", DateTime(timezone=True)),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+)

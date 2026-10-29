@@ -3,7 +3,7 @@ import json
 from collections.abc import AsyncIterator
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Path, Query
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -19,6 +19,7 @@ from app.metadata.connectors import (
     IntrospectedTable,
 )
 from app.metadata.drivers.install import DriverInstallResult
+from app.metadata.marks import Mark, MarkKind, MarkLimitError, MarkStore, MarkUpdate
 from app.metadata.notes import ColumnNotesRejectedError, ColumnNotesUpdate, ConnectionNotes
 from app.metadata.relationships import (
     ConnectionRelationships,
@@ -86,9 +87,16 @@ def get_actor(x_decision_actor: Annotated[str | None, Header()] = None) -> str:
     return normalize_actor(x_decision_actor)
 
 
+def get_mark_store() -> MarkStore:
+    from app.main import mark_store
+
+    return mark_store
+
+
 Operator = Annotated[OperatorApplication, Depends(get_operator_application)]
 Connections = Annotated[ConnectionService, Depends(get_connection_service)]
 Actor = Annotated[str, Depends(get_actor)]
+Marks = Annotated[MarkStore, Depends(get_mark_store)]
 
 
 @router.get("/api/health", response_model=ApiHealthResponse)
@@ -482,3 +490,24 @@ def delete_connection(connection_id: str, service: Connections) -> None:
         raise HTTPException(status_code=400, detail="The governed source cannot be removed here.")
     if not service.delete(connection_id):
         raise HTTPException(status_code=404, detail="Connection not found")
+
+
+@router.get("/api/marks", response_model=list[Mark])
+def list_marks(store: Marks, actor: Actor) -> list[Mark]:
+    """The actor's own names and pins for conversations and reports."""
+    return store.list(actor)
+
+
+@router.put("/api/marks/{kind}/{item_id}", response_model=Mark | None)
+def set_mark(
+    kind: MarkKind,
+    item_id: Annotated[str, Path(min_length=1, max_length=80)],
+    payload: MarkUpdate,
+    store: Marks,
+    actor: Actor,
+) -> Mark | None:
+    """Rename or pin for this actor only; a mark with neither is removed."""
+    try:
+        return store.set(actor, kind, item_id, payload)
+    except MarkLimitError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error

@@ -99,6 +99,46 @@ REJECTED = (
         STATUS_TOTALS,
     ),
     Case(
+        "child rows grouped on more than the join key, passed through another CTE",
+        "WITH items AS (SELECT order_id, product_id FROM order_items "
+        "GROUP BY order_id, product_id), "
+        "wrapped AS (SELECT order_id, product_id FROM items) "
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN wrapped w ON w.order_id = o.id GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
+        "child rows kept distinct on more than the join key, the extra key dropped outside",
+        "WITH items AS (SELECT DISTINCT order_id, product_id FROM order_items), "
+        "wrapped AS (SELECT order_id FROM items) "
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN wrapped w ON w.order_id = o.id GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
+        "child rows grouped on more than the join key, in nested derived tables",
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN (SELECT order_id FROM (SELECT order_id, product_id FROM order_items "
+        "GROUP BY order_id, product_id) x) w ON w.order_id = o.id "
+        "GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
+        "raw child rows beside an aggregate in a scalar subquery",
+        "WITH items AS (SELECT oi.order_id, (SELECT COUNT(*) FROM order_items) AS n "
+        "FROM order_items oi) "
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN items i ON i.order_id = o.id GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
+        "raw child rows beside an aggregate in a scalar subquery, in a derived table",
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN (SELECT oi.order_id, (SELECT MAX(quantity) FROM order_items) AS m "
+        "FROM order_items oi) i ON i.order_id = o.id GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
         "parent measure summed across a grandchild's parent",
         "SELECT p.category, SUM(o.total_amount) FROM orders o "
         "JOIN order_items oi ON oi.order_id = o.id "
@@ -176,6 +216,25 @@ ALLOWED = (
         "WITH i AS (SELECT DISTINCT order_id FROM order_items) "
         "SELECT o.status, SUM(o.total_amount) FROM orders o "
         "JOIN i ON i.order_id = o.id GROUP BY o.status ORDER BY 1",
+        STATUS_TOTALS,
+    ),
+    Case(
+        "child rows grouped on the join key, renamed and filtered in another CTE",
+        "WITH items AS (SELECT order_id, SUM(quantity) AS q FROM order_items "
+        "GROUP BY order_id), "
+        "wrapped AS (SELECT order_id AS oid, q FROM items WHERE q > 3) "
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN wrapped w ON w.oid = o.id GROUP BY o.status ORDER BY 1",
+        "SELECT status, SUM(total_amount) FROM orders WHERE id IN "
+        "(SELECT order_id FROM order_items GROUP BY order_id HAVING SUM(quantity) > 3) "
+        "GROUP BY status ORDER BY 1",
+    ),
+    Case(
+        "child rows kept distinct on the join key, passed through with a star",
+        "WITH items AS (SELECT DISTINCT order_id FROM order_items), "
+        "wrapped AS (SELECT * FROM items) "
+        "SELECT o.status, SUM(o.total_amount) FROM orders o "
+        "JOIN wrapped w ON w.order_id = o.id GROUP BY o.status ORDER BY 1",
         STATUS_TOTALS,
     ),
     Case(

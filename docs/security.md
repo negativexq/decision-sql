@@ -70,7 +70,8 @@ tests.
   relationships: a `CROSS JOIN`, a comma list, `ON TRUE`, or a range
   comparison between two tables is rejected. A CTE or derived table needs no
   link, so a one-row aggregate can be cross joined, and aliases of one table
-  count as that table.
+  count as that table. A column a CTE or derived table passes through from a
+  table is joined under that table's relationships.
 - Aggregates that would fan out across a parent-child join are rejected,
   including `SUM(DISTINCT ...)` over such a join, a join made inside a CTE or
   derived table whose column is summed outside it, child rows joined through a

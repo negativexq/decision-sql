@@ -239,8 +239,11 @@ class SQLPolicy:
 
         The tables themselves may be authorized while the columns joining them are
         not: ``orders.id = customers.id`` matches unrelated rows that happen to share
-        a number.  Columns of CTEs and derived tables are not traced to their source
-        tables, and a table compared with itself is left alone.
+        a number.  A column a CTE or derived table passes straight through from a table
+        is checked as that table's column; between two such columns, two keys of one
+        entity also match (``orders.customer_id`` and ``payments.customer_id`` both
+        name a customer).  A computed column is not traced, and a table compared with
+        itself is left alone.
 
         Once two tables are joined by authorized relationships ANDed into the same
         SELECT, a further equality between them, such as ``trans.date = loan.date``,
@@ -252,28 +255,38 @@ class SQLPolicy:
             if not isinstance(scope.expression, exp.Select):
                 continue
             relations = self._scope_relations(scope)
-            pairs: list[tuple[exp.EQ, tuple[str, str], tuple[str, str]]] = []
+            pairs: list[tuple[exp.EQ, tuple[str, str], tuple[str, str], bool]] = []
             for equality in scope.expression.find_all(exp.EQ):
                 if equality.find_ancestor(exp.Select) is not scope.expression:
                     continue
                 left = self._join_column(scope, relations, equality.left)
                 right = self._join_column(scope, relations, equality.right)
+                traced = False
+                if left is None:
+                    left, traced = self._traced_column(scope, equality.left), True
+                if right is None:
+                    right, traced = self._traced_column(scope, equality.right), True
                 if left is None or right is None or left[0] == right[0]:
                     continue
-                pairs.append((equality, left, right))
+                pairs.append((equality, left, right, traced))
             links = {
                 frozenset((left[0], right[0]))
-                for equality, left, right in pairs
+                for equality, left, right, _ in pairs
                 if _conjunct(equality) and self._related(left, right)
             }
-            for equality, left, right in pairs:
+            for equality, left, right, traced in pairs:
                 if self._related(left, right):
+                    continue
+                if traced and self._key_of(left) == self._key_of(right):
                     continue
                 if _conjunct(equality) and _connected(left[0], right[0], links):
                     continue
+                message = self._join_message(left, right)
+                if traced:
+                    message += " The columns are read through a CTE or derived table."
                 return self._reject(
                     PolicyCode.UNAUTHORIZED_JOIN,
-                    self._join_message(left, right),
+                    message,
                     f"{left[0]}.{left[1]} = {right[0]}.{right[1]}",
                 )
             unlinked = self._unlinked_tables(scope.expression, relations)
@@ -296,7 +309,8 @@ class SQLPolicy:
         ANDed into a WHERE or JOIN ... ON, an OR of such equalities between the same
         two relations, or a ``USING`` column. Between two tables an equality must
         follow an authorized relationship; one with a CTE or derived table counts,
-        because its columns are not traced. A CTE or derived table needs no link of
+        since the equality check has already traced the columns it passes through.
+        A CTE or derived table needs no link of
         its own, so a one-row aggregate can still be cross joined, and aliases of
         one table count as that table, as a table compared with itself is not
         checked.
@@ -413,6 +427,72 @@ class SQLPolicy:
         if relation is None or relation.table is None or relation.table.get_column(name) is None:
             return None
         return relation.table.name.lower(), name
+
+    def _traced_column(
+        self, scope: Scope, node: exp.Expression, *, inner: bool = False
+    ) -> tuple[str, str] | None:
+        """The table column a CTE or derived table's column passes straight through.
+
+        Followed through nested CTEs, casts, and ``*``; None for a computed column, a
+        set operation, or names a column list renames. At the outer level a column of
+        a table is ``_join_column``'s, so only one read through a derived source counts.
+        """
+        while isinstance(node, (exp.Cast, exp.Paren)):
+            node = node.this
+        if not isinstance(node, exp.Column):
+            return None
+        name = self._identifier_name(node.name)
+        qualifier = node.table.lower()
+        sources = {key.lower(): source for key, (_, source) in scope.selected_sources.items()}
+        if qualifier:
+            candidates = [sources[qualifier]] if qualifier in sources else []
+        else:
+            candidates = [
+                source
+                for source in sources.values()
+                if (isinstance(source, exp.Table) and self._table_has(source, name))
+                or (isinstance(source, Scope) and name in self._output_columns(source))
+            ]
+        if len(candidates) != 1:
+            return None
+        source = candidates[0]
+        if isinstance(source, exp.Table):
+            return (source.name.lower(), name) if inner and self._table_has(source, name) else None
+        select = source.expression
+        if not isinstance(select, exp.Select) or self._renames_columns(select):
+            return None
+        for projection in select.selects:
+            if isinstance(projection, exp.Star) or (
+                isinstance(projection, exp.Column) and isinstance(projection.this, exp.Star)
+            ):
+                continue
+            if self._identifier_name(projection.alias_or_name) == name:
+                passed = projection.this if isinstance(projection, exp.Alias) else projection
+                return self._traced_column(source, passed, inner=True)
+        if any(
+            isinstance(projection, exp.Star)
+            or (isinstance(projection, exp.Column) and isinstance(projection.this, exp.Star))
+            for projection in select.selects
+        ):
+            return self._traced_column(source, exp.column(name), inner=True)
+        return None
+
+    def _table_has(self, table: exp.Table, name: str) -> bool:
+        metadata = self.catalog.get_table(table.name)
+        return metadata is not None and metadata.get_column(name) is not None
+
+    @staticmethod
+    def _renames_columns(select: exp.Select) -> bool:
+        alias = select.parent.args.get("alias") if select.parent is not None else None
+        return isinstance(alias, exp.TableAlias) and bool(alias.args.get("columns"))
+
+    def _key_of(self, column: tuple[str, str]) -> tuple[str, str]:
+        """The key a column names: the column it references, or itself."""
+        table = self.catalog.get_table(column[0])
+        for item in table.relationships if table is not None else ():
+            if item.column.lower() == column[1]:
+                return item.referenced_table.lower(), item.referenced_column.lower()
+        return column
 
     def _relationships(self, a: str, b: str) -> list[tuple[str, str, str, str]]:
         found: list[tuple[str, str, str, str]] = []

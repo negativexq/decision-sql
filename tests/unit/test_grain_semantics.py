@@ -294,6 +294,11 @@ def test_grouping_by_the_parent_key_does_not_make_a_sum_safe() -> None:
         "JOIN (SELECT parent_id FROM children) i ON i.parent_id = p.parent_id",
         "WITH a AS (SELECT parent_id FROM children), b AS (SELECT parent_id FROM a) "
         "SELECT SUM(p.amount) FROM parents p JOIN b ON b.parent_id = p.parent_id",
+        # De-duplicated or grouped on more than the joined key: one row per child still.
+        "WITH items AS (SELECT DISTINCT parent_id, child_id FROM children) "
+        "SELECT SUM(p.amount) FROM parents p JOIN items i ON i.parent_id = p.parent_id",
+        "SELECT SUM(p.amount) FROM parents p JOIN (SELECT parent_id, child_id FROM children "
+        "GROUP BY parent_id, child_id) i ON i.parent_id = p.parent_id",
     ],
 )
 def test_child_rows_behind_a_cte_or_derived_table_are_a_fanout(sql: str) -> None:
@@ -315,6 +320,16 @@ def test_child_rows_behind_a_cte_or_derived_table_are_a_fanout(sql: str) -> None
         "WITH items AS (SELECT parent_id, amount FROM children) SELECT p.parent_id, "
         "SUM(i.amount) FROM parents p JOIN items i ON i.parent_id = p.parent_id "
         "GROUP BY p.parent_id",
+        "WITH k AS (SELECT DISTINCT ON (parent_id) parent_id, child_id FROM children) "
+        "SELECT SUM(p.amount) FROM parents p JOIN k ON k.parent_id = p.parent_id",
+        # Grouped by the extra column on the way out, each group holds a parent once.
+        "WITH items AS (SELECT DISTINCT parent_id, child_id FROM children) "
+        "SELECT i.child_id, SUM(p.amount) FROM parents p "
+        "JOIN items i ON i.parent_id = p.parent_id GROUP BY i.child_id",
+        "WITH items AS (SELECT DISTINCT parent_id, child_id FROM children), "
+        "joined AS (SELECT i.child_id, p.amount FROM parents p "
+        "JOIN items i ON i.parent_id = p.parent_id) "
+        "SELECT child_id, SUM(amount) FROM joined GROUP BY child_id",
     ],
 )
 def test_child_rows_collapsed_before_the_join_are_safe(sql: str) -> None:

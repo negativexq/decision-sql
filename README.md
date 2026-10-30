@@ -96,10 +96,10 @@ flowchart TD
   fan-out), it gets one repair round; if it names a table that was left out of
   the context, the context is widened once. Probes and checking a question's
   readings have their own allowances, so a question makes at most 7 model calls
-  with the default settings, and most make one. A run also has a deadline, a
-  token limit, and a probe-query limit that stop optional steps, never the
-  answer. Authority and write rejections are final, and every call is in the
-  trace.
+  with the default settings, and most make one. A run also has a time, token,
+  and probe-query budget that stops optional steps but never the first decision
+  or the answering query, so it is not a hard end-to-end timeout. Authority
+  and write rejections are final, and every call is in the trace.
 - **A reason for every non-answer.** A clarification comes with the question to
   answer and the readings to choose from; a refusal names the missing join.
 
@@ -225,9 +225,9 @@ Text-to-SQL accuracy claim.
 - Authority is relation-level; there are no tenant predicates or row-level
   security.
 - Questions run only on PostgreSQL.
-- Grain and join checks follow columns through CTEs and derived tables, but
-  grain trusts a grouped or `DISTINCT` one not to repeat the parent, and a
-  computed column joined on a non-key is not caught.
+- Grain and join checks follow columns through CTEs and derived tables, but a
+  computed column joined on a non-key is not caught, and grain takes a grouped
+  source nested inside another at its own grain.
 - The demo catalog is a synthetic commerce schema with hand-written business
   definitions.
 

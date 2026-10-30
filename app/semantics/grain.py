@@ -451,10 +451,13 @@ class GrainSafetyValidator:
         """
         joined: set[str] = set()
         last = len(path) - 1
-        for depth, scope in enumerate(reversed(path)):
+        outward = tuple(reversed(path))
+        for depth, scope in enumerate(outward):
             # The source the measure arrives through is traced, not a sibling child.
             arrived_through = path[last - depth + 1] if depth > 0 else None
-            joined |= _physical_tables(scope) | self._derived_child_tables(scope, arrived_through)
+            joined |= _physical_tables(scope) | self._derived_child_tables(
+                scope, arrived_through, outward[depth:]
+            )
             if depth == last and not isinstance(aggregate, exp.Avg):
                 continue
             if self._keeps_native_grain(scope, measure, aggregating=depth == last):
@@ -497,18 +500,64 @@ class GrainSafetyValidator:
             )
         return None
 
-    def _derived_child_tables(self, scope: Scope, skip: Scope | None = None) -> set[str]:
-        """Tables behind the CTEs and derived tables of raw rows joined in this scope;
-        they repeat whatever they are joined to once per row.
+    def _derived_child_tables(
+        self, scope: Scope, skip: Scope | None = None, outward: tuple[Scope, ...] = ()
+    ) -> set[str]:
+        """Tables behind the CTEs and derived tables joined in this scope that can give
+        more than one row per joined key, so they repeat whatever they are joined to.
 
         ``JOIN (SELECT order_id FROM order_items) i ON i.order_id = o.id`` repeats each
-        order once per item; grouped or DISTINCT on ``order_id`` it gives one row per order.
+        order once per item; grouped or DISTINCT on ``order_id`` it gives one row per
+        order. DISTINCT (order_id, product_id) still gives one row per product of the
+        order, unless the query groups by product_id on the way out (``outward`` runs
+        from this scope to the aggregating one): then each group holds an order once.
         """
         found: set[str] = set()
-        for _, source in scope.selected_sources.values():
-            if isinstance(source, Scope) and source is not skip:
-                found |= _repeated_tables(source)
+        for alias, (_, source) in scope.selected_sources.items():
+            if not isinstance(source, Scope) or source is skip:
+                continue
+            if self._repeats_rows(scope, alias, source, outward or (scope,)):
+                found |= _repeated_tables(source, outermost=True)
         return found
+
+    def _repeats_rows(
+        self, scope: Scope, alias: str, source: Scope, outward: tuple[Scope, ...]
+    ) -> bool:
+        """Whether a derived source can give more than one row per key it is joined on."""
+        select = source.expression
+        if not isinstance(select, exp.Select):
+            return False
+        keys = _row_keys(select)
+        if keys is None:
+            return True
+        extras = keys - _join_keys(scope.expression, alias)
+        if not extras:
+            return False
+        grouped = [self._grouped_lineage(later) for later in outward]
+        for extra in extras:
+            if extra is None:
+                return True
+            column = exp.column(extra, table=alias)
+            lineage = {
+                (table, name)
+                for table, name, _ in self._lineage(scope, column, (), through_derived=False)
+            }
+            if not lineage or not any(lineage <= group for group in grouped):
+                return True
+        return False
+
+    def _grouped_lineage(self, scope: Scope) -> set[tuple[str, str]]:
+        """The table columns a scope's GROUP BY reads."""
+        select = scope.expression
+        group = select.args.get("group") if isinstance(select, exp.Select) else None
+        if not isinstance(group, exp.Group):
+            return set()
+        return {
+            (table, name)
+            for item in group.expressions
+            for column in item.find_all(exp.Column)
+            for table, name, _ in self._lineage(scope, column, (), through_derived=False)
+        }
 
     def _keeps_native_grain(
         self, scope: Scope, measure: MeasureSemantics, *, aggregating: bool
@@ -808,16 +857,11 @@ def _has_star(select: exp.Select) -> bool:
     )
 
 
-def _repeated_tables(scope: Scope) -> set[str]:
-    """The physical tables a derived source of raw rows reads, through raw inner sources.
-
-    Only raw rows are taken as repeating. A source grouped or de-duplicated on more
-    than the joined key, such as DISTINCT (gender, district_id) joined on district_id,
-    repeats each district once per gender, but the query usually groups by gender
-    later; telling the two apart needs the outer grouping, so such a source is trusted.
-    """
+def _repeated_tables(scope: Scope, *, outermost: bool = False) -> set[str]:
+    """The physical tables a repeating derived source reads, through its inner sources
+    of raw rows; an inner source that is grouped or DISTINCT is taken at its own grain."""
     select = scope.expression
-    if not isinstance(select, exp.Select) or _collapses_rows(select):
+    if not isinstance(select, exp.Select) or (not outermost and _collapses_rows(select)):
         return set()
     found = _physical_tables(scope)
     for _, source in scope.selected_sources.values():
@@ -828,8 +872,53 @@ def _repeated_tables(scope: Scope) -> set[str]:
 
 def _collapses_rows(select: exp.Select) -> bool:
     """Grouped, DISTINCT, or a single aggregated row."""
-    if isinstance(select.args.get("group"), exp.Group) or select.args.get("distinct"):
-        return True
-    return any(
+    return _row_keys(select) is not None
+
+
+def _row_keys(select: exp.Select) -> frozenset[str | None] | None:
+    """The output columns a select gives one row per; None for raw rows.
+
+    One aggregated row has no key (an empty set). A GROUP BY expression no output
+    column names counts as an unknown key (None), which nothing outside can match.
+    """
+    distinct = select.args.get("distinct")
+    group = select.args.get("group")
+    if isinstance(group, exp.Group):
+        named: set[str | None] = set()
+        for item in group.expressions:
+            projection = next((p for p in select.expressions if p.unalias() == item), None)
+            if projection is not None:
+                named.add(projection.alias_or_name.lower())
+            elif isinstance(item, exp.Column):
+                named.add(item.name.lower())
+            else:
+                named.add(None)
+        return frozenset(named)
+    if isinstance(distinct, exp.Distinct):
+        on = distinct.args.get("on")
+        items = on.expressions if isinstance(on, exp.Tuple) else select.expressions
+        return frozenset(
+            item.alias_or_name.lower() if item.alias_or_name else None for item in items
+        )
+    if any(
         p.find(exp.AggFunc) is not None and p.find(exp.Window) is None for p in select.expressions
-    )
+    ):
+        return frozenset()
+    return None
+
+
+def _join_keys(select: exp.Expression, alias: str) -> set[str | None]:
+    """Columns of source ``alias`` that this select equates with a column of another source."""
+    keys: set[str | None] = set()
+    if not isinstance(select, exp.Select):
+        return keys
+    for equality in select.find_all(exp.EQ):
+        if equality.find_ancestor(exp.Select) is not select:
+            continue
+        left, right = equality.left, equality.right
+        if not (isinstance(left, exp.Column) and isinstance(right, exp.Column)):
+            continue
+        for mine, other in ((left, right), (right, left)):
+            if mine.table.lower() == alias.lower() and other.table.lower() != alias.lower():
+                keys.add(mine.name.lower())
+    return keys

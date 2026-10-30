@@ -194,8 +194,11 @@ The same budget holds three limits on the whole run:
 
 They stop optional steps only: expansion, look first, a probe round, a reading
 check, repair. The first decision and the query that answers always run, so a
-run past its deadline still answers with the decision it has; its query is
-bounded by the statement timeout. A model call still running at the deadline
+run past its deadline still answers with the decision it has. The deadline is
+therefore a budget for the steps after the first decision, not a hard
+end-to-end timeout: the longest a run can take is the first call's
+`DECISION_SQL_LLM_TIMEOUT_SECONDS` (30 s), plus the deadline, plus the
+answering query's statement timeout (5 s). A model call still running at the deadline
 is cut off, a probe past the query limit is not run and the model is told so,
 and a stopped step records `BUDGET_DEADLINE`, `BUDGET_TOKENS`, or
 `BUDGET_PROBE_QUERIES` as its reason. The defaults sit above what live runs in
@@ -257,9 +260,13 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   projections, including inner aggregates, to the table it is read from;
   every table joined along the way counts, unless a scope in between groups
   or de-duplicates on the parent's key (or a column its joins equate with it).
-  A CTE or derived table of raw child rows joined beside the parent counts as
-  its child table; one that is grouped, `DISTINCT`, or a single aggregated row
-  does not. Grouping the aggregate itself by the parent's key makes an `AVG`
+  A CTE or derived table joined beside the parent counts as its child table
+  when it can give more than one row per key it is joined on: raw rows, or
+  rows grouped or `DISTINCT` on more than that key (`DISTINCT order_id,
+  product_id` joined on `order_id`), unless the query groups by the extra
+  columns on the way out, so each group holds the parent once. One grouped
+  on the joined key alone, `DISTINCT ON` it, or a single aggregated row does
+  not count. Grouping the aggregate itself by the parent's key makes an `AVG`
   safe but not a `SUM`: each group is one parent repeated once per child.
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
@@ -314,10 +321,8 @@ audit log keeps both the model's SQL and the text the database received
 
 ### Known gaps
 
-- A CTE or derived table that is grouped or `DISTINCT` is trusted not to
-  repeat the parent, even when it groups on more than the joined key
-  (`DISTINCT gender, district_id` joined on `district_id`). Such queries
-  usually group by the extra column later, which the check does not follow.
+- A grouped or `DISTINCT` source nested inside another derived source is
+  taken at its own grain, without comparing its key to the outer join.
 - The join check traces only columns a CTE or derived table passes through
   unchanged; a computed or aggregated column joined on a non-key passes it.
 - A table joined with itself is not checked against relationships, so two

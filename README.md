@@ -96,8 +96,10 @@ flowchart TD
   fan-out), it gets one repair round; if it names a table that was left out of
   the context, the context is widened once. Probes and checking a question's
   readings have their own allowances, so a question makes at most 7 model calls
-  with the default settings, and most make one. Authority and write rejections
-  are final, and every call is in the trace.
+  with the default settings, and most make one. A run also has a deadline, a
+  token limit, and a probe-query limit that stop optional steps, never the
+  answer. Authority and write rejections are final, and every call is in the
+  trace.
 - **A reason for every non-answer.** A clarification comes with the question to
   answer and the readings to choose from; a refusal names the missing join.
 

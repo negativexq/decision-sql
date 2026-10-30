@@ -527,7 +527,7 @@ class GrainSafetyValidator:
         select = source.expression
         if not isinstance(select, exp.Select):
             return False
-        keys = _row_keys(select)
+        keys = _row_keys(source)
         if keys is None:
             return True
         extras = keys - _join_keys(scope.expression, alias)
@@ -859,10 +859,18 @@ def _has_star(select: exp.Select) -> bool:
 
 def _repeated_tables(scope: Scope, *, outermost: bool = False) -> set[str]:
     """The physical tables a repeating derived source reads, through its inner sources
-    of raw rows; an inner source that is grouped or DISTINCT is taken at its own grain."""
+    of raw rows; an inner source that is grouped or DISTINCT is taken at its own grain.
+
+    A select that only passes one source through repeats as that source does, so its
+    source is read as the repeating one: ``SELECT order_id FROM items`` over items
+    grouped by (order_id, product_id) repeats order_items.
+    """
     select = scope.expression
-    if not isinstance(select, exp.Select) or (not outermost and _collapses_rows(select)):
+    if not isinstance(select, exp.Select) or (not outermost and _collapses_rows(scope)):
         return set()
+    inner = _passthrough_source(scope)
+    if inner is not None:
+        return _repeated_tables(inner, outermost=True)
     found = _physical_tables(scope)
     for _, source in scope.selected_sources.values():
         if isinstance(source, Scope):
@@ -870,17 +878,38 @@ def _repeated_tables(scope: Scope, *, outermost: bool = False) -> set[str]:
     return found
 
 
-def _collapses_rows(select: exp.Select) -> bool:
-    """Grouped, DISTINCT, or a single aggregated row."""
-    return _row_keys(select) is not None
+def _collapses_rows(scope: Scope) -> bool:
+    """Grouped, DISTINCT, or a single aggregated row, here or in a source passed through."""
+    return _row_keys(scope) is not None
 
 
-def _row_keys(select: exp.Select) -> frozenset[str | None] | None:
+def _passthrough_source(scope: Scope) -> Scope | None:
+    """The one derived source a select reads without grouping, DISTINCT or aggregating,
+    which it therefore gives the rows of (fewer, if it filters)."""
+    select = scope.expression
+    if (
+        not isinstance(select, exp.Select)
+        or select.args.get("group") is not None
+        or select.args.get("distinct") is not None
+        or _aggregates_to_one_row(select)
+        or len(scope.selected_sources) != 1
+    ):
+        return None
+    ((_, source),) = scope.selected_sources.values()
+    return source if isinstance(source, Scope) else None
+
+
+def _row_keys(scope: Scope) -> frozenset[str | None] | None:
     """The output columns a select gives one row per; None for raw rows.
 
     One aggregated row has no key (an empty set). A GROUP BY expression no output
     column names counts as an unknown key (None), which nothing outside can match.
+    A select passing one source through keeps that source's keys under the names it
+    gives them; a key it leaves out leaves its rows repeating, as raw rows do.
     """
+    select = scope.expression
+    if not isinstance(select, exp.Select):
+        return None
     distinct = select.args.get("distinct")
     group = select.args.get("group")
     if isinstance(group, exp.Group):
@@ -900,11 +929,35 @@ def _row_keys(select: exp.Select) -> frozenset[str | None] | None:
         return frozenset(
             item.alias_or_name.lower() if item.alias_or_name else None for item in items
         )
-    if any(
-        p.find(exp.AggFunc) is not None and p.find(exp.Window) is None for p in select.expressions
-    ):
+    if _aggregates_to_one_row(select):
         return frozenset()
-    return None
+    inner = _passthrough_source(scope)
+    if inner is None:
+        return None
+    inner_keys = _row_keys(inner)
+    if inner_keys is None or _has_star(select):
+        return inner_keys
+    renamed: dict[str, str] = {}
+    for projection in select.expressions:
+        column = projection.unalias()
+        if isinstance(column, exp.Column):
+            renamed.setdefault(column.name.lower(), projection.alias_or_name.lower())
+    keys: set[str | None] = set()
+    for key in inner_keys:
+        if key is not None and key not in renamed:
+            return None
+        keys.add(None if key is None else renamed[key])
+    return frozenset(keys)
+
+
+def _aggregates_to_one_row(select: exp.Select) -> bool:
+    """An aggregate of this select's own, outside any window, in its output; one in a
+    scalar subquery or under OVER belongs to that query or window instead."""
+    return any(
+        aggregate.find_ancestor(exp.Select, exp.Window) is select
+        for projection in select.expressions
+        for aggregate in projection.find_all(exp.AggFunc)
+    )
 
 
 def _join_keys(select: exp.Expression, alias: str) -> set[str | None]:

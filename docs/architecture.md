@@ -266,7 +266,11 @@ An `ANSWER` is still only a proposal. `SqlSafetyService` turns it into a
   product_id` joined on `order_id`), unless the query groups by the extra
   columns on the way out, so each group holds the parent once. One grouped
   on the joined key alone, `DISTINCT ON` it, or a single aggregated row does
-  not count. Grouping the aggregate itself by the parent's key makes an `AVG`
+  not count; an aggregate inside a scalar subquery or under `OVER` does not
+  make its select one row. A CTE that only passes one such source through
+  (no grouping, `DISTINCT`, or join of its own) keeps that source's keys
+  under the names it gives them, and dropping a key leaves it repeating.
+  Grouping the aggregate itself by the parent's key makes an `AVG`
   safe but not a `SUM`: each group is one parent repeated once per child.
   Tables without a primary key, and joins that are neither, are not checked.
 - **Stored values**: for columns whose complete value set was read from
@@ -321,8 +325,9 @@ audit log keeps both the model's SQL and the text the database received
 
 ### Known gaps
 
-- A grouped or `DISTINCT` source nested inside another derived source is
-  taken at its own grain, without comparing its key to the outer join.
+- A grouped or `DISTINCT` source nested inside a derived source that joins or
+  groups again is taken at its own grain, without comparing its key to the
+  outer join; one passed through unchanged is compared.
 - The join check traces only columns a CTE or derived table passes through
   unchanged; a computed or aggregated column joined on a non-key passes it.
 - A table joined with itself is not checked against relationships, so two

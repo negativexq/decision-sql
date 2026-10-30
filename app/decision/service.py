@@ -4,7 +4,7 @@ import asyncio
 from time import perf_counter
 
 from app.config import Settings
-from app.decision.budget import AttemptBudget, ModelCall
+from app.decision.budget import AttemptBudget, BudgetExhaustedError, BudgetLimit, ModelCall
 from app.decision.exploration import (
     Exploration,
     NoValueAccess,
@@ -359,7 +359,7 @@ class DecisionSqlApplication:
             collector.record_stage(
                 "context_expansion",
                 TraceStageStatus.FAILED,
-                reason="EXPANSION_FAILURE",
+                reason=_failure(error, "EXPANSION_FAILURE"),
                 metadata={**base, "error_type": type(error).__name__},
                 duration_ms=(perf_counter() - started) * 1000,
             )
@@ -503,7 +503,9 @@ class DecisionSqlApplication:
             and state.exploration.open
         ):
             rounds += 1
-            found = await asyncio.to_thread(self._run_probes, decision, authority, collector.run_id)
+            found = await asyncio.to_thread(
+                self._run_probes, decision, authority, collector.run_id, state.budget
+            )
             reports.extend(found)
             state.exploration = Exploration(
                 open=rounds < self.settings.exploration_rounds,
@@ -517,8 +519,8 @@ class DecisionSqlApplication:
                     state.schema_text,
                     exploration=state.exploration,
                 )
-            except Exception:
-                finish(TraceStageStatus.FAILED, "PROVIDER_FAILURE")
+            except Exception as error:
+                finish(TraceStageStatus.FAILED, _failure(error))
                 return None
             for key in tokens:
                 tokens[key] += getattr(proposal, key) or 0
@@ -584,8 +586,8 @@ class DecisionSqlApplication:
                 state.schema_text,
                 exploration=Exploration(open=True, readings=readings),
             )
-        except Exception:
-            finish("PROVIDER_FAILURE", TraceStageStatus.FAILED)
+        except Exception as error:
+            finish(_failure(error), TraceStageStatus.FAILED)
             return None
         metadata.update(
             prompt_tokens=proposal.prompt_tokens,
@@ -602,7 +604,7 @@ class DecisionSqlApplication:
             return None
         metadata["reading_sql"] = list(probes)
         executions = await asyncio.to_thread(
-            self._run_readings, probes, state.authority, collector.run_id
+            self._run_readings, probes, state.authority, collector.run_id, state.budget
         )
         if executions is None:
             finish("READING_NOT_RUN")
@@ -911,11 +913,29 @@ class DecisionSqlApplication:
         exploration: Exploration | None,
         repair: RuntimeRejectionFeedback | None = None,
     ) -> ProductionDecisionProposal:
-        """The one way a run asks the model; refused when ``call`` has no budget left."""
+        """The one way a run asks the model; refused when the budget does not allow ``call``.
+
+        A call still running when the run's deadline passes is cut off, and the tokens
+        each call used count toward the run's token limit.
+        """
         budget.take(call)
-        return await self.provider.propose_decision(
-            question, schema_text, repair=repair, earlier=self.earlier, exploration=exploration
-        )
+        remaining = budget.remaining()
+        try:
+            async with asyncio.timeout(remaining if call is not ModelCall.GENERATION else None):
+                proposal = await self.provider.propose_decision(
+                    question,
+                    schema_text,
+                    repair=repair,
+                    earlier=self.earlier,
+                    exploration=exploration,
+                )
+        except TimeoutError as error:
+            left = budget.remaining()
+            if call is not ModelCall.GENERATION and left is not None and left <= 0:
+                raise budget.stop(BudgetLimit.DEADLINE, call) from error
+            raise
+        budget.spend_tokens((proposal.prompt_tokens or 0) + (proposal.completion_tokens or 0))
+        return proposal
 
     async def _repair(
         self, state: DecisionState, feedback: RuntimeRejectionFeedback
@@ -937,7 +957,7 @@ class DecisionSqlApplication:
             collector.record_stage(
                 "repair",
                 TraceStageStatus.FAILED,
-                reason="PROVIDER_FAILURE",
+                reason=_failure(error),
                 metadata={**base, "error_type": type(error).__name__},
                 duration_ms=(perf_counter() - started) * 1000,
             )
@@ -987,11 +1007,19 @@ class DecisionSqlApplication:
         return serialize_governed_context(context)
 
     def _run_readings(
-        self, probes: tuple[str, ...], authority: ExecutionAuthority, run_id: str
+        self,
+        probes: tuple[str, ...],
+        authority: ExecutionAuthority,
+        run_id: str,
+        budget: AttemptBudget,
     ) -> list[QueryExecution] | None:
         """Each reading's full result; None if one did not run or was cut off."""
         results: list[QueryExecution] = []
         for sql in probes:
+            try:
+                budget.take_probe_query()
+            except BudgetExhaustedError:
+                return None
             planned, executed = self.safety_service.explore(
                 SqlCandidate(
                     sql=sql,
@@ -1008,10 +1036,27 @@ class DecisionSqlApplication:
         return results
 
     def _run_probes(
-        self, decision: ProductionDecision, authority: ExecutionAuthority, run_id: str
+        self,
+        decision: ProductionDecision,
+        authority: ExecutionAuthority,
+        run_id: str,
+        budget: AttemptBudget,
     ) -> list[ProbeReport]:
         reports: list[ProbeReport] = []
         for sql in (decision.probes or ())[:MAX_PROBES]:
+            try:
+                budget.take_probe_query()
+            except BudgetExhaustedError as error:
+                reports.append(
+                    ProbeReport(
+                        sql=sql,
+                        status="REJECTED",
+                        reason=error.reason,
+                        message="The run's budget allows no more probes; decide with what "
+                        "the probes so far showed.",
+                    )
+                )
+                continue
             planned, executed = self.safety_service.explore(
                 SqlCandidate(
                     sql=sql,
@@ -1127,7 +1172,12 @@ def _close(
 
 
 def _calls(budget: AttemptBudget) -> dict[str, object]:
-    return {"model_calls": budget.spent, "model_call_limit": budget.limit}
+    return budget.summary()
+
+
+def _failure(error: Exception, other: str = "PROVIDER_FAILURE") -> str:
+    """A model call's failure as a trace reason: the budget limit that refused it, or ``other``."""
+    return error.reason if isinstance(error, BudgetExhaustedError) else other
 
 
 def _tokens(proposal: ProductionDecisionProposal) -> dict[str, object]:

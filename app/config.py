@@ -113,6 +113,21 @@ class Settings(BaseSettings):
     context_format: Literal["json", "compact"] = Field(
         default="compact", validation_alias="DECISION_SQL_CONTEXT_FORMAT"
     )
+    # Limits on one question beyond its model calls. They stop the optional steps
+    # (expansion, look first, probes, reading checks, repair), never the first decision
+    # or the query that answers. The defaults sit above what live runs have used: the
+    # slowest took 108 s and the costliest about 91,000 tokens.
+    run_deadline_seconds: float = Field(
+        default=120.0, gt=0, validation_alias="DECISION_SQL_RUN_DEADLINE_SECONDS"
+    )
+    run_token_limit: int = Field(
+        default=150_000, ge=1, validation_alias="DECISION_SQL_RUN_TOKEN_LIMIT"
+    )
+    # Probe and reading-check queries the model may run; unset allows every probe round
+    # and a reading check their full size.
+    run_probe_query_limit: int | None = Field(
+        default=None, ge=0, validation_alias="DECISION_SQL_RUN_PROBE_QUERY_LIMIT"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 

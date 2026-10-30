@@ -165,7 +165,7 @@ and percentage out of range share one:
   model hears the column and that it left the range, never the value, and may
   keep the query when the question asks for a change that can exceed 100.
 
-### Model-call budget
+### Run budget
 
 Every model call of a run is taken from an `AttemptBudget`
 (`app/decision/budget.py`) before the provider is asked. Each step has its own
@@ -182,8 +182,30 @@ allowance, and a step with none left is refused rather than called:
 
 A step turned off in settings has no allowance, and a replay has none at all.
 With the defaults a question makes at most 7 calls; most make one. A failed
-call still counts, so a repair call that fails uses the repair round. The
-response stage records `model_calls` and `model_call_limit` for every run.
+call still counts, so a repair call that fails uses the repair round.
+
+The same budget holds three limits on the whole run:
+
+| Limit | Setting | Default |
+| --- | --- | ---: |
+| Wall-clock time | `DECISION_SQL_RUN_DEADLINE_SECONDS` | 120 s |
+| Model tokens (prompt + completion) | `DECISION_SQL_RUN_TOKEN_LIMIT` | 150,000 |
+| Probe and reading-check queries | `DECISION_SQL_RUN_PROBE_QUERY_LIMIT` | 3 per probe round, plus 3 |
+
+They stop optional steps only: expansion, look first, a probe round, a reading
+check, repair. The first decision and the query that answers always run, so a
+run past its deadline still answers with the decision it has; its query is
+bounded by the statement timeout. A model call still running at the deadline
+is cut off, a probe past the query limit is not run and the model is told so,
+and a stopped step records `BUDGET_DEADLINE`, `BUDGET_TOKENS`, or
+`BUDGET_PROBE_QUERIES` as its reason. The defaults sit above what live runs in
+the audit log have used (slowest 108 s, at most about 91,000 tokens and 5
+probe queries), so they stop runaway runs, not ordinary ones.
+
+The response stage records what the run spent against its limits:
+`model_calls`, `model_call_limit`, `tokens`, `token_limit`, `probe_queries`,
+`probe_query_limit`, `elapsed_ms`, `deadline_ms`, and `budget_stopped` (the
+first limit that stopped a step, or empty).
 
 `DecisionSqlApplication.run` (`app/decision/service.py`) opens the run with
 the context and the first decision, then hands a `DecisionState`
@@ -481,7 +503,7 @@ or stored secrets.
 | --- | --- |
 | `app/api` | HTTP routes |
 | `app/operator` | The workspace facade the UI calls |
-| `app/decision` | The stages of a run, its model-call budget, and the runtime's feedback to the model |
+| `app/decision` | The stages of a run, its budget, and the runtime's feedback to the model |
 | `app/generation` | The decision contract and the model provider |
 | `app/catalog`, `app/retrieval`, `app/governance` | Catalog, context selection, and the model-visible context |
 | `app/sql` | Parsing, policy, authority, the plan/execute service, and the plain-language explanation of a query |

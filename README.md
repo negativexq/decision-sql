@@ -190,6 +190,10 @@ npm --prefix ui run build
 Tests do not call a model. Integration tests under `tests/integration` run
 against the Docker Compose PostgreSQL (and optional MySQL or Trino containers)
 and skip when those are not reachable.
+`tests/integration/test_grain_adversarial_postgres.py` pairs fan-out and
+wrong-join SQL with a reference query: each wrong query must be refused by the
+gate named for it and, where the demo data shows it, give different rows than
+the reference; each right query must pass and return the reference's rows.
 
 ## Measurement
 

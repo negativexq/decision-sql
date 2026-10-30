@@ -39,7 +39,7 @@ and read-only execution are deterministic code the model cannot bypass.
   PDF. Reports sit in the sidebar next to your conversations.
 - **Audit log.** Who asked what, which decision and SQL, and what each check
   decided, for every question.
-- **Measured.** 74/100 on a fixed sample of BIRD Mini-Dev 2026 (PostgreSQL)
+- **Measured.** 76/100 on a fixed sample of BIRD Mini-Dev 2026 (PostgreSQL)
   with `gpt-6-luna`; see [Measurement](#measurement).
 
 ![An answered question with its chart and the checks it passed](docs/screenshots/ask-answer.png)
@@ -203,7 +203,7 @@ The current decision contract was measured on 2026-10-29 with `gpt-6-luna`.
 | --- | ---: | --- |
 | Own field set: a wholesale schema with no foreign keys and no column descriptions, 31 questions, 3 runs each | 124/126 behaved as expected | Before any join was declared, all 30 join questions were refused. With joins declared: 67/69 answers matched the expected rows and none returned wrong rows (the other 2 asked for clarification), 12/12 ambiguous questions asked for clarification, 6/6 write requests were refused, and 6/6 questions about data the database does not hold were not answered. |
 | BIRD Mini-Dev, PostgreSQL, stratified 100 questions (30 simple, 50 moderate, 20 challenging) | 59/100 execution accuracy | 59/82 without the 18 questions whose gold SQL is disputed (for example ties broken by `LIMIT 1`, or a hint that contradicts the gold query). Databases without foreign keys had their joins declared through the relationships screen first. |
-| BIRD Mini-Dev 2026, PostgreSQL, a fixed random 100 of the 500 questions (93 challenging) | 74/100 execution accuracy | For comparison, the public leaderboard lists `gpt-6-luna` at 51.8 on the full 500. |
+| BIRD Mini-Dev 2026, PostgreSQL, a fixed random 100 of the 500 questions (93 challenging) | 76/100 execution accuracy | Measured on 2026-10-30 with the run budget on: a median of 20 s per question (95th percentile 77 s), and one question stopped at the 120-second deadline. For comparison, the public leaderboard lists `gpt-6-luna` at 51.8 on the full 500. |
 
 The field set checks behavior, not only rows: whether the system refuses a
 join nobody authorized, asks when a question can be read two ways, and keeps

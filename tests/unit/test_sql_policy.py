@@ -318,10 +318,8 @@ def test_joins_must_follow_an_authorized_relationship() -> None:
         "SELECT o.id FROM orders o, customers c WHERE c.id = o.customer_id AND c.name = 'x'",
         "SELECT c.name FROM customers c WHERE EXISTS "
         "(SELECT 1 FROM orders o WHERE o.customer_id = c.id)",
-        # A table compared with itself, and CTE columns, are not traced.
+        # A table compared with itself is not traced.
         "SELECT a.id FROM orders a JOIN orders b ON a.customer_id = b.customer_id",
-        "WITH t AS (SELECT id AS key FROM customers) "
-        "SELECT o.id FROM orders o JOIN t ON t.key = o.id",
     )
     for query in allowed:
         assert sql_policy.validate(parsed(query)) is None, query
@@ -408,3 +406,39 @@ def test_every_table_of_a_select_must_be_joined_by_a_relationship() -> None:
     assert "Join them on orders.customer_id = customers.id" in message
     unrelated = sql_policy.validate(parsed("SELECT 1 FROM products p CROSS JOIN customers c"))
     assert unrelated is not None and "no authorized relationship" in unrelated.message
+
+
+def test_a_column_read_through_a_cte_is_joined_as_its_tables_column() -> None:
+    sql_policy = policy()
+    allowed = (
+        "WITH t AS (SELECT id AS key FROM customers) "
+        "SELECT o.id FROM orders o JOIN t ON t.key = o.customer_id",
+        "SELECT c.name, t.n FROM customers c JOIN (SELECT customer_id, COUNT(*) AS n "
+        "FROM orders GROUP BY customer_id) t ON t.customer_id = c.id",
+        "WITH a AS (SELECT * FROM orders), b AS (SELECT a.id AS order_ref FROM a) "
+        "SELECT i.id FROM order_items i JOIN b ON b.order_ref = i.order_id",
+        # Two keys of one order, each read through its own CTE.
+        "WITH i AS (SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id), "
+        "p AS (SELECT order_id, SUM(amount) AS paid FROM payments GROUP BY order_id) "
+        "SELECT i.units, p.paid FROM i JOIN p ON p.order_id = i.order_id",
+        # A computed column is not traced.
+        "WITH t AS (SELECT customer_id + 0 AS key FROM orders) "
+        "SELECT c.name FROM customers c JOIN t ON t.key = c.id",
+    )
+    for query in allowed:
+        assert sql_policy.validate(parsed(query)) is None, query
+
+    rejected = (
+        "WITH t AS (SELECT id AS key FROM customers) "
+        "SELECT o.id FROM orders o JOIN t ON t.key = o.id",
+        "SELECT c.name FROM customers c JOIN (SELECT id, total_amount FROM orders) t "
+        "ON t.id = c.id",
+        "WITH a AS (SELECT * FROM orders), b AS (SELECT a.id AS ref FROM a) "
+        "SELECT c.name FROM customers c JOIN b ON b.ref = c.id",
+        "WITH i AS (SELECT id FROM order_items), p AS (SELECT order_id FROM payments) "
+        "SELECT 1 FROM i JOIN p ON p.order_id = i.id",
+    )
+    for query in rejected:
+        rejection = sql_policy.validate(parsed(query))
+        assert rejection is not None and rejection.code is PolicyCode.UNAUTHORIZED_JOIN, query
+        assert "through a CTE or derived table" in rejection.message

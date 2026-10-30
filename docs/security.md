@@ -95,6 +95,8 @@ tests.
 - `EXPLAIN` and execution run in a `READ ONLY` transaction with
   `search_path = public` and `DECISION_SQL_STATEMENT_TIMEOUT_MS`.
 - Results are capped at `DECISION_SQL_MAX_RESULT_ROWS` and marked truncated.
+  Repeated result column names are made distinct (`sum`, `sum_2`), so no
+  value is dropped when rows are keyed by column.
 - Migrations, seed, audit writes, and connection storage use the admin role.
 
 ## Audit log and connections

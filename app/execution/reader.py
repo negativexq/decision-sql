@@ -24,6 +24,24 @@ _ERROR_CLASSES = {
 }
 
 
+def unique_columns(names: list[str]) -> list[str]:
+    """Result column names made distinct, so no value is lost when rows become dicts.
+
+    PostgreSQL names every unaliased SUM ``sum``; the second becomes ``sum_2``.
+    """
+    taken = set(names)
+    seen: set[str] = set()
+    unique: list[str] = []
+    for name in names:
+        candidate, suffix = name, 2
+        while candidate in seen or (candidate != name and candidate in taken):
+            candidate = f"{name}_{suffix}"
+            suffix += 1
+        seen.add(candidate)
+        unique.append(candidate)
+    return unique
+
+
 def error_class(error: BaseException) -> str | None:
     """The fixed name of a fixable database failure, from its SQLSTATE only."""
     code = getattr(getattr(error, "orig", error), "sqlstate", None)
@@ -56,11 +74,12 @@ class ReadOnlyExecutor:
             rows = result.fetchmany(self.max_rows + 1)
             truncated = len(rows) > self.max_rows
             bounded_rows = rows[: self.max_rows]
+            columns = unique_columns(list(result.keys()))
             return QueryExecution(
                 plan_id=plan.plan_id,
                 correlation_id=plan.correlation_id,
-                columns=list(result.keys()),
-                rows=[dict(row._mapping) for row in bounded_rows],
+                columns=columns,
+                rows=[dict(zip(columns, row, strict=True)) for row in bounded_rows],
                 row_count=len(bounded_rows),
                 truncated=truncated,
                 latency_ms=0.0,

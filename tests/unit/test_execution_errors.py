@@ -1,4 +1,4 @@
-from app.execution.reader import error_class
+from app.execution.reader import error_class, unique_columns
 
 
 class _DriverError(Exception):
@@ -19,3 +19,10 @@ def test_only_fixable_sqlstates_get_a_name() -> None:
     assert error_class(_Wrapped(_DriverError("42501"))) is None  # permission denied stays unnamed
     assert error_class(_Wrapped(_DriverError(None))) is None
     assert error_class(ValueError("no state")) is None
+
+
+def test_repeated_result_columns_get_distinct_names() -> None:
+    assert unique_columns(["status", "sum", "sum"]) == ["status", "sum", "sum_2"]
+    # A later column already called sum_2 keeps its name; the repeat moves on.
+    assert unique_columns(["sum", "sum", "sum_2"]) == ["sum", "sum_3", "sum_2"]
+    assert unique_columns(["a", "b"]) == ["a", "b"]
